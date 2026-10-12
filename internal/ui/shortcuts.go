@@ -88,8 +88,8 @@ func (s *shellUI) showShortcuts() {
 			} else {
 				source = "Turned off in inua"
 			}
-		} else if keys = hyprconf.KeysFor(sc.binds, cmd); len(keys) > 0 {
-			source = "From hyprland.conf"
+		} else if keys = hyprconf.KeysFor(sc.binds, cmd, a.Label); len(keys) > 0 {
+			source = "From Hyprland"
 		}
 		box := &sc.inua
 		if a.Shot {
@@ -114,6 +114,16 @@ func (s *shellUI) showShortcuts() {
 			(b.Dispatcher == "exec" && commands[strings.Join(strings.Fields(b.Arg), " ")]) {
 			continue
 		}
+		descMatch := false
+		for _, a := range hyprconf.Actions {
+			if b.Description != "" && strings.EqualFold(b.Description, a.Label) {
+				descMatch = true
+				break
+			}
+		}
+		if descMatch {
+			continue
+		}
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
 		row.AddCssClass("row")
 		row.AddCssClass("compact")
@@ -122,8 +132,14 @@ func (s *shellUI) showShortcuts() {
 		gtkx.Append(col, &keycap(b.Keys).Widget)
 		gtkx.Append(row, &col.Widget)
 		what := b.Dispatcher
-		if b.Arg != "" {
-			what += "  " + b.Arg
+		if b.Description != "" {
+			what = b.Description
+		} else if b.Arg != "" {
+			if b.Dispatcher == "__lua" {
+				what = "Lua action"
+			} else {
+				what += "  " + b.Arg
+			}
 		}
 		l := gtk.NewLabel(what)
 		l.AddCssClass("readout")
@@ -293,7 +309,14 @@ func (s *shellUI) setShortcut(id, keys string) {
 			at = i
 		}
 	} else if at = shortcutIndex(list, id); at < 0 {
-		list = append(list, config.Shortcut{Action: id, Replaces: hyprconf.KeysFor(s.settings.sc.binds, hyprconf.Command(c, id))})
+		label := id
+		for _, a := range hyprconf.Actions {
+			if a.ID == id {
+				label = a.Label
+				break
+			}
+		}
+		list = append(list, config.Shortcut{Action: id, Replaces: hyprconf.KeysFor(s.settings.sc.binds, hyprconf.Command(c, id), label)})
 		at = len(list) - 1
 	}
 	if at < 0 {
@@ -320,7 +343,7 @@ func (s *shellUI) startRecording(id string) {
 		s.stopRecording()
 	}
 	sc.recording = id
-	s.dispatch("submap " + hyprconf.RecordSubmap)
+	s.dispatchSubmap(hyprconf.RecordSubmap)
 	sc.recordGen++
 	glib.TimeoutAdd(recordMS, &s.onRecordTimeout, sc.recordGen)
 	s.showShortcuts()
@@ -332,7 +355,7 @@ func (s *shellUI) stopRecording() {
 		return
 	}
 	sc.recording = ""
-	s.dispatch("submap reset")
+	s.dispatchSubmap("reset")
 	if s.settings.win != nil {
 		s.showShortcuts()
 	}

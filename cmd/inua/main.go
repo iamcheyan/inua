@@ -231,15 +231,20 @@ func checkSource(path, target string) {
 	where, overrides, err := bootstrap.FindSource(path, target)
 	switch {
 	case errors.Is(err, bootstrap.ErrNoSource):
-		fmt.Printf("%s does not source %s, so the keyboard and touchpad\n"+
-			"settings in inua's settings window do nothing. Add this as its last line:\n\n    source = ./%s\n",
-			path, hyprconf.Name, hyprconf.Name)
+		if strings.HasSuffix(path, ".lua") {
+			fmt.Printf("%s does not load %s, so settings outside live sessions are not persistent yet. Add this line to it:\n\n    require(\"hypr.inua\")\n",
+				path, hyprconf.LuaName)
+		} else {
+			fmt.Printf("%s does not source %s, so the keyboard and touchpad\n"+
+				"settings in inua's settings window do nothing. Add this as its last line:\n\n    source = ./%s\n",
+				path, hyprconf.Name, hyprconf.Name)
+		}
 	case err != nil:
 		fmt.Printf("%s: %v\n", path, err)
 	default:
-		fmt.Printf("%s: sources %s (%s)\n", path, hyprconf.Name, where)
+		fmt.Printf("%s: loads inua (%s)\n", path, where)
 		for _, o := range overrides {
-			fmt.Printf("%s: set after inua.conf, so it overrides inua's setting; move the source line below it\n", o)
+			fmt.Printf("%s: set after inua, so it overrides inua's setting; move the inua loading line below it\n", o)
 		}
 	}
 }

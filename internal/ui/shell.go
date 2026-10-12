@@ -542,8 +542,26 @@ func (s *shellUI) refocusPointer() {
 		if json.Unmarshal(b, &p) != nil {
 			return
 		}
-		if err := s.client.Dispatch(ctx, fmt.Sprintf("movecursor %d %d", int(p.X), int(p.Y))); err != nil {
-			log.Printf("hyprland: movecursor: %v", err)
+		if err := s.client.LuaDispatch(ctx, fmt.Sprintf("hl.dsp.cursor.move({x=%d, y=%d})", int(p.X), int(p.Y))); err != nil {
+			if errLegacy := s.client.Dispatch(ctx, fmt.Sprintf("movecursor %d %d", int(p.X), int(p.Y))); errLegacy != nil {
+				log.Printf("hyprland: movecursor: %v (legacy: %v)", err, errLegacy)
+			}
+		}
+	}()
+}
+
+func (s *shellUI) dispatchSubmap(name string) {
+	if s.client == nil {
+		log.Printf("hyprland: not connected, dropping submap %q", name)
+		return
+	}
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		if err := s.client.LuaDispatch(ctx, fmt.Sprintf("hl.dsp.submap(%q)", name)); err != nil {
+			if errLegacy := s.client.Dispatch(ctx, "submap "+name); errLegacy != nil {
+				log.Printf("hyprland: submap %s: %v (legacy: %v)", name, err, errLegacy)
+			}
 		}
 	}()
 }

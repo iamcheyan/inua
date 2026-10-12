@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -139,17 +140,28 @@ func (s *shellUI) showSourceWarning() {
 	st := &s.settings
 	target := hyprconf.Path(s.opts.ConfigPath)
 	conf := filepath.Join(filepath.Dir(target), "hyprland.conf")
+	if _, err := os.Stat(conf); os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join(filepath.Dir(target), "hyprland.lua")); err == nil {
+			conf = filepath.Join(filepath.Dir(target), "hyprland.lua")
+		}
+	}
 	_, overrides, err := bootstrap.FindSource(conf, target)
 	text := ""
+	isLua := strings.HasSuffix(conf, ".lua")
 	switch {
 	case errors.Is(err, bootstrap.ErrNoSource):
-		text = fmt.Sprintf("hyprland.conf does not load inua.conf, so these settings do nothing yet. "+
-			"Add this as its last line:  source = ./%s", hyprconf.Name)
+		if isLua {
+			text = fmt.Sprintf("hyprland.lua does not load %s, so settings outside live sessions are not persistent yet. "+
+				"Add this to hyprland.lua:  require(\"hypr.inua\")", hyprconf.LuaName)
+		} else {
+			text = fmt.Sprintf("hyprland.conf does not load %s, so these settings do nothing yet. "+
+				"Add this as its last line:  source = ./%s", hyprconf.Name, hyprconf.Name)
+		}
 	case err != nil:
 		text = err.Error()
 	case len(overrides) > 0:
-		text = "hyprland.conf sets these again after loading inua.conf, which wins over inua: " +
-			strings.Join(overrides, ", ") + ". Move the source line below them."
+		text = filepath.Base(conf) + " sets these again after loading inua: " +
+			strings.Join(overrides, ", ") + ". Move the inua loading line below them."
 	}
 	for _, l := range []*gtk.Label{&st.kbWarn, &st.tpWarn, &st.sc.warn} {
 		l.SetText(text)
