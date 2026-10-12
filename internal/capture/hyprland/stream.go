@@ -98,7 +98,7 @@ type client struct {
 	mappings         map[uint32]uint32
 	foreignHandles   map[uint32]bool
 	frames           map[uint32]*frameState
-	buffers          map[string]*buffer
+	buf              *buffer
 }
 
 func socketPath() (string, error) {
@@ -126,7 +126,7 @@ func run(ctx context.Context, updates <-chan captureTargets, onFrame func(Frame)
 		return fmt.Errorf("connect Wayland: %w", err)
 	}
 	defer conn.Close()
-	c := &client{conn: conn, next: 6, frames: map[uint32]*frameState{}, buffers: map[string]*buffer{}, handles: map[string]uint32{}, mappings: map[uint32]uint32{}, foreignHandles: map[uint32]bool{}}
+	c := &client{conn: conn, next: 6, frames: map[uint32]*frameState{}, handles: map[string]uint32{}, mappings: map[uint32]uint32{}, foreignHandles: map[uint32]bool{}}
 	defer c.releaseBuffers()
 	if err := c.init(); err != nil {
 		return err
@@ -140,16 +140,6 @@ func run(ctx context.Context, updates <-chan captureTargets, onFrame func(Frame)
 			return nil
 		case t := <-updates:
 			schedule.set(t)
-			keep := map[string]bool{}
-			for _, a := range schedule.targets {
-				keep[a] = true
-			}
-			for a, b := range c.buffers {
-				if !keep[a] {
-					c.destroyBuffer(b)
-					delete(c.buffers, a)
-				}
-			}
 		case <-tick.C:
 			a := schedule.next(time.Now())
 			if a == "" {
@@ -337,24 +327,27 @@ func (c *client) capture(address string, onFrame func(Frame)) error {
 				c.destroyFrame(id)
 				return errors.New("invalid Hyprland capture buffer size")
 			}
-			b := c.buffers[address]
+			// Captures run sequentially, so one shared-memory buffer serves all
+			// windows. The callback copies pixels before the next capture reuses it.
+			b := c.buf
 			if b == nil || b.w != f.w || b.h != f.h || b.stride != f.stride || b.format != f.format {
 				if b != nil {
 					c.destroyBuffer(b)
+					c.buf = nil
 				}
 				b, err = c.newBuffer(*f)
 				if err != nil {
 					c.destroyFrame(id)
 					return err
 				}
-				c.buffers[address] = b
+				c.buf = b
 			}
 			if err = c.send(id, 0, u32(b.id), u32(1)); err != nil {
 				c.destroyFrame(id)
 				return err
 			}
 		case 3: // ready
-			b := c.buffers[address]
+			b := c.buf
 			if b != nil && onFrame != nil {
 				onFrame(Frame{Address: address, Width: b.w, Height: b.h, Stride: b.stride, Format: b.format, YInvert: f.flags&1 != 0, Pixels: b.data})
 			}
@@ -415,9 +408,8 @@ func (c *client) destroyBuffer(b *buffer) {
 	}
 }
 func (c *client) releaseBuffers() {
-	for _, b := range c.buffers {
-		c.destroyBuffer(b)
-	}
+	c.destroyBuffer(c.buf)
+	c.buf = nil
 }
 func (c *client) alloc() uint32 { id := c.next; c.next++; return id }
 
