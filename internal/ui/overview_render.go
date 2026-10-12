@@ -94,6 +94,7 @@ func (s *shellUI) updateOverviewWidgets(o *workspaceOverview) {
 				continue
 			}
 			x, y, pw, ph := overviewWindowLayout(w, view.monX, view.monY, view.monW, view.monH, view.thumbW, view.thumbH)
+			s.noteOverviewPreviewSize(w.Address, pw, ph, int(o.root.GetScaleFactor()))
 			rect := [4]float64{x, y, pw, ph}
 			if window.rect != rect {
 				view.board.Move(&window.button.Widget, x, y)

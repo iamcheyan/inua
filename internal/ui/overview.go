@@ -58,6 +58,7 @@ type workspaceOverview struct {
 	renderGen            uintptr
 	captureMu            sync.Mutex
 	pendingFrames        map[string]queuedOverviewFrame
+	previewSize          map[string][2]int
 	frameDrainQueued     bool
 	columns              int
 	refs                 gtkx.Scope
@@ -398,6 +399,9 @@ func (s *shellUI) renderOverview() {
 	if o.targets == nil {
 		o.targets = map[uintptr]overviewDropTarget{}
 	}
+	o.captureMu.Lock()
+	o.previewSize = make(map[string][2]int)
+	o.captureMu.Unlock()
 	s.renderOverviewView(o)
 	for _, view := range o.views {
 		view.st = o.st
@@ -598,6 +602,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 		for wi := len(card.Windows) - 1; wi >= 0; wi-- {
 			w := card.Windows[wi]
 			x, y, pw, ph := overviewWindowLayout(w, monX, monY, monW, monH, thumbW, thumbH)
+			s.noteOverviewPreviewSize(w.Address, pw, ph, int(o.root.GetScaleFactor()))
 			b := gtk.NewButton()
 			b.SetName("window:" + w.Address)
 			b.SetSizeRequest(int32(pw), int32(ph))
@@ -713,7 +718,8 @@ func (s *shellUI) updateOverviewCapture() {
 	o.captureGen++
 	gen := o.captureGen
 	o.capture = hyprland.Start(context.Background(), targets, func(f hyprland.Frame) {
-		s.queueOverviewFrame(gen, hyprland.Shrink(f, 720, 720))
+		w, h := s.overviewPreviewSize(f.Address)
+		s.queueOverviewFrame(gen, hyprland.Shrink(f, w, h))
 	}, func(err error) {
 		log.Printf("overview capture: %v", err)
 		gtkx.Post(func() {
@@ -734,6 +740,36 @@ func (s *shellUI) updateOverviewCapture() {
 		})
 	})
 	o.capture.SetTargetsWithPriority(targets, priority)
+}
+
+func (s *shellUI) noteOverviewPreviewSize(address string, width, height float64, scale int) {
+	if address == "" {
+		return
+	}
+	if scale < 1 {
+		scale = 1
+	}
+	o := &s.overview
+	o.captureMu.Lock()
+	defer o.captureMu.Unlock()
+	if o.previewSize == nil {
+		o.previewSize = make(map[string][2]int)
+	}
+	old := o.previewSize[address]
+	w := int(width*float64(scale) + 0.5)
+	h := int(height*float64(scale) + 0.5)
+	o.previewSize[address] = [2]int{max(old[0], w), max(old[1], h)}
+}
+
+func (s *shellUI) overviewPreviewSize(address string) (int, int) {
+	o := &s.overview
+	o.captureMu.Lock()
+	size := o.previewSize[address]
+	o.captureMu.Unlock()
+	if size[0] <= 0 || size[1] <= 0 {
+		return 720, 720
+	}
+	return size[0], size[1]
 }
 
 // queueOverviewFrame keeps at most the newest frame per client while GTK is
