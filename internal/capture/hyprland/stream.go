@@ -28,13 +28,13 @@ type Frame struct {
 // Stream is a live preview worker. SetTargets replaces the capture list;
 // frame callbacks run on the worker goroutine.
 type Stream struct {
-	targets chan []string
+	targets chan captureTargets
 	cancel  context.CancelFunc
 }
 
 func Start(ctx context.Context, targets []string, onFrame func(Frame), onError func(error)) *Stream {
 	workerCtx, cancel := context.WithCancel(ctx)
-	s := &Stream{targets: make(chan []string, 1), cancel: cancel}
+	s := &Stream{targets: make(chan captureTargets, 1), cancel: cancel}
 	s.SetTargets(targets)
 	go func() {
 		if err := run(workerCtx, s.targets, onFrame); err != nil && onError != nil && workerCtx.Err() == nil {
@@ -45,10 +45,16 @@ func Start(ctx context.Context, targets []string, onFrame func(Frame), onError f
 }
 
 func (s *Stream) SetTargets(targets []string) {
+	s.SetTargetsWithPriority(targets, nil)
+}
+
+// SetTargetsWithPriority refreshes selected-workspace windows first while
+// continuing to refresh the other visible previews at a lower rate.
+func (s *Stream) SetTargetsWithPriority(targets, priority []string) {
 	if s == nil {
 		return
 	}
-	copyTargets := append([]string(nil), targets...)
+	copyTargets := captureTargets{addresses: append([]string(nil), targets...), priority: append([]string(nil), priority...)}
 	select {
 	case s.targets <- copyTargets:
 	default:
@@ -110,7 +116,7 @@ func socketPath() (string, error) {
 	return filepath.Join(runtime, name), nil
 }
 
-func run(ctx context.Context, updates <-chan []string, onFrame func(Frame)) error {
+func run(ctx context.Context, updates <-chan captureTargets, onFrame func(Frame)) error {
 	path, err := socketPath()
 	if err != nil {
 		return err
@@ -125,18 +131,17 @@ func run(ctx context.Context, updates <-chan []string, onFrame func(Frame)) erro
 	if err := c.init(); err != nil {
 		return err
 	}
-	targets := []string{}
-	next := 0
-	tick := time.NewTicker(120 * time.Millisecond)
+	schedule := captureSchedule{}
+	tick := time.NewTicker(16 * time.Millisecond)
 	defer tick.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 		case t := <-updates:
-			targets = unique(t)
+			schedule.set(t)
 			keep := map[string]bool{}
-			for _, a := range targets {
+			for _, a := range schedule.targets {
 				keep[a] = true
 			}
 			for a, b := range c.buffers {
@@ -146,14 +151,10 @@ func run(ctx context.Context, updates <-chan []string, onFrame func(Frame)) erro
 				}
 			}
 		case <-tick.C:
-			if len(targets) == 0 {
+			a := schedule.next(time.Now())
+			if a == "" {
 				continue
 			}
-			if next >= len(targets) {
-				next = 0
-			}
-			a := targets[next]
-			next++
 			if err := c.capture(a, onFrame); err != nil {
 				if ctx.Err() != nil {
 					return nil

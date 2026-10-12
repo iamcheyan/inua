@@ -45,6 +45,10 @@ type workspaceOverview struct {
 	searchStatus         gtk.Label
 	mru                  gtk.Button
 	images               map[string]*gtk.Picture
+	layoutKey            string
+	cardWidgets          map[int]*overviewCardWidgets
+	windowWidgets        map[string]*overviewWindowWidgets
+	renderedTargets      []uintptr
 	textures             map[string]*gdk.MemoryTexture
 	capture              *hyprland.Stream
 	captureFailed        bool
@@ -124,7 +128,6 @@ func (s *shellUI) showOverview() {
 		}
 	}
 	s.renderOverview()
-	s.updateOverviewCapture()
 	s.guardOverviewMouse(true)
 	log.Printf("overview: open (%d workspaces) wallpaper=%q", len(s.overview.st.Cards), s.cfg.ImagePath())
 }
@@ -165,6 +168,11 @@ func (s *shellUI) closeOverview(restore bool) {
 		o.win.Unref()
 		o.win = nil
 	}
+	o.targets = nil
+	o.cardWidgets = nil
+	o.windowWidgets = nil
+	o.images = nil
+	o.renderedTargets = nil
 	if restore && previous != "" {
 		for _, w := range s.snap.Toplevels {
 			if w.Address == previous {
@@ -185,7 +193,6 @@ func (s *shellUI) bindOverviewHandlers() {
 	s.onOverviewRender = func(gen uintptr) bool {
 		if gen == s.overview.renderGen && s.overview.st.Open {
 			s.renderOverview()
-			s.updateOverviewCapture()
 		}
 		return false
 	}
@@ -387,13 +394,16 @@ func (s *shellUI) renderOverview() {
 	if !o.st.Open || o.dragging != "" {
 		return
 	}
-	o.targets = map[uintptr]overviewDropTarget{}
+	if o.targets == nil {
+		o.targets = map[uintptr]overviewDropTarget{}
+	}
 	s.renderOverviewView(o)
 	for _, view := range o.views {
 		view.st = o.st
 		view.textures = o.textures
 		s.renderOverviewView(view)
 	}
+	s.updateOverviewCapture()
 }
 
 func (s *shellUI) renderOverviewView(o *workspaceOverview) {
@@ -401,6 +411,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 		return
 	}
 	if o.win == nil {
+		o.layoutKey = ""
 		s.buildOverview(o)
 	}
 	if o.query.GetText() != o.st.Query {
@@ -410,9 +421,6 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 	}
 	o.mru.SetLabel(map[bool]string{true: "MRU: ON", false: "MRU: OFF"}[o.st.MRU])
 	o.scope.SetLabel(map[bool]string{true: "This monitor", false: "All monitors"}[s.cfg.Overview.PerMonitor])
-	o.images = make(map[string]*gtk.Picture)
-
-	gtkx.Clear(&o.cards)
 	matching := 0
 	for _, card := range o.st.Cards {
 		if s.cfg.Overview.PerMonitor && card.Workspace.Monitor != o.monitor {
@@ -428,6 +436,20 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 		o.searchStatus.SetText(fmt.Sprintf("%d MATCHING WINDOWS", matching))
 	}
 	o.queryClear.SetVisible(o.st.Query != "")
+	key := overviewLayoutKey(o.st.Cards, s.snap.Monitors, s.cfg.Overview.PerMonitor, o.monitor, int(o.root.GetScaleFactor()), o.st.Query != "")
+	if o.layoutKey == key {
+		s.updateOverviewWidgets(o)
+		return
+	}
+	for _, ptr := range o.renderedTargets {
+		delete(s.overview.targets, ptr)
+	}
+	o.renderedTargets = nil
+	o.layoutKey = key
+	o.images = make(map[string]*gtk.Picture)
+	o.cardWidgets = make(map[int]*overviewCardWidgets)
+	o.windowWidgets = make(map[string]*overviewWindowWidgets)
+	gtkx.Clear(&o.cards)
 	type indexedCard struct {
 		index int
 		card  shell.OverviewCard
@@ -549,6 +571,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 		background.Unref()
 		{
 			s.overview.targets[canvas.GoPointer()] = overviewDropTarget{ID: card.Workspace.ID, Monitor: card.Workspace.Monitor, New: card.New, Scale: thumbW / monW}
+			o.renderedTargets = append(o.renderedTargets, canvas.GoPointer())
 			drop := gtk.NewDropTarget(types.GType(gobject.TypeStringVal), gdk.ActionMoveValue)
 			drop.ConnectMotion(&s.onOverviewMotion)
 			drop.ConnectLeave(&s.onOverviewLeave)
@@ -559,6 +582,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 		board.SetOverflow(gtk.OverflowHiddenValue)
 		canvas.AddOverlay(&board.Widget)
 		board.Unref()
+		o.cardWidgets[i] = &overviewCardWidgets{canvas: canvas, board: board, order: overviewWindowOrder(card.Windows), monX: monX, monY: monY, monW: monW, monH: monH, thumbW: thumbW, thumbH: thumbH}
 		// Paint the focused window last, as the topmost window.
 		for wi := len(card.Windows) - 1; wi >= 0; wi-- {
 			w := card.Windows[wi]
@@ -567,6 +591,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 			b.SetName("window:" + w.Address)
 			b.SetSizeRequest(int32(pw), int32(ph))
 			b.SetTooltipText(w.Title)
+			o.windowWidgets[w.Address] = &overviewWindowWidgets{button: b, rect: [4]float64{x, y, pw, ph}, title: w.Title}
 			b.AddCssClass("overview-window")
 			if w.Activated {
 				b.AddCssClass("active")
@@ -633,10 +658,13 @@ func (s *shellUI) updateOverviewCapture() {
 	if o.captureFailed {
 		return
 	}
-	var targets []string
-	for _, card := range o.st.Cards {
+	var targets, priority []string
+	for i, card := range o.st.Cards {
 		for _, w := range card.Windows {
 			targets = append(targets, w.Address)
+			if i == o.st.Selected {
+				priority = append(priority, w.Address)
+			}
 		}
 	}
 	if len(targets) == 0 {
@@ -648,7 +676,7 @@ func (s *shellUI) updateOverviewCapture() {
 		return
 	}
 	if o.capture != nil {
-		o.capture.SetTargets(targets)
+		o.capture.SetTargetsWithPriority(targets, priority)
 		return
 	}
 	o.captureGen++
@@ -674,6 +702,7 @@ func (s *shellUI) updateOverviewCapture() {
 			})
 		})
 	})
+	o.capture.SetTargetsWithPriority(targets, priority)
 }
 
 // queueOverviewFrame keeps at most the newest frame per client while GTK is

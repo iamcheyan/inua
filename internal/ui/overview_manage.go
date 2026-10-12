@@ -161,6 +161,7 @@ func (s *shellUI) bindOverviewManagement() {
 					if o.hint != nil {
 						o.hint.SetText(w.Title + "    ·    " + w.Class + "    ·    Middle click: close")
 					}
+					s.updateOverviewCapture()
 					return
 				}
 			}
