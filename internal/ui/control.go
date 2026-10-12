@@ -144,6 +144,7 @@ func (s *shellUI) toggleControl() {
 }
 
 func (s *shellUI) openControl() {
+	s.closeClipboard()
 	c := &s.control
 	if c.open {
 		return

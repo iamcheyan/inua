@@ -33,6 +33,7 @@ type Config struct {
 	Assistant  Assistant  `toml:"assistant"`
 	Keyring    Keyring    `toml:"keyring"`
 	Screenshot Screenshot `toml:"screenshot"`
+	Clipboard  Clipboard  `toml:"clipboard"`
 	Shortcuts  []Shortcut `toml:"shortcuts"`
 
 	// Dir is the directory the file was read from; relative paths in the
@@ -156,7 +157,7 @@ type Shortcut struct {
 // ShortcutActions are the actions a shortcut can run besides "exec"; the
 // commands behind them are in internal/hyprconf.
 var ShortcutActions = []string{
-	"launcher", "windows", "overview", "control", "notifications", "focus", "settings", "restart", "lock",
+	"launcher", "windows", "overview", "control", "notifications", "clipboard", "focus", "settings", "restart", "lock",
 	"shot-area", "shot-screen", "shot-window", "shot-record", "color",
 }
 
@@ -346,6 +347,22 @@ var DockSizes = []int{28, 36, 44, 56}
 // DockPositions are the edges offered in the dock settings.
 var DockPositions = []string{"bottom", "top", "left", "right"}
 
+// Clipboard is the clipboard history panel.
+type Clipboard struct {
+	// Bar shows a clipboard history button in the top bar.
+	Bar bool `toml:"bar"`
+	// Opacity of the clipboard panel card (50 to 100 percent).
+	Opacity int `toml:"opacity"`
+	// Limit is the maximum number of history items to keep (20 to 1000).
+	Limit int `toml:"limit"`
+	// PasteOnClick immediately pastes the selected entry to the active window.
+	// false: only copies to clipboard without pasting.
+	PasteOnClick bool `toml:"paste_on_click"`
+}
+
+// ClipboardLimitChoices are the history limits the settings window offers.
+var ClipboardLimitChoices = []int{50, 100, 300, 500}
+
 // Notify is the notification center (internal/notify).
 type Notify struct {
 	// Enable makes the shell the notification server. Off leaves
@@ -411,6 +428,7 @@ func Default() Config {
 		Background: Background{Enable: true, Fit: "cover"},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
 		Screenshot: Screenshot{Folder: "~/Pictures/Screenshots", Copy: true, Recordings: "~/Videos/Screencasts"},
+		Clipboard:  Clipboard{Bar: true, Opacity: 84, Limit: 300, PasteOnClick: true},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "org.gnome.Nautilus", "kitty"}},
 		Assistant: Assistant{Enable: true, Profile: "openai", Tools: []string{"web_search", "url_fetch"}, AskBeforeChanges: true,
 			Profiles: []AIProfile{{Name: "openai", Provider: "openai", Model: "gpt-5.2", APIKeyEnv: "OPENAI_API_KEY"}}},
@@ -531,6 +549,14 @@ func (c *Config) validate() []string {
 	}
 	if c.Control.Lock == OldLockCommand {
 		c.Control.Lock = d.Control.Lock
+	}
+	if c.Clipboard.Opacity < 30 || c.Clipboard.Opacity > 100 {
+		w = append(w, fmt.Sprintf("clipboard.opacity = %d: want 30 to 100; using %d", c.Clipboard.Opacity, d.Clipboard.Opacity))
+		c.Clipboard.Opacity = d.Clipboard.Opacity
+	}
+	if c.Clipboard.Limit < 10 || c.Clipboard.Limit > 2000 {
+		w = append(w, fmt.Sprintf("clipboard.limit = %d: want 10 to 2000; using %d", c.Clipboard.Limit, d.Clipboard.Limit))
+		c.Clipboard.Limit = d.Clipboard.Limit
 	}
 	// Renamed actions are read as the new ones; one may now repeat another.
 	seen := map[string]bool{}

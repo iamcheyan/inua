@@ -16,6 +16,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"github.com/lyricat/inua/internal/clipboard"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/shell"
@@ -36,11 +37,15 @@ type settings struct {
 
 	bgEnable, title, tray, tpAccel, notifyOn, critFocus gtk.Switch
 	barOn, dockOn, dockHide, dockDrawer, dockFlushBar   gtk.Switch
+	clipBar, clipPaste                                  gtk.Switch
 	dockSize, dockPosition                              gtk.DropDown
 	dockPinned                                          gtk.Box
 	bgImage, bgColor, clock, terminal, lock, screenshot gtk.Entry
 	bgFit, ws, launchMode, swap, caps, icons, banner    gtk.DropDown
-	tpSpeed                                             gtk.Scale
+	clipLimit                                           gtk.DropDown
+	tpSpeed, clipOpacity                                gtk.Scale
+	clipOpacityVal, clipStats                           gtk.Label
+	clipClear                                           gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
 	// would do nothing.
@@ -112,6 +117,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Notify.Enable = on
 		case "critical_focus":
 			c.Notify.CriticalInFocus = on
+		case "clip_bar":
+			c.Clipboard.Bar = on
+		case "clip_paste":
+			c.Clipboard.PasteOnClick = on
 		case "tp_accel":
 			c.Input.TouchpadAccel = "flat"
 			if on {
@@ -147,6 +156,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			if i >= 0 && i < len(config.BannerChoices) {
 				c.Notify.Banner = config.BannerChoices[i]
 			}
+		case "clip_limit":
+			if i >= 0 && i < len(config.ClipboardLimitChoices) {
+				c.Clipboard.Limit = config.ClipboardLimitChoices[i]
+			}
 		case "icons":
 			c.Style.Icons = pick(config.IconSets, i, c.Style.Icons)
 		case "swap":
@@ -177,6 +190,10 @@ func (s *shellUI) bindSettingsHandlers() {
 		case name == "bg_clear":
 			c.Background.Image = ""
 			s.changeSettings(c)
+		case name == "clip_clear":
+			_ = clipboard.Clear(s.clipboard.path)
+			s.refreshClipboard()
+			s.updateClipboardStats()
 		case strings.HasPrefix(name, "pin-"):
 			action, id, _ := strings.Cut(strings.TrimPrefix(name, "pin-"), ":")
 			c.Dock.Pinned = movePinned(c.Dock.Pinned, id, action)
@@ -193,8 +210,15 @@ func (s *shellUI) bindSettingsHandlers() {
 		if s.settings.filling {
 			return false
 		}
-		v = math.Round(max(-1, min(v, 1))*20) / 20 // the steps of 0.05
 		c := s.cfg
+		if r.GetName() == "clip_opacity" {
+			val := int(math.Round(v))
+			c.Clipboard.Opacity = val
+			s.settings.clipOpacityVal.SetText(fmt.Sprintf("%d%%", val))
+			s.changeSettings(c)
+			return false
+		}
+		v = math.Round(max(-1, min(v, 1))*20) / 20 // the steps of 0.05
 		c.Input.TouchpadSpeed = &v
 		s.changeSettings(c)
 		return false // let the scale move
@@ -302,6 +326,13 @@ func (s *shellUI) openSettings() {
 	ui.Get("notify_enable", &st.notifyOn)
 	ui.Get("critical_focus", &st.critFocus)
 	ui.Get("notify_state", &st.notifyState)
+	ui.Get("clip_bar", &st.clipBar)
+	ui.Get("clip_paste", &st.clipPaste)
+	ui.Get("clip_limit", &st.clipLimit)
+	ui.Get("clip_opacity", &st.clipOpacity)
+	ui.Get("clip_opacity_val", &st.clipOpacityVal)
+	ui.Get("clip_stats", &st.clipStats)
+	ui.Get("clip_clear", &st.clipClear)
 	ui.Get("swap", &st.swap)
 	ui.Get("caps", &st.caps)
 	ui.Get("tp_speed", &st.tpSpeed)
@@ -327,17 +358,19 @@ func (s *shellUI) openSettings() {
 		st.entries[e.GoPointer()] = e
 		gtkx.ConnectChanged(e, &s.onSettingsEntry)
 	}
-	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.banner, &st.dockSize, &st.dockPosition} {
+	st.drops = map[uintptr]*gtk.DropDown{}
+	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar} {
+	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipBar, &st.clipPaste} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
-	for _, b := range []*gtk.Button{&choose, &clearImage, &st.kbReset, &st.tpReset} {
+	for _, b := range []*gtk.Button{&choose, &clearImage, &st.kbReset, &st.tpReset, &st.clipClear} {
 		b.ConnectClicked(&s.onSettingsButton)
 	}
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
+	st.clipOpacity.ConnectChangeValue(&s.onSettingsScale)
 	s.buildSwatches()
 	st.hyprKb = s.hyprKbOptions()
 	st.sc.binds = s.hyprBinds()
@@ -356,7 +389,7 @@ func (s *shellUI) openSettings() {
 }
 
 // settingsPages are the pages' names in settings.ui, in order.
-var settingsPages = []string{"appearance", "bar", "launcher", "ai", "notifications", "shortcuts", "keyboard", "mouse"}
+var settingsPages = []string{"appearance", "bar", "launcher", "ai", "notifications", "clipboard", "shortcuts", "keyboard", "mouse"}
 
 // settingsPageAliases name the page that now holds a section that was once
 // a page of its own.
@@ -471,12 +504,50 @@ func (s *shellUI) showSettings() {
 	s.showInput()
 	s.showNotifySettings()
 	s.showDockSettings()
+	s.showClipboardSettings()
 	s.showShortcuts()
 	s.showAISettings()
 	st.clockPreview.SetText(config.Strftime(c.Bar.Clock, time.Now()))
 	for _, e := range st.entries {
 		e.RemoveCssClass("invalid")
 	}
+}
+
+func (s *shellUI) showClipboardSettings() {
+	st := &s.settings
+	c := s.cfg.Clipboard
+	st.clipBar.SetActive(c.Bar)
+	st.clipPaste.SetActive(c.PasteOnClick)
+	st.clipOpacity.SetValue(float64(c.Opacity))
+	st.clipOpacityVal.SetText(fmt.Sprintf("%d%%", c.Opacity))
+	idx := slices.Index(config.ClipboardLimitChoices, c.Limit)
+	if idx < 0 {
+		idx = 2
+	}
+	st.clipLimit.SetSelected(uint32(idx))
+	s.updateClipboardStats()
+}
+
+func (s *shellUI) updateClipboardStats() {
+	st := &s.settings
+	if st.win == nil {
+		return
+	}
+	entries, _ := clipboard.Read(s.clipboard.path)
+	texts, imgs := 0, 0
+	for _, e := range entries {
+		if e.Type == "image" {
+			imgs++
+		} else {
+			texts++
+		}
+	}
+	info, err := os.Stat(s.clipboard.path)
+	var size int64
+	if err == nil {
+		size = info.Size()
+	}
+	st.clipStats.SetText(fmt.Sprintf("%d items (%d text, %d images) · %.1f KB", len(entries), texts, imgs, float64(size)/1024.0))
 }
 
 // setEntry changes an entry's text only if it differs, so the caret stays

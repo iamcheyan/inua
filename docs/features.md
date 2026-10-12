@@ -148,3 +148,22 @@ Phosphor icons, and matching Fcitx 5 themes.
 ## Wallpaper
 
 An image placed your way, or the theme's ground with a fine texture.
+
+### Clipboard history
+
+The clipboard button in the top bar opens a searchable text and image history
+in a fixed-width, full-height sidebar matching the notification center. Image
+previews scale to fit within the sidebar without stretching it.
+Hover over a row for its text or image preview; click it to paste into the
+previously focused application. Each row also has copy-only and delete actions,
+and image rows can paste their source file path. Escape or a click outside
+closes the panel. Colours follow the active Inua theme.
+
+Inua uses `wl-paste --watch` and `wl-copy` from wl-clipboard. History is limited
+to 300 entries, with a 32 MiB limit per selection; sensitive selections are not
+stored. Existing Anchor Shell (`labwc`) or Omarchy JSON history is reused when
+available; otherwise history lives in `$XDG_STATE_HOME/inua` (default
+`~/.local/state/inua`). The watcher stops when the shell exits or restarts.
+`inua call clipboard toggle|open|close` also controls the panel, for custom
+keyboard shortcuts. Automatic paste uses Hyprland's targeted shortcut dispatch;
+on other compositors it requires `wtype`.

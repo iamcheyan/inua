@@ -722,6 +722,7 @@ func (s *shellUI) toggleCenter() {
 }
 
 func (s *shellUI) openCenter() {
+	s.closeClipboard()
 	nt := &s.notes
 	if nt.open {
 		return

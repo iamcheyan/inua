@@ -184,6 +184,21 @@ critical_in_focus = true
 # and tell you in a notification, with a button to upgrade (inua upgrade).
 updates = true
 
+[clipboard]
+# Show the clipboard history button in the top bar.
+bar = true
+
+# Opacity of the clipboard panel card (50 to 100 percent).
+# Higher values improve readability on complex backgrounds.
+opacity = 84
+
+# Maximum number of history items to keep (20 to 1000).
+limit = 300
+
+# Clicking an item immediately pastes it into the previous window.
+# false: only copies to clipboard without auto-pasting.
+paste_on_click = true
+
 [dock]
 # Show the app dock on each monitor: pinned apps, then the others with open
 # windows. Click to open or bring forward (again to cycle through its windows);
@@ -257,7 +272,7 @@ folder = "inua-keyring"
 # them to ~/.config/hypr/inua.conf: each unbinds its keys from anything
 # else, and the keys its action had in hyprland.conf ("replaces"). Actions
 # without an entry keep their hyprland.conf shortcuts. An action is one of
-#   launcher windows overview control notifications focus settings restart lock
+#   launcher windows overview control notifications clipboard focus settings restart lock
 #   shot-area shot-screen shot-window shot-record color
 # or "exec" with a command. keys = "" turns the action's shortcut off.
 #

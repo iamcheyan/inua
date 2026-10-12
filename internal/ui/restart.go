@@ -49,7 +49,9 @@ func (s *shellUI) scheduleRestart() error {
 			s.guardOverviewMouse(false)
 			s.pauseOverviewKeys()
 			log.Printf("restarting %s", exe)
+			s.stopClipboardCapture()
 			err := syscall.Exec(exe, os.Args, os.Environ())
+			s.startClipboardCapture()
 			log.Printf("restart: %v", err) // Exec only returns on failure
 		})
 	}()

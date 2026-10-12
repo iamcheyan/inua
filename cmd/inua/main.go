@@ -31,6 +31,7 @@ import (
 
 	samples "github.com/lyricat/inua/config"
 	"github.com/lyricat/inua/internal/bootstrap"
+	"github.com/lyricat/inua/internal/clipboard"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/hyprconf"
@@ -48,6 +49,15 @@ func main() {
 	switch os.Args[1] {
 	case "call", "show":
 		err = cmdControl(os.Args[1], os.Args[2:])
+	case "clipboard":
+		if len(os.Args) < 3 || len(os.Args) > 4 || os.Args[2] != "capture" {
+			usage()
+		}
+		path := clipboard.HistoryPath()
+		if len(os.Args) == 4 {
+			path = os.Args[3]
+		}
+		err = clipboard.Capture(path, os.Stdin)
 	case "hypr":
 		err = cmdHypr(os.Args[2:])
 	case "config":
@@ -80,6 +90,7 @@ func usage() {
   inua init [-force] [-pinentry ask|replace|keep] [-dir dir]
   inua keyring status|import [-n]|enable|disable|replace
   inua upgrade [-check] [-force] [-version vX.Y.Z]
+  inua clipboard capture [history-path]
   inua version`)
 	os.Exit(2)
 }

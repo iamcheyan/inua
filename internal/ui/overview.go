@@ -79,6 +79,7 @@ type queuedOverviewFrame struct {
 }
 
 func (s *shellUI) showOverview() {
+	s.closeClipboard()
 	if s.overview.st.Open {
 		s.closeOverview(false)
 		return

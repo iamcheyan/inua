@@ -766,13 +766,13 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
-                        label: "Apps drawer";
+                        label: "Application launcher";
                         xalign: 0;
                       }
 
                       Label {
                         styles ["sub"]
-                        label: "A button at the end for Clock, Weather, Stocks and Calculator";
+                        label: "Search light apps and installed desktop apps from the dock";
                         xalign: 0;
                         wrap: true;
                       }
@@ -1491,6 +1491,231 @@ ApplicationWindow settings {
           // The head of the section scrolled under the top edge.
           [overlay]
           Box sticky_notifications {
+            styles ["section-head", "sticky"]
+            spacing: 10;
+            valign: start;
+            visible: false;
+          }
+        };
+      }
+
+      StackPage {
+        name: "clipboard";
+        title: "Clipboard";
+
+        child: Overlay {
+          child: ScrolledWindow scroll_clipboard {
+            hscrollbar-policy: never;
+
+            Box {
+              styles ["page"]
+              orientation: vertical;
+
+              // [CLIPBOARD]
+              Box {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    use-markup: true;
+                    label: "<span alpha='55%'>[</span>CLIPBOARD<span alpha='55%'>]</span>";
+                  }
+
+                  Label {
+                    styles ["section-meta"]
+                    label: "History, panel appearance and pasting";
+                    hexpand: true;
+                    xalign: 0;
+                    ellipsize: end;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: "Show in top bar";
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label: "A button in the status area opens clipboard history";
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch clip_bar {
+                      name: "clip_bar";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: "Paste on click";
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label: "Clicking an item pastes it immediately; off only copies";
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch clip_paste {
+                      name: "clip_paste";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      width-request: 260;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: "Panel opacity";
+                        xalign: 0;
+                      }
+                      Label clip_opacity_val {
+                        styles ["readout"]
+                        xalign: 0;
+                      }
+                    }
+
+                    Scale clip_opacity {
+                      name: "clip_opacity";
+                      hexpand: true;
+                      valign: center;
+                      draw-value: false;
+
+                      adjustment: Adjustment {
+                        lower: 50;
+                        upper: 100;
+                        step-increment: 1;
+                        page-increment: 5;
+                      };
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: "History limit";
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label: "Maximum number of history items to keep";
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown clip_limit {
+                      name: "clip_limit";
+                      valign: center;
+
+                      model: StringList {
+                        strings [
+                          "50 items",
+                          "100 items",
+                          "300 items",
+                          "500 items",
+                        ]
+                      };
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: "History storage";
+                        xalign: 0;
+                      }
+                      Label clip_stats {
+                        styles ["sub"]
+                        label: "Loading history…";
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Button clip_clear {
+                      name: "clip_clear";
+                      label: "Clear History";
+                      styles ["button-danger"]
+                      valign: center;
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          [overlay]
+          Box sticky_clipboard {
             styles ["section-head", "sticky"]
             spacing: 10;
             valign: start;

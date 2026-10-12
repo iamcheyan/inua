@@ -22,6 +22,7 @@ func Format(c Config) string {
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates,
+		c.Clipboard.Bar, c.Clipboard.Opacity, c.Clipboard.Limit, c.Clipboard.PasteOnClick,
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges, aiProfiles(c.Assistant.Profiles),
@@ -300,6 +301,21 @@ critical_in_focus = %t
 # and tell you in a notification, with a button to upgrade (inua upgrade).
 updates = %t
 
+[clipboard]
+# Show the clipboard history button in the top bar.
+bar = %t
+
+# Opacity of the clipboard panel card (50 to 100 percent).
+# Higher values improve readability on complex backgrounds.
+opacity = %d
+
+# Maximum number of history items to keep (20 to 1000).
+limit = %d
+
+# Clicking an item immediately pastes it into the previous window.
+# false: only copies to clipboard without auto-pasting.
+paste_on_click = %t
+
 [dock]
 # Show the app dock on each monitor: pinned apps, then the others with open
 # windows. Click to open or bring forward (again to cycle through its windows);
@@ -365,7 +381,7 @@ folder = %s
 # them to ~/.config/hypr/inua.conf: each unbinds its keys from anything
 # else, and the keys its action had in hyprland.conf ("replaces"). Actions
 # without an entry keep their hyprland.conf shortcuts. An action is one of
-#   launcher windows overview control notifications focus settings restart lock
+#   launcher windows overview control notifications clipboard focus settings restart lock
 #   shot-area shot-screen shot-window shot-record color
 # or "exec" with a command. keys = "" turns the action's shortcut off.
 #
