@@ -5,8 +5,10 @@ application ID, so the launcher, the dock and Hyprland treat it as an app.
 They follow inua's theme and style as you change them, and use the shell's
 icons.
 
-Open them from the launcher, from the drawer at the end of the dock, or
-with `inua-apps NAME` (`inua-apps clock`, `inua-apps tailscale` …). An app
+Open them from the keyboard launcher or the categorized app launcher at the
+end of the dock. The dock launcher also lists installed desktop apps and can
+filter by name, description or desktop ID. You can also start them with
+`inua-apps NAME` (`inua-apps clock`, `inua-apps tailscale` …). An app
 runs once: starting it again brings its window to the current workspace.
 Viewer is the exception, with a window for each image opened. The
 Assistant is a program of its own, `inua-assistant`.

@@ -70,11 +70,12 @@ type shellUI struct {
 	// hyprLua: Hyprland runs Lua (0.55 and later; probeLua). The overview
 	// needs it, and focusing and switching use its dispatchers when there,
 	// the classic ones otherwise.
-	hyprLua   bool
-	hyprApply hyprApply // writing hypr/inua.conf; see applyHyprland
-	notes     notes
-	dockState dockState
-	icons     icons
+	hyprLua     bool
+	hyprApply   hyprApply // writing hypr/inua.conf; see applyHyprland
+	notes       notes
+	dockState   dockState
+	icons       icons
+	desktopApps []*desktop.Entry
 
 	bars      map[uintptr]*bar // by GdkMonitor
 	styles    styles
@@ -197,6 +198,7 @@ type shellUI struct {
 	onDockClicked          func(gtk.Button)
 	onDrawerClicked        func(gtk.Button)
 	onDrawerApp            func(gtk.Button)
+	onDrawerSearch         func(gtk.SearchEntry)
 	onDrawerBackdrop       func(gtk.GestureClick, int32, float64, float64)
 	onDrawerKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onDrawerGone           glib.SourceFunc

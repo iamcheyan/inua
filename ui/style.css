@@ -557,12 +557,53 @@ button.link:hover { color: @t0; }
 .dock button.dock-item.dock-drawer:hover image { color: @accent; transform: none; }
 .drawer-overlay .drawer {
   margin: 0 14px 6px; /* room for the shadow inside the revealer */
-  padding: 6px 12px 12px;
+  padding: 10px 12px 12px;
   background: @app; /* not blurred: opaque */
   border: 1px solid @line;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
 }
+.drawer-overlay entry.search {
+  min-height: 38px;
+  margin: 0 2px 8px;
+  padding: 0 8px;
+  color: @t0;
+  caret-color: @accent;
+  background: @app;
+  background-image: none;
+  border: 1px solid @line;
+  border-radius: 5px;
+  box-shadow: none;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out;
+}
+.drawer-overlay entry.search:focus-within {
+  border-color: alpha(@accent, 0.85);
+  box-shadow: 0 0 0 3px alpha(@accent, 0.13);
+}
+.drawer-overlay entry.search text {
+  min-height: 0;
+  padding: 0 4px;
+  color: @t0;
+  caret-color: @accent;
+  background: @app;
+  background-image: none;
+  border: 0;
+  box-shadow: none;
+}
+.drawer-overlay entry.search text placeholder { color: @t2; }
+.drawer-overlay entry.search image { color: @t2; }
+.drawer-overlay entry.search:focus-within image { color: @accent; }
+.drawer-overlay scrollbar { background: transparent; border: 0; }
+.drawer-overlay scrollbar slider {
+  min-width: 5px;
+  min-height: 5px;
+  border: 0;
+  border-radius: 99px;
+  background: alpha(@t2, 0.45);
+  transition: background 120ms ease-out;
+}
+.drawer-overlay scrollbar slider:hover { background: alpha(@accent, 0.72); }
+.drawer-search { margin: 0; }
 .drawer-title {
   margin: 10px 4px 6px;
   font-family: "Geist Mono", "IBM Plex Mono", monospace;

@@ -205,6 +205,7 @@ func (s *shellUI) newDock(b *bar) *dock {
 
 // dockApps rebuilds the app index when the desktop entries arrive.
 func (s *shellUI) dockApps(entries []*desktop.Entry) {
+	s.desktopApps = entries
 	s.dockState.apps = shell.NewAppIndex(entries)
 	s.renderDocks()
 }

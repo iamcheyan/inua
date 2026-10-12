@@ -131,6 +131,13 @@ func dropWallpaper(b *bar) {
 func (s *shellUI) applyConfig(c config.Config) {
 	old := s.cfg
 	s.cfg = c
+	if old.Dock.Size != c.Dock.Size {
+		if p := s.dockState.drawer; p != nil && !p.closing {
+			content := s.drawerContent(p.search.GetText())
+			p.results.SetChild(&content.Widget)
+			content.Unref()
+		}
+	}
 	if old.Overview != c.Overview {
 		s.installOverviewKeys()
 	}

@@ -82,9 +82,10 @@ restarts. Focus keeps banners quiet. Cleared notifications slide away.
 Pinned apps and running ones, with marks that grow and change colour as
 apps start and come to the front. Click to open or cycle windows,
 right-click to pin or quit; drag to reorder (the others move aside to make
-room) or off the pinned ones to unpin; a drawer at the end slides up the
-light apps, the Assistant, Settings, the launcher and Screenshot, grouped
-by kind; optional autohide. Starting a light app that is open brings
+room) or off the pinned ones to unpin; the grid button at the end opens a
+searchable launcher with Everyday, Tools and Network groups, the Assistant,
+Settings, Screenshot, and all other installed desktop apps; optional autohide.
+Starting a light app that is open brings
 its window to the current workspace.
 
 ## Settings

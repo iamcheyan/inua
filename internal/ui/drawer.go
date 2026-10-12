@@ -4,6 +4,7 @@ import (
 	"log"
 	"os/exec"
 	"slices"
+	"sort"
 	"strings"
 	"time"
 	"unsafe"
@@ -19,8 +20,8 @@ import (
 	"github.com/lyricat/inua/internal/shell"
 )
 
-// The dock's drawer: a button at the dock's end (dock.drawer) that opens
-// a card of inua's light apps above it. The card is in a full-screen
+// The dock's launcher: a button at the dock's end (dock.drawer) that opens
+// a searchable grid of light apps and installed desktop apps above it. The card is in a full-screen
 // overlay, like the control center's, so it slides up and back down
 // whichever way it closes: a click outside, Escape, the button again, or
 // an app started. The dock stays up while it is open.
@@ -39,6 +40,8 @@ type drawerPanel struct {
 	win      gtk.ApplicationWindow
 	backdrop *gtk.Box // borrowed from win
 	reveal   *gtk.Revealer
+	search   gtk.SearchEntry
+	results  gtk.ScrolledWindow
 	closing  bool
 	then     func() // a shell tool to open once the drawer is gone
 }
@@ -62,11 +65,20 @@ func (s *shellUI) bindDrawerHandlers() {
 			return
 		}
 		gtkx.Post(s.closeDrawer) // the button is in the drawer
-		for _, e := range shell.LightApps(s.dockState.apps) {
+		for _, e := range s.desktopApps {
 			if e.ID == id {
 				s.launchApp(e)
 			}
 		}
+	}
+	s.onDrawerSearch = func(e gtk.SearchEntry) {
+		p := s.dockState.drawer
+		if p == nil || p.closing {
+			return
+		}
+		content := s.drawerContent(e.GetText())
+		p.results.SetChild(&content.Widget)
+		content.Unref()
 	}
 	s.onDrawerBackdrop = func(g gtk.GestureClick, _ int32, x, y float64) {
 		p := s.dockState.drawer
@@ -187,8 +199,58 @@ func (s *shellUI) toggleDrawer(b *bar) {
 // drawerContent is the card: each group's title, then its apps in rows of
 // drawerColumns, every cell as wide as the others, so a long name wraps
 // instead of widening the row.
-func (s *shellUI) drawerContent() *gtk.Box {
+func (s *shellUI) drawerContent(query string) *gtk.Box {
 	sections := s.drawerSections()
+	query = strings.ToLower(strings.TrimSpace(query))
+	used := map[string]bool{}
+	for _, group := range sections {
+		for _, e := range group.Apps {
+			used[strings.ToLower(e.ID)] = true
+		}
+	}
+	if query != "" {
+		filtered := sections[:0]
+		for _, group := range sections {
+			matches := make([]*desktop.Entry, 0, len(group.Apps))
+			for _, e := range group.Apps {
+				text := strings.ToLower(strings.Join(append([]string{e.Name, e.GenericName, e.Comment, e.ID}, e.Keywords...), " "))
+				if strings.Contains(text, query) {
+					matches = append(matches, e)
+				}
+			}
+			if len(matches) > 0 {
+				group.Apps = matches
+				filtered = append(filtered, group)
+			}
+		}
+		sections = filtered
+	}
+	var apps []*desktop.Entry
+	for _, e := range s.desktopApps {
+		if e == nil || e.NoDisplay {
+			continue
+		}
+		if used[strings.ToLower(e.ID)] {
+			continue
+		}
+		if query != "" {
+			text := strings.ToLower(strings.Join(append([]string{e.Name, e.GenericName, e.Comment, e.ID}, e.Keywords...), " "))
+			if !strings.Contains(text, query) {
+				continue
+			}
+		}
+		apps = append(apps, e)
+	}
+	sort.SliceStable(apps, func(i, j int) bool {
+		return strings.ToLower(apps[i].Name) < strings.ToLower(apps[j].Name)
+	})
+	if len(apps) > 0 {
+		title := "APPLICATIONS"
+		if query != "" {
+			title = "RESULTS"
+		}
+		sections = append(sections, shell.AppGroup{Title: title, Apps: apps})
+	}
 	content := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	for _, g := range sections {
 		title := gtk.NewLabel(g.Title)
@@ -208,7 +270,7 @@ func (s *shellUI) drawerContent() *gtk.Box {
 			col := gtk.NewBox(gtk.OrientationVerticalValue, 7)
 			img := gtk.NewImage()
 			setIcon(img, e.Icon)
-			img.SetPixelSize(44)
+			img.SetPixelSize(int32(s.cfg.Dock.Size))
 			gtkx.Append(col, &img.Widget)
 			l := gtk.NewLabel(e.Name)
 			l.AddCssClass("drawer-name")
@@ -234,8 +296,12 @@ func (s *shellUI) drawerContent() *gtk.Box {
 		}
 		gtkx.Append(content, &grid.Widget)
 	}
-	if len(shell.LightApps(s.dockState.apps)) == len(shell.ShellApps) {
-		l := gtk.NewLabel("The light apps are not installed (make install).")
+	if len(sections) == 0 {
+		message := "No applications are installed."
+		if query != "" {
+			message = "No matching applications."
+		}
+		l := gtk.NewLabel(message)
 		l.AddCssClass("drawer-empty")
 		gtkx.Append(content, &l.Widget)
 	}
@@ -259,16 +325,23 @@ func (s *shellUI) openDrawer(b *bar) {
 	reveal.SetValign(gtk.AlignStartValue)
 	// The card scrolls once the groups are taller than the room between
 	// the bar and the dock.
-	card := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+	card := gtk.NewBox(gtk.OrientationVerticalValue, 8)
 	card.AddCssClass("drawer")
+	p.search = *gtk.NewSearchEntry()
+	p.search.SetPlaceholderText("Filter by name or description")
+	p.search.AddCssClass("drawer-search")
+	p.search.ConnectSearchChanged(&s.onDrawerSearch)
+	gtkx.Append(card, &p.search.Widget)
 	scroll := gtk.NewScrolledWindow()
-	scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
-	scroll.SetPropagateNaturalWidth(true)
-	scroll.SetPropagateNaturalHeight(true)
-	content := s.drawerContent()
-	scroll.SetChild(&content.Widget)
+	p.results = *scroll
+	p.results.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
+	p.results.SetPropagateNaturalWidth(true)
+	p.results.SetPropagateNaturalHeight(true)
+	content := s.drawerContent("")
+	p.results.SetChild(&content.Widget)
 	content.Unref()
 	gtkx.Append(card, &scroll.Widget)
+	scroll.Unref()
 	reveal.SetChild(&card.Widget)
 	gtkx.Append(backdrop, &reveal.Widget)
 	p.win.SetChild(&backdrop.Widget)
@@ -293,6 +366,10 @@ func (s *shellUI) openDrawer(b *bar) {
 	var cardSize, contentSize gtk.Requisition
 	card.GetPreferredSize(nil, &cardSize)
 	content.GetPreferredSize(nil, &contentSize)
+	if cardSize.Height > room { // scroll the rest
+		scroll.SetMaxContentHeight(max(120, room-(cardSize.Height-contentSize.Height)))
+		card.GetPreferredSize(nil, &cardSize)
+	}
 	if cardSize.Height > room { // scroll the rest
 		scroll.SetMaxContentHeight(max(120, room-(cardSize.Height-contentSize.Height)))
 		card.GetPreferredSize(nil, &cardSize)
@@ -346,13 +423,17 @@ func (s *shellUI) openDrawer(b *bar) {
 	click.ConnectPressed(&s.onDrawerBackdrop)
 	backdrop.AddController(&click.EventController)
 	keys := gtk.NewEventControllerKey()
+	keys.SetPropagationPhase(gtk.PhaseCaptureValue)
 	keys.ConnectKeyPressed(&s.onDrawerKey)
 	p.win.AddController(&keys.EventController)
 
 	w := p.win.GoPointer()
 	layershell.InitForWindow(w)
 	layershell.SetNamespace(w, "inua-drawer")
-	layershell.SetLayer(w, layershell.LayerOverlay)
+	// Keep the launcher in the top layer so Fcitx popups can stack above it on
+	// older Hyprland builds. Unrelated overlay-layer surfaces still remain above
+	// the launcher, matching the intended parent-surface ordering.
+	layershell.SetLayer(w, layershell.LayerTop)
 	layershell.SetKeyboardMode(w, layershell.KeyboardExclusive)
 	for _, e := range []layershell.Edge{layershell.EdgeTop, layershell.EdgeBottom, layershell.EdgeLeft, layershell.EdgeRight} {
 		layershell.SetAnchor(w, e, true)
@@ -362,6 +443,7 @@ func (s *shellUI) openDrawer(b *bar) {
 	s.dockState.drawer = p
 	p.win.Present()
 	reveal.SetRevealChild(true) // after Present, so it slides in
+	p.search.GrabFocus()
 }
 
 // drawerGap is the least space between the drawer and the screen's edges.
@@ -401,12 +483,25 @@ func (s *shellUI) drawerRequest(fn string) bool {
 	if open {
 		return true
 	}
+	// Prefer the focused monitor, but the snapshot can lag behind the
+	// compositor while outputs are changing. Keep the command useful in that
+	// case by falling back to any monitor that has the launcher button.
+	var fallback *bar
 	for _, b := range s.bars {
-		if b.dock == nil || b.connector() != s.snap.FocusedMonitor || b.dock.drawer == nil {
+		if b.dock == nil || b.dock.drawer == nil {
 			continue
 		}
-		s.showDock(b.dock)
-		s.toggleDrawer(b)
+		if fallback == nil {
+			fallback = b
+		}
+		if b.connector() == s.snap.FocusedMonitor {
+			fallback = b
+			break
+		}
+	}
+	if fallback != nil {
+		s.showDock(fallback.dock)
+		s.toggleDrawer(fallback)
 	}
 	return true
 }
