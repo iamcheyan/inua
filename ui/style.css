@@ -174,9 +174,9 @@ button.plain:disabled { color: alpha(@t2, 0.5); }
   transition: background 120ms ease-out, border-color 120ms ease-out;
 }
 .bar .tray button { padding: 3px 5px; }
-/* .hover: the pointer is in the status button's reach past the island
-   (the screen corner); see bar.statusReach. */
-.bar button.status:hover, .bar button.status.hover, .bar button.notes:hover, .bar button.clock-button:hover, .bar button.clock-button.hover, .bar .tray button:hover { background: alpha(@accent, 0.09); }
+/* .hover: the pointer is in a button's reach past the island (up to the
+   screen's edge); see bar.statusReach, notesReach and clockReach. */
+.bar button.status:hover, .bar button.status.hover, .bar button.notes:hover, .bar button.notes.hover, .bar button.clock-button:hover, .bar button.clock-button.hover, .bar .tray button:hover { background: alpha(@accent, 0.09); }
 /* Its panel is open: the selection style. */
 .bar button.status.open, .bar button.notes.open, .bar button.clock-button.open { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); }
 
@@ -290,6 +290,20 @@ button.plain:disabled { color: alpha(@t2, 0.5); }
   color: @t0;
 }
 .agenda-day.outside { color: alpha(@t2, 0.55); }
+/* The weather under the month, a button that opens the Weather app. */
+button.agenda-weather {
+  padding: 12px 6px 4px;
+  border: none;
+  border-top: 1px solid alpha(@line, 0.7);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+button.agenda-weather:hover { background: alpha(@accent, 0.05); }
+button.agenda-weather image { color: @accent; }
+.agenda-weather-temp { font-size: 22px; font-weight: 300; font-feature-settings: "tnum"; color: @t0; }
+.agenda-weather-text { font-size: 11.5px; font-feature-settings: "tnum"; color: @t1; }
+button.agenda-weather .agenda-weather-day image { color: @t1; }
 /* Today: the selection style. */
 .agenda-day.today {
   border-color: alpha(@accent, 0.38);
@@ -1241,7 +1255,9 @@ progressbar.thin progress { min-height: 2px; border-radius: 1px; background: @ac
 .range-fill { min-height: 4px; border-radius: 2px; background: @accent; }
 .settings .details { margin-bottom: 4px; }
 /* Scoped: the launcher's rows have a .detail label too. */
-.details > .detail, .sysmonapp box.detail, .tailscaleapp box.detail { padding: 14px 0; }
+.details > .detail { padding: 14px 0; }
+/* A device's or a process's page: a list, with its side margins. */
+.sysmonapp box.detail, .tailscaleapp box.detail { padding: 14px 28px; }
 .details > .detail.right { padding-left: 18px; border-left: 1px solid alpha(@line, 0.55); }
 .details > .detail.lower { border-top: 1px solid alpha(@line, 0.55); }
 .detail-value { font-size: 24px; }
@@ -1326,6 +1342,17 @@ button.calc-key.sci { min-width: 52px; background: transparent; color: @t1; font
 button.calc-key.op { color: @accent; font-size: 20px; }
 button.calc-key.eq { background: @primary; border-color: @primary; color: @app; font-size: 20px; }
 button.calc-key.eq:hover { background: mix(@primary, @app, 0.12); }
+button.calc-key image { -gtk-icon-size: 20px; }
+.settings button.calc-toggle image { -gtk-icon-size: 14px; }
+/* History: a panel at the right, as the viewer's details. */
+.calc-history { padding: 14px 12px 16px; background: @panel; border-left: 1px solid alpha(@line, 0.55); }
+.calc-history > .kicker { margin: 4px 8px 10px; }
+.calc-history > button { margin: 10px 8px 0; }
+button.calc-history-entry { padding: 6px 8px; border: none; border-radius: 2px; background: transparent; box-shadow: none; }
+button.calc-history-entry:hover { background: alpha(@accent, 0.09); }
+.calc-history-expr { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 12px; color: @t2; }
+.calc-history-result { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; font-weight: 300; font-feature-settings: "tnum"; color: @t0; }
+.calc-history-empty { padding: 6px 8px; color: @t2; font-size: 12.5px; }
 
 /* The screenshot tool's Record toggle and colour loupe. */
 button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alpha(@danger, 0.5); color: @danger; }
@@ -1379,6 +1406,11 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .sysmonapp .cores { margin-top: 10px; }
 .sysmonapp .range.core { min-height: 3px; }
 .sysmonapp .range.core .range-fill { min-height: 3px; }
+/* The open process or device, in a panel at the right; its row in the
+   list stays marked. */
+.sysmonapp.proc-panel, .tailscaleapp.ts-panel { background: @panel; border-left: 1px solid alpha(@line, 0.55); }
+.settings .proc-panel .detail-bar, .settings .ts-panel .detail-bar { padding: 22px 14px 4px 28px; }
+.settings .rows > .row.proc.open > button.row-button, .settings .rows > .ts-row.open > button.row-button { background: alpha(@accent, 0.09); }
 .sysmonapp .proc-note { margin: 0 28px 10px; font-size: 12px; color: @t1; }
 .sysmonapp .detail .proc-note { margin: 0 0 8px; }
 .sysmonapp .proc-note.error { color: @danger; }
@@ -1416,8 +1448,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .tailscaleapp .ts-switch-row { padding: 10px 0; }
 .tailscaleapp .actions { padding: 14px 0 2px; }
 .settings .rows > .ts-row > button.row-button { min-height: 44px; padding: 8px 6px; }
-.tailscaleapp .ts-more > button { min-height: 0; padding: 6px; border: none; background: transparent; box-shadow: none; color: @t2; }
-.tailscaleapp .ts-more > button:hover, .tailscaleapp .ts-more > button:checked { color: @t0; background: alpha(@accent, 0.08); }
 .tailscaleapp .ts-drop { padding: 18px 14px; border: 1px dashed alpha(@line, 1); border-radius: 3px; }
 
 /* Calendar */
@@ -1476,8 +1506,7 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 
 /* Small Fortune's panel: players, the square in focus, the turn, news. */
 .fortune-panel { padding: 4px 6px 0 0; }
-.fortune-kicker { margin: 16px 0 6px; }
-.fortune-kicker:first-child { margin-top: 2px; }
+.fortune-kicker { margin: 12px 0 6px; }
 .fortune-player { padding: 7px 0; border-bottom: 1px solid alpha(@line, 0.6); font-size: 14px; color: @t0; }
 .fortune-player.out { opacity: 0.45; }
 .fortune-cash { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-feature-settings: "tnum"; font-size: 14px; color: @t0; }
@@ -1491,9 +1520,26 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .fortune-log.latest { color: @t1; }
 .fortune-log.good { color: alpha(@ok, 0.85); }
 .fortune-log.bad { color: alpha(@danger, 0.85); }
-.fortune-rivals { margin: 12px 0 4px; padding-top: 10px; border-top: 1px solid alpha(@line, 0.6); font-size: 12.5px; }
-.settings button.fortune-rival { min-width: 30px; min-height: 26px; padding: 0 8px; }
-.settings button.fortune-rival.on { border-color: @accent; color: @accent; }
+/* The panel: players, the square, what happened; a third each. */
+.fortune-section { padding-bottom: 10px; }
+.fortune-section + .fortune-section { border-top: 1px solid alpha(@line, 0.6); }
+.fortune-acts { margin-top: 8px; }
+.fortune-zoom { margin: 12px; }
+.settings .fortune-zoom button { min-width: 30px; min-height: 30px; padding: 0; background: alpha(@surface, 0.85); }
+.fortune-cash { transition: color 250ms ease-out; }
+.fortune-cash.gain { color: @ok; }
+.fortune-cash.loss { color: @danger; }
+/* Before a game: the cities, the choices, Start. */
+.fortune-setup { padding: 24px; }
+.fortune-setup-title { font-family: "Shippori Mincho", "Noto Serif CJK JP", serif; font-size: 28px; font-weight: 500; color: @t0; margin-bottom: 18px; }
+.settings button.fortune-city { padding: 8px; border: 1px solid alpha(@line, 0.9); border-radius: 6px; background: transparent; box-shadow: none; }
+.settings button.fortune-city:hover { background: alpha(@t0, 0.04); }
+.settings button.fortune-city:checked { border-color: @accent; background: alpha(@accent, 0.08); box-shadow: inset 0 0 0 1px @accent; }
+.fortune-city-name { margin-top: 6px; font-size: 15px; font-weight: 500; color: @t0; }
+.fortune-city-sub { font-size: 12px; color: @t2; }
+.fortune-options { margin: 26px 0 22px; }
+.fortune-option { font-size: 13px; color: @t1; }
+.settings button.fortune-start { min-height: 40px; padding: 0 24px; font-weight: 500; }
 
 /* A row of choices above a board: Minesweeper's sizes. */
 .game-choices { margin: 2px 0 12px; }

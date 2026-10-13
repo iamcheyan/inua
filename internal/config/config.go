@@ -21,6 +21,9 @@ import (
 
 // Config is the shell's settings.
 type Config struct {
+	// Language is the interface's language, one of Languages: "auto"
+	// follows the environment (LANGUAGE, LC_ALL, LC_MESSAGES, LANG).
+	Language   string     `toml:"language"`
 	Bar        Bar        `toml:"bar"`
 	Launcher   Launcher   `toml:"launcher"`
 	Overview   Overview   `toml:"overview"`
@@ -194,6 +197,9 @@ type Assistant struct {
 	// AskBeforeChanges makes the assistant ask before changing anything;
 	// power, ending processes and closing windows always ask.
 	AskBeforeChanges bool `toml:"ask_before_changes"`
+	// ServeEnable controls the Console Runtime API independently of its address.
+	ServeEnable bool   `toml:"serve_enable"`
+	ServeListen string `toml:"serve_listen"`
 	// Profiles are the models it can use, as Mister Morph's llm.profiles.
 	Profiles []AIProfile `toml:"profiles"`
 }
@@ -207,10 +213,6 @@ type AIProfile struct {
 	// Endpoint is the API's address, for a compatible server or a proxy;
 	// "" for the provider's own.
 	Endpoint string `toml:"endpoint"`
-	// APIKeyEnv names the environment variable holding the API key. A key
-	// typed in the settings window is kept outside this file instead
-	// (internal/assistant/keys).
-	APIKeyEnv string `toml:"api_key_env"`
 	// Reasoning is the reasoning effort (ReasoningEfforts); "" for the
 	// model's default.
 	Reasoning string `toml:"reasoning"`
@@ -227,20 +229,20 @@ func (a Assistant) ProfileNamed(name string) (AIProfile, bool) {
 }
 
 // AIProviders are the inference providers Mister Morph knows, as the
-// settings window offers them, with the variable their key is usually in.
-var AIProviders = []struct{ ID, Name, KeyEnv string }{
-	{"openai", "OpenAI", "OPENAI_API_KEY"},
-	{"anthropic", "Anthropic", "ANTHROPIC_API_KEY"},
-	{"gemini", "Google Gemini", "GEMINI_API_KEY"},
-	{"xai", "xAI", "XAI_API_KEY"},
-	{"deepseek", "DeepSeek", "DEEPSEEK_API_KEY"},
-	{"kimi", "Kimi (Moonshot)", "MOONSHOT_API_KEY"},
-	{"openrouter", "OpenRouter", "OPENROUTER_API_KEY"},
-	{"groq", "Groq", "GROQ_API_KEY"},
-	{"mistermorph_pro", "Mister Morph Pro", "MISTER_MORPH_LLM_API_KEY"},
-	{"openai_chat_compatible", "OpenAI-compatible (Chat Completions)", ""},
-	{"openai_response_compatible", "OpenAI-compatible (Responses)", ""},
-	{"anthropic_compatible", "Anthropic-compatible", ""},
+// settings window offers them.
+var AIProviders = []struct{ ID, Name string }{
+	{"openai", "OpenAI"},
+	{"anthropic", "Anthropic"},
+	{"gemini", "Google Gemini"},
+	{"xai", "xAI"},
+	{"deepseek", "DeepSeek"},
+	{"kimi", "Kimi (Moonshot)"},
+	{"openrouter", "OpenRouter"},
+	{"groq", "Groq"},
+	{"mistermorph_pro", "Mister Morph Pro"},
+	{"openai_chat_compatible", "OpenAI-compatible (Chat Completions)"},
+	{"openai_response_compatible", "OpenAI-compatible (Responses)"},
+	{"anthropic_compatible", "Anthropic-compatible"},
 }
 
 // AIProviderIDs lists AIProviders' IDs.
@@ -321,6 +323,9 @@ var AssistantTools = []string{"web_search", "url_fetch", "read_file", "bash"}
 type Keyring struct {
 	// Folder is the password store's folder for its items.
 	Folder string `toml:"folder"`
+	// Notify tells of each app's first secret read since inua-keyring
+	// started; Settings → Keyring lists every read.
+	Notify bool `toml:"notify"`
 }
 
 // Dock is the app dock along a screen edge of each monitor.
@@ -387,6 +392,10 @@ var Fits = []string{"cover", "contain", "tile", "center"}
 // from the system's.
 var IconSets = []string{"phosphor", "system"}
 
+// Languages are the interface's languages: "auto" (the environment's),
+// English, then the catalogs in internal/i18n/locales.
+var Languages = []string{"auto", "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr"}
+
 // Themes are the built-in colour themes (ui/themes/<name>.css): three
 // everyday ones, then four dark editions.
 var Themes = []string{"yoru", "washi", "aojashin", "suimen", "rinko", "bunko", "denko"}
@@ -394,6 +403,7 @@ var Themes = []string{"yoru", "washi", "aojashin", "suimen", "rinko", "bunko", "
 // Default returns the settings used when the file says nothing.
 func Default() Config {
 	return Config{
+		Language: "auto",
 		Bar: Bar{
 			Enable:     true,
 			Clock:      "%a %b %-d  %H:%M",
@@ -412,9 +422,9 @@ func Default() Config {
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
 		Screenshot: Screenshot{Folder: "~/Pictures/Screenshots", Copy: true, Recordings: "~/Videos/Screencasts"},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "org.gnome.Nautilus", "kitty"}},
-		Assistant: Assistant{Enable: true, Profile: "openai", Tools: []string{"web_search", "url_fetch"}, AskBeforeChanges: true,
-			Profiles: []AIProfile{{Name: "openai", Provider: "openai", Model: "gpt-5.2", APIKeyEnv: "OPENAI_API_KEY"}}},
-		Keyring: Keyring{Folder: "inua-keyring"},
+		Assistant: Assistant{Enable: true, Profile: "openai", Tools: []string{"web_search", "url_fetch"}, AskBeforeChanges: true, ServeListen: "127.0.0.1:8794",
+			Profiles: []AIProfile{{Name: "openai", Provider: "openai", Model: "gpt-5.2"}}},
+		Keyring: Keyring{Folder: "inua-keyring", Notify: true},
 	}
 }
 
@@ -449,6 +459,9 @@ func Load(path string) (Config, []string, error) {
 	}
 	var warnings []string
 	for _, k := range md.Undecoded() {
+		if k.String() == "assistant.profiles.api_key_env" {
+			continue // keys were once read from a variable; now only the keyring holds them
+		}
 		warnings = append(warnings, fmt.Sprintf("unknown setting %s", k))
 	}
 	warnings = append(warnings, c.validate()...)
@@ -502,6 +515,7 @@ func (c *Config) validate() []string {
 		}
 		return false
 	})
+	oneOf("language", &c.Language, d.Language, Languages...)
 	oneOf("style.theme", &c.Style.Theme, d.Style.Theme, Themes...)
 	oneOf("style.icons", &c.Style.Icons, d.Style.Icons, IconSets...)
 	oneOf("background.fit", &c.Background.Fit, d.Background.Fit, Fits...)

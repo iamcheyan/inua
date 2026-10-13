@@ -15,6 +15,7 @@ import (
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
 )
@@ -235,7 +236,7 @@ func (b *bar) setWorkspaces(s *shellUI, wss []hypr.Workspace) {
 			btn.SetName(fmt.Sprint(w.ID))
 			btn.SetFocusable(false)
 			btn.SetValign(gtk.AlignCenterValue)
-			btn.SetTooltipText(fmt.Sprintf("Workspace %s", w.Name))
+			btn.SetTooltipText(i18n.Tf("Workspace %s", w.Name))
 			btn.ConnectClicked(&s.onWorkspaceClicked)
 			b.workspaces.InsertChildAfter(&btn.Widget, prev)
 			btn.Unref() // the box holds it
@@ -248,7 +249,7 @@ func (b *bar) setWorkspaces(s *shellUI, wss []hypr.Workspace) {
 		if s.cfg.Overview.MRU {
 			btn.SetLabel("·")
 			if w.Focused || w.Active {
-				btn.SetLabel("WORKSPACE")
+				btn.SetLabel(i18n.T("WORKSPACE"))
 			}
 		} else {
 			btn.SetLabel(w.Name)
@@ -328,6 +329,23 @@ func (b *bar) clockReach(x, y float64) (reach, onButton bool) {
 	const wider = 12
 	px, py := float32(x), float32(y)
 	reach = px >= f[0]-wider && px < f[0]+f[2]+wider
+	onButton = reach && px >= f[0] && px < f[0]+f[2] && py >= f[1] && py < f[1]+f[3]
+	return reach, onButton
+}
+
+// notesReach reports whether a point in the bar's window is in the
+// notification button's reach: its column, from half the gap before it to
+// the status button's reach after it, the window's full height up to the
+// screen's edge. onButton is the button itself, which takes its own clicks.
+func (b *bar) notesReach(x, y float64) (reach, onButton bool) {
+	var r graphene.Rect
+	if !b.notes.IsVisible() || !b.notes.ComputeBounds(&b.win.Widget, &r) {
+		return false, false
+	}
+	f := *(*[4]float32)(unsafe.Pointer(&r))
+	const gap = 6 // the end box's spacing
+	px, py := float32(x), float32(y)
+	reach = px >= f[0]-gap/2 && px < f[0]+f[2]+gap
 	onButton = reach && px >= f[0] && px < f[0]+f[2] && py >= f[1] && py < f[1]+f[3]
 	return reach, onButton
 }

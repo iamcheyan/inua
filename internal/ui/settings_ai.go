@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"log"
-	"regexp"
+	"net"
 	"slices"
 	"strconv"
 	"strings"
@@ -13,6 +13,7 @@ import (
 	"github.com/lyricat/inua/internal/assistant/keys"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/i18n"
 )
 
 // The AI page: the assistant's switches, which profile answers, and a
@@ -30,6 +31,11 @@ type aiSettings struct {
 	keysNote                      gtk.Label
 	cards                         []*aiCard
 	names                         []string // the profile drop-down's
+	listen, endpoint, token       gtk.Entry
+	serve                         gtk.Switch
+	serveNote                     gtk.Label
+	tokenShow, tokenCopy, urlCopy gtk.Button
+	tokenBusy                     bool
 
 	keys     *keys.Keys
 	saved    map[string]uint64 // profiles with a saved key
@@ -49,9 +55,7 @@ type aiCard struct {
 }
 
 // reasoningNames are config.ReasoningEfforts as the drop-down shows them.
-var reasoningNames = []string{"Model default", "Minimal", "Low", "Medium", "High"}
-
-var envNameRe = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
+var reasoningNames = []string{i18n.M("Model default"), i18n.M("Minimal"), i18n.M("Low"), i18n.M("Medium"), i18n.M("High")}
 
 func (s *shellUI) getAISettings(ui *gtkx.Builder) {
 	a := &s.settings.ai
@@ -64,6 +68,20 @@ func (s *shellUI) getAISettings(ui *gtkx.Builder) {
 	ui.Get("ai_route", &a.route)
 	ui.Get("ai_profiles", &a.list)
 	ui.Get("ai_keys_note", &a.keysNote)
+	ui.Get("ai_serve_listen", &a.listen)
+	ui.Get("ai_serve_enable", &a.serve)
+	a.serve.ConnectStateSet(&s.onSettingsSwitch)
+	ui.Get("ai_serve_url", &a.endpoint)
+	ui.Get("ai_serve_token", &a.token)
+	ui.Get("ai_serve_note", &a.serveNote)
+	ui.Get("ai_token_show", &a.tokenShow)
+	ui.Get("ai_token_copy", &a.tokenCopy)
+	ui.Get("ai_url_copy", &a.urlCopy)
+	s.settings.entries[a.listen.GoPointer()] = &a.listen
+	gtkx.ConnectChanged(&a.listen, &s.onSettingsEntry)
+	for _, b := range []*gtk.Button{&a.tokenShow, &a.tokenCopy, &a.urlCopy} {
+		b.ConnectClicked(&s.onSettingsButton)
+	}
 	var add gtk.Button
 	ui.Get("ai_add", &add)
 	add.ConnectClicked(&s.onSettingsButton)
@@ -76,7 +94,7 @@ func (s *shellUI) getAISettings(ui *gtkx.Builder) {
 	if a.keys == nil {
 		a.keys = keys.New()
 	}
-	a.keysNote.SetText("Keys typed here are kept in " + a.keys.Where())
+	a.keysNote.SetText(i18n.Tf("Keys typed here are kept in %s", a.keys.Where()))
 	a.refreshSaved()
 }
 
@@ -115,7 +133,7 @@ func (s *shellUI) applyKeyRenames() {
 	a.renames = nil
 	for _, r := range renames {
 		if r[0] != r[1] && a.keys != nil {
-			s.keysDo("key not moved", func(k *keys.Keys) error { return k.Rename(r[0], r[1]) })
+			s.keysDo(i18n.T("key not moved"), func(k *keys.Keys) error { return k.Rename(r[0], r[1]) })
 		}
 	}
 }
@@ -130,6 +148,42 @@ func (s *shellUI) showAISettings() {
 	a.web.SetActive(slices.Contains(c.Tools, "web_search"))
 	a.files.SetActive(slices.Contains(c.Tools, "read_file"))
 	a.bash.SetActive(slices.Contains(c.Tools, "bash"))
+	setEntry(&a.listen, c.ServeListen)
+	a.serve.SetActive(c.ServeEnable)
+	endpoint := ""
+	if host, port, err := net.SplitHostPort(c.ServeListen); err == nil {
+		switch host {
+		case "", "0.0.0.0":
+			host = "127.0.0.1"
+		case "::":
+			host = "::1"
+		}
+		endpoint = "http://" + net.JoinHostPort(host, port) + "/runtime"
+	}
+	setEntry(&a.endpoint, endpoint)
+	a.urlCopy.SetSensitive(endpoint != "")
+	note := i18n.T("Use this URL and the token in Console. From another computer, use this desktop's reachable address.")
+	switch {
+	case !c.Enable:
+		note = i18n.T("Turn on Assistant to serve this endpoint.")
+	case !c.ServeEnable:
+		note = i18n.T("HTTP serving is off. The assistant still runs in the background.")
+	case a.saved[keys.ServeTokenKey] == 0:
+		note = i18n.T("Create a token to allow Console connections.")
+	}
+	a.serveNote.SetText(note)
+	a.tokenShow.SetSensitive(!a.tokenBusy)
+	a.tokenCopy.SetSensitive(!a.tokenBusy && a.saved[keys.ServeTokenKey] != 0)
+	switch {
+	case a.tokenBusy:
+		a.tokenShow.SetLabel(i18n.T("Reading keyring…"))
+	case a.token.GetVisibility() && a.token.GetText() != "":
+		a.tokenShow.SetLabel(i18n.T("Hide token"))
+	case a.saved[keys.ServeTokenKey] == 0:
+		a.tokenShow.SetLabel(i18n.T("Create token"))
+	default:
+		a.tokenShow.SetLabel(i18n.T("Show token"))
+	}
 
 	names := make([]string, len(c.Profiles))
 	for i, p := range c.Profiles {
@@ -143,9 +197,9 @@ func (s *shellUI) showAISettings() {
 	}
 	a.profile.SetSelected(uint32(max(0, slices.Index(names, c.Profile))))
 	if len(c.Fallback) > 0 {
-		a.route.SetText("Then, when it fails: " + strings.Join(c.Fallback, ", "))
+		a.route.SetText(i18n.Tf("Then, when it fails: %s", strings.Join(c.Fallback, ", ")))
 	} else {
-		a.route.SetText("The profile asked first; turn on Fallback on others to try them when it fails")
+		a.route.SetText(i18n.T("The profile asked first; turn on Fallback on others to try them when it fails"))
 	}
 
 	if len(a.cards) != len(c.Profiles) {
@@ -161,7 +215,7 @@ func (s *shellUI) buildAICards(n int) {
 	st := &s.settings
 	a := &st.ai
 	for _, card := range a.cards { // their widgets go with the box's children
-		for _, e := range []*gtk.Entry{card.name, card.model, card.endpoint, card.env, card.key} {
+		for _, e := range []*gtk.Entry{card.name, card.model, card.endpoint, card.key} {
 			delete(st.entries, e.GoPointer())
 		}
 		delete(st.drops, card.provider.GoPointer())
@@ -201,9 +255,9 @@ func (s *shellUI) buildAICards(n int) {
 			head.Append(&b.Widget)
 			return b // unreferenced with the card's other widgets
 		}
-		card.up = button("up", "pan-up-symbolic", "Move up (fallbacks are tried in this order)")
-		card.down = button("down", "pan-down-symbolic", "Move down")
-		card.remove = button("remove", "window-close-symbolic", "Remove this profile")
+		card.up = button("up", "pan-up-symbolic", i18n.T("Move up (fallbacks are tried in this order)"))
+		card.down = button("down", "pan-down-symbolic", i18n.T("Move down"))
+		card.remove = button("remove", "window-close-symbolic", i18n.T("Remove this profile"))
 		gtkx.Append(box, &head.Widget)
 
 		grid := gtk.NewGrid()
@@ -226,14 +280,16 @@ func (s *shellUI) buildAICards(n int) {
 			gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 			return d
 		}
-		card.name = entry("name", "a name: work, fast, local …")
+		card.name = entry("name", i18n.T("a name: work, fast, local …"))
 		card.provider = drop("provider", providers)
-		card.model = entry("model", "the model's ID")
-		card.endpoint = entry("endpoint", "the provider's own")
-		card.env = entry("env", "none")
-		card.env.AddCssClass("mono-entry")
-		card.reasoning = drop("reasoning", reasoningNames)
-		card.key = entry("key", "Paste a key, then Save")
+		card.model = entry("model", i18n.T("the model's ID"))
+		card.endpoint = entry("endpoint", i18n.T("the provider's own"))
+		translatedReasoning := make([]string, len(reasoningNames))
+		for j, name := range reasoningNames {
+			translatedReasoning[j] = i18n.T(name)
+		}
+		card.reasoning = drop("reasoning", translatedReasoning)
+		card.key = entry("key", i18n.T("Paste a key, then Save"))
 		card.key.SetVisibility(false)
 		card.key.AddCssClass("mono-entry")
 		field := func(label string, w *gtk.Widget, col, row, width int) {
@@ -246,16 +302,15 @@ func (s *shellUI) buildAICards(n int) {
 			grid.Attach(&f.Widget, int32(col), int32(row), int32(width), 1)
 			f.Unref()
 		}
-		field("Name", &card.name.Widget, 0, 0, 1)
-		field("Provider", &card.provider.Widget, 1, 0, 1)
-		field("Model", &card.model.Widget, 0, 1, 1)
-		field("Reasoning", &card.reasoning.Widget, 1, 1, 1)
-		field("Endpoint", &card.endpoint.Widget, 0, 2, 1)
-		field("Key from the variable", &card.env.Widget, 1, 2, 1)
+		field(i18n.T("Name"), &card.name.Widget, 0, 0, 1)
+		field(i18n.T("Provider"), &card.provider.Widget, 1, 0, 1)
+		field(i18n.T("Model"), &card.model.Widget, 0, 1, 1)
+		field(i18n.T("Reasoning"), &card.reasoning.Widget, 1, 1, 1)
+		field(i18n.T("Endpoint"), &card.endpoint.Widget, 0, 2, 2)
 		keyRow := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
 		keyRow.Append(&card.key.Widget)
-		card.save = gtk.NewButtonWithLabel("Save")
-		card.forget = gtk.NewButtonWithLabel("Forget")
+		card.save = gtk.NewButtonWithLabel(i18n.T("Save"))
+		card.forget = gtk.NewButtonWithLabel(i18n.T("Forget"))
 		for _, b := range []*gtk.Button{card.save, card.forget} {
 			b.AddCssClass("outlined")
 			keyRow.Append(&b.Widget)
@@ -263,12 +318,12 @@ func (s *shellUI) buildAICards(n int) {
 		}
 		card.save.SetName(fmt.Sprintf("ai-keysave:%d", i))
 		card.forget.SetName(fmt.Sprintf("ai-keyforget:%d", i))
-		field("API key", &keyRow.Widget, 0, 3, 2)
+		field(i18n.T("API key"), &keyRow.Widget, 0, 3, 2)
 		keyRow.Unref()
 		gtkx.Append(box, &grid.Widget)
 
 		card.fallbackRow = gtk.NewBox(gtk.OrientationHorizontalValue, 16)
-		l := gtk.NewLabel("Fallback: answers when the profiles above it fail")
+		l := gtk.NewLabel(i18n.T("Fallback: answers when the profiles above it fail"))
 		l.AddCssClass("sub")
 		l.SetXalign(0)
 		l.SetHexpand(true)
@@ -282,7 +337,7 @@ func (s *shellUI) buildAICards(n int) {
 
 		gtkx.Append(&a.list, &box.Widget)
 		// The card's box owns them now; the card keeps pointers.
-		for _, o := range []interface{ Unref() }{&card.title, &card.state, card.name, card.model, card.endpoint, card.env,
+		for _, o := range []interface{ Unref() }{&card.title, &card.state, card.name, card.model, card.endpoint,
 			card.key, card.provider, card.reasoning, card.fallback, card.fallbackRow, card.up, card.down, card.remove,
 			card.save, card.forget} { // texts and grid went with gtkx.Append
 			o.Unref()
@@ -299,7 +354,6 @@ func (s *shellUI) fillAICard(card *aiCard, i int, p config.AIProfile, saved map[
 	setEntry(card.name, p.Name)
 	setEntry(card.model, p.Model)
 	setEntry(card.endpoint, p.Endpoint)
-	setEntry(card.env, p.APIKeyEnv)
 	card.provider.SetSelected(uint32(max(0, slices.Index(config.AIProviderIDs(), p.Provider))))
 	card.reasoning.SetSelected(uint32(max(0, slices.Index(config.ReasoningEfforts, p.Reasoning))))
 	card.fallback.SetActive(slices.Contains(c.Fallback, p.Name))
@@ -311,42 +365,31 @@ func (s *shellUI) fillAICard(card *aiCard, i int, p config.AIProfile, saved map[
 	role := ""
 	switch {
 	case p.Name == c.Profile:
-		role = "Answers first. "
+		role = i18n.T("Answers first. ")
 	case slices.Contains(c.Fallback, p.Name):
-		role = fmt.Sprintf("Fallback %d. ", slices.Index(c.Fallback, p.Name)+1)
+		role = i18n.Tf("Fallback %d. ", slices.Index(c.Fallback, p.Name)+1)
 	}
 	var key string
-	switch src := keys.Source(saved, p.Name, p.APIKeyEnv); {
+	switch {
 	case err != nil:
-		key = "The saved keys cannot be read: " + err.Error()
-	case src == "saved":
-		key = "Key saved"
-	case src != "":
-		key = "Key from $" + src
+		key = i18n.Tf("The saved keys cannot be read: %s", err.Error())
+	case saved[p.Name] != 0:
+		key = i18n.T("Key saved")
 	case strings.HasSuffix(p.Provider, "_compatible"):
-		key = "No key (a local server may want none)"
+		key = i18n.T("No key (a local server may want none)")
 	case p.Name == c.Profile:
-		key = "No key yet: the assistant cannot answer"
+		key = i18n.T("No key yet: the assistant cannot answer")
 	default:
-		key = "No key yet: this profile is skipped"
+		key = i18n.T("No key yet: this profile is skipped")
 	}
 	card.state.SetText(role + key)
-	toggle(&card.state.Widget, "missing", err != nil || (key[0] == 'N' && !strings.HasSuffix(p.Provider, "_compatible")))
+	toggle(&card.state.Widget, "missing", err != nil || (saved[p.Name] == 0 && !strings.HasSuffix(p.Provider, "_compatible")))
 	card.forget.SetVisible(saved[p.Name] != 0)
 	if saved[p.Name] != 0 {
-		card.key.SetPlaceholderText("Saved; paste another to replace it")
+		card.key.SetPlaceholderText(i18n.T("Saved; paste another to replace it"))
 	} else {
-		card.key.SetPlaceholderText("Paste a key, then Save")
+		card.key.SetPlaceholderText(i18n.T("Paste a key, then Save"))
 	}
-}
-
-func providerKeyEnv(id string) string {
-	for _, p := range config.AIProviders {
-		if p.ID == id {
-			return p.KeyEnv
-		}
-	}
-	return ""
 }
 
 // aiIndex is the profile a control named "ai-FIELD:N" is for.
@@ -358,6 +401,16 @@ func aiIndex(name string, c config.Assistant) (string, int, bool) {
 
 // aiEntryChanged applies a profile's text field; false marks it invalid.
 func (s *shellUI) aiEntryChanged(name, text string, c *config.Config) bool {
+	if name == "ai-serve-listen" {
+		text = strings.TrimSpace(text)
+		_, port, err := net.SplitHostPort(text)
+		n, portErr := strconv.Atoi(port)
+		if err != nil || portErr != nil || n < 1 || n > 65535 {
+			return false
+		}
+		c.Assistant.ServeListen = text
+		return true
+	}
 	field, i, ok := aiIndex(name, c.Assistant)
 	if !ok {
 		return false
@@ -410,11 +463,6 @@ func (s *shellUI) aiEntryChanged(name, text string, c *config.Config) bool {
 		p.Model = text
 	case "endpoint":
 		p.Endpoint = text
-	case "env":
-		if text != "" && !envNameRe.MatchString(text) {
-			return false
-		}
-		p.APIKeyEnv = text
 	case "key":
 		return true // saved with its button
 	}
@@ -442,10 +490,6 @@ func (s *shellUI) aiDrop(name string, i int, c *config.Config) {
 		if i < 0 || i >= len(config.AIProviders) {
 			return
 		}
-		// The variable follows the provider unless it was set by hand.
-		if p.APIKeyEnv == "" || p.APIKeyEnv == providerKeyEnv(p.Provider) {
-			p.APIKeyEnv = config.AIProviders[i].KeyEnv
-		}
 		p.Provider = config.AIProviders[i].ID
 	case "reasoning":
 		if i >= 0 && i < len(config.ReasoningEfforts) {
@@ -467,6 +511,8 @@ func (s *shellUI) aiSwitch(name string, on bool, c *config.Config) bool {
 	switch name {
 	case "ai_enable":
 		a.Enable = on
+	case "ai_serve_enable":
+		a.ServeEnable = on
 	case "ai_ask":
 		a.AskBeforeChanges = on
 	case "ai_web":
@@ -497,6 +543,58 @@ func (s *shellUI) aiSwitch(name string, on bool, c *config.Config) bool {
 
 // aiButton carries out the AI page's buttons; false for a button not its.
 func (s *shellUI) aiButton(name string) bool {
+	if name == "ai_url_copy" {
+		clip := s.settings.win.GetClipboard()
+		clip.SetText(s.settings.ai.endpoint.GetText())
+		clip.Unref()
+		s.setStatus(i18n.T("Endpoint URL copied"), false)
+		return true
+	}
+	if name == "ai_token_show" || name == "ai_token_copy" {
+		a := &s.settings.ai
+		if a.tokenBusy {
+			return true
+		}
+		if name == "ai_token_show" && a.token.GetVisibility() && a.token.GetText() != "" {
+			a.token.SetText("")
+			a.token.SetVisibility(false)
+			s.showSettings()
+			return true
+		}
+		a.tokenBusy = true
+		s.showSettings()
+		win, k := s.settings.win, a.keys
+		go func() {
+			token, err := k.ServeToken(name == "ai_token_show")
+			saved, savedErr := k.Saved()
+			gtkx.Post(func() {
+				a.tokenBusy = false
+				a.saved, a.savedErr = saved, savedErr
+				if s.settings.win == nil {
+					return
+				}
+				if s.settings.win == win {
+					switch {
+					case err != nil:
+						s.setStatus(i18n.Tf("Cannot read the Console token: %s", err.Error()), true)
+					case token == "":
+						s.setStatus(i18n.T("No Console token. Create one first."), true)
+					case name == "ai_token_copy":
+						clip := win.GetClipboard()
+						clip.SetText(token)
+						clip.Unref()
+						s.setStatus(i18n.T("Token copied"), false)
+					default:
+						a.token.SetText(token)
+						a.token.SetVisibility(true)
+						s.setStatus("", false)
+					}
+				}
+				s.showSettings()
+			})
+		}()
+		return true
+	}
 	c := s.cfg
 	a := &c.Assistant
 	if name == "ai_add" {
@@ -550,7 +648,7 @@ func (s *shellUI) aiButton(name string) bool {
 		if a.Profile == p.Name {
 			a.Profile = a.Profiles[0].Name
 		}
-		s.keysDo("key not removed", func(k *keys.Keys) error { return k.Set(p.Name, "") })
+		s.keysDo(i18n.T("key not removed"), func(k *keys.Keys) error { return k.Set(p.Name, "") })
 	case "keysave", "keyforget":
 		key := ""
 		if field == "keysave" {
@@ -561,7 +659,7 @@ func (s *shellUI) aiButton(name string) bool {
 		}
 		s.settings.ai.cards[i].key.SetText("")
 		s.setStatus("", false)
-		s.keysDo("key not saved", func(k *keys.Keys) error { return k.Set(p.Name, key) })
+		s.keysDo(i18n.T("key not saved"), func(k *keys.Keys) error { return k.Set(p.Name, key) })
 		return true
 	}
 	s.changeSettings(c)

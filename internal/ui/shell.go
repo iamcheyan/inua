@@ -32,6 +32,7 @@ import (
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
@@ -132,6 +133,8 @@ type shellUI struct {
 	onSettingsEntry        func(uintptr, uintptr)
 	onSettingsSwitch       func(gtk.Switch, bool) bool
 	onSettingsDrop         func(uintptr, uintptr, uintptr)
+	onSettingsPage         func(uintptr, uintptr, uintptr)
+	onAboutLink            func(gtk.Button)
 	onSettingsButton       func(gtk.Button)
 	onSettingsClose        func(gtk.Window) bool
 	onSettingsKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
@@ -161,6 +164,7 @@ type shellUI struct {
 	onRecButton            func(gtk.Button)
 	onClockButton          func(gtk.Button)
 	onAgendaButton         func(gtk.Button)
+	onAgendaWeather        func(gtk.Button)
 	onAgendaPressed        func(gtk.GestureClick, int32, float64, float64)
 	onAgendaKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onAgendaGone           glib.SourceFunc
@@ -243,7 +247,7 @@ func Run(opts Options) int {
 		return 1
 	}
 
-	app := gtk.NewApplication("io.github.lyricat.Inua", gio.GApplicationNonUniqueValue)
+	app := gtk.NewApplication(shell.AppID, gio.GApplicationNonUniqueValue)
 	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}}
 	s.pass.slot = make(chan struct{}, 1) // before the control socket serves
 	activate := func(gio.Application) { s.start() }
@@ -338,6 +342,7 @@ func (s *shellUI) start() {
 	s.bindRecordHandlers()
 	s.bindTrayHandlers()
 	s.bindSettingsHandlers()
+	s.bindAboutHandlers()
 	s.bindNotifyHandlers()
 	s.bindDockHandlers()
 	s.bindDrawerHandlers()
@@ -359,6 +364,7 @@ func (s *shellUI) start() {
 	s.startAlarms()
 	s.startUpdates()
 	s.startSystem()
+	s.startAssistant()
 	if s.layer { // elsewhere (GNOME) the desktop has its own agent
 		s.startPolkit()
 	}
@@ -376,7 +382,11 @@ func (s *shellUI) start() {
 	// shell was not running); Hyprland reloads only if it changed.
 	s.applyHyprland()
 	go func() {
-		entries := desktop.Scan(desktop.DataDirs(), os.Getenv("LANG"))
+		locale := os.Getenv("LANG")
+		if selected := i18n.Lang(); selected != "" {
+			locale = selected
+		}
+		entries := desktop.Scan(desktop.DataDirs(), locale)
 		gtkx.Post(func() {
 			s.launcher.st.SetApps(entries)
 			s.dockApps(entries)
@@ -404,6 +414,8 @@ func (s *shellUI) bindHandlers() {
 		if b := s.barOf(c.GetWidget()); b != nil {
 			reach, _ := b.statusReach(x, y)
 			toggle(&b.status.Widget, "hover", reach)
+			notes, _ := b.notesReach(x, y)
+			toggle(&b.notes.Widget, "hover", notes && !reach)
 			clock, _ := b.clockReach(x, y)
 			toggle(&b.clockButton.Widget, "hover", clock)
 		}
@@ -411,6 +423,7 @@ func (s *shellUI) bindHandlers() {
 	s.onBarLeave = func(c gtk.EventControllerMotion) {
 		if b := s.barOf(c.GetWidget()); b != nil {
 			toggle(&b.status.Widget, "hover", false)
+			toggle(&b.notes.Widget, "hover", false)
 			toggle(&b.clockButton.Widget, "hover", false)
 		}
 	}
@@ -420,8 +433,13 @@ func (s *shellUI) bindHandlers() {
 			return
 		}
 		clock, onClock := b.clockReach(x, y)
-		if reach, onButton := b.statusReach(x, y); reach && !onButton {
-			s.controlAction("status")
+		notes, onNotes := b.notesReach(x, y)
+		if reach, onButton := b.statusReach(x, y); reach {
+			if !onButton {
+				s.controlAction("status")
+			}
+		} else if notes && !onNotes {
+			s.toggleCenter()
 		} else if clock && !onClock {
 			s.toggleAgenda()
 		}
