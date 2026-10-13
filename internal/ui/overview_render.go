@@ -21,6 +21,7 @@ type overviewCardWidgets struct {
 
 type overviewWindowWidgets struct {
 	button *gtk.Button
+	label  *gtk.Label // the title on the preview
 	rect   [4]float64
 	title  string
 }
@@ -103,6 +104,7 @@ func (s *shellUI) updateOverviewWidgets(o *workspaceOverview) {
 			}
 			if window.title != w.Title {
 				window.button.SetTooltipText(w.Title)
+				window.label.SetText(w.Title)
 				window.title = w.Title
 			}
 			overviewClass(&window.button.Widget, "active", w.Activated)

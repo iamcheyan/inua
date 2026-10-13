@@ -98,7 +98,7 @@ type client struct {
 	mappings         map[uint32]uint32
 	foreignHandles   map[uint32]bool
 	frames           map[uint32]*frameState
-	buf              *buffer
+	bufs             []*buffer // by last use, newest first; at most keepBuffers
 }
 
 func socketPath() (string, error) {
@@ -285,6 +285,7 @@ func (c *client) capture(address string, onFrame func(Frame)) error {
 	}
 	id := c.alloc()
 	c.frames[id] = &frameState{id: id, address: address}
+	var cur *buffer // the buffer this frame is copied into
 	if err := c.send(c.manager, 2, u32(id), u32(0), u32(handle)); err != nil {
 		delete(c.frames, id)
 		return err
@@ -327,28 +328,18 @@ func (c *client) capture(address string, onFrame func(Frame)) error {
 				c.destroyFrame(id)
 				return errors.New("invalid Hyprland capture buffer size")
 			}
-			// Captures run sequentially, so one shared-memory buffer serves all
-			// windows. The callback copies pixels before the next capture reuses it.
-			b := c.buf
-			if b == nil || b.w != f.w || b.h != f.h || b.stride != f.stride || b.format != f.format {
-				if b != nil {
-					c.destroyBuffer(b)
-					c.buf = nil
-				}
-				b, err = c.newBuffer(*f)
-				if err != nil {
-					c.destroyFrame(id)
-					return err
-				}
-				c.buf = b
+			b, err := c.bufferFor(*f)
+			if err != nil {
+				c.destroyFrame(id)
+				return err
 			}
+			cur = b
 			if err = c.send(id, 0, u32(b.id), u32(1)); err != nil {
 				c.destroyFrame(id)
 				return err
 			}
 		case 3: // ready
-			b := c.buf
-			if b != nil && onFrame != nil {
+			if b := cur; b != nil && onFrame != nil {
 				onFrame(Frame{Address: address, Width: b.w, Height: b.h, Stride: b.stride, Format: b.format, YInvert: f.flags&1 != 0, Pixels: b.data})
 			}
 			c.destroyFrame(id)
@@ -408,8 +399,37 @@ func (c *client) destroyBuffer(b *buffer) {
 	}
 }
 func (c *client) releaseBuffers() {
-	c.destroyBuffer(c.buf)
-	c.buf = nil
+	for _, b := range c.bufs {
+		c.destroyBuffer(b)
+	}
+	c.bufs = nil
+}
+
+// keepBuffers is how many shared-memory buffers the client keeps. Captures
+// run one at a time and onFrame copies the pixels out, so windows of one size
+// share a buffer; a few sizes cover the usual mix without reallocating on
+// each capture, or holding one buffer per window.
+const keepBuffers = 4
+
+// bufferFor is a buffer for frame f's size and format, the last used first.
+func (c *client) bufferFor(f frameState) (*buffer, error) {
+	for i, b := range c.bufs {
+		if b.w == f.w && b.h == f.h && b.stride == f.stride && b.format == f.format {
+			copy(c.bufs[1:i+1], c.bufs[:i])
+			c.bufs[0] = b
+			return b, nil
+		}
+	}
+	b, err := c.newBuffer(f)
+	if err != nil {
+		return nil, err
+	}
+	c.bufs = append([]*buffer{b}, c.bufs...)
+	if len(c.bufs) > keepBuffers {
+		c.destroyBuffer(c.bufs[keepBuffers])
+		c.bufs = c.bufs[:keepBuffers]
+	}
+	return b, nil
 }
 func (c *client) alloc() uint32 { id := c.next; c.next++; return id }
 

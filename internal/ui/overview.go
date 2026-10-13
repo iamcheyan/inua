@@ -607,7 +607,9 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 			b := gtk.NewButton()
 			b.SetName("window:" + w.Address)
 			b.SetSizeRequest(int32(pw), int32(ph))
-			o.windowWidgets[w.Address] = &overviewWindowWidgets{button: b, rect: [4]float64{x, y, pw, ph}, title: w.Title}
+			b.SetTooltipText(w.Title) // the label is cut short in small previews
+			ww := &overviewWindowWidgets{button: b, rect: [4]float64{x, y, pw, ph}, title: w.Title}
+			o.windowWidgets[w.Address] = ww
 			b.AddCssClass("overview-window")
 			if w.Activated {
 				b.AddCssClass("active")
@@ -650,6 +652,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 			title.SetValign(gtk.AlignCenterValue)
 			title.SetHexpand(true)
 			gtkx.Append(meta, &title.Widget)
+			ww.label = title
 			windowLayer.AddOverlay(&meta.Widget)
 			meta.Unref()
 			icon.Unref()
