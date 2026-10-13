@@ -15,6 +15,7 @@ import (
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hyprconf"
+	"github.com/lyricat/inua/internal/i18n"
 )
 
 // The settings window's Shortcuts page. Shortcuts set here are saved in
@@ -84,18 +85,18 @@ func (s *shellUI) showShortcuts() {
 		if i := shortcutIndex(c.Shortcuts, a.ID); i >= 0 {
 			managed = true
 			if k := c.Shortcuts[i].Keys; k != "" {
-				keys, source = []string{k}, "Set in inua"
+				keys, source = []string{k}, i18n.T("Set in inua")
 			} else {
-				source = "Turned off in inua"
+				source = i18n.T("Turned off in inua")
 			}
-		} else if keys = hyprconf.KeysFor(sc.binds, cmd); len(keys) > 0 {
-			source = "From hyprland.conf"
+		} else if keys = hyprconf.KeysFor(sc.binds, cmd, a.Label); len(keys) > 0 {
+			source = i18n.T("From Hyprland")
 		}
 		box := &sc.inua
 		if a.Shot {
 			box = &sc.shots
 		}
-		s.shortcutRow(box, a.ID, a.Label, source, keys, managed, false)
+		s.shortcutRow(box, a.ID, i18n.T(a.Label), source, keys, managed, false)
 	}
 	for i, x := range c.Shortcuts {
 		if x.Action != "exec" {
@@ -114,6 +115,10 @@ func (s *shellUI) showShortcuts() {
 			(b.Dispatcher == "exec" && commands[strings.Join(strings.Fields(b.Arg), " ")]) {
 			continue
 		}
+		// inua.lua's binds, described as the action they run.
+		if b.Description != "" && slices.ContainsFunc(hyprconf.Actions, func(a hyprconf.Action) bool { return strings.EqualFold(b.Description, a.Label) }) {
+			continue
+		}
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
 		row.AddCssClass("row")
 		row.AddCssClass("compact")
@@ -122,8 +127,14 @@ func (s *shellUI) showShortcuts() {
 		gtkx.Append(col, &keycap(b.Keys).Widget)
 		gtkx.Append(row, &col.Widget)
 		what := b.Dispatcher
-		if b.Arg != "" {
-			what += "  " + b.Arg
+		if b.Description != "" {
+			what = b.Description
+		} else if b.Arg != "" {
+			if b.Dispatcher == "__lua" { // a Lua function: its code is not shown
+				what = i18n.T("Lua function")
+			} else {
+				what += "  " + b.Arg
+			}
 		}
 		l := gtk.NewLabel(what)
 		l.AddCssClass("readout")
@@ -136,7 +147,7 @@ func (s *shellUI) showShortcuts() {
 		n++
 	}
 	if n == 0 {
-		l := gtk.NewLabel("None")
+		l := gtk.NewLabel(i18n.T("None"))
 		l.AddCssClass("sub")
 		l.AddCssClass("row")
 		l.SetXalign(0)
@@ -177,16 +188,16 @@ func (s *shellUI) shortcutRow(box *gtk.Box, id, title, sub string, keys []string
 	rec.AddCssClass("keys")
 	rec.SetName("sc-rec:" + id)
 	rec.SetValign(gtk.AlignCenterValue)
-	rec.SetTooltipText("Click, then press the new shortcut")
+	rec.SetTooltipText(i18n.T("Click, then press the new shortcut"))
 	caps := gtk.NewBox(gtk.OrientationHorizontalValue, 6)
 	caps.SetHalign(gtk.AlignEndValue)
 	switch {
 	case sc.recording == id:
-		l := keycapText("Press keys…")
+		l := keycapText(i18n.T("Press keys…"))
 		l.AddCssClass("waiting")
 		gtkx.Append(caps, &l.Widget)
 	case len(keys) == 0:
-		l := keycapText("Not set")
+		l := keycapText(i18n.T("Not set"))
 		l.AddCssClass("empty")
 		gtkx.Append(caps, &l.Widget)
 	default:
@@ -212,11 +223,11 @@ func (s *shellUI) shortcutRow(box *gtk.Box, id, title, sub string, keys []string
 	}
 	switch {
 	case custom:
-		icon("sc-del:"+id, "window-close-symbolic", "Remove this command")
+		icon("sc-del:"+id, "window-close-symbolic", i18n.T("Remove this command"))
 	case managed:
-		icon("sc-reset:"+id, "edit-undo-symbolic", "Use hyprland.conf's shortcut again")
+		icon("sc-reset:"+id, "edit-undo-symbolic", i18n.T("Use hyprland.conf's shortcut again"))
 	case len(keys) > 0:
-		icon("sc-off:"+id, "window-close-symbolic", "Turn the shortcut off")
+		icon("sc-off:"+id, "window-close-symbolic", i18n.T("Turn the shortcut off"))
 	}
 	gtkx.Append(row, &slot.Widget)
 	gtkx.Append(box, &row.Widget)
@@ -293,7 +304,11 @@ func (s *shellUI) setShortcut(id, keys string) {
 			at = i
 		}
 	} else if at = shortcutIndex(list, id); at < 0 {
-		list = append(list, config.Shortcut{Action: id, Replaces: hyprconf.KeysFor(s.settings.sc.binds, hyprconf.Command(c, id))})
+		label := ""
+		if i := slices.IndexFunc(hyprconf.Actions, func(a hyprconf.Action) bool { return a.ID == id }); i >= 0 {
+			label = hyprconf.Actions[i].Label
+		}
+		list = append(list, config.Shortcut{Action: id, Replaces: hyprconf.KeysFor(s.settings.sc.binds, hyprconf.Command(c, id), label)})
 		at = len(list) - 1
 	}
 	if at < 0 {
@@ -320,7 +335,7 @@ func (s *shellUI) startRecording(id string) {
 		s.stopRecording()
 	}
 	sc.recording = id
-	s.dispatch("submap " + hyprconf.RecordSubmap)
+	s.dispatchSubmap(hyprconf.RecordSubmap)
 	sc.recordGen++
 	glib.TimeoutAdd(recordMS, &s.onRecordTimeout, sc.recordGen)
 	s.showShortcuts()
@@ -332,7 +347,7 @@ func (s *shellUI) stopRecording() {
 		return
 	}
 	sc.recording = ""
-	s.dispatch("submap reset")
+	s.dispatchSubmap("reset")
 	if s.settings.win != nil {
 		s.showShortcuts()
 	}

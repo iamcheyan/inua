@@ -19,6 +19,7 @@ import (
 	"github.com/lyricat/inua/internal/clipboard"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/shell"
 )
 
@@ -52,12 +53,18 @@ type settings struct {
 	kbState, kbReadout, kbWarn, tpState, tpValue, tpWarn gtk.Label
 	notifyState                                          gtk.Label
 	kbReset, tpReset                                     gtk.Button
+	// The language, and the offer to restart the shell into a new one.
+	language       gtk.DropDown
+	langRestartRow gtk.Box
+	langRestart    gtk.Button
 	// hyprKb is Hyprland's kb_options while inua sets none, so the
 	// controls start from what is in effect.
 	hyprKb string
 
-	sc shortcutState // the Shortcuts page
-	ai aiSettings    // the AI page
+	sc      shortcutState   // the Shortcuts page
+	ai      aiSettings      // the AI page
+	about   aboutSettings   // the About page
+	keyring keyringSettings // the Keyring page
 
 	sticky map[uintptr]*stickyHead // by the pages' vertical adjustments
 
@@ -117,6 +124,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Notify.Enable = on
 		case "critical_focus":
 			c.Notify.CriticalInFocus = on
+		case "about_daily":
+			c.Notify.Updates = on
+		case "keyring_notify":
+			c.Keyring.Notify = on
 		case "clip_bar":
 			c.Clipboard.Bar = on
 		case "clip_paste":
@@ -162,6 +173,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			}
 		case "icons":
 			c.Style.Icons = pick(config.IconSets, i, c.Style.Icons)
+		case "language":
+			c.Language = pick(config.Languages, i, c.Language)
 		case "swap":
 			opts := shell.SetSwapCtrlAlt(s.kbOptions(), pick(swapChoices, i, ""))
 			c.Input.KbOptions = &opts
@@ -177,7 +190,7 @@ func (s *shellUI) bindSettingsHandlers() {
 	}
 	s.onSettingsButton = func(b gtk.Button) {
 		name := b.GetName()
-		if s.shortcutButton(name) || s.aiButton(name) {
+		if s.shortcutButton(name) || s.aiButton(name) || s.aboutButton(name) || s.keyringButton(name) {
 			return
 		}
 		c := s.cfg
@@ -198,6 +211,13 @@ func (s *shellUI) bindSettingsHandlers() {
 			action, id, _ := strings.Cut(strings.TrimPrefix(name, "pin-"), ":")
 			c.Dock.Pinned = movePinned(c.Dock.Pinned, id, action)
 			s.changeSettings(c)
+		case name == "lang_restart":
+			if s.settings.dirty {
+				s.saveSettings() // before the restart reads it
+			}
+			if err := s.scheduleRestart(); err != nil {
+				s.setStatus(i18n.Tf("Not restarted: %s", err.Error()), true)
+			}
 		case name == "kb_reset":
 			c.Input.KbOptions = nil
 			s.changeSettings(c)
@@ -303,6 +323,9 @@ func (s *shellUI) openSettings() {
 	ui.Get("ws", &st.ws)
 	ui.Get("launch_mode", &st.launchMode)
 	ui.Get("icons", &st.icons)
+	ui.Get("language", &st.language)
+	ui.Get("lang_restart_row", &st.langRestartRow)
+	ui.Get("lang_restart", &st.langRestart)
 	ui.Get("banner", &st.banner)
 	ui.Get("bar_enable", &st.barOn)
 	ui.Get("dock_enable", &st.dockOn)
@@ -352,21 +375,22 @@ func (s *shellUI) openSettings() {
 	st.entries = map[uintptr]*gtk.Entry{}
 	st.drops = map[uintptr]*gtk.DropDown{}
 	s.getAISettings(ui)
+	s.getAboutSettings(ui)
+	s.getKeyringSettings(ui)
 	ui.Close()
 
 	for _, e := range []*gtk.Entry{&st.bgImage, &st.bgColor, &st.clock, &st.terminal, &st.lock, &st.screenshot} {
 		st.entries[e.GoPointer()] = e
 		gtkx.ConnectChanged(e, &s.onSettingsEntry)
 	}
-	st.drops = map[uintptr]*gtk.DropDown{}
-	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
+	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
 	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipBar, &st.clipPaste} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
-	for _, b := range []*gtk.Button{&choose, &clearImage, &st.kbReset, &st.tpReset, &st.clipClear} {
+	for _, b := range []*gtk.Button{&choose, &clearImage, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear} {
 		b.ConnectClicked(&s.onSettingsButton)
 	}
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
@@ -389,7 +413,7 @@ func (s *shellUI) openSettings() {
 }
 
 // settingsPages are the pages' names in settings.ui, in order.
-var settingsPages = []string{"appearance", "bar", "launcher", "ai", "notifications", "clipboard", "shortcuts", "keyboard", "mouse"}
+var settingsPages = []string{"appearance", "bar", "launcher", "ai", "notifications", "clipboard", "keyring", "shortcuts", "keyboard", "mouse", "about"}
 
 // settingsPageAliases name the page that now holds a section that was once
 // a page of its own.
@@ -407,7 +431,9 @@ func (s *shellUI) showSettingsPage(name string) bool {
 	if st.win == nil || !slices.Contains(settingsPages, name) {
 		return false
 	}
-	st.pages.SetVisibleChildName(name)
+	// At once: a crossfade begun before a new window's first frame stays
+	// on the old page.
+	st.pages.SetVisibleChildFull(name, gtk.StackTransitionTypeNoneValue)
 	return true
 }
 
@@ -501,12 +527,17 @@ func (s *shellUI) showSettings() {
 	st.ws.SetSelected(uint32(max(0, slices.Index(wsChoices, c.Bar.Workspaces))))
 	st.launchMode.SetSelected(uint32(max(0, slices.Index(modeChoices, c.Launcher.Mode))))
 	st.icons.SetSelected(uint32(max(0, slices.Index(config.IconSets, c.Style.Icons))))
+	st.language.SetSelected(uint32(max(0, slices.Index(config.Languages, c.Language))))
+	// The shell chose its language when it started.
+	st.langRestartRow.SetVisible(c.Language != s.opts.Config.Language)
 	s.showInput()
 	s.showNotifySettings()
 	s.showDockSettings()
 	s.showClipboardSettings()
 	s.showShortcuts()
 	s.showAISettings()
+	s.showAboutSettings()
+	st.keyring.notify.SetActive(c.Keyring.Notify)
 	st.clockPreview.SetText(config.Strftime(c.Bar.Clock, time.Now()))
 	for _, e := range st.entries {
 		e.RemoveCssClass("invalid")
@@ -613,7 +644,7 @@ func (s *shellUI) saveSettings() {
 	st.dirty = false
 	if err := config.Save(s.opts.ConfigPath, s.cfg); err != nil {
 		log.Printf("settings: %v", err)
-		s.setStatus("not saved: "+err.Error(), true)
+		s.setStatus(i18n.Tf("Not saved: %s", err.Error()), true)
 		return
 	}
 	s.setStatus("", false)
@@ -639,9 +670,9 @@ func (s *shellUI) chooseImage() {
 		return
 	}
 	d := gtk.NewFileDialog()
-	d.SetTitle("Choose a wallpaper")
+	d.SetTitle(i18n.T("Choose a wallpaper"))
 	filter := gtk.NewFileFilter()
-	filter.SetName("Images")
+	filter.SetName(i18n.T("Images"))
 	filter.AddMimeType("image/*")
 	d.SetDefaultFilter(filter)
 	filter.Unref()
@@ -680,11 +711,11 @@ func (s *shellUI) showNotifySettings() {
 	st.banner.SetSelected(uint32(max(0, slices.Index(config.BannerChoices, c.Banner))))
 	switch {
 	case !c.Enable:
-		st.notifyState.SetText("Off: another notification daemon can show them")
+		st.notifyState.SetText(i18n.T("Off: another notification daemon can show them"))
 	case s.notesNative():
-		st.notifyState.SetText("Banners, then the notification center (the bell in the bar, or Super+N)")
+		st.notifyState.SetText(i18n.T("Banners, then the notification center (the bell in the bar, or Super+N)"))
 	default:
-		st.notifyState.SetText("Waiting: another notification daemon is running")
+		st.notifyState.SetText(i18n.T("Waiting: another notification daemon is running"))
 	}
 }
 
@@ -702,7 +733,7 @@ func (s *shellUI) showDockSettings() {
 	st.dockPosition.SetSelected(uint32(max(0, slices.Index(config.DockPositions, c.Dock.Position))))
 	gtkx.Clear(&st.dockPinned)
 	if len(c.Dock.Pinned) == 0 {
-		l := gtk.NewLabel("Nothing pinned")
+		l := gtk.NewLabel(i18n.T("Nothing pinned"))
 		l.AddCssClass("sub")
 		l.SetXalign(0)
 		l.AddCssClass("row")
@@ -718,7 +749,7 @@ func (s *shellUI) showDockSettings() {
 			name = e.Name
 		} else {
 			img.SetFromIconName("application-x-executable-symbolic")
-			name = id + " (not installed)"
+			name = i18n.Tf("%s (not installed)", id)
 		}
 		img.SetPixelSize(24)
 		gtkx.Append(row, &img.Widget)
@@ -731,9 +762,9 @@ func (s *shellUI) showDockSettings() {
 			action, icon, tip string
 			ok                bool
 		}{
-			{"up", "pan-up-symbolic", "Move earlier", i > 0},
-			{"down", "pan-down-symbolic", "Move later", i < len(c.Dock.Pinned)-1},
-			{"remove", "window-close-symbolic", "Remove from the dock", true},
+			{"up", "pan-up-symbolic", i18n.T("Move earlier"), i > 0},
+			{"down", "pan-down-symbolic", i18n.T("Move later"), i < len(c.Dock.Pinned)-1},
+			{"remove", "window-close-symbolic", i18n.T("Remove from the dock"), true},
 		} {
 			btn := gtk.NewButtonFromIconName(b.icon)
 			btn.AddCssClass("plain")

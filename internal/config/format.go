@@ -14,6 +14,7 @@ import (
 // not kept.
 func Format(c Config) string {
 	return fmt.Sprintf(template,
+		q(c.Language),
 		c.Bar.Enable, q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray,
 		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor,
 		q(c.Control.Lock), q(c.Control.Screenshot),
@@ -25,8 +26,9 @@ func Format(c Config) string {
 		c.Clipboard.Bar, c.Clipboard.Opacity, c.Clipboard.Limit, c.Clipboard.PasteOnClick,
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback),
-		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges, aiProfiles(c.Assistant.Profiles),
-		q(c.Keyring.Folder),
+		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges,
+		c.Assistant.ServeEnable, q(c.Assistant.ServeListen), aiProfiles(c.Assistant.Profiles),
+		q(c.Keyring.Folder), c.Keyring.Notify,
 		shortcuts(c.Shortcuts))
 }
 
@@ -72,8 +74,8 @@ func quicklinks(all []Quicklink) string {
 func aiProfiles(all []AIProfile) string {
 	var b strings.Builder
 	for _, p := range all {
-		fmt.Fprintf(&b, "\n\n[[assistant.profiles]]\nname = %s\nprovider = %s\nmodel = %s\nendpoint = %s\napi_key_env = %s\nreasoning = %s",
-			q(p.Name), q(p.Provider), q(p.Model), q(p.Endpoint), q(p.APIKeyEnv), q(p.Reasoning))
+		fmt.Fprintf(&b, "\n\n[[assistant.profiles]]\nname = %s\nprovider = %s\nmodel = %s\nendpoint = %s\nreasoning = %s",
+			q(p.Name), q(p.Provider), q(p.Model), q(p.Endpoint), q(p.Reasoning))
 	}
 	return b.String()
 }
@@ -159,6 +161,11 @@ var template = strings.TrimLeft(`
 # The settings window (inua call settings open) edits this file and applies
 # changes at once; it rewrites the file in this layout. After editing by
 # hand: `+"`inua call shell reload`"+`.
+
+# The interface's language: "auto" follows the system (LANGUAGE, LC_ALL,
+# LC_MESSAGES, LANG); or "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr".
+# The shell and apps read it when they start.
+language = %s
 
 [bar]
 # Show the bar along the top of each monitor. Without it the launcher
@@ -342,7 +349,8 @@ pinned = %s
 
 [assistant]
 # The assistant (inua-assistant, the launcher's "Ask"): an agent with
-# inua's tools, run by Mister Morph. Nothing runs until you ask.
+# inua's tools, run by Mister Morph. The shell starts it in the background;
+# model calls only run when you or a connected Console submit a task.
 enable = %t
 
 # The profile that answers, and the profiles tried in turn when it fails
@@ -359,16 +367,23 @@ tools = %s
 # process and closing a window always ask.
 ask_before_changes = %t
 
+# Console Runtime API: turn on in Settings → AI, which also creates and
+# copies its token. The token stays in the Secret Service (inua-keyring
+# keeps it in pass); inua-assistant --serve-token also prints it.
+# Console uses http://ADDRESS/runtime. Turning serving off keeps the
+# address and token; the assistant continues running in the background.
+serve_enable = %t
+serve_listen = %s
+
 # The models, as Mister Morph's profiles: a name, a provider ("openai",
 # "anthropic", "gemini", "xai", "deepseek", "kimi", "openrouter", "groq",
 # "mistermorph_pro", or "openai_chat_compatible", "openai_response_compatible",
 # "anthropic_compatible" with an endpoint), the model, an endpoint ("" for
-# the provider's own), the environment variable holding the API key, and
-# the reasoning effort ("minimal" to "high"; "" for the model's default).
-# A key typed in the settings window (AI) is kept in the keyring (the
-# Secret Service; inua-keyring keeps it in pass) instead, or without one
-# in ~/.local/share/inua/keys.json, readable only by you; keys are never
-# written here.%s
+# the provider's own), and the reasoning effort ("minimal" to "high"; ""
+# for the model's default). The API key is typed in the settings window
+# (AI) and kept in the keyring (the Secret Service; inua-keyring keeps it
+# in pass), or without one in ~/.local/share/inua/keys.json, readable only
+# by you; keys are never written here.%s
 
 [keyring]
 # inua-keyring keeps apps' secrets (the Secret Service: browsers' keys,
@@ -376,6 +391,10 @@ ask_before_changes = %t
 # of the password store (PASSWORD_STORE_DIR, else ~/.password-store).
 # inua keyring status|import|enable|disable: see docs/feat/keyring.md.
 folder = %s
+
+# A notification when an app reads its first secret since inua-keyring
+# started. Every read is listed in Settings → Keyring.
+notify = %t
 
 # Keyboard shortcuts set in the settings window (Shortcuts). inua writes
 # them to ~/.config/hypr/inua.conf: each unbinds its keys from anything

@@ -19,6 +19,7 @@ import (
 	"github.com/lyricat/inua/internal/bootstrap"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hyprconf"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/shell"
 )
 
@@ -36,7 +37,7 @@ type hyprApply struct {
 // background, and reloads Hyprland if the file changed.
 func (s *shellUI) applyHyprland() {
 	c, client := s.cfg, s.client
-	path := hyprconf.Path(s.opts.ConfigPath)
+	path := hyprconf.Target(s.hyprConfig())
 	gen := s.hyprApply.latest.Add(1)
 	go func() {
 		s.hyprApply.mu.Lock()
@@ -51,7 +52,7 @@ func (s *shellUI) applyHyprland() {
 			switch {
 			case err != nil:
 				log.Printf("hyprland settings: %v", err)
-				s.setStatus("not applied to Hyprland: "+err.Error(), true)
+				s.setStatus(i18n.Tf("Not applied to Hyprland: %s", err.Error()), true)
 			case changed:
 				log.Printf("hyprland settings: wrote %s", path)
 			}
@@ -109,11 +110,11 @@ func (s *shellUI) showInput() {
 	st.swap.SetSelected(uint32(max(0, slices.Index(swapChoices, shell.SwapCtrlAlt(opts)))))
 	st.caps.SetSelected(uint32(max(0, slices.Index(capsChoices, shell.CapsLock(opts)))))
 	if in.KbOptions != nil {
-		st.kbState.SetText("Set by inua")
+		st.kbState.SetText(i18n.T("Set by inua"))
 	} else {
-		st.kbState.SetText("Set in hyprland.conf")
+		st.kbState.SetText(i18n.T("Set in hyprland.conf"))
 	}
-	st.kbReadout.SetText(cmp.Or(opts, "no XKB options"))
+	st.kbReadout.SetText(cmp.Or(opts, i18n.T("no XKB options")))
 	st.kbReset.SetSensitive(in.KbOptions != nil)
 
 	speed := 0.0
@@ -121,35 +122,43 @@ func (s *shellUI) showInput() {
 		speed = *in.TouchpadSpeed
 		st.tpValue.SetText(fmt.Sprintf("%+.2f", speed))
 	} else {
-		st.tpValue.SetText("hyprland.conf's")
+		st.tpValue.SetText(i18n.T("From hyprland.conf"))
 	}
 	st.tpSpeed.SetValue(speed)
 	st.tpAccel.SetActive(in.TouchpadAccel != "flat")
 	if in.TouchpadSpeed != nil || in.TouchpadAccel != "" {
-		st.tpState.SetText("Set by inua")
+		st.tpState.SetText(i18n.T("Set by inua"))
 	} else {
-		st.tpState.SetText("Set in hyprland.conf")
+		st.tpState.SetText(i18n.T("Set in hyprland.conf"))
 	}
 	st.tpReset.SetSensitive(in.TouchpadSpeed != nil || in.TouchpadAccel != "")
 }
 
+// hyprConfig is the config Hyprland reads: hyprland.lua when it runs Lua
+// and the file is there, else hyprland.conf.
+func (s *shellUI) hyprConfig() string {
+	return hyprconf.ConfigFile(filepath.Dir(hyprconf.Path(s.opts.ConfigPath)), s.hyprLua)
+}
+
 // showSourceWarning explains on the keyboard and touchpad pages when
-// hyprland.conf does not source inua.conf, or overrides it.
+// Hyprland's config does not load inua's file (inua.conf, or inua.lua for
+// hyprland.lua), or overrides it.
 func (s *shellUI) showSourceWarning() {
 	st := &s.settings
-	target := hyprconf.Path(s.opts.ConfigPath)
-	conf := filepath.Join(filepath.Dir(target), "hyprland.conf")
-	_, overrides, err := bootstrap.FindSource(conf, target)
+	conf := s.hyprConfig()
+	_, overrides, err := bootstrap.FindSource(conf, hyprconf.Target(conf))
 	text := ""
 	switch {
+	case errors.Is(err, bootstrap.ErrNoSource) && strings.HasSuffix(conf, ".lua"):
+		text = i18n.Tf("hyprland.lua does not load inua.lua, so these settings do nothing yet. Add this as its last line: %s", hyprconf.LuaRequire)
 	case errors.Is(err, bootstrap.ErrNoSource):
-		text = fmt.Sprintf("hyprland.conf does not load inua.conf, so these settings do nothing yet. "+
-			"Add this as its last line:  source = ./%s", hyprconf.Name)
+		text = i18n.Tf("hyprland.conf does not load inua.conf, so these settings do nothing yet. Add this as its last line: source = ./%s", hyprconf.Name)
 	case err != nil:
 		text = err.Error()
+	case len(overrides) > 0 && strings.HasSuffix(conf, ".lua"):
+		text = i18n.Tf("hyprland.lua sets these again after loading inua.lua, which wins over inua: %s. Move the require line below them.", strings.Join(overrides, ", "))
 	case len(overrides) > 0:
-		text = "hyprland.conf sets these again after loading inua.conf, which wins over inua: " +
-			strings.Join(overrides, ", ") + ". Move the source line below them."
+		text = i18n.Tf("hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them.", strings.Join(overrides, ", "))
 	}
 	for _, l := range []*gtk.Label{&st.kbWarn, &st.tpWarn, &st.sc.warn} {
 		l.SetText(text)

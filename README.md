@@ -32,7 +32,7 @@ and a settings window, in one calm visual language. It works with
 | **Screenshots** | Areas, windows and screens, recordings, and a drawer of recent shots to drag into apps. |
 | **Passwords** | inua asks for administrator passwords (it is the Polkit agent) and gpg's passphrases. |
 | **Keyring** | `inua-keyring` serves apps' secrets (the Secret Service: browsers, Wi-Fi, the assistant's keys) from pass, after importing gnome-keyring's. |
-| **Assistant** | An agent that answers questions about this computer and does things on it (windows, Wi-Fi, volume, Focus, notifications, Tailscale …), asking before it changes anything; on [Mister Morph](https://github.com/quailyquaily/mistermorph), with your own models and keys, and fallbacks between them. |
+| **Assistant** | An agent that answers questions about this computer and does things on it (windows, Wi-Fi, volume, Focus, notifications, Tailscale …), asking before it changes anything; on [Mister Morph](https://github.com/quailyquaily/mistermorph), with your own models and keys, and fallbacks between them. It stays running with the desktop and can serve as an [endpoint for other Consoles](docs/apps.md#console-endpoint). |
 | **Light apps** | Clock, Weather, Stocks, Calculator, Calendar, Color Picker, System Monitor, Tailscale and Viewer. |
 | **Games** | Three offline light games: Minesweeper, Space Pinball and Small Fortune, a short property game against the computer. Each has its own launcher, or run `inua-games minesweeper`. |
 | **Keyboard and touchpad** | Swap Ctrl and Alt, remap Caps Lock, set the touchpad's speed. |
@@ -60,7 +60,8 @@ curl -fsSL https://inua.lyric.im/install.sh | sh
 
 Then log out and pick **Inua** at the login screen. The script installs the
 latest release for amd64 or arm64 (checking its checksum) into `~/.local`,
-offers to install the packages inua needs with apt, writes your
+offers to install the packages inua needs with apt, pacman, dnf or zypper
+(under each one's names), writes your
 configuration with `inua init` (never replacing your files), and adds the
 Inua login session (sudo). Where inua replaces something you have, it asks
 first, and the answer defaults to yes: gpg's pinentry (with
@@ -75,10 +76,12 @@ replaces the programs where `inua` is installed and the light apps'
 launchers, and restarts the shell in place; it lists the programs that keep
 running the old version until they restart (inua-keyring until you log in
 again). `-version v0.1.2` installs a
-given release. Running the install script again also updates. The shell
+given release. A build from source (`dev`) counts as older than every
+release, so `inua upgrade` replaces it with the latest; `git pull` and
+`make install` bring it back. Running the install script again also updates. The shell
 checks for a new release a random 1 to 10 minutes after you log in, then
 once a day, and tells you in a notification with an **Upgrade** button;
-`updates = false` under `[notifications]` in `config.toml` turns that off.
+Settings → About shows the version, checks for a new release on demand, upgrades, and lists what the latest release changed; its switch (`updates` under `[notifications]` in `config.toml`) turns the daily check off.
 
 The companions the sample config uses (a terminal, a file manager,
 screenshot tools …) are in [docs/design.md](docs/design.md#packages).
@@ -119,6 +122,14 @@ exec-once = inua-shell
 source = ./inua.conf      # keep this last
 ```
 
+With a Lua config (`hyprland.lua`, Hyprland 0.55 and later), the same two
+lines are:
+
+```lua
+hl.on("hyprland.start", function() hl.exec_cmd("inua-shell") end)
+pcall(require, "inua")    -- keep this last; loads inua.lua
+```
+
 `inua config hyprland` checks both. Setup in detail:
 [config/README.md](config/README.md).
 
@@ -154,7 +165,8 @@ applies it, `inua config check` checks it). The sample lists every option:
 [config/inua/config.toml](config/inua/config.toml).
 
 Keyboard, touchpad and shortcut settings are Hyprland's, so inua writes them
-to `~/.config/hypr/inua.conf`, which your `hyprland.conf` sources.
+to `~/.config/hypr/inua.conf`, which your `hyprland.conf` sources (or to
+`inua.lua`, which a `hyprland.lua` requires).
 Restyle anything with `~/.config/inua/style.css`.
 
 ## Development
@@ -170,6 +182,19 @@ make run         # run it in the current Hyprland session
 - `inua-shell -ui-dir ui` reads layouts and styles from disk.
 - `inua call shell snapshot DIR` renders the shell's windows to PNG files.
 - `inua call shell restart` re-executes the shell in place after a rebuild.
+
+Translations are gettext catalogs in `internal/i18n/locales`, keyed by
+the English text; `make i18n` gathers the text to translate into
+`po/inua.pot` and updates them, including desktop launchers. The interface
+supports Simplified Chinese, Traditional Chinese, Japanese, Spanish, French
+and Korean, chosen in Settings → Appearance → Language or by the
+environment (`LANGUAGE=zh-hant inua-apps clock`): see
+[docs/i18n.md](docs/i18n.md).
+
+Pull requests and pushes to `master` run Go formatting checks, regenerate
+Blueprint layouts and the translation catalogs and check for differences, run `make test`, and build all
+programs on Ubuntu 26.04. Desktop interactions still need a manual check
+in a Hyprland session.
 
 Releases: tag a version (`git tag v0.1.2 && git push --tags`) and GitHub
 Actions builds the Linux releases with GoReleaser (`.goreleaser.yaml`);

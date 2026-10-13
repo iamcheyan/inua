@@ -25,6 +25,7 @@ import (
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/rundir"
 	"github.com/lyricat/inua/internal/shell"
 	layouts "github.com/lyricat/inua/ui"
@@ -56,15 +57,15 @@ var Apps = map[string]struct {
 	make      func() view
 	many      bool
 }{
-	"clock":          {"Clock", "Clock", func() view { return &clockApp{} }, false},
-	"weather":        {"Weather", "Weather", func() view { return &weatherApp{} }, false},
-	"stocks":         {"Stocks", "Stocks", func() view { return &stocksApp{} }, false},
-	"calculator":     {"Calculator", "Calculator", func() view { return &calcApp{} }, false},
-	"calendar":       {"Calendar", "Calendar", func() view { return &calendarApp{} }, false},
-	"color-picker":   {"ColorPicker", "Color Picker", func() view { return &colorApp{} }, false},
-	"system-monitor": {"SystemMonitor", "System Monitor", func() view { return &sysmonApp{} }, false},
-	"tailscale":      {"Tailscale", "Tailscale", func() view { return &tailscaleApp{} }, false},
-	"viewer":         {"Viewer", "Viewer", func() view { return &viewerApp{} }, true},
+	"clock":          {"Clock", i18n.M("Clock"), func() view { return &clockApp{} }, false},
+	"weather":        {"Weather", i18n.M("Weather"), func() view { return &weatherApp{} }, false},
+	"stocks":         {"Stocks", i18n.M("Stocks"), func() view { return &stocksApp{} }, false},
+	"calculator":     {"Calculator", i18n.M("Calculator"), func() view { return &calcApp{} }, false},
+	"calendar":       {"Calendar", i18n.M("Calendar"), func() view { return &calendarApp{} }, false},
+	"color-picker":   {"ColorPicker", i18n.M("Color Picker"), func() view { return &colorApp{} }, false},
+	"system-monitor": {"SystemMonitor", i18n.M("System Monitor"), func() view { return &sysmonApp{} }, false},
+	"tailscale":      {"Tailscale", i18n.M("Tailscale"), func() view { return &tailscaleApp{} }, false},
+	"viewer":         {"Viewer", i18n.M("Viewer"), func() view { return &viewerApp{} }, true},
 }
 
 // View is a light app's window from another package: cmd/inua-assistant
@@ -101,10 +102,12 @@ func Register(name, id, title string, make func() View) {
 // Ctx is what the views share: the application, the layouts and the
 // theme.
 type Ctx struct {
-	App    *gtk.Application
-	UIDir  string // read layouts from here instead of the embedded copy
-	Colors map[string]string
-	refs   gtkx.Scope
+	App *gtk.Application
+	// StartHidden keeps a background app's first window out of the way.
+	StartHidden bool
+	UIDir       string // read layouts from here instead of the embedded copy
+	Colors      map[string]string
+	refs        gtkx.Scope
 
 	cfgPath  string
 	cfgMod   time.Time
@@ -121,6 +124,8 @@ type Ctx struct {
 // same app brings its window forward instead, unless the app has many.
 // args are a page to open, or files for an opener.
 func Run(name string, args []string, uiDir string) int {
+	cfg, _, _ := config.Load(config.DefaultPath()) // a broken file leaves the defaults
+	i18n.Init(cfg.Language)
 	a, ok := Apps[name]
 	if !ok {
 		names := make([]string, 0, len(Apps))
@@ -146,11 +151,13 @@ func Run(name string, args []string, uiDir string) int {
 		c.loadIcons()
 		c.win = c.v.build(c)
 		c.win.SetApplication(app)
-		c.win.SetTitle(a.Title)
+		c.win.SetTitle(i18n.T(a.Title))
 		c.win.AddCssClass("app")
 		c.win.AddCssClass("settings") // the settings window's controls and sections
 		c.win.AddCssClass(name)
-		c.win.Present()
+		if !c.StartHidden {
+			c.win.Present()
+		}
 		if o, ok := c.v.(opener); ok {
 			o.open(args)
 		} else if p, ok := c.v.(pager); ok && len(args) > 0 {
@@ -312,4 +319,103 @@ func bringHere() {
 	if err := hypr.NewClient(paths).BringHere(ctx, os.Getpid()); err != nil {
 		log.Printf("bringing the window here: %v", err)
 	}
+}
+
+// sidePanel is a panel sliding in at a window's right, which widens the
+// window. A floating window keeps the size and place it grew to, so once
+// the panel has slid away, Hyprland is asked to put the window back: its
+// size from before, and its place from before, moved by as much as it was
+// moved while the panel showed.
+type sidePanel struct {
+	win    *gtk.ApplicationWindow
+	rev    *gtk.Revealer
+	want   bool
+	before *hypr.Rect // the window before the panel, while it shows
+	grown  *hypr.Rect // and once the panel showed
+	// onRevealed outlives the window, like every signal handler.
+	onRevealed func(uintptr, uintptr, uintptr)
+}
+
+func (p *sidePanel) init(win *gtk.ApplicationWindow, rev *gtk.Revealer) {
+	p.win, p.rev = win, rev
+	p.onRevealed = func(uintptr, uintptr, uintptr) {
+		before := p.before
+		if before == nil {
+			return
+		}
+		shown, grown := p.rev.GetChildRevealed(), p.grown
+		go func() {
+			c, err := hyprClient()
+			if err != nil {
+				return
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+			defer cancel()
+			now, err := c.WindowOf(ctx, os.Getpid())
+			if err != nil {
+				log.Printf("panel: %v", err)
+				return
+			}
+			if shown {
+				gtkx.Post(func() {
+					if p.before == before {
+						p.grown = &now
+					}
+				})
+				return
+			}
+			r := *before
+			if grown != nil { // moved since it grew
+				r.X += now.X - grown.X
+				r.Y += now.Y - grown.Y
+			}
+			if err := c.PlaceWindow(ctx, os.Getpid(), r); err != nil {
+				log.Printf("panel: %v", err)
+			}
+		}()
+		if !shown {
+			p.before, p.grown = nil, nil
+		}
+	}
+	gtkx.ConnectNotify(rev, "child-revealed", &p.onRevealed)
+}
+
+// open shows the panel, once the window's place before it is known.
+func (p *sidePanel) open() {
+	if p.want {
+		return
+	}
+	p.want = true
+	go func() {
+		var before *hypr.Rect
+		if c, err := hyprClient(); err == nil {
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+			if r, err := c.WindowOf(ctx, os.Getpid()); err == nil {
+				before = &r
+			}
+			cancel()
+		}
+		gtkx.Post(func() {
+			if !p.want {
+				return
+			}
+			if p.before == nil {
+				p.before, p.grown = before, nil
+			}
+			p.rev.SetRevealChild(true)
+		})
+	}()
+}
+
+func (p *sidePanel) close() {
+	p.want = false
+	p.rev.SetRevealChild(false)
+}
+
+func hyprClient() (*hypr.Client, error) {
+	paths, err := hypr.PathsFromEnv()
+	if err != nil {
+		return nil, err // not in Hyprland
+	}
+	return hypr.NewClient(paths), nil
 }

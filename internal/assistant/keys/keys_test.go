@@ -27,10 +27,8 @@ func TestFile(t *testing.T) {
 	if v, _ := k.Get("work"); v != "sk-1" {
 		t.Errorf("renamed: %q", v)
 	}
-	saved, _ := k.Saved()
-	t.Setenv("INUA_TEST_KEY", "sk-env")
-	if Source(saved, "work", "") != "saved" || Source(saved, "x", "INUA_TEST_KEY") != "INUA_TEST_KEY" || Source(saved, "x", "NOPE_NOT_SET") != "" {
-		t.Error("source")
+	if saved, _ := k.Saved(); saved["work"] == 0 || saved["x"] != 0 {
+		t.Errorf("saved: %v", saved)
 	}
 	k.Set("work", "")
 	if saved, _ := k.Saved(); len(saved) != 0 {
@@ -97,5 +95,34 @@ func TestKeyring(t *testing.T) {
 	}
 	if w := k.Where(); w != "the keyring, in pass (inua-keyring)" {
 		t.Errorf("where: %q", w)
+	}
+	if token, err := k.ServeToken(false); err != nil || token != "" {
+		t.Fatalf("missing endpoint token: %v", err)
+	}
+	token, err := k.ServeToken(true)
+	if err != nil || len(token) < 26 {
+		t.Fatalf("creating endpoint token: %v", err)
+	}
+	for _, create := range []bool{false, true} {
+		got, err := k.ServeToken(create)
+		if err != nil || got != token {
+			t.Fatalf("endpoint token was not retained: %v", err)
+		}
+	}
+	if saved, err := k.Saved(); err != nil || saved[ServeTokenKey] == 0 {
+		t.Fatalf("endpoint token missing from key metadata: %v", err)
+	}
+	if left, _ := load(path); len(left) != 0 {
+		t.Error("endpoint token reached the plaintext fallback")
+	}
+}
+
+func TestServeTokenRequiresKeyring(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "keys.json")
+	if _, err := NewAt(path, nil).ServeToken(true); err == nil {
+		t.Fatal("created an endpoint token without a Secret Service")
+	}
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Fatal("created a plaintext fallback")
 	}
 }
