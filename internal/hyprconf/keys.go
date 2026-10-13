@@ -1,6 +1,7 @@
 package hyprconf
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -167,27 +168,16 @@ func ParseBinds(reply []byte) ([]Bind, error) {
 	return binds, nil
 }
 
-// KeysFor lists the keys of the binds that run command (or match label), outside submaps.
-func KeysFor(binds []Bind, command string, label ...string) []string {
+// KeysFor lists the keys of the binds that run command, or that Hyprland
+// describes as label (inua.lua's binds, whose command a Lua bind does not
+// show), outside submaps.
+func KeysFor(binds []Bind, command, label string) []string {
 	var keys []string
 	norm := strings.Join(strings.Fields(command), " ")
-	lbl := ""
-	if len(label) > 0 {
-		lbl = label[0]
-	}
 	for _, b := range binds {
-		if b.Submap != "" {
-			continue
-		}
-		matches := false
-		if b.Dispatcher == "exec" && strings.Join(strings.Fields(b.Arg), " ") == norm {
-			matches = true
-		} else if lbl != "" && b.Description != "" && strings.EqualFold(b.Description, lbl) {
-			matches = true
-		} else if b.Description != "" && strings.EqualFold(b.Description, norm) {
-			matches = true
-		}
-		if matches && !slices.ContainsFunc(keys, func(k string) bool { return SameKeys(k, b.Keys) }) {
+		runs := b.Dispatcher == "exec" && strings.Join(strings.Fields(b.Arg), " ") == norm
+		described := label != "" && strings.EqualFold(b.Description, label)
+		if b.Submap == "" && (runs || described) && !slices.ContainsFunc(keys, func(k string) bool { return SameKeys(k, b.Keys) }) {
 			keys = append(keys, b.Keys)
 		}
 	}
@@ -225,18 +215,29 @@ func renderShortcuts(b *strings.Builder, c config.Config) {
 	fmt.Fprintf(b, "\n# While inua's settings window records a shortcut, no other is active.\nsubmap = %s\nbind = SUPER CTRL ALT, Escape, submap, reset\nsubmap = reset\n", RecordSubmap)
 }
 
-// LuaKeys converts "SUPER+SHIFT+V" into Hyprland's Lua format "SUPER + SHIFT + V".
-func LuaKeys(keys string) string {
-	parts := strings.Split(keys, "+")
-	return strings.Join(parts, " + ")
+// luaKeys are the ways keys can be written in a Lua bind ("SUPER + SHIFT +
+// V"). hl.unbind matches case exactly, so a key of more than one letter
+// comes as written, in capitals and in lower case: "Tab", "TAB", "tab".
+func luaKeys(keys string) []string {
+	mods, key := splitKeys(keys)
+	prefix := ""
+	if mods != "" {
+		prefix = strings.ReplaceAll(mods, " ", " + ") + " + "
+	}
+	var out []string
+	for _, k := range []string{key, strings.ToUpper(key), strings.ToLower(key)} {
+		if !slices.Contains(out, prefix+k) {
+			out = append(out, prefix+k)
+		}
+	}
+	return out
 }
 
+// shortcutLabel is a shortcut's description in Hyprland (hyprctl binds),
+// which the settings window matches its actions by.
 func shortcutLabel(sc config.Shortcut) string {
 	if sc.Action == "exec" {
-		if sc.Name != "" {
-			return sc.Name
-		}
-		return sc.Command
+		return cmp.Or(sc.Name, sc.Command)
 	}
 	for _, a := range Actions {
 		if a.ID == sc.Action {
@@ -246,6 +247,7 @@ func shortcutLabel(sc config.Shortcut) string {
 	return sc.Action
 }
 
+// renderShortcutsLua is renderShortcuts for inua.lua.
 func renderShortcutsLua(b *strings.Builder, c config.Config) {
 	var unbind []string
 	for _, sc := range c.Shortcuts {
@@ -256,27 +258,20 @@ func renderShortcutsLua(b *strings.Builder, c config.Config) {
 		}
 	}
 	if len(c.Shortcuts) > 0 {
-		b.WriteString("\n-- Shortcuts managed by inua\n")
+		b.WriteString("\n-- Shortcuts from inua's settings window.\n")
 	}
 	for _, k := range unbind {
-		fmt.Fprintf(b, "pcall(function() hl.unbind(%q) end)\n", LuaKeys(k))
+		for _, v := range luaKeys(k) {
+			fmt.Fprintf(b, "pcall(hl.unbind, %s)\n", luaString(v)) // in case one is not bound
+		}
 	}
 	for _, sc := range c.Shortcuts {
 		cmd := ShortcutCommand(c, sc)
 		if sc.Keys == "" || cmd == "" {
 			continue
 		}
-		label := shortcutLabel(sc)
-		fmt.Fprintf(b, "pcall(function() hl.bind(%q, hl.dsp.exec_cmd(%q), { description = %q }) end)\n",
-			LuaKeys(sc.Keys), cmd, label)
+		fmt.Fprintf(b, "hl.bind(%s, hl.dsp.exec_cmd(%s), { description = %s })\n",
+			luaString(luaKeys(sc.Keys)[0]), luaString(cmd), luaString(shortcutLabel(sc)))
 	}
-	if !strings.HasSuffix(b.String(), "\n\n") {
-		b.WriteString("\n")
-	}
-	b.WriteString("-- While inua's settings window records a shortcut, no other is active.\n")
-	b.WriteString("pcall(function()\n")
-	fmt.Fprintf(b, "    hl.define_submap(%q, function()\n", RecordSubmap)
-	b.WriteString("        hl.bind(\"SUPER + CTRL + ALT + Escape\", hl.dsp.submap(\"reset\"))\n")
-	b.WriteString("    end)\n")
-	b.WriteString("end)\n")
+	fmt.Fprintf(b, "\n-- While inua's settings window records a shortcut, no other is active.\nhl.define_submap(%s, function()\n    hl.bind(\"SUPER + CTRL + ALT + Escape\", hl.dsp.submap(\"reset\"))\nend)\n", luaString(RecordSubmap))
 }

@@ -115,14 +115,8 @@ func (s *shellUI) showShortcuts() {
 			(b.Dispatcher == "exec" && commands[strings.Join(strings.Fields(b.Arg), " ")]) {
 			continue
 		}
-		descMatch := false
-		for _, a := range hyprconf.Actions {
-			if b.Description != "" && strings.EqualFold(b.Description, a.Label) {
-				descMatch = true
-				break
-			}
-		}
-		if descMatch {
+		// inua.lua's binds, described as the action they run.
+		if b.Description != "" && slices.ContainsFunc(hyprconf.Actions, func(a hyprconf.Action) bool { return strings.EqualFold(b.Description, a.Label) }) {
 			continue
 		}
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
@@ -136,8 +130,8 @@ func (s *shellUI) showShortcuts() {
 		if b.Description != "" {
 			what = b.Description
 		} else if b.Arg != "" {
-			if b.Dispatcher == "__lua" {
-				what = "Lua action"
+			if b.Dispatcher == "__lua" { // a Lua function: its code is not shown
+				what = i18n.T("Lua function")
 			} else {
 				what += "  " + b.Arg
 			}
@@ -310,12 +304,9 @@ func (s *shellUI) setShortcut(id, keys string) {
 			at = i
 		}
 	} else if at = shortcutIndex(list, id); at < 0 {
-		label := id
-		for _, a := range hyprconf.Actions {
-			if a.ID == id {
-				label = a.Label
-				break
-			}
+		label := ""
+		if i := slices.IndexFunc(hyprconf.Actions, func(a hyprconf.Action) bool { return a.ID == id }); i >= 0 {
+			label = hyprconf.Actions[i].Label
 		}
 		list = append(list, config.Shortcut{Action: id, Replaces: hyprconf.KeysFor(s.settings.sc.binds, hyprconf.Command(c, id), label)})
 		at = len(list) - 1

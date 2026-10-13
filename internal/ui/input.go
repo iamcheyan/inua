@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -38,7 +37,7 @@ type hyprApply struct {
 // background, and reloads Hyprland if the file changed.
 func (s *shellUI) applyHyprland() {
 	c, client := s.cfg, s.client
-	path := hyprconf.Path(s.opts.ConfigPath)
+	path := hyprconf.Target(s.hyprConfig())
 	gen := s.hyprApply.latest.Add(1)
 	go func() {
 		s.hyprApply.mu.Lock()
@@ -135,34 +134,31 @@ func (s *shellUI) showInput() {
 	st.tpReset.SetSensitive(in.TouchpadSpeed != nil || in.TouchpadAccel != "")
 }
 
+// hyprConfig is the config Hyprland reads: hyprland.lua when it runs Lua
+// and the file is there, else hyprland.conf.
+func (s *shellUI) hyprConfig() string {
+	return hyprconf.ConfigFile(filepath.Dir(hyprconf.Path(s.opts.ConfigPath)), s.hyprLua)
+}
+
 // showSourceWarning explains on the keyboard and touchpad pages when
-// hyprland.conf does not source inua.conf, or overrides it.
+// Hyprland's config does not load inua's file (inua.conf, or inua.lua for
+// hyprland.lua), or overrides it.
 func (s *shellUI) showSourceWarning() {
 	st := &s.settings
-	target := hyprconf.Path(s.opts.ConfigPath)
-	conf := filepath.Join(filepath.Dir(target), "hyprland.conf")
-	if _, err := os.Stat(conf); os.IsNotExist(err) {
-		if _, err := os.Stat(filepath.Join(filepath.Dir(target), "hyprland.lua")); err == nil {
-			conf = filepath.Join(filepath.Dir(target), "hyprland.lua")
-		}
-	}
-	_, overrides, err := bootstrap.FindSource(conf, target)
+	conf := s.hyprConfig()
+	_, overrides, err := bootstrap.FindSource(conf, hyprconf.Target(conf))
 	text := ""
-	isLua := strings.HasSuffix(conf, ".lua")
 	switch {
+	case errors.Is(err, bootstrap.ErrNoSource) && strings.HasSuffix(conf, ".lua"):
+		text = i18n.Tf("hyprland.lua does not load inua.lua, so these settings do nothing yet. Add this as its last line: %s", hyprconf.LuaRequire)
 	case errors.Is(err, bootstrap.ErrNoSource):
-		if isLua {
-			text = fmt.Sprintf("hyprland.lua does not load %s, so settings outside live sessions are not persistent yet. "+
-				"Add this to hyprland.lua:  require(\"hypr.inua\")", hyprconf.LuaName)
-		} else {
-			text = fmt.Sprintf("hyprland.conf does not load %s, so these settings do nothing yet. "+
-				"Add this as its last line:  source = ./%s", hyprconf.Name, hyprconf.Name)
-		}
+		text = i18n.Tf("hyprland.conf does not load inua.conf, so these settings do nothing yet. Add this as its last line: source = ./%s", hyprconf.Name)
 	case err != nil:
 		text = err.Error()
+	case len(overrides) > 0 && strings.HasSuffix(conf, ".lua"):
+		text = i18n.Tf("hyprland.lua sets these again after loading inua.lua, which wins over inua: %s. Move the require line below them.", strings.Join(overrides, ", "))
 	case len(overrides) > 0:
-		text = filepath.Base(conf) + " sets these again after loading inua: " +
-			strings.Join(overrides, ", ") + ". Move the inua loading line below them."
+		text = i18n.Tf("hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them.", strings.Join(overrides, ", "))
 	}
 	for _, l := range []*gtk.Label{&st.kbWarn, &st.tpWarn, &st.sc.warn} {
 		l.SetText(text)
