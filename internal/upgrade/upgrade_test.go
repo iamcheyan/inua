@@ -30,13 +30,43 @@ func TestCompare(t *testing.T) {
 		{"0.0.3-SNAPSHOT-abc", "v0.0.3", -1, true},
 		{"v0.0.3", "0.0.3-rc1", 1, true},
 		{"0.0.3-rc1", "0.0.3-rc2", -1, true},
-		{"dev", "v0.0.2", 0, false},
+		{"dev", "v0.0.1", -1, true}, // a build from source comes before every release
+		{"v0.0.1", "dev", 1, true},
+		{"dev", "0.0.1-rc1", -1, true},
+		{"dev", "dev", 0, true},
+		{"abc", "v0.0.2", 0, false},
 		{"v0.0.2", "v0.2", 0, false},
 	} {
 		got, ok := Compare(c.a, c.b)
 		if got != c.want || ok != c.ok {
 			t.Errorf("Compare(%q, %q) = %d, %v; want %d, %v", c.a, c.b, got, ok, c.want, c.ok)
 		}
+	}
+}
+
+func TestDecide(t *testing.T) {
+	for _, c := range []struct {
+		have, tag      string
+		force, pinned  bool
+		install, fails bool
+	}{
+		{"dev", "v0.0.3", false, false, true, false}, // the latest, over a build from source
+		{"dev", "v0.0.3", false, true, true, false},  // the settings' button: -version
+		{"v0.0.2", "v0.0.3", false, false, true, false},
+		{"v0.0.3", "v0.0.3", false, true, false, false},
+		{"v0.0.3", "v0.0.3", true, true, true, false},
+		{"v0.0.4", "v0.0.3", false, false, false, false},
+		{"v0.0.4", "v0.0.3", false, true, true, false}, // an older release, asked for
+		{"abc", "v0.0.3", false, true, false, true},
+		{"abc", "v0.0.3", true, false, true, false},
+	} {
+		install, why, err := Decide(c.have, c.tag, c.force, c.pinned)
+		if install != c.install || (err != nil) != c.fails || (!install && err == nil && why == "") {
+			t.Errorf("Decide(%q, %q, force=%v, pinned=%v) = %v, %q, %v", c.have, c.tag, c.force, c.pinned, install, why, err)
+		}
+	}
+	if IsRelease("dev") || !IsRelease("v0.0.3") {
+		t.Error("IsRelease")
 	}
 }
 
@@ -245,5 +275,28 @@ func TestStillOld(t *testing.T) {
 	}
 	if got := StillOld(dir, installed, "inua-keyring"); len(got) != 0 {
 		t.Errorf("left out: %v", got)
+	}
+}
+
+func TestReleasesAndChanges(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/releases" || r.URL.Query().Get("per_page") != "5" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Write([]byte(`[{"tag_name":"v0.0.2","name":"v0.0.2","published_at":"2026-10-11T14:23:31Z",
+			"html_url":"https://example.com/v0.0.2",
+			"body":"## Changelog\n* e02ccd41912ab497edcaabcce9b17f22b5854a09 Fix two crashes\n* 9216ab8 Notifications: names\n\nInstall or update: ` + "`curl … | sh`" + `\n"}]`))
+	}))
+	defer srv.Close()
+	rs, err := (Source{API: srv.URL, Client: srv.Client()}).Releases(context.Background(), 5)
+	if err != nil || len(rs) != 1 || rs[0].Tag != "v0.0.2" || rs[0].Date.Day() != 11 {
+		t.Fatalf("%+v %v", rs, err)
+	}
+	if got := Changes(rs[0].Body); !slices.Equal(got, []string{"Fix two crashes", "Notifications: names"}) {
+		t.Errorf("changes %q", got)
+	}
+	if got := Changes("A first release.\n\nWith `code`."); !slices.Equal(got, []string{"A first release.", "With code."}) {
+		t.Errorf("plain notes %q", got)
 	}
 }
