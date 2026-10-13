@@ -145,7 +145,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	b.status.ConnectClicked(&s.onControlButton)
 	b.notes.ConnectClicked(&s.onNotesButton)
 	b.clipboard.ConnectClicked(&s.onClipboardButton)
-	b.clipboard.SetVisible(s.cfg.Clipboard.Bar)
+	b.clipboard.SetVisible(s.cfg.Clipboard.Enable && s.cfg.Clipboard.Bar)
 	b.rec.ConnectClicked(&s.onRecButton)
 	b.clockButton.ConnectClicked(&s.onClockButton)
 	s.showNotesButton(b)

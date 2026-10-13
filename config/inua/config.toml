@@ -190,18 +190,23 @@ critical_in_focus = true
 updates = true
 
 [clipboard]
-# Show the clipboard history button in the top bar.
+# Keep a history of what you copy (text and images, with wl-paste from
+# wl-clipboard) in ~/.local/state/inua. A password manager's copies, which
+# it marks as sensitive, are left out. false records nothing.
+enable = true
+
+# Show the clipboard history button in the top bar; a shortcut set in
+# Shortcuts (Clipboard history) opens the panel too.
 bar = true
 
-# Opacity of the clipboard panel card (50 to 100 percent).
-# Higher values improve readability on complex backgrounds.
+# The panel's opacity, 50 to 100 percent.
 opacity = 84
 
-# Maximum number of history items to keep (20 to 1000).
+# How many entries the history keeps, 20 to 1000; the oldest go first.
 limit = 300
 
-# Clicking an item immediately pastes it into the previous window.
-# false: only copies to clipboard without auto-pasting.
+# Clicking an entry pastes it into the window you were in; false only
+# copies it.
 paste_on_click = true
 
 [dock]

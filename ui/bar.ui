@@ -108,7 +108,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                   <class name="clipboard"/>
                 </style>
                 <property name="focusable">false</property>
-                <property name="tooltip-text">Clipboard history</property>
+                <property name="tooltip-text" translatable="yes">Clipboard history</property>
                 <property name="icon-name">edit-paste-symbolic</property>
               </object>
             </child>

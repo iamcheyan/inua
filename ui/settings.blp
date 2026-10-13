@@ -1835,12 +1835,42 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
+                        label:  _("Keep a clipboard history");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Text and images you copy, kept on this computer; a password manager's copies are left out");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch clip_enable {
+                      name: "clip_enable";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
                         label:  _("Show in top bar");
                         xalign: 0;
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("A button in the status area opens clipboard history");
+                        label:  _("A button in the status area opens the clipboard history");
                         xalign: 0;
                         wrap: true;
                       }
@@ -1870,7 +1900,7 @@ ApplicationWindow settings {
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("Clicking an item pastes it immediately; off only copies");
+                        label:  _("Clicking an entry pastes it into the window you were in; off only copies it");
                         xalign: 0;
                         wrap: true;
                       }
@@ -1937,24 +1967,16 @@ ApplicationWindow settings {
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("Maximum number of history items to keep");
+                        label:  _("How many entries it keeps; the oldest go first");
                         xalign: 0;
                         wrap: true;
                       }
                     }
 
+                    // Its choices come from Go (showClipboardSettings).
                     DropDown clip_limit {
                       name: "clip_limit";
                       valign: center;
-
-                      model: StringList {
-                        strings [
-                          "50 items",
-                          "100 items",
-                          "300 items",
-                          "500 items",
-                        ]
-                      };
                     }
                   }
 
@@ -1984,7 +2006,7 @@ ApplicationWindow settings {
 
                     Button clip_clear {
                       name: "clip_clear";
-                      label:  _("Clear History");
+                      label:  _("Clear the history");
                       styles ["button-danger"]
                       valign: center;
                     }

@@ -126,6 +126,34 @@ says who asked: the app inua-keyring reads a secret for, or the program
 gpg-agent names and those it runs under ("gpg ← git ← zed"). The shell
 keeps none of it.
 
+## Clipboard history
+
+The clipboard button in the top bar (or a shortcut set for "Clipboard
+history", or `inua call clipboard toggle|open|close`) opens a searchable
+list of the text and images you copied, in a sidebar like the notification
+center's. Hover over an entry for its text or image and when it was copied;
+click it to paste into the window you were in, or use its buttons to only
+copy it, paste an image's file path, or delete it. Escape or a click
+outside closes the panel.
+
+The shell runs `wl-paste --watch` (wl-clipboard), which hands each new
+selection to `inua clipboard capture`; it keeps the newest
+`clipboard.limit` entries (300; 20 to 1000) in
+`~/.local/state/inua/clipboard-history.json`, images in
+`clipboard-images/` next to it, readable only by you. Text over 1 MiB and
+images over 32 MiB are not kept, nor a password manager's copies when it
+marks them as sensitive (`CLIPBOARD_STATE=sensitive`). Deleting, clearing
+or falling past the limit removes an image's file too.
+`clipboard.enable = false` (Settings → Clipboard) records nothing, and
+what is on the clipboard when recording starts (the shell starting, or the
+switch turned on) is not kept either.
+
+Pasting focuses the window again without moving the pointer and sends it
+Ctrl+V, Ctrl+Shift+V in a terminal, by address, so the window under the
+pointer cannot take it: with Hyprland's classic dispatchers on 0.53, its
+Lua ones on 0.55. Without Hyprland it types the shortcut with `wtype`.
+`clipboard.paste_on_click = false` only copies.
+
 ## Keyring
 
 `inua-keyring` is a Secret Service (what apps use through libsecret:
@@ -155,22 +183,3 @@ Phosphor icons, and matching Fcitx 5 themes.
 ## Wallpaper
 
 An image placed your way, or the theme's ground with a fine texture.
-
-### Clipboard history
-
-The clipboard button in the top bar opens a searchable text and image history
-in a fixed-width, full-height sidebar matching the notification center. Image
-previews scale to fit within the sidebar without stretching it.
-Hover over a row for its text or image preview; click it to paste into the
-previously focused application. Each row also has copy-only and delete actions,
-and image rows can paste their source file path. Escape or a click outside
-closes the panel. Colours follow the active Inua theme.
-
-Inua uses `wl-paste --watch` and `wl-copy` from wl-clipboard. History is limited
-to 300 entries, with a 32 MiB limit per selection; sensitive selections are not
-stored. Existing Anchor Shell (`labwc`) or Omarchy JSON history is reused when
-available; otherwise history lives in `$XDG_STATE_HOME/inua` (default
-`~/.local/state/inua`). The watcher stops when the shell exits or restarts.
-`inua call clipboard toggle|open|close` also controls the panel, for custom
-keyboard shortcuts. Automatic paste uses Hyprland's targeted shortcut dispatch;
-on other compositors it requires `wtype`.

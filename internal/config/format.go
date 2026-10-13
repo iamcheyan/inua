@@ -23,7 +23,7 @@ func Format(c Config) string {
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates,
-		c.Clipboard.Bar, c.Clipboard.Opacity, c.Clipboard.Limit, c.Clipboard.PasteOnClick,
+		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Opacity, c.Clipboard.Limit, c.Clipboard.PasteOnClick,
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges,
@@ -309,18 +309,23 @@ critical_in_focus = %t
 updates = %t
 
 [clipboard]
-# Show the clipboard history button in the top bar.
+# Keep a history of what you copy (text and images, with wl-paste from
+# wl-clipboard) in ~/.local/state/inua. A password manager's copies, which
+# it marks as sensitive, are left out. false records nothing.
+enable = %t
+
+# Show the clipboard history button in the top bar; a shortcut set in
+# Shortcuts (Clipboard history) opens the panel too.
 bar = %t
 
-# Opacity of the clipboard panel card (50 to 100 percent).
-# Higher values improve readability on complex backgrounds.
+# The panel's opacity, 50 to 100 percent.
 opacity = %d
 
-# Maximum number of history items to keep (20 to 1000).
+# How many entries the history keeps, 20 to 1000; the oldest go first.
 limit = %d
 
-# Clicking an item immediately pastes it into the previous window.
-# false: only copies to clipboard without auto-pasting.
+# Clicking an entry pastes it into the window you were in; false only
+# copies it.
 paste_on_click = %t
 
 [dock]

@@ -11,7 +11,6 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
-	"github.com/lyricat/inua/internal/clipboard"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/layershell"
@@ -63,12 +62,8 @@ func (s *shellUI) loadClipboardStyle() {
 		st.clipboard = gtk.NewCssProvider()
 		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.clipboard, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
 	}
-	op := s.cfg.Clipboard.Opacity
-	if op < 30 || op > 100 {
-		op = 84
-	}
-	alpha := float64(op) / 100.0
-	css := fmt.Sprintf(".clipboard-panel .clipboard-card { background: alpha(@app, %.2f); }\n", alpha)
+	// The settings file checks the range (config.validate).
+	css := fmt.Sprintf(".clipboard-panel .clipboard-card { background: alpha(@app, %.2f); }\n", float64(s.cfg.Clipboard.Opacity)/100)
 	st.clipboard.LoadFromString(css)
 }
 
@@ -171,15 +166,20 @@ func (s *shellUI) applyConfig(c config.Config) {
 		s.syncDock(b)
 		b.title.SetVisible(c.Bar.Title)
 		b.tray.SetVisible(c.Bar.Tray)
-		b.clipboard.SetVisible(c.Clipboard.Bar)
+		b.clipboard.SetVisible(c.Clipboard.Enable && c.Clipboard.Bar)
 		b.setHypr(s, s.snap)
 		s.syncWallpaper(b)
 	}
 	if old.Clipboard.Opacity != c.Clipboard.Opacity {
 		s.loadClipboardStyle()
 	}
-	if old.Clipboard.Limit != c.Clipboard.Limit {
-		clipboard.Limit = c.Clipboard.Limit
+	if old.Clipboard.Enable != c.Clipboard.Enable {
+		if c.Clipboard.Enable {
+			s.startClipboardCapture()
+		} else {
+			s.stopClipboardCapture()
+			s.closeClipboard()
+		}
 	}
 	if c.Bar.Tray && s.tray.host == nil {
 		s.startTray()

@@ -38,12 +38,13 @@ type settings struct {
 
 	bgEnable, title, tray, tpAccel, notifyOn, critFocus gtk.Switch
 	barOn, dockOn, dockHide, dockDrawer, dockFlushBar   gtk.Switch
-	clipBar, clipPaste                                  gtk.Switch
+	clipEnable, clipBar, clipPaste                      gtk.Switch
 	dockSize, dockPosition                              gtk.DropDown
 	dockPinned                                          gtk.Box
 	bgImage, bgColor, clock, terminal, lock, screenshot gtk.Entry
 	bgFit, ws, launchMode, swap, caps, icons, banner    gtk.DropDown
 	clipLimit                                           gtk.DropDown
+	clipLimits                                          []int // clipLimit's choices
 	tpSpeed, clipOpacity                                gtk.Scale
 	clipOpacityVal, clipStats                           gtk.Label
 	clipClear                                           gtk.Button
@@ -128,6 +129,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Notify.Updates = on
 		case "keyring_notify":
 			c.Keyring.Notify = on
+		case "clip_enable":
+			c.Clipboard.Enable = on
 		case "clip_bar":
 			c.Clipboard.Bar = on
 		case "clip_paste":
@@ -168,8 +171,8 @@ func (s *shellUI) bindSettingsHandlers() {
 				c.Notify.Banner = config.BannerChoices[i]
 			}
 		case "clip_limit":
-			if i >= 0 && i < len(config.ClipboardLimitChoices) {
-				c.Clipboard.Limit = config.ClipboardLimitChoices[i]
+			if i >= 0 && i < len(s.settings.clipLimits) {
+				c.Clipboard.Limit = s.settings.clipLimits[i]
 			}
 		case "icons":
 			c.Style.Icons = pick(config.IconSets, i, c.Style.Icons)
@@ -234,7 +237,7 @@ func (s *shellUI) bindSettingsHandlers() {
 		if r.GetName() == "clip_opacity" {
 			val := int(math.Round(v))
 			c.Clipboard.Opacity = val
-			s.settings.clipOpacityVal.SetText(fmt.Sprintf("%d%%", val))
+			s.settings.clipOpacityVal.SetText(i18n.Tf("%d%%", val))
 			s.changeSettings(c)
 			return false
 		}
@@ -349,9 +352,11 @@ func (s *shellUI) openSettings() {
 	ui.Get("notify_enable", &st.notifyOn)
 	ui.Get("critical_focus", &st.critFocus)
 	ui.Get("notify_state", &st.notifyState)
+	ui.Get("clip_enable", &st.clipEnable)
 	ui.Get("clip_bar", &st.clipBar)
 	ui.Get("clip_paste", &st.clipPaste)
 	ui.Get("clip_limit", &st.clipLimit)
+	st.clipLimits = nil // a new dropdown, without its choices
 	ui.Get("clip_opacity", &st.clipOpacity)
 	ui.Get("clip_opacity_val", &st.clipOpacityVal)
 	ui.Get("clip_stats", &st.clipStats)
@@ -387,7 +392,7 @@ func (s *shellUI) openSettings() {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipBar, &st.clipPaste} {
+	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
 	for _, b := range []*gtk.Button{&choose, &clearImage, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear} {
@@ -547,15 +552,28 @@ func (s *shellUI) showSettings() {
 func (s *shellUI) showClipboardSettings() {
 	st := &s.settings
 	c := s.cfg.Clipboard
+	st.clipEnable.SetActive(c.Enable)
 	st.clipBar.SetActive(c.Bar)
 	st.clipPaste.SetActive(c.PasteOnClick)
 	st.clipOpacity.SetValue(float64(c.Opacity))
-	st.clipOpacityVal.SetText(fmt.Sprintf("%d%%", c.Opacity))
-	idx := slices.Index(config.ClipboardLimitChoices, c.Limit)
-	if idx < 0 {
-		idx = 2
+	st.clipOpacityVal.SetText(i18n.Tf("%d%%", c.Opacity))
+	// The usual limits, and the one in the file if it is another.
+	limits := slices.Clone(config.ClipboardLimitChoices)
+	if !slices.Contains(limits, c.Limit) {
+		limits = append(limits, c.Limit)
+		slices.Sort(limits)
 	}
-	st.clipLimit.SetSelected(uint32(idx))
+	if !slices.Equal(limits, st.clipLimits) {
+		names := make([]string, len(limits))
+		for i, n := range limits {
+			names[i] = i18n.Nf("%d entry", "%d entries", n, n)
+		}
+		list := gtk.NewStringList(names)
+		st.clipLimit.SetModel(list)
+		list.Unref()
+		st.clipLimits = limits
+	}
+	st.clipLimit.SetSelected(uint32(slices.Index(limits, c.Limit)))
 	s.updateClipboardStats()
 }
 
@@ -573,12 +591,12 @@ func (s *shellUI) updateClipboardStats() {
 			texts++
 		}
 	}
-	info, err := os.Stat(s.clipboard.path)
-	var size int64
-	if err == nil {
-		size = info.Size()
-	}
-	st.clipStats.SetText(fmt.Sprintf("%d items (%d text, %d images) · %.1f KB", len(entries), texts, imgs, float64(size)/1024.0))
+	size := clipboard.Size(s.clipboard.path)
+	st.clipStats.SetText(i18n.Tf("%s (%s, %s) · %s",
+		i18n.Nf("%d entry", "%d entries", len(entries), len(entries)),
+		i18n.Nf("%d text", "%d texts", texts, texts),
+		i18n.Nf("%d image", "%d images", imgs, imgs),
+		i18n.Tf("%.1f KB", float64(size)/1024)))
 }
 
 // setEntry changes an entry's text only if it differs, so the caret stays

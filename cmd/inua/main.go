@@ -22,6 +22,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -53,11 +54,7 @@ func main() {
 		if len(os.Args) < 3 || len(os.Args) > 4 || os.Args[2] != "capture" {
 			usage()
 		}
-		path := clipboard.HistoryPath()
-		if len(os.Args) == 4 {
-			path = os.Args[3]
-		}
-		err = clipboard.Capture(path, os.Stdin)
+		err = cmdClipboardCapture(os.Args[3:])
 	case "hypr":
 		err = cmdHypr(os.Args[2:])
 	case "config":
@@ -181,6 +178,23 @@ func cmdHypr(args []string) error {
 	}
 	usage()
 	return nil
+}
+
+// cmdClipboardCapture adds the selection on stdin to the clipboard
+// history; the shell runs it through wl-paste --watch. It reads the
+// settings each time, so a new limit, or recording turned off, holds
+// from the next copy.
+func cmdClipboardCapture(args []string) error {
+	path := clipboard.HistoryPath()
+	if len(args) == 1 {
+		path = args[0]
+	}
+	c, _, _ := config.Load(config.DefaultPath()) // a broken file leaves the defaults
+	if !c.Clipboard.Enable {
+		io.Copy(io.Discard, os.Stdin)
+		return nil
+	}
+	return clipboard.Capture(path, c.Clipboard.Limit, os.Stdin)
 }
 
 // cmdConfig checks the settings file the way inua-shell reads it.

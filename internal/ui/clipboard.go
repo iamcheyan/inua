@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"syscall"
@@ -21,6 +22,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/pango"
 	"github.com/lyricat/inua/internal/clipboard"
 	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 )
 
@@ -33,7 +35,7 @@ type clipboardPanel struct {
 	detailWidget                     *gtk.Widget
 	search                           *gtk.SearchEntry
 	preview                          *gtk.Picture
-	text, status                     *gtk.Label
+	text, status, detailTitle        *gtk.Label
 	entries                          []clipboard.Entry
 	filtered                         []clipboard.Entry
 	path, stamp, target, targetClass string
@@ -76,7 +78,7 @@ func (s *shellUI) bindClipboardHandlers() {
 		action, raw, _ := strings.Cut(b.GetName(), ":")
 		if action == "clear" {
 			if err := clipboard.Clear(c.path); err != nil {
-				c.status.SetText("Could not clear history")
+				c.status.SetText(i18n.T("Could not clear the history"))
 				return
 			}
 			s.refreshClipboard()
@@ -89,7 +91,7 @@ func (s *shellUI) bindClipboardHandlers() {
 		entry := c.filtered[index]
 		if action == "delete" {
 			if err := clipboard.Delete(c.path, entry); err != nil {
-				c.status.SetText("Could not delete item")
+				c.status.SetText(i18n.T("Could not delete it"))
 				return
 			}
 			s.refreshClipboard()
@@ -140,9 +142,13 @@ func (s *shellUI) bindClipboardHandlers() {
 	}
 }
 
-// A shell-owned watcher invokes the lightweight CLI, not another GTK process.
-// The existing JSON store is shared with Anchor Shell, including its lock.
+// startClipboardCapture records what is copied, when the settings say so:
+// wl-paste --watch runs `inua clipboard capture` (no GTK) for each new
+// selection, and the panel reads the history it writes.
 func (s *shellUI) startClipboardCapture() {
+	if !s.cfg.Clipboard.Enable || s.clipboard.watcher != nil {
+		return
+	}
 	exe, err := os.Executable()
 	if err != nil {
 		return
@@ -152,11 +158,15 @@ func (s *shellUI) startClipboardCapture() {
 		log.Printf("clipboard: capture helper unavailable: %v", err)
 		return
 	}
+	if err := clipboard.SkipFirst(s.clipboard.path); err != nil {
+		log.Printf("clipboard: %v", err)
+		return
+	}
 	cmd := exec.Command("wl-paste", "--watch", helper, "clipboard", "capture", s.clipboard.path)
 	cmd.Stderr = os.Stderr
 	cmd.SysProcAttr = &syscall.SysProcAttr{Pdeathsig: syscall.SIGTERM}
 	if err := cmd.Start(); err != nil {
-		log.Printf("clipboard watcher: %v", err)
+		log.Printf("clipboard watcher: %v (is wl-clipboard installed?)", err)
 		return
 	}
 	s.clipboard.watcher = cmd
@@ -215,34 +225,33 @@ func (s *shellUI) openClipboard(mon *gdk.Monitor) {
 	mark.AddCssClass("mark")
 	mark.SetValign(gtk.AlignCenterValue)
 	gtkx.Append(heading, &mark.Widget)
-	title := gtk.NewLabel("[CLIPBOARD]")
+	title := gtk.NewLabel(i18n.T("[CLIPBOARD]"))
 	title.AddCssClass("tag")
 	title.SetHexpand(true)
 	title.SetXalign(0)
 	gtkx.Append(heading, &title.Widget)
-	clear := gtk.NewButtonWithLabel("Clear all")
+	clear := gtk.NewButtonWithLabel(i18n.T("Clear all"))
 	clear.AddCssClass("link")
 	clear.SetName("clear")
 	clear.ConnectClicked(&s.onClipboardAction)
 	gtkx.Append(heading, &clear.Widget)
 	gtkx.Append(card, &heading.Widget)
 	c.search = gtk.NewSearchEntry()
-	c.search.SetPlaceholderText("Search clipboard history")
+	c.search.SetPlaceholderText(i18n.T("Search clipboard history"))
 	c.search.AddCssClass("clipboard-search")
 	c.search.ConnectSearchChanged(&s.onClipboardSearch)
 	c.search.ConnectActivate(&s.onClipboardActivate)
 	gtkx.Append(card, &c.search.Widget)
 
-	// Hover details live in a separate fixed-width card beside the selected row,
-	// matching the original clipboard plugin's interaction.
+	// Hover details live in a card of their own beside the row.
 	c.detailCard = gtk.NewBox(gtk.OrientationVerticalValue, 8)
 	c.detailCard.AddCssClass("clipboard-card")
 	c.detailCard.AddCssClass("clipboard-detail")
 	c.detailCard.SetSizeRequest(380, 300)
-	detailTitle := gtk.NewLabel("Clipboard details")
-	detailTitle.AddCssClass("tag")
-	detailTitle.SetXalign(0)
-	gtkx.Append(c.detailCard, &detailTitle.Widget)
+	c.detailTitle = gtk.NewLabel("")
+	c.detailTitle.AddCssClass("tag")
+	c.detailTitle.SetXalign(0)
+	gtkx.Append(c.detailCard, &c.detailTitle.Widget)
 	divider := gtk.NewSeparator(gtk.OrientationHorizontalValue)
 	gtkx.Append(c.detailCard, &divider.Widget)
 	c.preview = gtk.NewPicture()
@@ -271,7 +280,7 @@ func (s *shellUI) openClipboard(mon *gdk.Monitor) {
 	c.rows = gtk.NewBox(gtk.OrientationVerticalValue, 4)
 	scroll.SetChild(&c.rows.Widget)
 	gtkx.Append(card, &scroll.Widget)
-	c.status = gtk.NewLabel("Click to paste · Escape to close")
+	c.status = gtk.NewLabel("")
 	c.status.AddCssClass("readout")
 	c.status.SetXalign(0)
 	c.status.SetWrap(true)
@@ -323,7 +332,7 @@ func (s *shellUI) openClipboard(mon *gdk.Monitor) {
 			c.monitor = mon.GetConnector()
 		}
 	} else {
-		c.win.SetTitle("Clipboard")
+		c.win.SetTitle(i18n.T("Clipboard"))
 		c.win.SetDefaultSize(400, 640)
 	}
 	c.open = true
@@ -367,7 +376,7 @@ func (s *shellUI) refreshClipboard() {
 	}
 	entries, err := clipboard.Read(c.path)
 	if err != nil {
-		c.status.SetText("Could not read clipboard history")
+		c.status.SetText(i18n.T("Could not read the clipboard history"))
 		return
 	}
 	c.stamp, c.entries = stamp, entries
@@ -413,7 +422,7 @@ func (s *shellUI) renderClipboard() {
 		label := strings.Join(strings.FieldsFunc(clipboardExcerpt(entry.Text, 300), unicode.IsSpace), " ")
 		if entry.Type == "image" {
 			icon.SetFromIconName("image-x-generic-symbolic")
-			label = "Image · " + entry.MIME
+			label = i18n.Tf("Image · %s", entry.MIME)
 		}
 		runes := []rune(label)
 		if len(runes) > 65 {
@@ -443,17 +452,17 @@ func (s *shellUI) renderClipboard() {
 			b.ConnectClicked(&s.onClipboardAction)
 			gtkx.Append(row, &b.Widget)
 		}
-		action("copy", "edit-copy-symbolic", "Copy without pasting")
+		action("copy", "edit-copy-symbolic", i18n.T("Copy without pasting"))
 		if entry.Type == "image" {
-			action("path", "go-next-symbolic", "Paste image file path")
+			action("path", "go-next-symbolic", i18n.T("Paste the image file's path"))
 		}
-		action("delete", "edit-delete-symbolic", "Delete item")
+		action("delete", "edit-delete-symbolic", i18n.T("Delete"))
 		gtkx.Append(c.rows, &row.Widget)
 	}
 	if len(c.filtered) == 0 {
-		text := "Clipboard history is empty"
+		text := i18n.T("Nothing copied yet")
 		if query != "" {
-			text = "No matching items"
+			text = i18n.T("Nothing matches")
 		}
 		label := gtk.NewLabel(text)
 		label.AddCssClass("readout")
@@ -461,11 +470,11 @@ func (s *shellUI) renderClipboard() {
 		s.hideClipboardDetail()
 		c.text.SetText(text)
 	}
-	hint := "Click to paste"
-	if !s.cfg.Clipboard.PasteOnClick {
-		hint = "Click to copy"
+	if s.cfg.Clipboard.PasteOnClick {
+		c.status.SetText(i18n.Nf("%d entry · click to paste · Escape to close", "%d entries · click to paste · Escape to close", len(c.filtered), len(c.filtered)))
+	} else {
+		c.status.SetText(i18n.Nf("%d entry · click to copy · Escape to close", "%d entries · click to copy · Escape to close", len(c.filtered), len(c.filtered)))
 	}
-	c.status.SetText(fmt.Sprintf("%d items · %s · Escape to close", len(c.filtered), hint))
 }
 
 // Bound rendering work without truncating the stored or pasted payload.
@@ -484,9 +493,13 @@ func (s *shellUI) showClipboardDetail(row *gtk.Widget, entry clipboard.Entry) {
 	c := &s.clipboard
 	image := entry.Type == "image"
 	c.preview.SetVisible(image)
+	c.detailTitle.SetText(i18n.T("[DETAILS]"))
+	if !entry.Time.IsZero() {
+		c.detailTitle.SetText(i18n.Tf("[COPIED %s]", strings.ToUpper(readTime(entry.Time, time.Now()))))
+	}
 	if image {
 		c.preview.SetFilename(entry.Path)
-		c.text.SetText(entry.CapturedAt)
+		c.text.SetText(entry.MIME)
 	} else {
 		c.text.SetText(clipboardExcerpt(entry.Text, 16000))
 	}
@@ -516,27 +529,34 @@ func (s *shellUI) hideClipboardDetail() {
 	}
 }
 
+// terminalClasses are app classes that paste with Ctrl+Shift+V, as
+// Ctrl+V means something else in a terminal.
+var terminalClasses = []string{"kitty", "alacritty", "foot", "wezterm", "ghostty", "terminal", "konsole", "xterm"}
+
+// pasteClipboard puts entry on the clipboard (action "copy", "paste", or
+// "path" for an image's file name) and, unless it is "copy", pastes it into
+// the window that was focused when the panel opened: focused again without
+// moving the pointer, then sent the paste shortcut, to that window by
+// address so a window under the pointer cannot take it. Hyprland 0.53
+// gets the classic dispatchers, 0.55 the Lua ones; without Hyprland, wtype
+// types the shortcut into whatever is focused.
 func (s *shellUI) pasteClipboard(entry clipboard.Entry, action string) {
 	c := &s.clipboard
-	target, class, client := c.target, strings.ToLower(c.targetClass), s.client
-	// Close the exclusive surface before delivering the paste shortcut.
-	// Retain the original app address so pointer focus cannot redirect a paste.
+	target, class, client, lua := c.target, strings.ToLower(c.targetClass), s.client, s.hyprLua
+	// The panel takes the keyboard; it goes before the paste.
 	s.closeClipboard()
 	go func() {
-		var data []byte
-		var err error
-		mime := "text/plain;charset=utf-8"
-		if entry.Type == "image" && action != "path" {
-			data, err = os.ReadFile(entry.Path)
-			mime = entry.MIME
-		} else if action == "path" {
+		data, mime := []byte(entry.Text), "text/plain;charset=utf-8"
+		switch {
+		case action == "path":
 			data = []byte(entry.Path)
-		} else {
-			data = []byte(entry.Text)
-		}
-		if err != nil {
-			log.Printf("clipboard: image unavailable: %v", err)
-			return
+		case entry.Type == "image":
+			var err error
+			if data, err = os.ReadFile(entry.Path); err != nil {
+				log.Printf("clipboard: image unavailable: %v", err)
+				return
+			}
+			mime = entry.MIME
 		}
 		cmd := exec.Command("wl-copy", "--type", mime)
 		cmd.Stdin = bytes.NewReader(data)
@@ -546,59 +566,36 @@ func (s *shellUI) pasteClipboard(entry clipboard.Entry, action string) {
 			log.Printf("clipboard copy: %v", err)
 			return
 		}
-		if action == "copy" {
+		if action == "copy" || (client != nil && target == "") {
 			return
 		}
-		time.Sleep(150 * time.Millisecond)
-		terminal := false
-		for _, name := range []string{"kitty", "alacritty", "foot", "wezterm", "ghostty", "terminal", "konsole", "xterm"} {
-			if strings.Contains(class, name) {
-				terminal = true
-				break
-			}
-		}
-		// Shift+Insert reads the primary selection in terminals such as Kitty.
-		if terminal {
-			primary := exec.Command("wl-copy", "--primary", "--type", mime)
-			primary.Stdin = bytes.NewReader(data)
-			primary.Stdout, primary.Stderr = os.Stdout, os.Stderr
-			if err := primary.Run(); err != nil {
-				log.Printf("clipboard primary copy: %v", err)
-				return
-			}
-		}
-		if client != nil && target == "" {
-			return
+		time.Sleep(150 * time.Millisecond) // the panel's surface is gone
+		mods := "CTRL"
+		if slices.ContainsFunc(terminalClasses, func(t string) bool { return strings.Contains(class, t) }) {
+			mods = "CTRL SHIFT"
 		}
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
-		if client != nil && target != "" {
-			script := fmt.Sprintf(`local noWarps = hl.get_config("cursor.no_warps"); hl.config({cursor={no_warps=true}}); local ok, err = pcall(function() hl.dispatch(hl.dsp.focus({window=%q})) end); hl.config({cursor={no_warps=noWarps}}); if not ok then error(err) end`, "address:"+target)
-			reply, err := client.Request(ctx, "eval "+script)
-			if err == nil && strings.TrimSpace(string(reply)) != "ok" {
-				err = fmt.Errorf("focus: %s", strings.TrimSpace(string(reply)))
-			}
-			if err != nil {
-				log.Printf("clipboard focus: %v", err)
-				return
-			}
-			mods, key := "CTRL", "V"
-			if terminal {
-				mods, key = "SHIFT", "Insert"
-			}
-			// Target the original window explicitly, never whichever app gained focus.
-			expression := fmt.Sprintf(`hl.dsp.send_shortcut({mods=%q,key=%q,window=%q})`, mods, key, "address:"+target)
-			if err := client.LuaDispatch(ctx, expression); err != nil {
-				log.Printf("clipboard paste: %v", err)
-			}
-		} else {
+		var err error
+		switch {
+		case client == nil:
 			args := []string{"-M", "ctrl", "-k", "v", "-m", "ctrl"}
-			if terminal {
-				args = []string{"-M", "shift", "-k", "Insert", "-m", "shift"}
+			if mods != "CTRL" {
+				args = []string{"-M", "ctrl", "-M", "shift", "-k", "v", "-m", "shift", "-m", "ctrl"}
 			}
-			if err := exec.CommandContext(ctx, "wtype", args...).Run(); err != nil {
-				log.Printf("clipboard paste: %v", err)
+			err = exec.CommandContext(ctx, "wtype", args...).Run()
+		default:
+			if err = focusQuietly(ctx, client, lua, target); err != nil {
+				break
 			}
+			if lua {
+				err = client.LuaDispatch(ctx, fmt.Sprintf(`hl.dsp.send_shortcut({ mods = %q, key = "V", window = %q })`, mods, "address:"+target))
+			} else {
+				err = client.Dispatch(ctx, fmt.Sprintf("sendshortcut %s, V, address:%s", mods, target))
+			}
+		}
+		if err != nil {
+			log.Printf("clipboard paste: %v", err)
 		}
 	}()
 }
