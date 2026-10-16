@@ -490,7 +490,7 @@ msgstr ""
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/ui/vm.go:246
+#: internal/ui/vm.go:244
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1375,7 +1375,7 @@ msgstr ""
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
 #: internal/ui/settings_keyring.go:560
-#: internal/ui/vm.go:237
+#: internal/ui/vm.go:235
 #: ui/stocks.ui:292
 #: ui/vm.ui:1139
 msgid "Remove"
@@ -2653,7 +2653,7 @@ msgid "Replace the installed %s?"
 msgstr ""
 
 #: internal/appui/workshop_manager.go:154
-#: internal/ui/vm.go:438
+#: internal/ui/vm.go:436
 #: ui/vm.ui:483
 msgid "Install"
 msgstr ""
@@ -7427,7 +7427,7 @@ msgid "Capture an area, a window or a screen"
 msgstr ""
 
 #: internal/shell/dock.go:289
-#: internal/ui/vm.go:307
+#: internal/ui/vm.go:305
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 msgid "Windows VM"
@@ -8864,152 +8864,152 @@ msgstr ""
 msgid "Could not upgrade: %s"
 msgstr ""
 
-#: internal/ui/vm.go:233
+#: internal/ui/vm.go:231
 msgid "Confirm remove"
 msgstr ""
 
-#: internal/ui/vm.go:242
+#: internal/ui/vm.go:240
 msgid "Confirm delete"
 msgstr ""
 
-#: internal/ui/vm.go:275
+#: internal/ui/vm.go:273
 msgid "The fix did not work: %v"
 msgstr ""
 
-#: internal/ui/vm.go:280
+#: internal/ui/vm.go:278
 msgid "Done. Log out and back in for it to take effect."
 msgstr ""
 
-#: internal/ui/vm.go:283
+#: internal/ui/vm.go:281
 msgid "Done."
 msgstr ""
 
-#: internal/ui/vm.go:298
+#: internal/ui/vm.go:296
 msgid "Log out to finish"
 msgstr ""
 
-#: internal/ui/vm.go:299
+#: internal/ui/vm.go:297
 msgid "The change takes effect the next time you log in."
 msgstr ""
 
-#: internal/ui/vm.go:314
+#: internal/ui/vm.go:312
 msgid "Log out now"
 msgstr ""
 
-#: internal/ui/vm.go:392
+#: internal/ui/vm.go:390
 msgid "Fix"
 msgstr ""
 
-#: internal/ui/vm.go:394
+#: internal/ui/vm.go:392
 msgid "Add me to %s"
 msgstr ""
 
-#: internal/ui/vm.go:446
+#: internal/ui/vm.go:444
 msgid "Operating system"
 msgstr ""
 
-#: internal/ui/vm.go:448
+#: internal/ui/vm.go:446
 msgid "Hardware virtualization (KVM)"
 msgstr ""
 
-#: internal/ui/vm.go:450
+#: internal/ui/vm.go:448
 msgid "Docker"
 msgstr ""
 
-#: internal/ui/vm.go:452
+#: internal/ui/vm.go:450
 msgid "Docker Compose v2"
 msgstr ""
 
-#: internal/ui/vm.go:454
+#: internal/ui/vm.go:452
 msgid "FreeRDP"
 msgstr ""
 
-#: internal/ui/vm.go:456
+#: internal/ui/vm.go:454
 msgid "Browser opener"
 msgstr ""
 
-#: internal/ui/vm.go:458
+#: internal/ui/vm.go:456
 msgid "Disk space"
 msgstr ""
 
-#: internal/ui/vm.go:460
+#: internal/ui/vm.go:458
 msgid "Network device (TUN)"
 msgstr ""
 
-#: internal/ui/vm.go:462
+#: internal/ui/vm.go:460
 #: ui/settings.ui:3556
 msgid "Secret Service"
 msgstr ""
 
-#: internal/ui/vm.go:471
+#: internal/ui/vm.go:469
 msgid "Not installed on this system."
 msgstr ""
 
-#: internal/ui/vm.go:473
+#: internal/ui/vm.go:471
 msgid "Installed, but your user may not use it."
 msgstr ""
 
-#: internal/ui/vm.go:475
+#: internal/ui/vm.go:473
 msgid "Installed, but not running."
 msgstr ""
 
-#: internal/ui/vm.go:477
+#: internal/ui/vm.go:475
 msgid "This Linux distribution is not supported."
 msgstr ""
 
-#: internal/ui/vm.go:479
+#: internal/ui/vm.go:477
 msgid "Could not be checked."
 msgstr ""
 
-#: internal/ui/vm.go:493
+#: internal/ui/vm.go:491
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr ""
 
-#: internal/ui/vm.go:508
+#: internal/ui/vm.go:506
 msgid "Stopping…"
 msgstr ""
 
-#: internal/ui/vm.go:510
+#: internal/ui/vm.go:508
 msgid "Windows is installing; this takes a while."
 msgstr ""
 
-#: internal/ui/vm.go:512
+#: internal/ui/vm.go:510
 msgid "Starting the guest…"
 msgstr ""
 
-#: internal/ui/vm.go:552
+#: internal/ui/vm.go:550
 msgid "Something went wrong"
 msgstr ""
 
-#: internal/ui/vm.go:556
+#: internal/ui/vm.go:554
 msgid "This system is missing something Windows needs"
 msgstr ""
 
-#: internal/ui/vm.go:558
+#: internal/ui/vm.go:556
 msgid "Not installed yet"
 msgstr ""
 
-#: internal/ui/vm.go:561
+#: internal/ui/vm.go:559
 msgid "Stopping"
 msgstr ""
 
-#: internal/ui/vm.go:563
+#: internal/ui/vm.go:561
 msgid "Installing Windows"
 msgstr ""
 
-#: internal/ui/vm.go:567
+#: internal/ui/vm.go:565
 msgid "Windows is running"
 msgstr ""
 
-#: internal/ui/vm.go:569
+#: internal/ui/vm.go:567
 msgid "Stopped"
 msgstr ""
 
-#: internal/ui/vm.go:571
+#: internal/ui/vm.go:569
 msgid "Failed"
 msgstr ""
 
-#: internal/ui/vm.go:573
+#: internal/ui/vm.go:571
 msgid "Ready"
 msgstr ""
 
