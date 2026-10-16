@@ -71,11 +71,11 @@ func vmDoctor(asJSON bool) error {
 	}
 	fmt.Printf("Supported: %t\n", platform.Supported)
 	for _, item := range platform.Doctor {
-		state := "FAIL"
-		if item.Available {
-			state = "OK"
+		if item.OK {
+			fmt.Printf("OK: %s\n", item.Name)
+			continue
 		}
-		fmt.Printf("%s: %s (%s)\n", state, item.Name, item.Detail)
+		fmt.Printf("FAIL: %s (%s)\n", item.Name, item.Reason)
 	}
 	fmt.Printf("Recommended resources: %d MiB RAM, %d CPUs, %d GiB disk\n", status.Recommended.MemoryMiB, status.Recommended.CPUs, status.Recommended.DiskGiB)
 	fmt.Printf("VM config: %s\n", path)

@@ -33,11 +33,21 @@ type VMManager interface {
 	RemoveData() error
 }
 
+// vmPhase is the window's page: what the guest's state means for the user.
+type vmPhase string
+
+const (
+	phasePrereq       vmPhase = "prereq"       // the host is missing something
+	phaseSetup        vmPhase = "setup"        // ready to install
+	phaseProvisioning vmPhase = "provisioning" // pulling, or Windows is installing
+	phaseReady        vmPhase = "ready"        // installed; start, connect, stop
+)
+
 // VMSnapshot is a presentation-ready view of VM state.
 type VMSnapshot struct {
 	Config       vm.Config
 	State        vm.State
-	Doctor       string
+	Checks       []vm.DoctorItem // the host checks, shown on the prereq page
 	Progress     float64
 	ProgressText string
 	Busy         bool
@@ -48,24 +58,84 @@ type VMSnapshot struct {
 	Err          error
 }
 
+// phase is which page the state calls for.
+func (s VMSnapshot) phase() vmPhase {
+	if !s.Available {
+		return phasePrereq
+	}
+	if !s.HasConfig {
+		return phaseSetup
+	}
+	// A configured guest that is not ready yet is still being provisioned:
+	// Docker is pulling the image, or Windows is installing for the first time.
+	switch s.State {
+	case vm.StateStarting, vm.StateStopping:
+		return phaseProvisioning
+	case vm.StateUnknown, vm.StateFailed:
+		if s.Busy {
+			return phaseProvisioning
+		}
+		return phaseReady
+	}
+	return phaseReady
+}
+
+// failedChecks are the host checks that did not pass.
+func (s VMSnapshot) failedChecks() []vm.DoctorItem {
+	var out []vm.DoctorItem
+	for _, c := range s.Checks {
+		if !c.OK {
+			out = append(out, c)
+		}
+	}
+	return out
+}
+
 type vmWindow struct {
-	win                                                 *gtk.ApplicationWindow
-	refs                                                gtkx.Scope
-	manager                                             VMManager
-	stateSub, doctor, progressText                      gtk.Label
-	stateMark, notice, profileSummary                   gtk.Label
-	progress                                            gtk.ProgressBar
-	memory, cpus, disk                                  gtk.SpinButton
-	advanced                                            gtk.Revealer
-	advancedToggle                                      gtk.Button
-	accept, configure, install, start, connect, console gtk.Button
-	stop, remove, removeData                            gtk.Button
-	closed                                              bool
-	removeArmed                                         bool
-	dataArmed                                           bool
-	operationBusy                                       bool
-	onClick                                             func(gtk.Button)
-	onClose                                             func(gtk.Window) bool
+	win     *gtk.ApplicationWindow
+	refs    gtkx.Scope
+	manager VMManager
+
+	// Headline, shared by every page.
+	sub, mark gtk.Label
+
+	stack gtk.Stack
+
+	// prereq
+	checkRows gtk.Box
+
+	// setup
+	setupSummary                               gtk.Label
+	profileDesc                                gtk.Label
+	accept, advancedToggle, configure, install gtk.Button
+	advanced                                   gtk.Revealer
+	memory, cpus, disk                         gtk.SpinButton
+
+	// provisioning
+	progress          gtk.ProgressBar
+	progressText      gtk.Label
+	console, provStop gtk.Button
+
+	// ready
+	readySummary             gtk.Label
+	readyMemory              gtk.SpinButton
+	readyCPUs                gtk.SpinButton
+	diskSize                 gtk.Label
+	readySave                gtk.Button
+	rowStart                 gtk.Box
+	rowConnect               gtk.Box
+	rowStop                  gtk.Box
+	start, connect           gtk.Button
+	consoleReady             gtk.Button
+	stop, remove, removeData gtk.Button
+
+	closed        bool
+	removeArmed   bool
+	dataArmed     bool
+	operationBusy bool
+	checkRefs     gtkx.Scope // the rows built for the current check list
+	onClick       func(gtk.Button)
+	onClose       func(gtk.Window) bool
 }
 
 // OpenVMManager builds the manager window. The layout goes through the
@@ -75,31 +145,43 @@ func OpenVMManager(s *shellUI, manager VMManager) *vmWindow {
 	v := &vmWindow{manager: manager, win: &gtk.ApplicationWindow{}}
 	builder := s.load("vm.ui", &v.refs)
 	builder.Get("vm", v.win)
-	builder.Get("state_sub", &v.stateSub)
-	builder.Get("state_mark", &v.stateMark)
-	builder.Get("notice", &v.notice)
-	builder.Get("profile_summary", &v.profileSummary)
-	builder.Get("doctor", &v.doctor)
-	builder.Get("progress", &v.progress)
-	builder.Get("progress_text", &v.progressText)
-	builder.Get("memory", &v.memory)
-	builder.Get("cpus", &v.cpus)
-	builder.Get("disk", &v.disk)
-	builder.Get("advanced_toggle", &v.advancedToggle)
-	builder.Get("advanced", &v.advanced)
-	builder.Get("accept", &v.accept)
-	builder.Get("configure", &v.configure)
-	builder.Get("install", &v.install)
-	builder.Get("start", &v.start)
-	builder.Get("connect", &v.connect)
-	builder.Get("console", &v.console)
-	builder.Get("stop", &v.stop)
-	builder.Get("remove", &v.remove)
-	builder.Get("remove_data", &v.removeData)
+	builder.Get("vm_sub", &v.sub)
+	builder.Get("vm_mark", &v.mark)
+	builder.Get("vm_stack", &v.stack)
+	builder.Get("vm_check_rows", &v.checkRows)
+	builder.Get("vm_setup_summary", &v.setupSummary)
+	builder.Get("vm_profile_desc", &v.profileDesc)
+	builder.Get("vm_accept", &v.accept)
+	builder.Get("vm_advanced_toggle", &v.advancedToggle)
+	builder.Get("vm_advanced", &v.advanced)
+	builder.Get("vm_memory", &v.memory)
+	builder.Get("vm_cpus", &v.cpus)
+	builder.Get("vm_disk", &v.disk)
+	builder.Get("vm_configure", &v.configure)
+	builder.Get("vm_install", &v.install)
+	builder.Get("vm_progress", &v.progress)
+	builder.Get("vm_progress_text", &v.progressText)
+	builder.Get("vm_console", &v.console)
+	builder.Get("vm_prov_stop", &v.provStop)
+	builder.Get("vm_ready_summary", &v.readySummary)
+	builder.Get("vm_ready_memory", &v.readyMemory)
+	builder.Get("vm_ready_cpus", &v.readyCPUs)
+	builder.Get("vm_disk_size", &v.diskSize)
+	builder.Get("vm_ready_save", &v.readySave)
+	builder.Get("vm_row_start", &v.rowStart)
+	builder.Get("vm_row_connect", &v.rowConnect)
+	builder.Get("vm_row_stop", &v.rowStop)
+	builder.Get("vm_start", &v.start)
+	builder.Get("vm_connect", &v.connect)
+	builder.Get("vm_console_ready", &v.consoleReady)
+	builder.Get("vm_stop", &v.stop)
+	builder.Get("vm_remove", &v.remove)
+	builder.Get("vm_remove_data", &v.removeData)
 	builder.Close()
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
-	for _, b := range []*gtk.Button{&v.advancedToggle, &v.accept, &v.configure, &v.install,
-		&v.start, &v.connect, &v.console, &v.stop, &v.remove, &v.removeData} {
+	for _, b := range []*gtk.Button{&v.accept, &v.advancedToggle, &v.configure, &v.install,
+		&v.console, &v.provStop, &v.readySave, &v.start, &v.connect, &v.consoleReady,
+		&v.stop, &v.remove, &v.removeData} {
 		b.ConnectClicked(&v.onClick)
 	}
 	// The window is destroyed on close, like the settings window; the shell
@@ -123,114 +205,234 @@ func (v *vmWindow) clicked(b gtk.Button) {
 	case "accept":
 		v.acceptProfile()
 	case "configure":
-		v.configureProfile()
+		v.run(func() error { return v.manager.Configure(v.setupConfig()) })
+	case "ready_save":
+		v.run(func() error { return v.manager.Configure(v.readyConfig()) })
 	case "install":
 		v.run(v.manager.Install)
 	case "start":
 		v.run(v.manager.Start)
 	case "connect":
 		v.run(v.manager.Connect)
-	case "console":
+	case "console", "console_ready":
 		v.run(v.manager.Console)
-	case "stop":
+	case "prov_stop", "stop":
 		v.run(v.manager.Stop)
 	case "remove":
 		if !v.removeArmed {
 			v.removeArmed = true
-			v.remove.SetLabel(i18n.T("Confirm remove VM"))
+			v.remove.SetLabel(i18n.T("Confirm remove"))
 			return
 		}
 		v.removeArmed = false
-		v.remove.SetLabel(i18n.T("Remove VM"))
+		v.remove.SetLabel(i18n.T("Remove"))
 		v.run(v.manager.Remove)
 	case "remove_data":
 		if !v.dataArmed {
 			v.dataArmed = true
-			v.removeData.SetLabel(i18n.T("Confirm delete disk data"))
+			v.removeData.SetLabel(i18n.T("Confirm delete"))
 			return
 		}
 		v.dataArmed = false
-		v.removeData.SetLabel(i18n.T("Delete disk data"))
+		v.removeData.SetLabel(i18n.T("Delete"))
 		v.run(v.manager.RemoveData)
 	}
 }
 
-// Update refreshes the window on the GTK main thread: the headline state, the
-// notice when it cannot be used, the profile summary, the host checks and
-// which actions make sense now.
+// Update refreshes the window on the GTK main thread: it picks the page the
+// guest's state calls for, fills the headline, and shows only the controls
+// that can do something useful there.
 func (v *vmWindow) Update(s VMSnapshot) {
 	gtkx.Post(func() {
 		if v.closed || v.win == nil {
 			return
 		}
-		state := s.State
-		if s.Err != nil {
-			v.stateSub.SetText(i18n.T("Something went wrong"))
-			v.notice.SetText(fmt.Sprintf("%s: %v", i18n.T("Error"), s.Err))
-			v.notice.SetVisible(true)
-		} else if !s.Available {
-			v.stateSub.SetText(i18n.T("Unavailable"))
-			v.notice.SetText(i18n.T("This system does not provide what the Windows VM needs; the checks below say what is missing."))
-			v.notice.SetVisible(true)
-		} else {
-			v.stateSub.SetText(vmStateText(state, s.HasConfig))
-			v.notice.SetVisible(false)
-		}
-		// The status mark: filled while the guest is up.
-		toggle(&v.stateMark.Widget, "on", state == vm.StateRunning)
+		v.stack.SetVisibleChildName(string(s.phase()))
+		v.sub.SetText(vmStateText(s))
+		toggle(&v.mark.Widget, "on", s.State == vm.StateRunning && s.Err == nil)
 
-		// The guest's profile: what it is, or what it would be.
-		cfg := s.Config
-		if !s.HasConfig {
-			cfg = vm.DefaultConfig()
-			cfg.MemoryMiB, cfg.CPUs, cfg.DiskGiB = s.Recommended.MemoryMiB, s.Recommended.CPUs, s.Recommended.DiskGiB
+		switch s.phase() {
+		case phasePrereq:
+			v.showChecks(s.failedChecks())
+		case phaseSetup:
+			v.showSetup(s)
+		case phaseProvisioning:
+			v.showProvisioning(s)
+		case phaseReady:
+			v.showReady(s)
 		}
-		v.profileSummary.SetText(fmt.Sprintf("%s %s · %s %s · %s %s",
-			humanMiB(cfg.MemoryMiB), i18n.T("RAM"),
-			fmt.Sprint(cfg.CPUs), i18n.T("CPU"),
-			fmt.Sprint(cfg.DiskGiB), i18n.T("GiB")))
-
-		doctor := s.Doctor
-		if doctor == "" {
-			doctor = i18n.T("Everything the guest needs is here.")
-		}
-		v.doctor.SetText(doctor)
-		v.progress.SetFraction(s.Progress)
-		v.progressText.SetText(s.ProgressText)
-
-		v.remove.SetLabel(i18n.T("Remove"))
-		v.removeData.SetLabel(i18n.T("Delete"))
-		v.accept.SetSensitive(s.Available && !s.Busy && !s.HasConfig)
-		v.configure.SetSensitive(s.Available && !s.Busy)
-		v.install.SetSensitive(s.Available && !s.Busy)
-		v.start.SetSensitive(s.Available && s.HasConfig && !s.Busy && state != vm.StateRunning)
-		v.connect.SetSensitive(s.Available && !s.Busy && state == vm.StateRunning)
-		v.console.SetSensitive(s.Available && s.HasConfig && !s.Busy)
-		v.stop.SetSensitive(s.Available && !s.Busy && (state == vm.StateRunning || state == vm.StateStarting))
-		v.remove.SetSensitive(s.Available && s.HasConfig && !s.Busy && state != vm.StateRunning)
-		// Deleting the disk data is available even after the VM is removed, so a
-		// user can clear the leftover guest image once the container is gone.
-		v.removeData.SetSensitive(s.Available && !s.Busy && state != vm.StateRunning)
 	})
 }
 
+// showChecks lists what the host is missing, one row each, in the user's
+// language: the platform reports a reason, not a sentence.
+func (v *vmWindow) showChecks(items []vm.DoctorItem) {
+	v.checkRefs.Release()
+	gtkx.Clear(&v.checkRows)
+	for _, c := range items {
+		row := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
+		row.AddCssClass("row")
+
+		mark := gtk.NewLabel("")
+		mark.AddCssClass("mark")
+		mark.SetValign(gtk.AlignCenterValue)
+		gtkx.Append(row, &mark.Widget)
+
+		text := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+		text.SetHexpand(true)
+		text.SetValign(gtk.AlignCenterValue)
+		name := gtk.NewLabel(vmCheckName(c.Name))
+		name.AddCssClass("label")
+		name.SetXalign(0)
+		detail := gtk.NewLabel(vmCheckReason(c.Reason))
+		detail.AddCssClass("sub")
+		detail.SetXalign(0)
+		detail.SetWrap(true)
+		gtkx.Append(text, &name.Widget)
+		gtkx.Append(text, &detail.Widget)
+		gtkx.Append(row, &text.Widget)
+		gtkx.Append(&v.checkRows, &row.Widget)
+	}
+}
+
+// vmCheckName is a check's name. The platform names them in English; these
+// are the ones the window shows.
+func vmCheckName(name string) string {
+	switch name {
+	case "Operating system":
+		return i18n.T("Operating system")
+	case "KVM":
+		return i18n.T("Hardware virtualization (KVM)")
+	case "Docker":
+		return i18n.T("Docker")
+	case "Docker Compose v2":
+		return i18n.T("Docker Compose v2")
+	case "FreeRDP":
+		return i18n.T("FreeRDP")
+	case "Browser opener":
+		return i18n.T("Browser opener")
+	case "Disk":
+		return i18n.T("Disk space")
+	case "TUN":
+		return i18n.T("Network device (TUN)")
+	case "Secret Service":
+		return i18n.T("Secret Service")
+	}
+	return name
+}
+
+// vmCheckReason words why a check failed.
+func vmCheckReason(r vm.DoctorReason) string {
+	switch r {
+	case vm.ReasonMissing:
+		return i18n.T("Not installed on this system.")
+	case vm.ReasonDenied:
+		return i18n.T("Installed, but your user may not use it.")
+	case vm.ReasonStopped:
+		return i18n.T("Installed, but not running.")
+	case vm.ReasonTooOld:
+		return i18n.T("This Linux distribution is not supported.")
+	}
+	return i18n.T("Could not be checked.")
+}
+
+// showSetup fills the page shown before anything is installed: the profile
+// to use, and the one action that means "install now".
+func (v *vmWindow) showSetup(s VMSnapshot) {
+	c := vm.DefaultConfig()
+	c.MemoryMiB, c.CPUs, c.DiskGiB = s.Recommended.MemoryMiB, s.Recommended.CPUs, s.Recommended.DiskGiB
+	if !v.advanced.GetRevealChild() {
+		v.memory.SetValue(float64(c.MemoryMiB))
+		v.cpus.SetValue(float64(c.CPUs))
+		v.disk.SetValue(float64(c.DiskGiB))
+	}
+	v.setupSummary.SetText(vmProfileText(c))
+	v.profileDesc.SetText(i18n.T("A balanced profile leaves memory and CPU for your system."))
+	v.accept.SetSensitive(!s.Busy)
+	v.configure.SetSensitive(!s.Busy)
+	v.install.SetSensitive(!s.Busy)
+	v.advancedToggle.SetSensitive(!s.Busy)
+}
+
+// showProvisioning fills the page shown while Docker pulls the image or
+// Windows installs for the first time. It offers the web console (the only
+// view of the guest that works yet) and stopping without losing the disk.
+func (v *vmWindow) showProvisioning(s VMSnapshot) {
+	v.progress.SetFraction(s.Progress)
+	if s.ProgressText != "" {
+		v.progressText.SetText(s.ProgressText)
+	} else if s.State == vm.StateStopping {
+		v.progressText.SetText(i18n.T("Stopping…"))
+	} else if s.Busy {
+		v.progressText.SetText(i18n.T("Windows is installing; this takes a while."))
+	} else {
+		v.progressText.SetText(i18n.T("Starting the guest…"))
+	}
+	v.console.SetSensitive(!s.Busy)
+	v.provStop.SetSensitive(!s.Busy && s.State != vm.StateStopping)
+}
+
+// showReady fills the page shown once a guest is installed. The memory and
+// CPU rows are editable (they take effect on the next start); the disk size
+// is shown for information, since enlarging it needs a manual resize inside
+// Windows.
+func (v *vmWindow) showReady(s VMSnapshot) {
+	c := s.Config
+	if c.Name == "" {
+		c = vm.DefaultConfig()
+	}
+	v.readySummary.SetText(vmProfileText(c))
+	if v.readyMemory.GetValueAsInt() == 0 {
+		v.readyMemory.SetValue(float64(c.MemoryMiB))
+		v.readyCPUs.SetValue(float64(c.CPUs))
+	}
+	v.diskSize.SetText(fmt.Sprintf("%d GiB", c.DiskGiB))
+
+	running := s.State == vm.StateRunning
+	// Only the rows that apply: starting a running guest, or stopping a
+	// stopped one, is not an action the user can want.
+	v.rowStart.SetVisible(!running)
+	v.rowConnect.SetVisible(running)
+	v.rowStop.SetVisible(running)
+	v.start.SetSensitive(!s.Busy)
+	v.connect.SetSensitive(!s.Busy)
+	v.consoleReady.SetSensitive(!s.Busy)
+	v.stop.SetSensitive(!s.Busy)
+	v.readySave.SetSensitive(!s.Busy)
+	v.remove.SetSensitive(!s.Busy && !running)
+	v.removeData.SetSensitive(!s.Busy && !running)
+}
+
 // vmStateText is the headline for a state, in the shell's voice.
-func vmStateText(state vm.State, hasConfig bool) string {
-	switch {
-	case !hasConfig:
-		return i18n.T("Not set up yet")
-	case state == vm.StateRunning:
+func vmStateText(s VMSnapshot) string {
+	if s.Err != nil {
+		return i18n.T("Something went wrong")
+	}
+	switch s.phase() {
+	case phasePrereq:
+		return i18n.T("This system is missing something Windows needs")
+	case phaseSetup:
+		return i18n.T("Not installed yet")
+	case phaseProvisioning:
+		if s.State == vm.StateStopping {
+			return i18n.T("Stopping")
+		}
+		return i18n.T("Installing Windows")
+	}
+	switch s.State {
+	case vm.StateRunning:
 		return i18n.T("Windows is running")
-	case state == vm.StateStarting:
-		return i18n.T("Starting, or installing Windows")
-	case state == vm.StateStopping:
-		return i18n.T("Stopping")
-	case state == vm.StateStopped:
+	case vm.StateStopped:
 		return i18n.T("Stopped")
-	case state == vm.StateFailed:
+	case vm.StateFailed:
 		return i18n.T("Failed")
 	}
-	return i18n.T("Not set up yet")
+	return i18n.T("Ready")
+}
+
+// vmProfileText is the guest's resources, as the section meta reads them.
+func vmProfileText(c vm.Config) string {
+	return fmt.Sprintf("%s · %d CPU · %d GiB", humanMiB(c.MemoryMiB), c.CPUs, c.DiskGiB)
 }
 
 // humanMiB shows a memory size the way the other windows do.
@@ -241,11 +443,24 @@ func humanMiB(mib int) string {
 	return fmt.Sprintf("%d MiB", mib)
 }
 
-func (v *vmWindow) configFromEditors() vm.Config {
+// setupConfig is the profile as the setup page's editors show it.
+func (v *vmWindow) setupConfig() vm.Config {
 	c := vm.DefaultConfig()
 	c.MemoryMiB = int(v.memory.GetValueAsInt())
 	c.CPUs = int(v.cpus.GetValueAsInt())
 	c.DiskGiB = int(v.disk.GetValueAsInt())
+	return c
+}
+
+// readyConfig is the guest's configuration with the editable resources
+// taken from the ready page; the disk keeps its configured size.
+func (v *vmWindow) readyConfig() vm.Config {
+	c := v.manager.Snapshot().Config
+	if c.Name == "" {
+		return vm.DefaultConfig()
+	}
+	c.MemoryMiB = int(v.readyMemory.GetValueAsInt())
+	c.CPUs = int(v.readyCPUs.GetValueAsInt())
 	return c
 }
 
@@ -256,11 +471,6 @@ func (v *vmWindow) acceptProfile() {
 	c.CPUs = s.Recommended.CPUs
 	c.DiskGiB = s.Recommended.DiskGiB
 	v.run(func() error { return v.manager.AcceptProfile(c) })
-}
-
-func (v *vmWindow) configureProfile() {
-	v.advanced.SetRevealChild(true)
-	v.run(func() error { return v.manager.Configure(v.configFromEditors()) })
 }
 
 func (v *vmWindow) run(f func() error) {

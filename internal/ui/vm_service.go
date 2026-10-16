@@ -16,7 +16,6 @@ import (
 
 	"github.com/godbus/dbus/v5"
 
-	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/keyring"
 	"github.com/lyricat/inua/internal/vm"
@@ -111,17 +110,16 @@ func (s *vmService) snapshot() VMSnapshot {
 	if !has {
 		state = vm.StateStopped
 	}
-	var doctor strings.Builder
-	for _, item := range s.platform.Doctor {
-		if !item.Available {
-			fmt.Fprintf(&doctor, "%s: %s\n", item.Name, item.Detail)
-		}
-	}
+	// The host checks, one line each, so the window can show every check and
+	// mark the ones that fail.
+	checks := make([]vm.DoctorItem, 0, len(s.platform.Doctor)+1)
+	checks = append(checks, s.platform.Doctor...)
 	if s.backend.Secrets == nil {
-		doctor.WriteString(i18n.T("Secret Service: unavailable; a safe Windows password store is required") + "\n")
-	}
-	if doctor.Len() == 0 {
-		doctor.WriteString(i18n.T("Host prerequisites detected."))
+		checks = append(checks, vm.DoctorItem{
+			Name:   "Secret Service",
+			OK:     false,
+			Reason: vm.ReasonMissing,
+		})
 	}
 	available := s.platform.Supported && s.platform.KVM.Available && s.platform.KVM.Accessible &&
 		s.platform.DockerSocket.Available && s.platform.DockerSocket.Accessible &&
@@ -130,7 +128,7 @@ func (s *vmService) snapshot() VMSnapshot {
 	if err == nil {
 		err = oldErr
 	}
-	return VMSnapshot{Config: cfg, State: state, Doctor: doctor.String(), Busy: busy,
+	return VMSnapshot{Config: cfg, State: state, Checks: checks, Busy: busy,
 		Available: available, HasConfig: has, Recommended: vm.RecommendProfile(s.host), Host: s.host, Err: err}
 }
 
@@ -168,7 +166,20 @@ func (s *vmService) refresh() {
 
 // Snapshot, Doctor and Status are the UI-facing reads; all are non-blocking.
 func (s *vmService) Snapshot() VMSnapshot { return s.snapshot() }
-func (s *vmService) Doctor() string       { return s.snapshot().Doctor }
+
+// Doctor is the checks as plain lines, for `inua call vm doctor`.
+func (s *vmService) Doctor() string {
+	var b strings.Builder
+	for _, c := range s.snapshot().Checks {
+		if c.OK {
+			fmt.Fprintf(&b, "OK   %s\n", c.Name)
+			continue
+		}
+		fmt.Fprintf(&b, "FAIL %s (%s)\n", c.Name, c.Reason)
+	}
+	return strings.TrimRight(b.String(), "\n")
+}
+
 func (s *vmService) Status() (vm.State, error) {
 	x := s.snapshot()
 	if x.Err != nil {

@@ -492,11 +492,11 @@ msgstr "影片"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/ui/vm.go:202
+#: internal/ui/vm.go:237
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
-#: ui/vm.ui:745
+#: ui/vm.ui:1183
 msgid "Delete"
 msgstr "刪除"
 
@@ -505,7 +505,6 @@ msgid "Change sign"
 msgstr "改變符號"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:169
 msgid "Error"
 msgstr "錯誤"
 
@@ -600,7 +599,7 @@ msgstr "刪除 %s"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
-#: ui/vm.ui:206
+#: ui/vm.ui:268
 msgid "Edit"
 msgstr "編輯"
 
@@ -608,7 +607,8 @@ msgstr "編輯"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:557
+#: ui/vm.ui:931
+#: ui/vm.ui:952
 msgid "Start"
 msgstr "啟動"
 
@@ -620,8 +620,9 @@ msgstr "重設"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:635
-#: ui/vm.ui:657
+#: ui/vm.ui:647
+#: ui/vm.ui:1032
+#: ui/vm.ui:1053
 msgid "Stop"
 msgstr "停止"
 
@@ -1366,9 +1367,9 @@ msgstr "%s · %s"
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
 #: internal/ui/settings_keyring.go:560
-#: internal/ui/vm.go:201
+#: internal/ui/vm.go:228
 #: ui/stocks.ui:292
-#: ui/vm.ui:701
+#: ui/vm.ui:1139
 msgid "Remove"
 msgstr "移除"
 
@@ -1576,7 +1577,6 @@ msgstr "按名稱退出全部"
 
 #: internal/appui/sysmon.go:142
 #: internal/appui/sysmon.go:720
-#: internal/ui/vm.go:190
 #: ui/sysmon.ui:84
 msgid "CPU"
 msgstr "CPU"
@@ -2101,7 +2101,6 @@ msgstr "Tailscale沒有運行。"
 #: internal/shell/status.go:69
 #: internal/shell/status.go:86
 #: internal/shell/status.go:101
-#: internal/ui/vm.go:172
 msgid "Unavailable"
 msgstr "無法使用"
 
@@ -2545,7 +2544,6 @@ msgstr "好的"
 #: internal/filesui/window.go:696
 #: internal/ui/record.go:163
 #: internal/ui/system_ipc.go:241
-#: ui/vm.ui:613
 msgid "Open"
 msgstr "開啟"
 
@@ -2553,7 +2551,6 @@ msgstr "開啟"
 #: internal/ui/settings_ai.go:328
 #: ui/clock.ui:252
 #: ui/pass.ui:490
-#: ui/vm.ui:355
 msgid "Save"
 msgstr "儲存"
 
@@ -2643,7 +2640,7 @@ msgid "Replace the installed %s?"
 msgstr "取代已安裝的 %s？"
 
 #: internal/appui/workshop_manager.go:154
-#: ui/vm.ui:510
+#: ui/vm.ui:483
 msgid "Install"
 msgstr "安裝"
 
@@ -3533,7 +3530,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://伺服器/分享, sftp://使用者@主機/資料夾, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:567
+#: ui/vm.ui:974
+#: ui/vm.ui:1008
 msgid "Connect"
 msgstr "連線"
 
@@ -7396,7 +7394,7 @@ msgid "Capture an area, a window or a screen"
 msgstr "捕捉區域、視窗或螢幕"
 
 #: internal/shell/dock.go:289
-#: ui/vm.ui:10
+#: ui/vm.ui:14
 #: ui/vm.ui:37
 msgid "Windows VM"
 msgstr "Windows 虛擬機"
@@ -8823,76 +8821,122 @@ msgstr "inua無法升級"
 msgid "Could not upgrade: %s"
 msgstr "無法升級:%s"
 
-#: internal/ui/vm.go:140
-msgid "Confirm remove VM"
-msgstr "確認刪除虛擬機"
+#: internal/ui/vm.go:224
+msgid "Confirm remove"
+msgstr "確認移除"
 
-#: internal/ui/vm.go:144
-#: ui/vm.ui:679
-msgid "Remove VM"
-msgstr "移除虛擬機"
+#: internal/ui/vm.go:233
+msgid "Confirm delete"
+msgstr "確認刪除"
 
-#: internal/ui/vm.go:149
-msgid "Confirm delete disk data"
-msgstr "確認刪除磁碟資料"
+#: internal/ui/vm.go:303
+msgid "Operating system"
+msgstr "作業系統"
 
-#: internal/ui/vm.go:153
-#: ui/vm.ui:723
-msgid "Delete disk data"
-msgstr "刪除磁碟資料"
+#: internal/ui/vm.go:305
+msgid "Hardware virtualization (KVM)"
+msgstr "硬體虛擬化 (KVM)"
 
-#: internal/ui/vm.go:168
+#: internal/ui/vm.go:307
+msgid "Docker"
+msgstr ""
+
+#: internal/ui/vm.go:309
+msgid "Docker Compose v2"
+msgstr ""
+
+#: internal/ui/vm.go:311
+msgid "FreeRDP"
+msgstr ""
+
+#: internal/ui/vm.go:313
+msgid "Browser opener"
+msgstr "瀏覽器開啟程式"
+
+#: internal/ui/vm.go:315
+msgid "Disk space"
+msgstr "磁碟空間"
+
+#: internal/ui/vm.go:317
+msgid "Network device (TUN)"
+msgstr "網路裝置 (TUN)"
+
+#: internal/ui/vm.go:319
+#: ui/settings.ui:3556
+msgid "Secret Service"
+msgstr "Secret Service"
+
+#: internal/ui/vm.go:328
+msgid "Not installed on this system."
+msgstr "此系統上未安裝。"
+
+#: internal/ui/vm.go:330
+msgid "Installed, but your user may not use it."
+msgstr "已安裝，但你的使用者無權使用。"
+
+#: internal/ui/vm.go:332
+msgid "Installed, but not running."
+msgstr ""
+
+#: internal/ui/vm.go:334
+msgid "This Linux distribution is not supported."
+msgstr "不支援此 Linux 發行版。"
+
+#: internal/ui/vm.go:336
+msgid "Could not be checked."
+msgstr "無法檢查。"
+
+#: internal/ui/vm.go:350
+msgid "A balanced profile leaves memory and CPU for your system."
+msgstr "均衡設定會為你的系統保留記憶體與 CPU。"
+
+#: internal/ui/vm.go:365
+msgid "Stopping…"
+msgstr "正在停止…"
+
+#: internal/ui/vm.go:367
+msgid "Windows is installing; this takes a while."
+msgstr "正在安裝 Windows；需要一些時間。"
+
+#: internal/ui/vm.go:369
+msgid "Starting the guest…"
+msgstr "正在啟動客體機…"
+
+#: internal/ui/vm.go:409
 msgid "Something went wrong"
 msgstr "發生錯誤"
 
-#: internal/ui/vm.go:173
-msgid "This system does not provide what the Windows VM needs; the checks below say what is missing."
-msgstr "此系統缺少 Windows 虛擬機所需的條件；下方檢查會說明缺什麼。"
+#: internal/ui/vm.go:413
+msgid "This system is missing something Windows needs"
+msgstr "此系統缺少 Windows 所需的元件"
 
-#: internal/ui/vm.go:189
-msgid "RAM"
-msgstr "記憶體"
+#: internal/ui/vm.go:415
+msgid "Not installed yet"
+msgstr "尚未安裝"
 
-#: internal/ui/vm.go:191
-msgid "GiB"
-msgstr "GiB"
-
-#: internal/ui/vm.go:195
-msgid "Everything the guest needs is here."
-msgstr "客體機所需的一切都已就緒。"
-
-#: internal/ui/vm.go:221
-#: internal/ui/vm.go:233
-msgid "Not set up yet"
-msgstr "尚未設定"
-
-#: internal/ui/vm.go:223
-msgid "Windows is running"
-msgstr "Windows 正在執行"
-
-#: internal/ui/vm.go:225
-msgid "Starting, or installing Windows"
-msgstr "正在啟動或安裝 Windows"
-
-#: internal/ui/vm.go:227
+#: internal/ui/vm.go:418
 msgid "Stopping"
 msgstr "正在停止"
 
-#: internal/ui/vm.go:229
+#: internal/ui/vm.go:420
+msgid "Installing Windows"
+msgstr "正在安裝 Windows"
+
+#: internal/ui/vm.go:424
+msgid "Windows is running"
+msgstr "Windows 正在執行"
+
+#: internal/ui/vm.go:426
 msgid "Stopped"
 msgstr "已停止"
 
-#: internal/ui/vm.go:231
+#: internal/ui/vm.go:428
 msgid "Failed"
 msgstr "失敗"
 
-#: internal/ui/vm_service.go:121
-msgid "Secret Service: unavailable; a safe Windows password store is required"
-msgstr ""
-
-#: internal/ui/vm_service.go:124
-msgid "Host prerequisites detected."
-msgstr "已偵測到主機前置條件。"
+#: internal/ui/vm.go:430
+msgid "Ready"
+msgstr "就緒"
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -10483,10 +10527,6 @@ msgstr "<span alpha='55%'>[</span>鑰匙圈<span alpha='55%'>]</span>"
 msgid "Apps' secrets: browsers' keys, Wi-Fi passwords, API keys"
 msgstr "應用程式的密鑰：瀏覽器金鑰、Wi-Fi 密碼、API 金鑰"
 
-#: ui/settings.ui:3556
-msgid "Secret Service"
-msgstr "Secret Service"
-
 #: ui/settings.ui:3592
 msgid "Unlocked secrets"
 msgstr "已解鎖的機密"
@@ -10911,89 +10951,138 @@ msgstr "詳細資料（I）"
 msgid "Open a File…"
 msgstr "開啟檔案…"
 
-#: ui/vm.ui:103
-msgid "[GUEST]"
-msgstr "[客體機]"
-
-#: ui/vm.ui:140
-msgid "Recommended profile"
-msgstr "建議設定"
-
-#: ui/vm.ui:149
-msgid "A balanced profile leaves memory and CPU for your system."
-msgstr "均衡設定會為你的系統保留記憶體與 CPU。"
-
-#: ui/vm.ui:162
-msgid "Use it"
-msgstr "使用"
-
-#: ui/vm.ui:184
-msgid "Advanced configuration"
-msgstr "進階設定"
-
-#: ui/vm.ui:193
-msgid "Set the memory, CPU cores and disk size yourself."
-msgstr "自行設定記憶體、CPU 核心與磁碟大小。"
-
-#: ui/vm.ui:234
-msgid "Memory (MiB)"
-msgstr "記憶體 (MiB)"
-
-#: ui/vm.ui:268
-msgid "CPU cores"
-msgstr "CPU 核心"
-
-#: ui/vm.ui:302
-msgid "Disk size (GiB)"
-msgstr "磁碟大小 (GiB)"
-
-#: ui/vm.ui:342
-msgid "Saving writes the guest's project without starting it."
-msgstr "儲存只寫入客體機專案，不會啟動它。"
-
-#: ui/vm.ui:393
+#: ui/vm.ui:101
 msgid "[HOST]"
 msgstr "[主機]"
 
-#: ui/vm.ui:459
+#: ui/vm.ui:167
+#: ui/vm.ui:695
+msgid "[GUEST]"
+msgstr "[客體機]"
+
+#: ui/vm.ui:204
+msgid "Recommended profile"
+msgstr "建議設定"
+
+#: ui/vm.ui:225
+msgid "Use it"
+msgstr "使用"
+
+#: ui/vm.ui:247
+msgid "Advanced configuration"
+msgstr "進階設定"
+
+#: ui/vm.ui:256
+msgid "Set memory, CPU cores and disk size yourself."
+msgstr "自行設定記憶體、CPU 核心與磁碟大小。"
+
+#: ui/vm.ui:292
+#: ui/vm.ui:726
+msgid "Memory (MiB)"
+msgstr "記憶體 (MiB)"
+
+#: ui/vm.ui:325
+#: ui/vm.ui:774
+msgid "CPU cores"
+msgstr "CPU 核心"
+
+#: ui/vm.ui:358
+#: ui/vm.ui:822
+msgid "Disk size (GiB)"
+msgstr "磁碟大小 (GiB)"
+
+#: ui/vm.ui:393
+msgid "Save profile"
+msgstr "儲存設定"
+
+#: ui/vm.ui:432
+msgid "[INSTALL]"
+msgstr "[安裝]"
+
+#: ui/vm.ui:461
+msgid "Download and install Windows"
+msgstr "下載並安裝 Windows"
+
+#: ui/vm.ui:470
+msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
+msgstr "下載約 8 GB 並安裝 Windows；需要 30 分鐘以上。"
+
+#: ui/vm.ui:530
+msgid "[PROGRESS]"
+msgstr "[進度]"
+
+#: ui/vm.ui:582
+msgid "Watch the installation"
+msgstr "查看安裝過程"
+
+#: ui/vm.ui:591
+msgid "The installer screen is in your browser."
+msgstr "安裝畫面會顯示在瀏覽器中。"
+
+#: ui/vm.ui:603
+msgid "Open web console"
+msgstr "開啟網頁主控台"
+
+#: ui/vm.ui:625
+msgid "Stop waiting"
+msgstr "停止等待"
+
+#: ui/vm.ui:634
+msgid "Stops the container; the disk is kept. Reopen to resume."
+msgstr "停止容器並保留磁碟；重新開啟可繼續。"
+
+#: ui/vm.ui:756
+#: ui/vm.ui:804
+msgid "Takes effect on next start."
+msgstr "下次啟動時生效。"
+
+#: ui/vm.ui:846
+msgid "Enlarging needs a manual partition resize inside Windows."
+msgstr "擴容需在 Windows 內手動調整分割區。"
+
+#: ui/vm.ui:867
+msgid "Apply"
+msgstr "套用"
+
+#: ui/vm.ui:902
 msgid "[ACTIONS]"
 msgstr "[操作]"
 
-#: ui/vm.ui:488
-msgid "Download and install"
-msgstr "下載並安裝"
+#: ui/vm.ui:940
+msgid "Starts the guest; ready in a minute or two."
+msgstr "啟動客體機，約一兩分鐘後就緒。"
 
-#: ui/vm.ui:497
-msgid "Downloads the image and installs Windows; it takes a while."
-msgstr "下載映像並安裝 Windows；需要一些時間。"
+#: ui/vm.ui:983
+msgid "Opens FreeRDP."
+msgstr "開啟 FreeRDP。"
 
-#: ui/vm.ui:532
-msgid "Start and connect"
-msgstr "啟動與連線"
-
-#: ui/vm.ui:541
-msgid "Connect opens FreeRDP once Windows is ready."
-msgstr "Windows 就緒後，連線會開啟 FreeRDP。"
-
-#: ui/vm.ui:591
+#: ui/vm.ui:998
 msgid "Web console"
 msgstr "網頁主控台"
 
-#: ui/vm.ui:600
-msgid "The installer's screen, in your browser."
-msgstr "在瀏覽器中查看安裝畫面。"
+#: ui/vm.ui:1041
+msgid "Stops the guest; the disk is kept."
+msgstr "停止客體機並保留磁碟。"
 
-#: ui/vm.ui:644
-msgid "Stops the guest and keeps its disk."
-msgstr "停止客體機並保留其磁碟。"
+#: ui/vm.ui:1088
+msgid "[REMOVE]"
+msgstr "[移除]"
 
-#: ui/vm.ui:688
-msgid "Deletes the container, project and password; the disk stays."
+#: ui/vm.ui:1117
+msgid "Remove VM"
+msgstr "移除虛擬機"
+
+#: ui/vm.ui:1126
+msgid "Deletes the container, project and password. The disk stays."
 msgstr "刪除容器、專案與密碼；磁碟保留。"
 
-#: ui/vm.ui:732
-msgid "Deletes the Windows disk for good; stopping never does."
-msgstr "永久刪除 Windows 磁碟；停止不會刪除。"
+#: ui/vm.ui:1161
+msgid "Delete disk data"
+msgstr "刪除磁碟資料"
+
+#: ui/vm.ui:1170
+msgid "Permanently deletes the Windows disk. Cannot be undone."
+msgstr "永久刪除 Windows 磁碟，無法復原。"
 
 #: ui/weather.ui:30
 msgid "Previous place"

@@ -38,10 +38,25 @@ type DeviceCapability struct {
 	Path       string
 	Detail     string
 }
+
+// DoctorReason says why a check failed, so the caller can say it in the
+// user's language. A check that passed has none. The set is small and stable.
+type DoctorReason string
+
+const (
+	ReasonMissing DoctorReason = "missing" // the device, tool or service is not there
+	ReasonDenied  DoctorReason = "denied"  // it is there, but this user cannot use it
+	ReasonStopped DoctorReason = "stopped" // the service is there but not running
+	ReasonTooOld  DoctorReason = "too_old" // a version older than the one required
+	ReasonUnclear DoctorReason = "unclear" // could not be told apart
+)
+
+// DoctorItem is one host check: what it needs, whether it holds, and, when it
+// does not, why - so the window can word it in the user's language.
 type DoctorItem struct {
-	Name      string
-	Available bool
-	Detail    string
+	Name   string
+	OK     bool
+	Reason DoctorReason
 }
 
 type PlatformProbes struct {
@@ -101,22 +116,21 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	p := Platform{OS: osName, Distribution: distro, Supported: osName == "linux" && supportedDistribution(distro)}
 	kvm := mapPath("/dev/kvm")
 	p.KVM = DeviceCapability{Path: kvm, Available: probes.Exists(kvm), Accessible: probes.Accessible(kvm)}
-	if !p.KVM.Available {
-		p.KVM.Detail = "KVM device /dev/kvm is unavailable"
-	} else if !p.KVM.Accessible {
-		p.KVM.Detail = "current user cannot access /dev/kvm"
-	} else {
-		p.KVM.Detail = "KVM device is accessible"
+	check := func(name string, ok bool, reason DoctorReason) DoctorItem {
+		return DoctorItem{Name: name, OK: ok, Reason: reason}
 	}
+	kvmCheck := check("KVM", p.KVM.Available && p.KVM.Accessible, ReasonMissing)
+	if p.KVM.Available && !p.KVM.Accessible {
+		kvmCheck.Reason = ReasonDenied
+	}
+
 	socket := mapPath("/var/run/docker.sock")
 	p.DockerSocket = DeviceCapability{Path: socket, Available: probes.Exists(socket), Accessible: probes.Accessible(socket)}
-	if !p.DockerSocket.Available {
-		p.DockerSocket.Detail = "Docker socket is unavailable"
-	} else if !p.DockerSocket.Accessible {
-		p.DockerSocket.Detail = "current user cannot access Docker socket"
-	} else {
-		p.DockerSocket.Detail = "Docker socket is accessible"
+	socketCheck := check("Docker", p.DockerSocket.Available && p.DockerSocket.Accessible, ReasonMissing)
+	if p.DockerSocket.Available && !p.DockerSocket.Accessible {
+		socketCheck.Reason = ReasonDenied
 	}
+
 	composeVersion, composeErr := composeVersion(probes)
 	compose := composeErr == nil && composeVersion != ""
 	p.ComposeV2 = Capability{Available: compose, Detail: "Docker Compose v2 plugin unavailable"}
@@ -125,13 +139,11 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	}
 	p.FreeRDP = executableCapability(probes, []string{"xfreerdp", "xfreerdp3"}, "FreeRDP unavailable")
 	p.BrowserOpener = executableCapability(probes, []string{"xdg-open"}, "browser opener xdg-open unavailable")
-	p.TUN = DeviceCapability{Path: mapPath("/dev/net/tun"), Available: probes.Exists(mapPath("/dev/net/tun")), Accessible: probes.Accessible(mapPath("/dev/net/tun"))}
-	if !p.TUN.Available {
-		p.TUN.Detail = "TUN device is unavailable"
-	} else if !p.TUN.Accessible {
-		p.TUN.Detail = "current user cannot access TUN device"
-	} else {
-		p.TUN.Detail = "TUN device is accessible"
+	tunPath := mapPath("/dev/net/tun")
+	p.TUN = DeviceCapability{Path: tunPath, Available: probes.Exists(tunPath), Accessible: probes.Accessible(tunPath)}
+	tunCheck := check("TUN", p.TUN.Available && p.TUN.Accessible, ReasonMissing)
+	if p.TUN.Available && !p.TUN.Accessible {
+		tunCheck.Reason = ReasonDenied
 	}
 	p.Filesystem = "unknown"
 	if probes.Filesystem != nil {
@@ -140,7 +152,23 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 		p.Filesystem = detectFilesystem(root)
 	}
 	p.Disk = Capability{Available: p.Filesystem != "" && p.Filesystem != "unknown", Detail: "filesystem: " + p.Filesystem}
-	p.Doctor = []DoctorItem{{"Operating system", p.Supported, distroDetail(osName, distro)}, {"KVM", p.KVM.Available && p.KVM.Accessible, p.KVM.Detail}, {"Docker socket", p.DockerSocket.Available && p.DockerSocket.Accessible, p.DockerSocket.Detail}, {"Docker Compose v2", p.ComposeV2.Available, p.ComposeV2.Detail}, {"FreeRDP", p.FreeRDP.Available, p.FreeRDP.Detail}, {"Browser opener", p.BrowserOpener.Available, p.BrowserOpener.Detail}, {"Disk/filesystem", p.Disk.Available, p.Disk.Detail}, {"TUN", p.TUN.Available && p.TUN.Accessible, p.TUN.Detail}}
+
+	osCheck := check("Operating system", p.Supported, ReasonUnclear)
+	if osName == "linux" && distro != "" {
+		osCheck.Reason = ReasonTooOld // an unsupported distribution, said plainly
+	}
+	// A check that passes says nothing about why; a failing one carries the
+	// reason the window words for the user.
+	p.Doctor = []DoctorItem{
+		osCheck,
+		kvmCheck,
+		socketCheck,
+		check("Docker Compose v2", p.ComposeV2.Available, ReasonMissing),
+		check("FreeRDP", p.FreeRDP.Available, ReasonMissing),
+		check("Browser opener", p.BrowserOpener.Available, ReasonMissing),
+		check("Disk", p.Disk.Available, ReasonUnclear),
+		tunCheck,
+	}
 	return p
 }
 
