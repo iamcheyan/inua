@@ -249,3 +249,43 @@ func TestRemoveDataRefusesDangerousPaths(t *testing.T) {
 		})
 	}
 }
+
+// Compose derives its project name from the compose file's folder. Two
+// projects whose folder is "windows" and whose service is "windows" would be
+// the same project to Docker, so `up -d` would tear down the other one's
+// container. The backend must pin a namespaced project name instead.
+func TestComposePinsNamespacedProject(t *testing.T) {
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	// State reads through compose, without waiting for RDP readiness.
+	if _, err := b.State(ctx); err != nil {
+		t.Fatalf("state: %v", err)
+	}
+	var sawProject bool
+	for _, call := range runner.calls {
+		if !strings.HasPrefix(call, "docker compose ") {
+			continue
+		}
+		if !strings.Contains(call, "-p inua-vm-windows") {
+			t.Errorf("compose call does not pin the project name: %s", call)
+			continue
+		}
+		sawProject = true
+	}
+	if !sawProject {
+		t.Fatalf("no compose call was made: %v", runner.calls)
+	}
+}
+
+func TestComposeProjectNamesAreNamespaced(t *testing.T) {
+	if got := composeProject("windows"); got != "inua-vm-windows" {
+		t.Errorf("composeProject = %q", got)
+	}
+	if composeProject("windows") == "windows" {
+		t.Error("the project name is the bare VM name, which collides with a user's own")
+	}
+}

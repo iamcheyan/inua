@@ -277,9 +277,19 @@ func (b *DockerBackend) compose(ctx context.Context, args ...string) (string, er
 	if b.Runner == nil {
 		b.Runner = execCommandRunner{}
 	}
-	argv := []string{"compose", "-f", b.composePath}
+	// Pin the project name: Docker Compose otherwise derives it from the
+	// directory the file sits in, so any other Compose project whose folder
+	// is named "windows" and whose service is "windows" would be treated as
+	// this one - and `up -d` would tear its container down.
+	argv := []string{"compose", "-p", composeProject(b.Config.Name), "-f", b.composePath}
 	argv = append(argv, args...)
 	return b.Runner.Run(ctx, "docker", argv...)
+}
+
+// composeProject is the Compose project name for a VM, namespaced so it can
+// never collide with a user's own Compose files.
+func composeProject(name string) string {
+	return "inua-vm-" + name
 }
 
 // SetInstalled restores the managed Compose location after reading Inua's config.
