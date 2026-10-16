@@ -5,6 +5,24 @@ inua is a desktop shell that works with Hyprland. Its logic is Go, its interface
 document follows [design.md](design.md); why this toolkit is in
 [toolkit.md](toolkit.md).
 
+## Windows VM boundary
+
+`internal/vm` owns toolkit-free configuration, Linux platform detection,
+resource recommendations and the Docker backend contract. `inua vm doctor`
+and `inua vm status --json` expose read-only diagnostics. They inspect host
+facilities and local configuration without making Docker API calls. Supported
+Linux hosts are NixOS, Ubuntu and Debian; the backend expects Docker Engine
+with Compose v2 and KVM. The VM is managed through the Docker backend boundary,
+with local RDP access provided by FreeRDP. Docker socket access is privileged
+host access and should be granted only to trusted users. A baseline is 4 GiB
+memory, 2 CPUs and 64 GiB disk; recommendations adapt to host resources.
+The shell holds the lifecycle: `internal/ui/vm.go` and `vm_service.go` drive
+the backend off the GTK main thread and keep the guest password in the Secret
+Service, never in the project or the configuration. Removing a VM deletes the
+container, project and password but keeps the guest disk; deleting the disk is
+a separate, explicitly confirmed action (`RemoveData`), because losing a
+Windows installation should take a deliberate second step.
+
 ## 1. Layers
 
 ```
@@ -15,7 +33,6 @@ document follows [design.md](design.md); why this toolkit is in
 │          settings: fetch named widgets, fill them, take events │
 ├──────────────────────────────────────────────────────────────┤
 │ State    internal/shell: modes, search, selection, focus      │  toolkit-free, unit tested
-│          rules, dock model (main thread)                       │
 ├──────────────────────────────────────────────────────────────┤
 │ GTK glue internal/gtkx (ownership, callbacks, main thread,    │
 │          .ui loading)   internal/layershell (gtk4-layer-shell) │

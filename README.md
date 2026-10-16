@@ -60,6 +60,41 @@ BlueZ, UPower, power-profiles-daemon, PipeWire. Without one, its part of the
 shell says "Unavailable" instead. The full list is in
 [docs/design.md](docs/design.md#packages).
 
+## Windows VM diagnostics
+
+`inua vm doctor` checks the Linux host prerequisites and VM configuration;
+`inua vm status --json` reports the same information for scripts. These are
+read-only diagnostics: they inspect local platform facilities and configuration,
+without contacting Docker or changing system or VM state.
+
+Windows VM support targets NixOS, Ubuntu and Debian Linux hosts. It uses
+Docker Engine with Compose v2 and KVM acceleration, and connects with
+FreeRDP. The host needs accessible `/dev/kvm` and Docker socket, Compose v2,
+FreeRDP, `xdg-open`, a filesystem with free space, and `/dev/net/tun` for
+networking. Allocate at least 4 GiB RAM, 2 CPUs and 64 GiB disk; diagnostics
+recommend a profile based on host resources. The VM is isolated behind the
+Docker backend boundary; Docker access itself grants broad control of the host,
+so only grant socket access to trusted users. The diagnostics never modify
+groups or package settings.
+
+### Using it
+
+The drawer's SYSTEM group holds a **Windows VM** entry, present whether or
+not a VM exists. Opening it shows the recommended resources and one
+**Accept recommended profile** button, with **Advanced configuration** for
+RAM, CPU cores and disk size. **Download and install Windows** is a separate
+step: it writes the Compose project, keeps the guest password in the Secret
+Service, pulls the image and starts the container. The first Windows
+installation downloads several gigabytes and needs many minutes; the guest
+password is never written to the configuration file, and **Open web console**
+shows the installer's progress in the browser. **Connect** opens FreeRDP
+after the guest is ready, and **Stop** keeps the disk.
+
+Removing is two separate, explicitly confirmed actions: **Remove VM** deletes
+the container, project and stored password but keeps the guest disk, while
+**Delete disk data** permanently deletes the Windows disk and asks first.
+Stopping or removing a VM never deletes its data.
+
 ## Install
 
 ```sh
@@ -77,7 +112,6 @@ first, and the answer defaults to yes for gpg's pinentry (with
 `inua-keyring`, after copying its items into pass) and for Omarchy's
 shell (Quickshell, with `inua-shell`). With no login manager
 it offers greetd + tuigreet, the login screen inua recommends (yes); GDM,
-SDDM … are kept unless you answer yes, and Inua joins their list of
 sessions. Without a password store it offers to make one with a GPG key of
 yours (yes), or with a new key whose passphrase you choose (no), and says
 what to run to do it yourself. On Fedora 43 and later, Hyprland comes from a COPR

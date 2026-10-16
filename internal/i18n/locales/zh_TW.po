@@ -509,9 +509,11 @@ msgstr "影片"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
+#: internal/ui/vm.go:246
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
+#: ui/vm.ui:1183
 msgid "Delete"
 msgstr "刪除"
 
@@ -614,6 +616,7 @@ msgstr "刪除 %s"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
+#: ui/vm.ui:268
 msgid "Edit"
 msgstr "編輯"
 
@@ -622,8 +625,10 @@ msgstr "編輯"
 #: internal/gamesui/fortune_menu.go:174
 #: ui/clock.ui:339
 #: ui/clock.ui:406
+#: ui/vm.ui:931
+#: ui/vm.ui:952
 msgid "Start"
-msgstr "開始"
+msgstr "啟動"
 
 #: internal/appui/clock.go:492
 #: ui/music.ui:332
@@ -633,6 +638,9 @@ msgstr "重設"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:431
 #: internal/ui/alarms.go:108
+#: ui/vm.ui:647
+#: ui/vm.ui:1032
+#: ui/vm.ui:1053
 msgid "Stop"
 msgstr "停止"
 
@@ -1244,7 +1252,7 @@ msgid "Show"
 msgstr "顯示"
 
 #: internal/appui/pass.go:597
-#: internal/ui/notify.go:402
+#: internal/ui/notify.go:404
 msgid "Hide"
 msgstr "隱藏"
 
@@ -1380,7 +1388,10 @@ msgstr "%s · %s"
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
+#: internal/ui/settings_keyring.go:560
+#: internal/ui/vm.go:237
 #: ui/stocks.ui:292
+#: ui/vm.ui:1139
 msgid "Remove"
 msgstr "移除"
 
@@ -1607,7 +1618,7 @@ msgstr "GPU"
 #: internal/appui/sysmon.go:1031
 #: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "NETWORK"
 msgstr "網路"
 
@@ -2652,6 +2663,8 @@ msgid "Replace the installed %s?"
 msgstr "取代已安裝的 %s？"
 
 #: internal/appui/workshop_manager.go:154
+#: internal/ui/vm.go:438
+#: ui/vm.ui:483
 msgid "Install"
 msgstr "安裝"
 
@@ -3539,6 +3552,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://伺服器/分享, sftp://使用者@主機/資料夾, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
+#: ui/vm.ui:974
+#: ui/vm.ui:1008
 msgid "Connect"
 msgstr "連線"
 
@@ -7143,7 +7158,7 @@ msgid "SPACE PINBALL"
 msgstr "太空彈珠"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 #: ui/settings.ui:1657
 msgid "Launcher"
 msgstr "啟動器"
@@ -7176,7 +7191,7 @@ msgstr "聚焦或關閉"
 
 #: internal/hyprconf/keys.go:30
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 #: ui/control.ui:62
 #: ui/settings.ui:30
 msgid "Settings"
@@ -7385,7 +7400,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "再次按 Enter 清空垃圾桶"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 msgid "inua's settings"
 msgstr "inua的設置"
 
@@ -7442,7 +7457,7 @@ msgid "All of them"
 msgstr "他們全部"
 
 #: internal/shell/commands.go:40
-#: internal/ui/notify.go:848
+#: internal/ui/notify.go:850
 #: ui/center.ui:71
 #: ui/control.ui:435
 msgid "Focus"
@@ -7532,12 +7547,12 @@ msgid "Web search"
 msgstr "網路搜尋"
 
 #: internal/shell/dock.go:246
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "EVERYDAY"
 msgstr "日常"
 
 #: internal/shell/dock.go:255
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "TOOLS"
 msgstr "工具"
 
@@ -7546,42 +7561,53 @@ msgid "PLAY"
 msgstr "玩"
 
 #: internal/shell/dock.go:273
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "系統"
 
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 msgid "Find apps, windows and answers"
 msgstr "尋找應用程式、視窗和答案"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 #: internal/ui/screenshot.go:783
 #: ui/settings.ui:1617
 msgid "Screenshot"
 msgstr "螢幕截圖"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 msgid "Capture an area, a window or a screen"
 msgstr "捕捉區域、視窗或螢幕"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:289
+#: internal/ui/vm.go:307
+#: ui/vm.ui:14
+#: ui/vm.ui:37
+msgid "Windows VM"
+msgstr "Windows 虛擬機"
+
+#: internal/shell/dock.go:289
+msgid "Manage your Windows virtual machine"
+msgstr "管理你的 Windows 虛擬機"
+
+#: internal/shell/dock.go:298
 msgid "DEVELOPMENT"
 msgstr "開發"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "MEDIA"
 msgstr "媒體"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "GAMES"
 msgstr "遊戲"
 
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 msgid "OTHER"
 msgstr "其他"
 
-#: internal/shell/dock.go:322
+#: internal/shell/dock.go:324
 msgid "WORKSHOP"
 msgstr "工坊"
 
@@ -8087,16 +8113,16 @@ msgstr "釘選至 Dock"
 msgid "Quit (%d windows)"
 msgstr "退出(%d視窗)"
 
-#: internal/ui/drawer.go:212
+#: internal/ui/drawer.go:235
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr "應用程式"
 
-#: internal/ui/drawer.go:215
+#: internal/ui/drawer.go:238
 msgid "Workshop apps"
 msgstr "工坊應用程式"
 
-#: internal/ui/drawer.go:316
+#: internal/ui/drawer.go:339
 msgid "The light apps are not installed (make install)."
 msgstr "輕應用程式未安裝(make install)。"
 
@@ -8169,17 +8195,17 @@ msgstr "正在檢查中…"
 msgid "The password could not be checked"
 msgstr "無法檢查密碼"
 
-#: internal/ui/notify.go:316
+#: internal/ui/notify.go:318
 #: ui/bar.ui:122
 #: ui/settings.ui:2911
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/ui/notify.go:318
+#: internal/ui/notify.go:320
 msgid "Notifications (Focus is on)"
 msgstr "通知（專注模式已開啟）"
 
-#: internal/ui/notify.go:404
+#: internal/ui/notify.go:406
 #: ui/colorpicker.ui:93
 #: ui/gpg.ui:508
 #: ui/gpg.ui:1011
@@ -8187,24 +8213,24 @@ msgstr "通知（專注模式已開啟）"
 msgid "Clear"
 msgstr "清除"
 
-#: internal/ui/notify.go:446
+#: internal/ui/notify.go:448
 msgid "Notification"
 msgstr "通知"
 
-#: internal/ui/notify.go:636
-#: internal/ui/notify.go:826
+#: internal/ui/notify.go:638
+#: internal/ui/notify.go:828
 msgid "inua notifications"
 msgstr "inua通知"
 
-#: internal/ui/notify.go:848
+#: internal/ui/notify.go:850
 msgid "Focus is on"
 msgstr "專注模式已開啟"
 
-#: internal/ui/notify.go:891
+#: internal/ui/notify.go:893
 msgid "Show less"
 msgstr "顯示較少"
 
-#: internal/ui/notify.go:893
+#: internal/ui/notify.go:895
 msgid "%d more"
 msgstr "%d更多"
 
@@ -9201,6 +9227,155 @@ msgstr "inua無法升級"
 #: internal/ui/updates.go:179
 msgid "Could not upgrade: %s"
 msgstr "無法升級:%s"
+
+#: internal/ui/vm.go:233
+msgid "Confirm remove"
+msgstr "確認移除"
+
+#: internal/ui/vm.go:242
+msgid "Confirm delete"
+msgstr "確認刪除"
+
+#: internal/ui/vm.go:275
+msgid "The fix did not work: %v"
+msgstr "修復失敗：%v"
+
+#: internal/ui/vm.go:280
+msgid "Done. Log out and back in for it to take effect."
+msgstr "完成。請登出並重新登入以使變更生效。"
+
+#: internal/ui/vm.go:283
+msgid "Done."
+msgstr "完成。"
+
+#: internal/ui/vm.go:298
+msgid "Log out to finish"
+msgstr "登出以完成"
+
+#: internal/ui/vm.go:299
+msgid "The change takes effect the next time you log in."
+msgstr "此變更將在你下次登入時生效。"
+
+#: internal/ui/vm.go:314
+msgid "Log out now"
+msgstr "立即登出"
+
+#: internal/ui/vm.go:392
+msgid "Fix"
+msgstr "修復"
+
+#: internal/ui/vm.go:394
+msgid "Add me to %s"
+msgstr "將我加入 %s 群組"
+
+#: internal/ui/vm.go:446
+msgid "Operating system"
+msgstr "作業系統"
+
+#: internal/ui/vm.go:448
+msgid "Hardware virtualization (KVM)"
+msgstr "硬體虛擬化 (KVM)"
+
+#: internal/ui/vm.go:450
+msgid "Docker"
+msgstr ""
+
+#: internal/ui/vm.go:452
+msgid "Docker Compose v2"
+msgstr ""
+
+#: internal/ui/vm.go:454
+msgid "FreeRDP"
+msgstr ""
+
+#: internal/ui/vm.go:456
+msgid "Browser opener"
+msgstr "瀏覽器開啟程式"
+
+#: internal/ui/vm.go:458
+msgid "Disk space"
+msgstr "磁碟空間"
+
+#: internal/ui/vm.go:460
+msgid "Network device (TUN)"
+msgstr "網路裝置 (TUN)"
+
+#: internal/ui/vm.go:462
+#: ui/settings.ui:3556
+msgid "Secret Service"
+msgstr "Secret Service"
+
+#: internal/ui/vm.go:471
+msgid "Not installed on this system."
+msgstr "此系統上未安裝。"
+
+#: internal/ui/vm.go:473
+msgid "Installed, but your user may not use it."
+msgstr "已安裝，但你的使用者無權使用。"
+
+#: internal/ui/vm.go:475
+msgid "Installed, but not running."
+msgstr ""
+
+#: internal/ui/vm.go:477
+msgid "This Linux distribution is not supported."
+msgstr "不支援此 Linux 發行版。"
+
+#: internal/ui/vm.go:479
+msgid "Could not be checked."
+msgstr "無法檢查。"
+
+#: internal/ui/vm.go:493
+msgid "A balanced profile leaves memory and CPU for your system."
+msgstr "均衡設定會為你的系統保留記憶體與 CPU。"
+
+#: internal/ui/vm.go:508
+msgid "Stopping…"
+msgstr "正在停止…"
+
+#: internal/ui/vm.go:510
+msgid "Windows is installing; this takes a while."
+msgstr "正在安裝 Windows；需要一些時間。"
+
+#: internal/ui/vm.go:512
+msgid "Starting the guest…"
+msgstr "正在啟動客體機…"
+
+#: internal/ui/vm.go:552
+msgid "Something went wrong"
+msgstr "發生錯誤"
+
+#: internal/ui/vm.go:556
+msgid "This system is missing something Windows needs"
+msgstr "此系統缺少 Windows 所需的元件"
+
+#: internal/ui/vm.go:558
+msgid "Not installed yet"
+msgstr "尚未安裝"
+
+#: internal/ui/vm.go:561
+msgid "Stopping"
+msgstr "正在停止"
+
+#: internal/ui/vm.go:563
+msgid "Installing Windows"
+msgstr "正在安裝 Windows"
+
+#: internal/ui/vm.go:567
+msgid "Windows is running"
+msgstr "Windows 正在執行"
+
+#: internal/ui/vm.go:569
+msgid "Stopped"
+msgstr "已停止"
+
+#: internal/ui/vm.go:571
+msgid "Failed"
+msgstr "失敗"
+
+#: internal/ui/vm.go:573
+msgid "Ready"
+msgstr "就緒"
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -10795,6 +10970,7 @@ msgid "Secret Service"
 msgstr "Secret Service"
 
 #: ui/settings.ui:3702
+#: ui/settings.ui:3592
 msgid "Unlocked secrets"
 msgstr "已解鎖的機密"
 
@@ -11237,6 +11413,139 @@ msgstr "詳細資料（I）"
 #: ui/viewer.ui:339
 msgid "Open a File…"
 msgstr "開啟檔案…"
+
+#: ui/vm.ui:101
+msgid "[HOST]"
+msgstr "[主機]"
+
+#: ui/vm.ui:167
+#: ui/vm.ui:695
+msgid "[GUEST]"
+msgstr "[客體機]"
+
+#: ui/vm.ui:204
+msgid "Recommended profile"
+msgstr "建議設定"
+
+#: ui/vm.ui:225
+msgid "Use it"
+msgstr "使用"
+
+#: ui/vm.ui:247
+msgid "Advanced configuration"
+msgstr "進階設定"
+
+#: ui/vm.ui:256
+msgid "Set memory, CPU cores and disk size yourself."
+msgstr "自行設定記憶體、CPU 核心與磁碟大小。"
+
+#: ui/vm.ui:292
+#: ui/vm.ui:726
+msgid "Memory (MiB)"
+msgstr "記憶體 (MiB)"
+
+#: ui/vm.ui:325
+#: ui/vm.ui:774
+msgid "CPU cores"
+msgstr "CPU 核心"
+
+#: ui/vm.ui:358
+#: ui/vm.ui:822
+msgid "Disk size (GiB)"
+msgstr "磁碟大小 (GiB)"
+
+#: ui/vm.ui:393
+msgid "Save profile"
+msgstr "儲存設定"
+
+#: ui/vm.ui:432
+msgid "[INSTALL]"
+msgstr "[安裝]"
+
+#: ui/vm.ui:461
+msgid "Download and install Windows"
+msgstr "下載並安裝 Windows"
+
+#: ui/vm.ui:470
+msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
+msgstr "下載約 8 GB 並安裝 Windows；需要 30 分鐘以上。"
+
+#: ui/vm.ui:530
+msgid "[PROGRESS]"
+msgstr "[進度]"
+
+#: ui/vm.ui:582
+msgid "Watch the installation"
+msgstr "查看安裝過程"
+
+#: ui/vm.ui:591
+msgid "The installer screen is in your browser."
+msgstr "安裝畫面會顯示在瀏覽器中。"
+
+#: ui/vm.ui:603
+msgid "Open web console"
+msgstr "開啟網頁主控台"
+
+#: ui/vm.ui:625
+msgid "Stop waiting"
+msgstr "停止等待"
+
+#: ui/vm.ui:634
+msgid "Stops the container; the disk is kept. Reopen to resume."
+msgstr "停止容器並保留磁碟；重新開啟可繼續。"
+
+#: ui/vm.ui:756
+#: ui/vm.ui:804
+msgid "Takes effect on next start."
+msgstr "下次啟動時生效。"
+
+#: ui/vm.ui:846
+msgid "Enlarging needs a manual partition resize inside Windows."
+msgstr "擴容需在 Windows 內手動調整分割區。"
+
+#: ui/vm.ui:867
+msgid "Apply"
+msgstr "套用"
+
+#: ui/vm.ui:902
+msgid "[ACTIONS]"
+msgstr "[操作]"
+
+#: ui/vm.ui:940
+msgid "Starts the guest; ready in a minute or two."
+msgstr "啟動客體機，約一兩分鐘後就緒。"
+
+#: ui/vm.ui:983
+msgid "Opens FreeRDP."
+msgstr "開啟 FreeRDP。"
+
+#: ui/vm.ui:998
+msgid "Web console"
+msgstr "網頁主控台"
+
+#: ui/vm.ui:1041
+msgid "Stops the guest; the disk is kept."
+msgstr "停止客體機並保留磁碟。"
+
+#: ui/vm.ui:1088
+msgid "[REMOVE]"
+msgstr "[移除]"
+
+#: ui/vm.ui:1117
+msgid "Remove VM"
+msgstr "移除虛擬機"
+
+#: ui/vm.ui:1126
+msgid "Deletes the container, project and password. The disk stays."
+msgstr "刪除容器、專案與密碼；磁碟保留。"
+
+#: ui/vm.ui:1161
+msgid "Delete disk data"
+msgstr "刪除磁碟資料"
+
+#: ui/vm.ui:1170
+msgid "Permanently deletes the Windows disk. Cannot be undone."
+msgstr "永久刪除 Windows 磁碟，無法復原。"
 
 #: ui/weather.ui:30
 msgid "Previous place"
