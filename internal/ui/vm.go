@@ -103,8 +103,7 @@ type vmWindow struct {
 	manager VMManager
 	shell   *shellUI // for a notification the window raises
 
-	// Headline, shared by every page.
-	sub, mark gtk.Label
+	sub gtk.Label // the headline under the title
 
 	stack gtk.Stack
 
@@ -155,7 +154,6 @@ func OpenVMManager(s *shellUI, manager VMManager) *vmWindow {
 	builder := s.load("vm.ui", &v.refs)
 	builder.Get("vm", v.win)
 	builder.Get("vm_sub", &v.sub)
-	builder.Get("vm_mark", &v.mark)
 	builder.Get("vm_stack", &v.stack)
 	builder.Get("vm_check_rows", &v.checkRows)
 	builder.Get("vm_setup_summary", &v.setupSummary)
@@ -315,12 +313,13 @@ func (v *vmWindow) askRelogin() {
 	})
 }
 
-// vmNoteAction answers the VM notification: Log out now ends the session,
-// as the control center's power row does; a click on the body only puts the
-// banner away.
+// vmNoteAction answers the VM notification: Log out now ends the session.
+// Hyprland 0.55 runs a Lua configuration, where the dispatcher is an
+// expression (hl.dsp.exit()) and the classic text form is rejected, so ask
+// dispatchEither to pick, as focusing and switching workspaces do.
 func (s *shellUI) vmNoteAction(_ notify.Notification, key string) {
 	if key == "vm-logout" {
-		s.dispatch("exit")
+		s.dispatchEither("exit", "hl.dsp.exit()")
 	}
 }
 
@@ -341,7 +340,6 @@ func (v *vmWindow) Update(s VMSnapshot) {
 		} else {
 			v.sub.SetText(vmStateText(s))
 		}
-		toggle(&v.mark.Widget, "on", s.State == vm.StateRunning && s.Err == nil)
 
 		switch s.phase() {
 		case phasePrereq:
