@@ -43,22 +43,22 @@ type settings struct {
 	swatchNames           []string               // the themes the swatches show
 	themeTrash, iconTrash gtk.Button             // for the user's theme or icon set in use
 
-	bgEnable, title, tray, tpAccel, notifyOn, critFocus, noteHistory gtk.Switch
-	barOn, dockOn, dockHide, dockDrawer, dockFlushBar                gtk.Switch
-	clipEnable, clipBar, clipPaste                                   gtk.Switch
-	dockSize, dockPosition, barDensity                               gtk.DropDown
-	dockPinned                                                       gtk.Box
-	bgImage, bgColor, clock, terminal, lock, screenshot              gtk.Entry
-	clipSensitive                                                    gtk.Entry
-	bgFit, ws, launchMode, swap, caps, icons, banner                 gtk.DropDown
-	clipLimit                                                        gtk.DropDown
-	clipLimits                                                       []int // clipLimit's choices
-	textScale                                                        gtk.DropDown
-	textScales                                                       []int    // textScale's choices
-	iconSets                                                         []string // icons' choices
-	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency gtk.Scale
+	bgEnable, title, tray, tpAccel, notifyOn, critFocus, noteHistory             gtk.Switch
+	barOn, dockOn, dockHide, dockDrawer, dockFlushBar                            gtk.Switch
+	clipEnable, clipBar, clipPaste                                               gtk.Switch
+	dockSize, dockPosition, barDensity                                           gtk.DropDown
+	dockPinned                                                                   gtk.Box
+	bgImage, bgColor, clock, terminal, lock, screenshot                          gtk.Entry
+	clipSensitive                                                                gtk.Entry
+	bgFit, ws, launchMode, swap, caps, icons, banner                             gtk.DropDown
+	clipLimit                                                                    gtk.DropDown
+	clipLimits                                                                   []int // clipLimit's choices
+	textScale                                                                    gtk.DropDown
+	textScales                                                                   []int    // textScale's choices
+	iconSets                                                                     []string // icons' choices
+	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency            gtk.Scale
 	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal gtk.Label
-	clipClear, clipReveal                                            gtk.Button
+	clipClear, clipReveal                                                        gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
 	// would do nothing.
@@ -101,8 +101,8 @@ var (
 	fitChoices   = config.Fits
 	wsChoices    = []string{"monitor", "all"}
 	barDensities = []string{"default", "compact"}
-	swapChoices = []string{"", "left", "both"}
-	capsChoices = []string{"", "escape", "ctrl"}
+	swapChoices  = []string{"", "left", "both"}
+	capsChoices  = []string{"", "escape", "ctrl"}
 )
 
 func (s *shellUI) bindSettingsHandlers() {
