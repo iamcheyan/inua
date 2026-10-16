@@ -10,6 +10,11 @@
 package ui
 
 import (
+	"codeberg.org/puregotk/purego"
+	"codeberg.org/puregotk/puregotk/v4/gdk"
+	"codeberg.org/puregotk/puregotk/v4/gio"
+	"codeberg.org/puregotk/puregotk/v4/glib"
+	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -21,12 +26,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"codeberg.org/puregotk/purego"
-	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
-	"codeberg.org/puregotk/puregotk/v4/glib"
-	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/desktop"
@@ -97,6 +96,7 @@ type shellUI struct {
 	settings  settings
 	tray      tray
 	sys       shell.System
+	vm        vmState
 	svc       services
 
 	// Long-lived signal handlers, shared by all widgets (see package gtkx).
@@ -266,9 +266,8 @@ func Run(opts Options) int {
 		log.Printf("ipc: %v", err)
 		return 1
 	}
-
 	app := gtk.NewApplication(shell.AppID, gio.GApplicationNonUniqueValue)
-	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}}
+	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}, vm: vmState{manager: newVMService()}}
 	s.pass.slot = make(chan struct{}, 1) // before the control socket serves
 	activate := func(gio.Application) { s.start() }
 	app.ConnectActivate(&activate)
@@ -693,10 +692,11 @@ func (s *shellUI) barNames() []string {
 //	notifications toggle|open|close|clear|focus [on|off]|list|dismiss ID|invoke ID [KEY]
 //	system   status|set KEY VALUE|power ACTION
 //	media    status|play-pause|next|previous
-//	shell    state|close|reload|restart|snapshot DIR|tray-menu N
+//
+// vm       status|doctor|open|configure|install|start|connect|console|stop|remove|remove-data
 func (s *shellUI) request(req ipc.Request) ipc.Response {
 	if req.Op == "show" {
-		return ipc.Response{OK: true, Result: "launcher: toggle apps windows close (apps|windows QUERY…)\noverview: toggle open close\ncontrol: toggle open close\nsettings: toggle open close\nnotifications: toggle open close clear focus list dismiss invoke\nmedia: status play-pause next previous\nsystem: status set (wifi bluetooth volume mute brightness focus saver) power (suspend reboot poweroff logout)\nscreenshot: area pick-window pick-screen screen window color record stop close\nlock: now unlock state\nclipboard: toggle open close\ndrawer: toggle open close\nshell: state close reload restart snapshot tray-menu"}
+		return ipc.Response{OK: true, Result: "launcher: toggle apps windows close (apps|windows QUERY…)\noverview: toggle open close\ncontrol: toggle open close\nsettings: toggle open close\nvm: status doctor open configure install start connect console stop remove remove-data\nnotifications: toggle open close clear focus list dismiss invoke\nmedia: status play-pause next previous\nsystem: status set (wifi bluetooth volume mute brightness focus saver) power (suspend reboot poweroff logout)\nscreenshot: area pick-window pick-screen screen window color record stop close\nlock: now unlock state\nclipboard: toggle open close\ndrawer: toggle open close\nshell: state close reload restart snapshot tray-menu"}
 	}
 	if req.Op != "call" {
 		return ipc.Response{Error: "unknown op " + req.Op}
@@ -706,6 +706,8 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 		return ipc.Response{Error: "the screen is locked"}
 	}
 	switch req.Target {
+	case "vm":
+		return s.vmRequest(req.Function)
 	case "launcher":
 		switch req.Function {
 		case "toggle":

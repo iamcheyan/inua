@@ -92,6 +92,11 @@ func (s *shellUI) snapshot(dir string) ([]string, error) {
 			return files, err
 		}
 	}
+	if s.vm.win != nil {
+		if err := save("vm", &s.vm.win.win.Window); err != nil {
+			return files, err
+		}
+	}
 	return files, nil
 }
 

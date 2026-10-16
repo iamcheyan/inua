@@ -229,6 +229,8 @@ func (s *shellUI) invokeNote(n notify.Notification, key string) {
 		s.recordingNoteAction(n, key)
 	case n.Entry == updateEntry:
 		s.updateNoteAction(n, key)
+	case n.Entry == vmEntry:
+		s.vmNoteAction(n, key)
 	case nt.srv != nil:
 		nt.srv.Invoke(n.ID, key, activationToken())
 	}

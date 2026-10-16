@@ -273,6 +273,7 @@ var LightAppGroups = []struct {
 	{i18n.M("SYSTEM"), []string{
 		"inua:settings",
 		"inua:launcher",
+		"inua:windows-vm",
 	}},
 }
 
@@ -285,6 +286,7 @@ var ShellApps = []*desktop.Entry{
 	{ID: "inua:settings", Name: i18n.M("Settings"), Comment: i18n.M("inua's settings"), Icon: "io.github.lyricat.Inua.Settings"},
 	{ID: "inua:launcher", Name: i18n.M("Launcher"), Comment: i18n.M("Find apps, windows and answers"), Icon: "io.github.lyricat.Inua.Launcher"},
 	{ID: "inua:screenshot", Name: i18n.M("Screenshot"), Comment: i18n.M("Capture an area, a window or a screen"), Icon: "io.github.lyricat.Inua.Screenshot"},
+	{ID: "inua:windows-vm", Name: i18n.M("Windows VM"), Comment: i18n.M("Manage your Windows virtual machine"), Icon: "io.github.lyricat.Inua.WindowsVM"},
 }
 
 // WorkshopApp is the Workshop light app, which ends the workshop drawer.

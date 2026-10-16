@@ -198,7 +198,30 @@ func (s *shellUI) drawerShellApp(id string) {
 			time.Sleep(150 * time.Millisecond) // the last frame of the drawer, off the screen
 			gtkx.Post(func() { s.screenshotRequest("area") })
 		}()
+	case "inua:windows-vm":
+		s.openVMManager()
 	}
+}
+
+func (s *shellUI) openVMManager() {
+	if s.vm.win == nil {
+		s.vm.win = OpenVMManager(s, s.vm.manager)
+		return
+	}
+	s.vm.win.win.Present()
+	s.vm.win.Update(s.vm.manager.Snapshot())
+}
+
+// closeVMManager destroys the manager window and forgets it, so opening the
+// drawer entry again builds a fresh one.
+func (s *shellUI) closeVMManager() {
+	if s.vm.win == nil {
+		return
+	}
+	s.vm.win.closed = true
+	s.vm.win.win.Destroy()
+	s.vm.win.refs.Release()
+	s.vm.win = nil
 }
 
 // drawerButton is a drawer's button at the dock's end, the size of an

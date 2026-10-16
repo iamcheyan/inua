@@ -167,7 +167,7 @@ func TestLightApps(t *testing.T) {
 	for _, e := range LightApps(apps) {
 		names = append(names, e.Name)
 	}
-	if got := strings.Join(names, ","); got != "Clock,Calculator,Screenshot,Settings,Launcher" {
+	if got := strings.Join(names, ","); got != "Clock,Calculator,Screenshot,Settings,Launcher,Windows VM" {
 		t.Fatalf("LightApps = %s", got)
 	}
 }
@@ -181,7 +181,7 @@ func TestLightAppSections(t *testing.T) {
 	got := LightAppSections(apps)
 	if len(got) != 3 || got[0].Title != "EVERYDAY" || len(got[0].Apps) != 2 || got[0].Apps[0].Name != "Clock" ||
 		got[1].Title != "TOOLS" || len(got[1].Apps) != 2 || got[1].Apps[0].Name != "Screenshot" ||
-		got[2].Title != "SYSTEM" || len(got[2].Apps) != 2 {
+		got[2].Title != "SYSTEM" || len(got[2].Apps) != 3 {
 		t.Fatalf("LightAppSections = %+v", got)
 	}
 	// The shell's tools are there with no light app installed.
