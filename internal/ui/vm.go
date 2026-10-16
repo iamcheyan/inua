@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -31,6 +32,9 @@ type VMManager interface {
 	Stop() error
 	Remove() error
 	RemoveData() error
+	// Fix applies a failing check's remedy, asking for the password through
+	// the session's polkit agent when it needs one.
+	Fix(vm.Remedy) (done string, relogin bool, err error)
 }
 
 // vmPhase is the window's page: what the guest's state means for the user.
@@ -134,6 +138,8 @@ type vmWindow struct {
 	dataArmed     bool
 	operationBusy bool
 	checkRefs     gtkx.Scope // the rows built for the current check list
+	fixButtons    []fixTarget
+	fixNote       string // what a fix did, shown until the next refresh
 	onClick       func(gtk.Button)
 	onClose       func(gtk.Window) bool
 }
@@ -236,7 +242,41 @@ func (v *vmWindow) clicked(b gtk.Button) {
 		v.dataArmed = false
 		v.removeData.SetLabel(i18n.T("Delete"))
 		v.run(v.manager.RemoveData)
+	case "fix":
+		for _, t := range v.fixButtons {
+			if t.btn.GoPointer() == b.GoPointer() {
+				v.applyFix(t.remedy)
+				return
+			}
+		}
 	}
+}
+
+// applyFix runs a remedy. The polkit dialog it may open lives on the main
+// thread, so the work goes to a goroutine (as the other actions do) and the
+// result comes back to the window.
+func (v *vmWindow) applyFix(r vm.Remedy) {
+	if v.operationBusy {
+		return
+	}
+	v.operationBusy = true
+	go func() {
+		_, relogin, err := v.manager.Fix(r)
+		gtkx.Post(func() {
+			v.operationBusy = false
+			switch {
+			case err != nil:
+				v.fixNote = i18n.Tf("The fix did not work: %v", err)
+			case relogin:
+				// A process's group list is fixed when it starts, so the
+				// change is real but this session cannot see it yet.
+				v.fixNote = i18n.T("Done. Log out and back in for it to take effect.")
+			default:
+				v.fixNote = i18n.T("Done.")
+			}
+			v.Update(v.manager.Snapshot())
+		})
+	}()
 }
 
 // Update refreshes the window on the GTK main thread: it picks the page the
@@ -248,7 +288,14 @@ func (v *vmWindow) Update(s VMSnapshot) {
 			return
 		}
 		v.stack.SetVisibleChildName(string(s.phase()))
-		v.sub.SetText(vmStateText(s))
+		// A fix's outcome outranks the state line: it is what the user just
+		// did, and a group change only takes hold at the next login. It stays
+		// up until something else replaces it.
+		if v.fixNote != "" {
+			v.sub.SetText(v.fixNote)
+		} else {
+			v.sub.SetText(vmStateText(s))
+		}
 		toggle(&v.mark.Widget, "on", s.State == vm.StateRunning && s.Err == nil)
 
 		switch s.phase() {
@@ -268,6 +315,7 @@ func (v *vmWindow) Update(s VMSnapshot) {
 // language: the platform reports a reason, not a sentence.
 func (v *vmWindow) showChecks(items []vm.DoctorItem) {
 	v.checkRefs.Release()
+	v.fixButtons = nil
 	gtkx.Clear(&v.checkRows)
 	for _, c := range items {
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
@@ -284,15 +332,65 @@ func (v *vmWindow) showChecks(items []vm.DoctorItem) {
 		name := gtk.NewLabel(vmCheckName(c.Name))
 		name.AddCssClass("label")
 		name.SetXalign(0)
-		detail := gtk.NewLabel(vmCheckReason(c.Reason))
-		detail.AddCssClass("sub")
-		detail.SetXalign(0)
-		detail.SetWrap(true)
+		text2 := gtk.NewLabel(vmCheckReason(c.Reason))
+		text2.AddCssClass("sub")
+		text2.SetXalign(0)
+		text2.SetWrap(true)
 		gtkx.Append(text, &name.Widget)
-		gtkx.Append(text, &detail.Widget)
+		gtkx.Append(text, &text2.Widget)
 		gtkx.Append(row, &text.Widget)
+
+		// What the user can do about it: a button when Inua can apply the
+		// fix itself, the platform's instructions when it cannot.
+		switch {
+		case c.Remedy != nil:
+			label := i18n.T("Fix")
+			if c.Remedy.Group != "" {
+				label = i18n.Tf("Add me to %s", c.Remedy.Group)
+			}
+			btn := gtk.NewButtonWithLabel(label)
+			btn.AddCssClass("outlined")
+			btn.SetValign(gtk.AlignCenterValue)
+			btn.SetName("fix")
+			v.fixButtons = append(v.fixButtons, fixTarget{btn: *btn, remedy: *c.Remedy})
+			btn.ConnectClicked(&v.onClick)
+			gtkx.Append(row, &btn.Widget)
+		default:
+			// A package to install, named for this distribution.
+			if hint := vmPackageHint(c.Name); hint != "" {
+				hintLabel := gtk.NewLabel(hint)
+				hintLabel.AddCssClass("sub")
+				hintLabel.AddCssClass("vm-hint")
+				hintLabel.SetValign(gtk.AlignCenterValue)
+				gtkx.Append(row, &hintLabel.Widget)
+			}
+		}
 		gtkx.Append(&v.checkRows, &row.Widget)
 	}
+}
+
+// fixTarget ties a button to the remedy it applies.
+type fixTarget struct {
+	btn    gtk.Button
+	remedy vm.Remedy
+}
+
+// vmPackageHint is how to install a missing tool on this distribution, as a
+// line the user can copy. The window never runs a package manager: choosing
+// packages and changing a system is the user's call, not a button's.
+func vmPackageHint(check string) string {
+	pkg := map[string]string{
+		"docker":           "docker",
+		"docker-compose":   "docker-compose",
+		"freerdp":          "freerdp",
+		"xdg-open":         "xdg-utils",
+		"operating system": "",
+		"secret service":   "gnome-keyring",
+	}[strings.ToLower(check)]
+	if pkg == "" {
+		return ""
+	}
+	return i18n.T("Install") + ": " + pkg
 }
 
 // vmCheckName is a check's name. The platform names them in English; these

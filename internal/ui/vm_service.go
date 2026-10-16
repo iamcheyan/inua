@@ -188,6 +188,21 @@ func (s *vmService) Status() (vm.State, error) {
 	return x.State, nil
 }
 
+// Fix applies a check's remedy. A privileged one goes through pkexec, so the
+// shell's own polkit dialog takes the password; this runs on a goroutine,
+// because that dialog is on the main thread and this call waits for it.
+//
+// It re-reads the platform afterwards, so the window shows the new state
+// rather than the one it was looking at.
+func (s *vmService) Fix(r vm.Remedy) (string, bool, error) {
+	done, relogin, err := vm.ApplyRemedy(r)
+	s.mu.Lock()
+	s.platform = vm.DetectPlatform("", vm.PlatformProbes{})
+	s.mu.Unlock()
+	s.refresh()
+	return done, relogin, err
+}
+
 // AcceptProfile saves the recommendation as the VM's configuration.
 func (s *vmService) AcceptProfile(c vm.Config) error { return s.Configure(c) }
 

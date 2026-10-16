@@ -51,12 +51,36 @@ const (
 	ReasonUnclear DoctorReason = "unclear" // could not be told apart
 )
 
-// DoctorItem is one host check: what it needs, whether it holds, and, when it
-// does not, why - so the window can word it in the user's language.
+// Remedy is what fixes a failing check, when Inua can do it at all. A check
+// the user must fix by hand (installing a package) carries none, and the
+// window shows the platform's instructions instead.
+//
+// A privileged remedy runs through pkexec, so the session's polkit agent
+// decides whether to ask for a password; it never runs with the caller's
+// rights.
+type Remedy struct {
+	// What is the fix, in the imperative: "Add your user to the docker group".
+	What string
+	// Group is the account group the fix adds the user to, when it does.
+	Group string
+	// Privileged means the command needs root, and runs through pkexec.
+	Privileged bool
+	// Argv is the command, run without a shell. {User} and {Group} are
+	// replaced with this session's user and Group.
+	Argv []string
+	// Relogin says the fix only takes effect after the user logs out and in
+	// again - a process's group list cannot be changed from inside it.
+	Relogin bool
+}
+
+// DoctorItem is one host check: what it needs, whether it holds, when it does
+// not why, and how to fix it when Inua can. The text is a stable identifier,
+// so the window can word all of it in the user's language.
 type DoctorItem struct {
 	Name   string
 	OK     bool
 	Reason DoctorReason
+	Remedy *Remedy
 }
 
 type PlatformProbes struct {
@@ -119,9 +143,25 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	check := func(name string, ok bool, reason DoctorReason) DoctorItem {
 		return DoctorItem{Name: name, OK: ok, Reason: reason}
 	}
+
+	// The remedies Inua can carry out itself: adding the user to a device's
+	// group. A process's group list cannot be changed from inside it, so the
+	// fix only takes hold at the next login.
+	groupRemedy := func(group string) *Remedy {
+		return &Remedy{
+			What:       "Add your user to the " + group + " group",
+			Group:      group,
+			Privileged: true,
+			Argv:       []string{"gpasswd", "-a", "{User}", group},
+			Relogin:    true,
+		}
+	}
+
 	kvmCheck := check("KVM", p.KVM.Available && p.KVM.Accessible, ReasonMissing)
 	if p.KVM.Available && !p.KVM.Accessible {
+		// The device is there; this user is not in the group it belongs to.
 		kvmCheck.Reason = ReasonDenied
+		kvmCheck.Remedy = groupRemedy("kvm")
 	}
 
 	socket := mapPath("/var/run/docker.sock")
@@ -129,6 +169,7 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	socketCheck := check("Docker", p.DockerSocket.Available && p.DockerSocket.Accessible, ReasonMissing)
 	if p.DockerSocket.Available && !p.DockerSocket.Accessible {
 		socketCheck.Reason = ReasonDenied
+		socketCheck.Remedy = groupRemedy("docker")
 	}
 
 	composeVersion, composeErr := composeVersion(probes)
@@ -157,8 +198,9 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	if osName == "linux" && distro != "" {
 		osCheck.Reason = ReasonTooOld // an unsupported distribution, said plainly
 	}
+
 	// A check that passes says nothing about why; a failing one carries the
-	// reason the window words for the user.
+	// reason, and a remedy when Inua can apply one.
 	p.Doctor = []DoctorItem{
 		osCheck,
 		kvmCheck,

@@ -492,7 +492,7 @@ msgstr "비디오"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/ui/vm.go:237
+#: internal/ui/vm.go:243
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1367,7 +1367,7 @@ msgstr "%s · %s"
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
 #: internal/ui/settings_keyring.go:560
-#: internal/ui/vm.go:228
+#: internal/ui/vm.go:234
 #: ui/stocks.ui:292
 #: ui/vm.ui:1139
 msgid "Remove"
@@ -2640,6 +2640,7 @@ msgid "Replace the installed %s?"
 msgstr "설치된 %s을(를) 바꿀까요?"
 
 #: internal/appui/workshop_manager.go:154
+#: internal/ui/vm.go:393
 #: ui/vm.ui:483
 msgid "Install"
 msgstr "설치"
@@ -8821,120 +8822,140 @@ msgstr "inua는 업그레이드할 수 없습니다."
 msgid "Could not upgrade: %s"
 msgstr "업그레이드할 수 없음: %s"
 
-#: internal/ui/vm.go:224
+#: internal/ui/vm.go:230
 msgid "Confirm remove"
 msgstr "제거 확인"
 
-#: internal/ui/vm.go:233
+#: internal/ui/vm.go:239
 msgid "Confirm delete"
 msgstr "삭제 확인"
 
-#: internal/ui/vm.go:303
+#: internal/ui/vm.go:269
+msgid "The fix did not work: %v"
+msgstr "수정에 실패했습니다: %v"
+
+#: internal/ui/vm.go:273
+msgid "Done. Log out and back in for it to take effect."
+msgstr "완료。변경 사항을 적용하려면 로그아웃한 후 다시 로그인하세요。"
+
+#: internal/ui/vm.go:275
+msgid "Done."
+msgstr "완료。"
+
+#: internal/ui/vm.go:347
+msgid "Fix"
+msgstr "수정"
+
+#: internal/ui/vm.go:349
+msgid "Add me to %s"
+msgstr "%s 그룹에 추가"
+
+#: internal/ui/vm.go:401
 msgid "Operating system"
 msgstr "운영 체제"
 
-#: internal/ui/vm.go:305
+#: internal/ui/vm.go:403
 msgid "Hardware virtualization (KVM)"
 msgstr "하드웨어 가상화 (KVM)"
 
-#: internal/ui/vm.go:307
+#: internal/ui/vm.go:405
 msgid "Docker"
 msgstr ""
 
-#: internal/ui/vm.go:309
+#: internal/ui/vm.go:407
 msgid "Docker Compose v2"
 msgstr ""
 
-#: internal/ui/vm.go:311
+#: internal/ui/vm.go:409
 msgid "FreeRDP"
 msgstr ""
 
-#: internal/ui/vm.go:313
+#: internal/ui/vm.go:411
 msgid "Browser opener"
 msgstr "브라우저 실행 명령"
 
-#: internal/ui/vm.go:315
+#: internal/ui/vm.go:413
 msgid "Disk space"
 msgstr "디스크 공간"
 
-#: internal/ui/vm.go:317
+#: internal/ui/vm.go:415
 msgid "Network device (TUN)"
 msgstr "네트워크 장치 (TUN)"
 
-#: internal/ui/vm.go:319
+#: internal/ui/vm.go:417
 #: ui/settings.ui:3556
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/ui/vm.go:328
+#: internal/ui/vm.go:426
 msgid "Not installed on this system."
 msgstr "이 시스템에는 설치되어 있지 않습니다."
 
-#: internal/ui/vm.go:330
+#: internal/ui/vm.go:428
 msgid "Installed, but your user may not use it."
 msgstr "설치되어 있지만 사용자가 사용할 수 없습니다."
 
-#: internal/ui/vm.go:332
+#: internal/ui/vm.go:430
 msgid "Installed, but not running."
 msgstr ""
 
-#: internal/ui/vm.go:334
+#: internal/ui/vm.go:432
 msgid "This Linux distribution is not supported."
 msgstr "이 Linux 배포판은 지원되지 않습니다."
 
-#: internal/ui/vm.go:336
+#: internal/ui/vm.go:434
 msgid "Could not be checked."
 msgstr "확인할 수 없습니다."
 
-#: internal/ui/vm.go:350
+#: internal/ui/vm.go:448
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "균형 설정은 시스템을 위해 메모리와 CPU를 남깁니다."
 
-#: internal/ui/vm.go:365
+#: internal/ui/vm.go:463
 msgid "Stopping…"
 msgstr "중지 중…"
 
-#: internal/ui/vm.go:367
+#: internal/ui/vm.go:465
 msgid "Windows is installing; this takes a while."
 msgstr "Windows를 설치하는 중입니다. 시간이 걸립니다."
 
-#: internal/ui/vm.go:369
+#: internal/ui/vm.go:467
 msgid "Starting the guest…"
 msgstr "게스트 시작 중…"
 
-#: internal/ui/vm.go:409
+#: internal/ui/vm.go:507
 msgid "Something went wrong"
 msgstr "문제가 발생했습니다"
 
-#: internal/ui/vm.go:413
+#: internal/ui/vm.go:511
 msgid "This system is missing something Windows needs"
 msgstr "이 시스템에는 Windows에 필요한 것이 없습니다"
 
-#: internal/ui/vm.go:415
+#: internal/ui/vm.go:513
 msgid "Not installed yet"
 msgstr "설치되지 않음"
 
-#: internal/ui/vm.go:418
+#: internal/ui/vm.go:516
 msgid "Stopping"
 msgstr "중지 중"
 
-#: internal/ui/vm.go:420
+#: internal/ui/vm.go:518
 msgid "Installing Windows"
 msgstr "Windows 설치 중"
 
-#: internal/ui/vm.go:424
+#: internal/ui/vm.go:522
 msgid "Windows is running"
 msgstr "Windows 실행 중"
 
-#: internal/ui/vm.go:426
+#: internal/ui/vm.go:524
 msgid "Stopped"
 msgstr "중지됨"
 
-#: internal/ui/vm.go:428
+#: internal/ui/vm.go:526
 msgid "Failed"
 msgstr "실패"
 
-#: internal/ui/vm.go:430
+#: internal/ui/vm.go:528
 msgid "Ready"
 msgstr "준비됨"
 
