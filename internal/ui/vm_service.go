@@ -390,10 +390,21 @@ func (s *shellUI) vmRequest(fn string) ipc.Response {
 		return ipc.Response{OK: true, Result: string(x.State)}
 	case "doctor":
 		return ipc.Response{OK: true, Result: m.Doctor()}
-	case "install":
+	case "configure":
+		// Write the project from the recommended profile, without starting.
 		return asyncVM(fn, func() error { return m.Configure(m.profileConfig()) })
-	case "start":
-		return asyncVM(fn, m.Start)
+	case "install":
+		// A one-shot first install, as the name suggests: write the project
+		// from the recommended profile when there is none, then start the
+		// container, which downloads the image and installs Windows.
+		return asyncVM(fn, func() error {
+			if !m.Snapshot().HasConfig {
+				if err := m.Configure(m.profileConfig()); err != nil {
+					return err
+				}
+			}
+			return m.Start()
+		})
 	case "connect":
 		return asyncVM(fn, m.Connect)
 	case "stop":
