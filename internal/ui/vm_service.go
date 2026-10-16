@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"os/exec"
@@ -416,6 +417,10 @@ func (s *shellUI) vmRequest(fn string) ipc.Response {
 		return ipc.Response{OK: true, Result: string(x.State)}
 	case "doctor":
 		return ipc.Response{OK: true, Result: m.Doctor()}
+	case "fix":
+		// The failing checks' remedies, applied one after another: the same
+		// work the window's buttons do, reachable without the window.
+		return s.vmFixRequest()
 	case "configure":
 		// Write the project from the recommended profile, without starting.
 		return asyncVM(fn, func() error { return m.Configure(m.profileConfig()) })
@@ -443,6 +448,37 @@ func (s *shellUI) vmRequest(fn string) ipc.Response {
 		return ipc.Response{Error: "unknown vm function " + fn}
 	}
 	return ipc.Response{OK: true}
+}
+
+// vmFixRequest applies every failing check's remedy, in order.
+//
+// It answers at once and does the work on a goroutine: a privileged remedy
+// waits for the polkit dialog, which the shell itself shows *on the main
+// thread*, so blocking the main thread here would deadlock the two - the
+// dialog could never appear, and the request would never be answered.
+func (s *shellUI) vmFixRequest() ipc.Response {
+	go func() {
+		var out []string
+		for _, c := range s.vm.manager.Snapshot().Checks {
+			if c.OK || c.Remedy == nil {
+				continue
+			}
+			what, relogin, err := s.vm.manager.Fix(*c.Remedy)
+			switch {
+			case err != nil:
+				out = append(out, fmt.Sprintf("%s: %v", c.Name, err))
+			case relogin:
+				out = append(out, fmt.Sprintf("%s: %s (log in again to take effect)", c.Name, what))
+			default:
+				out = append(out, fmt.Sprintf("%s: %s", c.Name, what))
+			}
+		}
+		if len(out) == 0 {
+			out = append(out, "nothing to fix")
+		}
+		log.Printf("vm fix: %s", strings.Join(out, "; "))
+	}()
+	return ipc.Response{OK: true, Result: "applying the fixes; a password prompt may appear"}
 }
 
 // asyncVM runs a long lifecycle action without blocking the control socket
