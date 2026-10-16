@@ -492,7 +492,7 @@ msgstr "ビデオ"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/ui/vm.go:243
+#: internal/ui/vm.go:246
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1233,7 +1233,7 @@ msgid "Show"
 msgstr "表示"
 
 #: internal/appui/pass.go:597
-#: internal/ui/notify.go:402
+#: internal/ui/notify.go:404
 msgid "Hide"
 msgstr "ヒデ"
 
@@ -1367,7 +1367,7 @@ msgstr "%s · %s"
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
 #: internal/ui/settings_keyring.go:560
-#: internal/ui/vm.go:234
+#: internal/ui/vm.go:237
 #: ui/stocks.ui:292
 #: ui/vm.ui:1139
 msgid "Remove"
@@ -2640,7 +2640,7 @@ msgid "Replace the installed %s?"
 msgstr "インストール済みの %s を置き換えますか？"
 
 #: internal/appui/workshop_manager.go:154
-#: internal/ui/vm.go:393
+#: internal/ui/vm.go:438
 #: ui/vm.ui:483
 msgid "Install"
 msgstr "インストール"
@@ -7271,7 +7271,7 @@ msgid "All of them"
 msgstr "それらすべて"
 
 #: internal/shell/commands.go:40
-#: internal/ui/notify.go:848
+#: internal/ui/notify.go:850
 #: ui/center.ui:71
 #: ui/control.ui:411
 msgid "Focus"
@@ -7395,6 +7395,7 @@ msgid "Capture an area, a window or a screen"
 msgstr "領域、ウィンドウ、または画面をキャプチャする"
 
 #: internal/shell/dock.go:289
+#: internal/ui/vm.go:307
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 msgid "Windows VM"
@@ -7979,17 +7980,17 @@ msgstr "チェック中…"
 msgid "The password could not be checked"
 msgstr "パスワードが確認できませんでした"
 
-#: internal/ui/notify.go:316
+#: internal/ui/notify.go:318
 #: ui/bar.ui:122
 #: ui/settings.ui:2801
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/ui/notify.go:318
+#: internal/ui/notify.go:320
 msgid "Notifications (Focus is on)"
 msgstr "通知（集中モードが有効）"
 
-#: internal/ui/notify.go:404
+#: internal/ui/notify.go:406
 #: ui/colorpicker.ui:93
 #: ui/gpg.ui:508
 #: ui/gpg.ui:1011
@@ -7997,24 +7998,24 @@ msgstr "通知（集中モードが有効）"
 msgid "Clear"
 msgstr "消去"
 
-#: internal/ui/notify.go:446
+#: internal/ui/notify.go:448
 msgid "Notification"
 msgstr "通知"
 
-#: internal/ui/notify.go:636
-#: internal/ui/notify.go:826
+#: internal/ui/notify.go:638
+#: internal/ui/notify.go:828
 msgid "inua notifications"
 msgstr "inua通知"
 
-#: internal/ui/notify.go:848
+#: internal/ui/notify.go:850
 msgid "Focus is on"
 msgstr "集中モードが有効"
 
-#: internal/ui/notify.go:891
+#: internal/ui/notify.go:893
 msgid "Show less"
 msgstr "表示を少なくする"
 
-#: internal/ui/notify.go:893
+#: internal/ui/notify.go:895
 msgid "%d more"
 msgstr "%d 詳細"
 
@@ -8822,140 +8823,152 @@ msgstr "inua をアップグレードできませんでした"
 msgid "Could not upgrade: %s"
 msgstr "アップグレードできませんでした: %s"
 
-#: internal/ui/vm.go:230
+#: internal/ui/vm.go:233
 msgid "Confirm remove"
 msgstr "削除を確認"
 
-#: internal/ui/vm.go:239
+#: internal/ui/vm.go:242
 msgid "Confirm delete"
 msgstr "削除を確認"
 
-#: internal/ui/vm.go:269
+#: internal/ui/vm.go:275
 msgid "The fix did not work: %v"
 msgstr "修正できませんでした: %v"
 
-#: internal/ui/vm.go:273
+#: internal/ui/vm.go:280
 msgid "Done. Log out and back in for it to take effect."
 msgstr "完了。変更を有効にするには、一度ログアウトしてから再度ログインしてください。"
 
-#: internal/ui/vm.go:275
+#: internal/ui/vm.go:283
 msgid "Done."
 msgstr "完了。"
 
-#: internal/ui/vm.go:347
+#: internal/ui/vm.go:298
+msgid "Log out to finish"
+msgstr "完了にはログアウトが必要です"
+
+#: internal/ui/vm.go:299
+msgid "The change takes effect the next time you log in."
+msgstr "変更は次回ログイン時に有効になります。"
+
+#: internal/ui/vm.go:314
+msgid "Log out now"
+msgstr "今すぐログアウト"
+
+#: internal/ui/vm.go:392
 msgid "Fix"
 msgstr "修正"
 
-#: internal/ui/vm.go:349
+#: internal/ui/vm.go:394
 msgid "Add me to %s"
 msgstr "%s グループに追加"
 
-#: internal/ui/vm.go:401
+#: internal/ui/vm.go:446
 msgid "Operating system"
 msgstr "オペレーティングシステム"
 
-#: internal/ui/vm.go:403
+#: internal/ui/vm.go:448
 msgid "Hardware virtualization (KVM)"
 msgstr "ハードウェア仮想化 (KVM)"
 
-#: internal/ui/vm.go:405
+#: internal/ui/vm.go:450
 msgid "Docker"
 msgstr ""
 
-#: internal/ui/vm.go:407
+#: internal/ui/vm.go:452
 msgid "Docker Compose v2"
 msgstr ""
 
-#: internal/ui/vm.go:409
+#: internal/ui/vm.go:454
 msgid "FreeRDP"
 msgstr ""
 
-#: internal/ui/vm.go:411
+#: internal/ui/vm.go:456
 msgid "Browser opener"
 msgstr "ブラウザー起動コマンド"
 
-#: internal/ui/vm.go:413
+#: internal/ui/vm.go:458
 msgid "Disk space"
 msgstr "ディスク容量"
 
-#: internal/ui/vm.go:415
+#: internal/ui/vm.go:460
 msgid "Network device (TUN)"
 msgstr "ネットワークデバイス (TUN)"
 
-#: internal/ui/vm.go:417
+#: internal/ui/vm.go:462
 #: ui/settings.ui:3556
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/ui/vm.go:426
+#: internal/ui/vm.go:471
 msgid "Not installed on this system."
 msgstr "このシステムにはインストールされていません。"
 
-#: internal/ui/vm.go:428
+#: internal/ui/vm.go:473
 msgid "Installed, but your user may not use it."
 msgstr "インストール済みですが、あなたのユーザーでは使えません。"
 
-#: internal/ui/vm.go:430
+#: internal/ui/vm.go:475
 msgid "Installed, but not running."
 msgstr ""
 
-#: internal/ui/vm.go:432
+#: internal/ui/vm.go:477
 msgid "This Linux distribution is not supported."
 msgstr "この Linux ディストリビューションには対応していません。"
 
-#: internal/ui/vm.go:434
+#: internal/ui/vm.go:479
 msgid "Could not be checked."
 msgstr "確認できませんでした。"
 
-#: internal/ui/vm.go:448
+#: internal/ui/vm.go:493
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "バランスの取れた設定は、システム用にメモリと CPU を残します。"
 
-#: internal/ui/vm.go:463
+#: internal/ui/vm.go:508
 msgid "Stopping…"
 msgstr "停止中…"
 
-#: internal/ui/vm.go:465
+#: internal/ui/vm.go:510
 msgid "Windows is installing; this takes a while."
 msgstr "Windows をインストール中です。しばらくかかります。"
 
-#: internal/ui/vm.go:467
+#: internal/ui/vm.go:512
 msgid "Starting the guest…"
 msgstr "ゲストを起動中…"
 
-#: internal/ui/vm.go:507
+#: internal/ui/vm.go:552
 msgid "Something went wrong"
 msgstr "エラーが発生しました"
 
-#: internal/ui/vm.go:511
+#: internal/ui/vm.go:556
 msgid "This system is missing something Windows needs"
 msgstr "このシステムには Windows に必要なものが欠けています"
 
-#: internal/ui/vm.go:513
+#: internal/ui/vm.go:558
 msgid "Not installed yet"
 msgstr "未インストール"
 
-#: internal/ui/vm.go:516
+#: internal/ui/vm.go:561
 msgid "Stopping"
 msgstr "停止中"
 
-#: internal/ui/vm.go:518
+#: internal/ui/vm.go:563
 msgid "Installing Windows"
 msgstr "Windows をインストール中"
 
-#: internal/ui/vm.go:522
+#: internal/ui/vm.go:567
 msgid "Windows is running"
 msgstr "Windows 実行中"
 
-#: internal/ui/vm.go:524
+#: internal/ui/vm.go:569
 msgid "Stopped"
 msgstr "停止"
 
-#: internal/ui/vm.go:526
+#: internal/ui/vm.go:571
 msgid "Failed"
 msgstr "失敗"
 
-#: internal/ui/vm.go:528
+#: internal/ui/vm.go:573
 msgid "Ready"
 msgstr "準備完了"
 

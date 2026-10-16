@@ -3,11 +3,13 @@ package ui
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/notify"
 	"github.com/lyricat/inua/internal/vm"
 )
 
@@ -99,6 +101,7 @@ type vmWindow struct {
 	win     *gtk.ApplicationWindow
 	refs    gtkx.Scope
 	manager VMManager
+	shell   *shellUI // for a notification the window raises
 
 	// Headline, shared by every page.
 	sub, mark gtk.Label
@@ -148,7 +151,7 @@ type vmWindow struct {
 // shell's own loader, like every other window: gtkx.Load takes markup, not a
 // file name, and passing the name was what made the shell panic on open.
 func OpenVMManager(s *shellUI, manager VMManager) *vmWindow {
-	v := &vmWindow{manager: manager, win: &gtk.ApplicationWindow{}}
+	v := &vmWindow{manager: manager, shell: s, win: &gtk.ApplicationWindow{}}
 	builder := s.load("vm.ui", &v.refs)
 	builder.Get("vm", v.win)
 	builder.Get("vm_sub", &v.sub)
@@ -252,6 +255,9 @@ func (v *vmWindow) clicked(b gtk.Button) {
 	}
 }
 
+// vmEntry marks the VM window's own notifications.
+const vmEntry = "inua-windows-vm"
+
 // applyFix runs a remedy. The polkit dialog it may open lives on the main
 // thread, so the work goes to a goroutine (as the other actions do) and the
 // result comes back to the window.
@@ -269,14 +275,53 @@ func (v *vmWindow) applyFix(r vm.Remedy) {
 				v.fixNote = i18n.Tf("The fix did not work: %v", err)
 			case relogin:
 				// A process's group list is fixed when it starts, so the
-				// change is real but this session cannot see it yet.
+				// change is real but this session cannot see it yet. Ask in a
+				// notification, where logging out is one click.
 				v.fixNote = i18n.T("Done. Log out and back in for it to take effect.")
+				v.askRelogin()
 			default:
 				v.fixNote = i18n.T("Done.")
 			}
 			v.Update(v.manager.Snapshot())
 		})
 	}()
+}
+
+// askRelogin says, in a notification, that the change needs a fresh login,
+// and offers to do it now: the shell's own log-out is the one the control
+// center's power row runs.
+func (v *vmWindow) askRelogin() {
+	s := v.shell
+	if s == nil {
+		return
+	}
+	summary := i18n.T("Log out to finish")
+	body := i18n.T("The change takes effect the next time you log in.")
+	if s.notes.srv == nil {
+		// Without our own notification service, the desktop's says it.
+		go run(fmt.Sprintf("notify-send -a inua %s %s", shellQuote(summary), shellQuote(body)))
+		return
+	}
+	s.postNote(notify.Notification{
+		ID:      s.notes.srv.NewID(),
+		App:     i18n.T("Windows VM"),
+		Entry:   vmEntry,
+		Icon:    "system-log-out-symbolic",
+		Summary: summary,
+		Body:    notify.Markup(body),
+		Urgency: notify.Normal,
+		Time:    time.Now(),
+		Actions: []notify.Action{{Key: "vm-logout", Label: i18n.T("Log out now")}},
+	})
+}
+
+// vmNoteAction answers the VM notification: Log out now ends the session,
+// as the control center's power row does; a click on the body only puts the
+// banner away.
+func (s *shellUI) vmNoteAction(_ notify.Notification, key string) {
+	if key == "vm-logout" {
+		s.dispatch("exit")
+	}
 }
 
 // Update refreshes the window on the GTK main thread: it picks the page the

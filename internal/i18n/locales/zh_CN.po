@@ -492,7 +492,7 @@ msgstr "视频"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/ui/vm.go:243
+#: internal/ui/vm.go:246
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1233,7 +1233,7 @@ msgid "Show"
 msgstr "显示"
 
 #: internal/appui/pass.go:597
-#: internal/ui/notify.go:402
+#: internal/ui/notify.go:404
 msgid "Hide"
 msgstr "隐藏"
 
@@ -1367,7 +1367,7 @@ msgstr "%s · %s"
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
 #: internal/ui/settings_keyring.go:560
-#: internal/ui/vm.go:234
+#: internal/ui/vm.go:237
 #: ui/stocks.ui:292
 #: ui/vm.ui:1139
 msgid "Remove"
@@ -2640,7 +2640,7 @@ msgid "Replace the installed %s?"
 msgstr "替换已安装的 %s？"
 
 #: internal/appui/workshop_manager.go:154
-#: internal/ui/vm.go:393
+#: internal/ui/vm.go:438
 #: ui/vm.ui:483
 msgid "Install"
 msgstr "安装"
@@ -7271,7 +7271,7 @@ msgid "All of them"
 msgstr "他们全部"
 
 #: internal/shell/commands.go:40
-#: internal/ui/notify.go:848
+#: internal/ui/notify.go:850
 #: ui/center.ui:71
 #: ui/control.ui:411
 msgid "Focus"
@@ -7395,6 +7395,7 @@ msgid "Capture an area, a window or a screen"
 msgstr "捕获区域、窗口或屏幕"
 
 #: internal/shell/dock.go:289
+#: internal/ui/vm.go:307
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 msgid "Windows VM"
@@ -7979,17 +7980,17 @@ msgstr "正在检查..."
 msgid "The password could not be checked"
 msgstr "无法检查密码"
 
-#: internal/ui/notify.go:316
+#: internal/ui/notify.go:318
 #: ui/bar.ui:122
 #: ui/settings.ui:2801
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/ui/notify.go:318
+#: internal/ui/notify.go:320
 msgid "Notifications (Focus is on)"
 msgstr "通知（专注模式已开启）"
 
-#: internal/ui/notify.go:404
+#: internal/ui/notify.go:406
 #: ui/colorpicker.ui:93
 #: ui/gpg.ui:508
 #: ui/gpg.ui:1011
@@ -7997,24 +7998,24 @@ msgstr "通知（专注模式已开启）"
 msgid "Clear"
 msgstr "清除"
 
-#: internal/ui/notify.go:446
+#: internal/ui/notify.go:448
 msgid "Notification"
 msgstr "通知"
 
-#: internal/ui/notify.go:636
-#: internal/ui/notify.go:826
+#: internal/ui/notify.go:638
+#: internal/ui/notify.go:828
 msgid "inua notifications"
 msgstr "inua通知"
 
-#: internal/ui/notify.go:848
+#: internal/ui/notify.go:850
 msgid "Focus is on"
 msgstr "专注模式已开启"
 
-#: internal/ui/notify.go:891
+#: internal/ui/notify.go:893
 msgid "Show less"
 msgstr "显示较少"
 
-#: internal/ui/notify.go:893
+#: internal/ui/notify.go:895
 msgid "%d more"
 msgstr "%d更多"
 
@@ -8822,140 +8823,152 @@ msgstr "inua无法升级"
 msgid "Could not upgrade: %s"
 msgstr "无法升级:%s"
 
-#: internal/ui/vm.go:230
+#: internal/ui/vm.go:233
 msgid "Confirm remove"
 msgstr "确认移除"
 
-#: internal/ui/vm.go:239
+#: internal/ui/vm.go:242
 msgid "Confirm delete"
 msgstr "确认删除"
 
-#: internal/ui/vm.go:269
+#: internal/ui/vm.go:275
 msgid "The fix did not work: %v"
 msgstr "修复失败：%v"
 
-#: internal/ui/vm.go:273
+#: internal/ui/vm.go:280
 msgid "Done. Log out and back in for it to take effect."
 msgstr "完成。请注销并重新登录以使更改生效。"
 
-#: internal/ui/vm.go:275
+#: internal/ui/vm.go:283
 msgid "Done."
 msgstr "完成。"
 
-#: internal/ui/vm.go:347
+#: internal/ui/vm.go:298
+msgid "Log out to finish"
+msgstr "注销以完成"
+
+#: internal/ui/vm.go:299
+msgid "The change takes effect the next time you log in."
+msgstr "此更改将在你下次登录时生效。"
+
+#: internal/ui/vm.go:314
+msgid "Log out now"
+msgstr "立即注销"
+
+#: internal/ui/vm.go:392
 msgid "Fix"
 msgstr "修复"
 
-#: internal/ui/vm.go:349
+#: internal/ui/vm.go:394
 msgid "Add me to %s"
 msgstr "将我添加到 %s 组"
 
-#: internal/ui/vm.go:401
+#: internal/ui/vm.go:446
 msgid "Operating system"
 msgstr "操作系统"
 
-#: internal/ui/vm.go:403
+#: internal/ui/vm.go:448
 msgid "Hardware virtualization (KVM)"
 msgstr "硬件虚拟化 (KVM)"
 
-#: internal/ui/vm.go:405
+#: internal/ui/vm.go:450
 msgid "Docker"
 msgstr ""
 
-#: internal/ui/vm.go:407
+#: internal/ui/vm.go:452
 msgid "Docker Compose v2"
 msgstr ""
 
-#: internal/ui/vm.go:409
+#: internal/ui/vm.go:454
 msgid "FreeRDP"
 msgstr ""
 
-#: internal/ui/vm.go:411
+#: internal/ui/vm.go:456
 msgid "Browser opener"
 msgstr "浏览器打开程序"
 
-#: internal/ui/vm.go:413
+#: internal/ui/vm.go:458
 msgid "Disk space"
 msgstr "磁盘空间"
 
-#: internal/ui/vm.go:415
+#: internal/ui/vm.go:460
 msgid "Network device (TUN)"
 msgstr "网络设备 (TUN)"
 
-#: internal/ui/vm.go:417
+#: internal/ui/vm.go:462
 #: ui/settings.ui:3556
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/ui/vm.go:426
+#: internal/ui/vm.go:471
 msgid "Not installed on this system."
 msgstr "此系统上未安装。"
 
-#: internal/ui/vm.go:428
+#: internal/ui/vm.go:473
 msgid "Installed, but your user may not use it."
 msgstr "已安装，但你的用户无权使用。"
 
-#: internal/ui/vm.go:430
+#: internal/ui/vm.go:475
 msgid "Installed, but not running."
 msgstr ""
 
-#: internal/ui/vm.go:432
+#: internal/ui/vm.go:477
 msgid "This Linux distribution is not supported."
 msgstr "不支持此 Linux 发行版。"
 
-#: internal/ui/vm.go:434
+#: internal/ui/vm.go:479
 msgid "Could not be checked."
 msgstr "无法检查。"
 
-#: internal/ui/vm.go:448
+#: internal/ui/vm.go:493
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "均衡配置会为你的系统保留内存与 CPU。"
 
-#: internal/ui/vm.go:463
+#: internal/ui/vm.go:508
 msgid "Stopping…"
 msgstr "正在停止…"
 
-#: internal/ui/vm.go:465
+#: internal/ui/vm.go:510
 msgid "Windows is installing; this takes a while."
 msgstr "正在安装 Windows；需要一些时间。"
 
-#: internal/ui/vm.go:467
+#: internal/ui/vm.go:512
 msgid "Starting the guest…"
 msgstr "正在启动客户机…"
 
-#: internal/ui/vm.go:507
+#: internal/ui/vm.go:552
 msgid "Something went wrong"
 msgstr "出错了"
 
-#: internal/ui/vm.go:511
+#: internal/ui/vm.go:556
 msgid "This system is missing something Windows needs"
 msgstr "此系统缺少 Windows 所需的组件"
 
-#: internal/ui/vm.go:513
+#: internal/ui/vm.go:558
 msgid "Not installed yet"
 msgstr "尚未安装"
 
-#: internal/ui/vm.go:516
+#: internal/ui/vm.go:561
 msgid "Stopping"
 msgstr "正在停止"
 
-#: internal/ui/vm.go:518
+#: internal/ui/vm.go:563
 msgid "Installing Windows"
 msgstr "正在安装 Windows"
 
-#: internal/ui/vm.go:522
+#: internal/ui/vm.go:567
 msgid "Windows is running"
 msgstr "Windows 正在运行"
 
-#: internal/ui/vm.go:524
+#: internal/ui/vm.go:569
 msgid "Stopped"
 msgstr "已停止"
 
-#: internal/ui/vm.go:526
+#: internal/ui/vm.go:571
 msgid "Failed"
 msgstr "失败"
 
-#: internal/ui/vm.go:528
+#: internal/ui/vm.go:573
 msgid "Ready"
 msgstr "就绪"
 
