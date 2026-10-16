@@ -67,12 +67,12 @@ type vmWindow struct {
 	onClose                                             func(gtk.Window) bool
 }
 
-func OpenVMManager(app *gtk.Application, manager VMManager) *vmWindow {
+// OpenVMManager builds the manager window. The layout goes through the
+// shell's own loader, like every other window: gtkx.Load takes markup, not a
+// file name, and passing the name was what made the shell panic on open.
+func OpenVMManager(s *shellUI, manager VMManager) *vmWindow {
 	v := &vmWindow{manager: manager, win: &gtk.ApplicationWindow{}}
-	builder, err := gtkx.Load("vm.ui", &v.refs)
-	if err != nil {
-		panic(err)
-	}
+	builder := s.load("vm.ui", &v.refs)
 	builder.Get("vm", v.win)
 	builder.Get("vm_status", &v.status)
 	builder.Get("vm_doctor", &v.doctor)
@@ -92,12 +92,18 @@ func OpenVMManager(app *gtk.Application, manager VMManager) *vmWindow {
 	builder.Get("vm_stop", &v.stop)
 	builder.Get("vm_remove", &v.remove)
 	builder.Get("vm_remove_data", &v.removeData)
+	builder.Close()
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
 	for _, b := range []*gtk.Button{&v.advancedToggle, &v.accept, &v.configure, &v.install,
 		&v.start, &v.connect, &v.console, &v.stop, &v.remove, &v.removeData} {
 		b.ConnectClicked(&v.onClick)
 	}
-	v.onClose = func(gtk.Window) bool { v.closed = true; return false }
+	// The window is destroyed on close, like the settings window; the shell
+	// drops its reference and makes the next open build a new one.
+	v.onClose = func(gtk.Window) bool {
+		s.closeVMManager()
+		return false
+	}
 	v.win.ConnectCloseRequest(&v.onClose)
 	v.Update(manager.Snapshot())
 	v.win.Present()
