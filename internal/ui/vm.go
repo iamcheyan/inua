@@ -52,7 +52,8 @@ type vmWindow struct {
 	win                                                 *gtk.ApplicationWindow
 	refs                                                gtkx.Scope
 	manager                                             VMManager
-	status, doctor, progressText                        gtk.Label
+	stateSub, doctor, progressText                      gtk.Label
+	stateMark, notice, profileSummary                   gtk.Label
 	progress                                            gtk.ProgressBar
 	memory, cpus, disk                                  gtk.SpinButton
 	advanced                                            gtk.Revealer
@@ -74,24 +75,27 @@ func OpenVMManager(s *shellUI, manager VMManager) *vmWindow {
 	v := &vmWindow{manager: manager, win: &gtk.ApplicationWindow{}}
 	builder := s.load("vm.ui", &v.refs)
 	builder.Get("vm", v.win)
-	builder.Get("vm_status", &v.status)
-	builder.Get("vm_doctor", &v.doctor)
-	builder.Get("vm_progress", &v.progress)
-	builder.Get("vm_progress_text", &v.progressText)
-	builder.Get("vm_memory", &v.memory)
-	builder.Get("vm_cpus", &v.cpus)
-	builder.Get("vm_disk", &v.disk)
-	builder.Get("vm_advanced_toggle", &v.advancedToggle)
-	builder.Get("vm_advanced", &v.advanced)
-	builder.Get("vm_accept", &v.accept)
-	builder.Get("vm_configure", &v.configure)
-	builder.Get("vm_install", &v.install)
-	builder.Get("vm_start", &v.start)
-	builder.Get("vm_connect", &v.connect)
-	builder.Get("vm_console", &v.console)
-	builder.Get("vm_stop", &v.stop)
-	builder.Get("vm_remove", &v.remove)
-	builder.Get("vm_remove_data", &v.removeData)
+	builder.Get("state_sub", &v.stateSub)
+	builder.Get("state_mark", &v.stateMark)
+	builder.Get("notice", &v.notice)
+	builder.Get("profile_summary", &v.profileSummary)
+	builder.Get("doctor", &v.doctor)
+	builder.Get("progress", &v.progress)
+	builder.Get("progress_text", &v.progressText)
+	builder.Get("memory", &v.memory)
+	builder.Get("cpus", &v.cpus)
+	builder.Get("disk", &v.disk)
+	builder.Get("advanced_toggle", &v.advancedToggle)
+	builder.Get("advanced", &v.advanced)
+	builder.Get("accept", &v.accept)
+	builder.Get("configure", &v.configure)
+	builder.Get("install", &v.install)
+	builder.Get("start", &v.start)
+	builder.Get("connect", &v.connect)
+	builder.Get("console", &v.console)
+	builder.Get("stop", &v.stop)
+	builder.Get("remove", &v.remove)
+	builder.Get("remove_data", &v.removeData)
 	builder.Close()
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
 	for _, b := range []*gtk.Button{&v.advancedToggle, &v.accept, &v.configure, &v.install,
@@ -151,42 +155,90 @@ func (v *vmWindow) clicked(b gtk.Button) {
 	}
 }
 
-// Update refreshes status and action availability on the GTK main thread.
+// Update refreshes the window on the GTK main thread: the headline state, the
+// notice when it cannot be used, the profile summary, the host checks and
+// which actions make sense now.
 func (v *vmWindow) Update(s VMSnapshot) {
 	gtkx.Post(func() {
 		if v.closed || v.win == nil {
 			return
 		}
-		text := string(s.State)
-		if text == "" {
-			text = i18n.T("Not configured")
-		}
+		state := s.State
 		if s.Err != nil {
-			text = fmt.Sprintf("%s: %v", i18n.T("Error"), s.Err)
+			v.stateSub.SetText(i18n.T("Something went wrong"))
+			v.notice.SetText(fmt.Sprintf("%s: %v", i18n.T("Error"), s.Err))
+			v.notice.SetVisible(true)
+		} else if !s.Available {
+			v.stateSub.SetText(i18n.T("Unavailable"))
+			v.notice.SetText(i18n.T("This system does not provide what the Windows VM needs; the checks below say what is missing."))
+			v.notice.SetVisible(true)
+		} else {
+			v.stateSub.SetText(vmStateText(state, s.HasConfig))
+			v.notice.SetVisible(false)
 		}
-		if !s.Available {
-			text = i18n.T("VM operations are unavailable on this system")
+		// The status mark: filled while the guest is up.
+		toggle(&v.stateMark.Widget, "on", state == vm.StateRunning)
+
+		// The guest's profile: what it is, or what it would be.
+		cfg := s.Config
+		if !s.HasConfig {
+			cfg = vm.DefaultConfig()
+			cfg.MemoryMiB, cfg.CPUs, cfg.DiskGiB = s.Recommended.MemoryMiB, s.Recommended.CPUs, s.Recommended.DiskGiB
 		}
-		v.remove.SetLabel(i18n.T("Remove VM"))
-		v.removeData.SetLabel(i18n.T("Delete disk data"))
-		v.status.SetText(text)
-		if s.Doctor == "" {
-			s.Doctor = i18n.T("No issues reported")
+		v.profileSummary.SetText(fmt.Sprintf("%s %s · %s %s · %s %s",
+			humanMiB(cfg.MemoryMiB), i18n.T("RAM"),
+			fmt.Sprint(cfg.CPUs), i18n.T("CPU"),
+			fmt.Sprint(cfg.DiskGiB), i18n.T("GiB")))
+
+		doctor := s.Doctor
+		if doctor == "" {
+			doctor = i18n.T("Everything the guest needs is here.")
 		}
-		v.doctor.SetText(s.Doctor)
+		v.doctor.SetText(doctor)
 		v.progress.SetFraction(s.Progress)
 		v.progressText.SetText(s.ProgressText)
+
+		v.remove.SetLabel(i18n.T("Remove"))
+		v.removeData.SetLabel(i18n.T("Delete"))
 		v.accept.SetSensitive(s.Available && !s.Busy && !s.HasConfig)
 		v.configure.SetSensitive(s.Available && !s.Busy)
-		v.install.SetSensitive(s.Available && s.HasConfig && !s.Busy)
-		v.start.SetSensitive(s.Available && s.HasConfig && !s.Busy)
-		v.connect.SetSensitive(s.Available && !s.Busy && s.State == vm.StateRunning)
-		v.stop.SetSensitive(s.Available && !s.Busy && s.State == vm.StateRunning)
-		v.remove.SetSensitive(s.Available && s.HasConfig && !s.Busy && s.State != vm.StateRunning)
+		v.install.SetSensitive(s.Available && !s.Busy)
+		v.start.SetSensitive(s.Available && s.HasConfig && !s.Busy && state != vm.StateRunning)
+		v.connect.SetSensitive(s.Available && !s.Busy && state == vm.StateRunning)
+		v.console.SetSensitive(s.Available && s.HasConfig && !s.Busy)
+		v.stop.SetSensitive(s.Available && !s.Busy && (state == vm.StateRunning || state == vm.StateStarting))
+		v.remove.SetSensitive(s.Available && s.HasConfig && !s.Busy && state != vm.StateRunning)
 		// Deleting the disk data is available even after the VM is removed, so a
 		// user can clear the leftover guest image once the container is gone.
-		v.removeData.SetSensitive(s.Available && !s.Busy && s.State != vm.StateRunning)
+		v.removeData.SetSensitive(s.Available && !s.Busy && state != vm.StateRunning)
 	})
+}
+
+// vmStateText is the headline for a state, in the shell's voice.
+func vmStateText(state vm.State, hasConfig bool) string {
+	switch {
+	case !hasConfig:
+		return i18n.T("Not set up yet")
+	case state == vm.StateRunning:
+		return i18n.T("Windows is running")
+	case state == vm.StateStarting:
+		return i18n.T("Starting, or installing Windows")
+	case state == vm.StateStopping:
+		return i18n.T("Stopping")
+	case state == vm.StateStopped:
+		return i18n.T("Stopped")
+	case state == vm.StateFailed:
+		return i18n.T("Failed")
+	}
+	return i18n.T("Not set up yet")
+}
+
+// humanMiB shows a memory size the way the other windows do.
+func humanMiB(mib int) string {
+	if mib >= 1024 {
+		return fmt.Sprintf("%d GiB", mib/1024)
+	}
+	return fmt.Sprintf("%d MiB", mib)
 }
 
 func (v *vmWindow) configFromEditors() vm.Config {

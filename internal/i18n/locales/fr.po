@@ -492,9 +492,11 @@ msgstr "Vidéo"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
+#: internal/ui/vm.go:202
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
+#: ui/vm.ui:745
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -503,7 +505,7 @@ msgid "Change sign"
 msgstr "Changer de signe"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:159
+#: internal/ui/vm.go:169
 msgid "Error"
 msgstr "Erreur"
 
@@ -598,6 +600,7 @@ msgstr "Supprimer %s"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
+#: ui/vm.ui:206
 msgid "Edit"
 msgstr "Modifier"
 
@@ -605,7 +608,7 @@ msgstr "Modifier"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:173
+#: ui/vm.ui:557
 msgid "Start"
 msgstr "Démarrer"
 
@@ -617,7 +620,8 @@ msgstr "Réinitialiser"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:196
+#: ui/vm.ui:635
+#: ui/vm.ui:657
 msgid "Stop"
 msgstr "Arrêter"
 
@@ -1372,9 +1376,11 @@ msgstr "%s · %s"
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
 #: internal/ui/settings_keyring.go:560
+#: internal/ui/vm.go:201
 #: ui/stocks.ui:292
+#: ui/vm.ui:701
 msgid "Remove"
-msgstr "Retirer"
+msgstr "Supprimer"
 
 #: internal/appui/pass.go:1055
 #: internal/ui/settings_keyring.go:564
@@ -1581,6 +1587,7 @@ msgstr "Quitter tout par nom"
 
 #: internal/appui/sysmon.go:142
 #: internal/appui/sysmon.go:720
+#: internal/ui/vm.go:190
 #: ui/sysmon.ui:84
 msgid "CPU"
 msgstr "CPU"
@@ -2109,6 +2116,7 @@ msgstr "Tailscale ne fonctionne pas."
 #: internal/shell/status.go:69
 #: internal/shell/status.go:86
 #: internal/shell/status.go:101
+#: internal/ui/vm.go:172
 msgid "Unavailable"
 msgstr "Indisponible"
 
@@ -2552,6 +2560,7 @@ msgstr "D'accord"
 #: internal/filesui/window.go:696
 #: internal/ui/record.go:163
 #: internal/ui/system_ipc.go:241
+#: ui/vm.ui:613
 msgid "Open"
 msgstr "Ouvrir"
 
@@ -2559,6 +2568,7 @@ msgstr "Ouvrir"
 #: internal/ui/settings_ai.go:328
 #: ui/clock.ui:252
 #: ui/pass.ui:490
+#: ui/vm.ui:355
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -2648,6 +2658,7 @@ msgid "Replace the installed %s?"
 msgstr "Remplacer %s installée ?"
 
 #: internal/appui/workshop_manager.go:154
+#: ui/vm.ui:510
 msgid "Install"
 msgstr "Installer"
 
@@ -3540,7 +3551,7 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://serveur/partage, sftp://utilisateur@hôte/dossier, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:179
+#: ui/vm.ui:567
 msgid "Connect"
 msgstr "Se connecter"
 
@@ -7420,6 +7431,7 @@ msgstr "Capturer une zone, une fenêtre ou un écran"
 
 #: internal/shell/dock.go:289
 #: ui/vm.ui:10
+#: ui/vm.ui:37
 msgid "Windows VM"
 msgstr "Machine virtuelle Windows"
 
@@ -7923,16 +7935,16 @@ msgstr "Épingler au dock"
 msgid "Quit (%d windows)"
 msgstr "Quitter (fenêtres %d)"
 
-#: internal/ui/drawer.go:223
+#: internal/ui/drawer.go:235
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr "Applications"
 
-#: internal/ui/drawer.go:226
+#: internal/ui/drawer.go:238
 msgid "Workshop apps"
 msgstr "Apps de l’atelier"
 
-#: internal/ui/drawer.go:327
+#: internal/ui/drawer.go:339
 msgid "The light apps are not installed (make install)."
 msgstr "Les applications légères ne sont pas installées (make install)."
 
@@ -8854,39 +8866,68 @@ msgstr "Inua n'a pas pu mettre à niveau"
 msgid "Could not upgrade: %s"
 msgstr "Impossible de mettre à niveau : %s"
 
-#: internal/ui/vm.go:130
+#: internal/ui/vm.go:140
 msgid "Confirm remove VM"
 msgstr "Confirmer la suppression de la VM"
 
-#: internal/ui/vm.go:134
-#: internal/ui/vm.go:164
-#: ui/vm.ui:202
+#: internal/ui/vm.go:144
+#: ui/vm.ui:679
 msgid "Remove VM"
 msgstr "Supprimer la VM"
 
-#: internal/ui/vm.go:139
+#: internal/ui/vm.go:149
 msgid "Confirm delete disk data"
 msgstr "Confirmer la suppression des données du disque"
 
-#: internal/ui/vm.go:143
-#: internal/ui/vm.go:165
-#: ui/vm.ui:216
+#: internal/ui/vm.go:153
+#: ui/vm.ui:723
 msgid "Delete disk data"
 msgstr "Supprimer les données du disque"
 
-#: internal/ui/vm.go:156
-#: ui/vm.ui:32
-msgid "Not configured"
-msgstr "Non configuré"
-
-#: internal/ui/vm.go:162
-msgid "VM operations are unavailable on this system"
-msgstr "Les opérations de VM sont indisponibles sur ce système"
-
 #: internal/ui/vm.go:168
-#: ui/vm.ui:154
-msgid "No issues reported"
-msgstr "Aucun problème signalé"
+msgid "Something went wrong"
+msgstr "Une erreur est survenue"
+
+#: internal/ui/vm.go:173
+msgid "This system does not provide what the Windows VM needs; the checks below say what is missing."
+msgstr "Ce système ne fournit pas ce dont la VM Windows a besoin ; les vérifications ci-dessous indiquent ce qui manque."
+
+#: internal/ui/vm.go:189
+msgid "RAM"
+msgstr "Mémoire"
+
+#: internal/ui/vm.go:191
+msgid "GiB"
+msgstr "Gio"
+
+#: internal/ui/vm.go:195
+msgid "Everything the guest needs is here."
+msgstr "Tout ce dont l'invité a besoin est présent."
+
+#: internal/ui/vm.go:221
+#: internal/ui/vm.go:233
+msgid "Not set up yet"
+msgstr "Pas encore configuré"
+
+#: internal/ui/vm.go:223
+msgid "Windows is running"
+msgstr "Windows est en cours d'exécution"
+
+#: internal/ui/vm.go:225
+msgid "Starting, or installing Windows"
+msgstr "Démarrage ou installation de Windows"
+
+#: internal/ui/vm.go:227
+msgid "Stopping"
+msgstr "Arrêt"
+
+#: internal/ui/vm.go:229
+msgid "Stopped"
+msgstr "Arrêté"
+
+#: internal/ui/vm.go:231
+msgid "Failed"
+msgstr "Échec"
 
 #: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
@@ -10914,57 +10955,89 @@ msgstr "Détails (I)"
 msgid "Open a File…"
 msgstr "Ouvrir un fichier…"
 
-#: ui/vm.ui:23
-msgid "Windows virtual machine"
-msgstr "Machine virtuelle Windows"
+#: ui/vm.ui:103
+msgid "[GUEST]"
+msgstr "[INVITÉ]"
 
-#: ui/vm.ui:40
-msgid "Recommended first-run profile"
-msgstr "Profil recommandé au premier lancement"
+#: ui/vm.ui:140
+msgid "Recommended profile"
+msgstr "Profil recommandé"
 
-#: ui/vm.ui:49
-msgid "A balanced profile keeps enough memory and CPU capacity available for your system."
-msgstr "Un profil équilibré réserve assez de mémoire et de CPU à votre système."
+#: ui/vm.ui:149
+msgid "A balanced profile leaves memory and CPU for your system."
+msgstr "Un profil équilibré réserve de la mémoire et du CPU à votre système."
 
-#: ui/vm.ui:57
-msgid "Accept recommended profile"
-msgstr ""
+#: ui/vm.ui:162
+msgid "Use it"
+msgstr "Utiliser"
 
-#: ui/vm.ui:63
+#: ui/vm.ui:184
 msgid "Advanced configuration"
 msgstr "Configuration avancée"
 
-#: ui/vm.ui:75
+#: ui/vm.ui:193
+msgid "Set the memory, CPU cores and disk size yourself."
+msgstr "Réglez vous-même la mémoire, les cœurs CPU et la taille du disque."
+
+#: ui/vm.ui:234
 msgid "Memory (MiB)"
 msgstr "Mémoire (MiB)"
 
-#: ui/vm.ui:95
+#: ui/vm.ui:268
 msgid "CPU cores"
 msgstr "Cœurs CPU"
 
-#: ui/vm.ui:115
+#: ui/vm.ui:302
 msgid "Disk size (GiB)"
 msgstr "Taille du disque (GiB)"
 
-#: ui/vm.ui:136
-msgid "Save configuration"
-msgstr "Enregistrer la configuration"
+#: ui/vm.ui:342
+msgid "Saving writes the guest's project without starting it."
+msgstr "Enregistrer écrit le projet de l'invité sans le démarrer."
 
-#: ui/vm.ui:145
-msgid "System status and checks"
-msgstr "État et vérifications du système"
+#: ui/vm.ui:393
+msgid "[HOST]"
+msgstr "[HÔTE]"
 
-#: ui/vm.ui:167
-msgid "Download and install Windows"
-msgstr "Télécharger et installer Windows"
+#: ui/vm.ui:459
+msgid "[ACTIONS]"
+msgstr "[ACTIONS]"
 
-#: ui/vm.ui:190
-msgid "Open web console"
-msgstr "Ouvrir la console web"
+#: ui/vm.ui:488
+msgid "Download and install"
+msgstr "Télécharger et installer"
 
-#: ui/vm.ui:217
-msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
-msgstr "Supprime définitivement le disque Windows. Arrêter ou supprimer la VM ne le fait jamais."
+#: ui/vm.ui:497
+msgid "Downloads the image and installs Windows; it takes a while."
+msgstr "Télécharge l'image et installe Windows ; cela prend du temps."
+
+#: ui/vm.ui:532
+msgid "Start and connect"
+msgstr "Démarrer et se connecter"
+
+#: ui/vm.ui:541
+msgid "Connect opens FreeRDP once Windows is ready."
+msgstr "Se connecter ouvre FreeRDP dès que Windows est prêt."
+
+#: ui/vm.ui:591
+msgid "Web console"
+msgstr "Console web"
+
+#: ui/vm.ui:600
+msgid "The installer's screen, in your browser."
+msgstr "L'écran de l'installateur, dans votre navigateur."
+
+#: ui/vm.ui:644
+msgid "Stops the guest and keeps its disk."
+msgstr "Arrête l'invité et conserve son disque."
+
+#: ui/vm.ui:688
+msgid "Deletes the container, project and password; the disk stays."
+msgstr "Supprime le conteneur, le projet et le mot de passe ; le disque reste."
+
+#: ui/vm.ui:732
+msgid "Deletes the Windows disk for good; stopping never does."
+msgstr "Supprime définitivement le disque Windows ; l'arrêt ne le fait jamais."
 
 #: ui/weather.ui:30
 msgid "Previous place"

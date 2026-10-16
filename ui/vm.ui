@@ -7,229 +7,777 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
 <interface>
   <requires lib="gtk" version="4.0"/>
   <object class="GtkApplicationWindow" id="vm">
+    <style>
+      <class name="settings"/>
+      <class name="vmpage"/>
+    </style>
     <property name="title" translatable="yes">Windows VM</property>
-    <property name="default-width">620</property>
+    <property name="default-width">520</property>
     <property name="default-height">720</property>
     <child>
       <object class="GtkBox">
         <property name="orientation">1</property>
-        <property name="spacing">12</property>
-        <property name="margin-top">20</property>
-        <property name="margin-bottom">20</property>
-        <property name="margin-start">20</property>
-        <property name="margin-end">20</property>
         <child>
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">Windows virtual machine</property>
+          <object class="GtkBox">
             <style>
-              <class name="title-1"/>
+              <class name="header"/>
             </style>
-            <property name="halign">1</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="vm_status">
-            <property name="label" translatable="yes">Not configured</property>
-            <property name="halign">1</property>
-            <property name="wrap">true</property>
-            <property name="xalign">0</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">Recommended first-run profile</property>
-            <style>
-              <class name="title-3"/>
-            </style>
-            <property name="halign">1</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">A balanced profile keeps enough memory and CPU capacity available for your system.</property>
-            <property name="wrap">true</property>
-            <property name="xalign">0</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="vm_accept">
-            <property name="name">accept</property>
-            <property name="label" translatable="yes">Accept recommended profile</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="vm_advanced_toggle">
-            <property name="name">advanced_toggle</property>
-            <property name="label" translatable="yes">Advanced configuration</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkRevealer" id="vm_advanced">
-            <property name="reveal-child">false</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkBox">
                 <property name="orientation">1</property>
-                <property name="spacing">8</property>
+                <property name="hexpand">true</property>
+                <property name="valign">3</property>
+                <property name="spacing">2</property>
                 <child>
                   <object class="GtkLabel">
-                    <property name="label" translatable="yes">Memory (MiB)</property>
-                    <property name="halign">1</property>
+                    <style>
+                      <class name="title"/>
+                    </style>
+                    <property name="label" translatable="yes">Windows VM</property>
+                    <property name="xalign">0</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="vm_memory">
-                    <property name="adjustment">
-                      <object class="GtkAdjustment">
-                        <property name="lower">1024</property>
-                        <property name="upper">262144</property>
-                        <property name="step-increment">1024</property>
-                        <property name="page-increment">4096</property>
-                        <property name="value">8192</property>
-                      </object>
-                    </property>
-                    <property name="numeric">true</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">CPU cores</property>
-                    <property name="halign">1</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="vm_cpus">
-                    <property name="adjustment">
-                      <object class="GtkAdjustment">
-                        <property name="lower">1</property>
-                        <property name="upper">256</property>
-                        <property name="step-increment">1</property>
-                        <property name="page-increment">2</property>
-                        <property name="value">4</property>
-                      </object>
-                    </property>
-                    <property name="numeric">true</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Disk size (GiB)</property>
-                    <property name="halign">1</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="vm_disk">
-                    <property name="adjustment">
-                      <object class="GtkAdjustment">
-                        <property name="lower">32</property>
-                        <property name="upper">2048</property>
-                        <property name="step-increment">16</property>
-                        <property name="page-increment">64</property>
-                        <property name="value">128</property>
-                      </object>
-                    </property>
-                    <property name="numeric">true</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="vm_configure">
-                    <property name="name">configure</property>
-                    <property name="label" translatable="yes">Save configuration</property>
+                  <object class="GtkLabel" id="state_sub">
+                    <style>
+                      <class name="sub"/>
+                    </style>
+                    <property name="xalign">0</property>
+                    <property name="ellipsize">3</property>
                   </object>
                 </child>
               </object>
             </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">System status and checks</property>
-            <style>
-              <class name="title-3"/>
-            </style>
-            <property name="halign">1</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="vm_doctor">
-            <property name="label" translatable="yes">No issues reported</property>
-            <property name="halign">1</property>
-            <property name="wrap">true</property>
-            <property name="selectable">true</property>
-            <property name="xalign">0</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="spacing">8</property>
             <child>
-              <object class="GtkButton" id="vm_install">
-                <property name="name">install</property>
-                <property name="label" translatable="yes">Download and install Windows</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="vm_start">
-                <property name="name">start</property>
-                <property name="label" translatable="yes">Start</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="vm_connect">
-                <property name="name">connect</property>
-                <property name="label" translatable="yes">Connect</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="spacing">8</property>
-            <child>
-              <object class="GtkButton" id="vm_console">
-                <property name="name">console</property>
-                <property name="label" translatable="yes">Open web console</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="vm_stop">
-                <property name="name">stop</property>
-                <property name="label" translatable="yes">Stop</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="vm_remove">
-                <property name="name">remove</property>
-                <property name="label" translatable="yes">Remove VM</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="spacing">8</property>
-            <child>
-              <object class="GtkButton" id="vm_remove_data">
-                <property name="name">remove_data</property>
+              <object class="GtkLabel" id="state_mark">
                 <style>
-                  <class name="destructive-action"/>
+                  <class name="mark"/>
                 </style>
-                <property name="label" translatable="yes">Delete disk data</property>
-                <property name="tooltip-text" translatable="yes">Deletes the Windows disk permanently. Stopping or removing the VM never does.</property>
+                <property name="valign">3</property>
               </object>
             </child>
           </object>
         </child>
         <child>
-          <object class="GtkProgressBar" id="vm_progress">
-            <property name="show-text">false</property>
+          <object class="GtkLabel" id="notice">
+            <style>
+              <class name="vnotice"/>
+            </style>
+            <property name="visible">false</property>
+            <property name="xalign">0</property>
+            <property name="wrap">true</property>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="vm_progress_text">
-            <property name="label"></property>
-            <property name="halign">1</property>
-            <property name="wrap">true</property>
-            <property name="xalign">0</property>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hscrollbar-policy">2</property>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">1</property>
+                <child>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="section"/>
+                    </style>
+                    <property name="orientation">1</property>
+                    <child>
+                      <object class="GtkBox" id="guest_head">
+                        <style>
+                          <class name="section-head"/>
+                        </style>
+                        <property name="spacing">10</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="mark"/>
+                            </style>
+                            <property name="valign">3</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="section-label"/>
+                            </style>
+                            <property name="label" translatable="yes">[GUEST]</property>
+                            <property name="hexpand">true</property>
+                            <property name="xalign">0</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="profile_summary">
+                            <style>
+                              <class name="section-meta"/>
+                            </style>
+                            <property name="xalign">1</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <style>
+                          <class name="section-body"/>
+                        </style>
+                        <property name="orientation">1</property>
+                        <child>
+                          <object class="GtkBox" id="row_profile">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Recommended profile</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">A balanced profile leaves memory and CPU for your system.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="accept">
+                                <style>
+                                  <class name="outlined"/>
+                                </style>
+                                <property name="name">accept</property>
+                                <property name="label" translatable="yes">Use it</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="row_advanced">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Advanced configuration</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Set the memory, CPU cores and disk size yourself.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="advanced_toggle">
+                                <style>
+                                  <class name="outlined"/>
+                                </style>
+                                <property name="name">advanced_toggle</property>
+                                <property name="label" translatable="yes">Edit</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkRevealer" id="advanced">
+                            <property name="reveal-child">false</property>
+                            <property name="transition-type">5</property>
+                            <property name="transition-duration">180</property>
+                            <child>
+                              <object class="GtkBox">
+                                <style>
+                                  <class name="section-body"/>
+                                  <class name="fields"/>
+                                </style>
+                                <property name="orientation">1</property>
+                                <child>
+                                  <object class="GtkBox" id="field_memory">
+                                    <style>
+                                      <class name="field"/>
+                                    </style>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="label"/>
+                                        </style>
+                                        <property name="label" translatable="yes">Memory (MiB)</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="memory">
+                                        <property name="name">memory</property>
+                                        <property name="adjustment">
+                                          <object class="GtkAdjustment">
+                                            <property name="lower">1024</property>
+                                            <property name="upper">262144</property>
+                                            <property name="step-increment">1024</property>
+                                            <property name="page-increment">4096</property>
+                                            <property name="value">8192</property>
+                                          </object>
+                                        </property>
+                                        <property name="numeric">true</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox" id="field_cpus">
+                                    <style>
+                                      <class name="field"/>
+                                    </style>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="label"/>
+                                        </style>
+                                        <property name="label" translatable="yes">CPU cores</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="cpus">
+                                        <property name="name">cpus</property>
+                                        <property name="adjustment">
+                                          <object class="GtkAdjustment">
+                                            <property name="lower">1</property>
+                                            <property name="upper">256</property>
+                                            <property name="step-increment">1</property>
+                                            <property name="page-increment">2</property>
+                                            <property name="value">4</property>
+                                          </object>
+                                        </property>
+                                        <property name="numeric">true</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox" id="field_disk">
+                                    <style>
+                                      <class name="field"/>
+                                    </style>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="label"/>
+                                        </style>
+                                        <property name="label" translatable="yes">Disk size (GiB)</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="disk">
+                                        <property name="name">disk</property>
+                                        <property name="adjustment">
+                                          <object class="GtkAdjustment">
+                                            <property name="lower">32</property>
+                                            <property name="upper">2048</property>
+                                            <property name="step-increment">16</property>
+                                            <property name="page-increment">64</property>
+                                            <property name="value">128</property>
+                                          </object>
+                                        </property>
+                                        <property name="numeric">true</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="row"/>
+                                    </style>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">1</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="valign">3</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <style>
+                                              <class name="sub"/>
+                                            </style>
+                                            <property name="label" translatable="yes">Saving writes the guest's project without starting it.</property>
+                                            <property name="xalign">0</property>
+                                            <property name="wrap">true</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="configure">
+                                        <style>
+                                          <class name="outlined"/>
+                                        </style>
+                                        <property name="name">configure</property>
+                                        <property name="label" translatable="yes">Save</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="section"/>
+                    </style>
+                    <property name="orientation">1</property>
+                    <child>
+                      <object class="GtkBox" id="host_head">
+                        <style>
+                          <class name="section-head"/>
+                        </style>
+                        <property name="spacing">10</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="mark"/>
+                            </style>
+                            <property name="valign">3</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="section-label"/>
+                            </style>
+                            <property name="label" translatable="yes">[HOST]</property>
+                            <property name="hexpand">true</property>
+                            <property name="xalign">0</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <style>
+                          <class name="section-body"/>
+                        </style>
+                        <property name="orientation">1</property>
+                        <child>
+                          <object class="GtkBox">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel" id="doctor">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label">—</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                    <property name="selectable">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="section"/>
+                    </style>
+                    <property name="orientation">1</property>
+                    <child>
+                      <object class="GtkBox" id="actions_head">
+                        <style>
+                          <class name="section-head"/>
+                        </style>
+                        <property name="spacing">10</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="mark"/>
+                            </style>
+                            <property name="valign">3</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="section-label"/>
+                            </style>
+                            <property name="label" translatable="yes">[ACTIONS]</property>
+                            <property name="hexpand">true</property>
+                            <property name="xalign">0</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <style>
+                          <class name="section-body"/>
+                        </style>
+                        <property name="orientation">1</property>
+                        <child>
+                          <object class="GtkBox" id="row_install">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Download and install</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Downloads the image and installs Windows; it takes a while.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="install">
+                                <style>
+                                  <class name="outlined"/>
+                                </style>
+                                <property name="name">install</property>
+                                <property name="label" translatable="yes">Install</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="row_run">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Start and connect</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Connect opens FreeRDP once Windows is ready.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="spacing">8</property>
+                                <child>
+                                  <object class="GtkButton" id="start">
+                                    <style>
+                                      <class name="outlined"/>
+                                    </style>
+                                    <property name="name">start</property>
+                                    <property name="label" translatable="yes">Start</property>
+                                    <property name="valign">3</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="connect">
+                                    <style>
+                                      <class name="outlined"/>
+                                    </style>
+                                    <property name="name">connect</property>
+                                    <property name="label" translatable="yes">Connect</property>
+                                    <property name="valign">3</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="row_console">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Web console</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">The installer's screen, in your browser.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="console">
+                                <style>
+                                  <class name="outlined"/>
+                                </style>
+                                <property name="name">console</property>
+                                <property name="label" translatable="yes">Open</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="row_stop">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Stop</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Stops the guest and keeps its disk.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="stop">
+                                <style>
+                                  <class name="outlined"/>
+                                </style>
+                                <property name="name">stop</property>
+                                <property name="label" translatable="yes">Stop</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="row_remove">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Remove VM</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Deletes the container, project and password; the disk stays.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="remove">
+                                <style>
+                                  <class name="outlined"/>
+                                </style>
+                                <property name="name">remove</property>
+                                <property name="label" translatable="yes">Remove</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="row_remove_data">
+                            <style>
+                              <class name="row"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="orientation">1</property>
+                                <property name="hexpand">true</property>
+                                <property name="valign">3</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="label"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Delete disk data</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="sub"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Deletes the Windows disk for good; stopping never does.</property>
+                                    <property name="xalign">0</property>
+                                    <property name="wrap">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="remove_data">
+                                <style>
+                                  <class name="destructive-action"/>
+                                </style>
+                                <property name="name">remove_data</property>
+                                <property name="label" translatable="yes">Delete</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="vprogress"/>
+                    </style>
+                    <child>
+                      <object class="GtkProgressBar" id="progress">
+                        <property name="vexpand">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="progress_text">
+                        <style>
+                          <class name="readout"/>
+                        </style>
+                        <property name="xalign">0</property>
+                        <property name="wrap">true</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
       </object>
