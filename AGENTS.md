@@ -48,3 +48,22 @@ A PR explains the problem, the behaviour after the change and how it was verifie
 ## Configuration and Operational Boundaries
 
 Do not commit secrets, local user names or local absolute paths. Do not run binaries downloaded from the internet without explicit permission. Install and session-setup commands write to user or system directories; do not run them as ordinary build checks.
+
+## The running shell
+
+inua-shell is the user's desktop session: their terminals and the programs
+they started run under it. Ending it takes them down with it, so treat the
+running process as untouchable.
+
+- Never `kill`, `pkill` or `systemctl stop|restart` a shell. That is not a
+  restart from the user's point of view; it is losing their work.
+- To pick up a new build, use `inua call shell restart`: it re-executes in
+  place with `syscall.Exec`, keeping the process and its children.
+- Do not run a shell just to check a layout or a window. Read the layout
+  through the shell's loader (`shellUI.load`) and render it with
+  `inua call shell snapshot DIR`, which draws the GTK widgets without
+  touching the session; or start a separate instance under its own
+  `-n NAME` and stop only that one.
+- `systemd-run` is not a safe way to host a shell either: its unit's default
+  KillMode takes the whole control group, which includes whatever the user
+  started from the shell.
