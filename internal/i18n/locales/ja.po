@@ -496,7 +496,7 @@ msgstr "ビデオ"
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
-#: ui/vm.ui:1183
+#: ui/vm.ui:1175
 msgid "Delete"
 msgstr "削除"
 
@@ -599,7 +599,7 @@ msgstr "%sを削除します"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
-#: ui/vm.ui:268
+#: ui/vm.ui:260
 msgid "Edit"
 msgstr "編集"
 
@@ -607,8 +607,8 @@ msgstr "編集"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:931
-#: ui/vm.ui:952
+#: ui/vm.ui:923
+#: ui/vm.ui:944
 msgid "Start"
 msgstr "起動"
 
@@ -620,9 +620,9 @@ msgstr "リセット"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:647
-#: ui/vm.ui:1032
-#: ui/vm.ui:1053
+#: ui/vm.ui:639
+#: ui/vm.ui:1024
+#: ui/vm.ui:1045
 msgid "Stop"
 msgstr "停止"
 
@@ -1369,7 +1369,7 @@ msgstr "%s · %s"
 #: internal/ui/settings_keyring.go:560
 #: internal/ui/vm.go:235
 #: ui/stocks.ui:292
-#: ui/vm.ui:1139
+#: ui/vm.ui:1131
 msgid "Remove"
 msgstr "削除"
 
@@ -2641,7 +2641,7 @@ msgstr "インストール済みの %s を置き換えますか？"
 
 #: internal/appui/workshop_manager.go:154
 #: internal/ui/vm.go:436
-#: ui/vm.ui:483
+#: ui/vm.ui:475
 msgid "Install"
 msgstr "インストール"
 
@@ -3531,8 +3531,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://サーバー/共有, sftp://ユーザー@ホスト/フォルダー, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:974
-#: ui/vm.ui:1008
+#: ui/vm.ui:966
+#: ui/vm.ui:1000
 msgid "Connect"
 msgstr "接続"
 
@@ -10985,136 +10985,136 @@ msgstr "詳細 (I)"
 msgid "Open a File…"
 msgstr "ファイルを開く…"
 
-#: ui/vm.ui:101
+#: ui/vm.ui:93
 msgid "[HOST]"
 msgstr "[ホスト]"
 
-#: ui/vm.ui:167
-#: ui/vm.ui:695
+#: ui/vm.ui:159
+#: ui/vm.ui:687
 msgid "[GUEST]"
 msgstr "[ゲスト]"
 
-#: ui/vm.ui:204
+#: ui/vm.ui:196
 msgid "Recommended profile"
 msgstr "推奨設定"
 
-#: ui/vm.ui:225
+#: ui/vm.ui:217
 msgid "Use it"
 msgstr "使用する"
 
-#: ui/vm.ui:247
+#: ui/vm.ui:239
 msgid "Advanced configuration"
 msgstr "詳細設定"
 
-#: ui/vm.ui:256
+#: ui/vm.ui:248
 msgid "Set memory, CPU cores and disk size yourself."
 msgstr "メモリ、CPU コア、ディスク容量を自分で設定します。"
 
-#: ui/vm.ui:292
-#: ui/vm.ui:726
+#: ui/vm.ui:284
+#: ui/vm.ui:718
 msgid "Memory (MiB)"
 msgstr "メモリ (MiB)"
 
-#: ui/vm.ui:325
-#: ui/vm.ui:774
+#: ui/vm.ui:317
+#: ui/vm.ui:766
 msgid "CPU cores"
 msgstr "CPU コア"
 
-#: ui/vm.ui:358
-#: ui/vm.ui:822
+#: ui/vm.ui:350
+#: ui/vm.ui:814
 msgid "Disk size (GiB)"
 msgstr "ディスク容量 (GiB)"
 
-#: ui/vm.ui:393
+#: ui/vm.ui:385
 msgid "Save profile"
 msgstr "設定を保存"
 
-#: ui/vm.ui:432
+#: ui/vm.ui:424
 msgid "[INSTALL]"
 msgstr "[インストール]"
 
-#: ui/vm.ui:461
+#: ui/vm.ui:453
 msgid "Download and install Windows"
 msgstr "Windows をダウンロードしてインストール"
 
-#: ui/vm.ui:470
+#: ui/vm.ui:462
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "約 8 GB をダウンロードして Windows をインストールします。30 分以上かかります。"
 
-#: ui/vm.ui:530
+#: ui/vm.ui:522
 msgid "[PROGRESS]"
 msgstr "[進捗]"
 
-#: ui/vm.ui:582
+#: ui/vm.ui:574
 msgid "Watch the installation"
 msgstr "インストールの様子を見る"
 
-#: ui/vm.ui:591
+#: ui/vm.ui:583
 msgid "The installer screen is in your browser."
 msgstr "インストーラーの画面はブラウザーに表示されます。"
 
-#: ui/vm.ui:603
+#: ui/vm.ui:595
 msgid "Open web console"
 msgstr "Web コンソールを開く"
 
-#: ui/vm.ui:625
+#: ui/vm.ui:617
 msgid "Stop waiting"
 msgstr "待つのをやめる"
 
-#: ui/vm.ui:634
+#: ui/vm.ui:626
 msgid "Stops the container; the disk is kept. Reopen to resume."
 msgstr "コンテナーを停止し、ディスクは残します。開き直せば続けられます。"
 
-#: ui/vm.ui:756
-#: ui/vm.ui:804
+#: ui/vm.ui:748
+#: ui/vm.ui:796
 msgid "Takes effect on next start."
 msgstr "次回の起動で有効になります。"
 
-#: ui/vm.ui:846
+#: ui/vm.ui:838
 msgid "Enlarging needs a manual partition resize inside Windows."
 msgstr "拡張には Windows 内での手動パーティション変更が必要です。"
 
-#: ui/vm.ui:867
+#: ui/vm.ui:859
 msgid "Apply"
 msgstr "適用"
 
-#: ui/vm.ui:902
+#: ui/vm.ui:894
 msgid "[ACTIONS]"
 msgstr "[操作]"
 
-#: ui/vm.ui:940
+#: ui/vm.ui:932
 msgid "Starts the guest; ready in a minute or two."
 msgstr "ゲストを起動します。1〜2 分で使えます。"
 
-#: ui/vm.ui:983
+#: ui/vm.ui:975
 msgid "Opens FreeRDP."
 msgstr "FreeRDP を開きます。"
 
-#: ui/vm.ui:998
+#: ui/vm.ui:990
 msgid "Web console"
 msgstr "Web コンソール"
 
-#: ui/vm.ui:1041
+#: ui/vm.ui:1033
 msgid "Stops the guest; the disk is kept."
 msgstr "ゲストを停止し、ディスクは残します。"
 
-#: ui/vm.ui:1088
+#: ui/vm.ui:1080
 msgid "[REMOVE]"
 msgstr "[削除]"
 
-#: ui/vm.ui:1117
+#: ui/vm.ui:1109
 msgid "Remove VM"
 msgstr "仮想マシンを削除"
 
-#: ui/vm.ui:1126
+#: ui/vm.ui:1118
 msgid "Deletes the container, project and password. The disk stays."
 msgstr "コンテナー、プロジェクト、パスワードを削除します。ディスクは残ります。"
 
-#: ui/vm.ui:1161
+#: ui/vm.ui:1153
 msgid "Delete disk data"
 msgstr "ディスクデータを削除"
 
-#: ui/vm.ui:1170
+#: ui/vm.ui:1162
 msgid "Permanently deletes the Windows disk. Cannot be undone."
 msgstr "Windows のディスクを完全に削除します。元に戻せません。"
 

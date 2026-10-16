@@ -49,14 +49,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 </child>
               </object>
             </child>
-            <child>
-              <object class="GtkLabel" id="vm_mark">
-                <style>
-                  <class name="mark"/>
-                </style>
-                <property name="valign">3</property>
-              </object>
-            </child>
           </object>
         </child>
         <child>

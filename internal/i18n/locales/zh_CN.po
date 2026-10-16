@@ -496,7 +496,7 @@ msgstr "视频"
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
-#: ui/vm.ui:1183
+#: ui/vm.ui:1175
 msgid "Delete"
 msgstr "删除"
 
@@ -599,7 +599,7 @@ msgstr "移除%s"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
-#: ui/vm.ui:268
+#: ui/vm.ui:260
 msgid "Edit"
 msgstr "编辑"
 
@@ -607,8 +607,8 @@ msgstr "编辑"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:931
-#: ui/vm.ui:952
+#: ui/vm.ui:923
+#: ui/vm.ui:944
 msgid "Start"
 msgstr "启动"
 
@@ -620,9 +620,9 @@ msgstr "重置"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:647
-#: ui/vm.ui:1032
-#: ui/vm.ui:1053
+#: ui/vm.ui:639
+#: ui/vm.ui:1024
+#: ui/vm.ui:1045
 msgid "Stop"
 msgstr "停止"
 
@@ -1369,7 +1369,7 @@ msgstr "%s · %s"
 #: internal/ui/settings_keyring.go:560
 #: internal/ui/vm.go:235
 #: ui/stocks.ui:292
-#: ui/vm.ui:1139
+#: ui/vm.ui:1131
 msgid "Remove"
 msgstr "移除"
 
@@ -2641,7 +2641,7 @@ msgstr "替换已安装的 %s？"
 
 #: internal/appui/workshop_manager.go:154
 #: internal/ui/vm.go:436
-#: ui/vm.ui:483
+#: ui/vm.ui:475
 msgid "Install"
 msgstr "安装"
 
@@ -3531,8 +3531,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://服务器/共享, sftp://用户@主机/文件夹, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:974
-#: ui/vm.ui:1008
+#: ui/vm.ui:966
+#: ui/vm.ui:1000
 msgid "Connect"
 msgstr "连接"
 
@@ -10985,136 +10985,136 @@ msgstr "详情（I）"
 msgid "Open a File…"
 msgstr "打开文件…"
 
-#: ui/vm.ui:101
+#: ui/vm.ui:93
 msgid "[HOST]"
 msgstr "[宿主]"
 
-#: ui/vm.ui:167
-#: ui/vm.ui:695
+#: ui/vm.ui:159
+#: ui/vm.ui:687
 msgid "[GUEST]"
 msgstr "[客户机]"
 
-#: ui/vm.ui:204
+#: ui/vm.ui:196
 msgid "Recommended profile"
 msgstr "推荐配置"
 
-#: ui/vm.ui:225
+#: ui/vm.ui:217
 msgid "Use it"
 msgstr "使用"
 
-#: ui/vm.ui:247
+#: ui/vm.ui:239
 msgid "Advanced configuration"
 msgstr "高级配置"
 
-#: ui/vm.ui:256
+#: ui/vm.ui:248
 msgid "Set memory, CPU cores and disk size yourself."
 msgstr "自行设置内存、CPU 核心与磁盘大小。"
 
-#: ui/vm.ui:292
-#: ui/vm.ui:726
+#: ui/vm.ui:284
+#: ui/vm.ui:718
 msgid "Memory (MiB)"
 msgstr "内存 (MiB)"
 
-#: ui/vm.ui:325
-#: ui/vm.ui:774
+#: ui/vm.ui:317
+#: ui/vm.ui:766
 msgid "CPU cores"
 msgstr "CPU 核心"
 
-#: ui/vm.ui:358
-#: ui/vm.ui:822
+#: ui/vm.ui:350
+#: ui/vm.ui:814
 msgid "Disk size (GiB)"
 msgstr "磁盘大小 (GiB)"
 
-#: ui/vm.ui:393
+#: ui/vm.ui:385
 msgid "Save profile"
 msgstr "保存配置"
 
-#: ui/vm.ui:432
+#: ui/vm.ui:424
 msgid "[INSTALL]"
 msgstr "[安装]"
 
-#: ui/vm.ui:461
+#: ui/vm.ui:453
 msgid "Download and install Windows"
 msgstr "下载并安装 Windows"
 
-#: ui/vm.ui:470
+#: ui/vm.ui:462
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "下载约 8 GB 并安装 Windows；需要 30 分钟以上。"
 
-#: ui/vm.ui:530
+#: ui/vm.ui:522
 msgid "[PROGRESS]"
 msgstr "[进度]"
 
-#: ui/vm.ui:582
+#: ui/vm.ui:574
 msgid "Watch the installation"
 msgstr "查看安装过程"
 
-#: ui/vm.ui:591
+#: ui/vm.ui:583
 msgid "The installer screen is in your browser."
 msgstr "安装画面会显示在浏览器中。"
 
-#: ui/vm.ui:603
+#: ui/vm.ui:595
 msgid "Open web console"
 msgstr "打开网页控制台"
 
-#: ui/vm.ui:625
+#: ui/vm.ui:617
 msgid "Stop waiting"
 msgstr "停止等待"
 
-#: ui/vm.ui:634
+#: ui/vm.ui:626
 msgid "Stops the container; the disk is kept. Reopen to resume."
 msgstr "停止容器并保留磁盘；重新打开可继续。"
 
-#: ui/vm.ui:756
-#: ui/vm.ui:804
+#: ui/vm.ui:748
+#: ui/vm.ui:796
 msgid "Takes effect on next start."
 msgstr "下次启动时生效。"
 
-#: ui/vm.ui:846
+#: ui/vm.ui:838
 msgid "Enlarging needs a manual partition resize inside Windows."
 msgstr "扩容需在 Windows 内手动调整分区。"
 
-#: ui/vm.ui:867
+#: ui/vm.ui:859
 msgid "Apply"
 msgstr "应用"
 
-#: ui/vm.ui:902
+#: ui/vm.ui:894
 msgid "[ACTIONS]"
 msgstr "[操作]"
 
-#: ui/vm.ui:940
+#: ui/vm.ui:932
 msgid "Starts the guest; ready in a minute or two."
 msgstr "启动客户机，大约一两分钟后就绪。"
 
-#: ui/vm.ui:983
+#: ui/vm.ui:975
 msgid "Opens FreeRDP."
 msgstr "打开 FreeRDP。"
 
-#: ui/vm.ui:998
+#: ui/vm.ui:990
 msgid "Web console"
 msgstr "网页控制台"
 
-#: ui/vm.ui:1041
+#: ui/vm.ui:1033
 msgid "Stops the guest; the disk is kept."
 msgstr "停止客户机并保留磁盘。"
 
-#: ui/vm.ui:1088
+#: ui/vm.ui:1080
 msgid "[REMOVE]"
 msgstr "[移除]"
 
-#: ui/vm.ui:1117
+#: ui/vm.ui:1109
 msgid "Remove VM"
 msgstr "移除虚拟机"
 
-#: ui/vm.ui:1126
+#: ui/vm.ui:1118
 msgid "Deletes the container, project and password. The disk stays."
 msgstr "删除容器、项目与密码；磁盘保留。"
 
-#: ui/vm.ui:1161
+#: ui/vm.ui:1153
 msgid "Delete disk data"
 msgstr "删除磁盘数据"
 
-#: ui/vm.ui:1170
+#: ui/vm.ui:1162
 msgid "Permanently deletes the Windows disk. Cannot be undone."
 msgstr "永久删除 Windows 磁盘，无法撤销。"
 

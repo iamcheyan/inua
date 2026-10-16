@@ -496,7 +496,7 @@ msgstr "비디오"
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
-#: ui/vm.ui:1183
+#: ui/vm.ui:1175
 msgid "Delete"
 msgstr "삭제"
 
@@ -599,7 +599,7 @@ msgstr "%s 제거"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
-#: ui/vm.ui:268
+#: ui/vm.ui:260
 msgid "Edit"
 msgstr "편집"
 
@@ -607,8 +607,8 @@ msgstr "편집"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:931
-#: ui/vm.ui:952
+#: ui/vm.ui:923
+#: ui/vm.ui:944
 msgid "Start"
 msgstr "시작"
 
@@ -620,9 +620,9 @@ msgstr "초기화"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:647
-#: ui/vm.ui:1032
-#: ui/vm.ui:1053
+#: ui/vm.ui:639
+#: ui/vm.ui:1024
+#: ui/vm.ui:1045
 msgid "Stop"
 msgstr "중지"
 
@@ -1369,7 +1369,7 @@ msgstr "%s · %s"
 #: internal/ui/settings_keyring.go:560
 #: internal/ui/vm.go:235
 #: ui/stocks.ui:292
-#: ui/vm.ui:1139
+#: ui/vm.ui:1131
 msgid "Remove"
 msgstr "제거"
 
@@ -2641,7 +2641,7 @@ msgstr "설치된 %s을(를) 바꿀까요?"
 
 #: internal/appui/workshop_manager.go:154
 #: internal/ui/vm.go:436
-#: ui/vm.ui:483
+#: ui/vm.ui:475
 msgid "Install"
 msgstr "설치"
 
@@ -3531,8 +3531,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://서버/공유, sftp://사용자@호스트/폴더, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:974
-#: ui/vm.ui:1008
+#: ui/vm.ui:966
+#: ui/vm.ui:1000
 msgid "Connect"
 msgstr "연결"
 
@@ -10985,136 +10985,136 @@ msgstr "세부 정보 (I)"
 msgid "Open a File…"
 msgstr "파일 열기…"
 
-#: ui/vm.ui:101
+#: ui/vm.ui:93
 msgid "[HOST]"
 msgstr "[호스트]"
 
-#: ui/vm.ui:167
-#: ui/vm.ui:695
+#: ui/vm.ui:159
+#: ui/vm.ui:687
 msgid "[GUEST]"
 msgstr "[게스트]"
 
-#: ui/vm.ui:204
+#: ui/vm.ui:196
 msgid "Recommended profile"
 msgstr "권장 설정"
 
-#: ui/vm.ui:225
+#: ui/vm.ui:217
 msgid "Use it"
 msgstr "사용"
 
-#: ui/vm.ui:247
+#: ui/vm.ui:239
 msgid "Advanced configuration"
 msgstr "고급 설정"
 
-#: ui/vm.ui:256
+#: ui/vm.ui:248
 msgid "Set memory, CPU cores and disk size yourself."
 msgstr "메모리, CPU 코어, 디스크 크기를 직접 설정합니다."
 
-#: ui/vm.ui:292
-#: ui/vm.ui:726
+#: ui/vm.ui:284
+#: ui/vm.ui:718
 msgid "Memory (MiB)"
 msgstr "메모리 (MiB)"
 
-#: ui/vm.ui:325
-#: ui/vm.ui:774
+#: ui/vm.ui:317
+#: ui/vm.ui:766
 msgid "CPU cores"
 msgstr "CPU 코어"
 
-#: ui/vm.ui:358
-#: ui/vm.ui:822
+#: ui/vm.ui:350
+#: ui/vm.ui:814
 msgid "Disk size (GiB)"
 msgstr "디스크 크기 (GiB)"
 
-#: ui/vm.ui:393
+#: ui/vm.ui:385
 msgid "Save profile"
 msgstr "설정 저장"
 
-#: ui/vm.ui:432
+#: ui/vm.ui:424
 msgid "[INSTALL]"
 msgstr "[설치]"
 
-#: ui/vm.ui:461
+#: ui/vm.ui:453
 msgid "Download and install Windows"
 msgstr "Windows 다운로드 및 설치"
 
-#: ui/vm.ui:470
+#: ui/vm.ui:462
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "약 8 GB를 내려받아 Windows를 설치합니다. 30분 이상 걸립니다."
 
-#: ui/vm.ui:530
+#: ui/vm.ui:522
 msgid "[PROGRESS]"
 msgstr "[진행]"
 
-#: ui/vm.ui:582
+#: ui/vm.ui:574
 msgid "Watch the installation"
 msgstr "설치 과정 보기"
 
-#: ui/vm.ui:591
+#: ui/vm.ui:583
 msgid "The installer screen is in your browser."
 msgstr "설치 화면은 브라우저에 표시됩니다."
 
-#: ui/vm.ui:603
+#: ui/vm.ui:595
 msgid "Open web console"
 msgstr "웹 콘솔 열기"
 
-#: ui/vm.ui:625
+#: ui/vm.ui:617
 msgid "Stop waiting"
 msgstr "기다리기 중지"
 
-#: ui/vm.ui:634
+#: ui/vm.ui:626
 msgid "Stops the container; the disk is kept. Reopen to resume."
 msgstr "컨테이너를 중지하고 디스크는 남깁니다. 다시 열면 이어집니다."
 
-#: ui/vm.ui:756
-#: ui/vm.ui:804
+#: ui/vm.ui:748
+#: ui/vm.ui:796
 msgid "Takes effect on next start."
 msgstr "다음 시작에 적용됩니다."
 
-#: ui/vm.ui:846
+#: ui/vm.ui:838
 msgid "Enlarging needs a manual partition resize inside Windows."
 msgstr "확장하려면 Windows 안에서 수동으로 파티션을 조정해야 합니다."
 
-#: ui/vm.ui:867
+#: ui/vm.ui:859
 msgid "Apply"
 msgstr "적용"
 
-#: ui/vm.ui:902
+#: ui/vm.ui:894
 msgid "[ACTIONS]"
 msgstr "[동작]"
 
-#: ui/vm.ui:940
+#: ui/vm.ui:932
 msgid "Starts the guest; ready in a minute or two."
 msgstr "게스트를 시작합니다. 1~2분이면 준비됩니다."
 
-#: ui/vm.ui:983
+#: ui/vm.ui:975
 msgid "Opens FreeRDP."
 msgstr "FreeRDP를 엽니다."
 
-#: ui/vm.ui:998
+#: ui/vm.ui:990
 msgid "Web console"
 msgstr "웹 콘솔"
 
-#: ui/vm.ui:1041
+#: ui/vm.ui:1033
 msgid "Stops the guest; the disk is kept."
 msgstr "게스트를 중지하고 디스크는 남깁니다."
 
-#: ui/vm.ui:1088
+#: ui/vm.ui:1080
 msgid "[REMOVE]"
 msgstr "[제거]"
 
-#: ui/vm.ui:1117
+#: ui/vm.ui:1109
 msgid "Remove VM"
 msgstr "가상 머신 제거"
 
-#: ui/vm.ui:1126
+#: ui/vm.ui:1118
 msgid "Deletes the container, project and password. The disk stays."
 msgstr "컨테이너, 프로젝트, 암호를 삭제합니다. 디스크는 남습니다."
 
-#: ui/vm.ui:1161
+#: ui/vm.ui:1153
 msgid "Delete disk data"
 msgstr "디스크 데이터 삭제"
 
-#: ui/vm.ui:1170
+#: ui/vm.ui:1162
 msgid "Permanently deletes the Windows disk. Cannot be undone."
 msgstr "Windows 디스크를 영구히 삭제합니다. 되돌릴 수 없습니다."
 

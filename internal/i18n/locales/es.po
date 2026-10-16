@@ -496,7 +496,7 @@ msgstr "Vídeo"
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
-#: ui/vm.ui:1183
+#: ui/vm.ui:1175
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -599,7 +599,7 @@ msgstr "Eliminar %s"
 
 #: internal/appui/clock.go:402
 #: ui/pass.ui:238
-#: ui/vm.ui:268
+#: ui/vm.ui:260
 msgid "Edit"
 msgstr "Editar"
 
@@ -607,8 +607,8 @@ msgstr "Editar"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:931
-#: ui/vm.ui:952
+#: ui/vm.ui:923
+#: ui/vm.ui:944
 msgid "Start"
 msgstr "Iniciar"
 
@@ -620,9 +620,9 @@ msgstr "Restablecer"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:647
-#: ui/vm.ui:1032
-#: ui/vm.ui:1053
+#: ui/vm.ui:639
+#: ui/vm.ui:1024
+#: ui/vm.ui:1045
 msgid "Stop"
 msgstr "Detener"
 
@@ -1379,7 +1379,7 @@ msgstr "%s · %s"
 #: internal/ui/settings_keyring.go:560
 #: internal/ui/vm.go:235
 #: ui/stocks.ui:292
-#: ui/vm.ui:1139
+#: ui/vm.ui:1131
 msgid "Remove"
 msgstr "Eliminar"
 
@@ -2656,7 +2656,7 @@ msgstr "¿Reemplazar %s instalada?"
 
 #: internal/appui/workshop_manager.go:154
 #: internal/ui/vm.go:436
-#: ui/vm.ui:483
+#: ui/vm.ui:475
 msgid "Install"
 msgstr "Instalar"
 
@@ -3549,8 +3549,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://servidor/recurso, sftp://usuario@host/carpeta, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:974
-#: ui/vm.ui:1008
+#: ui/vm.ui:966
+#: ui/vm.ui:1000
 msgid "Connect"
 msgstr "Conectar"
 
@@ -11029,136 +11029,136 @@ msgstr "Detalles (I)"
 msgid "Open a File…"
 msgstr "Abrir un archivo…"
 
-#: ui/vm.ui:101
+#: ui/vm.ui:93
 msgid "[HOST]"
 msgstr "[ANFITRIÓN]"
 
-#: ui/vm.ui:167
-#: ui/vm.ui:695
+#: ui/vm.ui:159
+#: ui/vm.ui:687
 msgid "[GUEST]"
 msgstr "[INVITADO]"
 
-#: ui/vm.ui:204
+#: ui/vm.ui:196
 msgid "Recommended profile"
 msgstr "Perfil recomendado"
 
-#: ui/vm.ui:225
+#: ui/vm.ui:217
 msgid "Use it"
 msgstr "Usar"
 
-#: ui/vm.ui:247
+#: ui/vm.ui:239
 msgid "Advanced configuration"
 msgstr "Configuración avanzada"
 
-#: ui/vm.ui:256
+#: ui/vm.ui:248
 msgid "Set memory, CPU cores and disk size yourself."
 msgstr "Configura tú mismo la memoria, los núcleos de CPU y el tamaño del disco."
 
-#: ui/vm.ui:292
-#: ui/vm.ui:726
+#: ui/vm.ui:284
+#: ui/vm.ui:718
 msgid "Memory (MiB)"
 msgstr "Memoria (MiB)"
 
-#: ui/vm.ui:325
-#: ui/vm.ui:774
+#: ui/vm.ui:317
+#: ui/vm.ui:766
 msgid "CPU cores"
 msgstr "Núcleos de CPU"
 
-#: ui/vm.ui:358
-#: ui/vm.ui:822
+#: ui/vm.ui:350
+#: ui/vm.ui:814
 msgid "Disk size (GiB)"
 msgstr "Tamaño del disco (GiB)"
 
-#: ui/vm.ui:393
+#: ui/vm.ui:385
 msgid "Save profile"
 msgstr "Guardar el perfil"
 
-#: ui/vm.ui:432
+#: ui/vm.ui:424
 msgid "[INSTALL]"
 msgstr "[INSTALAR]"
 
-#: ui/vm.ui:461
+#: ui/vm.ui:453
 msgid "Download and install Windows"
 msgstr "Descargar e instalar Windows"
 
-#: ui/vm.ui:470
+#: ui/vm.ui:462
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "Descarga unos 8 GB e instala Windows; tarda más de 30 minutos."
 
-#: ui/vm.ui:530
+#: ui/vm.ui:522
 msgid "[PROGRESS]"
 msgstr "[PROGRESO]"
 
-#: ui/vm.ui:582
+#: ui/vm.ui:574
 msgid "Watch the installation"
 msgstr "Ver la instalación"
 
-#: ui/vm.ui:591
+#: ui/vm.ui:583
 msgid "The installer screen is in your browser."
 msgstr "La pantalla del instalador está en tu navegador."
 
-#: ui/vm.ui:603
+#: ui/vm.ui:595
 msgid "Open web console"
 msgstr "Abrir la consola web"
 
-#: ui/vm.ui:625
+#: ui/vm.ui:617
 msgid "Stop waiting"
 msgstr "Dejar de esperar"
 
-#: ui/vm.ui:634
+#: ui/vm.ui:626
 msgid "Stops the container; the disk is kept. Reopen to resume."
 msgstr "Detiene el contenedor; el disco se conserva. Reabre para continuar."
 
-#: ui/vm.ui:756
-#: ui/vm.ui:804
+#: ui/vm.ui:748
+#: ui/vm.ui:796
 msgid "Takes effect on next start."
 msgstr "Surte efecto en el próximo inicio."
 
-#: ui/vm.ui:846
+#: ui/vm.ui:838
 msgid "Enlarging needs a manual partition resize inside Windows."
 msgstr "Ampliar requiere redimensionar la partición manualmente dentro de Windows."
 
-#: ui/vm.ui:867
+#: ui/vm.ui:859
 msgid "Apply"
 msgstr "Aplicar"
 
-#: ui/vm.ui:902
+#: ui/vm.ui:894
 msgid "[ACTIONS]"
 msgstr "[ACCIONES]"
 
-#: ui/vm.ui:940
+#: ui/vm.ui:932
 msgid "Starts the guest; ready in a minute or two."
 msgstr "Inicia el invitado; listo en uno o dos minutos."
 
-#: ui/vm.ui:983
+#: ui/vm.ui:975
 msgid "Opens FreeRDP."
 msgstr "Abre FreeRDP."
 
-#: ui/vm.ui:998
+#: ui/vm.ui:990
 msgid "Web console"
 msgstr "Consola web"
 
-#: ui/vm.ui:1041
+#: ui/vm.ui:1033
 msgid "Stops the guest; the disk is kept."
 msgstr "Detiene el invitado; el disco se conserva."
 
-#: ui/vm.ui:1088
+#: ui/vm.ui:1080
 msgid "[REMOVE]"
 msgstr "[ELIMINAR]"
 
-#: ui/vm.ui:1117
+#: ui/vm.ui:1109
 msgid "Remove VM"
 msgstr "Eliminar la VM"
 
-#: ui/vm.ui:1126
+#: ui/vm.ui:1118
 msgid "Deletes the container, project and password. The disk stays."
 msgstr "Elimina el contenedor, el proyecto y la contraseña. El disco permanece."
 
-#: ui/vm.ui:1161
+#: ui/vm.ui:1153
 msgid "Delete disk data"
 msgstr "Eliminar los datos del disco"
 
-#: ui/vm.ui:1170
+#: ui/vm.ui:1162
 msgid "Permanently deletes the Windows disk. Cannot be undone."
 msgstr "Elimina el disco de Windows de forma permanente. No se puede deshacer."
 
