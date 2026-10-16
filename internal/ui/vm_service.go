@@ -25,14 +25,15 @@ import (
 // shellVMManager is the shell's implementation of VMManager: it owns the
 // Docker backend, the persisted configuration and the operation lock.
 type vmService struct {
-	mu        sync.Mutex
-	backend   *vm.DockerBackend
-	config    vm.Config
-	host      vm.Host
-	platform  vm.Platform
-	hasConfig bool
-	busy      bool
-	err       error
+	mu         sync.Mutex
+	backend    *vm.DockerBackend
+	config     vm.Config
+	host       vm.Host
+	platform   vm.Platform
+	hasConfig  bool
+	busy       bool
+	err        error
+	secretConn *dbus.Conn // the Secret Service session, held for the shell's life
 }
 
 // vmSecretStore keeps the guest password in the Secret Service under inua's
@@ -68,11 +69,15 @@ func newVMService() *vmService {
 	s := &vmService{host: vm.DetectHost(""), platform: vm.DetectPlatform("", vm.PlatformProbes{})}
 	s.config = vm.DefaultConfig()
 	s.backend = vm.NewDockerBackend(nil)
+	// The Secret Service session must outlive this call: closing the bus
+	// connection here would break every later password read.
 	if conn, err := dbus.ConnectSessionBus(); err == nil {
 		if client, err := keyring.Connect(conn, keyring.AlgDH); err == nil {
+			s.secretConn = conn
 			s.backend.Secrets = vmSecretStore{client: client}
+		} else {
+			_ = conn.Close()
 		}
-		_ = conn.Close()
 	}
 	s.load()
 	return s

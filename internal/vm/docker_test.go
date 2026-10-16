@@ -2,6 +2,7 @@ package vm
 
 import (
 	"context"
+	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
 	"strings"
@@ -175,5 +176,31 @@ func TestSetInstalledRestoresManagedLocations(t *testing.T) {
 	}
 	if err := b.ensureInstalled(); err == nil {
 		t.Error("ensureInstalled accepted a project that was never written")
+	}
+}
+
+// The Compose project must be valid YAML: a quoted volume source followed by
+// a bare ": /storage" made Docker refuse the project outright.
+func TestInstallWritesParsableCompose(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	data, err := os.ReadFile(b.composePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err := yaml.Unmarshal(data, &doc); err != nil {
+		t.Fatalf("compose is not valid YAML: %v\n%s", err, data)
+	}
+	services, _ := doc["services"].(map[string]any)
+	if services == nil {
+		t.Fatalf("compose has no services: %s", data)
+	}
+	if _, ok := services["windows"]; !ok {
+		t.Fatalf("compose has no windows service: %s", data)
 	}
 }
