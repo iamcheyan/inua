@@ -503,6 +503,7 @@ msgid "Change sign"
 msgstr "변경 표시"
 
 #: internal/appui/calculator.go:200
+#: internal/ui/vm.go:147
 msgid "Error"
 msgstr "오류"
 
@@ -604,6 +605,7 @@ msgstr "편집하다"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
+#: ui/vm.ui:173
 msgid "Start"
 msgstr "시작"
 
@@ -615,6 +617,7 @@ msgstr "초기화"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
+#: ui/vm.ui:196
 msgid "Stop"
 msgstr "중지"
 
@@ -1586,7 +1589,7 @@ msgstr "GPU"
 #: internal/appui/sysmon.go:1031
 #: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "NETWORK"
 msgstr "네트워크"
 
@@ -3519,6 +3522,7 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://서버/공유, sftp://사용자@호스트/폴더, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
+#: ui/vm.ui:179
 msgid "Connect"
 msgstr "연결"
 
@@ -6958,7 +6962,7 @@ msgid "SPACE PINBALL"
 msgstr "우주 핀볼"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 #: ui/settings.ui:1657
 msgid "Launcher"
 msgstr "실행기"
@@ -6991,7 +6995,7 @@ msgstr "포커스 온 또는 오프"
 
 #: internal/hyprconf/keys.go:30
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 #: ui/control.ui:62
 #: ui/settings.ui:30
 msgid "Settings"
@@ -7200,7 +7204,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "Enter를 다시 누르면 휴지통을 비웁니다"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 msgid "inua's settings"
 msgstr "inua의 설정"
 
@@ -7347,12 +7351,12 @@ msgid "Web search"
 msgstr "웹 검색"
 
 #: internal/shell/dock.go:246
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "EVERYDAY"
 msgstr "매일"
 
 #: internal/shell/dock.go:255
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "TOOLS"
 msgstr "도구"
 
@@ -7361,42 +7365,51 @@ msgid "PLAY"
 msgstr "재생"
 
 #: internal/shell/dock.go:273
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "시스템"
 
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 msgid "Find apps, windows and answers"
 msgstr "앱, 창 및 답변 찾기"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 #: internal/ui/screenshot.go:783
 #: ui/settings.ui:1617
 msgid "Screenshot"
 msgstr "스크린샷"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 msgid "Capture an area, a window or a screen"
 msgstr "영역, 창, 화면 캡처"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:289
+#: ui/vm.ui:10
+msgid "Windows VM"
+msgstr "Windows 가상 머신"
+
+#: internal/shell/dock.go:289
+msgid "Manage your Windows virtual machine"
+msgstr "Windows 가상 머신 관리"
+
+#: internal/shell/dock.go:298
 msgid "DEVELOPMENT"
 msgstr "개발"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "MEDIA"
 msgstr "미디어"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "GAMES"
 msgstr "게임"
 
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 msgid "OTHER"
 msgstr "기타"
 
-#: internal/shell/dock.go:322
+#: internal/shell/dock.go:324
 msgid "WORKSHOP"
 msgstr "워크숍"
 
@@ -7873,16 +7886,16 @@ msgstr "독에 고정"
 msgid "Quit (%d windows)"
 msgstr "종료(%d 창)"
 
-#: internal/ui/drawer.go:212
+#: internal/ui/drawer.go:223
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr "앱"
 
-#: internal/ui/drawer.go:215
+#: internal/ui/drawer.go:226
 msgid "Workshop apps"
 msgstr "워크숍 앱"
 
-#: internal/ui/drawer.go:316
+#: internal/ui/drawer.go:327
 msgid "The light apps are not installed (make install)."
 msgstr "라이트 앱이 설치되지 않았습니다(make install)."
 
@@ -8797,6 +8810,38 @@ msgstr "inua는 업그레이드할 수 없습니다."
 #: internal/ui/updates.go:179
 msgid "Could not upgrade: %s"
 msgstr "업그레이드할 수 없음: %s"
+
+#: internal/ui/vm.go:127
+msgid "Confirm remove VM"
+msgstr "가상 머신 삭제 확인"
+
+#: internal/ui/vm.go:131
+#: internal/ui/vm.go:152
+#: ui/vm.ui:202
+msgid "Remove VM"
+msgstr "가상 머신 삭제"
+
+#: internal/ui/vm.go:144
+#: ui/vm.ui:32
+msgid "Not configured"
+msgstr "설정되지 않음"
+
+#: internal/ui/vm.go:150
+msgid "VM operations are unavailable on this system"
+msgstr "이 시스템에서는 가상 머신을 조작할 수 없습니다"
+
+#: internal/ui/vm.go:155
+#: ui/vm.ui:154
+msgid "No issues reported"
+msgstr "문제 없음"
+
+#: internal/ui/vm_service.go:114
+msgid "Secret Service: unavailable; a safe Windows password store is required"
+msgstr ""
+
+#: internal/ui/vm_service.go:117
+msgid "Host prerequisites detected."
+msgstr "호스트 사전 요구 사항을 확인했습니다."
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -10814,6 +10859,54 @@ msgstr "세부 정보 (I)"
 #: ui/viewer.ui:339
 msgid "Open a File…"
 msgstr "파일 열기…"
+
+#: ui/vm.ui:23
+msgid "Windows virtual machine"
+msgstr "Windows 가상 머신"
+
+#: ui/vm.ui:40
+msgid "Recommended first-run profile"
+msgstr "권장 첫 설정"
+
+#: ui/vm.ui:49
+msgid "A balanced profile keeps enough memory and CPU capacity available for your system."
+msgstr "균형 설정은 시스템을 위해 충분한 메모리와 CPU를 남깁니다."
+
+#: ui/vm.ui:57
+msgid "Accept recommended profile"
+msgstr ""
+
+#: ui/vm.ui:63
+msgid "Advanced configuration"
+msgstr "고급 설정"
+
+#: ui/vm.ui:75
+msgid "Memory (MiB)"
+msgstr "메모리 (MiB)"
+
+#: ui/vm.ui:95
+msgid "CPU cores"
+msgstr "CPU 코어"
+
+#: ui/vm.ui:115
+msgid "Disk size (GiB)"
+msgstr "디스크 크기 (GiB)"
+
+#: ui/vm.ui:136
+msgid "Save configuration"
+msgstr "설정 저장"
+
+#: ui/vm.ui:145
+msgid "System status and checks"
+msgstr "시스템 상태 및 점검"
+
+#: ui/vm.ui:167
+msgid "Download and install Windows"
+msgstr "Windows 다운로드 및 설치"
+
+#: ui/vm.ui:190
+msgid "Open web console"
+msgstr "웹 콘솔 열기"
 
 #: ui/weather.ui:30
 msgid "Previous place"

@@ -3,6 +3,18 @@
 What each part of inua does. The [README](../README.md) has the short
 version; the light apps have [their own page](apps.md).
 
+## Windows VM diagnostics
+
+`inua vm doctor` checks Linux host support and the configured VM resources;
+`inua vm status --json` emits the same read-only snapshot as JSON. Diagnostics
+use platform probes and local configuration only. They do not contact Docker
+or change host or VM state. Supported hosts are NixOS, Ubuntu and Debian
+Linux, with Docker Engine, Compose v2, KVM, FreeRDP and `xdg-open`. The host
+needs accessible `/dev/kvm` and Docker socket, `/dev/net/tun`, and sufficient
+free disk space. The baseline recommendation is 4 GiB RAM, 2 CPUs and 64 GiB
+disk; the CLI reports a profile adjusted to host resources. Docker socket
+access is a privileged host boundary and should be limited to trusted users.
+
 ## Bar
 
 Workspaces as square marks, the focused window's title, the clock (a click

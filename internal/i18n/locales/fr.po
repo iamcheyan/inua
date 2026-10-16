@@ -503,6 +503,7 @@ msgid "Change sign"
 msgstr "Changer de signe"
 
 #: internal/appui/calculator.go:200
+#: internal/ui/vm.go:147
 msgid "Error"
 msgstr "Erreur"
 
@@ -604,6 +605,7 @@ msgstr "Modifier"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
+#: ui/vm.ui:173
 msgid "Start"
 msgstr "Démarrer"
 
@@ -615,6 +617,7 @@ msgstr "Réinitialiser"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
+#: ui/vm.ui:196
 msgid "Stop"
 msgstr "Arrêter"
 
@@ -1597,7 +1600,7 @@ msgstr "GPU"
 #: internal/appui/sysmon.go:1031
 #: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "NETWORK"
 msgstr "RÉSEAU"
 
@@ -3537,6 +3540,7 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://serveur/partage, sftp://utilisateur@hôte/dossier, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
+#: ui/vm.ui:179
 msgid "Connect"
 msgstr "Se connecter"
 
@@ -6992,7 +6996,7 @@ msgid "SPACE PINBALL"
 msgstr "FLIPPER SPATIAL"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 #: ui/settings.ui:1657
 msgid "Launcher"
 msgstr "Lanceur"
@@ -7025,7 +7029,7 @@ msgstr "Mise au point activée ou désactivée"
 
 #: internal/hyprconf/keys.go:30
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 #: ui/control.ui:62
 #: ui/settings.ui:30
 msgid "Settings"
@@ -7234,7 +7238,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "Appuyez à nouveau sur Entrée pour vider la corbeille"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 msgid "inua's settings"
 msgstr "Paramètres d'Inua"
 
@@ -7381,12 +7385,12 @@ msgid "Web search"
 msgstr "Recherche sur le Web"
 
 #: internal/shell/dock.go:246
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "EVERYDAY"
 msgstr "TOUS LES JOURS"
 
 #: internal/shell/dock.go:255
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "TOOLS"
 msgstr "OUTILS"
 
@@ -7395,42 +7399,51 @@ msgid "PLAY"
 msgstr "JOUER"
 
 #: internal/shell/dock.go:273
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "SYSTÈME"
 
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 msgid "Find apps, windows and answers"
 msgstr "Rechercher des applications, des fenêtres et des réponses"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 #: internal/ui/screenshot.go:783
 #: ui/settings.ui:1617
 msgid "Screenshot"
 msgstr "Capture d’écran"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 msgid "Capture an area, a window or a screen"
 msgstr "Capturer une zone, une fenêtre ou un écran"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:289
+#: ui/vm.ui:10
+msgid "Windows VM"
+msgstr "Machine virtuelle Windows"
+
+#: internal/shell/dock.go:289
+msgid "Manage your Windows virtual machine"
+msgstr "Gérer votre machine virtuelle Windows"
+
+#: internal/shell/dock.go:298
 msgid "DEVELOPMENT"
 msgstr "DÉVELOPPEMENT"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "MEDIA"
 msgstr "MÉDIAS"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "GAMES"
 msgstr "JEUX"
 
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 msgid "OTHER"
 msgstr "AUTRES"
 
-#: internal/shell/dock.go:322
+#: internal/shell/dock.go:324
 msgid "WORKSHOP"
 msgstr "ATELIER"
 
@@ -7910,16 +7923,16 @@ msgstr "Épingler au dock"
 msgid "Quit (%d windows)"
 msgstr "Quitter (fenêtres %d)"
 
-#: internal/ui/drawer.go:212
+#: internal/ui/drawer.go:223
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr "Applications"
 
-#: internal/ui/drawer.go:215
+#: internal/ui/drawer.go:226
 msgid "Workshop apps"
 msgstr "Apps de l’atelier"
 
-#: internal/ui/drawer.go:316
+#: internal/ui/drawer.go:327
 msgid "The light apps are not installed (make install)."
 msgstr "Les applications légères ne sont pas installées (make install)."
 
@@ -8840,6 +8853,38 @@ msgstr "Inua n'a pas pu mettre à niveau"
 #: internal/ui/updates.go:179
 msgid "Could not upgrade: %s"
 msgstr "Impossible de mettre à niveau : %s"
+
+#: internal/ui/vm.go:127
+msgid "Confirm remove VM"
+msgstr "Confirmer la suppression de la VM"
+
+#: internal/ui/vm.go:131
+#: internal/ui/vm.go:152
+#: ui/vm.ui:202
+msgid "Remove VM"
+msgstr "Supprimer la VM"
+
+#: internal/ui/vm.go:144
+#: ui/vm.ui:32
+msgid "Not configured"
+msgstr "Non configuré"
+
+#: internal/ui/vm.go:150
+msgid "VM operations are unavailable on this system"
+msgstr "Les opérations de VM sont indisponibles sur ce système"
+
+#: internal/ui/vm.go:155
+#: ui/vm.ui:154
+msgid "No issues reported"
+msgstr "Aucun problème signalé"
+
+#: internal/ui/vm_service.go:114
+msgid "Secret Service: unavailable; a safe Windows password store is required"
+msgstr ""
+
+#: internal/ui/vm_service.go:117
+msgid "Host prerequisites detected."
+msgstr "Prérequis de l'hôte détectés."
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -10858,6 +10903,54 @@ msgstr "Détails (I)"
 #: ui/viewer.ui:339
 msgid "Open a File…"
 msgstr "Ouvrir un fichier…"
+
+#: ui/vm.ui:23
+msgid "Windows virtual machine"
+msgstr "Machine virtuelle Windows"
+
+#: ui/vm.ui:40
+msgid "Recommended first-run profile"
+msgstr "Profil recommandé au premier lancement"
+
+#: ui/vm.ui:49
+msgid "A balanced profile keeps enough memory and CPU capacity available for your system."
+msgstr "Un profil équilibré réserve assez de mémoire et de CPU à votre système."
+
+#: ui/vm.ui:57
+msgid "Accept recommended profile"
+msgstr ""
+
+#: ui/vm.ui:63
+msgid "Advanced configuration"
+msgstr "Configuration avancée"
+
+#: ui/vm.ui:75
+msgid "Memory (MiB)"
+msgstr "Mémoire (MiB)"
+
+#: ui/vm.ui:95
+msgid "CPU cores"
+msgstr "Cœurs CPU"
+
+#: ui/vm.ui:115
+msgid "Disk size (GiB)"
+msgstr "Taille du disque (GiB)"
+
+#: ui/vm.ui:136
+msgid "Save configuration"
+msgstr "Enregistrer la configuration"
+
+#: ui/vm.ui:145
+msgid "System status and checks"
+msgstr "État et vérifications du système"
+
+#: ui/vm.ui:167
+msgid "Download and install Windows"
+msgstr "Télécharger et installer Windows"
+
+#: ui/vm.ui:190
+msgid "Open web console"
+msgstr "Ouvrir la console web"
 
 #: ui/weather.ui:30
 msgid "Previous place"

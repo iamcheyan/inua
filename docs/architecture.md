@@ -5,6 +5,18 @@ inua is a desktop shell that works with Hyprland. Its logic is Go, its interface
 document follows [design.md](design.md); why this toolkit is in
 [toolkit.md](toolkit.md).
 
+## Windows VM boundary
+
+`internal/vm` owns toolkit-free configuration, Linux platform detection,
+resource recommendations and the Docker backend contract. `inua vm doctor`
+and `inua vm status --json` expose read-only diagnostics. They inspect host
+facilities and local configuration without making Docker API calls. Supported
+Linux hosts are NixOS, Ubuntu and Debian; the backend expects Docker Engine
+with Compose v2 and KVM. The VM is managed through the Docker backend boundary,
+with local RDP access provided by FreeRDP. Docker socket access is privileged
+host access and should be granted only to trusted users. A baseline is 4 GiB
+memory, 2 CPUs and 64 GiB disk; recommendations adapt to host resources.
+
 ## 1. Layers
 
 ```

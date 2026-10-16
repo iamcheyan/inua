@@ -501,6 +501,7 @@ msgid "Change sign"
 msgstr ""
 
 #: internal/appui/calculator.go:200
+#: internal/ui/vm.go:147
 msgid "Error"
 msgstr ""
 
@@ -602,6 +603,7 @@ msgstr ""
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
+#: ui/vm.ui:173
 msgid "Start"
 msgstr ""
 
@@ -613,6 +615,7 @@ msgstr ""
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
+#: ui/vm.ui:196
 msgid "Stop"
 msgstr ""
 
@@ -1595,7 +1598,7 @@ msgstr ""
 #: internal/appui/sysmon.go:1031
 #: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "NETWORK"
 msgstr ""
 
@@ -3535,6 +3538,7 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr ""
 
 #: internal/filesui/cards.go:503
+#: ui/vm.ui:179
 msgid "Connect"
 msgstr ""
 
@@ -6990,7 +6994,7 @@ msgid "SPACE PINBALL"
 msgstr ""
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 #: ui/settings.ui:1657
 msgid "Launcher"
 msgstr ""
@@ -7023,7 +7027,7 @@ msgstr ""
 
 #: internal/hyprconf/keys.go:30
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 #: ui/control.ui:62
 #: ui/settings.ui:30
 msgid "Settings"
@@ -7232,7 +7236,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr ""
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 msgid "inua's settings"
 msgstr ""
 
@@ -7379,12 +7383,12 @@ msgid "Web search"
 msgstr ""
 
 #: internal/shell/dock.go:246
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "EVERYDAY"
 msgstr ""
 
 #: internal/shell/dock.go:255
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "TOOLS"
 msgstr ""
 
@@ -7393,42 +7397,51 @@ msgid "PLAY"
 msgstr ""
 
 #: internal/shell/dock.go:273
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr ""
 
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 msgid "Find apps, windows and answers"
 msgstr ""
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 #: internal/ui/screenshot.go:783
 #: ui/settings.ui:1617
 msgid "Screenshot"
 msgstr ""
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 msgid "Capture an area, a window or a screen"
 msgstr ""
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:289
+#: ui/vm.ui:10
+msgid "Windows VM"
+msgstr ""
+
+#: internal/shell/dock.go:289
+msgid "Manage your Windows virtual machine"
+msgstr ""
+
+#: internal/shell/dock.go:298
 msgid "DEVELOPMENT"
 msgstr ""
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "MEDIA"
 msgstr ""
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "GAMES"
 msgstr ""
 
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 msgid "OTHER"
 msgstr ""
 
-#: internal/shell/dock.go:322
+#: internal/shell/dock.go:324
 msgid "WORKSHOP"
 msgstr ""
 
@@ -7908,16 +7921,16 @@ msgstr ""
 msgid "Quit (%d windows)"
 msgstr ""
 
-#: internal/ui/drawer.go:212
+#: internal/ui/drawer.go:223
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr ""
 
-#: internal/ui/drawer.go:215
+#: internal/ui/drawer.go:226
 msgid "Workshop apps"
 msgstr ""
 
-#: internal/ui/drawer.go:316
+#: internal/ui/drawer.go:327
 msgid "The light apps are not installed (make install)."
 msgstr ""
 
@@ -8837,6 +8850,38 @@ msgstr ""
 
 #: internal/ui/updates.go:179
 msgid "Could not upgrade: %s"
+msgstr ""
+
+#: internal/ui/vm.go:127
+msgid "Confirm remove VM"
+msgstr ""
+
+#: internal/ui/vm.go:131
+#: internal/ui/vm.go:152
+#: ui/vm.ui:202
+msgid "Remove VM"
+msgstr ""
+
+#: internal/ui/vm.go:144
+#: ui/vm.ui:32
+msgid "Not configured"
+msgstr ""
+
+#: internal/ui/vm.go:150
+msgid "VM operations are unavailable on this system"
+msgstr ""
+
+#: internal/ui/vm.go:155
+#: ui/vm.ui:154
+msgid "No issues reported"
+msgstr ""
+
+#: internal/ui/vm_service.go:114
+msgid "Secret Service: unavailable; a safe Windows password store is required"
+msgstr ""
+
+#: internal/ui/vm_service.go:117
+msgid "Host prerequisites detected."
 msgstr ""
 
 #: internal/viewerui/app.go:36
@@ -10855,6 +10900,54 @@ msgstr ""
 
 #: ui/viewer.ui:339
 msgid "Open a File…"
+msgstr ""
+
+#: ui/vm.ui:23
+msgid "Windows virtual machine"
+msgstr ""
+
+#: ui/vm.ui:40
+msgid "Recommended first-run profile"
+msgstr ""
+
+#: ui/vm.ui:49
+msgid "A balanced profile keeps enough memory and CPU capacity available for your system."
+msgstr ""
+
+#: ui/vm.ui:57
+msgid "Accept recommended profile"
+msgstr ""
+
+#: ui/vm.ui:63
+msgid "Advanced configuration"
+msgstr ""
+
+#: ui/vm.ui:75
+msgid "Memory (MiB)"
+msgstr ""
+
+#: ui/vm.ui:95
+msgid "CPU cores"
+msgstr ""
+
+#: ui/vm.ui:115
+msgid "Disk size (GiB)"
+msgstr ""
+
+#: ui/vm.ui:136
+msgid "Save configuration"
+msgstr ""
+
+#: ui/vm.ui:145
+msgid "System status and checks"
+msgstr ""
+
+#: ui/vm.ui:167
+msgid "Download and install Windows"
+msgstr ""
+
+#: ui/vm.ui:190
+msgid "Open web console"
 msgstr ""
 
 #: ui/weather.ui:30

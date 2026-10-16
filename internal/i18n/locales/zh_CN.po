@@ -503,6 +503,7 @@ msgid "Change sign"
 msgstr "改变符号"
 
 #: internal/appui/calculator.go:200
+#: internal/ui/vm.go:147
 msgid "Error"
 msgstr "错误"
 
@@ -604,8 +605,9 @@ msgstr "编辑"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
+#: ui/vm.ui:173
 msgid "Start"
-msgstr "开始"
+msgstr "启动"
 
 #: internal/appui/clock.go:492
 #: ui/music.ui:332
@@ -615,6 +617,7 @@ msgstr "重置"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
+#: ui/vm.ui:196
 msgid "Stop"
 msgstr "停止"
 
@@ -1586,7 +1589,7 @@ msgstr "GPU"
 #: internal/appui/sysmon.go:1031
 #: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "NETWORK"
 msgstr "网络"
 
@@ -3519,6 +3522,7 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://服务器/共享, sftp://用户@主机/文件夹, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
+#: ui/vm.ui:179
 msgid "Connect"
 msgstr "连接"
 
@@ -6958,7 +6962,7 @@ msgid "SPACE PINBALL"
 msgstr "太空弹球"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 #: ui/settings.ui:1657
 msgid "Launcher"
 msgstr "启动器"
@@ -6991,7 +6995,7 @@ msgstr "聚焦或关闭"
 
 #: internal/hyprconf/keys.go:30
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 #: ui/control.ui:62
 #: ui/settings.ui:30
 msgid "Settings"
@@ -7200,7 +7204,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "再次按 Enter 清空回收站"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 msgid "inua's settings"
 msgstr "inua的设置"
 
@@ -7347,12 +7351,12 @@ msgid "Web search"
 msgstr "网络搜索"
 
 #: internal/shell/dock.go:246
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "EVERYDAY"
 msgstr "日常"
 
 #: internal/shell/dock.go:255
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "TOOLS"
 msgstr "工具"
 
@@ -7361,42 +7365,51 @@ msgid "PLAY"
 msgstr "玩"
 
 #: internal/shell/dock.go:273
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "系统"
 
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 msgid "Find apps, windows and answers"
 msgstr "查找应用程序、窗口和答案"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 #: internal/ui/screenshot.go:783
 #: ui/settings.ui:1617
 msgid "Screenshot"
 msgstr "截图"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 msgid "Capture an area, a window or a screen"
 msgstr "捕获区域、窗口或屏幕"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:289
+#: ui/vm.ui:10
+msgid "Windows VM"
+msgstr "Windows 虚拟机"
+
+#: internal/shell/dock.go:289
+msgid "Manage your Windows virtual machine"
+msgstr "管理你的 Windows 虚拟机"
+
+#: internal/shell/dock.go:298
 msgid "DEVELOPMENT"
 msgstr "开发"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "MEDIA"
 msgstr "媒体"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "GAMES"
 msgstr "游戏"
 
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 msgid "OTHER"
 msgstr "其他"
 
-#: internal/shell/dock.go:322
+#: internal/shell/dock.go:324
 msgid "WORKSHOP"
 msgstr "工坊"
 
@@ -7873,16 +7886,16 @@ msgstr "固定到程序坞"
 msgid "Quit (%d windows)"
 msgstr "退出(%d窗口)"
 
-#: internal/ui/drawer.go:212
+#: internal/ui/drawer.go:223
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr "应用程序"
 
-#: internal/ui/drawer.go:215
+#: internal/ui/drawer.go:226
 msgid "Workshop apps"
 msgstr "工坊应用"
 
-#: internal/ui/drawer.go:316
+#: internal/ui/drawer.go:327
 msgid "The light apps are not installed (make install)."
 msgstr "轻型应用程序未安装(make install)。"
 
@@ -8797,6 +8810,38 @@ msgstr "inua无法升级"
 #: internal/ui/updates.go:179
 msgid "Could not upgrade: %s"
 msgstr "无法升级:%s"
+
+#: internal/ui/vm.go:127
+msgid "Confirm remove VM"
+msgstr "确认删除虚拟机"
+
+#: internal/ui/vm.go:131
+#: internal/ui/vm.go:152
+#: ui/vm.ui:202
+msgid "Remove VM"
+msgstr "删除虚拟机"
+
+#: internal/ui/vm.go:144
+#: ui/vm.ui:32
+msgid "Not configured"
+msgstr "未配置"
+
+#: internal/ui/vm.go:150
+msgid "VM operations are unavailable on this system"
+msgstr "此系统上无法执行虚拟机操作"
+
+#: internal/ui/vm.go:155
+#: ui/vm.ui:154
+msgid "No issues reported"
+msgstr "未发现问题"
+
+#: internal/ui/vm_service.go:114
+msgid "Secret Service: unavailable; a safe Windows password store is required"
+msgstr "Secret Service 不可用；需要安全的 Windows 密码存储"
+
+#: internal/ui/vm_service.go:117
+msgid "Host prerequisites detected."
+msgstr "已检测到宿主前置条件。"
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -10814,6 +10859,54 @@ msgstr "详情（I）"
 #: ui/viewer.ui:339
 msgid "Open a File…"
 msgstr "打开文件…"
+
+#: ui/vm.ui:23
+msgid "Windows virtual machine"
+msgstr "Windows 虚拟机"
+
+#: ui/vm.ui:40
+msgid "Recommended first-run profile"
+msgstr "推荐的首次配置"
+
+#: ui/vm.ui:49
+msgid "A balanced profile keeps enough memory and CPU capacity available for your system."
+msgstr "均衡配置会为你的系统保留足够的内存和 CPU 余量。"
+
+#: ui/vm.ui:57
+msgid "Accept recommended profile"
+msgstr ""
+
+#: ui/vm.ui:63
+msgid "Advanced configuration"
+msgstr "高级配置"
+
+#: ui/vm.ui:75
+msgid "Memory (MiB)"
+msgstr "内存 (MiB)"
+
+#: ui/vm.ui:95
+msgid "CPU cores"
+msgstr "CPU 核心"
+
+#: ui/vm.ui:115
+msgid "Disk size (GiB)"
+msgstr "磁盘大小 (GiB)"
+
+#: ui/vm.ui:136
+msgid "Save configuration"
+msgstr "保存配置"
+
+#: ui/vm.ui:145
+msgid "System status and checks"
+msgstr "系统状态与检查"
+
+#: ui/vm.ui:167
+msgid "Download and install Windows"
+msgstr "下载并安装 Windows"
+
+#: ui/vm.ui:190
+msgid "Open web console"
+msgstr "打开网页控制台"
 
 #: ui/weather.ui:30
 msgid "Previous place"

@@ -198,7 +198,18 @@ func (s *shellUI) drawerShellApp(id string) {
 			time.Sleep(150 * time.Millisecond) // the last frame of the drawer, off the screen
 			gtkx.Post(func() { s.screenshotRequest("area") })
 		}()
+	case "inua:windows-vm":
+		s.openVMManager()
 	}
+}
+
+func (s *shellUI) openVMManager() {
+	if s.vm.win == nil {
+		s.vm.win = OpenVMManager(s.app, s.vm.manager)
+		return
+	}
+	s.vm.win.win.Present()
+	s.vm.win.Update(s.vm.manager.Snapshot())
 }
 
 // drawerButton is a drawer's button at the dock's end, the size of an

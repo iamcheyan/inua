@@ -503,6 +503,7 @@ msgid "Change sign"
 msgstr "チェンジサイン"
 
 #: internal/appui/calculator.go:200
+#: internal/ui/vm.go:147
 msgid "Error"
 msgstr "エラー"
 
@@ -604,8 +605,9 @@ msgstr "編集"
 #: internal/games/fortune.go:65
 #: ui/clock.ui:339
 #: ui/clock.ui:406
+#: ui/vm.ui:173
 msgid "Start"
-msgstr "開始"
+msgstr "起動"
 
 #: internal/appui/clock.go:492
 #: ui/music.ui:332
@@ -615,6 +617,7 @@ msgstr "リセット"
 #: internal/appui/clock.go:496
 #: internal/assistantui/assistantui.go:458
 #: internal/ui/alarms.go:108
+#: ui/vm.ui:196
 msgid "Stop"
 msgstr "停止"
 
@@ -1586,7 +1589,7 @@ msgstr "GPU"
 #: internal/appui/sysmon.go:1031
 #: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "NETWORK"
 msgstr "ネットワーク"
 
@@ -3519,6 +3522,7 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr "smb://サーバー/共有, sftp://ユーザー@ホスト/フォルダー, ftp://, dav://, nfs://"
 
 #: internal/filesui/cards.go:503
+#: ui/vm.ui:179
 msgid "Connect"
 msgstr "接続"
 
@@ -6958,7 +6962,7 @@ msgid "SPACE PINBALL"
 msgstr "スペースピンボール"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 #: ui/settings.ui:1657
 msgid "Launcher"
 msgstr "ランチャー"
@@ -6991,7 +6995,7 @@ msgstr "フォーカスのオンまたはオフ"
 
 #: internal/hyprconf/keys.go:30
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 #: ui/control.ui:62
 #: ui/settings.ui:30
 msgid "Settings"
@@ -7200,7 +7204,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "もう一度 Enter を押すとゴミ箱を空にします"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:285
+#: internal/shell/dock.go:286
 msgid "inua's settings"
 msgstr "inuaの設定"
 
@@ -7347,12 +7351,12 @@ msgid "Web search"
 msgstr "ウェブ検索"
 
 #: internal/shell/dock.go:246
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "EVERYDAY"
 msgstr "毎日"
 
 #: internal/shell/dock.go:255
-#: internal/shell/dock.go:295
+#: internal/shell/dock.go:297
 msgid "TOOLS"
 msgstr "ツール"
 
@@ -7361,42 +7365,51 @@ msgid "PLAY"
 msgstr "遊び"
 
 #: internal/shell/dock.go:273
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "システム"
 
-#: internal/shell/dock.go:286
+#: internal/shell/dock.go:287
 msgid "Find apps, windows and answers"
 msgstr "アプリ、ウィンドウ、および回答を見つける"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 #: internal/ui/screenshot.go:783
 #: ui/settings.ui:1617
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
-#: internal/shell/dock.go:287
+#: internal/shell/dock.go:288
 msgid "Capture an area, a window or a screen"
 msgstr "領域、ウィンドウ、または画面をキャプチャする"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:289
+#: ui/vm.ui:10
+msgid "Windows VM"
+msgstr "Windows 仮想マシン"
+
+#: internal/shell/dock.go:289
+msgid "Manage your Windows virtual machine"
+msgstr "Windows 仮想マシンを管理"
+
+#: internal/shell/dock.go:298
 msgid "DEVELOPMENT"
 msgstr "開発"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "MEDIA"
 msgstr "メディア"
 
-#: internal/shell/dock.go:296
+#: internal/shell/dock.go:298
 msgid "GAMES"
 msgstr "ゲーム"
 
-#: internal/shell/dock.go:297
+#: internal/shell/dock.go:299
 msgid "OTHER"
 msgstr "その他"
 
-#: internal/shell/dock.go:322
+#: internal/shell/dock.go:324
 msgid "WORKSHOP"
 msgstr "ワークショップ"
 
@@ -7873,16 +7886,16 @@ msgstr "ドックに固定"
 msgid "Quit (%d windows)"
 msgstr "終了 (%d Windows)"
 
-#: internal/ui/drawer.go:212
+#: internal/ui/drawer.go:223
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr "アプリ"
 
-#: internal/ui/drawer.go:215
+#: internal/ui/drawer.go:226
 msgid "Workshop apps"
 msgstr "ワークショップのアプリ"
 
-#: internal/ui/drawer.go:316
+#: internal/ui/drawer.go:327
 msgid "The light apps are not installed (make install)."
 msgstr "ライトアプリはインストールされない(メイクインストール)。"
 
@@ -8797,6 +8810,38 @@ msgstr "inua をアップグレードできませんでした"
 #: internal/ui/updates.go:179
 msgid "Could not upgrade: %s"
 msgstr "アップグレードできませんでした: %s"
+
+#: internal/ui/vm.go:127
+msgid "Confirm remove VM"
+msgstr "仮想マシンの削除を確認"
+
+#: internal/ui/vm.go:131
+#: internal/ui/vm.go:152
+#: ui/vm.ui:202
+msgid "Remove VM"
+msgstr "仮想マシンを削除"
+
+#: internal/ui/vm.go:144
+#: ui/vm.ui:32
+msgid "Not configured"
+msgstr "未設定"
+
+#: internal/ui/vm.go:150
+msgid "VM operations are unavailable on this system"
+msgstr "このシステムでは仮想マシンを操作できません"
+
+#: internal/ui/vm.go:155
+#: ui/vm.ui:154
+msgid "No issues reported"
+msgstr "問題はありません"
+
+#: internal/ui/vm_service.go:114
+msgid "Secret Service: unavailable; a safe Windows password store is required"
+msgstr ""
+
+#: internal/ui/vm_service.go:117
+msgid "Host prerequisites detected."
+msgstr "ホストの前提条件を確認しました。"
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -10814,6 +10859,54 @@ msgstr "詳細 (I)"
 #: ui/viewer.ui:339
 msgid "Open a File…"
 msgstr "ファイルを開く…"
+
+#: ui/vm.ui:23
+msgid "Windows virtual machine"
+msgstr "Windows 仮想マシン"
+
+#: ui/vm.ui:40
+msgid "Recommended first-run profile"
+msgstr "推奨の初期設定"
+
+#: ui/vm.ui:49
+msgid "A balanced profile keeps enough memory and CPU capacity available for your system."
+msgstr "バランスの取れた設定は、システム用に十分なメモリと CPU を残します。"
+
+#: ui/vm.ui:57
+msgid "Accept recommended profile"
+msgstr ""
+
+#: ui/vm.ui:63
+msgid "Advanced configuration"
+msgstr "詳細設定"
+
+#: ui/vm.ui:75
+msgid "Memory (MiB)"
+msgstr "メモリ (MiB)"
+
+#: ui/vm.ui:95
+msgid "CPU cores"
+msgstr "CPU コア"
+
+#: ui/vm.ui:115
+msgid "Disk size (GiB)"
+msgstr "ディスク容量 (GiB)"
+
+#: ui/vm.ui:136
+msgid "Save configuration"
+msgstr "設定を保存"
+
+#: ui/vm.ui:145
+msgid "System status and checks"
+msgstr "システム状態と確認"
+
+#: ui/vm.ui:167
+msgid "Download and install Windows"
+msgstr "Windows をダウンロードしてインストール"
+
+#: ui/vm.ui:190
+msgid "Open web console"
+msgstr "Web コンソールを開く"
 
 #: ui/weather.ui:30
 msgid "Previous place"
