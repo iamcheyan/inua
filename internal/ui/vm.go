@@ -30,6 +30,7 @@ type VMManager interface {
 	Console() error
 	Stop() error
 	Remove() error
+	RemoveData() error
 }
 
 // VMSnapshot is a presentation-ready view of VM state.
@@ -57,9 +58,10 @@ type vmWindow struct {
 	advanced                                            gtk.Revealer
 	advancedToggle                                      gtk.Button
 	accept, configure, install, start, connect, console gtk.Button
-	stop, remove                                        gtk.Button
+	stop, remove, removeData                            gtk.Button
 	closed                                              bool
 	removeArmed                                         bool
+	dataArmed                                           bool
 	operationBusy                                       bool
 	onClick                                             func(gtk.Button)
 	onClose                                             func(gtk.Window) bool
@@ -89,9 +91,10 @@ func OpenVMManager(app *gtk.Application, manager VMManager) *vmWindow {
 	builder.Get("vm_console", &v.console)
 	builder.Get("vm_stop", &v.stop)
 	builder.Get("vm_remove", &v.remove)
+	builder.Get("vm_remove_data", &v.removeData)
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
 	for _, b := range []*gtk.Button{&v.advancedToggle, &v.accept, &v.configure, &v.install,
-		&v.start, &v.connect, &v.console, &v.stop, &v.remove} {
+		&v.start, &v.connect, &v.console, &v.stop, &v.remove, &v.removeData} {
 		b.ConnectClicked(&v.onClick)
 	}
 	v.onClose = func(gtk.Window) bool { v.closed = true; return false }
@@ -130,6 +133,15 @@ func (v *vmWindow) clicked(b gtk.Button) {
 		v.removeArmed = false
 		v.remove.SetLabel(i18n.T("Remove VM"))
 		v.run(v.manager.Remove)
+	case "remove_data":
+		if !v.dataArmed {
+			v.dataArmed = true
+			v.removeData.SetLabel(i18n.T("Confirm delete disk data"))
+			return
+		}
+		v.dataArmed = false
+		v.removeData.SetLabel(i18n.T("Delete disk data"))
+		v.run(v.manager.RemoveData)
 	}
 }
 
@@ -150,6 +162,7 @@ func (v *vmWindow) Update(s VMSnapshot) {
 			text = i18n.T("VM operations are unavailable on this system")
 		}
 		v.remove.SetLabel(i18n.T("Remove VM"))
+		v.removeData.SetLabel(i18n.T("Delete disk data"))
 		v.status.SetText(text)
 		if s.Doctor == "" {
 			s.Doctor = i18n.T("No issues reported")
@@ -164,6 +177,9 @@ func (v *vmWindow) Update(s VMSnapshot) {
 		v.connect.SetSensitive(s.Available && !s.Busy && s.State == vm.StateRunning)
 		v.stop.SetSensitive(s.Available && !s.Busy && s.State == vm.StateRunning)
 		v.remove.SetSensitive(s.Available && s.HasConfig && !s.Busy && s.State != vm.StateRunning)
+		// Deleting the disk data is available even after the VM is removed, so a
+		// user can clear the leftover guest image once the container is gone.
+		v.removeData.SetSensitive(s.Available && !s.Busy && s.State != vm.StateRunning)
 	})
 }
 

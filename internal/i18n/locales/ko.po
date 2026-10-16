@@ -503,7 +503,7 @@ msgid "Change sign"
 msgstr "변경 표시"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:147
+#: internal/ui/vm.go:159
 msgid "Error"
 msgstr "오류"
 
@@ -8811,35 +8811,45 @@ msgstr "inua는 업그레이드할 수 없습니다."
 msgid "Could not upgrade: %s"
 msgstr "업그레이드할 수 없음: %s"
 
-#: internal/ui/vm.go:127
+#: internal/ui/vm.go:130
 msgid "Confirm remove VM"
 msgstr "가상 머신 삭제 확인"
 
-#: internal/ui/vm.go:131
-#: internal/ui/vm.go:152
+#: internal/ui/vm.go:134
+#: internal/ui/vm.go:164
 #: ui/vm.ui:202
 msgid "Remove VM"
 msgstr "가상 머신 삭제"
 
-#: internal/ui/vm.go:144
+#: internal/ui/vm.go:139
+msgid "Confirm delete disk data"
+msgstr "디스크 데이터 삭제 확인"
+
+#: internal/ui/vm.go:143
+#: internal/ui/vm.go:165
+#: ui/vm.ui:216
+msgid "Delete disk data"
+msgstr "디스크 데이터 삭제"
+
+#: internal/ui/vm.go:156
 #: ui/vm.ui:32
 msgid "Not configured"
 msgstr "설정되지 않음"
 
-#: internal/ui/vm.go:150
+#: internal/ui/vm.go:162
 msgid "VM operations are unavailable on this system"
 msgstr "이 시스템에서는 가상 머신을 조작할 수 없습니다"
 
-#: internal/ui/vm.go:155
+#: internal/ui/vm.go:168
 #: ui/vm.ui:154
 msgid "No issues reported"
 msgstr "문제 없음"
 
-#: internal/ui/vm_service.go:114
+#: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
 msgstr ""
 
-#: internal/ui/vm_service.go:117
+#: internal/ui/vm_service.go:124
 msgid "Host prerequisites detected."
 msgstr "호스트 사전 요구 사항을 확인했습니다."
 
@@ -10907,6 +10917,10 @@ msgstr "Windows 다운로드 및 설치"
 #: ui/vm.ui:190
 msgid "Open web console"
 msgstr "웹 콘솔 열기"
+
+#: ui/vm.ui:217
+msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
+msgstr "Windows 디스크를 영구적으로 삭제합니다. 중지나 가상 머신 제거로는 삭제되지 않습니다."
 
 #: ui/weather.ui:30
 msgid "Previous place"

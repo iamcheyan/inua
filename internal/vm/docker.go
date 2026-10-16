@@ -212,6 +212,10 @@ func (b *DockerBackend) ConsoleURL() (string, error) {
 func (b *DockerBackend) Console(context.Context) (string, error) {
 	return b.ConsoleURL()
 }
+
+// Remove tears down the managed container, project and stored password. The
+// guest disk is deliberately left alone: deleting the user's Windows install
+// is a separate, explicitly confirmed act (RemoveData).
 func (b *DockerBackend) Remove(ctx context.Context) error {
 	if err := b.ensureInstalled(); err != nil {
 		return vmError("remove", ErrorConflict, err)
@@ -229,6 +233,42 @@ func (b *DockerBackend) Remove(ctx context.Context) error {
 		if err := b.Secrets.Delete(ctx, b.secretID); err != nil {
 			return vmError("remove", ErrorBackend, err)
 		}
+	}
+	return nil
+}
+
+// RemoveData deletes the guest disk directory. It only ever removes the
+// configured VM data directory itself, after checking that it is the kind of
+// path Inua owns: absolute, not a filesystem root, and not a symlink.
+func (b *DockerBackend) RemoveData(ctx context.Context) error {
+	dir := b.Config.DataDir
+	if err := validateOwnedDataDir(dir); err != nil {
+		return vmError("remove-data", ErrorInvalidConfig, err)
+	}
+	if err := rejectPathSymlinks(dir); err != nil {
+		return vmError("remove-data", ErrorInvalidConfig, err)
+	}
+	if _, err := os.Lstat(dir); errors.Is(err, os.ErrNotExist) {
+		return nil
+	} else if err != nil {
+		return vmError("remove-data", ErrorBackend, err)
+	}
+	return os.RemoveAll(dir)
+}
+
+// validateOwnedDataDir rejects anything that is not a plainly-owned VM data
+// directory, so a misconfigured path cannot turn RemoveData into a wide rm.
+func validateOwnedDataDir(dir string) error {
+	clean := filepath.Clean(dir)
+	switch {
+	case dir == "" || !filepath.IsAbs(clean):
+		return errors.New("VM data directory must be absolute")
+	case clean == string(filepath.Separator):
+		return errors.New("refusing to remove the filesystem root")
+	case clean == filepath.Clean(os.Getenv("HOME")) && os.Getenv("HOME") != "":
+		return errors.New("refusing to remove the home directory")
+	case dir != clean:
+		return errors.New("VM data directory must be a clean path")
 	}
 	return nil
 }

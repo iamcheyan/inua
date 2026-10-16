@@ -503,7 +503,7 @@ msgid "Change sign"
 msgstr "チェンジサイン"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:147
+#: internal/ui/vm.go:159
 msgid "Error"
 msgstr "エラー"
 
@@ -8811,35 +8811,45 @@ msgstr "inua をアップグレードできませんでした"
 msgid "Could not upgrade: %s"
 msgstr "アップグレードできませんでした: %s"
 
-#: internal/ui/vm.go:127
+#: internal/ui/vm.go:130
 msgid "Confirm remove VM"
 msgstr "仮想マシンの削除を確認"
 
-#: internal/ui/vm.go:131
-#: internal/ui/vm.go:152
+#: internal/ui/vm.go:134
+#: internal/ui/vm.go:164
 #: ui/vm.ui:202
 msgid "Remove VM"
 msgstr "仮想マシンを削除"
 
-#: internal/ui/vm.go:144
+#: internal/ui/vm.go:139
+msgid "Confirm delete disk data"
+msgstr "ディスクデータの削除を確認"
+
+#: internal/ui/vm.go:143
+#: internal/ui/vm.go:165
+#: ui/vm.ui:216
+msgid "Delete disk data"
+msgstr "ディスクデータを削除"
+
+#: internal/ui/vm.go:156
 #: ui/vm.ui:32
 msgid "Not configured"
 msgstr "未設定"
 
-#: internal/ui/vm.go:150
+#: internal/ui/vm.go:162
 msgid "VM operations are unavailable on this system"
 msgstr "このシステムでは仮想マシンを操作できません"
 
-#: internal/ui/vm.go:155
+#: internal/ui/vm.go:168
 #: ui/vm.ui:154
 msgid "No issues reported"
 msgstr "問題はありません"
 
-#: internal/ui/vm_service.go:114
+#: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
 msgstr ""
 
-#: internal/ui/vm_service.go:117
+#: internal/ui/vm_service.go:124
 msgid "Host prerequisites detected."
 msgstr "ホストの前提条件を確認しました。"
 
@@ -10907,6 +10917,10 @@ msgstr "Windows をダウンロードしてインストール"
 #: ui/vm.ui:190
 msgid "Open web console"
 msgstr "Web コンソールを開く"
+
+#: ui/vm.ui:217
+msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
+msgstr "Windows のディスクを完全に削除します。停止や仮想マシンの削除では削除されません。"
 
 #: ui/weather.ui:30
 msgid "Previous place"

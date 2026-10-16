@@ -503,7 +503,7 @@ msgid "Change sign"
 msgstr "Changer de signe"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:147
+#: internal/ui/vm.go:159
 msgid "Error"
 msgstr "Erreur"
 
@@ -8854,35 +8854,45 @@ msgstr "Inua n'a pas pu mettre à niveau"
 msgid "Could not upgrade: %s"
 msgstr "Impossible de mettre à niveau : %s"
 
-#: internal/ui/vm.go:127
+#: internal/ui/vm.go:130
 msgid "Confirm remove VM"
 msgstr "Confirmer la suppression de la VM"
 
-#: internal/ui/vm.go:131
-#: internal/ui/vm.go:152
+#: internal/ui/vm.go:134
+#: internal/ui/vm.go:164
 #: ui/vm.ui:202
 msgid "Remove VM"
 msgstr "Supprimer la VM"
 
-#: internal/ui/vm.go:144
+#: internal/ui/vm.go:139
+msgid "Confirm delete disk data"
+msgstr "Confirmer la suppression des données du disque"
+
+#: internal/ui/vm.go:143
+#: internal/ui/vm.go:165
+#: ui/vm.ui:216
+msgid "Delete disk data"
+msgstr "Supprimer les données du disque"
+
+#: internal/ui/vm.go:156
 #: ui/vm.ui:32
 msgid "Not configured"
 msgstr "Non configuré"
 
-#: internal/ui/vm.go:150
+#: internal/ui/vm.go:162
 msgid "VM operations are unavailable on this system"
 msgstr "Les opérations de VM sont indisponibles sur ce système"
 
-#: internal/ui/vm.go:155
+#: internal/ui/vm.go:168
 #: ui/vm.ui:154
 msgid "No issues reported"
 msgstr "Aucun problème signalé"
 
-#: internal/ui/vm_service.go:114
+#: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
 msgstr ""
 
-#: internal/ui/vm_service.go:117
+#: internal/ui/vm_service.go:124
 msgid "Host prerequisites detected."
 msgstr "Prérequis de l'hôte détectés."
 
@@ -10951,6 +10961,10 @@ msgstr "Télécharger et installer Windows"
 #: ui/vm.ui:190
 msgid "Open web console"
 msgstr "Ouvrir la console web"
+
+#: ui/vm.ui:217
+msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
+msgstr "Supprime définitivement le disque Windows. Arrêter ou supprimer la VM ne le fait jamais."
 
 #: ui/weather.ui:30
 msgid "Previous place"

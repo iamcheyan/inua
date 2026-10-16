@@ -204,3 +204,48 @@ func TestInstallWritesParsableCompose(t *testing.T) {
 		t.Fatalf("compose has no windows service: %s", data)
 	}
 }
+
+func TestRemoveKeepsDataUntilExplicitlyDeleted(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	// The guest image stands in for a real disk.
+	disk := filepath.Join(cfg.DataDir, "data.img")
+	if err := os.WriteFile(disk, []byte("windows"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Remove(ctx); err != nil {
+		t.Fatalf("remove: %v", err)
+	}
+	if _, err := os.Stat(disk); err != nil {
+		t.Fatalf("remove deleted the guest disk: %v", err)
+	}
+	if err := b.RemoveData(ctx); err != nil {
+		t.Fatalf("remove-data: %v", err)
+	}
+	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
+		t.Errorf("the VM data directory survived RemoveData")
+	}
+}
+
+func TestRemoveDataRefusesDangerousPaths(t *testing.T) {
+	for name, dir := range map[string]string{
+		"root":     "/",
+		"home":     os.Getenv("HOME"),
+		"empty":    "",
+		"relative": "vm/windows",
+	} {
+		t.Run(name, func(t *testing.T) {
+			b, cfg, _, _ := newTestBackend(t)
+			b.Config = cfg
+			cfg.DataDir = dir
+			b.Config = cfg
+			if err := b.RemoveData(context.Background()); err == nil {
+				t.Fatalf("RemoveData accepted %q", dir)
+			}
+		})
+	}
+}

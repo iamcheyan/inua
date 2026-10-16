@@ -501,7 +501,7 @@ msgid "Change sign"
 msgstr ""
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:147
+#: internal/ui/vm.go:159
 msgid "Error"
 msgstr ""
 
@@ -8852,35 +8852,45 @@ msgstr ""
 msgid "Could not upgrade: %s"
 msgstr ""
 
-#: internal/ui/vm.go:127
+#: internal/ui/vm.go:130
 msgid "Confirm remove VM"
 msgstr ""
 
-#: internal/ui/vm.go:131
-#: internal/ui/vm.go:152
+#: internal/ui/vm.go:134
+#: internal/ui/vm.go:164
 #: ui/vm.ui:202
 msgid "Remove VM"
 msgstr ""
 
-#: internal/ui/vm.go:144
+#: internal/ui/vm.go:139
+msgid "Confirm delete disk data"
+msgstr ""
+
+#: internal/ui/vm.go:143
+#: internal/ui/vm.go:165
+#: ui/vm.ui:216
+msgid "Delete disk data"
+msgstr ""
+
+#: internal/ui/vm.go:156
 #: ui/vm.ui:32
 msgid "Not configured"
 msgstr ""
 
-#: internal/ui/vm.go:150
+#: internal/ui/vm.go:162
 msgid "VM operations are unavailable on this system"
 msgstr ""
 
-#: internal/ui/vm.go:155
+#: internal/ui/vm.go:168
 #: ui/vm.ui:154
 msgid "No issues reported"
 msgstr ""
 
-#: internal/ui/vm_service.go:114
+#: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
 msgstr ""
 
-#: internal/ui/vm_service.go:117
+#: internal/ui/vm_service.go:124
 msgid "Host prerequisites detected."
 msgstr ""
 
@@ -10948,6 +10958,10 @@ msgstr ""
 
 #: ui/vm.ui:190
 msgid "Open web console"
+msgstr ""
+
+#: ui/vm.ui:217
+msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
 msgstr ""
 
 #: ui/weather.ui:30

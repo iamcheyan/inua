@@ -503,7 +503,7 @@ msgid "Change sign"
 msgstr "改變符號"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:147
+#: internal/ui/vm.go:159
 msgid "Error"
 msgstr "錯誤"
 
@@ -8811,35 +8811,45 @@ msgstr "inua無法升級"
 msgid "Could not upgrade: %s"
 msgstr "無法升級:%s"
 
-#: internal/ui/vm.go:127
+#: internal/ui/vm.go:130
 msgid "Confirm remove VM"
 msgstr "確認刪除虛擬機"
 
-#: internal/ui/vm.go:131
-#: internal/ui/vm.go:152
+#: internal/ui/vm.go:134
+#: internal/ui/vm.go:164
 #: ui/vm.ui:202
 msgid "Remove VM"
 msgstr "刪除虛擬機"
 
-#: internal/ui/vm.go:144
+#: internal/ui/vm.go:139
+msgid "Confirm delete disk data"
+msgstr "確認刪除磁碟資料"
+
+#: internal/ui/vm.go:143
+#: internal/ui/vm.go:165
+#: ui/vm.ui:216
+msgid "Delete disk data"
+msgstr "刪除磁碟資料"
+
+#: internal/ui/vm.go:156
 #: ui/vm.ui:32
 msgid "Not configured"
 msgstr "未設定"
 
-#: internal/ui/vm.go:150
+#: internal/ui/vm.go:162
 msgid "VM operations are unavailable on this system"
 msgstr "此系統上無法執行虛擬機操作"
 
-#: internal/ui/vm.go:155
+#: internal/ui/vm.go:168
 #: ui/vm.ui:154
 msgid "No issues reported"
 msgstr "未發現問題"
 
-#: internal/ui/vm_service.go:114
+#: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
 msgstr ""
 
-#: internal/ui/vm_service.go:117
+#: internal/ui/vm_service.go:124
 msgid "Host prerequisites detected."
 msgstr "已偵測到主機前置條件。"
 
@@ -10907,6 +10917,10 @@ msgstr "下載並安裝 Windows"
 #: ui/vm.ui:190
 msgid "Open web console"
 msgstr "開啟網頁主控台"
+
+#: ui/vm.ui:217
+msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
+msgstr "永久刪除 Windows 磁碟。停止或移除虛擬機的操作不會刪除它。"
 
 #: ui/weather.ui:30
 msgid "Previous place"

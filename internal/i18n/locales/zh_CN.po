@@ -503,7 +503,7 @@ msgid "Change sign"
 msgstr "改变符号"
 
 #: internal/appui/calculator.go:200
-#: internal/ui/vm.go:147
+#: internal/ui/vm.go:159
 msgid "Error"
 msgstr "错误"
 
@@ -8811,35 +8811,45 @@ msgstr "inua无法升级"
 msgid "Could not upgrade: %s"
 msgstr "无法升级:%s"
 
-#: internal/ui/vm.go:127
+#: internal/ui/vm.go:130
 msgid "Confirm remove VM"
 msgstr "确认删除虚拟机"
 
-#: internal/ui/vm.go:131
-#: internal/ui/vm.go:152
+#: internal/ui/vm.go:134
+#: internal/ui/vm.go:164
 #: ui/vm.ui:202
 msgid "Remove VM"
 msgstr "删除虚拟机"
 
-#: internal/ui/vm.go:144
+#: internal/ui/vm.go:139
+msgid "Confirm delete disk data"
+msgstr "确认删除磁盘数据"
+
+#: internal/ui/vm.go:143
+#: internal/ui/vm.go:165
+#: ui/vm.ui:216
+msgid "Delete disk data"
+msgstr "删除磁盘数据"
+
+#: internal/ui/vm.go:156
 #: ui/vm.ui:32
 msgid "Not configured"
 msgstr "未配置"
 
-#: internal/ui/vm.go:150
+#: internal/ui/vm.go:162
 msgid "VM operations are unavailable on this system"
 msgstr "此系统上无法执行虚拟机操作"
 
-#: internal/ui/vm.go:155
+#: internal/ui/vm.go:168
 #: ui/vm.ui:154
 msgid "No issues reported"
 msgstr "未发现问题"
 
-#: internal/ui/vm_service.go:114
+#: internal/ui/vm_service.go:121
 msgid "Secret Service: unavailable; a safe Windows password store is required"
 msgstr "Secret Service 不可用；需要安全的 Windows 密码存储"
 
-#: internal/ui/vm_service.go:117
+#: internal/ui/vm_service.go:124
 msgid "Host prerequisites detected."
 msgstr "已检测到宿主前置条件。"
 
@@ -10907,6 +10917,10 @@ msgstr "下载并安装 Windows"
 #: ui/vm.ui:190
 msgid "Open web console"
 msgstr "打开网页控制台"
+
+#: ui/vm.ui:217
+msgid "Deletes the Windows disk permanently. Stopping or removing the VM never does."
+msgstr "永久删除 Windows 磁盘。停止或移除虚拟机的操作不会删除它。"
 
 #: ui/weather.ui:30
 msgid "Previous place"

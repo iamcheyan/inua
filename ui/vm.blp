@@ -165,6 +165,17 @@ ApplicationWindow vm {
       }
     }
 
+    Box {
+      spacing: 8;
+
+      Button vm_remove_data {
+        name: "remove_data";
+        styles ["destructive-action"]
+        label: _("Delete disk data");
+        tooltip-text: _("Deletes the Windows disk permanently. Stopping or removing the VM never does.");
+      }
+    }
+
     ProgressBar vm_progress {
       show-text: false;
     }

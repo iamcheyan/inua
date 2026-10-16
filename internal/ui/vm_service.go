@@ -33,6 +33,9 @@ type vmService struct {
 	hasConfig  bool
 	busy       bool
 	err        error
+	state      vm.State
+	stateErr   error
+	refreshing bool
 	secretConn *dbus.Conn // the Secret Service session, held for the shell's life
 }
 
@@ -98,16 +101,15 @@ func (s *vmService) load() {
 	s.mu.Unlock()
 }
 
+// snapshot is non-blocking: it reports the state last observed by refresh,
+// because its callers run on the GTK main thread. Reading Docker there (a
+// subprocess, up to seconds) would stall the whole shell.
 func (s *vmService) snapshot() VMSnapshot {
 	s.mu.Lock()
-	cfg, has, busy, oldErr := s.config, s.hasConfig, s.busy, s.err
+	cfg, has, busy, oldErr, state, stateErr := s.config, s.hasConfig, s.busy, s.err, s.state, s.stateErr
 	s.mu.Unlock()
-	state := vm.StateStopped
-	var err error
-	if has {
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		state, err = s.backend.State(ctx)
-		cancel()
+	if !has {
+		state = vm.StateStopped
 	}
 	var doctor strings.Builder
 	for _, item := range s.platform.Doctor {
@@ -124,6 +126,7 @@ func (s *vmService) snapshot() VMSnapshot {
 	available := s.platform.Supported && s.platform.KVM.Available && s.platform.KVM.Accessible &&
 		s.platform.DockerSocket.Available && s.platform.DockerSocket.Accessible &&
 		s.platform.ComposeV2.Available && s.platform.FreeRDP.Available && s.backend.Secrets != nil
+	err := stateErr
 	if err == nil {
 		err = oldErr
 	}
@@ -131,6 +134,39 @@ func (s *vmService) snapshot() VMSnapshot {
 		Available: available, HasConfig: has, Recommended: vm.RecommendProfile(s.host), Host: s.host, Err: err}
 }
 
+// refresh reads the backend state off the main thread and records it for
+// snapshot; overlapping calls collapse into the one already running.
+func (s *vmService) refresh() {
+	s.mu.Lock()
+	if s.refreshing {
+		s.mu.Unlock()
+		return
+	}
+	s.refreshing = true
+	has := s.hasConfig
+	s.mu.Unlock()
+	go func() {
+		var state vm.State
+		var err error
+		if has {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			state, err = s.backend.State(ctx)
+			cancel()
+		} else {
+			state = vm.StateStopped
+		}
+		s.mu.Lock()
+		if has {
+			s.state, s.stateErr = state, err
+		} else {
+			s.state, s.stateErr = vm.StateStopped, nil
+		}
+		s.refreshing = false
+		s.mu.Unlock()
+	}()
+}
+
+// Snapshot, Doctor and Status are the UI-facing reads; all are non-blocking.
 func (s *vmService) Snapshot() VMSnapshot { return s.snapshot() }
 func (s *vmService) Doctor() string       { return s.snapshot().Doctor }
 func (s *vmService) Status() (vm.State, error) {
@@ -261,6 +297,29 @@ func (s *vmService) Remove() error {
 	return nil
 }
 
+// RemoveData deletes the guest disk. It runs only after Remove (or when no
+// configuration remains), so the container that had the disk mounted is gone.
+func (s *vmService) RemoveData() error {
+	if err := s.begin(); err != nil {
+		return err
+	}
+	var opErr error
+	defer func() { s.end(opErr) }()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancel()
+	if opErr = s.backend.RemoveData(ctx); opErr != nil {
+		return opErr
+	}
+	if err := os.Remove(vm.ConfigPath()); err != nil && !errors.Is(err, os.ErrNotExist) {
+		opErr = err
+		return err
+	}
+	s.mu.Lock()
+	s.hasConfig, s.config = false, vm.DefaultConfig()
+	s.mu.Unlock()
+	return nil
+}
+
 func (s *vmService) begin() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -274,6 +333,7 @@ func (s *vmService) end(err error) {
 	s.mu.Lock()
 	s.busy, s.err = false, err
 	s.mu.Unlock()
+	s.refresh() // so the next status shows what the operation did
 }
 
 func (s *vmService) save(installed bool) error {
@@ -320,11 +380,14 @@ func (s *shellUI) vmRequest(fn string) ipc.Response {
 	case "open":
 		s.openVMManager()
 	case "status":
-		state, err := m.Status()
-		if err != nil {
-			return ipc.Response{Error: err.Error()}
+		// The cached state goes out at once and the next read refreshes it,
+		// so the shell's main loop never waits on Docker.
+		x := m.Snapshot()
+		m.refresh()
+		if x.Err != nil {
+			return ipc.Response{Error: x.Err.Error()}
 		}
-		return ipc.Response{OK: true, Result: string(state)}
+		return ipc.Response{OK: true, Result: string(x.State)}
 	case "doctor":
 		return ipc.Response{OK: true, Result: m.Doctor()}
 	case "install":
@@ -337,6 +400,8 @@ func (s *shellUI) vmRequest(fn string) ipc.Response {
 		return asyncVM(fn, m.Stop)
 	case "remove":
 		return asyncVM(fn, m.Remove)
+	case "remove-data":
+		return asyncVM(fn, m.RemoveData)
 	default:
 		return ipc.Response{Error: "unknown vm function " + fn}
 	}
