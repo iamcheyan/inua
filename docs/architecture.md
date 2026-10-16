@@ -16,6 +16,12 @@ with Compose v2 and KVM. The VM is managed through the Docker backend boundary,
 with local RDP access provided by FreeRDP. Docker socket access is privileged
 host access and should be granted only to trusted users. A baseline is 4 GiB
 memory, 2 CPUs and 64 GiB disk; recommendations adapt to host resources.
+The shell holds the lifecycle: `internal/ui/vm.go` and `vm_service.go` drive
+the backend off the GTK main thread and keep the guest password in the Secret
+Service, never in the project or the configuration. Removing a VM deletes the
+container, project and password but keeps the guest disk; deleting the disk is
+a separate, explicitly confirmed action (`RemoveData`), because losing a
+Windows installation should take a deliberate second step.
 
 ## 1. Layers
 
@@ -27,7 +33,6 @@ memory, 2 CPUs and 64 GiB disk; recommendations adapt to host resources.
 │          settings: fetch named widgets, fill them, take events │
 ├──────────────────────────────────────────────────────────────┤
 │ State    internal/shell: modes, search, selection, focus      │  toolkit-free, unit tested
-│          rules, dock model (main thread)                       │
 ├──────────────────────────────────────────────────────────────┤
 │ GTK glue internal/gtkx (ownership, callbacks, main thread,    │
 │          .ui loading)   internal/layershell (gtk4-layer-shell) │

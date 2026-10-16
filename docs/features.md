@@ -15,6 +15,24 @@ free disk space. The baseline recommendation is 4 GiB RAM, 2 CPUs and 64 GiB
 disk; the CLI reports a profile adjusted to host resources. Docker socket
 access is a privileged host boundary and should be limited to trusted users.
 
+The drawer's SYSTEM group has a **Windows VM** entry that opens the manager
+window: the recommended profile (RAM, CPU cores, disk) with an advanced
+editor, host checks, and the lifecycle buttons. The same actions are on the
+control socket for scripts:
+
+```
+inua call vm install       write the project and start the first installation
+inua call vm console       open the container's web console
+inua call vm connect       open FreeRDP once Windows is ready
+inua call vm stop          stop the container, keeping the disk
+inua call vm start         start it again
+inua call vm remove        delete the container, project and password, keeping the disk
+inua call vm remove-data   delete the guest disk itself
+```
+
+Removal never deletes the guest disk: **Delete disk data** is its own
+confirmed action in the window, and `remove-data` on the socket.
+
 ## Bar
 
 Workspaces as square marks, the focused window's title, the clock (a click
@@ -23,8 +41,6 @@ notifications and the status button for the control center. The clock and
 the buttons at the end reach up to the screen's top edge and across the
 gaps between them, and the status button into the corner, so the pointer
 thrown at the edge lands on one. One per monitor.
-
-## Launcher
 
 One search for apps and open windows (Super+Space; Tab switches modes), ranked by
 prefix, word starts and subsequences; Enter launches or focuses, Esc

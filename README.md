@@ -77,6 +77,24 @@ Docker backend boundary; Docker access itself grants broad control of the host,
 so only grant socket access to trusted users. The diagnostics never modify
 groups or package settings.
 
+### Using it
+
+The drawer's SYSTEM group holds a **Windows VM** entry, present whether or
+not a VM exists. Opening it shows the recommended resources and one
+**Accept recommended profile** button, with **Advanced configuration** for
+RAM, CPU cores and disk size. **Download and install Windows** is a separate
+step: it writes the Compose project, keeps the guest password in the Secret
+Service, pulls the image and starts the container. The first Windows
+installation downloads several gigabytes and needs many minutes; the guest
+password is never written to the configuration file, and **Open web console**
+shows the installer's progress in the browser. **Connect** opens FreeRDP
+after the guest is ready, and **Stop** keeps the disk.
+
+Removing is two separate, explicitly confirmed actions: **Remove VM** deletes
+the container, project and stored password but keeps the guest disk, while
+**Delete disk data** permanently deletes the Windows disk and asks first.
+Stopping or removing a VM never deletes its data.
+
 ## Install
 
 ```sh
