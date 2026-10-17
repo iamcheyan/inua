@@ -10321,27 +10321,27 @@ msgstr "オフ: Super+Space、Super+A、および Super+N は引き続きラン�
 
 #: ui/settings.ui:980
 msgid "Bar spacing"
-msgstr ""
+msgstr "バーの間隔"
 
 #: ui/settings.ui:989
 msgid "Choose the standard or compact bar layout"
-msgstr ""
+msgstr "標準またはコンパクトなバーのレイアウトを選びます"
 
 #: ui/settings.ui:1003
 msgid "Default"
-msgstr ""
+msgstr "標準"
 
 #: ui/settings.ui:1004
 msgid "Compact"
-msgstr ""
+msgstr "コンパクト"
 
 #: ui/settings.ui:1031
 msgid "Empty workspace transparency"
-msgstr ""
+msgstr "空のワークスペースでの透明度"
 
 #: ui/settings.ui:1082
 msgid "Window workspace transparency"
-msgstr ""
+msgstr "ウィンドウのあるワークスペースでの透明度"
 
 #: ui/settings.ui:1162
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"

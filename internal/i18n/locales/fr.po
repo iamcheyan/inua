@@ -10367,27 +10367,27 @@ msgstr "Désactivé : Super+Space, Super+A et Super+N ouvrent toujours le lanceu
 
 #: ui/settings.ui:980
 msgid "Bar spacing"
-msgstr ""
+msgstr "Espacement de la barre"
 
 #: ui/settings.ui:989
 msgid "Choose the standard or compact bar layout"
-msgstr ""
+msgstr "Choisir la disposition standard ou compacte de la barre"
 
 #: ui/settings.ui:1003
 msgid "Default"
-msgstr ""
+msgstr "Par défaut"
 
 #: ui/settings.ui:1004
 msgid "Compact"
-msgstr ""
+msgstr "Compacte"
 
 #: ui/settings.ui:1031
 msgid "Empty workspace transparency"
-msgstr ""
+msgstr "Transparence sur un espace de travail vide"
 
 #: ui/settings.ui:1082
 msgid "Window workspace transparency"
-msgstr ""
+msgstr "Transparence sur un espace de travail avec des fenêtres"
 
 #: ui/settings.ui:1162
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"

@@ -10367,27 +10367,27 @@ msgstr "Apagado: Super+Space, Super+A y Super+N aún abren el iniciador, el cent
 
 #: ui/settings.ui:980
 msgid "Bar spacing"
-msgstr ""
+msgstr "Espaciado de la barra"
 
 #: ui/settings.ui:989
 msgid "Choose the standard or compact bar layout"
-msgstr ""
+msgstr "Elige la disposición estándar o compacta de la barra"
 
 #: ui/settings.ui:1003
 msgid "Default"
-msgstr ""
+msgstr "Predeterminada"
 
 #: ui/settings.ui:1004
 msgid "Compact"
-msgstr ""
+msgstr "Compacta"
 
 #: ui/settings.ui:1031
 msgid "Empty workspace transparency"
-msgstr ""
+msgstr "Transparencia en espacios de trabajo vacíos"
 
 #: ui/settings.ui:1082
 msgid "Window workspace transparency"
-msgstr ""
+msgstr "Transparencia en espacios de trabajo con ventanas"
 
 #: ui/settings.ui:1162
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"

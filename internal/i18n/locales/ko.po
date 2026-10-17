@@ -10321,27 +10321,27 @@ msgstr "꺼짐: Super+Space, Super+A 및 Super+N은 여전히 실행기, 제어 
 
 #: ui/settings.ui:980
 msgid "Bar spacing"
-msgstr ""
+msgstr "상단 표시줄 간격"
 
 #: ui/settings.ui:989
 msgid "Choose the standard or compact bar layout"
-msgstr ""
+msgstr "표준 또는 촘촘한 상단 표시줄 배치를 고릅니다"
 
 #: ui/settings.ui:1003
 msgid "Default"
-msgstr ""
+msgstr "기본"
 
 #: ui/settings.ui:1004
 msgid "Compact"
-msgstr ""
+msgstr "촘촘하게"
 
 #: ui/settings.ui:1031
 msgid "Empty workspace transparency"
-msgstr ""
+msgstr "빈 작업공간의 투명도"
 
 #: ui/settings.ui:1082
 msgid "Window workspace transparency"
-msgstr ""
+msgstr "창이 있는 작업공간의 투명도"
 
 #: ui/settings.ui:1162
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"

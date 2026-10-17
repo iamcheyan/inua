@@ -10321,27 +10321,27 @@ msgstr "关闭：Super+Space、Super+A和Super+N仍然打开启动器、控制�
 
 #: ui/settings.ui:980
 msgid "Bar spacing"
-msgstr ""
+msgstr "顶栏间距"
 
 #: ui/settings.ui:989
 msgid "Choose the standard or compact bar layout"
-msgstr ""
+msgstr "选择标准或紧凑的顶栏布局"
 
 #: ui/settings.ui:1003
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 #: ui/settings.ui:1004
 msgid "Compact"
-msgstr ""
+msgstr "紧凑"
 
 #: ui/settings.ui:1031
 msgid "Empty workspace transparency"
-msgstr ""
+msgstr "空工作区时的透明度"
 
 #: ui/settings.ui:1082
 msgid "Window workspace transparency"
-msgstr ""
+msgstr "有窗口的工作区的透明度"
 
 #: ui/settings.ui:1162
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"
