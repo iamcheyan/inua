@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -73,6 +75,7 @@ func newTestBackend(t *testing.T) (*DockerBackend, Config, *fakeRunner, *fakeSec
 	secrets := &fakeSecrets{items: map[string][]byte{}}
 	b := NewDockerBackend(runner)
 	b.Secrets = secrets
+	b.Answers = func(context.Context, string) bool { return false }
 	return b, cfg, runner, secrets
 }
 
@@ -371,7 +374,10 @@ func TestStateReportsStartingUntilGuestReady(t *testing.T) {
 	}
 }
 
-func TestStateReportsRunningWhenLogsSayStarted(t *testing.T) {
+// Dockur says "started successfully" once the firmware boots, the
+// installation DVD included: on a first install that is the start of
+// Windows' setup, so the line alone must not make the guest running.
+func TestStateIsStartingWhileOnlyTheLogSaysStarted(t *testing.T) {
 	b, cfg, runner, _ := newTestBackend(t)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -386,8 +392,90 @@ func TestStateReportsRunningWhenLogsSayStarted(t *testing.T) {
 	if err != nil {
 		t.Fatalf("state: %v", err)
 	}
+	if state != StateStarting {
+		t.Fatalf("state = %q, want starting", state)
+	}
+}
+
+func TestStateIsRunningOnceRemoteDesktopAnswers(t *testing.T) {
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cfg.RDPPort = 13389
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	runner.out = map[string]string{"docker compose": "windows\n"}
+	var asked string
+	b.Answers = func(_ context.Context, addr string) bool { asked = addr; return true }
+	state, err := b.State(ctx)
+	if err != nil {
+		t.Fatalf("state: %v", err)
+	}
 	if state != StateRunning {
 		t.Fatalf("state = %q, want running", state)
+	}
+	if asked != "127.0.0.1:13389" {
+		t.Errorf("asked %q, want the guest's port on the loopback interface", asked)
+	}
+}
+
+// rdpServer listens on the loopback interface and answers each connection
+// with reply, the way a server behind a port forward would.
+func rdpServer(t *testing.T, reply []byte) string {
+	t.Helper()
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { l.Close() })
+	go func() {
+		for {
+			c, err := l.Accept()
+			if err != nil {
+				return
+			}
+			go func() {
+				defer c.Close()
+				request := make([]byte, len(rdpRequest))
+				if _, err := io.ReadFull(c, request); err != nil {
+					return
+				}
+				c.Write(reply)
+			}()
+		}
+	}()
+	return l.Addr().String()
+}
+
+func TestRDPAnswersOnlyToAConnectionConfirm(t *testing.T) {
+	confirm := []byte{0x03, 0x00, 0x00, 0x13, 0x0e, 0xd0, 0x00, 0x00, 0x12, 0x34, 0x00,
+		0x02, 0x00, 0x08, 0x00, 0x02, 0x00, 0x00, 0x00}
+	for _, tc := range []struct {
+		name  string
+		reply []byte
+		want  bool
+	}{
+		{"a Remote Desktop server", confirm, true},
+		// Docker's port forward accepts the connection and closes it when
+		// nothing listens behind it yet.
+		{"a forward with nothing behind it", nil, false},
+		{"another service", []byte("HTTP/1.1 400 Bad Request\r\n\r\n"), false},
+	} {
+		addr := rdpServer(t, tc.reply)
+		if got := rdpAnswers(context.Background(), addr); got != tc.want {
+			t.Errorf("%s: rdpAnswers = %v, want %v", tc.name, got, tc.want)
+		}
+	}
+	// Nothing listening at all.
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	addr := l.Addr().String()
+	l.Close()
+	if rdpAnswers(context.Background(), addr) {
+		t.Error("rdpAnswers with nothing listening")
 	}
 }
 

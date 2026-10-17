@@ -174,8 +174,8 @@ func (s *vmService) snapshot() VMSnapshot {
 
 // Refresh reads Docker off the GTK thread and returns a snapshot the window
 // can paint. It is also where "Windows is installed" is decided: the guest
-// is taken to be installed once Dockur has said it started, so a later stop
-// does not send the window back to "still installing".
+// is taken to be installed once its Remote Desktop has answered, so a later
+// stop does not send the window back to "still installing".
 func (s *vmService) Refresh() VMSnapshot {
 	// Re-read the host while the window is open: the user may have installed
 	// Docker or joined a group since the shell started, and the prereq page

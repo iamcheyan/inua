@@ -6,9 +6,11 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -56,9 +58,12 @@ func (execCommandRunner) Run(ctx context.Context, name string, args ...string) (
 
 // DockerBackend manages one Dockur Windows container using Docker Compose v2.
 type DockerBackend struct {
-	Runner      CommandRunner
-	Secrets     GuestSecretStore
-	Config      Config
+	Runner  CommandRunner
+	Secrets GuestSecretStore
+	Config  Config
+	// Answers reports whether Remote Desktop answers at an address; it is
+	// rdpAnswers unless a test puts another in.
+	Answers     func(ctx context.Context, addr string) bool
 	composePath string
 	secretID    string
 }
@@ -157,10 +162,15 @@ func (b *DockerBackend) Start(ctx context.Context) error {
 // State reports what the guest is doing.
 //
 // Running means Windows itself is up, which is not the same as the container
-// being up: the container's RDP port answers long before Windows has
-// installed, so a container that is running but whose guest is still
-// installing is StateStarting. The distinction is what tells the window
-// whether to offer Connect or to keep showing the installation.
+// being up: a running container whose guest is still installing or booting
+// is StateStarting. The distinction is what tells the window whether to
+// offer Connect or to keep showing the installation.
+//
+// Windows is up once its Remote Desktop answers. Dockur's log says "started
+// successfully" as soon as the firmware boots from the disk or from the
+// installation DVD, so on a first install it says so at the very start of
+// Windows' setup; and a restarted container still carries the line of the
+// boot before.
 func (b *DockerBackend) State(ctx context.Context) (State, error) {
 	if err := b.ensureInstalled(); err != nil {
 		return StateUnknown, vmError("state", ErrorConflict, err)
@@ -172,29 +182,14 @@ func (b *DockerBackend) State(ctx context.Context) (State, error) {
 	if !strings.Contains(out, "windows") {
 		return StateStopped, nil
 	}
-	ready, err := b.guestReady(ctx)
-	if err != nil {
-		// The container is up; Windows is still installing or still booting.
-		return StateStarting, nil
+	answers := b.Answers
+	if answers == nil {
+		answers = rdpAnswers
 	}
-	if ready {
+	if answers(ctx, net.JoinHostPort("127.0.0.1", strconv.Itoa(b.Config.RDPPort))) {
 		return StateRunning, nil
 	}
 	return StateStarting, nil
-}
-
-// guestReady reports whether Windows has said it started.
-//
-// The container's RDP port is open as soon as it starts, so it says nothing
-// about the guest; Dockur prints "started successfully" when the system in it
-// actually comes up, which is the moment worth reporting. The last log lines
-// are enough: that message is written at the end of each boot.
-func (b *DockerBackend) guestReady(ctx context.Context) (bool, error) {
-	logs, err := b.containerLogs(ctx, "200")
-	if err != nil {
-		return false, err
-	}
-	return strings.Contains(strings.ToLower(logs), "started successfully"), nil
 }
 
 // RecentOutput is the last useful line of the container's logs, for the
