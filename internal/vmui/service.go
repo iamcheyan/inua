@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -513,6 +514,44 @@ func (s *vmService) profileConfig() vm.Config {
 	return c
 }
 
+// rdpCommand runs FreeRDP with args. FreeRDP 3 reads them from its standard
+// input (/args-from:stdin, one a line), so the guest's password stays off the
+// command line, which every user of this machine can read in the process
+// list. FreeRDP 2 has no such option and takes them as they are.
+func rdpCommand(bin string, args []string, fromStdin bool) *exec.Cmd {
+	if !fromStdin {
+		return exec.Command(bin, args...)
+	}
+	cmd := exec.Command(bin, "/args-from:stdin")
+	cmd.Stdin = strings.NewReader(strings.Join(args, "\n") + "\n")
+	return cmd
+}
+
+// freerdp3 reports whether the client is FreeRDP 3 or later: the SDL client
+// and the clients named with a 3 are; another says so in its version.
+func freerdp3(name, bin string) bool {
+	if strings.HasPrefix(name, "sdl-") || strings.HasSuffix(name, "3") {
+		return true
+	}
+	out, _ := exec.Command(bin, "/version").CombinedOutput()
+	return freerdpMajor(string(out)) >= 3
+}
+
+// freerdpMajor is the major version in FreeRDP's "This is FreeRDP version
+// 3.10.3 (…)", 0 when there is none.
+func freerdpMajor(version string) int {
+	_, rest, ok := strings.Cut(version, "FreeRDP version ")
+	if !ok {
+		return 0
+	}
+	major, _, _ := strings.Cut(rest, ".")
+	n, err := strconv.Atoi(major)
+	if err != nil {
+		return 0
+	}
+	return n
+}
+
 // rdpDisplay is the monitor FreeRDP's window appears on: its logical size and
 // Hyprland's scale, which the guest's own display scaling follows.
 type rdpDisplay struct {
@@ -566,7 +605,7 @@ func startRDPClient(address string, port int, user, password string, d *rdpDispl
 		if err != nil {
 			continue
 		}
-		cmd := exec.Command(bin, rdpArgs(address, port, user, password, d)...)
+		cmd := rdpCommand(bin, rdpArgs(address, port, user, password, d), freerdp3(name, bin))
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		if err := cmd.Start(); err != nil {
 			return err
