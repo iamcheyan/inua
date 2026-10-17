@@ -11,7 +11,7 @@ import (
 // Report is what the diagnostics answer: what this host provides for a guest,
 // what the configuration says and what Inua would allocate. `inua vm
 // doctor|status` and `inua-vm --doctor|--status` print it; nothing here
-// contacts Docker or changes the host.
+// changes Docker or the host: Docker is only asked for its version.
 type Report struct {
 	Platform    Platform `json:"platform"`
 	Host        Host     `json:"host"`

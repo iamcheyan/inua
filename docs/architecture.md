@@ -30,9 +30,12 @@ install reuses that Windows; deleting the disk is a separate, confirmed
 action (`RemoveData`), because losing a Windows installation should take a
 deliberate second step. `inua-vm --doctor` and `--status [--json]` (and
 `inua vm doctor|status`) report the host's checks and the configuration,
-read-only, without contacting Docker; `--start` and `--stop` drive the
-backend from a script.
+read-only; `--start` and `--stop` drive the backend from a script.
 
+Docker is the daemon the `docker` command reaches, the one `docker compose`
+will use: the current context's or `DOCKER_HOST`'s, the system's or a
+rootless one's, or Podman's behind its `docker` command. When it reaches
+none, the socket it would use says why: not running, or not this user's.
 Docker socket access is privileged host access, so the platform layer
 reports a socket this user cannot use as denied and offers no fix for it:
 membership in the `docker` group is as good as root on the host. The window

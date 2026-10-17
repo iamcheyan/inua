@@ -105,28 +105,7 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 		probes.Exists = func(p string) bool { _, err := os.Stat(p); return err == nil }
 	}
 	if probes.Accessible == nil {
-		probes.Accessible = func(p string) bool {
-			fi, err := os.Stat(p)
-			if err != nil {
-				return false
-			}
-			if fi.Mode()&os.ModeSocket != 0 {
-				// A Unix socket cannot be opened like a file: connecting is
-				// what checks the permission bits.
-				c, err := net.DialTimeout("unix", p, 250*time.Millisecond)
-				if err != nil {
-					return false
-				}
-				_ = c.Close()
-				return true
-			}
-			f, err := os.OpenFile(p, os.O_RDWR, 0)
-			if err != nil {
-				return false
-			}
-			_ = f.Close()
-			return true
-		}
+		probes.Accessible = accessible
 	}
 	if probes.Executable == nil {
 		probes.Executable = func(name string) bool { _, err := exec.LookPath(name); return err == nil }
@@ -168,10 +147,31 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 		kvmCheck.Remedy = groupRemedy("kvm")
 	}
 
-	socket := mapPath("/var/run/docker.sock")
-	p.DockerSocket = DeviceCapability{Path: socket, Available: probes.Exists(socket), Accessible: probes.Accessible(socket)}
-	socketCheck := check("Docker", p.DockerSocket.Available && p.DockerSocket.Accessible, ReasonMissing)
-	if p.DockerSocket.Available && !p.DockerSocket.Accessible {
+	// Docker is the daemon `docker compose` will talk to: the current
+	// context's or DOCKER_HOST's, the system's or a rootless one, or
+	// Podman's behind its docker command. Asking the command is the one way
+	// to know; when it reaches no daemon, the socket it would use says why.
+	socket := dockerSocket(os.Getenv("DOCKER_HOST"), os.Getenv("XDG_RUNTIME_DIR"), mapPath("/var/run/docker.sock"), probes.Exists)
+	p.DockerSocket = DeviceCapability{Path: socket}
+	if v, err := probes.CommandOutput("docker", "version", "--format", "{{.Server.Version}}"); err == nil && strings.TrimSpace(v) != "" {
+		p.DockerSocket.Available, p.DockerSocket.Accessible = true, true
+		p.DockerSocket.Detail = "Docker " + strings.TrimSpace(v)
+	} else if socket != "" && probes.Exists(socket) {
+		p.DockerSocket.Available = true
+	}
+	socketCheck := check("Docker", p.DockerSocket.Accessible, ReasonMissing)
+	switch {
+	case p.DockerSocket.Accessible:
+	case !probes.Executable("docker"):
+		// Not installed: ReasonMissing.
+	case !p.DockerSocket.Available:
+		// The command is there, its daemon's socket is not.
+		socketCheck.Reason = ReasonStopped
+		p.DockerSocket.Detail = "Docker is not running"
+	case probes.Accessible(socket):
+		// The socket takes connections, yet the command reached no daemon.
+		socketCheck.Reason = ReasonUnclear
+	default:
 		// The socket is there; either this user cannot talk to it, or the
 		// daemon is not running. Dial once more to tell the two apart, so
 		// the window does not say Docker is down when it is only this user.
@@ -274,6 +274,50 @@ func detectFilesystem(root string) string {
 		return "unknown"
 	}
 	return fs
+}
+
+// accessible reports whether this user may use the device or socket at p.
+func accessible(p string) bool {
+	fi, err := os.Stat(p)
+	if err != nil {
+		return false
+	}
+	if fi.Mode()&os.ModeSocket != 0 {
+		// A Unix socket cannot be opened like a file: connecting is what
+		// checks the permission bits.
+		c, err := net.DialTimeout("unix", p, 250*time.Millisecond)
+		if err != nil {
+			return false
+		}
+		_ = c.Close()
+		return true
+	}
+	f, err := os.OpenFile(p, os.O_RDWR, 0)
+	if err != nil {
+		return false
+	}
+	_ = f.Close()
+	return true
+}
+
+// dockerSocket is the socket the docker command uses when it is a local
+// one: DOCKER_HOST's, else a rootless daemon's in the runtime directory,
+// else the system's. It is "" when DOCKER_HOST names another kind (tcp://,
+// ssh://), which only the command itself can check.
+func dockerSocket(host, runtimeDir, system string, exists func(string) bool) string {
+	if host != "" {
+		path, ok := strings.CutPrefix(host, "unix://")
+		if !ok {
+			return ""
+		}
+		return path
+	}
+	if runtimeDir != "" {
+		if rootless := filepath.Join(runtimeDir, "docker.sock"); exists(rootless) {
+			return rootless
+		}
+	}
+	return system
 }
 
 func dockerDial(path string) error {

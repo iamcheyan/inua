@@ -93,6 +93,9 @@ func TestDetectPlatformChecksComposeV2Output(t *testing.T) {
 		want   bool
 	}{{"v2.29.1", nil, true}, {"v1.29.2", nil, false}, {"", errors.New("missing plugin"), false}} {
 		platform := DetectPlatform(t.TempDir(), PlatformProbes{CommandOutput: func(name string, args ...string) (string, error) {
+			if name == "docker" && len(args) > 0 && args[0] == "version" {
+				return "", errors.New("no daemon")
+			}
 			if name != "docker" || strings.Join(args, " ") != "compose version --short" {
 				t.Errorf("unexpected command: %s %v", name, args)
 			}
@@ -137,12 +140,19 @@ func TestDockerSocketDeniedOffersNoOneClickFix(t *testing.T) {
 		}
 	}()
 
+	t.Setenv("DOCKER_HOST", "")
+	t.Setenv("XDG_RUNTIME_DIR", "")
 	p := DetectPlatform(root, PlatformProbes{
-		Exists:        func(string) bool { return true },
-		Accessible:    func(string) bool { return false },
-		Executable:    func(string) bool { return true },
-		Filesystem:    func(string) string { return "ext4" },
-		CommandOutput: func(string, ...string) (string, error) { return "v2.29.1", nil },
+		Exists:     func(string) bool { return true },
+		Accessible: func(string) bool { return false },
+		Executable: func(string) bool { return true },
+		Filesystem: func(string) string { return "ext4" },
+		CommandOutput: func(_ string, args ...string) (string, error) {
+			if args[0] == "version" {
+				return "", errors.New("permission denied while trying to connect to the Docker daemon socket")
+			}
+			return "v2.29.1", nil
+		},
 	})
 	byName := map[string]DoctorItem{}
 	for _, item := range p.Doctor {
@@ -169,18 +179,9 @@ func TestDockerSocketDeniedOffersNoOneClickFix(t *testing.T) {
 
 // A Docker socket cannot be opened like a file; accessibility must come from
 // connecting to it, or every user would be told they lack access.
-func TestDetectPlatformConnectsToDockerSocket(t *testing.T) {
-	root := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(root, "var", "run"), 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(filepath.Join(root, "dev"), 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(root, "dev", "kvm"), nil, 0600); err != nil {
-		t.Fatal(err)
-	}
-	ln, err := net.Listen("unix", filepath.Join(root, "var", "run", "docker.sock"))
+func TestAccessibleConnectsToASocket(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "docker.sock")
+	ln, err := net.Listen("unix", path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -194,8 +195,72 @@ func TestDetectPlatformConnectsToDockerSocket(t *testing.T) {
 			_ = c.Close()
 		}
 	}()
-	p := DetectPlatform(root, PlatformProbes{})
-	if !p.DockerSocket.Accessible {
-		t.Fatalf("a listening Unix socket should be accessible: %+v", p.DockerSocket)
+	if !accessible(path) {
+		t.Fatal("a listening Unix socket should be accessible")
+	}
+}
+
+// The guest's Docker is whatever the docker command reaches: a rootless
+// daemon, which has no socket in /var/run, counts as much as the system's.
+func TestDockerIsWhatTheDockerCommandReaches(t *testing.T) {
+	t.Setenv("DOCKER_HOST", "")
+	t.Setenv("XDG_RUNTIME_DIR", t.TempDir())
+	p := DetectPlatform(t.TempDir(), PlatformProbes{
+		Exists:     func(string) bool { return false },
+		Accessible: func(string) bool { return false },
+		Executable: func(string) bool { return true },
+		CommandOutput: func(_ string, args ...string) (string, error) {
+			if args[0] == "version" {
+				return "28.1.1\n", nil
+			}
+			return "v2.29.1", nil
+		},
+	})
+	if !p.DockerSocket.Available || !p.DockerSocket.Accessible {
+		t.Fatalf("a daemon the docker command reaches is not taken: %+v", p.DockerSocket)
+	}
+	for _, item := range p.Doctor {
+		if item.Name == "Docker" && !item.OK {
+			t.Errorf("the Docker check failed: %+v", item)
+		}
+	}
+}
+
+// When the command reaches no daemon, the socket it would use says why:
+// DOCKER_HOST's, a rootless daemon's, else the system's.
+func TestDockerSocketIsTheOneTheCommandUses(t *testing.T) {
+	run := t.TempDir()
+	rootless := filepath.Join(run, "docker.sock")
+	exists := func(p string) bool { return p == rootless }
+	for _, tc := range []struct {
+		host, runtimeDir, want string
+	}{
+		{"unix:///run/user/1000/podman/podman.sock", run, "/run/user/1000/podman/podman.sock"},
+		{"tcp://127.0.0.1:2375", run, ""},
+		{"", run, rootless},
+		{"", t.TempDir(), "/var/run/docker.sock"},
+		{"", "", "/var/run/docker.sock"},
+	} {
+		if got := dockerSocket(tc.host, tc.runtimeDir, "/var/run/docker.sock", exists); got != tc.want {
+			t.Errorf("dockerSocket(%q, %q) = %q, want %q", tc.host, tc.runtimeDir, got, tc.want)
+		}
+	}
+}
+
+func TestDockerWithoutItsSocketIsNotRunning(t *testing.T) {
+	t.Setenv("DOCKER_HOST", "")
+	t.Setenv("XDG_RUNTIME_DIR", "")
+	p := DetectPlatform(t.TempDir(), PlatformProbes{
+		Exists:     func(string) bool { return false },
+		Accessible: func(string) bool { return false },
+		Executable: func(string) bool { return true },
+		CommandOutput: func(_ string, args ...string) (string, error) {
+			return "", errors.New("Cannot connect to the Docker daemon")
+		},
+	})
+	for _, item := range p.Doctor {
+		if item.Name == "Docker" && item.Reason != ReasonStopped {
+			t.Errorf("Docker reason = %q, want %q", item.Reason, ReasonStopped)
+		}
 	}
 }
