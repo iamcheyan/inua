@@ -9467,7 +9467,7 @@ msgstr "無法開啟連結"
 msgid "Windows VM"
 msgstr "Windows 虛擬機"
 
-#: internal/vmui/service.go:348
+#: internal/vmui/service.go:322
 msgid "Windows installs from %s, which is not there any more."
 msgstr "Windows 要從 %s 安裝，但它已經不在了。"
 

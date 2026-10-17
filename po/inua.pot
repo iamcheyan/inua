@@ -9511,7 +9511,7 @@ msgstr ""
 msgid "Windows VM"
 msgstr ""
 
-#: internal/vmui/service.go:348
+#: internal/vmui/service.go:322
 msgid "Windows installs from %s, which is not there any more."
 msgstr ""
 

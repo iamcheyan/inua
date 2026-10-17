@@ -28,8 +28,8 @@ func (a *App) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	return w.win
 }
 
-// ThemeChanged is empty: the window is rebuilt by appui when the theme
-// changes, and everything it draws comes from the layout and the style.
+// ThemeChanged is empty: everything the window draws comes from the layout
+// and the style, which appui reloads when the theme changes.
 func (a *App) ThemeChanged() {}
 
 // Start brings the guest up: `inua-vm --start`, for scripts and for a session

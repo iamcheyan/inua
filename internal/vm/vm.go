@@ -22,7 +22,6 @@ const (
 	MinMemoryMiB     = 2048
 	MinCPUs          = 1
 	MinDiskGiB       = 32
-	ConfigFileName   = "windows-vm.json"
 	// GuestUser is the Windows account Dockur creates. Connect uses it.
 	GuestUser = "Inua"
 )

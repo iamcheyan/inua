@@ -233,29 +233,8 @@ func (s *vmService) sync() {
 	}
 }
 
-// Snapshot, Doctor and Status are the UI-facing reads; all are non-blocking.
+// Snapshot is the window's read of the guest; it does not block.
 func (s *vmService) Snapshot() VMSnapshot { return s.snapshot() }
-
-// Doctor is the checks as plain lines, for `inua call vm doctor`.
-func (s *vmService) Doctor() string {
-	var b strings.Builder
-	for _, c := range s.snapshot().Checks {
-		if c.OK {
-			fmt.Fprintf(&b, "OK   %s\n", c.Name)
-			continue
-		}
-		fmt.Fprintf(&b, "FAIL %s (%s)\n", c.Name, c.Reason)
-	}
-	return strings.TrimRight(b.String(), "\n")
-}
-
-func (s *vmService) Status() (vm.State, error) {
-	x := s.snapshot()
-	if x.Err != nil {
-		return x.State, x.Err
-	}
-	return x.State, nil
-}
 
 // Fix applies a check's remedy. A privileged one goes through pkexec, so the
 // shell's own polkit dialog takes the password; this runs on a goroutine,
@@ -321,14 +300,9 @@ func (s *vmService) Install(c vm.Config) error {
 	return s.Start()
 }
 
-func (s *vmService) hasProjectNow() bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.hasProject
-}
-
-// Start brings the container up and waits for the guest to answer on RDP:
-// the wait is what takes the minutes on a first install.
+// Start brings the container up. It does not wait for Windows: the window
+// follows the guest's state, and Windows' own setup on a first install takes
+// tens of minutes after the container is up.
 func (s *vmService) Start() error {
 	if err := s.begin(); err != nil {
 		return err
@@ -348,8 +322,8 @@ func (s *vmService) Start() error {
 		opErr = errors.New(i18n.Tf("Windows installs from %s, which is not there any more.", iso))
 		return opErr
 	}
-	// The wait is unbounded in practice on a first install: the image
-	// download and Windows' own setup run inside it.
+	// A first start pulls the image, which can take a while on a slow
+	// connection.
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Hour)
 	defer cancel()
 	opErr = s.backend.Start(ctx)
@@ -515,13 +489,6 @@ func (s *vmService) save(installed bool) error {
 		return err
 	}
 	return os.Rename(name, vm.ConfigPath())
-}
-
-func (s *vmService) profileConfig() vm.Config {
-	p := vm.RecommendProfile(s.host)
-	c := vm.DefaultConfig()
-	c.MemoryMiB, c.CPUs, c.DiskGiB = p.MemoryMiB, p.CPUs, p.DiskGiB
-	return c
 }
 
 // rdpCommand runs FreeRDP with args. FreeRDP 3 reads them from its standard

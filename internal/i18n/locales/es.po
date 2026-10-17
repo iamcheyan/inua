@@ -9513,7 +9513,7 @@ msgstr "No se pudo abrir el enlace"
 msgid "Windows VM"
 msgstr "Máquina virtual de Windows"
 
-#: internal/vmui/service.go:348
+#: internal/vmui/service.go:322
 msgid "Windows installs from %s, which is not there any more."
 msgstr "Windows se instala desde %s, que ya no está."
 

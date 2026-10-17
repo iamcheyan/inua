@@ -9467,7 +9467,7 @@ msgstr "링크를 열 수 없습니다"
 msgid "Windows VM"
 msgstr "Windows 가상 머신"
 
-#: internal/vmui/service.go:348
+#: internal/vmui/service.go:322
 msgid "Windows installs from %s, which is not there any more."
 msgstr "Windows를 %s에서 설치하는데, 이 파일이 더 이상 없습니다."
 
