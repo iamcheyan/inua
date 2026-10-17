@@ -83,10 +83,11 @@ project or in your configuration), and every published port binds to
 Two things the window says outright: the web console on 127.0.0.1:8006 has
 no login of its own, and Windows needs a licence. Docker socket access is
 as good as root on the host, so inua explains it and never offers to add
-you to the `docker` group; the `kvm` group fix, which grants one device,
-stays. Docker Engine with Compose v2, KVM, FreeRDP and `xdg-open` must be
-installed: the window names whichever is missing and which packages provide
-it.
+you to the `docker` group: it names the command, for whoever decides they
+want it, and points at rootless Docker or Podman instead. The `kvm` group
+fix, which grants one device, stays. Docker Engine with Compose v2, KVM,
+FreeRDP and `xdg-open` must be installed: the window names whichever is
+missing and which packages provide it.
 
 ## Install
 

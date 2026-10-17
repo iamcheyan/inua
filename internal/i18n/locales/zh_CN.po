@@ -2752,7 +2752,7 @@ msgid "Stopped."
 msgstr "停止。"
 
 #: internal/assistantui/assistantui.go:456
-#: internal/vmui/window.go:684
+#: internal/vmui/window.go:693
 msgid "Something went wrong: %s"
 msgstr "出了点问题:%s"
 
@@ -9461,7 +9461,7 @@ msgid "Could not open the link"
 msgstr "无法打开链接"
 
 #: internal/vmui/app.go:21
-#: internal/vmui/window.go:712
+#: internal/vmui/window.go:721
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 #: config/apps/io.github.lyricat.Inua.VM.desktop:3
@@ -9558,90 +9558,94 @@ msgstr "网络设备 (TUN)"
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/vmui/window.go:562
+#: internal/vmui/window.go:567
+msgid "Your user may not use Docker's socket. Joining the docker group would let anything running as you control this machine as root, so Inua will not do it for you: run `sudo gpasswd -a $USER docker` yourself if you accept that, or use rootless Docker or Podman instead."
+msgstr "你的用户不能使用 Docker 的 socket。加入 docker 组会让以你的身份运行的一切都等同 root 控制这台机器，所以 Inua 不会替你做：如果你接受这一点，可以自己运行 `sudo gpasswd -a $USER docker`，或改用 rootless Docker 或 Podman。"
+
+#: internal/vmui/window.go:571
 msgid "Not installed on this system."
 msgstr "此系统上未安装。"
 
-#: internal/vmui/window.go:564
+#: internal/vmui/window.go:573
 msgid "Installed, but your user may not use it."
 msgstr "已安装，但你的用户无权使用。"
 
-#: internal/vmui/window.go:566
+#: internal/vmui/window.go:575
 msgid "Installed, but not running."
 msgstr "已安装，但未运行。"
 
-#: internal/vmui/window.go:568
+#: internal/vmui/window.go:577
 msgid "This Linux distribution is not supported."
 msgstr "不支持此 Linux 发行版。"
 
-#: internal/vmui/window.go:570
+#: internal/vmui/window.go:579
 msgid "Could not be checked."
 msgstr "无法检查。"
 
-#: internal/vmui/window.go:588
+#: internal/vmui/window.go:597
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "均衡配置会为你的系统保留内存与 CPU。"
 
-#: internal/vmui/window.go:590
+#: internal/vmui/window.go:599
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
 msgstr "上次安装留下的文件还在。继续安装会复用它们；删除后则从头开始。"
 
-#: internal/vmui/window.go:592
+#: internal/vmui/window.go:601
 #: ui/vm.ui:447
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "下载约 8 GB 并安装 Windows；需要 30 分钟以上。"
 
-#: internal/vmui/window.go:616
+#: internal/vmui/window.go:625
 msgid "Windows is installing; this takes a while."
 msgstr "正在安装 Windows；需要一些时间。"
 
-#: internal/vmui/window.go:618
-#: internal/vmui/window.go:661
+#: internal/vmui/window.go:627
+#: internal/vmui/window.go:670
 msgid "Stopping…"
 msgstr "正在停止…"
 
-#: internal/vmui/window.go:620
+#: internal/vmui/window.go:629
 msgid "The installation is paused. Continue to resume."
 msgstr "安装已暂停。继续即可恢复。"
 
-#: internal/vmui/window.go:663
+#: internal/vmui/window.go:672
 msgid "Windows is starting; ready in a minute or two."
 msgstr "Windows 正在启动，大约一两分钟后就绪。"
 
-#: internal/vmui/window.go:688
+#: internal/vmui/window.go:697
 msgid "This system is missing something Windows needs"
 msgstr "此系统缺少 Windows 所需的组件"
 
-#: internal/vmui/window.go:691
+#: internal/vmui/window.go:700
 msgid "Files from a previous attempt are still here"
 msgstr "上次安装留下的文件还在"
 
-#: internal/vmui/window.go:693
+#: internal/vmui/window.go:702
 msgid "Not installed yet"
 msgstr "尚未安装"
 
-#: internal/vmui/window.go:696
-#: internal/vmui/window.go:704
+#: internal/vmui/window.go:705
+#: internal/vmui/window.go:713
 msgid "Stopping"
 msgstr "正在停止"
 
-#: internal/vmui/window.go:699
+#: internal/vmui/window.go:708
 msgid "Installing Windows"
 msgstr "正在安装 Windows"
 
-#: internal/vmui/window.go:701
+#: internal/vmui/window.go:710
 msgid "Installation paused"
 msgstr "安装已暂停"
 
-#: internal/vmui/window.go:706
+#: internal/vmui/window.go:715
 msgid "Windows is starting"
 msgstr "Windows 正在启动"
 
-#: internal/vmui/window.go:708
+#: internal/vmui/window.go:717
 msgid "Windows is running"
 msgstr "Windows 正在运行"
 
-#: internal/vmui/window.go:710
+#: internal/vmui/window.go:719
 msgid "Stopped"
 msgstr "已停止"
 

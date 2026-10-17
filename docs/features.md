@@ -30,7 +30,9 @@ is a separate, confirmed action. A group change needs a fresh login, since
 a running process cannot change its own group list; the window says so and
 notifies when it happens. Docker socket access is as good as root on this
 machine, so a denied Docker socket is explained, never fixed with one
-click; the `kvm` group fix stays, since it grants one device.
+click: the window names the command for whoever wants it and points at
+rootless Docker or Podman instead. The `kvm` group fix stays, since it
+grants one device.
 
 From a script or a key binding:
 

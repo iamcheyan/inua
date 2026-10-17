@@ -418,12 +418,14 @@ console on 127.0.0.1:8006 has no login of its own, and Windows needs a
 licence.
 
 Docker socket access is as good as root on this machine, so inua explains it
-and never offers to add you to the `docker` group; the `kvm` group fix,
-which grants one device, stays. Removing the guest deletes the container and
-the project but keeps its disk and its password, so a later install reuses
-that Windows; **Delete disk** is a separate, confirmed action. Only Windows
-runs today: Linux, FreeBSD, Android and custom systems, and seamless
-windows, are the later steps of [inua-vm.md](inua-vm.md).
+and never offers to add you to the `docker` group: it shows the command, for
+whoever decides they want it, and points at rootless Docker or Podman
+instead. The `kvm` group fix, which grants one device, stays. Removing the
+guest deletes the container and the project but keeps its disk and its
+password, so a later install reuses that Windows; **Delete disk** is a
+separate, confirmed action. Only Windows runs today: Linux, FreeBSD, Android
+and custom systems, and seamless windows, are the later steps of
+[inua-vm.md](inua-vm.md).
 
 ## Files
 

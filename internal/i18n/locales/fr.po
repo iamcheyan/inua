@@ -2767,7 +2767,7 @@ msgid "Stopped."
 msgstr "Arrêté."
 
 #: internal/assistantui/assistantui.go:456
-#: internal/vmui/window.go:684
+#: internal/vmui/window.go:693
 msgid "Something went wrong: %s"
 msgstr "Quelque chose s’est mal passé : %s"
 
@@ -9507,7 +9507,7 @@ msgid "Could not open the link"
 msgstr "Impossible d’ouvrir le lien"
 
 #: internal/vmui/app.go:21
-#: internal/vmui/window.go:712
+#: internal/vmui/window.go:721
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 #: config/apps/io.github.lyricat.Inua.VM.desktop:3
@@ -9604,90 +9604,94 @@ msgstr "Périphérique réseau (TUN)"
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/vmui/window.go:562
+#: internal/vmui/window.go:567
+msgid "Your user may not use Docker's socket. Joining the docker group would let anything running as you control this machine as root, so Inua will not do it for you: run `sudo gpasswd -a $USER docker` yourself if you accept that, or use rootless Docker or Podman instead."
+msgstr "Votre utilisateur ne peut pas utiliser le socket de Docker. Rejoindre le groupe docker permettrait à tout ce qui tourne sous votre compte de contrôler cette machine comme root, donc Inua ne le fera pas à votre place : lancez `sudo gpasswd -a $USER docker` vous-même si vous l'acceptez, ou utilisez Docker sans root ou Podman à la place."
+
+#: internal/vmui/window.go:571
 msgid "Not installed on this system."
 msgstr "Non installé sur ce système."
 
-#: internal/vmui/window.go:564
+#: internal/vmui/window.go:573
 msgid "Installed, but your user may not use it."
 msgstr "Installé, mais votre utilisateur ne peut pas l'utiliser."
 
-#: internal/vmui/window.go:566
+#: internal/vmui/window.go:575
 msgid "Installed, but not running."
 msgstr "Installé, mais inactif."
 
-#: internal/vmui/window.go:568
+#: internal/vmui/window.go:577
 msgid "This Linux distribution is not supported."
 msgstr "Cette distribution Linux n'est pas prise en charge."
 
-#: internal/vmui/window.go:570
+#: internal/vmui/window.go:579
 msgid "Could not be checked."
 msgstr "Impossible de vérifier."
 
-#: internal/vmui/window.go:588
+#: internal/vmui/window.go:597
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "Un profil équilibré réserve de la mémoire et du CPU à votre système."
 
-#: internal/vmui/window.go:590
+#: internal/vmui/window.go:599
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
 msgstr ""
 
-#: internal/vmui/window.go:592
+#: internal/vmui/window.go:601
 #: ui/vm.ui:447
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "Télécharge environ 8 Go et installe Windows ; cela prend plus de 30 minutes."
 
-#: internal/vmui/window.go:616
+#: internal/vmui/window.go:625
 msgid "Windows is installing; this takes a while."
 msgstr "Windows s'installe ; cela prend du temps."
 
-#: internal/vmui/window.go:618
-#: internal/vmui/window.go:661
+#: internal/vmui/window.go:627
+#: internal/vmui/window.go:670
 msgid "Stopping…"
 msgstr "Arrêt…"
 
-#: internal/vmui/window.go:620
+#: internal/vmui/window.go:629
 msgid "The installation is paused. Continue to resume."
 msgstr "L'installation est en pause. Continuez pour la reprendre."
 
-#: internal/vmui/window.go:663
+#: internal/vmui/window.go:672
 msgid "Windows is starting; ready in a minute or two."
 msgstr ""
 
-#: internal/vmui/window.go:688
+#: internal/vmui/window.go:697
 msgid "This system is missing something Windows needs"
 msgstr "Ce système n'a pas ce que Windows requiert"
 
-#: internal/vmui/window.go:691
+#: internal/vmui/window.go:700
 msgid "Files from a previous attempt are still here"
 msgstr ""
 
-#: internal/vmui/window.go:693
+#: internal/vmui/window.go:702
 msgid "Not installed yet"
 msgstr "Pas encore installé"
 
-#: internal/vmui/window.go:696
-#: internal/vmui/window.go:704
+#: internal/vmui/window.go:705
+#: internal/vmui/window.go:713
 msgid "Stopping"
 msgstr "Arrêt"
 
-#: internal/vmui/window.go:699
+#: internal/vmui/window.go:708
 msgid "Installing Windows"
 msgstr "Installation de Windows"
 
-#: internal/vmui/window.go:701
+#: internal/vmui/window.go:710
 msgid "Installation paused"
 msgstr ""
 
-#: internal/vmui/window.go:706
+#: internal/vmui/window.go:715
 msgid "Windows is starting"
 msgstr ""
 
-#: internal/vmui/window.go:708
+#: internal/vmui/window.go:717
 msgid "Windows is running"
 msgstr "Windows est en cours d'exécution"
 
-#: internal/vmui/window.go:710
+#: internal/vmui/window.go:719
 msgid "Stopped"
 msgstr "Arrêté"
 

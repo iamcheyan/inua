@@ -439,7 +439,7 @@ func (v *vmWindow) showChecks(s VMSnapshot) {
 		name := gtk.NewLabel(vmCheckName(c.Name))
 		name.AddCssClass("label")
 		name.SetXalign(0)
-		text2 := gtk.NewLabel(vmCheckReason(c.Reason))
+		text2 := gtk.NewLabel(vmCheckReason(c.Name, c.Reason))
 		text2.AddCssClass("sub")
 		text2.SetXalign(0)
 		text2.SetWrap(true)
@@ -555,8 +555,17 @@ func vmCheckName(name string) string {
 	return name
 }
 
-// vmCheckReason words why a check failed.
-func vmCheckReason(r vm.DoctorReason) string {
+// vmCheckReason words why a check failed. The Docker socket is the one case
+// whose reason has to carry a warning: the socket is there and this user may
+// not use it, and the fix — joining the docker group — would give everything
+// running as this user what amounts to root on this host. Inua explains it,
+// shows the command for whoever decides they want it, and points at the two
+// ways that do not widen the account's rights; the guide's later steps add a
+// machine run with QEMU, which needs no Docker at all.
+func vmCheckReason(name string, r vm.DoctorReason) string {
+	if name == "Docker" && r == vm.ReasonDenied {
+		return i18n.T("Your user may not use Docker's socket. Joining the docker group would let anything running as you control this machine as root, so Inua will not do it for you: run `sudo gpasswd -a $USER docker` yourself if you accept that, or use rootless Docker or Podman instead.")
+	}
 	switch r {
 	case vm.ReasonMissing:
 		return i18n.T("Not installed on this system.")
