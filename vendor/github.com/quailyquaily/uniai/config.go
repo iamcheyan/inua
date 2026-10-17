@@ -1,0 +1,125 @@
+package uniai
+
+import (
+	"net/http"
+
+	"github.com/quailyquaily/uniai/evaluate"
+	"github.com/quailyquaily/uniai/internal/httputil"
+	"github.com/quailyquaily/uniai/providers/anthropic"
+	"github.com/quailyquaily/uniai/subscription"
+	"github.com/quailyquaily/uniai/subscription/claude/claudecode"
+)
+
+// Config provides shared configuration for uniai clients.
+// Fields are optional and used by specific providers/features.
+type Config struct {
+	Provider string
+	Debug    bool
+
+	// ChatHeaders are applied to chat provider HTTP requests only.
+	ChatHeaders map[string]string
+
+	// ModelsHeaders and ModelsHTTPClient apply only to ListModels requests.
+	ModelsHeaders    map[string]string
+	ModelsHTTPClient *http.Client
+
+	// Evaluate defaults are independent of the Chat provider and model defaults.
+	EvaluateProvider         string
+	EvaluateModel            string
+	EvaluateEmulationMode    evaluate.EmulationMode
+	EvaluateEmulationOptions *evaluate.EmulationOptions
+	// EvaluateHTTPClient affects native Evaluate requests only.
+	EvaluateHTTPClient *http.Client
+	TypeSafeAPIKey     string
+	TypeSafeAPIBase    string
+
+	// Pricing overrides the default cost estimation rules. When nil, uniai uses
+	// the embedded default pricing catalog. Use an empty catalog to disable
+	// Usage.Cost derivation.
+	Pricing *PricingCatalog
+
+	// OpenAI / OpenAI-compatible
+	OpenAIAPIKey  string
+	OpenAIAPIBase string
+	OpenAIModel   string
+
+	// Subscription credential sources are implemented and owned by the caller.
+	// SubscriptionHTTPClient is optional and only affects subscription-backed
+	// inference requests; their upstream base URLs remain fixed.
+	CodexSubscription      subscription.CredentialSource
+	XAISubscription        subscription.CredentialSource
+	ClaudeSubscription     subscription.CredentialSource
+	SubscriptionHTTPClient *http.Client
+
+	// ClaudeCode controls the HTTP compatibility profile for claude_oauth only.
+	ClaudeCode claudecode.Profile
+
+	// Azure OpenAI
+	AzureOpenAIAPIKey     string
+	AzureOpenAIEndpoint   string
+	AzureOpenAIModel      string
+	AzureOpenAIAPIVersion string
+
+	// Anthropic
+	AnthropicAPIKey  string
+	AnthropicAPIBase string
+	AnthropicModel   string
+
+	// AWS Bedrock
+	AwsKey             string
+	AwsSecret          string
+	AwsSessionToken    string
+	AwsRegion          string
+	AwsBedrockModelArn string
+
+	// Cloudflare Workers AI
+	CloudflareAccountID string
+	CloudflareAPIToken  string
+	CloudflareAPIBase   string
+
+	// Embeddings / Images / Rerank / Classify
+	OpenAIEmbeddingModel      string
+	AzureOpenAIEmbeddingModel string
+	AwsBedrockEmbeddingModel  string
+
+	JinaAPIKey    string
+	JinaAPIBase   string
+	GeminiAPIKey  string
+	GeminiAPIBase string
+	GeminiModel   string
+}
+
+const (
+	DefaultOpenAIAPIBase     = "https://api.openai.com/v1"
+	DefaultAnthropicAPIBase  = anthropic.DefaultAPIBase
+	DefaultJinaAPIBase       = "https://api.jina.ai"
+	DefaultGeminiAPIBase     = "https://generativelanguage.googleapis.com"
+	DefaultCloudflareAPIBase = "https://api.cloudflare.com/client/v4"
+)
+
+func (cfg Config) withDefaults() Config {
+	cfg.ChatHeaders = httputil.CloneHeaders(cfg.ChatHeaders)
+	cfg.ModelsHeaders = httputil.CloneHeaders(cfg.ModelsHeaders)
+	cfg.EvaluateEmulationOptions = cloneEvaluateEmulationOptions(cfg.EvaluateEmulationOptions)
+	if cfg.Pricing == nil {
+		cfg.Pricing = DefaultPricingCatalog()
+	} else {
+		cfg.Pricing = cfg.Pricing.Clone()
+	}
+	if cfg.OpenAIAPIBase == "" {
+		cfg.OpenAIAPIBase = DefaultOpenAIAPIBase
+	}
+	if cfg.AnthropicAPIBase == "" {
+		cfg.AnthropicAPIBase = DefaultAnthropicAPIBase
+	}
+	if cfg.JinaAPIBase == "" {
+		cfg.JinaAPIBase = DefaultJinaAPIBase
+	}
+	if cfg.GeminiAPIBase == "" {
+		cfg.GeminiAPIBase = DefaultGeminiAPIBase
+	}
+	if cfg.CloudflareAPIBase == "" {
+		cfg.CloudflareAPIBase = DefaultCloudflareAPIBase
+	}
+	return cfg
+}

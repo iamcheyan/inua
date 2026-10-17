@@ -1,5 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <rect width="256" height="256" rx="56" fill="#4A6FA5"/>
   <rect x="0.5" y="0.5" width="255" height="255" rx="55.5" fill="none" stroke="#ffffff" stroke-opacity="0.12"/>
-  <g transform="translate(56 56) scale(0.5625)" fill="#ffffff"><path d="M240,136v32a16,16,0,0,1-16,16H136a16,16,0,0,1-16-16V136a16,16,0,0,1,16-16h88A16,16,0,0,1,240,136Zm-16,0H136v32h88Zm16,56a8,8,0,0,1-8,8H24a8,8,0,0,1,0-16H232A8,8,0,0,1,240,192ZM208,88v32a16,16,0,0,1-16,16H24A16,16,0,0,1,8,120V88A16,16,0,0,1,24,72h40V48a8,8,0,0,1,8-8h24a8,8,0,0,1,0,16H80V72h112A16,16,0,0,1,208,88Zm-16,0H24v32H192Z"/></g>
+  <g fill="#ffffff">
+    <path d="M56 66.5l66-9v65H56z"/>
+    <path d="M134 56l66 9v57h-66z"/>
+    <path d="M56 134.5h66v65l-66-9z"/>
+    <path d="M134 134.5h66v57l-66 9z"/>
+  </g>
 </svg>

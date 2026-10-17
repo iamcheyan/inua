@@ -1,0 +1,112 @@
+package agent
+
+import "fmt"
+
+const (
+	defaultContextCompactionTriggerRatio = 0.80
+	contextCompactionTargetRatio         = 0.60
+)
+
+type ContextCompactionConfig struct {
+	Enabled      *bool
+	TriggerRatio float64
+}
+
+func NewContextCompactionConfig(enabled bool, triggerRatio float64) ContextCompactionConfig {
+	return ContextCompactionConfig{
+		Enabled:      &enabled,
+		TriggerRatio: triggerRatio,
+	}
+}
+
+func (config ContextCompactionConfig) Validate() error {
+	usesDefaultTriggerRatio := config.TriggerRatio == 0 && config.Enabled == nil
+	if !usesDefaultTriggerRatio && (config.TriggerRatio <= 0 || config.TriggerRatio >= 1) {
+		return fmt.Errorf("context compaction trigger ratio must be greater than 0 and less than 1")
+	}
+	return nil
+}
+
+type resolvedContextCompactionConfig struct {
+	Enabled      bool
+	TriggerRatio float64
+}
+
+func resolveContextCompactionConfig(config ContextCompactionConfig, disabledForRun bool) resolvedContextCompactionConfig {
+	enabled := true
+	if config.Enabled != nil {
+		enabled = *config.Enabled
+	}
+	ratio := config.TriggerRatio
+	if ratio <= 0 || ratio >= 1 {
+		ratio = defaultContextCompactionTriggerRatio
+	}
+	return resolvedContextCompactionConfig{
+		Enabled:      enabled && !disabledForRun,
+		TriggerRatio: ratio,
+	}
+}
+
+func contextInputLimits(contextWindowTokens int64, config resolvedContextCompactionConfig, requestMaxTokens int) (inputLimit int, trigger int, outputReserve int) {
+	if contextWindowTokens <= 0 || contextWindowTokens > int64(^uint(0)>>1) {
+		return 0, 0, 0
+	}
+	window := int(contextWindowTokens)
+	outputReserve = requestMaxTokens
+	if outputReserve <= 0 {
+		outputReserve = defaultContextOutputReserve(window)
+	}
+	if outputReserve >= window {
+		return 0, 0, outputReserve
+	}
+	inputLimit = window - outputReserve
+	trigger = int(float64(inputLimit) * config.TriggerRatio)
+	if trigger < 1 {
+		trigger = 1
+	}
+	return inputLimit, trigger, outputReserve
+}
+
+// ContextCompactionTriggerTokens is the input size, in tokens, at which a run compacts its context
+// for a model with this context window: the configured ratio of the window less the default output
+// reserve. A run that sets its own max output tokens reserves that instead, so its trigger differs.
+// It returns 0 when compaction is off or the window is unknown.
+func ContextCompactionTriggerTokens(contextWindowTokens int64, config ContextCompactionConfig) int64 {
+	resolved := resolveContextCompactionConfig(config, false)
+	if !resolved.Enabled {
+		return 0
+	}
+	inputLimit, trigger, _ := contextInputLimits(contextWindowTokens, resolved, 0)
+	if inputLimit <= 0 {
+		return 0
+	}
+	return int64(trigger)
+}
+
+func defaultContextOutputReserve(contextWindowTokens int) int {
+	if contextWindowTokens <= 0 {
+		return 0
+	}
+	reserve := contextWindowTokens / 10
+	if reserve < 4096 {
+		reserve = 4096
+	}
+	if reserve > 32768 {
+		reserve = 32768
+	}
+	half := contextWindowTokens / 2
+	if reserve > half {
+		reserve = half
+	}
+	return reserve
+}
+
+func checkpointMaxOutputTokens(outputReserve int) int {
+	if outputReserve <= 0 {
+		return 0
+	}
+	if outputReserve > 4096 {
+		return 4096
+	}
+	return outputReserve
+}

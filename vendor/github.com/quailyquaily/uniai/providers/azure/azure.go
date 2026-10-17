@@ -1,0 +1,152 @@
+package azure
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/lyricat/goutils/structs"
+	openai "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/azure"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/quailyquaily/uniai/chat"
+	"github.com/quailyquaily/uniai/internal/diag"
+	"github.com/quailyquaily/uniai/internal/httputil"
+	"github.com/quailyquaily/uniai/internal/oaicompat"
+)
+
+type Config struct {
+	APIKey     string
+	Endpoint   string
+	Deployment string
+	APIVersion string
+	Headers    map[string]string
+	Debug      bool
+}
+
+type Provider struct {
+	client     openai.Client
+	deployment string
+	debug      bool
+}
+
+const azureAPIVersion = "2024-08-01-preview"
+
+func New(cfg Config) (*Provider, error) {
+	if cfg.APIKey == "" || cfg.Endpoint == "" {
+		return nil, fmt.Errorf("azure openai api key and endpoint are required")
+	}
+	if cfg.Deployment == "" {
+		return nil, fmt.Errorf("azure openai deployment is required")
+	}
+	apiVersion := cfg.APIVersion
+	if apiVersion == "" {
+		apiVersion = azureAPIVersion
+	}
+	opts := []option.RequestOption{
+		azure.WithEndpoint(cfg.Endpoint, apiVersion),
+		azure.WithAPIKey(cfg.APIKey),
+	}
+	for key, value := range httputil.CloneHeaders(cfg.Headers) {
+		opts = append(opts, option.WithHeader(key, value))
+	}
+	client := openai.NewClient(opts...)
+	return &Provider{
+		client:     client,
+		deployment: cfg.Deployment,
+		debug:      cfg.Debug,
+	}, nil
+}
+
+func (p *Provider) Chat(ctx context.Context, req *chat.Request) (*chat.Result, error) {
+	debugFn := req.Options.DebugFn
+	if err := chat.ValidateNoScopedCacheControl(req, "azure"); err != nil {
+		return nil, err
+	}
+	messages, err := oaicompat.ToMessages(req.Messages, p.deployment)
+	if err != nil {
+		return nil, fmt.Errorf("azure provider model %q: %w", p.deployment, err)
+	}
+
+	params := openai.ChatCompletionNewParams{
+		Model:    openai.ChatModel(p.deployment),
+		Messages: messages,
+	}
+
+	if req.Options.Temperature != nil {
+		params.Temperature = openai.Float(*req.Options.Temperature)
+	}
+	if req.Options.TopP != nil {
+		params.TopP = openai.Float(*req.Options.TopP)
+	}
+	if req.Options.MaxTokens != nil {
+		params.MaxTokens = openai.Int(int64(*req.Options.MaxTokens))
+	}
+	if len(req.Options.Stop) > 0 {
+		params.Stop = openai.ChatCompletionNewParamsStopUnion{OfStringArray: append([]string{}, req.Options.Stop...)}
+	}
+	if req.Options.PresencePenalty != nil {
+		params.PresencePenalty = openai.Float(*req.Options.PresencePenalty)
+	}
+	if req.Options.FrequencyPenalty != nil {
+		params.FrequencyPenalty = openai.Float(*req.Options.FrequencyPenalty)
+	}
+	if req.Options.User != nil {
+		params.User = openai.String(*req.Options.User)
+	}
+
+	if len(req.Tools) > 0 {
+		tools, err := oaicompat.ToToolParams(req.Tools)
+		if err != nil {
+			return nil, err
+		}
+		if len(tools) > 0 {
+			params.Tools = tools
+		}
+	}
+
+	if req.ToolChoice != nil {
+		params.ToolChoice = oaicompat.ToToolChoice(req.ToolChoice)
+	}
+
+	if err := applyAzureOptions(&params, req.Options.Azure, req.Options.OpenAI); err != nil {
+		return nil, err
+	}
+	diag.LogJSON(p.debug, debugFn, "azure.chat.request", params)
+
+	if req.Options.OnStream != nil {
+		result, err := oaicompat.ChatStream(ctx, &p.client, params, req.Options.ReasoningDetails, req.Options.OnStream)
+		if err != nil {
+			diag.LogError(p.debug, debugFn, "azure.chat.response", err)
+			return nil, err
+		}
+		return result, nil
+	}
+
+	resp, err := p.client.Chat.Completions.New(ctx, params)
+	if err != nil {
+		diag.LogError(p.debug, debugFn, "azure.chat.response", err)
+		return nil, err
+	}
+	if raw := resp.RawJSON(); raw != "" {
+		diag.LogText(p.debug, debugFn, "azure.chat.response", raw)
+	} else {
+		diag.LogJSON(p.debug, debugFn, "azure.chat.response", resp)
+	}
+	result := toResult(resp)
+	if req.Options.ReasoningDetails {
+		oaicompat.ApplyReasoningDetails(result)
+	}
+	return result, nil
+}
+
+func applyAzureOptions(params *openai.ChatCompletionNewParams, azureOpts, openaiOpts structs.JSONMap) error {
+	opts := azureOpts
+	if len(opts) == 0 && len(openaiOpts) > 0 {
+		opts = openaiOpts
+	}
+	return oaicompat.ApplyOptions(params, opts)
+}
+
+func toResult(resp *openai.ChatCompletion) *chat.Result {
+	return oaicompat.ChatCompletionToResult(resp)
+}

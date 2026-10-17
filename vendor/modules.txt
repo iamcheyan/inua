@@ -1,0 +1,799 @@
+# codeberg.org/puregotk/purego v0.0.0-20260224095105-2513c838cb80
+## explicit; go 1.18
+codeberg.org/puregotk/purego
+codeberg.org/puregotk/purego/internal/cgo
+codeberg.org/puregotk/purego/internal/fakecgo
+codeberg.org/puregotk/purego/internal/strings
+codeberg.org/puregotk/purego/internal/xreflect
+# codeberg.org/puregotk/puregotk v0.0.0-20261003054014-d92056b0aa41
+## explicit; go 1.24.0
+codeberg.org/puregotk/puregotk/internal/core
+codeberg.org/puregotk/puregotk/pkg/core
+codeberg.org/puregotk/puregotk/v4/cairo
+codeberg.org/puregotk/puregotk/v4/gdk
+codeberg.org/puregotk/puregotk/v4/gdkpixbuf
+codeberg.org/puregotk/puregotk/v4/gio
+codeberg.org/puregotk/puregotk/v4/glib
+codeberg.org/puregotk/puregotk/v4/gmodule
+codeberg.org/puregotk/puregotk/v4/gobject
+codeberg.org/puregotk/puregotk/v4/gobject/types
+codeberg.org/puregotk/puregotk/v4/graphene
+codeberg.org/puregotk/puregotk/v4/gsk
+codeberg.org/puregotk/puregotk/v4/gtk
+codeberg.org/puregotk/puregotk/v4/pango
+codeberg.org/puregotk/puregotk/v4/pangocairo
+# github.com/Azure/azure-sdk-for-go/sdk/azcore v1.18.1
+## explicit; go 1.23.0
+github.com/Azure/azure-sdk-for-go/sdk/azcore
+github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/exported
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/log
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/pollers
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/pollers/async
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/pollers/body
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/pollers/fake
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/pollers/loc
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/pollers/op
+github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/shared
+github.com/Azure/azure-sdk-for-go/sdk/azcore/log
+github.com/Azure/azure-sdk-for-go/sdk/azcore/policy
+github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime
+github.com/Azure/azure-sdk-for-go/sdk/azcore/streaming
+github.com/Azure/azure-sdk-for-go/sdk/azcore/tracing
+# github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.2
+## explicit; go 1.23.0
+github.com/Azure/azure-sdk-for-go/sdk/internal/diag
+github.com/Azure/azure-sdk-for-go/sdk/internal/errorinfo
+github.com/Azure/azure-sdk-for-go/sdk/internal/exported
+github.com/Azure/azure-sdk-for-go/sdk/internal/log
+github.com/Azure/azure-sdk-for-go/sdk/internal/poller
+github.com/Azure/azure-sdk-for-go/sdk/internal/temporal
+github.com/Azure/azure-sdk-for-go/sdk/internal/uuid
+# github.com/BurntSushi/toml v1.6.0
+## explicit; go 1.18
+github.com/BurntSushi/toml
+github.com/BurntSushi/toml/internal
+# github.com/Calcium-Ion/moejs v0.1.0-alpha.5.0.20261006033145-81508091e814
+## explicit; go 1.25
+github.com/Calcium-Ion/moejs
+github.com/Calcium-Ion/moejs/bytecode
+github.com/Calcium-Ion/moejs/compiler
+github.com/Calcium-Ion/moejs/engine
+github.com/Calcium-Ion/moejs/internal/regexpsyntax
+github.com/Calcium-Ion/moejs/syntax
+# github.com/aws/aws-sdk-go-v2 v1.42.1
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/aws
+github.com/aws/aws-sdk-go-v2/aws/defaults
+github.com/aws/aws-sdk-go-v2/aws/middleware
+github.com/aws/aws-sdk-go-v2/aws/protocol/query
+github.com/aws/aws-sdk-go-v2/aws/protocol/restjson
+github.com/aws/aws-sdk-go-v2/aws/protocol/xml
+github.com/aws/aws-sdk-go-v2/aws/ratelimit
+github.com/aws/aws-sdk-go-v2/aws/retry
+github.com/aws/aws-sdk-go-v2/aws/signer/internal/v4
+github.com/aws/aws-sdk-go-v2/aws/signer/v4
+github.com/aws/aws-sdk-go-v2/aws/transport/http
+github.com/aws/aws-sdk-go-v2/internal/auth
+github.com/aws/aws-sdk-go-v2/internal/auth/smithy
+github.com/aws/aws-sdk-go-v2/internal/context
+github.com/aws/aws-sdk-go-v2/internal/endpoints
+github.com/aws/aws-sdk-go-v2/internal/endpoints/awsrulesfn
+github.com/aws/aws-sdk-go-v2/internal/rand
+github.com/aws/aws-sdk-go-v2/internal/sdk
+github.com/aws/aws-sdk-go-v2/internal/sdkio
+github.com/aws/aws-sdk-go-v2/internal/shareddefaults
+github.com/aws/aws-sdk-go-v2/internal/strings
+github.com/aws/aws-sdk-go-v2/internal/sync/singleflight
+github.com/aws/aws-sdk-go-v2/internal/timeconv
+# github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream
+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream/eventstreamapi
+# github.com/aws/aws-sdk-go-v2/config v1.32.16
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/config
+github.com/aws/aws-sdk-go-v2/config/internal/ini
+# github.com/aws/aws-sdk-go-v2/credentials v1.19.28
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/credentials
+github.com/aws/aws-sdk-go-v2/credentials/ec2rolecreds
+github.com/aws/aws-sdk-go-v2/credentials/endpointcreds
+github.com/aws/aws-sdk-go-v2/credentials/endpointcreds/internal/client
+github.com/aws/aws-sdk-go-v2/credentials/logincreds
+github.com/aws/aws-sdk-go-v2/credentials/processcreds
+github.com/aws/aws-sdk-go-v2/credentials/ssocreds
+github.com/aws/aws-sdk-go-v2/credentials/stscreds
+# github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/feature/ec2/imds
+github.com/aws/aws-sdk-go-v2/feature/ec2/imds/internal/config
+# github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/internal/configsources
+# github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.30
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
+# github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.31
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/internal/v4a
+github.com/aws/aws-sdk-go-v2/internal/v4a/internal/crypto
+github.com/aws/aws-sdk-go-v2/internal/v4a/internal/v4
+# github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.55.0
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/bedrockruntime
+github.com/aws/aws-sdk-go-v2/service/bedrockruntime/document
+github.com/aws/aws-sdk-go-v2/service/bedrockruntime/internal/document
+github.com/aws/aws-sdk-go-v2/service/bedrockruntime/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types
+# github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.13
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
+# github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.30
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
+# github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.43.0
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/secretsmanager
+github.com/aws/aws-sdk-go-v2/service/secretsmanager/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/secretsmanager/types
+# github.com/aws/aws-sdk-go-v2/service/signin v1.4.0
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/signin
+github.com/aws/aws-sdk-go-v2/service/signin/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/signin/types
+# github.com/aws/aws-sdk-go-v2/service/sso v1.32.0
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/sso
+github.com/aws/aws-sdk-go-v2/service/sso/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/sso/types
+# github.com/aws/aws-sdk-go-v2/service/ssooidc v1.37.0
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/ssooidc
+github.com/aws/aws-sdk-go-v2/service/ssooidc/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/ssooidc/types
+# github.com/aws/aws-sdk-go-v2/service/sts v1.44.0
+## explicit; go 1.24
+github.com/aws/aws-sdk-go-v2/service/sts
+github.com/aws/aws-sdk-go-v2/service/sts/internal/endpoints
+github.com/aws/aws-sdk-go-v2/service/sts/types
+# github.com/aws/smithy-go v1.27.3
+## explicit; go 1.24
+github.com/aws/smithy-go
+github.com/aws/smithy-go/auth
+github.com/aws/smithy-go/auth/bearer
+github.com/aws/smithy-go/context
+github.com/aws/smithy-go/document
+github.com/aws/smithy-go/document/internal/serde
+github.com/aws/smithy-go/document/json
+github.com/aws/smithy-go/encoding
+github.com/aws/smithy-go/encoding/httpbinding
+github.com/aws/smithy-go/encoding/json
+github.com/aws/smithy-go/encoding/xml
+github.com/aws/smithy-go/endpoints
+github.com/aws/smithy-go/endpoints/private/bdd
+github.com/aws/smithy-go/endpoints/private/rulesfn
+github.com/aws/smithy-go/eventstream
+github.com/aws/smithy-go/internal/sync/singleflight
+github.com/aws/smithy-go/io
+github.com/aws/smithy-go/logging
+github.com/aws/smithy-go/metrics
+github.com/aws/smithy-go/middleware
+github.com/aws/smithy-go/private/requestcompression
+github.com/aws/smithy-go/ptr
+github.com/aws/smithy-go/rand
+github.com/aws/smithy-go/sync
+github.com/aws/smithy-go/time
+github.com/aws/smithy-go/tracing
+github.com/aws/smithy-go/traits
+github.com/aws/smithy-go/transport/http
+github.com/aws/smithy-go/transport/http/internal/io
+# github.com/danieljoos/wincred v1.2.3
+## explicit; go 1.18
+github.com/danieljoos/wincred
+# github.com/dsnet/compress v0.0.1
+## explicit; go 1.9
+github.com/dsnet/compress
+github.com/dsnet/compress/bzip2
+github.com/dsnet/compress/bzip2/internal/sais
+github.com/dsnet/compress/internal
+github.com/dsnet/compress/internal/errors
+github.com/dsnet/compress/internal/prefix
+# github.com/ebitengine/purego v0.9.1
+## explicit; go 1.18
+github.com/ebitengine/purego
+github.com/ebitengine/purego/internal/cgo
+github.com/ebitengine/purego/internal/fakecgo
+github.com/ebitengine/purego/internal/strings
+# github.com/fsnotify/fsnotify v1.9.0
+## explicit; go 1.17
+github.com/fsnotify/fsnotify
+github.com/fsnotify/fsnotify/internal
+# github.com/godbus/dbus/v5 v5.2.2
+## explicit; go 1.20
+github.com/godbus/dbus/v5
+github.com/godbus/dbus/v5/introspect
+github.com/godbus/dbus/v5/prop
+# github.com/gogo/protobuf v1.3.2
+## explicit; go 1.15
+github.com/gogo/protobuf/gogoproto
+github.com/gogo/protobuf/proto
+github.com/gogo/protobuf/protoc-gen-gogo/descriptor
+# github.com/golang/snappy v0.0.4
+## explicit
+github.com/golang/snappy
+# github.com/google/jsonschema-go v0.4.2
+## explicit; go 1.23.0
+github.com/google/jsonschema-go/jsonschema
+# github.com/google/uuid v1.6.0
+## explicit
+github.com/google/uuid
+# github.com/gorilla/websocket v1.5.3
+## explicit; go 1.12
+github.com/gorilla/websocket
+# github.com/hashicorp/hcl v1.0.0
+## explicit
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/printer
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
+# github.com/inconshreveable/mousetrap v1.1.0
+## explicit; go 1.18
+github.com/inconshreveable/mousetrap
+# github.com/larksuite/oapi-sdk-go/v3 v3.8.1
+## explicit; go 1.13
+github.com/larksuite/oapi-sdk-go/v3
+github.com/larksuite/oapi-sdk-go/v3/cache
+github.com/larksuite/oapi-sdk-go/v3/card
+github.com/larksuite/oapi-sdk-go/v3/core
+github.com/larksuite/oapi-sdk-go/v3/event
+github.com/larksuite/oapi-sdk-go/v3/event/dispatcher
+github.com/larksuite/oapi-sdk-go/v3/event/dispatcher/callback
+github.com/larksuite/oapi-sdk-go/v3/service/acs
+github.com/larksuite/oapi-sdk-go/v3/service/acs/v1
+github.com/larksuite/oapi-sdk-go/v3/service/admin
+github.com/larksuite/oapi-sdk-go/v3/service/admin/v1
+github.com/larksuite/oapi-sdk-go/v3/service/aily
+github.com/larksuite/oapi-sdk-go/v3/service/aily/v1
+github.com/larksuite/oapi-sdk-go/v3/service/apaas
+github.com/larksuite/oapi-sdk-go/v3/service/apaas/v1
+github.com/larksuite/oapi-sdk-go/v3/service/application
+github.com/larksuite/oapi-sdk-go/v3/service/application/v6
+github.com/larksuite/oapi-sdk-go/v3/service/approval
+github.com/larksuite/oapi-sdk-go/v3/service/approval/v4
+github.com/larksuite/oapi-sdk-go/v3/service/attendance
+github.com/larksuite/oapi-sdk-go/v3/service/attendance/v1
+github.com/larksuite/oapi-sdk-go/v3/service/auth
+github.com/larksuite/oapi-sdk-go/v3/service/auth/v3
+github.com/larksuite/oapi-sdk-go/v3/service/authen
+github.com/larksuite/oapi-sdk-go/v3/service/authen/v1
+github.com/larksuite/oapi-sdk-go/v3/service/baike
+github.com/larksuite/oapi-sdk-go/v3/service/baike/v1
+github.com/larksuite/oapi-sdk-go/v3/service/base
+github.com/larksuite/oapi-sdk-go/v3/service/base/v2
+github.com/larksuite/oapi-sdk-go/v3/service/bitable
+github.com/larksuite/oapi-sdk-go/v3/service/bitable/v1
+github.com/larksuite/oapi-sdk-go/v3/service/block
+github.com/larksuite/oapi-sdk-go/v3/service/block/v2
+github.com/larksuite/oapi-sdk-go/v3/service/board
+github.com/larksuite/oapi-sdk-go/v3/service/board/v1
+github.com/larksuite/oapi-sdk-go/v3/service/calendar
+github.com/larksuite/oapi-sdk-go/v3/service/calendar/v4
+github.com/larksuite/oapi-sdk-go/v3/service/cardkit
+github.com/larksuite/oapi-sdk-go/v3/service/cardkit/v1
+github.com/larksuite/oapi-sdk-go/v3/service/compensation
+github.com/larksuite/oapi-sdk-go/v3/service/compensation/v1
+github.com/larksuite/oapi-sdk-go/v3/service/contact
+github.com/larksuite/oapi-sdk-go/v3/service/contact/v3
+github.com/larksuite/oapi-sdk-go/v3/service/corehr
+github.com/larksuite/oapi-sdk-go/v3/service/corehr/v1
+github.com/larksuite/oapi-sdk-go/v3/service/corehr/v2
+github.com/larksuite/oapi-sdk-go/v3/service/directory
+github.com/larksuite/oapi-sdk-go/v3/service/directory/v1
+github.com/larksuite/oapi-sdk-go/v3/service/docs
+github.com/larksuite/oapi-sdk-go/v3/service/docs/v1
+github.com/larksuite/oapi-sdk-go/v3/service/document_ai
+github.com/larksuite/oapi-sdk-go/v3/service/document_ai/v1
+github.com/larksuite/oapi-sdk-go/v3/service/docx
+github.com/larksuite/oapi-sdk-go/v3/service/docx/v1
+github.com/larksuite/oapi-sdk-go/v3/service/drive
+github.com/larksuite/oapi-sdk-go/v3/service/drive/v1
+github.com/larksuite/oapi-sdk-go/v3/service/drive/v2
+github.com/larksuite/oapi-sdk-go/v3/service/ehr
+github.com/larksuite/oapi-sdk-go/v3/service/ehr/v1
+github.com/larksuite/oapi-sdk-go/v3/service/event
+github.com/larksuite/oapi-sdk-go/v3/service/event/v1
+github.com/larksuite/oapi-sdk-go/v3/service/ext
+github.com/larksuite/oapi-sdk-go/v3/service/helpdesk
+github.com/larksuite/oapi-sdk-go/v3/service/helpdesk/v1
+github.com/larksuite/oapi-sdk-go/v3/service/hire
+github.com/larksuite/oapi-sdk-go/v3/service/hire/v1
+github.com/larksuite/oapi-sdk-go/v3/service/hire/v2
+github.com/larksuite/oapi-sdk-go/v3/service/human_authentication
+github.com/larksuite/oapi-sdk-go/v3/service/human_authentication/v1
+github.com/larksuite/oapi-sdk-go/v3/service/im
+github.com/larksuite/oapi-sdk-go/v3/service/im/v1
+github.com/larksuite/oapi-sdk-go/v3/service/im/v2
+github.com/larksuite/oapi-sdk-go/v3/service/lingo
+github.com/larksuite/oapi-sdk-go/v3/service/lingo/v1
+github.com/larksuite/oapi-sdk-go/v3/service/mail
+github.com/larksuite/oapi-sdk-go/v3/service/mail/v1
+github.com/larksuite/oapi-sdk-go/v3/service/mdm
+github.com/larksuite/oapi-sdk-go/v3/service/mdm/v1
+github.com/larksuite/oapi-sdk-go/v3/service/mdm/v3
+github.com/larksuite/oapi-sdk-go/v3/service/meeting_room
+github.com/larksuite/oapi-sdk-go/v3/service/meeting_room/v1
+github.com/larksuite/oapi-sdk-go/v3/service/minutes
+github.com/larksuite/oapi-sdk-go/v3/service/minutes/v1
+github.com/larksuite/oapi-sdk-go/v3/service/moments
+github.com/larksuite/oapi-sdk-go/v3/service/moments/v1
+github.com/larksuite/oapi-sdk-go/v3/service/okr
+github.com/larksuite/oapi-sdk-go/v3/service/okr/v1
+github.com/larksuite/oapi-sdk-go/v3/service/optical_char_recognition
+github.com/larksuite/oapi-sdk-go/v3/service/optical_char_recognition/v1
+github.com/larksuite/oapi-sdk-go/v3/service/passport
+github.com/larksuite/oapi-sdk-go/v3/service/passport/v1
+github.com/larksuite/oapi-sdk-go/v3/service/payroll
+github.com/larksuite/oapi-sdk-go/v3/service/payroll/v1
+github.com/larksuite/oapi-sdk-go/v3/service/performance
+github.com/larksuite/oapi-sdk-go/v3/service/performance/v2
+github.com/larksuite/oapi-sdk-go/v3/service/personal_settings
+github.com/larksuite/oapi-sdk-go/v3/service/personal_settings/v1
+github.com/larksuite/oapi-sdk-go/v3/service/report
+github.com/larksuite/oapi-sdk-go/v3/service/report/v1
+github.com/larksuite/oapi-sdk-go/v3/service/search
+github.com/larksuite/oapi-sdk-go/v3/service/search/v2
+github.com/larksuite/oapi-sdk-go/v3/service/security_and_compliance
+github.com/larksuite/oapi-sdk-go/v3/service/security_and_compliance/v1
+github.com/larksuite/oapi-sdk-go/v3/service/security_and_compliance/v2
+github.com/larksuite/oapi-sdk-go/v3/service/sheets
+github.com/larksuite/oapi-sdk-go/v3/service/sheets/v3
+github.com/larksuite/oapi-sdk-go/v3/service/speech_to_text
+github.com/larksuite/oapi-sdk-go/v3/service/speech_to_text/v1
+github.com/larksuite/oapi-sdk-go/v3/service/task
+github.com/larksuite/oapi-sdk-go/v3/service/task/v1
+github.com/larksuite/oapi-sdk-go/v3/service/task/v2
+github.com/larksuite/oapi-sdk-go/v3/service/tenant
+github.com/larksuite/oapi-sdk-go/v3/service/tenant/v2
+github.com/larksuite/oapi-sdk-go/v3/service/translation
+github.com/larksuite/oapi-sdk-go/v3/service/translation/v1
+github.com/larksuite/oapi-sdk-go/v3/service/vc
+github.com/larksuite/oapi-sdk-go/v3/service/vc/v1
+github.com/larksuite/oapi-sdk-go/v3/service/verification
+github.com/larksuite/oapi-sdk-go/v3/service/verification/v1
+github.com/larksuite/oapi-sdk-go/v3/service/wiki
+github.com/larksuite/oapi-sdk-go/v3/service/wiki/v1
+github.com/larksuite/oapi-sdk-go/v3/service/wiki/v2
+github.com/larksuite/oapi-sdk-go/v3/service/workplace
+github.com/larksuite/oapi-sdk-go/v3/service/workplace/v1
+github.com/larksuite/oapi-sdk-go/v3/ws
+# github.com/lyricat/goutils v1.2.3
+## explicit; go 1.22.2
+github.com/lyricat/goutils/structs
+# github.com/magiconair/properties v1.8.7
+## explicit; go 1.19
+github.com/magiconair/properties
+# github.com/makiuchi-d/gozxing v0.1.1
+## explicit; go 1.17
+github.com/makiuchi-d/gozxing
+github.com/makiuchi-d/gozxing/common
+github.com/makiuchi-d/gozxing/common/reedsolomon
+github.com/makiuchi-d/gozxing/common/util
+github.com/makiuchi-d/gozxing/multi
+github.com/makiuchi-d/gozxing/multi/qrcode
+github.com/makiuchi-d/gozxing/multi/qrcode/detector
+github.com/makiuchi-d/gozxing/qrcode
+github.com/makiuchi-d/gozxing/qrcode/decoder
+github.com/makiuchi-d/gozxing/qrcode/detector
+github.com/makiuchi-d/gozxing/qrcode/encoder
+# github.com/mholt/archiver v3.1.1+incompatible
+## explicit
+github.com/mholt/archiver
+# github.com/mitchellh/mapstructure v1.5.0
+## explicit; go 1.14
+github.com/mitchellh/mapstructure
+# github.com/modelcontextprotocol/go-sdk v1.4.0
+## explicit; go 1.24.0
+github.com/modelcontextprotocol/go-sdk/auth
+github.com/modelcontextprotocol/go-sdk/internal/json
+github.com/modelcontextprotocol/go-sdk/internal/jsonrpc2
+github.com/modelcontextprotocol/go-sdk/internal/mcpgodebug
+github.com/modelcontextprotocol/go-sdk/internal/util
+github.com/modelcontextprotocol/go-sdk/internal/xcontext
+github.com/modelcontextprotocol/go-sdk/jsonrpc
+github.com/modelcontextprotocol/go-sdk/mcp
+github.com/modelcontextprotocol/go-sdk/oauthex
+# github.com/nickalie/go-binwrapper v0.0.0-20190114141239-525121d43c84
+## explicit
+github.com/nickalie/go-binwrapper
+# github.com/nickalie/go-webpbin v0.0.0-20220110095747-f10016bf2dc1
+## explicit; go 1.14
+github.com/nickalie/go-webpbin
+# github.com/nwaples/rardecode v1.1.0
+## explicit
+github.com/nwaples/rardecode
+# github.com/openai/openai-go/v3 v3.42.0
+## explicit; go 1.22
+github.com/openai/openai-go/v3
+github.com/openai/openai-go/v3/auth
+github.com/openai/openai-go/v3/azure
+github.com/openai/openai-go/v3/conversations
+github.com/openai/openai-go/v3/internal
+github.com/openai/openai-go/v3/internal/apierror
+github.com/openai/openai-go/v3/internal/apiform
+github.com/openai/openai-go/v3/internal/apijson
+github.com/openai/openai-go/v3/internal/apiquery
+github.com/openai/openai-go/v3/internal/encoding/json
+github.com/openai/openai-go/v3/internal/encoding/json/sentinel
+github.com/openai/openai-go/v3/internal/encoding/json/shims
+github.com/openai/openai-go/v3/internal/paramutil
+github.com/openai/openai-go/v3/internal/requestconfig
+github.com/openai/openai-go/v3/option
+github.com/openai/openai-go/v3/packages/pagination
+github.com/openai/openai-go/v3/packages/param
+github.com/openai/openai-go/v3/packages/respjson
+github.com/openai/openai-go/v3/packages/ssestream
+github.com/openai/openai-go/v3/realtime
+github.com/openai/openai-go/v3/responses
+github.com/openai/openai-go/v3/shared
+github.com/openai/openai-go/v3/shared/constant
+github.com/openai/openai-go/v3/webhooks
+# github.com/pelletier/go-toml/v2 v2.2.2
+## explicit; go 1.16
+github.com/pelletier/go-toml/v2
+github.com/pelletier/go-toml/v2/internal/characters
+github.com/pelletier/go-toml/v2/internal/danger
+github.com/pelletier/go-toml/v2/internal/tracker
+github.com/pelletier/go-toml/v2/unstable
+# github.com/pierrec/lz4 v2.6.1+incompatible
+## explicit
+github.com/pierrec/lz4
+github.com/pierrec/lz4/internal/xxh32
+# github.com/quailyquaily/mistermorph v0.3.58
+## explicit; go 1.25.0
+github.com/quailyquaily/mistermorph/agent
+github.com/quailyquaily/mistermorph/contacts
+github.com/quailyquaily/mistermorph/guard
+github.com/quailyquaily/mistermorph/integration
+github.com/quailyquaily/mistermorph/internal/agentlink
+github.com/quailyquaily/mistermorph/internal/agentpair
+github.com/quailyquaily/mistermorph/internal/agentsettings
+github.com/quailyquaily/mistermorph/internal/awareness
+github.com/quailyquaily/mistermorph/internal/blueskyapi
+github.com/quailyquaily/mistermorph/internal/bus
+github.com/quailyquaily/mistermorph/internal/bus/adapters
+github.com/quailyquaily/mistermorph/internal/bus/adapters/accountdm
+github.com/quailyquaily/mistermorph/internal/bus/adapters/discord
+github.com/quailyquaily/mistermorph/internal/bus/adapters/lark
+github.com/quailyquaily/mistermorph/internal/bus/adapters/line
+github.com/quailyquaily/mistermorph/internal/bus/adapters/mixin
+github.com/quailyquaily/mistermorph/internal/bus/adapters/slack
+github.com/quailyquaily/mistermorph/internal/bus/adapters/telegram
+github.com/quailyquaily/mistermorph/internal/caprefs
+github.com/quailyquaily/mistermorph/internal/channelopts
+github.com/quailyquaily/mistermorph/internal/channelruntime/accountdm
+github.com/quailyquaily/mistermorph/internal/channelruntime/agentlink
+github.com/quailyquaily/mistermorph/internal/channelruntime/bluesky
+github.com/quailyquaily/mistermorph/internal/channelruntime/core
+github.com/quailyquaily/mistermorph/internal/channelruntime/depsutil
+github.com/quailyquaily/mistermorph/internal/channelruntime/discord
+github.com/quailyquaily/mistermorph/internal/channelruntime/imagehistory
+github.com/quailyquaily/mistermorph/internal/channelruntime/imageinput
+github.com/quailyquaily/mistermorph/internal/channelruntime/lark
+github.com/quailyquaily/mistermorph/internal/channelruntime/line
+github.com/quailyquaily/mistermorph/internal/channelruntime/mixin
+github.com/quailyquaily/mistermorph/internal/channelruntime/slack
+github.com/quailyquaily/mistermorph/internal/channelruntime/socialpost
+github.com/quailyquaily/mistermorph/internal/channelruntime/taskruntime
+github.com/quailyquaily/mistermorph/internal/channelruntime/telegram
+github.com/quailyquaily/mistermorph/internal/channelruntime/wechat
+github.com/quailyquaily/mistermorph/internal/channelruntime/whatsapp
+github.com/quailyquaily/mistermorph/internal/channelruntime/xchannel
+github.com/quailyquaily/mistermorph/internal/channels
+github.com/quailyquaily/mistermorph/internal/chatcommands
+github.com/quailyquaily/mistermorph/internal/chathistory
+github.com/quailyquaily/mistermorph/internal/chatinfo
+github.com/quailyquaily/mistermorph/internal/codemode
+github.com/quailyquaily/mistermorph/internal/codexauth
+github.com/quailyquaily/mistermorph/internal/configbootstrap
+github.com/quailyquaily/mistermorph/internal/configdefaults
+github.com/quailyquaily/mistermorph/internal/configrevision
+github.com/quailyquaily/mistermorph/internal/configsettings
+github.com/quailyquaily/mistermorph/internal/configutil
+github.com/quailyquaily/mistermorph/internal/contactsruntime
+github.com/quailyquaily/mistermorph/internal/contextcheckpoint
+github.com/quailyquaily/mistermorph/internal/cron
+github.com/quailyquaily/mistermorph/internal/daemonruntime
+github.com/quailyquaily/mistermorph/internal/discordapi
+github.com/quailyquaily/mistermorph/internal/domainjournal
+github.com/quailyquaily/mistermorph/internal/entryutil/refid
+github.com/quailyquaily/mistermorph/internal/filecache
+github.com/quailyquaily/mistermorph/internal/fsstore
+github.com/quailyquaily/mistermorph/internal/grouptrigger
+github.com/quailyquaily/mistermorph/internal/httpserver
+github.com/quailyquaily/mistermorph/internal/idempotency
+github.com/quailyquaily/mistermorph/internal/imagemime
+github.com/quailyquaily/mistermorph/internal/imagesession
+github.com/quailyquaily/mistermorph/internal/jsonutil
+github.com/quailyquaily/mistermorph/internal/larkapi
+github.com/quailyquaily/mistermorph/internal/livesend
+github.com/quailyquaily/mistermorph/internal/llmbench
+github.com/quailyquaily/mistermorph/internal/llmconfig
+github.com/quailyquaily/mistermorph/internal/llminspect
+github.com/quailyquaily/mistermorph/internal/llmselect
+github.com/quailyquaily/mistermorph/internal/llmstats
+github.com/quailyquaily/mistermorph/internal/llmutil
+github.com/quailyquaily/mistermorph/internal/logutil
+github.com/quailyquaily/mistermorph/internal/markdown
+github.com/quailyquaily/mistermorph/internal/mcphost
+github.com/quailyquaily/mistermorph/internal/mixinapi
+github.com/quailyquaily/mistermorph/internal/onboardingcheck
+github.com/quailyquaily/mistermorph/internal/outputfmt
+github.com/quailyquaily/mistermorph/internal/pagination
+github.com/quailyquaily/mistermorph/internal/pathroots
+github.com/quailyquaily/mistermorph/internal/pathutil
+github.com/quailyquaily/mistermorph/internal/personautil
+github.com/quailyquaily/mistermorph/internal/platformutil
+github.com/quailyquaily/mistermorph/internal/pricingutil
+github.com/quailyquaily/mistermorph/internal/proaccount
+github.com/quailyquaily/mistermorph/internal/promptprofile
+github.com/quailyquaily/mistermorph/internal/prompttmpl
+github.com/quailyquaily/mistermorph/internal/replyrule
+github.com/quailyquaily/mistermorph/internal/runtimeclock
+github.com/quailyquaily/mistermorph/internal/runtimecommands
+github.com/quailyquaily/mistermorph/internal/runtimecontrol
+github.com/quailyquaily/mistermorph/internal/runtimelock
+github.com/quailyquaily/mistermorph/internal/runtimepaths
+github.com/quailyquaily/mistermorph/internal/secref
+github.com/quailyquaily/mistermorph/internal/shellenv
+github.com/quailyquaily/mistermorph/internal/skillinstall
+github.com/quailyquaily/mistermorph/internal/skillsutil
+github.com/quailyquaily/mistermorph/internal/slackclient
+github.com/quailyquaily/mistermorph/internal/statepaths
+github.com/quailyquaily/mistermorph/internal/taskdomain
+github.com/quailyquaily/mistermorph/internal/telegramapi
+github.com/quailyquaily/mistermorph/internal/telegramutil
+github.com/quailyquaily/mistermorph/internal/textsplit
+github.com/quailyquaily/mistermorph/internal/textutil
+github.com/quailyquaily/mistermorph/internal/todo
+github.com/quailyquaily/mistermorph/internal/toolsutil
+github.com/quailyquaily/mistermorph/internal/topiccontext
+github.com/quailyquaily/mistermorph/internal/topicproj
+github.com/quailyquaily/mistermorph/internal/topicstate
+github.com/quailyquaily/mistermorph/internal/updatecheck
+github.com/quailyquaily/mistermorph/internal/wechatapi
+github.com/quailyquaily/mistermorph/internal/whatsappapi
+github.com/quailyquaily/mistermorph/internal/workspace
+github.com/quailyquaily/mistermorph/internal/xaiauth
+github.com/quailyquaily/mistermorph/internal/xapi
+github.com/quailyquaily/mistermorph/internal/xlogin
+github.com/quailyquaily/mistermorph/llm
+github.com/quailyquaily/mistermorph/providers/codex
+github.com/quailyquaily/mistermorph/providers/uniai
+github.com/quailyquaily/mistermorph/secrets
+github.com/quailyquaily/mistermorph/skills
+github.com/quailyquaily/mistermorph/tools
+github.com/quailyquaily/mistermorph/tools/accountdm
+github.com/quailyquaily/mistermorph/tools/builtin
+github.com/quailyquaily/mistermorph/tools/discord
+github.com/quailyquaily/mistermorph/tools/lark
+github.com/quailyquaily/mistermorph/tools/mixin
+github.com/quailyquaily/mistermorph/tools/slack
+github.com/quailyquaily/mistermorph/tools/telegram
+# github.com/quailyquaily/uniai v0.1.69
+## explicit; go 1.24.0
+github.com/quailyquaily/uniai
+github.com/quailyquaily/uniai/audio
+github.com/quailyquaily/uniai/chat
+github.com/quailyquaily/uniai/classify
+github.com/quailyquaily/uniai/embedding
+github.com/quailyquaily/uniai/evaluate
+github.com/quailyquaily/uniai/image
+github.com/quailyquaily/uniai/internal/anthropicstream
+github.com/quailyquaily/uniai/internal/diag
+github.com/quailyquaily/uniai/internal/httputil
+github.com/quailyquaily/uniai/internal/jsonoutput
+github.com/quailyquaily/uniai/internal/modelcompat
+github.com/quailyquaily/uniai/internal/oaicompat
+github.com/quailyquaily/uniai/internal/providers/cloudflare
+github.com/quailyquaily/uniai/internal/providers/gemini
+github.com/quailyquaily/uniai/internal/providers/jina
+github.com/quailyquaily/uniai/internal/providers/openai
+github.com/quailyquaily/uniai/internal/tokencount
+github.com/quailyquaily/uniai/internal/toolschema
+github.com/quailyquaily/uniai/providers/anthropic
+github.com/quailyquaily/uniai/providers/azure
+github.com/quailyquaily/uniai/providers/bedrock
+github.com/quailyquaily/uniai/providers/cloudflare
+github.com/quailyquaily/uniai/providers/codex
+github.com/quailyquaily/uniai/providers/gemini
+github.com/quailyquaily/uniai/providers/openai
+github.com/quailyquaily/uniai/providers/openai_decisions
+github.com/quailyquaily/uniai/providers/openai_resp
+github.com/quailyquaily/uniai/providers/typesafe
+github.com/quailyquaily/uniai/providers/xaioauth
+github.com/quailyquaily/uniai/rerank
+github.com/quailyquaily/uniai/subscription
+github.com/quailyquaily/uniai/subscription/claude/claudecode
+github.com/quailyquaily/uniai/subscription/codex
+github.com/quailyquaily/uniai/subscription/xai
+# github.com/sagikazarmark/locafero v0.4.0
+## explicit; go 1.20
+github.com/sagikazarmark/locafero
+# github.com/sagikazarmark/slog-shim v0.1.0
+## explicit; go 1.20
+github.com/sagikazarmark/slog-shim
+# github.com/segmentio/asm v1.2.0
+## explicit; go 1.18
+github.com/segmentio/asm/ascii
+github.com/segmentio/asm/base64
+github.com/segmentio/asm/cpu
+github.com/segmentio/asm/cpu/arm
+github.com/segmentio/asm/cpu/arm64
+github.com/segmentio/asm/cpu/cpuid
+github.com/segmentio/asm/cpu/x86
+github.com/segmentio/asm/internal/unsafebytes
+github.com/segmentio/asm/keyset
+# github.com/segmentio/encoding v0.5.3
+## explicit; go 1.23
+github.com/segmentio/encoding/ascii
+github.com/segmentio/encoding/iso8601
+github.com/segmentio/encoding/json
+# github.com/shopspring/decimal v1.4.0
+## explicit; go 1.10
+github.com/shopspring/decimal
+# github.com/sourcegraph/conc v0.3.0
+## explicit; go 1.19
+github.com/sourcegraph/conc
+github.com/sourcegraph/conc/internal/multierror
+github.com/sourcegraph/conc/iter
+github.com/sourcegraph/conc/panics
+# github.com/spf13/afero v1.11.0
+## explicit; go 1.19
+github.com/spf13/afero
+github.com/spf13/afero/internal/common
+github.com/spf13/afero/mem
+# github.com/spf13/cast v1.10.0
+## explicit; go 1.21.0
+github.com/spf13/cast
+github.com/spf13/cast/internal
+# github.com/spf13/cobra v1.8.1
+## explicit; go 1.15
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.10
+## explicit; go 1.12
+github.com/spf13/pflag
+# github.com/spf13/viper v1.19.0
+## explicit; go 1.20
+github.com/spf13/viper
+github.com/spf13/viper/internal/encoding
+github.com/spf13/viper/internal/encoding/dotenv
+github.com/spf13/viper/internal/encoding/hcl
+github.com/spf13/viper/internal/encoding/ini
+github.com/spf13/viper/internal/encoding/javaproperties
+github.com/spf13/viper/internal/encoding/json
+github.com/spf13/viper/internal/encoding/toml
+github.com/spf13/viper/internal/encoding/yaml
+github.com/spf13/viper/internal/features
+# github.com/subosito/gotenv v1.6.0
+## explicit; go 1.18
+github.com/subosito/gotenv
+# github.com/tidwall/gjson v1.18.0
+## explicit; go 1.12
+github.com/tidwall/gjson
+# github.com/tidwall/match v1.1.1
+## explicit; go 1.15
+github.com/tidwall/match
+# github.com/tidwall/pretty v1.2.1
+## explicit; go 1.16
+github.com/tidwall/pretty
+# github.com/tidwall/sjson v1.2.5
+## explicit; go 1.14
+github.com/tidwall/sjson
+# github.com/ulikunitz/xz v0.5.15
+## explicit; go 1.12
+github.com/ulikunitz/xz
+github.com/ulikunitz/xz/internal/hash
+github.com/ulikunitz/xz/internal/xlog
+github.com/ulikunitz/xz/lzma
+# github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8
+## explicit
+github.com/xi2/xz
+# github.com/yosida95/uritemplate/v3 v3.0.2
+## explicit; go 1.14
+github.com/yosida95/uritemplate/v3
+# github.com/yuin/goldmark v1.7.16
+## explicit; go 1.22
+github.com/yuin/goldmark
+github.com/yuin/goldmark/ast
+github.com/yuin/goldmark/extension
+github.com/yuin/goldmark/extension/ast
+github.com/yuin/goldmark/parser
+github.com/yuin/goldmark/renderer
+github.com/yuin/goldmark/renderer/html
+github.com/yuin/goldmark/text
+github.com/yuin/goldmark/util
+# github.com/zalando/go-keyring v0.2.8
+## explicit; go 1.18
+github.com/zalando/go-keyring
+github.com/zalando/go-keyring/internal/shellescape
+github.com/zalando/go-keyring/secret_service
+# go.uber.org/multierr v1.11.0
+## explicit; go 1.19
+go.uber.org/multierr
+# golang.org/x/crypto v0.50.0
+## explicit; go 1.25.0
+golang.org/x/crypto/curve25519
+# golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f
+## explicit; go 1.25.0
+golang.org/x/exp/slices
+golang.org/x/exp/slog
+golang.org/x/exp/slog/internal
+golang.org/x/exp/slog/internal/buffer
+# golang.org/x/image v0.47.0
+## explicit; go 1.26.0
+golang.org/x/image/bmp
+golang.org/x/image/ccitt
+golang.org/x/image/draw
+golang.org/x/image/internal/safemath
+golang.org/x/image/math/f64
+golang.org/x/image/riff
+golang.org/x/image/tiff
+golang.org/x/image/tiff/lzw
+golang.org/x/image/vector
+golang.org/x/image/vp8
+golang.org/x/image/vp8l
+golang.org/x/image/webp
+# golang.org/x/net v0.53.0
+## explicit; go 1.25.0
+golang.org/x/net/html
+golang.org/x/net/html/atom
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+golang.org/x/net/internal/httpcommon
+golang.org/x/net/internal/httpsfv
+# golang.org/x/oauth2 v0.34.0
+## explicit; go 1.24.0
+golang.org/x/oauth2
+golang.org/x/oauth2/internal
+# golang.org/x/sys v0.49.0
+## explicit; go 1.26.0
+golang.org/x/sys/cpu
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.43.0
+## explicit; go 1.26.0
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/ianaindex
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+# golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2
+## explicit; go 1.17
+golang.org/x/xerrors
+golang.org/x/xerrors/internal
+# gopkg.in/ini.v1 v1.67.0
+## explicit
+gopkg.in/ini.v1
+# gopkg.in/yaml.v3 v3.0.1
+## explicit
+gopkg.in/yaml.v3

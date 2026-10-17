@@ -51,9 +51,11 @@ func vmDoctor(asJSON bool) error {
 	cfg := vm.DefaultConfig()
 	path := vm.ConfigPath()
 	if b, err := os.ReadFile(path); err == nil {
-		if err := json.Unmarshal(b, &cfg); err != nil {
+		saved, err := vm.ParsePersisted(b)
+		if err != nil {
 			return fmt.Errorf("read VM config %s: %w", path, err)
 		}
+		cfg = saved.Config
 	}
 	configErr := cfg.Validate()
 	status := vmStatus{Platform: platform, Host: host, Recommended: vm.RecommendProfile(host), Config: cfg, ConfigPath: path, ConfigValid: configErr == nil}

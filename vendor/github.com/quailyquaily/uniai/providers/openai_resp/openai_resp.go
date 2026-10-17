@@ -1,0 +1,1764 @@
+package openairesp
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"slices"
+	"sort"
+	"strings"
+
+	"github.com/lyricat/goutils/structs"
+	openai "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/packages/param"
+	"github.com/openai/openai-go/v3/packages/ssestream"
+	"github.com/openai/openai-go/v3/responses"
+	"github.com/openai/openai-go/v3/shared"
+	"github.com/quailyquaily/uniai/chat"
+	"github.com/quailyquaily/uniai/internal/diag"
+	"github.com/quailyquaily/uniai/internal/httputil"
+	"github.com/quailyquaily/uniai/internal/modelcompat"
+	"github.com/quailyquaily/uniai/internal/oaicompat"
+	"github.com/quailyquaily/uniai/internal/toolschema"
+)
+
+type Config struct {
+	APIKey       string
+	BaseURL      string
+	DefaultModel string
+	Headers      map[string]string
+	HTTPClient   *http.Client
+	Debug        bool
+	OpenAICodex  bool
+}
+
+type Provider struct {
+	client       openai.Client
+	defaultModel string
+	debug        bool
+	openAICodex  bool
+}
+
+func New(cfg Config) (*Provider, error) {
+	if strings.TrimSpace(cfg.APIKey) == "" {
+		return nil, fmt.Errorf("openai api key is required")
+	}
+
+	opts := []option.RequestOption{option.WithAPIKey(cfg.APIKey)}
+	if cfg.BaseURL != "" {
+		opts = append(opts, option.WithBaseURL(cfg.BaseURL))
+	}
+	if cfg.HTTPClient != nil {
+		opts = append(opts, option.WithHTTPClient(cfg.HTTPClient))
+	}
+	for key, value := range httputil.CloneHeaders(cfg.Headers) {
+		opts = append(opts, option.WithHeader(key, value))
+	}
+
+	return &Provider{
+		client:       openai.NewClient(opts...),
+		defaultModel: cfg.DefaultModel,
+		debug:        cfg.Debug,
+		openAICodex:  cfg.OpenAICodex,
+	}, nil
+}
+
+func (p *Provider) Chat(ctx context.Context, req *chat.Request) (*chat.Result, error) {
+	debugFn := req.Options.DebugFn
+	params, err := buildParams(req, p.defaultModel, p.openAICodex)
+	if err != nil {
+		return nil, err
+	}
+	diag.LogJSON(p.debug, debugFn, "openai.responses.request", params)
+
+	var requestOpts []option.RequestOption
+	if p.openAICodex && params.PromptCacheKey.Valid() {
+		// Use the normalized request key for both routing headers. Per-request
+		// options override client defaults without changing the shared client.
+		requestOpts = append(requestOpts,
+			option.WithHeader("session-id", params.PromptCacheKey.Value),
+			option.WithHeader("x-client-request-id", params.PromptCacheKey.Value),
+		)
+	}
+
+	if req.Options.OnStream != nil {
+		result, err := streamChat(ctx, &p.client, params, req.Options.ReasoningDetails, req.Options.OnStream, requestOpts...)
+		if err != nil {
+			diag.LogError(p.debug, debugFn, "openai.responses.response", err)
+			return nil, err
+		}
+		return result, nil
+	}
+
+	result, raw, err := p.response(ctx, params, req.Options.ReasoningDetails, requestOpts...)
+	if err != nil {
+		diag.LogError(p.debug, debugFn, "openai.responses.response", err)
+		return nil, err
+	}
+	if raw != "" {
+		diag.LogText(p.debug, debugFn, "openai.responses.response", raw)
+	} else {
+		diag.LogJSON(p.debug, debugFn, "openai.responses.response", result.Raw)
+	}
+
+	return result, nil
+}
+
+func (p *Provider) response(ctx context.Context, params responses.ResponseNewParams, reasoningDetails bool, requestOpts ...option.RequestOption) (*chat.Result, string, error) {
+	var rawResp *http.Response
+	if err := p.client.Execute(ctx, http.MethodPost, "responses", params, &rawResp, requestOpts...); err != nil {
+		return nil, "", err
+	}
+	if rawResp == nil || rawResp.Body == nil {
+		return nil, "", fmt.Errorf("openai responses response is empty")
+	}
+	defer rawResp.Body.Close()
+
+	if oaicompat.IsEventStreamContentType(rawResp.Header.Get("Content-Type")) {
+		result, err := streamChatFromResponse(rawResp, reasoningDetails)
+		if isEmptyMissingCompletedStream(err) {
+			result, err = streamChat(ctx, &p.client, params, reasoningDetails, nil, requestOpts...)
+			return result, "", err
+		}
+		return result, "", err
+	}
+
+	data, err := io.ReadAll(rawResp.Body)
+	if err != nil {
+		return nil, "", err
+	}
+	var resp responses.Response
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, string(data), err
+	}
+	if err := responseStatusError(&resp); err != nil {
+		return nil, string(data), err
+	}
+	return toResult(&resp), string(data), nil
+}
+
+var openAIResponsesOptionKeys = map[string]struct{}{
+	"background":             {},
+	"conversation":           {},
+	"include":                {},
+	"input":                  {},
+	"instructions":           {},
+	"max_tool_calls":         {},
+	"metadata":               {},
+	"parallel_tool_calls":    {},
+	"previous_response_id":   {},
+	"prompt":                 {},
+	"prompt_cache_key":       {},
+	"prompt_cache_options":   {},
+	"prompt_cache_retention": {},
+	"reasoning":              {},
+	"response_format":        {},
+	"safety_identifier":      {},
+	"service_tier":           {},
+	"store":                  {},
+	"stream_options":         {},
+	"text":                   {},
+	"tool_choice":            {},
+	"tools":                  {},
+	"top_logprobs":           {},
+	"truncation":             {},
+	"user":                   {},
+	"verbosity":              {},
+}
+
+func buildParams(req *chat.Request, defaultModel string, openAICodex bool) (responses.ResponseNewParams, error) {
+	model := strings.TrimSpace(req.Model)
+	if model == "" {
+		model = strings.TrimSpace(defaultModel)
+	}
+	if model == "" {
+		return responses.ResponseNewParams{}, fmt.Errorf("model is required")
+	}
+	if req.Options.ReasoningBudget != nil && !openAICodex {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai_resp provider does not support reasoning budget tokens; use reasoning effort")
+	}
+	if len(req.Options.Stop) > 0 {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai_resp provider does not support stop sequences on the Responses API")
+	}
+	if req.Options.PresencePenalty != nil {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai_resp provider does not support presence penalty on the Responses API")
+	}
+	if req.Options.FrequencyPenalty != nil {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai_resp provider does not support frequency penalty on the Responses API")
+	}
+	if !openAICodex {
+		var cacheControlErr error
+		if modelcompat.OpenAIUsesPromptCacheOptions(model) {
+			cacheControlErr = chat.ValidatePromptCacheControl(req, "openai_resp")
+		} else {
+			cacheControlErr = chat.ValidateNoScopedCacheControl(req, "openai_resp")
+		}
+		if cacheControlErr != nil {
+			return responses.ResponseNewParams{}, cacheControlErr
+		}
+	}
+
+	opts := req.Options.OpenAI
+	if openAICodex {
+		opts = filterOpenAICodexOptions(opts)
+	}
+	if err := validateOpenAIResponsesOptions(opts); err != nil {
+		return responses.ResponseNewParams{}, err
+	}
+	if err := validateOpenAIResponsesConflicts(req, opts); err != nil {
+		return responses.ResponseNewParams{}, err
+	}
+	if opts.HasKey("prompt_cache_options") && modelcompat.OpenAIRejectsPromptCacheOptions(model) {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai model %q does not support prompt_cache_options; use prompt_cache_retention", model)
+	}
+
+	params := responses.ResponseNewParams{
+		Model: shared.ResponsesModel(model),
+	}
+
+	if req.Options.Temperature != nil && !openAICodex {
+		params.Temperature = openai.Float(*req.Options.Temperature)
+	}
+	if req.Options.TopP != nil {
+		params.TopP = openai.Float(*req.Options.TopP)
+	}
+	if req.Options.MaxTokens != nil && !openAICodex {
+		params.MaxOutputTokens = openai.Int(int64(*req.Options.MaxTokens))
+	}
+	if req.Options.User != nil {
+		params.User = openai.String(*req.Options.User)
+	}
+
+	if err := applyRawRootOptions(&params, opts); err != nil {
+		return responses.ResponseNewParams{}, err
+	}
+
+	if opts.HasKey("reasoning") {
+		reasoning, err := decodeJSONValue[shared.ReasoningParam](opts["reasoning"])
+		if err != nil {
+			return responses.ResponseNewParams{}, fmt.Errorf("openai reasoning: %w", err)
+		}
+		params.Reasoning = reasoning
+	} else if req.Options.ReasoningEffort != nil || req.Options.ReasoningDetails {
+		reasoning := shared.ReasoningParam{}
+		if req.Options.ReasoningEffort != nil {
+			reasoning.Effort = shared.ReasoningEffort(*req.Options.ReasoningEffort)
+		}
+		if req.Options.ReasoningDetails {
+			reasoning.Summary = shared.ReasoningSummaryAuto
+		}
+		params.Reasoning = reasoning
+	}
+	if !modelcompat.OpenAIReasoningEffortSupported(model, string(params.Reasoning.Effort)) {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai model %q does not support reasoning effort %q", model, params.Reasoning.Effort)
+	}
+	if !modelcompat.OpenAIReasoningModeSupported(model, string(params.Reasoning.Mode)) {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai model %q does not support reasoning mode %q", model, params.Reasoning.Mode)
+	}
+	if !modelcompat.OpenAIReasoningContextSupported(model, string(params.Reasoning.Context)) {
+		return responses.ResponseNewParams{}, fmt.Errorf("openai model %q does not support reasoning context %q", model, params.Reasoning.Context)
+	}
+
+	if opts.HasKey("text") {
+		text, err := decodeJSONValue[responses.ResponseTextConfigParam](opts["text"])
+		if err != nil {
+			return responses.ResponseNewParams{}, fmt.Errorf("openai text: %w", err)
+		}
+		params.Text = text
+	} else {
+		text, hasText, err := buildTextConfig(opts)
+		if err != nil {
+			return responses.ResponseNewParams{}, err
+		}
+		if hasText {
+			params.Text = text
+		}
+	}
+
+	if opts.HasKey("input") {
+		data, err := json.Marshal(opts["input"])
+		if err != nil {
+			return responses.ResponseNewParams{}, fmt.Errorf("openai input: %w", err)
+		}
+		hasPromptCacheBreakpoint := false
+		if openAICodex {
+			data, err = removePromptCacheBreakpoints(data)
+			if err != nil {
+				return responses.ResponseNewParams{}, err
+			}
+		} else {
+			hasPromptCacheBreakpoint, err = validatePromptCacheBreakpoints(data)
+			if err != nil {
+				return responses.ResponseNewParams{}, err
+			}
+			if hasPromptCacheBreakpoint && !modelcompat.OpenAIUsesPromptCacheOptions(model) {
+				return responses.ResponseNewParams{}, fmt.Errorf("openai model %q does not support prompt_cache_breakpoint", model)
+			}
+		}
+		var input responses.ResponseNewParamsInputUnion
+		if err := json.Unmarshal(data, &input); err == nil {
+			params.Input = input
+		} else {
+			// openai-go can marshal valid easy-message input items without a
+			// type field but cannot unmarshal them back into this union.
+			params.Input = param.Override[responses.ResponseNewParamsInputUnion](json.RawMessage(data))
+		}
+	} else {
+		input, err := buildInputFromMessages(req.Messages, !openAICodex)
+		if err != nil {
+			return responses.ResponseNewParams{}, err
+		}
+		params.Input = input
+	}
+	if openAICodex {
+		if err := ensureOpenAICodexJSONInput(&params); err != nil {
+			return responses.ResponseNewParams{}, err
+		}
+	}
+
+	rawTools, err := decodeRawTools(opts)
+	if err != nil {
+		return responses.ResponseNewParams{}, err
+	}
+	compatTools, err := buildFunctionTools(req.Tools)
+	if err != nil {
+		return responses.ResponseNewParams{}, err
+	}
+	if len(rawTools)+len(compatTools) > 0 {
+		params.Tools = append(rawTools, compatTools...)
+	}
+
+	if opts.HasKey("tool_choice") {
+		choice, err := decodeJSONValue[responses.ResponseNewParamsToolChoiceUnion](opts["tool_choice"])
+		if err != nil {
+			return responses.ResponseNewParams{}, fmt.Errorf("openai tool_choice: %w", err)
+		}
+		params.ToolChoice = choice
+	} else if req.ToolChoice != nil {
+		params.ToolChoice, err = buildToolChoice(*req.ToolChoice)
+		if err != nil {
+			return responses.ResponseNewParams{}, err
+		}
+	}
+
+	applyModelParameterOverlay(&params, opts.HasKey("prompt_cache_options"))
+	if openAICodex {
+		// Model defaults may add cache retention when a cache key is present,
+		// but Codex does not accept either TTL option.
+		params.PromptCacheRetention = ""
+		params.PromptCacheOptions = responses.ResponseNewParamsPromptCacheOptions{}
+	}
+	return params, nil
+}
+
+var openAICodexIgnoredOptionKeys = map[string]struct{}{
+	"temperature":             {},
+	"max_tokens":              {},
+	"max_output_tokens":       {},
+	"prompt_cache_retention":  {},
+	"prompt_cache_options":    {},
+	"reasoning_budget_tokens": {},
+}
+
+func filterOpenAICodexOptions(opts structs.JSONMap) structs.JSONMap {
+	if len(opts) == 0 {
+		return opts
+	}
+	filtered := make(structs.JSONMap, len(opts))
+	for key, value := range opts {
+		if _, ignored := openAICodexIgnoredOptionKeys[key]; ignored {
+			continue
+		}
+		filtered[key] = value
+	}
+	return filtered
+}
+
+func removePromptCacheBreakpoints(data []byte) ([]byte, error) {
+	var input any
+	if err := json.Unmarshal(data, &input); err != nil {
+		return nil, fmt.Errorf("openai input: %w", err)
+	}
+
+	var remove func(any)
+	remove = func(value any) {
+		switch value := value.(type) {
+		case []any:
+			for _, item := range value {
+				remove(item)
+			}
+		case map[string]any:
+			delete(value, "prompt_cache_breakpoint")
+			for _, item := range value {
+				remove(item)
+			}
+		}
+	}
+	remove(input)
+
+	cleaned, err := json.Marshal(input)
+	if err != nil {
+		return nil, fmt.Errorf("openai input: %w", err)
+	}
+	return cleaned, nil
+}
+
+func ensureOpenAICodexJSONInput(params *responses.ResponseNewParams) error {
+	if params == nil {
+		return nil
+	}
+	formatType := params.Text.Format.GetType()
+	if formatType == nil || *formatType != "json_object" {
+		return nil
+	}
+
+	data, err := json.Marshal(params.Input)
+	if err != nil {
+		return fmt.Errorf("openai input: %w", err)
+	}
+	var input any
+	if err := json.Unmarshal(data, &input); err != nil {
+		return fmt.Errorf("openai input: %w", err)
+	}
+	hasJSON := false
+	if text, ok := input.(string); ok {
+		hasJSON = strings.Contains(text, "JSON")
+	} else {
+		hasJSON = inputMessagesContainJSON(input)
+	}
+	if hasJSON {
+		return nil
+	}
+
+	items := []any{
+		map[string]any{
+			"type": "message",
+			"role": "user",
+			"content": []any{
+				map[string]any{
+					"type": "input_text",
+					"text": "Return the response as JSON.",
+				},
+			},
+		},
+	}
+	switch input := input.(type) {
+	case string:
+		items = append(items, map[string]any{
+			"type":    "message",
+			"role":    "user",
+			"content": input,
+		})
+	case []any:
+		items = append(items, input...)
+	default:
+		return fmt.Errorf("openai input must be a string or array")
+	}
+	data, err = json.Marshal(items)
+	if err != nil {
+		return fmt.Errorf("openai input: %w", err)
+	}
+	params.Input = param.Override[responses.ResponseNewParamsInputUnion](json.RawMessage(data))
+	return nil
+}
+
+func inputMessagesContainJSON(value any) bool {
+	items, ok := value.([]any)
+	if !ok {
+		return false
+	}
+	for _, rawItem := range items {
+		item, ok := rawItem.(map[string]any)
+		if !ok {
+			continue
+		}
+		itemType, _ := item["type"].(string)
+		if itemType != "" && itemType != "message" {
+			continue
+		}
+		if itemType == "" {
+			if _, ok := item["role"].(string); !ok {
+				continue
+			}
+		}
+
+		content := item["content"]
+		if text, ok := content.(string); ok {
+			if strings.Contains(text, "JSON") {
+				return true
+			}
+			continue
+		}
+		parts, ok := content.([]any)
+		if !ok {
+			continue
+		}
+		for _, rawPart := range parts {
+			part, ok := rawPart.(map[string]any)
+			if !ok {
+				continue
+			}
+			if text, ok := part["text"].(string); ok && strings.Contains(text, "JSON") {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func validatePromptCacheBreakpoints(data []byte) (bool, error) {
+	var input any
+	if err := json.Unmarshal(data, &input); err != nil {
+		return false, fmt.Errorf("openai input: %w", err)
+	}
+
+	found := false
+	var walk func(any) error
+	walk = func(value any) error {
+		switch value := value.(type) {
+		case []any:
+			for _, item := range value {
+				if err := walk(item); err != nil {
+					return err
+				}
+			}
+		case map[string]any:
+			for key, item := range value {
+				if key == "prompt_cache_breakpoint" {
+					found = true
+					breakpoint, ok := item.(map[string]any)
+					if !ok || breakpoint["mode"] != "explicit" {
+						return fmt.Errorf("openai input prompt_cache_breakpoint.mode must be explicit")
+					}
+				}
+				if err := walk(item); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+
+	if err := walk(input); err != nil {
+		return found, err
+	}
+	return found, nil
+}
+
+func applyModelParameterOverlay(params *responses.ResponseNewParams, hasPromptCacheOptions bool) {
+	if params == nil {
+		return
+	}
+	model := string(params.Model)
+	reasoningRequested := params.Reasoning.Effort != "" ||
+		params.Reasoning.Summary != "" ||
+		params.Reasoning.GenerateSummary != "" ||
+		params.Reasoning.Mode != "" ||
+		params.Reasoning.Context != ""
+	dropSampling := modelcompat.OpenAIDropsSampling(model, string(params.Reasoning.Effort), reasoningRequested)
+	if modelcompat.KimiUsesFixedSampling(model) || dropSampling {
+		params.Temperature = param.Opt[float64]{}
+		params.TopP = param.Opt[float64]{}
+		params.TopLogprobs = param.Opt[int64]{}
+	}
+	if modelcompat.IsGPT6(model) && dropSampling {
+		params.Include = slices.DeleteFunc(params.Include, func(item responses.ResponseIncludable) bool {
+			return item == "message.output_text.logprobs"
+		})
+	}
+	if modelcompat.OpenAIRequires24hPromptCacheRetention(model) {
+		if params.PromptCacheKey.Valid() || params.PromptCacheRetention != "" {
+			params.PromptCacheRetention = responses.ResponseNewParamsPromptCacheRetention24h
+		}
+	}
+	if modelcompat.OpenAIUsesPromptCacheOptions(model) {
+		if !hasPromptCacheOptions && params.PromptCacheRetention != "" {
+			params.PromptCacheOptions.Ttl = "30m"
+		}
+		params.PromptCacheRetention = ""
+	}
+}
+
+func validateOpenAIResponsesOptions(opts structs.JSONMap) error {
+	if len(opts) == 0 {
+		return nil
+	}
+	var unsupported []string
+	for key := range opts {
+		if _, ok := openAIResponsesOptionKeys[key]; !ok {
+			unsupported = append(unsupported, key)
+		}
+	}
+	if len(unsupported) == 0 {
+		return nil
+	}
+	sort.Strings(unsupported)
+	return fmt.Errorf("openai_resp provider does not support OpenAI options: %s", strings.Join(unsupported, ", "))
+}
+
+func validateOpenAIResponsesConflicts(req *chat.Request, opts structs.JSONMap) error {
+	if opts.HasKey("input") && len(req.Messages) > 0 {
+		return fmt.Errorf("openai_resp provider does not allow openai.input together with chat messages")
+	}
+	if opts.HasKey("reasoning") && (req.Options.ReasoningEffort != nil || req.Options.ReasoningDetails) {
+		return fmt.Errorf("openai_resp provider does not allow openai.reasoning together with WithReasoningEffort or WithReasoningDetails")
+	}
+	if opts.HasKey("tool_choice") && req.ToolChoice != nil {
+		return fmt.Errorf("openai_resp provider does not allow openai.tool_choice together with WithToolChoice")
+	}
+	if opts.HasKey("previous_response_id") && opts.HasKey("conversation") {
+		return fmt.Errorf("openai_resp provider does not allow openai.previous_response_id together with openai.conversation")
+	}
+	if opts.HasKey("text") && (opts.HasKey("response_format") || opts.HasKey("verbosity")) {
+		return fmt.Errorf("openai_resp provider does not allow openai.text together with response_format or verbosity shortcuts")
+	}
+	if req.Options.User != nil && opts.HasKey("user") {
+		return fmt.Errorf("openai_resp provider does not allow openai.user together with WithUser")
+	}
+	return nil
+}
+
+func applyRawRootOptions(params *responses.ResponseNewParams, opts structs.JSONMap) error {
+	if params == nil || len(opts) == 0 {
+		return nil
+	}
+	if opts.HasKey("background") {
+		params.Background = openai.Bool(opts.GetBool("background"))
+	}
+	if opts.HasKey("conversation") {
+		conversation, err := decodeJSONValue[responses.ResponseNewParamsConversationUnion](opts["conversation"])
+		if err != nil {
+			return fmt.Errorf("openai conversation: %w", err)
+		}
+		params.Conversation = conversation
+	}
+	if opts.HasKey("include") {
+		include, err := decodeJSONValue[[]responses.ResponseIncludable](opts["include"])
+		if err != nil {
+			return fmt.Errorf("openai include: %w", err)
+		}
+		params.Include = include
+	}
+	if opts.HasKey("instructions") {
+		if val := strings.TrimSpace(opts.GetString("instructions")); val != "" {
+			params.Instructions = openai.String(val)
+		}
+	}
+	if opts.HasKey("max_tool_calls") {
+		val, ok := oaicompat.ToInt64(opts["max_tool_calls"])
+		if !ok {
+			return fmt.Errorf("openai max_tool_calls must be numeric")
+		}
+		params.MaxToolCalls = openai.Int(val)
+	}
+	if opts.HasKey("metadata") {
+		if meta := oaicompat.ParseStringMap(opts["metadata"]); len(meta) > 0 {
+			params.Metadata = shared.Metadata(meta)
+		}
+	}
+	if opts.HasKey("parallel_tool_calls") {
+		params.ParallelToolCalls = openai.Bool(opts.GetBool("parallel_tool_calls"))
+	}
+	if opts.HasKey("previous_response_id") {
+		if val := strings.TrimSpace(opts.GetString("previous_response_id")); val != "" {
+			params.PreviousResponseID = openai.String(val)
+		}
+	}
+	if opts.HasKey("prompt") {
+		prompt, err := decodeJSONValue[responses.ResponsePromptParam](opts["prompt"])
+		if err != nil {
+			return fmt.Errorf("openai prompt: %w", err)
+		}
+		params.Prompt = prompt
+	}
+	if opts.HasKey("prompt_cache_key") {
+		if val := strings.TrimSpace(opts.GetString("prompt_cache_key")); val != "" {
+			if err := oaicompat.ValidatePromptCacheKey(val); err != nil {
+				return err
+			}
+			params.PromptCacheKey = openai.String(val)
+		}
+	}
+	if opts.HasKey("prompt_cache_retention") {
+		if val := strings.TrimSpace(opts.GetString("prompt_cache_retention")); val != "" {
+			params.PromptCacheRetention = responses.ResponseNewParamsPromptCacheRetention(val)
+		}
+	}
+	if opts.HasKey("prompt_cache_options") {
+		options, err := oaicompat.ParsePromptCacheOptions(opts["prompt_cache_options"])
+		if err != nil {
+			return err
+		}
+		params.PromptCacheOptions = responses.ResponseNewParamsPromptCacheOptions{
+			Mode: options.Mode,
+			Ttl:  options.TTL,
+		}
+	}
+	if opts.HasKey("safety_identifier") {
+		if val := strings.TrimSpace(opts.GetString("safety_identifier")); val != "" {
+			params.SafetyIdentifier = openai.String(val)
+		}
+	}
+	if opts.HasKey("service_tier") {
+		if val := strings.TrimSpace(opts.GetString("service_tier")); val != "" {
+			params.ServiceTier = responses.ResponseNewParamsServiceTier(val)
+		}
+	}
+	if opts.HasKey("store") {
+		params.Store = openai.Bool(opts.GetBool("store"))
+	}
+	if opts.HasKey("stream_options") {
+		streamOptions, err := decodeJSONValue[responses.ResponseNewParamsStreamOptions](opts["stream_options"])
+		if err != nil {
+			return fmt.Errorf("openai stream_options: %w", err)
+		}
+		params.StreamOptions = streamOptions
+	}
+	if opts.HasKey("top_logprobs") {
+		val, ok := oaicompat.ToInt64(opts["top_logprobs"])
+		if !ok {
+			return fmt.Errorf("openai top_logprobs must be numeric")
+		}
+		params.TopLogprobs = openai.Int(val)
+	}
+	if opts.HasKey("truncation") {
+		if val := strings.TrimSpace(opts.GetString("truncation")); val != "" {
+			params.Truncation = responses.ResponseNewParamsTruncation(val)
+		}
+	}
+	if opts.HasKey("user") {
+		if val := strings.TrimSpace(opts.GetString("user")); val != "" {
+			params.User = openai.String(val)
+		}
+	}
+	return nil
+}
+
+func buildTextConfig(opts structs.JSONMap) (responses.ResponseTextConfigParam, bool, error) {
+	cfg := responses.ResponseTextConfigParam{}
+	hasText := false
+
+	if opts.HasKey("verbosity") {
+		val := strings.TrimSpace(opts.GetString("verbosity"))
+		if val != "" {
+			cfg.Verbosity = responses.ResponseTextConfigVerbosity(val)
+			hasText = true
+		}
+	}
+	if opts.HasKey("response_format") {
+		if err := applyResponseFormat(&cfg, opts["response_format"]); err != nil {
+			return responses.ResponseTextConfigParam{}, false, err
+		}
+		hasText = true
+	}
+
+	return cfg, hasText, nil
+}
+
+func applyResponseFormat(cfg *responses.ResponseTextConfigParam, value any) error {
+	switch v := value.(type) {
+	case string:
+		return setResponseFormatByType(cfg, v, nil)
+	case map[string]any:
+		return setResponseFormatByType(cfg, "", v)
+	case structs.JSONMap:
+		return setResponseFormatByType(cfg, "", map[string]any(v))
+	default:
+		return fmt.Errorf("openai response_format has unsupported type %T", value)
+	}
+}
+
+func setResponseFormatByType(cfg *responses.ResponseTextConfigParam, typeName string, payload map[string]any) error {
+	if cfg == nil {
+		return nil
+	}
+	typ := strings.ToLower(strings.TrimSpace(typeName))
+	if typ == "" && payload != nil {
+		if raw, ok := payload["type"].(string); ok {
+			typ = strings.ToLower(strings.TrimSpace(raw))
+		}
+	}
+
+	switch typ {
+	case "text":
+		cfg.Format = responses.ResponseFormatTextConfigUnionParam{
+			OfText: &shared.ResponseFormatTextParam{Type: "text"},
+		}
+		return nil
+	case "json_object":
+		cfg.Format = responses.ResponseFormatTextConfigUnionParam{
+			OfJSONObject: &shared.ResponseFormatJSONObjectParam{Type: "json_object"},
+		}
+		return nil
+	case "json_schema":
+		schemaPayload := payload
+		if payload != nil {
+			if raw, ok := payload["json_schema"]; ok {
+				switch schema := raw.(type) {
+				case map[string]any:
+					schemaPayload = schema
+				case structs.JSONMap:
+					schemaPayload = map[string]any(schema)
+				}
+			}
+		}
+		if schemaPayload == nil {
+			return fmt.Errorf("openai response_format json_schema requires payload")
+		}
+		name, _ := schemaPayload["name"].(string)
+		name = strings.TrimSpace(name)
+		if name == "" {
+			return fmt.Errorf("openai response_format json_schema requires name")
+		}
+		out := responses.ResponseFormatTextJSONSchemaConfigParam{
+			Name:   name,
+			Schema: map[string]any{},
+		}
+		if schema, ok := schemaPayload["schema"].(map[string]any); ok {
+			out.Schema = schema
+		} else if schema, ok := schemaPayload["schema"].(structs.JSONMap); ok {
+			out.Schema = map[string]any(schema)
+		}
+		if raw, ok := schemaPayload["strict"].(bool); ok {
+			out.Strict = openai.Bool(raw)
+		}
+		if raw, ok := schemaPayload["description"].(string); ok && strings.TrimSpace(raw) != "" {
+			out.Description = openai.String(raw)
+		}
+		cfg.Format = responses.ResponseFormatTextConfigUnionParam{
+			OfJSONSchema: &out,
+		}
+		return nil
+	default:
+		return fmt.Errorf("openai response_format type %q is not supported on openai_resp", typ)
+	}
+}
+
+func decodeRawTools(opts structs.JSONMap) ([]responses.ToolUnionParam, error) {
+	if !opts.HasKey("tools") {
+		return nil, nil
+	}
+	tools, err := decodeJSONValue[[]responses.ToolUnionParam](opts["tools"])
+	if err != nil {
+		return nil, fmt.Errorf("openai tools: %w", err)
+	}
+	if len(tools) == 0 {
+		return nil, nil
+	}
+	return tools, nil
+}
+
+func buildFunctionTools(tools []chat.Tool) ([]responses.ToolUnionParam, error) {
+	out := make([]responses.ToolUnionParam, 0, len(tools))
+	for _, tool := range tools {
+		if tool.Type != "function" {
+			continue
+		}
+		name := strings.TrimSpace(tool.Function.Name)
+		if name == "" {
+			continue
+		}
+		params := map[string]any{"type": "object"}
+		if len(tool.Function.ParametersJSONSchema) > 0 {
+			if err := json.Unmarshal(tool.Function.ParametersJSONSchema, &params); err != nil {
+				return nil, err
+			}
+			toolschema.Normalize(params)
+			if tool.Function.Strict != nil && *tool.Function.Strict {
+				normalizeOpenAIStrictSchema(params)
+			}
+		}
+		fn := responses.FunctionToolParam{
+			Name:       name,
+			Parameters: params,
+			// Responses API treats omitted strict as provider-default strict mode.
+			// Default to false here so uniai preserves ordinary JSON Schema semantics
+			// unless the caller explicitly opts into strict validation.
+			Strict: openai.Bool(false),
+		}
+		if tool.Function.Strict != nil {
+			fn.Strict = openai.Bool(*tool.Function.Strict)
+		}
+		if desc := strings.TrimSpace(tool.Function.Description); desc != "" {
+			fn.Description = openai.String(desc)
+		}
+		out = append(out, responses.ToolUnionParam{
+			OfFunction: &fn,
+		})
+	}
+	if len(out) == 0 {
+		return nil, nil
+	}
+	return out, nil
+}
+
+func normalizeOpenAIStrictSchema(value any) {
+	switch node := value.(type) {
+	case map[string]any:
+		normalizeOpenAIStrictSchemaMap(node)
+	case []any:
+		for _, item := range node {
+			normalizeOpenAIStrictSchema(item)
+		}
+	}
+}
+
+func normalizeOpenAIStrictSchemaMap(node map[string]any) {
+	if isObjectSchema(node) {
+		if _, ok := node["additionalProperties"]; !ok {
+			node["additionalProperties"] = false
+		}
+	}
+
+	for _, key := range []string{"properties", "patternProperties", "definitions", "$defs"} {
+		if props, ok := node[key].(map[string]any); ok {
+			for _, val := range props {
+				normalizeOpenAIStrictSchema(val)
+			}
+		}
+	}
+	for _, key := range []string{"items", "additionalProperties", "contains", "not", "if", "then", "else", "propertyNames"} {
+		if val, ok := node[key]; ok {
+			normalizeOpenAIStrictSchema(val)
+		}
+	}
+	for _, key := range []string{"allOf", "anyOf", "oneOf", "prefixItems"} {
+		if items, ok := node[key].([]any); ok {
+			for _, val := range items {
+				normalizeOpenAIStrictSchema(val)
+			}
+		}
+	}
+}
+
+func isObjectSchema(node map[string]any) bool {
+	switch t := node["type"].(type) {
+	case string:
+		return strings.EqualFold(strings.TrimSpace(t), "object")
+	case []string:
+		for _, item := range t {
+			if strings.EqualFold(strings.TrimSpace(item), "object") {
+				return true
+			}
+		}
+	case []any:
+		for _, item := range t {
+			if s, ok := item.(string); ok && strings.EqualFold(strings.TrimSpace(s), "object") {
+				return true
+			}
+		}
+	}
+	_, hasProps := node["properties"]
+	return hasProps
+}
+
+func buildToolChoice(choice chat.ToolChoice) (responses.ResponseNewParamsToolChoiceUnion, error) {
+	switch strings.ToLower(strings.TrimSpace(choice.Mode)) {
+	case "", "auto":
+		return responses.ResponseNewParamsToolChoiceUnion{
+			OfToolChoiceMode: openai.Opt(responses.ToolChoiceOptionsAuto),
+		}, nil
+	case "none":
+		return responses.ResponseNewParamsToolChoiceUnion{
+			OfToolChoiceMode: openai.Opt(responses.ToolChoiceOptionsNone),
+		}, nil
+	case "required":
+		return responses.ResponseNewParamsToolChoiceUnion{
+			OfToolChoiceMode: openai.Opt(responses.ToolChoiceOptionsRequired),
+		}, nil
+	case "function":
+		name := strings.TrimSpace(choice.FunctionName)
+		if name == "" {
+			return responses.ResponseNewParamsToolChoiceUnion{}, fmt.Errorf("tool_choice function_name is required when mode=function")
+		}
+		return responses.ResponseNewParamsToolChoiceUnion{
+			OfFunctionTool: &responses.ToolChoiceFunctionParam{Name: name},
+		}, nil
+	default:
+		return responses.ResponseNewParamsToolChoiceUnion{}, fmt.Errorf("unsupported tool choice mode %q", choice.Mode)
+	}
+}
+
+func buildInputFromMessages(messages []chat.Message, promptCacheBreakpoints bool) (responses.ResponseNewParamsInputUnion, error) {
+	items := make([]responses.ResponseInputItemUnionParam, 0, len(messages))
+	autoID := 0
+
+	for _, msg := range messages {
+		if strings.TrimSpace(msg.Name) != "" {
+			return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("openai_resp provider does not support message names")
+		}
+		if msg.Role != chat.RoleAssistant && len(msg.ToolCalls) > 0 {
+			return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("role %q does not support tool calls", msg.Role)
+		}
+
+		switch msg.Role {
+		case chat.RoleUser:
+			content, ok, err := buildUserInputContent(msg, promptCacheBreakpoints)
+			if err != nil {
+				return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("role %q: %w", msg.Role, err)
+			}
+			if !ok {
+				continue
+			}
+			items = append(items, responses.ResponseInputItemParamOfMessage(content, responses.EasyInputMessageRoleUser))
+		case chat.RoleSystem, chat.RoleAssistant:
+			var content responses.ResponseInputMessageContentListParam
+			if promptCacheBreakpoints {
+				var err error
+				content, err = buildCachedTextInputContent(msg)
+				if err != nil {
+					return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("role %q: %w", msg.Role, err)
+				}
+			}
+			role := responses.EasyInputMessageRole(msg.Role)
+			if content != nil {
+				items = append(items, responses.ResponseInputItemParamOfMessage(content, role))
+			} else {
+				text, err := chat.MessageText(msg)
+				if err != nil {
+					return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("role %q: %w", msg.Role, err)
+				}
+				if strings.TrimSpace(text) != "" {
+					items = append(items, responses.ResponseInputItemParamOfMessage(text, role))
+				}
+			}
+			for _, call := range msg.ToolCalls {
+				name := strings.TrimSpace(call.Function.Name)
+				if name == "" {
+					return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("assistant tool call name is required")
+				}
+				callType := strings.ToLower(strings.TrimSpace(call.Type))
+				if callType == "" {
+					callType = "function"
+				}
+				if callType != "function" {
+					return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("unsupported assistant tool call type %q", call.Type)
+				}
+				callID := strings.TrimSpace(call.ID)
+				if callID == "" {
+					autoID++
+					callID = fmt.Sprintf("call_%d", autoID)
+				}
+				args := strings.TrimSpace(call.Function.Arguments)
+				if args == "" {
+					args = "{}"
+				}
+				items = append(items, responses.ResponseInputItemParamOfFunctionCall(args, callID, name))
+			}
+		case chat.RoleTool:
+			callID := strings.TrimSpace(msg.ToolCallID)
+			if callID == "" {
+				return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("tool_call_id is required for tool messages")
+			}
+			text, err := chat.MessageText(msg)
+			if err != nil {
+				return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("role %q: %w", msg.Role, err)
+			}
+			items = append(items, responses.ResponseInputItemParamOfFunctionCallOutput(callID, text))
+		default:
+			return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("unsupported message role %q", msg.Role)
+		}
+	}
+
+	if len(items) == 0 {
+		return responses.ResponseNewParamsInputUnion{}, fmt.Errorf("messages are required")
+	}
+
+	return responses.ResponseNewParamsInputUnion{
+		OfInputItemList: items,
+	}, nil
+}
+
+func buildCachedTextInputContent(msg chat.Message) (responses.ResponseInputMessageContentListParam, error) {
+	parts := chat.NormalizeMessageParts(msg)
+	hasCacheControl := false
+	for _, part := range parts {
+		if part.CacheControl != nil {
+			hasCacheControl = true
+			break
+		}
+	}
+	if !hasCacheControl {
+		return nil, nil
+	}
+
+	out := make(responses.ResponseInputMessageContentListParam, 0, len(parts))
+	for i, part := range parts {
+		if err := chat.ValidatePart(part); err != nil {
+			return nil, fmt.Errorf("part[%d]: %w", i, err)
+		}
+		if part.Type != chat.PartTypeText {
+			return nil, fmt.Errorf("part[%d]: unsupported part type %q", i, part.Type)
+		}
+		if msg.Role == chat.RoleAssistant {
+			item := responses.ResponseOutputTextParam{
+				Text:        part.Text,
+				Annotations: []responses.ResponseOutputTextAnnotationUnionParam{},
+			}
+			if part.CacheControl != nil {
+				item.SetExtraFields(map[string]any{
+					"prompt_cache_breakpoint": responses.NewResponseInputTextPromptCacheBreakpointParam(),
+				})
+			}
+			// The SDK's easy-message content union lacks output_text, which
+			// assistant history requires even when sent in the input array.
+			out = append(out, param.Override[responses.ResponseInputContentUnionParam](item))
+			continue
+		}
+		item := responses.ResponseInputTextParam{Text: part.Text}
+		if part.CacheControl != nil {
+			item.PromptCacheBreakpoint = responses.NewResponseInputTextPromptCacheBreakpointParam()
+		}
+		out = append(out, responses.ResponseInputContentUnionParam{OfInputText: &item})
+	}
+	return out, nil
+}
+
+func buildUserInputContent(msg chat.Message, promptCacheBreakpoints bool) (responses.ResponseInputMessageContentListParam, bool, error) {
+	parts := chat.NormalizeMessageParts(msg)
+	if len(parts) == 0 {
+		return nil, false, nil
+	}
+
+	out := make(responses.ResponseInputMessageContentListParam, 0, len(parts))
+	for _, part := range parts {
+		if err := chat.ValidatePart(part); err != nil {
+			return nil, false, err
+		}
+		switch part.Type {
+		case chat.PartTypeText:
+			item := responses.ResponseInputTextParam{Text: part.Text}
+			if promptCacheBreakpoints && part.CacheControl != nil {
+				item.PromptCacheBreakpoint = responses.NewResponseInputTextPromptCacheBreakpointParam()
+			}
+			out = append(out, responses.ResponseInputContentUnionParam{OfInputText: &item})
+		case chat.PartTypeImageURL:
+			out = append(out, responses.ResponseInputContentUnionParam{
+				OfInputImage: &responses.ResponseInputImageParam{
+					Detail:   responses.ResponseInputImageDetailAuto,
+					ImageURL: openai.String(part.URL),
+				},
+			})
+		case chat.PartTypeImageBase64:
+			mimeType := strings.TrimSpace(part.MIMEType)
+			if mimeType == "" {
+				return nil, false, fmt.Errorf("part type %q requires mime_type for openai_resp", chat.PartTypeImageBase64)
+			}
+			out = append(out, responses.ResponseInputContentUnionParam{
+				OfInputImage: &responses.ResponseInputImageParam{
+					Detail:   responses.ResponseInputImageDetailAuto,
+					ImageURL: openai.String(fmt.Sprintf("data:%s;base64,%s", mimeType, part.DataBase64)),
+				},
+			})
+		default:
+			return nil, false, fmt.Errorf("unsupported part type %q", part.Type)
+		}
+	}
+
+	return out, true, nil
+}
+
+func toResult(resp *responses.Response) *chat.Result {
+	if resp == nil {
+		return &chat.Result{Warnings: []string{"openai responses response is nil"}}
+	}
+
+	usage := responseUsageToChatUsage(resp.Usage)
+
+	result := &chat.Result{
+		ID:    resp.ID,
+		Text:  resp.OutputText(),
+		Model: string(resp.Model),
+		Usage: usage,
+		Raw:   resp,
+	}
+	if resp.Status == responses.ResponseStatusCompleted {
+		result.FinishReason = "stop"
+	}
+
+	var textMessages []chat.Message
+	var toolCalls []chat.ToolCall
+	var reasoning *chat.ReasoningResult
+	for _, item := range resp.Output {
+		switch out := item.AsAny().(type) {
+		case responses.ResponseOutputMessage:
+			var text strings.Builder
+			parts := make([]chat.Part, 0, len(out.Content))
+			for _, content := range out.Content {
+				switch content := content.AsAny().(type) {
+				case responses.ResponseOutputText:
+					if content.Text != "" {
+						text.WriteString(content.Text)
+						parts = append(parts, chat.TextPart(content.Text))
+					}
+				case responses.ResponseOutputRefusal:
+					if resp.Status == responses.ResponseStatusCompleted {
+						result.FinishReason = "content_filter"
+					}
+				}
+			}
+			if len(parts) > 0 {
+				result.Parts = append(result.Parts, parts...)
+			}
+			if strings.TrimSpace(text.String()) != "" {
+				textMessages = append(textMessages, chat.Message{
+					Role:    chat.RoleAssistant,
+					Content: text.String(),
+					Parts:   parts,
+				})
+			}
+		case responses.ResponseFunctionToolCall:
+			toolCalls = append(toolCalls, chat.ToolCall{
+				ID:   out.CallID,
+				Type: "function",
+				Function: chat.ToolCallFunction{
+					Name:      out.Name,
+					Arguments: out.Arguments,
+				},
+			})
+		case responses.ResponseReasoningItem:
+			if reasoning == nil {
+				reasoning = &chat.ReasoningResult{}
+			}
+			for _, summary := range out.Summary {
+				if strings.TrimSpace(summary.Text) != "" {
+					reasoning.Summary = append(reasoning.Summary, summary.Text)
+				}
+			}
+			for _, content := range out.Content {
+				if strings.TrimSpace(content.Text) != "" {
+					reasoning.Blocks = append(reasoning.Blocks, chat.ReasoningBlock{
+						Type: "thinking",
+						Text: content.Text,
+					})
+				}
+			}
+			if strings.TrimSpace(out.EncryptedContent) != "" {
+				reasoning.Blocks = append(reasoning.Blocks, chat.ReasoningBlock{
+					Type: "encrypted",
+					Data: out.EncryptedContent,
+				})
+			}
+		}
+	}
+
+	if len(toolCalls) > 0 {
+		result.ToolCalls = toolCalls
+		if result.FinishReason == "stop" {
+			result.FinishReason = "tool_calls"
+		}
+		textMessages = append(textMessages, chat.Message{
+			Role:      chat.RoleAssistant,
+			ToolCalls: append([]chat.ToolCall{}, toolCalls...),
+		})
+	}
+	if len(textMessages) > 0 {
+		result.Messages = textMessages
+	}
+	if reasoning != nil && (len(reasoning.Summary) > 0 || len(reasoning.Blocks) > 0) {
+		result.Reasoning = reasoning
+	}
+	chat.EnsureResultParts(result)
+	return result
+}
+
+func responseUsageToChatUsage(usage responses.ResponseUsage) chat.Usage {
+	inputTokens := int(usage.InputTokens)
+	outputTokens := int(usage.OutputTokens)
+	cachedInputTokens := int(usage.InputTokensDetails.CachedTokens)
+
+	var inputDetails struct {
+		OrchestrationInputTokens       int `json:"orchestration_input_tokens"`
+		OrchestrationInputCachedTokens int `json:"orchestration_input_cached_tokens"`
+		CacheWriteTokens               int `json:"cache_write_tokens"`
+	}
+	if raw := strings.TrimSpace(usage.InputTokensDetails.RawJSON()); raw != "" {
+		_ = json.Unmarshal([]byte(raw), &inputDetails)
+	}
+	if inputDetails.OrchestrationInputTokens > 0 {
+		inputTokens += inputDetails.OrchestrationInputTokens
+	}
+	if inputDetails.OrchestrationInputCachedTokens > 0 {
+		cachedInputTokens += inputDetails.OrchestrationInputCachedTokens
+	}
+
+	var outputDetails struct {
+		OrchestrationOutputTokens int `json:"orchestration_output_tokens"`
+	}
+	if raw := strings.TrimSpace(usage.OutputTokensDetails.RawJSON()); raw != "" {
+		_ = json.Unmarshal([]byte(raw), &outputDetails)
+	}
+	if outputDetails.OrchestrationOutputTokens > 0 {
+		outputTokens += outputDetails.OrchestrationOutputTokens
+	}
+
+	return chat.Usage{
+		InputTokens:  inputTokens,
+		OutputTokens: outputTokens,
+		TotalTokens:  int(usage.TotalTokens),
+		Cache: chat.UsageCache{
+			CachedInputTokens:        cachedInputTokens,
+			CacheCreationInputTokens: inputDetails.CacheWriteTokens,
+		},
+	}
+}
+
+func responseStatusError(resp *responses.Response) error {
+	if resp == nil {
+		return fmt.Errorf("openai responses response is nil")
+	}
+	switch resp.Status {
+	case responses.ResponseStatusFailed:
+		if strings.TrimSpace(resp.Error.Message) != "" {
+			return fmt.Errorf("openai responses failed: %s", resp.Error.Message)
+		}
+		return fmt.Errorf("openai responses failed")
+	case responses.ResponseStatusIncomplete:
+		reason := strings.TrimSpace(resp.IncompleteDetails.Reason)
+		if reason != "" {
+			return fmt.Errorf("openai responses incomplete: %s", reason)
+		}
+		return fmt.Errorf("openai responses incomplete")
+	default:
+		return nil
+	}
+}
+
+type streamToolCallState struct {
+	CallID    string
+	ItemID    string
+	Name      string
+	Arguments string
+}
+
+type responseStreamState struct {
+	toolCalls map[int]streamToolCallState
+	completed *responses.Response
+	text      strings.Builder
+	summaries responseReasoningTextState
+	thinking  responseReasoningTextState
+	events    int
+}
+
+type responseReasoningKey struct {
+	itemID      string
+	outputIndex int64
+	partIndex   int64
+}
+
+type responseReasoningTextState struct {
+	indexes map[responseReasoningKey]int
+	values  []string
+}
+
+func (s *responseReasoningTextState) append(key responseReasoningKey, delta string) int {
+	if s.indexes == nil {
+		s.indexes = make(map[responseReasoningKey]int)
+	}
+	index, ok := s.indexes[key]
+	if !ok {
+		index = len(s.values)
+		s.indexes[key] = index
+		s.values = append(s.values, "")
+	}
+	s.values[index] += delta
+	return index
+}
+
+type missingCompletedStreamError struct {
+	events    int
+	textLen   int
+	toolCalls int
+}
+
+func (e *missingCompletedStreamError) Error() string {
+	return "openai responses stream ended without a completed response"
+}
+
+func (e *missingCompletedStreamError) empty() bool {
+	return e != nil && e.events == 0 && e.textLen == 0 && e.toolCalls == 0
+}
+
+func isEmptyMissingCompletedStream(err error) bool {
+	var missing *missingCompletedStreamError
+	return errors.As(err, &missing) && missing.empty()
+}
+
+func streamChat(
+	ctx context.Context,
+	client *openai.Client,
+	params responses.ResponseNewParams,
+	reasoningDetails bool,
+	onStream chat.OnStreamFunc,
+	requestOpts ...option.RequestOption,
+) (*chat.Result, error) {
+	stream := client.Responses.NewStreaming(ctx, params, requestOpts...)
+	return consumeResponseStream(stream, reasoningDetails, onStream)
+}
+
+func streamChatFromResponse(resp *http.Response, reasoningDetails bool) (*chat.Result, error) {
+	if resp == nil || resp.Body == nil {
+		return nil, fmt.Errorf("openai responses stream response is empty")
+	}
+	stream := ssestream.NewStream[responses.ResponseStreamEventUnion](ssestream.NewDecoder(resp), nil)
+	return consumeResponseStream(stream, reasoningDetails, nil)
+}
+
+func consumeResponseStream(stream *ssestream.Stream[responses.ResponseStreamEventUnion], reasoningDetails bool, onStream chat.OnStreamFunc) (*chat.Result, error) {
+	defer stream.Close()
+	state := &responseStreamState{
+		toolCalls: map[int]streamToolCallState{},
+	}
+
+	for stream.Next() {
+		ev := stream.Current()
+		state.events++
+		if err := processStreamEvent(ev, state, reasoningDetails, onStream); err != nil {
+			return nil, err
+		}
+		if state.completed != nil {
+			break
+		}
+	}
+	if err := stream.Err(); err != nil {
+		return nil, err
+	}
+	result, err := finalizeStreamResult(state)
+	if err != nil {
+		return nil, err
+	}
+	if onStream != nil {
+		if err := onStream(chat.StreamEvent{
+			FinishReason: result.FinishReason,
+			Done:         true,
+			Usage:        &result.Usage,
+			Raw:          state.completed,
+		}); err != nil {
+			return nil, err
+		}
+	}
+	return result, nil
+}
+
+func processStreamEvent(ev responses.ResponseStreamEventUnion, state *responseStreamState, reasoningDetails bool, onStream chat.OnStreamFunc) error {
+	emitRaw := func() error {
+		if onStream == nil {
+			return nil
+		}
+		return onStream(chat.StreamEvent{Raw: ev})
+	}
+	switch event := ev.AsAny().(type) {
+	case responses.ResponseErrorEvent:
+		return fmt.Errorf("openai responses stream error: %s", event.Message)
+	case responses.ResponseOutputItemAddedEvent:
+		registerStreamOutputItem(event.Item, int(event.OutputIndex), state)
+		return emitRaw()
+	case responses.ResponseOutputItemDoneEvent:
+		registerStreamOutputItem(event.Item, int(event.OutputIndex), state)
+		return emitRaw()
+	case responses.ResponseTextDeltaEvent:
+		if event.Delta == "" {
+			return emitRaw()
+		}
+		if state != nil {
+			state.text.WriteString(event.Delta)
+		}
+		if onStream == nil {
+			return nil
+		}
+		return onStream(chat.StreamEvent{Delta: event.Delta, Raw: ev})
+	case responses.ResponseReasoningSummaryTextDeltaEvent:
+		if !reasoningDetails || event.Delta == "" {
+			return emitRaw()
+		}
+		index := 0
+		if state != nil {
+			index = state.summaries.append(responseReasoningKey{
+				itemID:      event.ItemID,
+				outputIndex: event.OutputIndex,
+				partIndex:   event.SummaryIndex,
+			}, event.Delta)
+		}
+		if onStream == nil {
+			return nil
+		}
+		return onStream(chat.StreamEvent{
+			ReasoningDelta: &chat.ReasoningDelta{
+				Index: index,
+				Type:  chat.ReasoningDeltaSummary,
+				Delta: event.Delta,
+			},
+			Raw: ev,
+		})
+	case responses.ResponseReasoningTextDeltaEvent:
+		if !reasoningDetails || event.Delta == "" {
+			return emitRaw()
+		}
+		index := 0
+		if state != nil {
+			index = state.thinking.append(responseReasoningKey{
+				itemID:      event.ItemID,
+				outputIndex: event.OutputIndex,
+				partIndex:   event.ContentIndex,
+			}, event.Delta)
+		}
+		if onStream == nil {
+			return nil
+		}
+		return onStream(chat.StreamEvent{
+			ReasoningDelta: &chat.ReasoningDelta{
+				Index: index,
+				Type:  chat.ReasoningDeltaThinking,
+				Delta: event.Delta,
+			},
+			Raw: ev,
+		})
+	case responses.ResponseFunctionCallArgumentsDeltaEvent:
+		meta := state.toolCalls[int(event.OutputIndex)]
+		id := strings.TrimSpace(meta.CallID)
+		if id == "" {
+			id = strings.TrimSpace(meta.ItemID)
+		}
+		if id == "" {
+			id = strings.TrimSpace(event.ItemID)
+		}
+		meta.Arguments += event.Delta
+		state.toolCalls[int(event.OutputIndex)] = meta
+		if onStream == nil {
+			return nil
+		}
+		return onStream(chat.StreamEvent{
+			ToolCallDelta: &chat.ToolCallDelta{
+				Index:     int(event.OutputIndex),
+				ID:        id,
+				Name:      meta.Name,
+				ArgsChunk: event.Delta,
+			},
+			Raw: ev,
+		})
+	case responses.ResponseFunctionCallArgumentsDoneEvent:
+		meta := state.toolCalls[int(event.OutputIndex)]
+		meta.Name = firstNonEmptyString(strings.TrimSpace(event.Name), meta.Name)
+		if meta.ItemID == "" {
+			meta.ItemID = strings.TrimSpace(event.ItemID)
+		}
+		if args := strings.TrimSpace(event.Arguments); args != "" {
+			meta.Arguments = args
+		}
+		state.toolCalls[int(event.OutputIndex)] = meta
+		id := strings.TrimSpace(meta.CallID)
+		if id == "" {
+			id = firstNonEmptyString(meta.ItemID, strings.TrimSpace(event.ItemID))
+		}
+		if onStream == nil {
+			return nil
+		}
+		return onStream(chat.StreamEvent{
+			ToolCallDelta: &chat.ToolCallDelta{
+				Index: int(event.OutputIndex),
+				ID:    id,
+				Name:  meta.Name,
+			},
+			Raw: ev,
+		})
+	case responses.ResponseCompletedEvent:
+		state.completed = &event.Response
+		return emitRaw()
+	case responses.ResponseIncompleteEvent:
+		state.completed = &event.Response
+		return emitRaw()
+	case responses.ResponseFailedEvent:
+		state.completed = &event.Response
+		return emitRaw()
+	default:
+		return emitRaw()
+	}
+}
+
+func finalizeStreamResult(state *responseStreamState) (*chat.Result, error) {
+	if state == nil || state.completed == nil {
+		if state == nil {
+			return nil, &missingCompletedStreamError{}
+		}
+		return nil, &missingCompletedStreamError{
+			events:    state.events,
+			textLen:   state.text.Len(),
+			toolCalls: len(state.toolCalls),
+		}
+	}
+	if err := responseStatusError(state.completed); err != nil {
+		return nil, err
+	}
+
+	result := toResult(state.completed)
+	if strings.TrimSpace(result.Text) == "" && state.text.Len() > 0 {
+		result.Text = state.text.String()
+		chat.EnsureResultParts(result)
+	}
+	applyStreamReasoningFallback(result, state)
+	if fallback := accumulatedStreamToolCalls(state); len(fallback) > 0 {
+		result.ToolCalls = mergeStreamToolCalls(result.ToolCalls, fallback)
+		ensureResultToolCallMessage(result)
+		if result.FinishReason == "stop" {
+			result.FinishReason = "tool_calls"
+		}
+	}
+	return result, nil
+}
+
+func applyStreamReasoningFallback(result *chat.Result, state *responseStreamState) {
+	if result == nil || state == nil {
+		return
+	}
+
+	reasoning := result.Reasoning
+	if len(state.summaries.values) > 0 && (reasoning == nil || len(reasoning.Summary) == 0) {
+		if reasoning == nil {
+			reasoning = &chat.ReasoningResult{}
+		}
+		for _, summary := range state.summaries.values {
+			if strings.TrimSpace(summary) != "" {
+				reasoning.Summary = append(reasoning.Summary, summary)
+			}
+		}
+	}
+
+	hasThinking := false
+	if reasoning != nil {
+		for _, block := range reasoning.Blocks {
+			if block.Type == "thinking" && strings.TrimSpace(block.Text) != "" {
+				hasThinking = true
+				break
+			}
+		}
+	}
+	if len(state.thinking.values) > 0 && !hasThinking {
+		if reasoning == nil {
+			reasoning = &chat.ReasoningResult{}
+		}
+		for _, thinking := range state.thinking.values {
+			if strings.TrimSpace(thinking) != "" {
+				reasoning.Blocks = append(reasoning.Blocks, chat.ReasoningBlock{
+					Type: "thinking",
+					Text: thinking,
+				})
+			}
+		}
+	}
+
+	if reasoning != nil && (len(reasoning.Summary) > 0 || len(reasoning.Blocks) > 0) {
+		result.Reasoning = reasoning
+	}
+}
+
+func accumulatedStreamToolCalls(state *responseStreamState) []chat.ToolCall {
+	if state == nil || len(state.toolCalls) == 0 {
+		return nil
+	}
+
+	indexes := make([]int, 0, len(state.toolCalls))
+	for index := range state.toolCalls {
+		indexes = append(indexes, index)
+	}
+	sort.Ints(indexes)
+
+	out := make([]chat.ToolCall, 0, len(indexes))
+	for _, index := range indexes {
+		meta := state.toolCalls[index]
+		id := firstNonEmptyString(meta.CallID, meta.ItemID)
+		if id == "" && meta.Name == "" && meta.Arguments == "" {
+			continue
+		}
+		out = append(out, chat.ToolCall{
+			ID:   id,
+			Type: "function",
+			Function: chat.ToolCallFunction{
+				Name:      meta.Name,
+				Arguments: meta.Arguments,
+			},
+		})
+	}
+	return out
+}
+
+func mergeStreamToolCalls(current, fallback []chat.ToolCall) []chat.ToolCall {
+	if len(fallback) == 0 {
+		return current
+	}
+	if len(current) == 0 {
+		return append([]chat.ToolCall{}, fallback...)
+	}
+
+	out := append([]chat.ToolCall{}, current...)
+	for i, tc := range fallback {
+		if i >= len(out) {
+			out = append(out, tc)
+			continue
+		}
+		out[i].ID = firstNonEmptyString(out[i].ID, tc.ID)
+		out[i].Type = firstNonEmptyString(out[i].Type, tc.Type)
+		out[i].Function.Name = firstNonEmptyString(out[i].Function.Name, tc.Function.Name)
+		out[i].Function.Arguments = firstNonEmptyString(out[i].Function.Arguments, tc.Function.Arguments)
+	}
+	return out
+}
+
+func ensureResultToolCallMessage(result *chat.Result) {
+	if result == nil || len(result.ToolCalls) == 0 {
+		return
+	}
+	for i := range result.Messages {
+		if len(result.Messages[i].ToolCalls) == 0 {
+			continue
+		}
+		result.Messages[i].ToolCalls = mergeStreamToolCalls(result.Messages[i].ToolCalls, result.ToolCalls)
+		return
+	}
+	result.Messages = append(result.Messages, chat.Message{
+		Role:      chat.RoleAssistant,
+		ToolCalls: append([]chat.ToolCall{}, result.ToolCalls...),
+	})
+}
+
+func registerStreamOutputItem(item responses.ResponseOutputItemUnion, outputIndex int, state *responseStreamState) {
+	if state == nil {
+		return
+	}
+	call, ok := item.AsAny().(responses.ResponseFunctionToolCall)
+	if !ok {
+		return
+	}
+	meta := state.toolCalls[outputIndex]
+	meta.CallID = firstNonEmptyString(strings.TrimSpace(call.CallID), meta.CallID)
+	meta.ItemID = firstNonEmptyString(strings.TrimSpace(call.ID), meta.ItemID)
+	meta.Name = firstNonEmptyString(strings.TrimSpace(call.Name), meta.Name)
+	if args := strings.TrimSpace(call.Arguments); args != "" {
+		meta.Arguments = args
+	}
+	state.toolCalls[outputIndex] = meta
+}
+
+func firstNonEmptyString(vals ...string) string {
+	for _, val := range vals {
+		if strings.TrimSpace(val) != "" {
+			return val
+		}
+	}
+	return ""
+}
+
+func decodeJSONValue[T any](value any) (T, error) {
+	var out T
+	data, err := json.Marshal(value)
+	if err != nil {
+		return out, err
+	}
+	if err := json.Unmarshal(data, &out); err != nil {
+		return out, err
+	}
+	return out, nil
+}

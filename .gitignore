@@ -7,3 +7,4 @@ __pycache__/
 
 # The symlink `nix build` leaves at the top of the tree.
 /result
+reload-shell

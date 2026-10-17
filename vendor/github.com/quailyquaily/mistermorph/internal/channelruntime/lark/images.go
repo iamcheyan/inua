@@ -1,0 +1,162 @@
+package lark
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+
+	busruntime "github.com/quailyquaily/mistermorph/internal/bus"
+	larkbus "github.com/quailyquaily/mistermorph/internal/bus/adapters/lark"
+	"github.com/quailyquaily/mistermorph/internal/imagemime"
+	"github.com/quailyquaily/mistermorph/internal/telegramutil"
+)
+
+const (
+	larkLLMMaxImages     = 3
+	larkLLMMaxImageBytes = int64(5 * 1024 * 1024)
+)
+
+func downloadLarkImageToCache(ctx context.Context, api *larkAPI, cacheDir string, messageID string, imageKey string, maxBytes int64) (string, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if api == nil {
+		return "", fmt.Errorf("lark api is not initialized")
+	}
+	cacheDir = strings.TrimSpace(cacheDir)
+	if cacheDir == "" {
+		return "", fmt.Errorf("lark image cache dir is required")
+	}
+	messageID = strings.TrimSpace(messageID)
+	if messageID == "" {
+		return "", fmt.Errorf("lark message id is required")
+	}
+	imageKey = strings.TrimSpace(imageKey)
+	if imageKey == "" {
+		return "", fmt.Errorf("lark image key is required")
+	}
+	if maxBytes <= 0 {
+		return "", fmt.Errorf("lark image max bytes must be positive")
+	}
+	if err := telegramutil.EnsureSecureCacheDir(cacheDir); err != nil {
+		return "", err
+	}
+
+	raw, mimeType, err := api.messageResource(ctx, messageID, imageKey, "image", maxBytes)
+	if err != nil {
+		return "", err
+	}
+	mimeType = imagemime.Normalize(mimeType)
+	if !imagemime.SupportedUpload(mimeType) {
+		detected := imagemime.Normalize(http.DetectContentType(raw))
+		if imagemime.SupportedUpload(detected) {
+			mimeType = detected
+		}
+	}
+	if !imagemime.SupportedUpload(mimeType) {
+		return "", fmt.Errorf("lark image format is not supported: %s", mimeType)
+	}
+	ext := imagemime.Extension(mimeType)
+	if ext == "" {
+		return "", fmt.Errorf("lark image extension is not supported: %s", mimeType)
+	}
+
+	pattern := "lark_" + sanitizeLarkFileToken(imageKey) + "_*" + ext
+	tmp, err := os.CreateTemp(cacheDir, pattern)
+	if err != nil {
+		return "", err
+	}
+	tmpPath := tmp.Name()
+	if _, err := tmp.Write(raw); err != nil {
+		_ = tmp.Close()
+		_ = os.Remove(tmpPath)
+		return "", err
+	}
+	if err := tmp.Close(); err != nil {
+		_ = os.Remove(tmpPath)
+		return "", err
+	}
+	return tmpPath, nil
+}
+
+func downloadLarkInboundImages(ctx context.Context, api *larkAPI, cacheDir string, inbound larkbus.InboundMessage, logger *slog.Logger) larkbus.InboundMessage {
+	if len(inbound.ImageKeys) == 0 {
+		return inbound
+	}
+	for _, imageKey := range inbound.ImageKeys {
+		if len(inbound.ImageAttachments) >= larkLLMMaxImages {
+			break
+		}
+		imageCtx, cancelImage := larkImageDownloadContext(ctx)
+		path, imageErr := downloadLarkImageToCache(imageCtx, api, cacheDir, inbound.MessageID, imageKey, larkLLMMaxImageBytes)
+		cancelImage()
+		if imageErr != nil {
+			if logger != nil {
+				logger.Warn("lark_image_download_failed",
+					"chat_id", strings.TrimSpace(inbound.ChatID),
+					"message_id", strings.TrimSpace(inbound.MessageID),
+					"image_key", strings.TrimSpace(imageKey),
+					"error", imageErr.Error(),
+				)
+			}
+			continue
+		}
+		inbound.ImageAttachments = append(inbound.ImageAttachments, busruntime.ImageAttachment{
+			Path:               path,
+			SourceMessageID:    strings.TrimSpace(inbound.MessageID),
+			SourceAttachmentID: strings.TrimSpace(imageKey),
+		})
+	}
+	inbound.ImagePaths = busruntime.ImagePathsFromAttachments(inbound.ImageAttachments)
+	if len(inbound.ImageAttachments) == 0 {
+		inbound.Text = appendLarkImageReadFailure(inbound.Text)
+	}
+	return inbound
+}
+
+func appendLarkImageReadFailure(text string) string {
+	text = strings.TrimSpace(text)
+	note := "Image attachment could not be read."
+	if text == "" || text == "User sent an image." {
+		return note
+	}
+	return text + "\n\n" + note
+}
+
+func sanitizeLarkFileToken(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return "img"
+	}
+	var b strings.Builder
+	for _, r := range raw {
+		switch {
+		case r >= 'a' && r <= 'z':
+			b.WriteRune(r)
+		case r >= 'A' && r <= 'Z':
+			b.WriteRune(r)
+		case r >= '0' && r <= '9':
+			b.WriteRune(r)
+		case r == '_' || r == '-':
+			b.WriteRune(r)
+		default:
+			b.WriteByte('_')
+		}
+	}
+	out := strings.TrimSpace(b.String())
+	if out == "" {
+		return "img"
+	}
+	return out
+}
+
+func larkImageDownloadContext(parent context.Context) (context.Context, context.CancelFunc) {
+	if parent == nil {
+		parent = context.Background()
+	}
+	return context.WithTimeout(parent, 4*time.Second)
+}

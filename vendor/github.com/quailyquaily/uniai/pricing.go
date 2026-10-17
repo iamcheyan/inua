@@ -1,0 +1,1023 @@
+package uniai
+
+import (
+	"fmt"
+	"math"
+	"strings"
+
+	"github.com/quailyquaily/uniai/evaluate"
+	"github.com/quailyquaily/uniai/image"
+	"gopkg.in/yaml.v3"
+)
+
+// PricingCatalog is the price table used by uniai to derive Usage.Cost.
+type PricingCatalog struct {
+	Chat     []ChatPricingRule       `json:"chat,omitempty" yaml:"chat,omitempty"`
+	Image    []ImagePricingRule      `json:"image,omitempty" yaml:"image,omitempty"`
+	Evaluate []EvaluationPricingRule `json:"evaluate,omitempty" yaml:"evaluate,omitempty"`
+}
+
+// EvaluationPricingRule prices native Evaluate calls only. Provider is required;
+// matching never falls back to another provider or a model's slash suffix.
+type EvaluationPricingRule struct {
+	InferenceProvider   string   `json:"inference_provider" yaml:"inference_provider"`
+	Model               string   `json:"model" yaml:"model"`
+	Aliases             []string `json:"aliases,omitempty" yaml:"aliases,omitempty"`
+	InputUSDPerMillion  float64  `json:"input_usd_per_million" yaml:"input_usd_per_million"`
+	OutputUSDPerMillion float64  `json:"output_usd_per_million" yaml:"output_usd_per_million"`
+}
+
+// ChatPricingRule defines one chat model price entry.
+//
+// Matching is exact on normalized model strings only by default. Aliases are
+// optional explicit alternate model names for the same price. InferenceProvider
+// is optional metadata, and can be used as an explicit runtime hint via
+// EstimateChatCostWithInferenceProvider.
+type ChatPricingRule struct {
+	InferenceProvider string   `json:"inference_provider,omitempty" yaml:"inference_provider,omitempty"`
+	Model             string   `json:"model" yaml:"model"`
+	Aliases           []string `json:"aliases,omitempty" yaml:"aliases,omitempty"`
+
+	InputUSDPerMillion  float64 `json:"input_usd_per_million,omitempty" yaml:"input_usd_per_million,omitempty"`
+	OutputUSDPerMillion float64 `json:"output_usd_per_million,omitempty" yaml:"output_usd_per_million,omitempty"`
+
+	CachedInputUSDPerMillion        *float64 `json:"cached_input_usd_per_million,omitempty" yaml:"cached_input_usd_per_million,omitempty"`
+	CacheCreationInputUSDPerMillion *float64 `json:"cache_creation_input_usd_per_million,omitempty" yaml:"cache_creation_input_usd_per_million,omitempty"`
+
+	// CacheCreationInputDetailUSDPerMillion maps provider-specific cache creation
+	// counters, such as "ephemeral_5m_input_tokens", to their USD per 1M token rate.
+	CacheCreationInputDetailUSDPerMillion map[string]float64 `json:"cache_creation_input_detail_usd_per_million,omitempty" yaml:"cache_creation_input_detail_usd_per_million,omitempty"`
+
+	// Tiers optionally overrides the flat rates above when a model's price depends
+	// on the input token count of a single upstream request.
+	Tiers []ChatPricingTier `json:"tiers,omitempty" yaml:"tiers,omitempty"`
+
+	// PeakRates optionally records an alternate peak-period rate set. The catalog
+	// stores these rates but leaves selection of the applicable period to callers.
+	PeakRates *ChatPricingRates `json:"peak_rates,omitempty" yaml:"peak_rates,omitempty"`
+}
+
+// ChatPricingRates records one complete set of chat token rates.
+type ChatPricingRates struct {
+	InputUSDPerMillion  float64 `json:"input_usd_per_million" yaml:"input_usd_per_million"`
+	OutputUSDPerMillion float64 `json:"output_usd_per_million" yaml:"output_usd_per_million"`
+
+	CachedInputUSDPerMillion        *float64 `json:"cached_input_usd_per_million,omitempty" yaml:"cached_input_usd_per_million,omitempty"`
+	CacheCreationInputUSDPerMillion *float64 `json:"cache_creation_input_usd_per_million,omitempty" yaml:"cache_creation_input_usd_per_million,omitempty"`
+
+	CacheCreationInputDetailUSDPerMillion map[string]float64 `json:"cache_creation_input_detail_usd_per_million,omitempty" yaml:"cache_creation_input_detail_usd_per_million,omitempty"`
+}
+
+// ChatPricingTier defines one request-level pricing tier for a chat model.
+type ChatPricingTier struct {
+	// MaxInputTokens is the inclusive upper bound for this tier.
+	// Nil means "and above".
+	MaxInputTokens *int `json:"max_input_tokens,omitempty" yaml:"max_input_tokens,omitempty"`
+
+	InputUSDPerMillion  float64 `json:"input_usd_per_million" yaml:"input_usd_per_million"`
+	OutputUSDPerMillion float64 `json:"output_usd_per_million" yaml:"output_usd_per_million"`
+
+	CachedInputUSDPerMillion        *float64 `json:"cached_input_usd_per_million,omitempty" yaml:"cached_input_usd_per_million,omitempty"`
+	CacheCreationInputUSDPerMillion *float64 `json:"cache_creation_input_usd_per_million,omitempty" yaml:"cache_creation_input_usd_per_million,omitempty"`
+
+	// CacheCreationInputDetailUSDPerMillion maps provider-specific cache creation
+	// counters, such as "ephemeral_5m_input_tokens", to their USD per 1M token rate.
+	CacheCreationInputDetailUSDPerMillion map[string]float64 `json:"cache_creation_input_detail_usd_per_million,omitempty" yaml:"cache_creation_input_detail_usd_per_million,omitempty"`
+}
+
+type chatPricingRates struct {
+	InputUSDPerMillion  float64
+	OutputUSDPerMillion float64
+
+	CachedInputUSDPerMillion        *float64
+	CacheCreationInputUSDPerMillion *float64
+
+	CacheCreationInputDetailUSDPerMillion map[string]float64
+}
+
+// ImagePricingRule defines one image generation model price entry.
+//
+// Text and image input token rates are separate because image generation APIs
+// may price prompt text and reference images differently. OutputUSDPerMillion
+// is the generated image rate; TextOutputUSDPerMillion optionally overrides it
+// for returned text and thinking tokens.
+type ImagePricingRule struct {
+	InferenceProvider string   `json:"inference_provider,omitempty" yaml:"inference_provider,omitempty"`
+	Model             string   `json:"model" yaml:"model"`
+	Aliases           []string `json:"aliases,omitempty" yaml:"aliases,omitempty"`
+
+	TextInputUSDPerMillion  float64  `json:"text_input_usd_per_million,omitempty" yaml:"text_input_usd_per_million,omitempty"`
+	ImageInputUSDPerMillion float64  `json:"image_input_usd_per_million,omitempty" yaml:"image_input_usd_per_million,omitempty"`
+	OutputUSDPerMillion     float64  `json:"output_usd_per_million,omitempty" yaml:"output_usd_per_million,omitempty"`
+	TextOutputUSDPerMillion *float64 `json:"text_output_usd_per_million,omitempty" yaml:"text_output_usd_per_million,omitempty"`
+
+	CachedTextInputUSDPerMillion  *float64 `json:"cached_text_input_usd_per_million,omitempty" yaml:"cached_text_input_usd_per_million,omitempty"`
+	CachedImageInputUSDPerMillion *float64 `json:"cached_image_input_usd_per_million,omitempty" yaml:"cached_image_input_usd_per_million,omitempty"`
+}
+
+// ParsePricingYAML decodes a pricing YAML document into a PricingCatalog and
+// validates the supported schema.
+func ParsePricingYAML(data []byte) (*PricingCatalog, error) {
+	var catalog PricingCatalog
+	if err := yaml.Unmarshal(data, &catalog); err != nil {
+		return nil, err
+	}
+	if err := catalog.Validate(); err != nil {
+		return nil, err
+	}
+	return &catalog, nil
+}
+
+// Clone returns a deep copy of the pricing catalog.
+func (c *PricingCatalog) Clone() *PricingCatalog {
+	if c == nil {
+		return nil
+	}
+	out := &PricingCatalog{}
+	if len(c.Chat) > 0 {
+		out.Chat = make([]ChatPricingRule, len(c.Chat))
+		for i := range c.Chat {
+			out.Chat[i] = cloneChatPricingRule(c.Chat[i])
+		}
+	}
+	if len(c.Image) > 0 {
+		out.Image = make([]ImagePricingRule, len(c.Image))
+		for i := range c.Image {
+			out.Image[i] = cloneImagePricingRule(c.Image[i])
+		}
+	}
+	if len(c.Evaluate) > 0 {
+		out.Evaluate = append([]EvaluationPricingRule(nil), c.Evaluate...)
+		for i := range out.Evaluate {
+			out.Evaluate[i].Aliases = append([]string(nil), c.Evaluate[i].Aliases...)
+		}
+	}
+	return out
+}
+
+// Validate checks that numeric prices are non-negative and rule names are not
+// ambiguous within the same inference provider.
+func (c *PricingCatalog) Validate() error {
+	if c == nil {
+		return nil
+	}
+	for i, rule := range c.Chat {
+		if err := validateChatPricingRule(rule); err != nil {
+			return fmt.Errorf("chat[%d]: %w", i, err)
+		}
+	}
+	for i, rule := range c.Image {
+		if err := validateImagePricingRule(rule); err != nil {
+			return fmt.Errorf("image[%d]: %w", i, err)
+		}
+	}
+	if err := validateUniqueChatPricingRuleModels(c.Chat); err != nil {
+		return err
+	}
+	if err := validateUniqueImagePricingRuleModels(c.Image); err != nil {
+		return err
+	}
+	seen := make(map[string]int)
+	for i, rule := range c.Evaluate {
+		provider := normalizeInferenceProvider(rule.InferenceProvider)
+		if provider == "" {
+			return fmt.Errorf("evaluate[%d]: inference_provider is required", i)
+		}
+		for field, rate := range map[string]float64{"input_usd_per_million": rule.InputUSDPerMillion, "output_usd_per_million": rule.OutputUSDPerMillion} {
+			if err := validateFinitePrice(field, rate); err != nil {
+				return fmt.Errorf("evaluate[%d]: %w", i, err)
+			}
+			if rate < 0 {
+				return fmt.Errorf("evaluate[%d]: %s must be non-negative", i, field)
+			}
+		}
+		for _, name := range append([]string{rule.Model}, rule.Aliases...) {
+			model := normalizeModel(name)
+			if model == "" {
+				return fmt.Errorf("evaluate[%d]: model and aliases must not be blank", i)
+			}
+			key := provider + "\x00" + model
+			if prev, ok := seen[key]; ok && prev != i {
+				return fmt.Errorf("evaluate[%d]: model or alias %q conflicts with evaluate[%d] under inference_provider %q", i, name, prev, rule.InferenceProvider)
+			}
+			seen[key] = i
+		}
+	}
+	return nil
+}
+
+// EstimateEvaluateCost estimates native Evaluate usage using the response model
+// and the exact provider. Both token counts must be present and non-negative.
+// Chat-emulated Evaluate results use the Chat pricing methods instead.
+func (c *PricingCatalog) EstimateEvaluateCost(provider, model string, usage evaluate.Usage) (*UsageCost, bool) {
+	provider, model = normalizeInferenceProvider(provider), normalizeModel(model)
+	if c == nil || provider == "" || model == "" || usage.InputTokens == nil || usage.OutputTokens == nil || *usage.InputTokens < 0 || *usage.OutputTokens < 0 {
+		return nil, false
+	}
+	for _, rule := range c.Evaluate {
+		if normalizeInferenceProvider(rule.InferenceProvider) != provider {
+			continue
+		}
+		for _, name := range append([]string{rule.Model}, rule.Aliases...) {
+			if normalizeModel(name) != model {
+				continue
+			}
+			input := tokensCost(*usage.InputTokens, rule.InputUSDPerMillion)
+			output := tokensCost(*usage.OutputTokens, rule.OutputUSDPerMillion)
+			return &UsageCost{Currency: "USD", Estimated: true, Input: roundUSD(input), Output: roundUSD(output), Total: roundUSD(input + output)}, true
+		}
+	}
+	return nil, false
+}
+
+// EstimateChatCost derives a cost estimate from the catalog, model, and usage.
+// It returns false when no rule matches or when the matched rule does not define
+// all rates required by the usage payload.
+func (c *PricingCatalog) EstimateChatCost(model string, usage Usage) (*UsageCost, bool) {
+	return c.EstimateChatCostWithInferenceProvider("", model, usage)
+}
+
+// EstimateChatCostWithInferenceProvider derives a cost estimate from the catalog,
+// inference provider hint, model, and usage.
+//
+// If inferenceProvider is empty, or if the catalog has no rule using that
+// inference provider, lookup falls back to model-only matching. If the hinted
+// provider exists in the catalog, lookup stays within that provider only.
+func (c *PricingCatalog) EstimateChatCostWithInferenceProvider(inferenceProvider, model string, usage Usage) (*UsageCost, bool) {
+	if c == nil {
+		return nil, false
+	}
+	if usage.Cost != nil {
+		return usage.Cost, true
+	}
+	rule := c.findChatPricingRuleWithInferenceProvider(inferenceProvider, model)
+	if rule == nil {
+		return nil, false
+	}
+	return estimateChatCostForRule(*rule, usage)
+}
+
+// EstimateImageCost derives a cost estimate from the catalog, model, and image
+// usage. It returns false when no rule matches or when the matched rule does not
+// define all rates required by the usage payload.
+func (c *PricingCatalog) EstimateImageCost(model string, usage image.CreateImageUsage) (*UsageCost, bool) {
+	return c.EstimateImageCostWithInferenceProvider("", model, usage)
+}
+
+// EstimateImageCostWithInferenceProvider derives an image generation cost
+// estimate from the catalog, inference provider hint, model, and usage.
+//
+// If inferenceProvider is empty, or if the catalog has no rule using that
+// inference provider, lookup falls back to model-only matching. If the hinted
+// provider exists in the catalog, lookup stays within that provider only.
+func (c *PricingCatalog) EstimateImageCostWithInferenceProvider(inferenceProvider, model string, usage image.CreateImageUsage) (*UsageCost, bool) {
+	if c == nil {
+		return nil, false
+	}
+	if usage.Cost != nil {
+		return usage.Cost, true
+	}
+	rule := c.findImagePricingRuleWithInferenceProvider(inferenceProvider, model)
+	if rule == nil {
+		return nil, false
+	}
+	return estimateImageCostForRule(*rule, usage)
+}
+
+func (c *PricingCatalog) findChatPricingRule(model string) *ChatPricingRule {
+	return c.findChatPricingRuleWithInferenceProvider("", model)
+}
+
+func (c *PricingCatalog) findImagePricingRule(model string) *ImagePricingRule {
+	return c.findImagePricingRuleWithInferenceProvider("", model)
+}
+
+func (c *PricingCatalog) findChatPricingRuleWithInferenceProvider(inferenceProvider, model string) *ChatPricingRule {
+	if c == nil {
+		return nil
+	}
+	candidates := normalizeModelCandidates(model)
+	if len(candidates) == 0 {
+		return nil
+	}
+	inferenceProvider = normalizeInferenceProvider(inferenceProvider)
+
+	if inferenceProvider != "" && c.hasInferenceProvider(inferenceProvider) {
+		for _, candidate := range candidates {
+			for i := range c.Chat {
+				rule := &c.Chat[i]
+				if normalizeInferenceProvider(rule.InferenceProvider) != inferenceProvider {
+					continue
+				}
+				if chatPricingRuleMatches(rule, candidate) {
+					return rule
+				}
+			}
+		}
+		return nil
+	}
+
+	for _, candidate := range candidates {
+		for i := range c.Chat {
+			rule := &c.Chat[i]
+			if chatPricingRuleMatches(rule, candidate) {
+				return rule
+			}
+		}
+	}
+	return nil
+}
+
+func (c *PricingCatalog) findImagePricingRuleWithInferenceProvider(inferenceProvider, model string) *ImagePricingRule {
+	if c == nil {
+		return nil
+	}
+	candidates := normalizeModelCandidates(model)
+	if len(candidates) == 0 {
+		return nil
+	}
+	inferenceProvider = normalizeInferenceProvider(inferenceProvider)
+
+	if inferenceProvider != "" && c.hasImageInferenceProvider(inferenceProvider) {
+		for _, candidate := range candidates {
+			for i := range c.Image {
+				rule := &c.Image[i]
+				if normalizeInferenceProvider(rule.InferenceProvider) != inferenceProvider {
+					continue
+				}
+				if imagePricingRuleMatches(rule, candidate) {
+					return rule
+				}
+			}
+		}
+		return nil
+	}
+
+	for _, candidate := range candidates {
+		for i := range c.Image {
+			rule := &c.Image[i]
+			if imagePricingRuleMatches(rule, candidate) {
+				return rule
+			}
+		}
+	}
+	return nil
+}
+
+func (c *PricingCatalog) hasInferenceProvider(inferenceProvider string) bool {
+	if c == nil || inferenceProvider == "" {
+		return false
+	}
+	for i := range c.Chat {
+		if normalizeInferenceProvider(c.Chat[i].InferenceProvider) == inferenceProvider {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *PricingCatalog) hasImageInferenceProvider(inferenceProvider string) bool {
+	if c == nil || inferenceProvider == "" {
+		return false
+	}
+	for i := range c.Image {
+		if normalizeInferenceProvider(c.Image[i].InferenceProvider) == inferenceProvider {
+			return true
+		}
+	}
+	return false
+}
+
+func chatPricingRuleMatches(rule *ChatPricingRule, model string) bool {
+	if rule == nil {
+		return false
+	}
+	if normalizeModel(rule.Model) == model {
+		return true
+	}
+	for _, alias := range rule.Aliases {
+		if normalizeModel(alias) == model {
+			return true
+		}
+	}
+	return false
+}
+
+func imagePricingRuleMatches(rule *ImagePricingRule, model string) bool {
+	if rule == nil {
+		return false
+	}
+	if normalizeModel(rule.Model) == model {
+		return true
+	}
+	for _, alias := range rule.Aliases {
+		if normalizeModel(alias) == model {
+			return true
+		}
+	}
+	return false
+}
+
+func estimateChatCostForRule(rule ChatPricingRule, usage Usage) (*UsageCost, bool) {
+	rates, ok := resolveChatPricingRates(rule, usage)
+	if !ok {
+		return nil, false
+	}
+	return estimateChatCostForRates(rates, usage)
+}
+
+func resolveChatPricingRates(rule ChatPricingRule, usage Usage) (chatPricingRates, bool) {
+	if len(rule.Tiers) == 0 {
+		return chatPricingRates{
+			InputUSDPerMillion:                    rule.InputUSDPerMillion,
+			OutputUSDPerMillion:                   rule.OutputUSDPerMillion,
+			CachedInputUSDPerMillion:              rule.CachedInputUSDPerMillion,
+			CacheCreationInputUSDPerMillion:       rule.CacheCreationInputUSDPerMillion,
+			CacheCreationInputDetailUSDPerMillion: rule.CacheCreationInputDetailUSDPerMillion,
+		}, true
+	}
+
+	for _, tier := range rule.Tiers {
+		if tier.MaxInputTokens == nil || usage.InputTokens <= *tier.MaxInputTokens {
+			return chatPricingRates{
+				InputUSDPerMillion:                    tier.InputUSDPerMillion,
+				OutputUSDPerMillion:                   tier.OutputUSDPerMillion,
+				CachedInputUSDPerMillion:              tier.CachedInputUSDPerMillion,
+				CacheCreationInputUSDPerMillion:       tier.CacheCreationInputUSDPerMillion,
+				CacheCreationInputDetailUSDPerMillion: tier.CacheCreationInputDetailUSDPerMillion,
+			}, true
+		}
+	}
+
+	return chatPricingRates{}, false
+}
+
+func estimateChatCostForRates(rates chatPricingRates, usage Usage) (*UsageCost, bool) {
+	if !hasPricableUsage(usage) {
+		return nil, false
+	}
+
+	baseInputTokens := usage.InputTokens - usage.Cache.CachedInputTokens - usage.Cache.CacheCreationInputTokens
+	if baseInputTokens < 0 {
+		baseInputTokens = 0
+	}
+
+	inputCost := tokensCost(baseInputTokens, rates.InputUSDPerMillion)
+	outputCost := tokensCost(usage.OutputTokens, rates.OutputUSDPerMillion)
+	cachedInputCost := 0.0
+	cacheCreationCost := 0.0
+
+	if usage.Cache.CachedInputTokens > 0 {
+		if rates.CachedInputUSDPerMillion == nil {
+			return nil, false
+		}
+		cachedInputCost = tokensCost(usage.Cache.CachedInputTokens, *rates.CachedInputUSDPerMillion)
+	}
+
+	if usage.Cache.CacheCreationInputTokens > 0 {
+		var ok bool
+		cacheCreationCost, ok = estimateCacheCreationCost(rates, usage.Cache)
+		if !ok {
+			return nil, false
+		}
+	}
+
+	total := inputCost + cachedInputCost + cacheCreationCost + outputCost
+	return &UsageCost{
+		Currency:           "USD",
+		Estimated:          true,
+		Input:              roundUSD(inputCost),
+		CachedInput:        roundUSD(cachedInputCost),
+		CacheCreationInput: roundUSD(cacheCreationCost),
+		Output:             roundUSD(outputCost),
+		Total:              roundUSD(total),
+	}, true
+}
+
+func estimateImageCostForRule(rule ImagePricingRule, usage image.CreateImageUsage) (*UsageCost, bool) {
+	if !hasPricableImageUsage(usage) {
+		return nil, false
+	}
+
+	textInputTokens := usage.InputTextTokens
+	imageInputTokens := usage.InputImageTokens
+	if textInputTokens == 0 && imageInputTokens == 0 {
+		// Generation-only calls may report input_tokens without a provider detail
+		// split. In that case the input is prompt text.
+		textInputTokens = usage.InputTokens
+	} else if remaining := usage.InputTokens - textInputTokens - imageInputTokens; remaining > 0 {
+		textInputTokens += remaining
+	}
+
+	baseTextInputTokens := textInputTokens - usage.CachedTextTokens
+	if baseTextInputTokens < 0 {
+		baseTextInputTokens = 0
+	}
+	baseImageInputTokens := imageInputTokens - usage.CachedImageTokens
+	if baseImageInputTokens < 0 {
+		baseImageInputTokens = 0
+	}
+
+	textInputCost := tokensCost(baseTextInputTokens, rule.TextInputUSDPerMillion)
+	imageInputCost := tokensCost(baseImageInputTokens, rule.ImageInputUSDPerMillion)
+	cachedInputCost := 0.0
+	if usage.CachedTextTokens > 0 {
+		if rule.CachedTextInputUSDPerMillion == nil {
+			return nil, false
+		}
+		cachedInputCost += tokensCost(usage.CachedTextTokens, *rule.CachedTextInputUSDPerMillion)
+	}
+	if usage.CachedImageTokens > 0 {
+		if rule.CachedImageInputUSDPerMillion == nil {
+			return nil, false
+		}
+		cachedInputCost += tokensCost(usage.CachedImageTokens, *rule.CachedImageInputUSDPerMillion)
+	}
+	textOutputRate := rule.OutputUSDPerMillion
+	if rule.TextOutputUSDPerMillion != nil {
+		textOutputRate = *rule.TextOutputUSDPerMillion
+	}
+	textOutputTokens := usage.OutputTextTokens + usage.ThoughtsTokens
+	imageOutputTokens := usage.OutputImageTokens
+	if unclassified := usage.OutputTokens - textOutputTokens - imageOutputTokens; unclassified > 0 {
+		imageOutputTokens += unclassified
+	}
+	outputCost := tokensCost(textOutputTokens, textOutputRate)
+	outputCost += tokensCost(imageOutputTokens, rule.OutputUSDPerMillion)
+	inputCost := textInputCost + imageInputCost
+	total := inputCost + cachedInputCost + outputCost
+
+	return &UsageCost{
+		Currency:    "USD",
+		Estimated:   true,
+		Input:       roundUSD(inputCost),
+		CachedInput: roundUSD(cachedInputCost),
+		Output:      roundUSD(outputCost),
+		Total:       roundUSD(total),
+	}, true
+}
+
+func hasPricableUsage(usage Usage) bool {
+	return usage.InputTokens > 0 ||
+		usage.OutputTokens > 0 ||
+		usage.Cache.CachedInputTokens > 0 ||
+		usage.Cache.CacheCreationInputTokens > 0
+}
+
+func hasPricableImageUsage(usage image.CreateImageUsage) bool {
+	return usage.InputTokens > 0 ||
+		usage.InputTextTokens > 0 ||
+		usage.InputImageTokens > 0 ||
+		usage.CachedTextTokens > 0 ||
+		usage.CachedImageTokens > 0 ||
+		usage.OutputTokens > 0 ||
+		usage.OutputTextTokens > 0 ||
+		usage.OutputImageTokens > 0 ||
+		usage.ThoughtsTokens > 0
+}
+
+func findDetailRate(rates map[string]float64, key string) (float64, bool) {
+	normalized := normalizeDetailKey(key)
+	if normalized == "" || len(rates) == 0 {
+		return 0, false
+	}
+	if rate, ok := rates[normalized]; ok {
+		return rate, true
+	}
+	for rawKey, rate := range rates {
+		if normalizeDetailKey(rawKey) == normalized {
+			return rate, true
+		}
+	}
+	return 0, false
+}
+
+func estimateCacheCreationCost(rates chatPricingRates, cache UsageCache) (float64, bool) {
+	remaining := cache.CacheCreationInputTokens
+	cost := 0.0
+
+	for key, tokens := range cache.Details {
+		rate, ok := findDetailRate(rates.CacheCreationInputDetailUSDPerMillion, key)
+		if !ok || tokens <= 0 {
+			continue
+		}
+		if tokens > remaining {
+			return 0, false
+		}
+		cost += tokensCost(tokens, rate)
+		remaining -= tokens
+	}
+
+	if remaining > 0 {
+		if rates.CacheCreationInputUSDPerMillion == nil {
+			return 0, false
+		}
+		cost += tokensCost(remaining, *rates.CacheCreationInputUSDPerMillion)
+	}
+
+	return cost, true
+}
+
+func cloneChatPricingRule(in ChatPricingRule) ChatPricingRule {
+	out := ChatPricingRule{
+		InferenceProvider:   in.InferenceProvider,
+		Model:               in.Model,
+		InputUSDPerMillion:  in.InputUSDPerMillion,
+		OutputUSDPerMillion: in.OutputUSDPerMillion,
+	}
+	if len(in.Aliases) > 0 {
+		out.Aliases = append([]string{}, in.Aliases...)
+	}
+	if in.CachedInputUSDPerMillion != nil {
+		v := *in.CachedInputUSDPerMillion
+		out.CachedInputUSDPerMillion = &v
+	}
+	if in.CacheCreationInputUSDPerMillion != nil {
+		v := *in.CacheCreationInputUSDPerMillion
+		out.CacheCreationInputUSDPerMillion = &v
+	}
+	if len(in.CacheCreationInputDetailUSDPerMillion) > 0 {
+		out.CacheCreationInputDetailUSDPerMillion = make(map[string]float64, len(in.CacheCreationInputDetailUSDPerMillion))
+		for key, value := range in.CacheCreationInputDetailUSDPerMillion {
+			out.CacheCreationInputDetailUSDPerMillion[normalizeDetailKey(key)] = value
+		}
+	}
+	if len(in.Tiers) > 0 {
+		out.Tiers = make([]ChatPricingTier, len(in.Tiers))
+		for i := range in.Tiers {
+			out.Tiers[i] = cloneChatPricingTier(in.Tiers[i])
+		}
+	}
+	if in.PeakRates != nil {
+		peakRates := cloneChatPricingRates(*in.PeakRates)
+		out.PeakRates = &peakRates
+	}
+	return out
+}
+
+func cloneImagePricingRule(in ImagePricingRule) ImagePricingRule {
+	out := ImagePricingRule{
+		InferenceProvider:       in.InferenceProvider,
+		Model:                   in.Model,
+		TextInputUSDPerMillion:  in.TextInputUSDPerMillion,
+		ImageInputUSDPerMillion: in.ImageInputUSDPerMillion,
+		OutputUSDPerMillion:     in.OutputUSDPerMillion,
+	}
+	if len(in.Aliases) > 0 {
+		out.Aliases = append([]string{}, in.Aliases...)
+	}
+	if in.CachedTextInputUSDPerMillion != nil {
+		v := *in.CachedTextInputUSDPerMillion
+		out.CachedTextInputUSDPerMillion = &v
+	}
+	if in.CachedImageInputUSDPerMillion != nil {
+		v := *in.CachedImageInputUSDPerMillion
+		out.CachedImageInputUSDPerMillion = &v
+	}
+	if in.TextOutputUSDPerMillion != nil {
+		v := *in.TextOutputUSDPerMillion
+		out.TextOutputUSDPerMillion = &v
+	}
+	return out
+}
+
+func cloneChatPricingTier(in ChatPricingTier) ChatPricingTier {
+	out := ChatPricingTier{
+		InputUSDPerMillion:  in.InputUSDPerMillion,
+		OutputUSDPerMillion: in.OutputUSDPerMillion,
+	}
+	if in.MaxInputTokens != nil {
+		v := *in.MaxInputTokens
+		out.MaxInputTokens = &v
+	}
+	if in.CachedInputUSDPerMillion != nil {
+		v := *in.CachedInputUSDPerMillion
+		out.CachedInputUSDPerMillion = &v
+	}
+	if in.CacheCreationInputUSDPerMillion != nil {
+		v := *in.CacheCreationInputUSDPerMillion
+		out.CacheCreationInputUSDPerMillion = &v
+	}
+	if len(in.CacheCreationInputDetailUSDPerMillion) > 0 {
+		out.CacheCreationInputDetailUSDPerMillion = make(map[string]float64, len(in.CacheCreationInputDetailUSDPerMillion))
+		for key, value := range in.CacheCreationInputDetailUSDPerMillion {
+			out.CacheCreationInputDetailUSDPerMillion[normalizeDetailKey(key)] = value
+		}
+	}
+	return out
+}
+
+func cloneChatPricingRates(in ChatPricingRates) ChatPricingRates {
+	out := ChatPricingRates{
+		InputUSDPerMillion:  in.InputUSDPerMillion,
+		OutputUSDPerMillion: in.OutputUSDPerMillion,
+	}
+	if in.CachedInputUSDPerMillion != nil {
+		value := *in.CachedInputUSDPerMillion
+		out.CachedInputUSDPerMillion = &value
+	}
+	if in.CacheCreationInputUSDPerMillion != nil {
+		value := *in.CacheCreationInputUSDPerMillion
+		out.CacheCreationInputUSDPerMillion = &value
+	}
+	if len(in.CacheCreationInputDetailUSDPerMillion) > 0 {
+		out.CacheCreationInputDetailUSDPerMillion = make(map[string]float64, len(in.CacheCreationInputDetailUSDPerMillion))
+		for key, value := range in.CacheCreationInputDetailUSDPerMillion {
+			out.CacheCreationInputDetailUSDPerMillion[normalizeDetailKey(key)] = value
+		}
+	}
+	return out
+}
+
+func validateChatPricingRule(rule ChatPricingRule) error {
+	if strings.TrimSpace(rule.Model) == "" {
+		return fmt.Errorf("model is required")
+	}
+	var err error
+	if len(rule.Tiers) > 0 {
+		if hasFlatChatPricingFields(rule) {
+			return fmt.Errorf("flat price fields and tiers cannot be mixed")
+		}
+		err = validateChatPricingTiers(rule.Tiers)
+	} else {
+		err = validateChatPricingRates("", chatPricingRates{
+			InputUSDPerMillion:                    rule.InputUSDPerMillion,
+			OutputUSDPerMillion:                   rule.OutputUSDPerMillion,
+			CachedInputUSDPerMillion:              rule.CachedInputUSDPerMillion,
+			CacheCreationInputUSDPerMillion:       rule.CacheCreationInputUSDPerMillion,
+			CacheCreationInputDetailUSDPerMillion: rule.CacheCreationInputDetailUSDPerMillion,
+		})
+	}
+	if err != nil {
+		return err
+	}
+	if rule.PeakRates != nil {
+		return validateChatPricingRates("peak_rates.", chatPricingRates{
+			InputUSDPerMillion:                    rule.PeakRates.InputUSDPerMillion,
+			OutputUSDPerMillion:                   rule.PeakRates.OutputUSDPerMillion,
+			CachedInputUSDPerMillion:              rule.PeakRates.CachedInputUSDPerMillion,
+			CacheCreationInputUSDPerMillion:       rule.PeakRates.CacheCreationInputUSDPerMillion,
+			CacheCreationInputDetailUSDPerMillion: rule.PeakRates.CacheCreationInputDetailUSDPerMillion,
+		})
+	}
+	return nil
+}
+
+func validateImagePricingRule(rule ImagePricingRule) error {
+	if strings.TrimSpace(rule.Model) == "" {
+		return fmt.Errorf("model is required")
+	}
+	if err := validateFinitePrice("text_input_usd_per_million", rule.TextInputUSDPerMillion); err != nil {
+		return err
+	}
+	if err := validateFinitePrice("image_input_usd_per_million", rule.ImageInputUSDPerMillion); err != nil {
+		return err
+	}
+	if err := validateFinitePrice("output_usd_per_million", rule.OutputUSDPerMillion); err != nil {
+		return err
+	}
+	if rule.TextOutputUSDPerMillion != nil {
+		if err := validateFinitePrice("text_output_usd_per_million", *rule.TextOutputUSDPerMillion); err != nil {
+			return err
+		}
+		if *rule.TextOutputUSDPerMillion < 0 {
+			return fmt.Errorf("text_output_usd_per_million must be >= 0")
+		}
+	}
+	if rule.TextInputUSDPerMillion < 0 {
+		return fmt.Errorf("text_input_usd_per_million must be >= 0")
+	}
+	if rule.ImageInputUSDPerMillion < 0 {
+		return fmt.Errorf("image_input_usd_per_million must be >= 0")
+	}
+	if rule.OutputUSDPerMillion < 0 {
+		return fmt.Errorf("output_usd_per_million must be >= 0")
+	}
+	if rule.CachedTextInputUSDPerMillion != nil {
+		if err := validateFinitePrice("cached_text_input_usd_per_million", *rule.CachedTextInputUSDPerMillion); err != nil {
+			return err
+		}
+		if *rule.CachedTextInputUSDPerMillion < 0 {
+			return fmt.Errorf("cached_text_input_usd_per_million must be >= 0")
+		}
+	}
+	if rule.CachedImageInputUSDPerMillion != nil {
+		if err := validateFinitePrice("cached_image_input_usd_per_million", *rule.CachedImageInputUSDPerMillion); err != nil {
+			return err
+		}
+		if *rule.CachedImageInputUSDPerMillion < 0 {
+			return fmt.Errorf("cached_image_input_usd_per_million must be >= 0")
+		}
+	}
+	return nil
+}
+
+func hasFlatChatPricingFields(rule ChatPricingRule) bool {
+	return rule.InputUSDPerMillion != 0 ||
+		rule.OutputUSDPerMillion != 0 ||
+		rule.CachedInputUSDPerMillion != nil ||
+		rule.CacheCreationInputUSDPerMillion != nil ||
+		len(rule.CacheCreationInputDetailUSDPerMillion) > 0
+}
+
+func validateChatPricingTiers(tiers []ChatPricingTier) error {
+	if len(tiers) == 0 {
+		return fmt.Errorf("tiers must not be empty")
+	}
+
+	var prevMax *int
+	for i, tier := range tiers {
+		prefix := fmt.Sprintf("tiers[%d].", i)
+		if err := validateChatPricingRates(prefix, chatPricingRates{
+			InputUSDPerMillion:                    tier.InputUSDPerMillion,
+			OutputUSDPerMillion:                   tier.OutputUSDPerMillion,
+			CachedInputUSDPerMillion:              tier.CachedInputUSDPerMillion,
+			CacheCreationInputUSDPerMillion:       tier.CacheCreationInputUSDPerMillion,
+			CacheCreationInputDetailUSDPerMillion: tier.CacheCreationInputDetailUSDPerMillion,
+		}); err != nil {
+			return err
+		}
+
+		if tier.MaxInputTokens == nil {
+			if i != len(tiers)-1 {
+				return fmt.Errorf("tiers[%d].max_input_tokens: open-ended tier must be last", i)
+			}
+			continue
+		}
+		if *tier.MaxInputTokens < 0 {
+			return fmt.Errorf("tiers[%d].max_input_tokens must be >= 0", i)
+		}
+		if prevMax != nil && *tier.MaxInputTokens <= *prevMax {
+			return fmt.Errorf("tiers[%d].max_input_tokens must be strictly increasing", i)
+		}
+		v := *tier.MaxInputTokens
+		prevMax = &v
+	}
+
+	return nil
+}
+
+func validateChatPricingRates(prefix string, rates chatPricingRates) error {
+	if err := validateFinitePrice(prefix+"input_usd_per_million", rates.InputUSDPerMillion); err != nil {
+		return err
+	}
+	if err := validateFinitePrice(prefix+"output_usd_per_million", rates.OutputUSDPerMillion); err != nil {
+		return err
+	}
+	if rates.InputUSDPerMillion < 0 {
+		return fmt.Errorf("%sinput_usd_per_million must be >= 0", prefix)
+	}
+	if rates.OutputUSDPerMillion < 0 {
+		return fmt.Errorf("%soutput_usd_per_million must be >= 0", prefix)
+	}
+	if rates.CachedInputUSDPerMillion != nil {
+		if err := validateFinitePrice(prefix+"cached_input_usd_per_million", *rates.CachedInputUSDPerMillion); err != nil {
+			return err
+		}
+		if *rates.CachedInputUSDPerMillion < 0 {
+			return fmt.Errorf("%scached_input_usd_per_million must be >= 0", prefix)
+		}
+	}
+	if rates.CacheCreationInputUSDPerMillion != nil {
+		if err := validateFinitePrice(prefix+"cache_creation_input_usd_per_million", *rates.CacheCreationInputUSDPerMillion); err != nil {
+			return err
+		}
+		if *rates.CacheCreationInputUSDPerMillion < 0 {
+			return fmt.Errorf("%scache_creation_input_usd_per_million must be >= 0", prefix)
+		}
+	}
+	for key, value := range rates.CacheCreationInputDetailUSDPerMillion {
+		if strings.TrimSpace(key) == "" {
+			return fmt.Errorf("%scache_creation_input_detail_usd_per_million key is required", prefix)
+		}
+		if err := validateFinitePrice(fmt.Sprintf("%scache_creation_input_detail_usd_per_million[%q]", prefix, key), value); err != nil {
+			return err
+		}
+		if value < 0 {
+			return fmt.Errorf("%scache_creation_input_detail_usd_per_million[%q] must be >= 0", prefix, key)
+		}
+	}
+	return nil
+}
+
+func validateUniqueChatPricingRuleModels(rules []ChatPricingRule) error {
+	seen := make(map[string]int, len(rules))
+	for i, rule := range rules {
+		inferenceProvider := normalizeInferenceProvider(rule.InferenceProvider)
+		names := append([]string{rule.Model}, rule.Aliases...)
+		for _, name := range names {
+			normalized := normalizeModel(name)
+			if normalized == "" {
+				continue
+			}
+			key := inferenceProvider + "\x00" + normalized
+			if prev, ok := seen[key]; ok {
+				if prev == i {
+					continue
+				}
+				if inferenceProvider == "" {
+					return fmt.Errorf("chat[%d]: model or alias %q conflicts with chat[%d]", i, name, prev)
+				}
+				return fmt.Errorf("chat[%d]: model or alias %q conflicts with chat[%d] under inference_provider %q", i, name, prev, rule.InferenceProvider)
+			}
+			seen[key] = i
+		}
+	}
+	return nil
+}
+
+func validateUniqueImagePricingRuleModels(rules []ImagePricingRule) error {
+	seen := make(map[string]int, len(rules))
+	for i, rule := range rules {
+		inferenceProvider := normalizeInferenceProvider(rule.InferenceProvider)
+		names := append([]string{rule.Model}, rule.Aliases...)
+		for _, name := range names {
+			normalized := normalizeModel(name)
+			if normalized == "" {
+				continue
+			}
+			key := inferenceProvider + "\x00" + normalized
+			if prev, ok := seen[key]; ok {
+				if prev == i {
+					continue
+				}
+				if inferenceProvider == "" {
+					return fmt.Errorf("image[%d]: model or alias %q conflicts with image[%d]", i, name, prev)
+				}
+				return fmt.Errorf("image[%d]: model or alias %q conflicts with image[%d] under inference_provider %q", i, name, prev, rule.InferenceProvider)
+			}
+			seen[key] = i
+		}
+	}
+	return nil
+}
+
+func validateFinitePrice(field string, value float64) error {
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		return fmt.Errorf("%s must be a finite number", field)
+	}
+	return nil
+}
+
+func normalizeInferenceProvider(inferenceProvider string) string {
+	return strings.ToLower(strings.TrimSpace(inferenceProvider))
+}
+
+func normalizeModel(model string) string {
+	model = strings.TrimSpace(strings.ToLower(model))
+	model = strings.TrimPrefix(model, "models/")
+	return normalizeNumericVersionDots(model)
+}
+
+func normalizeModelCandidates(model string) []string {
+	normalized := normalizeModel(model)
+	if normalized == "" {
+		return nil
+	}
+
+	candidates := []string{normalized}
+	if slash := strings.LastIndex(normalized, "/"); slash >= 0 && slash+1 < len(normalized) {
+		suffix := normalized[slash+1:]
+		if suffix != "" && suffix != normalized {
+			candidates = append(candidates, suffix)
+		}
+	}
+	return candidates
+}
+
+func normalizeNumericVersionDots(model string) string {
+	if !strings.Contains(model, ".") {
+		return model
+	}
+
+	var b strings.Builder
+	b.Grow(len(model))
+	for i := 0; i < len(model); i++ {
+		ch := model[i]
+		if ch == '.' && i > 0 && i+1 < len(model) && isASCIIDigit(model[i-1]) && isASCIIDigit(model[i+1]) {
+			b.WriteByte('-')
+			continue
+		}
+		b.WriteByte(ch)
+	}
+	return b.String()
+}
+
+func isASCIIDigit(ch byte) bool {
+	return ch >= '0' && ch <= '9'
+}
+
+func normalizeDetailKey(key string) string {
+	return strings.ToLower(strings.TrimSpace(key))
+}
+
+func tokensCost(tokens int, usdPerMillion float64) float64 {
+	if tokens <= 0 || usdPerMillion <= 0 {
+		return 0
+	}
+	return float64(tokens) * usdPerMillion / 1_000_000
+}
+
+func roundUSD(v float64) float64 {
+	return math.Round(v*1e12) / 1e12
+}

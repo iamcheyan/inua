@@ -1,0 +1,1318 @@
+package daemonruntime
+
+import (
+	"bufio"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/quailyquaily/mistermorph/internal/domainjournal"
+	"github.com/quailyquaily/mistermorph/internal/pagination"
+	"github.com/quailyquaily/mistermorph/internal/taskdomain"
+	"github.com/quailyquaily/mistermorph/internal/topicproj"
+)
+
+const (
+	legacyConsoleTopicFileVersion = 1
+	legacyConsoleTaskLogDirName   = "log"
+	legacyConsoleHeartbeatTopicID = "_heartbeat"
+	legacyConsoleHeartbeatTitle   = "Heartbeat"
+)
+
+var (
+	ErrTopicTitleChanged = errors.New("topic was renamed or deleted during generation")
+	ErrTopicTitleBusy    = errors.New("topic name generation is already in progress")
+	ErrTopicNotFound     = errors.New("topic not found")
+)
+
+type ConsoleFileStoreOptions struct {
+	RootDir string
+	// Target names the runtime whose journal records the store reads and writes. Empty means
+	// "console"; an embedding program serving its own runtime API uses its own target.
+	Target         string
+	Persist        bool
+	Journal        *domainjournal.Journal
+	JournalDir     string
+	RotateMaxBytes int64
+	// Local chat reads shared history without recovering another runtime's jobs.
+	SkipRecovery bool
+	// TopicsProjectionPath optionally receives a lightweight topics
+	// projection after every topic mutation so local clients can read it
+	// without a runtime API connection. Write failures are ignored; the
+	// journal remains the source of truth.
+	TopicsProjectionPath string
+}
+
+type ConsoleFileStore struct {
+	mu sync.RWMutex
+
+	rootDir              string
+	target               string
+	topicsProjectionPath string
+	journalDir           string
+	persist              bool
+	skipRecovery         bool
+	journal              *domainjournal.Journal
+	projectionCursor     domainjournal.Cursor
+	projectionErr        error
+
+	items             map[string]TaskInfo
+	topics            map[string]TopicInfo
+	triggers          map[string]TaskTrigger
+	orderedIDs        []string
+	orderedIDsByTopic map[string][]string
+	orderedTopicIDs   []string
+}
+
+type legacyConsoleTopicFile struct {
+	Version   int         `json:"version"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	Items     []TopicInfo `json:"items"`
+}
+
+type legacyConsoleTaskEvent struct {
+	Type    string       `json:"type"`
+	At      time.Time    `json:"at"`
+	Channel string       `json:"channel"`
+	Trigger *TaskTrigger `json:"trigger,omitempty"`
+	Task    TaskInfo     `json:"task"`
+}
+
+func NewConsoleFileStore(opts ConsoleFileStoreOptions) (*ConsoleFileStore, error) {
+	rootDir := strings.TrimSpace(opts.RootDir)
+	if opts.Persist && rootDir == "" {
+		return nil, fmt.Errorf("console task store root dir is required")
+	}
+	s := &ConsoleFileStore{
+		rootDir:              filepath.Clean(rootDir),
+		target:               consoleStoreTarget(opts.Target),
+		topicsProjectionPath: cleanOptionalPath(opts.TopicsProjectionPath),
+		persist:              opts.Persist,
+		skipRecovery:         opts.SkipRecovery,
+		journal:              opts.Journal,
+		items:                map[string]TaskInfo{},
+		topics:               map[string]TopicInfo{},
+		triggers:             map[string]TaskTrigger{},
+		orderedIDsByTopic:    map[string][]string{},
+	}
+	journalDir := cleanOptionalPath(opts.JournalDir)
+	if s.journal == nil && journalDir != "" {
+		journal, err := taskdomain.NewJournal(journalDir, opts.RotateMaxBytes)
+		if err != nil {
+			return nil, err
+		}
+		s.journal = journal
+	}
+	if s.persist && s.journal == nil {
+		return nil, fmt.Errorf("journal dir is required")
+	}
+	if s.journal != nil {
+		s.journalDir = journalDir
+	}
+	if err := s.load(); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+func (s *ConsoleFileStore) ApplyConfig(opts ConsoleFileStoreOptions) error {
+	if s == nil {
+		return fmt.Errorf("console task store is nil")
+	}
+	rootDir := strings.TrimSpace(opts.RootDir)
+	if opts.Persist && rootDir == "" {
+		return fmt.Errorf("console task store root dir is required")
+	}
+	nextRootDir := filepath.Clean(rootDir)
+	nextJournal := opts.Journal
+	nextJournalDir := cleanOptionalPath(opts.JournalDir)
+	if nextJournal == nil && nextJournalDir != "" {
+		var err error
+		nextJournal, err = taskdomain.NewJournal(nextJournalDir, opts.RotateMaxBytes)
+		if err != nil {
+			return err
+		}
+	}
+	if opts.Persist && nextJournal == nil {
+		return fmt.Errorf("journal dir is required")
+	}
+
+	unlock, err := s.lockShared()
+	if err != nil {
+		return err
+	}
+	defer unlock()
+
+	sameJournal := sameConsoleJournalStorage(s.journal, s.journalDir, nextJournal, nextJournalDir)
+
+	if !opts.Persist {
+		s.rootDir = nextRootDir
+		s.journalDir = nextJournalDir
+		s.persist = false
+		s.journal = nextJournal
+		if !sameJournal {
+			s.projectionCursor = domainjournal.Cursor{}
+		}
+		s.projectionErr = nil
+		return nil
+	}
+
+	now := time.Now().UTC()
+	nextCursor := s.projectionCursor
+	if !sameJournal {
+		var err error
+		nextCursor, err = s.seedJournalLocked(nextJournal, now)
+		if err != nil {
+			return err
+		}
+	}
+	projectionErr := s.saveSnapshotAtRootLocked(nextRootDir, now, nextCursor)
+	s.rootDir = nextRootDir
+	s.journalDir = nextJournalDir
+	s.persist = true
+	s.journal = nextJournal
+	s.projectionCursor = nextCursor
+	s.projectionErr = projectionErr
+	return nil
+}
+
+// CreateTopic creates an empty topic with a seed title, which a generated title may replace.
+func (s *ConsoleFileStore) CreateTopic(title string) (TopicInfo, error) {
+	return s.createTopic(title, false)
+}
+
+// CreateNamedTopic creates an empty topic whose title, when given, is the user's own: generated
+// titles leave it alone. Without a title the topic is named after its first task.
+func (s *ConsoleFileStore) CreateNamedTopic(title string) (TopicInfo, error) {
+	return s.createTopic(title, strings.TrimSpace(title) != "")
+}
+
+func (s *ConsoleFileStore) createTopic(title string, customized bool) (TopicInfo, error) {
+	if s == nil {
+		return TopicInfo{}, fmt.Errorf("console task store is nil")
+	}
+	now := time.Now().UTC()
+	topic := TopicInfo{
+		ID:              buildConsoleTopicID(),
+		Title:           strings.TrimSpace(title),
+		TitleCustomized: customized,
+		CreatedAt:       now,
+		UpdatedAt:       now,
+	}
+
+	unlock, err := s.lockShared()
+	if err != nil {
+		return TopicInfo{}, err
+	}
+	defer unlock()
+	cursor, err := s.appendTopicEventLocked(taskdomain.JournalTypeTopicUpsert, topic, now, TaskTrigger{})
+	if err != nil {
+		return TopicInfo{}, err
+	}
+	s.topics[topic.ID] = topic
+	s.orderedTopicIDs = upsertOrderedTopicID(s.orderedTopicIDs, s.topics, topic.ID)
+	s.projectionCursor = cursor
+	s.persistTopicsProjectionLocked(now)
+	return topic, nil
+}
+
+func (s *ConsoleFileStore) Upsert(info TaskInfo) error {
+	return s.UpsertWithTrigger(info, TaskTrigger{}, "")
+}
+
+func (s *ConsoleFileStore) RecordTaskUpsert(info TaskInfo, trigger TaskTrigger) error {
+	return s.UpsertWithTrigger(info, trigger, "")
+}
+
+func (s *ConsoleFileStore) UpsertWithTrigger(info TaskInfo, trigger TaskTrigger, topicTitle string) error {
+	if s == nil {
+		return nil
+	}
+	info = normalizeConsoleTaskInfo(info)
+	if info.ID == "" {
+		return nil
+	}
+	now := time.Now().UTC()
+
+	unlock, err := s.lockShared()
+	if err != nil {
+		return err
+	}
+	defer unlock()
+
+	info.TopicID = s.normalizeTopicIDLocked(info.TopicID)
+	if topic, ok := s.topics[info.TopicID]; ok && topicDeleted(topic) {
+		if _, exists := s.items[info.ID]; !exists {
+			return fmt.Errorf("topic %q was deleted", info.TopicID)
+		}
+	}
+	if _, exists := s.items[info.ID]; !exists && activeConsoleTask(info) && info.SteerTargetTaskID == "" {
+		for _, other := range s.items {
+			if other.TopicID == info.TopicID && activeConsoleTask(other) && other.SteerTargetTaskID == "" &&
+				(trigger.Source == "chat" || s.triggers[other.ID].Source == "chat") {
+				return ErrTopicBusy
+			}
+		}
+	}
+	currentTopic, topicExists := s.topics[info.TopicID]
+	topic := nextConsoleTopic(currentTopic, topicExists, info.TopicID, topicTitle, now, true)
+	cursor, err := s.appendTaskEventLocked(info, &topic, now, s.triggerForTaskLocked(info.ID, trigger), taskdomain.JournalTypeTaskUpsert)
+	if err != nil {
+		return err
+	}
+	previous, existed := s.items[info.ID]
+	previousTopic := currentTopic
+	s.items[info.ID] = info
+	s.updateTaskOrderLocked(previous, existed, info)
+	s.topics[topic.ID] = topic
+	if !topicExists || topicOrderChanged(previousTopic, topic) {
+		s.orderedTopicIDs = upsertOrderedTopicID(s.orderedTopicIDs, s.topics, topic.ID)
+	}
+	if taskdomain.HasTaskTrigger(trigger) {
+		s.triggers[info.ID] = taskdomain.NormalizeTaskTrigger(trigger)
+	}
+	s.projectionCursor = cursor
+	s.persistTopicsProjectionLocked(now)
+	return nil
+}
+
+func (s *ConsoleFileStore) Update(id string, fn func(*TaskInfo)) error {
+	return s.UpdateWithTrigger(id, TaskTrigger{}, fn)
+}
+
+func (s *ConsoleFileStore) RecordTaskUpdate(id string, trigger TaskTrigger, fn func(*TaskInfo)) error {
+	return s.UpdateWithTrigger(id, trigger, fn)
+}
+
+func (s *ConsoleFileStore) UpdateWithTrigger(id string, trigger TaskTrigger, fn func(*TaskInfo)) error {
+	if s == nil || fn == nil {
+		return nil
+	}
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return nil
+	}
+	now := time.Now().UTC()
+
+	unlock, err := s.lockShared()
+	if err != nil {
+		return err
+	}
+	defer unlock()
+
+	item, ok := s.items[id]
+	if !ok {
+		return nil
+	}
+	fn(&item)
+	item = normalizeConsoleTaskInfo(item)
+	item.ID = id
+	item.TopicID = s.normalizeTopicIDLocked(item.TopicID)
+	cursor, err := s.appendTaskEventLocked(item, nil, now, s.triggerForTaskLocked(id, trigger), taskdomain.JournalTypeTaskUpdate)
+	if err != nil {
+		return err
+	}
+	previous := s.items[id]
+	s.items[id] = item
+	s.updateTaskOrderLocked(previous, true, item)
+	if taskdomain.HasTaskTrigger(trigger) {
+		s.triggers[id] = taskdomain.NormalizeTaskTrigger(trigger)
+	}
+	s.projectionCursor = cursor
+	return nil
+}
+
+// ProjectionError reports the latest startup snapshot write or load failure.
+// Task and topic events remain committed in the journal and replay from the
+// saved cursor.
+func (s *ConsoleFileStore) ProjectionError() error {
+	if s == nil {
+		return nil
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.projectionErr
+}
+
+func (s *ConsoleFileStore) Get(id string) (*TaskInfo, bool) {
+	if s == nil {
+		return nil, false
+	}
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return nil, false
+	}
+	unlock, err := s.lockShared()
+	if err != nil {
+		return nil, false
+	}
+	defer unlock()
+	item, ok := s.items[id]
+	if !ok {
+		return nil, false
+	}
+	cp := item
+	return &cp, true
+}
+
+func (s *ConsoleFileStore) GetTopic(id string) (*TopicInfo, bool) {
+	if s == nil {
+		return nil, false
+	}
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return nil, false
+	}
+	unlock, err := s.lockShared()
+	if err != nil {
+		return nil, false
+	}
+	defer unlock()
+	topic, ok := s.topics[id]
+	if !ok {
+		return nil, false
+	}
+	cp := topic
+	return &cp, true
+}
+
+func (s *ConsoleFileStore) GetTrigger(taskID string) (TaskTrigger, bool) {
+	if s == nil {
+		return TaskTrigger{}, false
+	}
+	taskID = strings.TrimSpace(taskID)
+	if taskID == "" {
+		return TaskTrigger{}, false
+	}
+	unlock, err := s.lockShared()
+	if err != nil {
+		return TaskTrigger{}, false
+	}
+	defer unlock()
+	trigger, ok := s.triggers[taskID]
+	if !ok {
+		return TaskTrigger{}, false
+	}
+	return trigger, true
+}
+
+func (s *ConsoleFileStore) List(opts TaskListOptions) []TaskInfo {
+	if s == nil {
+		return nil
+	}
+	limit := opts.Limit
+	if limit <= 0 {
+		limit = taskListDefaultLimit
+	}
+	if limit > taskListInternalMaxLimit {
+		limit = taskListInternalMaxLimit
+	}
+	statusNorm := strings.TrimSpace(strings.ToLower(string(opts.Status)))
+	topicID := strings.TrimSpace(opts.TopicID)
+
+	cursor, cursorOK := pagination.ParseKeysetCursor(opts.Cursor)
+	useCursor := cursorOK && strings.TrimSpace(opts.Cursor) != ""
+	unlock, err := s.lockShared()
+	if err != nil {
+		return nil
+	}
+	defer unlock()
+	orderedIDs := s.orderedIDs
+	if topicID != "" {
+		orderedIDs = s.orderedIDsByTopic[topicID]
+	}
+	start := 0
+	if useCursor {
+		start = sort.Search(len(orderedIDs), func(i int) bool {
+			item := s.items[orderedIDs[i]]
+			return pagination.FollowsKeysetCursor(item.CreatedAt, item.ID, cursor)
+		})
+	}
+	out := make([]TaskInfo, 0, limit)
+	for _, id := range orderedIDs[start:] {
+		item, ok := s.items[id]
+		if !ok {
+			continue
+		}
+		if statusNorm != "" && strings.ToLower(string(item.Status)) != statusNorm {
+			continue
+		}
+		if topicID != "" && strings.TrimSpace(item.TopicID) != topicID {
+			continue
+		}
+		if topicID == "" && strings.TrimSpace(item.TopicID) == ConsoleAwarenessTopicID {
+			continue
+		}
+		if topicDeleted(s.topics[strings.TrimSpace(item.TopicID)]) {
+			continue
+		}
+		out = append(out, item)
+		if len(out) >= limit {
+			break
+		}
+	}
+	return out
+}
+
+func (s *ConsoleFileStore) updateTaskOrderLocked(previous TaskInfo, existed bool, next TaskInfo) {
+	orderChanged := !existed || taskOrderChanged(previous, next)
+	previousTopicID := strings.TrimSpace(previous.TopicID)
+	nextTopicID := strings.TrimSpace(next.TopicID)
+	topicChanged := existed && previousTopicID != nextTopicID
+	if orderChanged {
+		s.orderedIDs = upsertOrderedTaskID(s.orderedIDs, s.items, next.ID)
+	}
+	if s.orderedIDsByTopic == nil {
+		s.orderedIDsByTopic = map[string][]string{}
+	}
+	if topicChanged {
+		previousIDs := removeOrderedTaskID(s.orderedIDsByTopic[previousTopicID], next.ID)
+		if len(previousIDs) == 0 {
+			delete(s.orderedIDsByTopic, previousTopicID)
+		} else {
+			s.orderedIDsByTopic[previousTopicID] = previousIDs
+		}
+	}
+	if orderChanged || topicChanged {
+		s.orderedIDsByTopic[nextTopicID] = upsertOrderedTaskID(s.orderedIDsByTopic[nextTopicID], s.items, next.ID)
+	}
+}
+
+func (s *ConsoleFileStore) ListTopicsPage(opts TopicListOptions) []TopicInfo {
+	if s == nil {
+		return nil
+	}
+	limit := opts.Limit
+	if limit <= 0 {
+		limit = topicListDefaultLimit
+	}
+	if limit > topicListInternalMax {
+		limit = topicListInternalMax
+	}
+	cursor, cursorOK := pagination.ParseKeysetCursor(opts.Cursor)
+	useCursor := cursorOK && strings.TrimSpace(opts.Cursor) != ""
+	unlock, err := s.lockShared()
+	if err != nil {
+		return nil
+	}
+	defer unlock()
+	start := 0
+	if useCursor {
+		start = sort.Search(len(s.orderedTopicIDs), func(i int) bool {
+			topic := s.topics[s.orderedTopicIDs[i]]
+			return pagination.FollowsKeysetCursor(topic.UpdatedAt, topic.ID, cursor)
+		})
+	}
+	out := make([]TopicInfo, 0, limit)
+	for _, id := range s.orderedTopicIDs[start:] {
+		topic, ok := s.topics[id]
+		if !ok || topicDeleted(topic) {
+			continue
+		}
+		out = append(out, topic)
+		if len(out) >= limit {
+			break
+		}
+	}
+	return out
+}
+
+func (s *ConsoleFileStore) DeleteTopic(id string) (bool, error) {
+	if s == nil {
+		return false, fmt.Errorf("console task store is nil")
+	}
+	id = strings.TrimSpace(id)
+	if id == "" || id == ConsoleDefaultTopicID {
+		return false, nil
+	}
+	now := time.Now().UTC()
+
+	unlock, err := s.lockShared()
+	if err != nil {
+		return false, err
+	}
+	defer unlock()
+
+	topic, ok := s.topics[id]
+	if !ok {
+		return false, nil
+	}
+	if topic.DeletedAt != nil {
+		return true, nil
+	}
+	for _, task := range s.items {
+		if task.TopicID == id && activeConsoleTask(task) && (s.skipRecovery || s.triggers[task.ID].Source == "chat") {
+			return false, ErrTopicBusy
+		}
+	}
+	topic.DeletedAt = &now
+	topic.UpdatedAt = now
+	cursor, err := s.appendTopicEventLocked(taskdomain.JournalTypeTopicDeleted, topic, now, TaskTrigger{})
+	if err != nil {
+		return false, err
+	}
+	s.topics[id] = topic
+	s.orderedTopicIDs = removeOrderedTopicID(s.orderedTopicIDs, id)
+	s.projectionCursor = cursor
+	s.persistTopicsProjectionLocked(now)
+	return true, nil
+}
+
+func (s *ConsoleFileStore) SetTopicTitle(id string, title string) error {
+	return s.setTopicTitle(id, title, "", "", false)
+}
+
+func (s *ConsoleFileStore) SetTopicTitleFromLLM(id, expectedTitle, title, icon string) error {
+	return s.setTopicTitle(id, title, icon, expectedTitle, true)
+}
+
+func (s *ConsoleFileStore) setTopicTitle(id, title, icon, expectedTitle string, fromLLM bool) error {
+	if s == nil {
+		return fmt.Errorf("console task store is nil")
+	}
+	id = strings.TrimSpace(id)
+	title = strings.TrimSpace(title)
+	if id == "" {
+		return fmt.Errorf("missing topic id")
+	}
+	if title == "" {
+		return fmt.Errorf("missing topic title")
+	}
+	now := time.Now().UTC()
+
+	unlock, err := s.lockShared()
+	if err != nil {
+		return err
+	}
+	defer unlock()
+
+	topic, ok := s.topics[id]
+	if !ok || topicDeleted(topic) {
+		return fmt.Errorf("topic %q not found", id)
+	}
+	if fromLLM && (topic.LLMTitleGeneratedAt != nil || topic.TitleCustomized || topic.TitleRevision != 0 || topic.Title != expectedTitle) {
+		return nil
+	}
+	topic.Title = title
+	if fromLLM {
+		topic.LLMTitleGeneratedAt = &now
+		topic.Icon = taskdomain.NormalizeTopicIcon(icon)
+	} else {
+		topic.TitleCustomized = true
+	}
+	topic.UpdatedAt = now
+	topic.TitleRevision++
+	return s.saveTopicTitleLocked(topic, now)
+}
+
+// BeginTopicTitleRegeneration invalidates pending naming results without changing
+// the displayed title, icon or topic ordering. Its revision survives a restart.
+func (s *ConsoleFileStore) BeginTopicTitleRegeneration(id string) (TopicInfo, error) {
+	unlock, err := s.lockShared()
+	if err != nil {
+		return TopicInfo{}, err
+	}
+	defer unlock()
+	topic, ok := s.topics[id]
+	if !ok || topicDeleted(topic) {
+		return TopicInfo{}, ErrTopicTitleChanged
+	}
+	topic.TitleRevision++
+	if err := s.saveTopicTitleLocked(topic, time.Now().UTC()); err != nil {
+		return TopicInfo{}, err
+	}
+	return topic, nil
+}
+
+func (s *ConsoleFileStore) CompleteTopicTitleRegeneration(id string, revision uint64, title, icon string) (TopicInfo, error) {
+	unlock, err := s.lockShared()
+	if err != nil {
+		return TopicInfo{}, err
+	}
+	defer unlock()
+	topic, ok := s.topics[id]
+	if !ok || topicDeleted(topic) || revision == 0 || topic.TitleRevision != revision {
+		return TopicInfo{}, ErrTopicTitleChanged
+	}
+	title = strings.TrimSpace(title)
+	if title == "" {
+		return TopicInfo{}, fmt.Errorf("missing topic title")
+	}
+	now := time.Now().UTC()
+	topic.Title = title
+	topic.Icon = taskdomain.NormalizeTopicIcon(icon)
+	topic.TitleCustomized = false
+	topic.TitleRevision++
+	topic.LLMTitleGeneratedAt = &now
+	topic.UpdatedAt = now
+	if err := s.saveTopicTitleLocked(topic, now); err != nil {
+		return TopicInfo{}, err
+	}
+	return topic, nil
+}
+
+// SetTopicTags replaces a topic's tags. It leaves updated_at alone, so tagging does not move the
+// topic in the date-ordered list.
+func (s *ConsoleFileStore) SetTopicTags(id string, tags []string) (TopicInfo, error) {
+	if s == nil {
+		return TopicInfo{}, fmt.Errorf("console task store is nil")
+	}
+	id = strings.TrimSpace(id)
+	normalized, err := taskdomain.NormalizeTopicTags(tags)
+	if err != nil {
+		return TopicInfo{}, BadRequest(err.Error())
+	}
+	unlock, err := s.lockShared()
+	if err != nil {
+		return TopicInfo{}, err
+	}
+	defer unlock()
+	topic, ok := s.topics[id]
+	if !ok || topicDeleted(topic) {
+		return TopicInfo{}, ErrTopicNotFound
+	}
+	topic.Tags = normalized
+	now := time.Now().UTC()
+	cursor, err := s.appendTopicEventLocked(taskdomain.JournalTypeTopicTagsUpdated, topic, now, TaskTrigger{})
+	if err != nil {
+		return TopicInfo{}, err
+	}
+	s.topics[id] = topic
+	s.projectionCursor = cursor
+	s.persistTopicsProjectionLocked(now)
+	return topic, nil
+}
+
+func (s *ConsoleFileStore) saveTopicTitleLocked(topic TopicInfo, now time.Time) error {
+	topic = normalizeTopicInfo(topic)
+	cursor, err := s.appendTopicEventLocked(taskdomain.JournalTypeTopicTitleUpdated, topic, now, TaskTrigger{})
+	if err != nil {
+		return err
+	}
+	previous := s.topics[topic.ID]
+	s.topics[topic.ID] = topic
+	if topicOrderChanged(previous, topic) {
+		s.orderedTopicIDs = upsertOrderedTopicID(s.orderedTopicIDs, s.topics, topic.ID)
+	}
+	s.projectionCursor = cursor
+	s.persistTopicsProjectionLocked(now)
+	return nil
+}
+
+// TopicTitleTasks returns the first user task and a bounded recent history in
+// chronological order. Slash commands are not conversation subjects.
+func (s *ConsoleFileStore) TopicTitleTasks(id string, recentLimit int) []TaskInfo {
+	unlock, err := s.lockShared()
+	if err != nil {
+		return nil
+	}
+	defer unlock()
+	if topic, ok := s.topics[id]; !ok || topicDeleted(topic) || recentLimit <= 0 {
+		return nil
+	}
+	var first TaskInfo
+	recent := make([]TaskInfo, 0, recentLimit+1)
+	for _, taskID := range s.orderedIDsByTopic[id] {
+		task := s.items[taskID]
+		text := strings.TrimSpace(task.Task)
+		if text == "" || strings.HasPrefix(text, "/") {
+			continue
+		}
+		first = task
+		if len(recent) < recentLimit {
+			recent = append(recent, task)
+		}
+	}
+	if len(recent) > 0 && recent[len(recent)-1].ID != first.ID {
+		recent = append(recent, first)
+	}
+	for i, j := 0, len(recent)-1; i < j; i, j = i+1, j-1 {
+		recent[i], recent[j] = recent[j], recent[i]
+	}
+	return recent
+}
+
+func (s *ConsoleFileStore) load() error {
+	unlock, err := s.lockState()
+	if err != nil {
+		return err
+	}
+	defer unlock()
+
+	if !s.persist {
+		return nil
+	}
+
+	start, err := s.loadSnapshotLocked()
+	if err != nil {
+		s.items = map[string]TaskInfo{}
+		s.topics = map[string]TopicInfo{}
+		s.triggers = map[string]TaskTrigger{}
+		s.projectionCursor = domainjournal.Cursor{}
+		s.projectionErr = err
+		start = domainjournal.Cursor{}
+	}
+	if err := s.replayJournalLocked(start); err != nil {
+		return err
+	}
+	s.pruneUnusedDefaultTopicLocked()
+	now := time.Now().UTC()
+	if !s.skipRecovery {
+		if err := s.recoverNonTerminalTasksLocked(now, false); err != nil {
+			return err
+		}
+	}
+	s.orderedIDs = rebuildOrderedTaskIDs(s.items)
+	s.orderedIDsByTopic = groupOrderedTaskIDsByTopic(s.orderedIDs, s.items)
+	s.orderedTopicIDs = rebuildOrderedTopicIDs(s.topics)
+	s.projectionErr = s.persistSnapshotLocked(now)
+	s.persistTopicsProjectionLocked(now)
+	return nil
+}
+
+// persistTopicsProjectionLocked mirrors the current topic list into the
+// optional projection file. Best effort: the file is a read cache for local
+// clients and the journal stays authoritative.
+func (s *ConsoleFileStore) persistTopicsProjectionLocked(now time.Time) {
+	if s.topicsProjectionPath == "" {
+		return
+	}
+	items := make([]TopicInfo, 0, len(s.orderedTopicIDs))
+	for _, id := range s.orderedTopicIDs {
+		topic, ok := s.topics[id]
+		if !ok || topicDeleted(topic) {
+			continue
+		}
+		items = append(items, normalizeTopicInfo(topic))
+	}
+	_ = topicproj.Save(s.topicsProjectionPath, items)
+}
+
+func (s *ConsoleFileStore) loadSnapshotLocked() (domainjournal.Cursor, error) {
+	snap, ok, err := loadTaskProjectionSnapshot(s.rootDir)
+	if err != nil {
+		return domainjournal.Cursor{}, err
+	}
+	if !ok {
+		if err := s.loadLegacyProjectionLocked(); err != nil {
+			return domainjournal.Cursor{}, err
+		}
+		return domainjournal.Cursor{}, nil
+	}
+	s.items = map[string]TaskInfo{}
+	for _, item := range snap.Items {
+		item = normalizeConsoleTaskInfo(item)
+		if item.ID != "" {
+			s.items[item.ID] = item
+		}
+	}
+	s.topics = map[string]TopicInfo{}
+	for _, topic := range snap.Topics {
+		topic = normalizeTopicInfo(topic)
+		if topic.ID != "" {
+			s.topics[topic.ID] = topic
+		}
+	}
+	s.triggers = map[string]TaskTrigger{}
+	for id, trigger := range snap.Triggers {
+		id = strings.TrimSpace(id)
+		if id != "" && taskdomain.HasTaskTrigger(trigger) {
+			s.triggers[id] = taskdomain.NormalizeTaskTrigger(trigger)
+		}
+	}
+	s.projectionCursor = snap.Cursor
+	return snap.Cursor, nil
+}
+
+func (s *ConsoleFileStore) loadLegacyProjectionLocked() error {
+	if err := s.loadLegacyTopicsLocked(); err != nil {
+		return err
+	}
+	return s.loadLegacyTaskLogsLocked()
+}
+
+func (s *ConsoleFileStore) loadLegacyTopicsLocked() error {
+	path := filepath.Join(s.rootDir, "topic.json")
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	var file legacyConsoleTopicFile
+	if err := json.Unmarshal(raw, &file); err != nil {
+		return fmt.Errorf("parse legacy topic.json: %w", err)
+	}
+	if file.Version != 0 && file.Version != legacyConsoleTopicFileVersion {
+		return fmt.Errorf("unsupported legacy topic.json version: %d", file.Version)
+	}
+	for _, item := range file.Items {
+		topic := normalizeLegacyConsoleTopicInfo(item)
+		if topic.ID != "" {
+			s.topics[topic.ID] = topic
+		}
+	}
+	return nil
+}
+
+func (s *ConsoleFileStore) loadLegacyTaskLogsLocked() error {
+	logDir := filepath.Join(s.rootDir, legacyConsoleTaskLogDirName)
+	entries, err := os.ReadDir(logDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		if !strings.HasSuffix(strings.ToLower(entry.Name()), ".jsonl") {
+			continue
+		}
+		names = append(names, entry.Name())
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		if err := s.loadLegacyTaskLogFileLocked(filepath.Join(logDir, name)); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *ConsoleFileStore) loadLegacyTaskLogFileLocked(path string) error {
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = file.Close() }()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 64*1024), 10*1024*1024)
+	lineNo := 0
+	for scanner.Scan() {
+		lineNo++
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		var event legacyConsoleTaskEvent
+		if err := json.Unmarshal([]byte(line), &event); err != nil {
+			return fmt.Errorf("parse legacy task log %s line %d: %w", filepath.Base(path), lineNo, err)
+		}
+		if event.Type != taskdomain.JournalTypeTaskUpsert {
+			continue
+		}
+		info := normalizeLegacyConsoleTaskInfo(event.Task)
+		if info.ID == "" {
+			continue
+		}
+		info.TopicID = s.normalizeTopicIDLocked(info.TopicID)
+		s.items[info.ID] = info
+		if event.Trigger != nil && taskdomain.HasTaskTrigger(*event.Trigger) {
+			s.triggers[info.ID] = taskdomain.NormalizeTaskTrigger(*event.Trigger)
+		}
+		s.ensureTopicLocked(info.TopicID, "", info.CreatedAt, false)
+	}
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("read legacy task log %s: %w", filepath.Base(path), err)
+	}
+	return nil
+}
+
+func (s *ConsoleFileStore) replayJournalLocked(cursor domainjournal.Cursor) error {
+	if s.journal == nil {
+		return nil
+	}
+	return s.journal.ReplayFrom(cursor, func(rec domainjournal.Record) error {
+		if rec.Event.Domain != taskdomain.JournalDomain {
+			s.projectionCursor = rec.Cursor
+			return nil
+		}
+		payload, err := taskdomain.DecodeJournalPayload(rec.Event.Payload)
+		if err != nil {
+			return fmt.Errorf("decode console task journal payload %s:%d: %w", rec.Cursor.File, rec.Cursor.Line, err)
+		}
+		s.projectionCursor = rec.Cursor
+		if strings.TrimSpace(payload.Target) != "" && !strings.EqualFold(strings.TrimSpace(payload.Target), s.target) {
+			return nil
+		}
+		switch rec.Event.Type {
+		case taskdomain.JournalTypeTopicUpsert, taskdomain.JournalTypeTopicTitleUpdated, taskdomain.JournalTypeTopicTagsUpdated, taskdomain.JournalTypeTopicDeleted:
+			if payload.Topic == nil {
+				return nil
+			}
+			topic := normalizeTopicInfo(*payload.Topic)
+			if topic.ID != "" {
+				s.topics[topic.ID] = topic
+			}
+		case taskdomain.JournalTypeTaskUpsert, taskdomain.JournalTypeTaskUpdate:
+			if payload.Task == nil {
+				return nil
+			}
+			info := normalizeConsoleTaskInfo(*payload.Task)
+			if info.ID == "" {
+				return nil
+			}
+			s.items[info.ID] = info
+			if payload.Trigger != nil && taskdomain.HasTaskTrigger(*payload.Trigger) {
+				s.triggers[info.ID] = taskdomain.NormalizeTaskTrigger(*payload.Trigger)
+			}
+			if payload.Topic != nil {
+				topic := normalizeTopicInfo(*payload.Topic)
+				if topic.ID != "" {
+					s.topics[topic.ID] = topic
+				}
+			} else {
+				s.ensureTopicLocked(info.TopicID, "", info.CreatedAt, false)
+			}
+		}
+		return nil
+	})
+}
+
+func (s *ConsoleFileStore) recoverNonTerminalTasksLocked(now time.Time, chatOnly bool) error {
+	for id, item := range s.items {
+		switch item.Status {
+		case TaskQueued, TaskRunning, TaskPending:
+		default:
+			continue
+		}
+		if chatOnly && s.triggers[id].Source != "chat" {
+			continue
+		}
+		if trigger := s.triggers[id]; trigger.Source == "chat" && trigger.Ref != "" {
+			live, err := s.chatSessionAlive(trigger.Ref)
+			if err != nil {
+				return err
+			}
+			if live {
+				continue
+			}
+		}
+		item.Status = TaskCanceled
+		item.Error = "runtime restarted"
+		item.FinishedAt = &now
+		item.PendingAt = nil
+		item.ApprovalRequestID = ""
+		item.Result = nil
+		cursor, err := s.appendTaskEventLocked(item, nil, now, s.triggerForTaskLocked(id, TaskTrigger{}), taskdomain.JournalTypeTaskUpdate)
+		if err != nil {
+			return err
+		}
+		s.items[id] = item
+		s.projectionCursor = cursor
+	}
+	return nil
+}
+
+func (s *ConsoleFileStore) appendTaskEventLocked(info TaskInfo, topic *TopicInfo, now time.Time, trigger TaskTrigger, defaultType string) (domainjournal.Cursor, error) {
+	if s.journal == nil {
+		return domainjournal.Cursor{}, nil
+	}
+	return taskdomain.AppendJournalEvent(s.journal, s.target, defaultType, now, trigger, &info, topic)
+}
+
+func (s *ConsoleFileStore) appendTopicEventLocked(typ string, topic TopicInfo, now time.Time, trigger TaskTrigger) (domainjournal.Cursor, error) {
+	if s.journal == nil {
+		return domainjournal.Cursor{}, nil
+	}
+	topic = normalizeTopicInfo(topic)
+	return taskdomain.AppendJournalEvent(s.journal, s.target, typ, now, trigger, nil, &topic)
+}
+
+func (s *ConsoleFileStore) persistSnapshotLocked(now time.Time) error {
+	return s.persistSnapshotAtRootLocked(s.rootDir, now)
+}
+
+func (s *ConsoleFileStore) persistSnapshotAtRootLocked(rootDir string, now time.Time) error {
+	if !s.persist {
+		return nil
+	}
+	return s.saveSnapshotAtRootLocked(rootDir, now, s.projectionCursor)
+}
+
+func (s *ConsoleFileStore) saveSnapshotAtRootLocked(rootDir string, now time.Time, cursor domainjournal.Cursor) error {
+	items := make([]TaskInfo, 0, len(s.items))
+	for _, item := range s.items {
+		items = append(items, item)
+	}
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].CreatedAt.Equal(items[j].CreatedAt) {
+			return items[i].ID > items[j].ID
+		}
+		return items[i].CreatedAt.After(items[j].CreatedAt)
+	})
+	topics := make([]TopicInfo, 0, len(s.topics))
+	for _, topic := range s.topics {
+		topics = append(topics, normalizeTopicInfo(topic))
+	}
+	sort.Slice(topics, func(i, j int) bool {
+		if topics[i].CreatedAt.Equal(topics[j].CreatedAt) {
+			return topics[i].ID < topics[j].ID
+		}
+		return topics[i].CreatedAt.Before(topics[j].CreatedAt)
+	})
+	triggers := make(map[string]TaskTrigger, len(s.triggers))
+	for id, trigger := range s.triggers {
+		if taskdomain.HasTaskTrigger(trigger) {
+			triggers[id] = taskdomain.NormalizeTaskTrigger(trigger)
+		}
+	}
+	return saveTaskProjectionSnapshot(rootDir, taskProjectionSnapshot{
+		UpdatedAt: now,
+		Cursor:    cursor,
+		Items:     items,
+		Topics:    topics,
+		Triggers:  triggers,
+	})
+}
+
+func (s *ConsoleFileStore) seedJournalLocked(journal *domainjournal.Journal, now time.Time) (domainjournal.Cursor, error) {
+	if journal == nil {
+		return domainjournal.Cursor{}, fmt.Errorf("journal is required")
+	}
+	cursor := domainjournal.Cursor{}
+	topics := make([]TopicInfo, 0, len(s.topics))
+	for _, topic := range s.topics {
+		topics = append(topics, normalizeTopicInfo(topic))
+	}
+	sort.Slice(topics, func(i, j int) bool {
+		if topics[i].CreatedAt.Equal(topics[j].CreatedAt) {
+			return topics[i].ID < topics[j].ID
+		}
+		return topics[i].CreatedAt.Before(topics[j].CreatedAt)
+	})
+	for _, topic := range topics {
+		if strings.TrimSpace(topic.ID) == "" {
+			continue
+		}
+		next, err := taskdomain.AppendJournalEvent(journal, s.target, taskdomain.JournalTypeTopicUpsert, now, TaskTrigger{}, nil, &topic)
+		if err != nil {
+			return domainjournal.Cursor{}, err
+		}
+		cursor = next
+	}
+
+	items := make([]TaskInfo, 0, len(s.items))
+	for _, item := range s.items {
+		items = append(items, normalizeConsoleTaskInfo(item))
+	}
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].CreatedAt.Equal(items[j].CreatedAt) {
+			return items[i].ID < items[j].ID
+		}
+		return items[i].CreatedAt.Before(items[j].CreatedAt)
+	})
+	for _, item := range items {
+		if strings.TrimSpace(item.ID) == "" {
+			continue
+		}
+		next, err := taskdomain.AppendJournalEvent(journal, s.target, taskdomain.JournalTypeTaskUpsert, now, s.triggerForTaskLocked(item.ID, TaskTrigger{}), &item, nil)
+		if err != nil {
+			return domainjournal.Cursor{}, err
+		}
+		cursor = next
+	}
+	return cursor, nil
+}
+
+func (s *ConsoleFileStore) ensureTopicLocked(topicID string, title string, now time.Time, touch bool) TopicInfo {
+	topicID = strings.TrimSpace(topicID)
+	if topicID == "" {
+		topicID = ConsoleDefaultTopicID
+	}
+	topic, ok := s.topics[topicID]
+	topic = nextConsoleTopic(topic, ok, topicID, title, now, touch)
+	s.topics[topicID] = topic
+	return topic
+}
+
+func nextConsoleTopic(topic TopicInfo, exists bool, topicID string, title string, now time.Time, touch bool) TopicInfo {
+	title = strings.TrimSpace(title)
+	if !exists {
+		topic = TopicInfo{
+			ID:        topicID,
+			Title:     title,
+			CreatedAt: nonZeroTime(now),
+			UpdatedAt: nonZeroTime(now),
+		}
+		if topic.ID == ConsoleDefaultTopicID && topic.Title == "" {
+			topic.Title = ConsoleDefaultTopicTitle
+		}
+		if topic.ID == ConsoleAwarenessTopicID && topic.Title == "" {
+			topic.Title = ConsoleAwarenessTopicTitle
+		}
+		return normalizeTopicInfo(topic)
+	}
+	changed := false
+	if title != "" {
+		topic.Title = title
+		topic.TitleCustomized = true
+		topic.TitleRevision++
+		changed = true
+	}
+	if touch {
+		topic.UpdatedAt = nonZeroTime(now)
+		changed = true
+	}
+	if topic.ID == ConsoleDefaultTopicID && topic.Title == "" {
+		topic.Title = ConsoleDefaultTopicTitle
+		changed = true
+	}
+	if topic.ID == ConsoleAwarenessTopicID && topic.Title == "" {
+		topic.Title = ConsoleAwarenessTopicTitle
+		changed = true
+	}
+	if changed {
+		topic = normalizeTopicInfo(topic)
+	}
+	return topic
+}
+
+func (s *ConsoleFileStore) pruneUnusedDefaultTopicLocked() {
+	topic, ok := s.topics[ConsoleDefaultTopicID]
+	if !ok || topicDeleted(topic) {
+		return
+	}
+	for _, item := range s.items {
+		if strings.TrimSpace(item.TopicID) == ConsoleDefaultTopicID {
+			return
+		}
+	}
+	delete(s.topics, ConsoleDefaultTopicID)
+}
+
+func (s *ConsoleFileStore) normalizeTopicIDLocked(topicID string) string {
+	topicID = strings.TrimSpace(topicID)
+	if topicID == "" {
+		return ConsoleDefaultTopicID
+	}
+	return topicID
+}
+
+func (s *ConsoleFileStore) triggerForTaskLocked(taskID string, trigger TaskTrigger) TaskTrigger {
+	if taskdomain.HasTaskTrigger(trigger) {
+		return taskdomain.NormalizeTaskTrigger(trigger)
+	}
+	if saved, ok := s.triggers[taskID]; ok && taskdomain.HasTaskTrigger(saved) {
+		return saved
+	}
+	return TaskTrigger{}
+}
+
+func consoleStoreTarget(target string) string {
+	if target = strings.TrimSpace(target); target != "" {
+		return target
+	}
+	return "console"
+}
+
+func buildConsoleTopicID() string {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return uuid.NewString()
+	}
+	return id.String()
+}
+
+func cleanOptionalPath(path string) string {
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return ""
+	}
+	return filepath.Clean(path)
+}
+
+func sameConsoleJournalStorage(oldJournal *domainjournal.Journal, oldDir string, nextJournal *domainjournal.Journal, nextDir string) bool {
+	if oldDir != "" && nextDir != "" {
+		return oldDir == nextDir
+	}
+	return oldJournal != nil && oldJournal == nextJournal
+}
+
+func normalizeLegacyConsoleTopicID(topicID string) string {
+	topicID = strings.TrimSpace(topicID)
+	if topicID == legacyConsoleHeartbeatTopicID {
+		return ConsoleAwarenessTopicID
+	}
+	return topicID
+}
+
+func normalizeLegacyConsoleTaskInfo(info TaskInfo) TaskInfo {
+	info.TopicID = normalizeLegacyConsoleTopicID(info.TopicID)
+	return normalizeConsoleTaskInfo(info)
+}
+
+func normalizeLegacyConsoleTopicInfo(topic TopicInfo) TopicInfo {
+	topic.ID = normalizeLegacyConsoleTopicID(topic.ID)
+	topic = normalizeTopicInfo(topic)
+	if topic.ID == ConsoleAwarenessTopicID && strings.EqualFold(topic.Title, legacyConsoleHeartbeatTitle) {
+		topic.Title = ConsoleAwarenessTopicTitle
+	}
+	return topic
+}
+
+func normalizeConsoleTaskInfo(info TaskInfo) TaskInfo {
+	info.ID = strings.TrimSpace(info.ID)
+	info.Task = strings.TrimSpace(info.Task)
+	info.Model = strings.TrimSpace(info.Model)
+	info.Timeout = strings.TrimSpace(info.Timeout)
+	info.Error = strings.TrimSpace(info.Error)
+	info.TopicID = strings.TrimSpace(info.TopicID)
+	info.SteerTargetTaskID = strings.TrimSpace(info.SteerTargetTaskID)
+	if info.TopicID == "" {
+		info.TopicID = ConsoleDefaultTopicID
+	}
+	if info.CreatedAt.IsZero() {
+		info.CreatedAt = time.Now().UTC()
+	} else {
+		info.CreatedAt = info.CreatedAt.UTC()
+	}
+	info.Status, _ = taskdomain.ParseTaskStatus(string(info.Status))
+	return info
+}
+
+func normalizeTopicInfo(topic TopicInfo) TopicInfo {
+	topic.ID = strings.TrimSpace(topic.ID)
+	topic.Title = strings.TrimSpace(topic.Title)
+	if topic.ID == ConsoleAwarenessTopicID && topic.Title == "" {
+		topic.Title = ConsoleAwarenessTopicTitle
+	}
+	if topic.LLMTitleGeneratedAt != nil {
+		generatedAt := topic.LLMTitleGeneratedAt.UTC()
+		topic.LLMTitleGeneratedAt = &generatedAt
+	}
+	topic.CreatedAt = nonZeroTime(topic.CreatedAt)
+	topic.UpdatedAt = nonZeroTime(topic.UpdatedAt)
+	if topic.UpdatedAt.Before(topic.CreatedAt) {
+		topic.UpdatedAt = topic.CreatedAt
+	}
+	if topic.DeletedAt != nil {
+		deletedAt := topic.DeletedAt.UTC()
+		topic.DeletedAt = &deletedAt
+	}
+	return topic
+}
+
+func topicDeleted(topic TopicInfo) bool {
+	return topic.DeletedAt != nil
+}
+
+func nonZeroTime(t time.Time) time.Time {
+	if t.IsZero() {
+		return time.Now().UTC()
+	}
+	return t.UTC()
+}

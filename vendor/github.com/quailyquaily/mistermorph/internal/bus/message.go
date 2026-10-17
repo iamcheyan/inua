@@ -1,0 +1,279 @@
+package bus
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/quailyquaily/mistermorph/internal/channels"
+)
+
+type Direction string
+
+const (
+	DirectionInbound  Direction = "inbound"
+	DirectionOutbound Direction = "outbound"
+)
+
+type Channel string
+
+const (
+	ChannelConsole  Channel = Channel(channels.Console)
+	ChannelTelegram Channel = Channel(channels.Telegram)
+	ChannelSlack    Channel = Channel(channels.Slack)
+	ChannelLine     Channel = Channel(channels.Line)
+	ChannelLark     Channel = Channel(channels.Lark)
+	ChannelDiscord  Channel = Channel(channels.Discord)
+	ChannelMixin    Channel = Channel(channels.Mixin)
+	ChannelWeChat   Channel = Channel(channels.WeChat)
+	ChannelWhatsApp Channel = Channel(channels.WhatsApp)
+	ChannelBluesky  Channel = Channel(channels.Bluesky)
+	ChannelX        Channel = Channel(channels.X)
+)
+
+type MessageExtensions struct {
+	PlatformMessageID   string               `json:"platform_message_id,omitempty"`
+	ReplyTo             string               `json:"reply_to,omitempty"`
+	SessionID           string               `json:"session_id,omitempty"`
+	ChatType            string               `json:"chat_type,omitempty"`
+	MessageThreadID     int64                `json:"message_thread_id,omitempty"`
+	FromUserID          int64                `json:"from_user_id,omitempty"`
+	FromUsername        string               `json:"from_username,omitempty"`
+	FromFirstName       string               `json:"from_first_name,omitempty"`
+	FromLastName        string               `json:"from_last_name,omitempty"`
+	FromDisplayName     string               `json:"from_display_name,omitempty"`
+	FromIsAgent         bool                 `json:"from_is_agent,omitempty"`
+	TeamID              string               `json:"team_id,omitempty"`
+	GuildID             string               `json:"guild_id,omitempty"`
+	ChannelID           string               `json:"channel_id,omitempty"`
+	FromUserRef         string               `json:"from_user_ref,omitempty"`
+	ThreadTS            string               `json:"thread_ts,omitempty"`
+	EventID             string               `json:"event_id,omitempty"`
+	MentionUsers        []string             `json:"mention_users,omitempty"`
+	MentionParticipants []MessageParticipant `json:"mention_participants,omitempty"`
+	ImagePaths          []string             `json:"image_paths,omitempty"`
+	ImageAttachments    []ImageAttachment    `json:"image_attachments,omitempty"`
+	ImageKeys           []string             `json:"image_keys,omitempty"`
+	ImagePending        bool                 `json:"image_pending,omitempty"`
+	// LightweightDecided: a decision-route check already chose a text reply for this message.
+	LightweightDecided bool `json:"lightweight_decided,omitempty"`
+	// ReferenceText is where $name references are read when the message text also carries
+	// context the user did not write, such as a quoted message.
+	ReferenceText string `json:"reference_text,omitempty"`
+}
+
+type MessageParticipant struct {
+	ID       string `json:"id"`
+	Nickname string `json:"nickname,omitempty"`
+}
+
+type ImageAttachment struct {
+	Path               string `json:"path"`
+	SourceMessageID    string `json:"source_message_id,omitempty"`
+	SourceAttachmentID string `json:"source_attachment_id,omitempty"`
+	MIMEType           string `json:"mime_type,omitempty"`
+}
+
+func ImagePathsFromAttachments(attachments []ImageAttachment) []string {
+	if len(attachments) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(attachments))
+	seen := make(map[string]bool, len(attachments))
+	for _, attachment := range attachments {
+		path := strings.TrimSpace(attachment.Path)
+		if path == "" || seen[path] {
+			continue
+		}
+		seen[path] = true
+		out = append(out, path)
+	}
+	return out
+}
+
+type BusMessage struct {
+	ID              string            `json:"id"`
+	Direction       Direction         `json:"direction"`
+	Channel         Channel           `json:"channel"`
+	Topic           string            `json:"topic"`
+	ConversationKey string            `json:"conversation_key"`
+	ParticipantKey  string            `json:"participant_key"`
+	IdempotencyKey  string            `json:"idempotency_key"`
+	CorrelationID   string            `json:"correlation_id"`
+	CausationID     string            `json:"causation_id,omitempty"`
+	PayloadBase64   string            `json:"payload_base64"`
+	CreatedAt       time.Time         `json:"created_at"`
+	Extensions      MessageExtensions `json:"extensions,omitempty"`
+}
+
+func (m BusMessage) Validate() error {
+	if m.ID != "" {
+		if err := validateOptionalCanonicalString("id", m.ID); err != nil {
+			return err
+		}
+	}
+	if m.Direction != "" {
+		switch m.Direction {
+		case DirectionInbound, DirectionOutbound:
+		default:
+			return fmt.Errorf("direction must be inbound|outbound")
+		}
+	}
+
+	if m.Channel != "" {
+		if conversationKeyPrefix(m.Channel) == "" {
+			return fmt.Errorf("channel is invalid")
+		}
+	}
+
+	if err := ValidateTopic(m.Topic); err != nil {
+		return wrapError(CodeInvalidTopic, err)
+	}
+	if err := validateRequiredCanonicalString("conversation_key", m.ConversationKey); err != nil {
+		return err
+	}
+	if m.ParticipantKey != "" {
+		if err := validateOptionalCanonicalString("participant_key", m.ParticipantKey); err != nil {
+			return err
+		}
+	}
+	if err := validateRequiredCanonicalString("idempotency_key", m.IdempotencyKey); err != nil {
+		return err
+	}
+	if m.CorrelationID != "" {
+		if err := validateOptionalCanonicalString("correlation_id", m.CorrelationID); err != nil {
+			return err
+		}
+	}
+	if m.CausationID != "" {
+		if err := validateOptionalCanonicalString("causation_id", m.CausationID); err != nil {
+			return err
+		}
+	}
+
+	if err := validateRequiredCanonicalString("payload_base64", m.PayloadBase64); err != nil {
+		return err
+	}
+	if _, err := DecodeMessageEnvelope(m.Topic, m.PayloadBase64); err != nil {
+		return err
+	}
+	if m.Extensions.PlatformMessageID != "" {
+		if err := validateOptionalCanonicalString("extensions.platform_message_id", m.Extensions.PlatformMessageID); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.ReplyTo != "" {
+		if err := validateOptionalCanonicalString("extensions.reply_to", m.Extensions.ReplyTo); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.SessionID != "" {
+		if err := validateUUIDv7Field("extensions.session_id", m.Extensions.SessionID); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.ChatType != "" {
+		if err := validateOptionalCanonicalString("extensions.chat_type", m.Extensions.ChatType); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.MessageThreadID < 0 {
+		return fmt.Errorf("extensions.message_thread_id is invalid")
+	}
+	if m.Extensions.FromUsername != "" {
+		if err := validateOptionalCanonicalString("extensions.from_username", m.Extensions.FromUsername); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.FromFirstName != "" {
+		if err := validateOptionalCanonicalString("extensions.from_first_name", m.Extensions.FromFirstName); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.FromLastName != "" {
+		if err := validateOptionalCanonicalString("extensions.from_last_name", m.Extensions.FromLastName); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.FromDisplayName != "" {
+		if err := validateOptionalCanonicalString("extensions.from_display_name", m.Extensions.FromDisplayName); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.TeamID != "" {
+		if err := validateOptionalCanonicalString("extensions.team_id", m.Extensions.TeamID); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.ChannelID != "" {
+		if err := validateOptionalCanonicalString("extensions.channel_id", m.Extensions.ChannelID); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.FromUserRef != "" {
+		if err := validateOptionalCanonicalString("extensions.from_user_ref", m.Extensions.FromUserRef); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.ThreadTS != "" {
+		if err := validateOptionalCanonicalString("extensions.thread_ts", m.Extensions.ThreadTS); err != nil {
+			return err
+		}
+	}
+	if m.Extensions.EventID != "" {
+		if err := validateOptionalCanonicalString("extensions.event_id", m.Extensions.EventID); err != nil {
+			return err
+		}
+	}
+	for i, mention := range m.Extensions.MentionUsers {
+		if err := validateRequiredCanonicalString(fmt.Sprintf("extensions.mention_users[%d]", i), mention); err != nil {
+			return err
+		}
+	}
+	for i, participant := range m.Extensions.MentionParticipants {
+		if err := validateRequiredCanonicalString(fmt.Sprintf("extensions.mention_participants[%d].id", i), participant.ID); err != nil {
+			return err
+		}
+		if participant.Nickname != "" {
+			if err := validateOptionalCanonicalString(fmt.Sprintf("extensions.mention_participants[%d].nickname", i), participant.Nickname); err != nil {
+				return err
+			}
+		}
+	}
+	for i, path := range m.Extensions.ImagePaths {
+		if err := validateRequiredCanonicalString(fmt.Sprintf("extensions.image_paths[%d]", i), path); err != nil {
+			return err
+		}
+	}
+	for i, image := range m.Extensions.ImageAttachments {
+		if err := validateRequiredCanonicalString(fmt.Sprintf("extensions.image_attachments[%d].path", i), image.Path); err != nil {
+			return err
+		}
+		if image.SourceMessageID != "" {
+			if err := validateOptionalCanonicalString(fmt.Sprintf("extensions.image_attachments[%d].source_message_id", i), image.SourceMessageID); err != nil {
+				return err
+			}
+		}
+		if image.SourceAttachmentID != "" {
+			if err := validateOptionalCanonicalString(fmt.Sprintf("extensions.image_attachments[%d].source_attachment_id", i), image.SourceAttachmentID); err != nil {
+				return err
+			}
+		}
+		if image.MIMEType != "" {
+			if err := validateOptionalCanonicalString(fmt.Sprintf("extensions.image_attachments[%d].mime_type", i), image.MIMEType); err != nil {
+				return err
+			}
+		}
+	}
+	for i, key := range m.Extensions.ImageKeys {
+		if err := validateRequiredCanonicalString(fmt.Sprintf("extensions.image_keys[%d]", i), key); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m BusMessage) Envelope() (MessageEnvelope, error) {
+	return DecodeMessageEnvelope(m.Topic, m.PayloadBase64)
+}

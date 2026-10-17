@@ -1,0 +1,671 @@
+package slack
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"regexp"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/gorilla/websocket"
+	"github.com/quailyquaily/mistermorph/internal/slackclient"
+)
+
+type slackAPI struct {
+	http     *http.Client
+	baseURL  string
+	botToken string
+	appToken string
+}
+
+func newSlackAPI(httpClient *http.Client, baseURL, botToken, appToken string) *slackAPI {
+	if httpClient == nil {
+		httpClient = &http.Client{Timeout: 30 * time.Second}
+	}
+	baseURL = strings.TrimSpace(strings.TrimRight(baseURL, "/"))
+	if baseURL == "" {
+		baseURL = "https://slack.com/api"
+	}
+	return &slackAPI{
+		http:     httpClient,
+		baseURL:  baseURL,
+		botToken: strings.TrimSpace(botToken),
+		appToken: strings.TrimSpace(appToken),
+	}
+}
+
+type slackAuthTestResult struct {
+	TeamID  string
+	UserID  string
+	BotID   string
+	URL     string
+	Team    string
+	User    string
+	IsOwner bool
+}
+
+type slackAuthTestResponse struct {
+	OK      bool   `json:"ok"`
+	Error   string `json:"error,omitempty"`
+	TeamID  string `json:"team_id,omitempty"`
+	UserID  string `json:"user_id,omitempty"`
+	BotID   string `json:"bot_id,omitempty"`
+	URL     string `json:"url,omitempty"`
+	Team    string `json:"team,omitempty"`
+	User    string `json:"user,omitempty"`
+	IsOwner bool   `json:"is_owner,omitempty"`
+}
+
+type slackUserIdentity struct {
+	UserID      string
+	Username    string
+	DisplayName string
+	AvatarURL   string
+}
+
+type slackBotInfoResponse struct {
+	OK    bool   `json:"ok"`
+	Error string `json:"error,omitempty"`
+	Bot   struct {
+		Name   string `json:"name,omitempty"`
+		UserID string `json:"user_id,omitempty"`
+		Icons  struct {
+			Image72 string `json:"image_72,omitempty"`
+		} `json:"icons,omitempty"`
+	} `json:"bot,omitempty"`
+}
+
+type slackUserInfoResponse struct {
+	OK    bool   `json:"ok"`
+	Error string `json:"error,omitempty"`
+	User  struct {
+		ID      string `json:"id,omitempty"`
+		Name    string `json:"name,omitempty"`
+		Profile struct {
+			DisplayName string `json:"display_name,omitempty"`
+			RealName    string `json:"real_name,omitempty"`
+			Image72     string `json:"image_72,omitempty"`
+			Image192    string `json:"image_192,omitempty"`
+		} `json:"profile,omitempty"`
+	} `json:"user,omitempty"`
+}
+
+type slackEmojiListResponse struct {
+	OK         bool            `json:"ok"`
+	Error      string          `json:"error,omitempty"`
+	Emoji      map[string]any  `json:"emoji,omitempty"`
+	Categories json.RawMessage `json:"categories,omitempty"`
+}
+
+type slackFileInfoResponse struct {
+	OK    bool           `json:"ok"`
+	Error string         `json:"error,omitempty"`
+	File  slackEventFile `json:"file,omitempty"`
+}
+
+var slackEmojiNameRegexp = regexp.MustCompile(`^[A-Za-z0-9_+\-]+$`)
+
+func (api *slackAPI) authTest(ctx context.Context) (slackAuthTestResult, error) {
+	if api == nil {
+		return slackAuthTestResult{}, fmt.Errorf("slack api is not initialized")
+	}
+	body, status, _, err := api.postAuthJSON(ctx, api.botToken, "/auth.test", nil)
+	if err != nil {
+		return slackAuthTestResult{}, err
+	}
+	if status < 200 || status >= 300 {
+		return slackAuthTestResult{}, fmt.Errorf("slack auth.test http %d", status)
+	}
+	var out slackAuthTestResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return slackAuthTestResult{}, err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		return slackAuthTestResult{}, fmt.Errorf("slack auth.test failed: %s", code)
+	}
+	return slackAuthTestResult{
+		TeamID:  strings.TrimSpace(out.TeamID),
+		UserID:  strings.TrimSpace(out.UserID),
+		BotID:   strings.TrimSpace(out.BotID),
+		URL:     strings.TrimSpace(out.URL),
+		Team:    strings.TrimSpace(out.Team),
+		User:    strings.TrimSpace(out.User),
+		IsOwner: out.IsOwner,
+	}, nil
+}
+
+func (api *slackAPI) userIdentity(ctx context.Context, userID string) (slackUserIdentity, error) {
+	if api == nil {
+		return slackUserIdentity{}, fmt.Errorf("slack api is not initialized")
+	}
+	userID = strings.TrimSpace(userID)
+	if userID == "" {
+		return slackUserIdentity{}, fmt.Errorf("slack user id is required")
+	}
+	body, status, _, err := api.postAuthForm(ctx, api.botToken, "/users.info", url.Values{
+		"user": []string{userID},
+	})
+	if err != nil {
+		return slackUserIdentity{}, err
+	}
+	if status < 200 || status >= 300 {
+		return slackUserIdentity{}, fmt.Errorf("slack users.info http %d", status)
+	}
+	var out slackUserInfoResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return slackUserIdentity{}, err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		// In shared-channel or externally federated cases, Slack may emit a valid
+		// user id in events but users.info cannot resolve profile fields.
+		// Keep ingress usable by falling back to user id for identity fields.
+		if code == "user_not_found" || code == "user_not_visible" {
+			return slackUserIdentity{
+				UserID:      userID,
+				Username:    userID,
+				DisplayName: userID,
+			}, nil
+		}
+		return slackUserIdentity{}, fmt.Errorf("slack users.info failed: %s", code)
+	}
+
+	resolvedUserID := strings.TrimSpace(out.User.ID)
+	if resolvedUserID == "" {
+		resolvedUserID = userID
+	}
+
+	username := strings.TrimSpace(out.User.Name)
+	if username == "" {
+		username = resolvedUserID
+	}
+	displayName := strings.TrimSpace(out.User.Profile.DisplayName)
+	if displayName == "" {
+		displayName = strings.TrimSpace(out.User.Profile.RealName)
+	}
+	if displayName == "" {
+		displayName = username
+	}
+	if username == "" || displayName == "" {
+		return slackUserIdentity{}, fmt.Errorf("slack users.info returned incomplete identity")
+	}
+	return slackUserIdentity{
+		UserID:      resolvedUserID,
+		Username:    username,
+		DisplayName: displayName,
+		AvatarURL:   firstNonEmptyString(out.User.Profile.Image192, out.User.Profile.Image72),
+	}, nil
+}
+
+func firstNonEmptyString(values ...string) string {
+	for _, value := range values {
+		if value = strings.TrimSpace(value); value != "" {
+			return value
+		}
+	}
+	return ""
+}
+
+func (api *slackAPI) botIdentity(ctx context.Context, botID string) (slackUserIdentity, error) {
+	if api == nil {
+		return slackUserIdentity{}, fmt.Errorf("slack api is not initialized")
+	}
+	botID = strings.TrimSpace(botID)
+	if botID == "" {
+		return slackUserIdentity{}, fmt.Errorf("slack bot id is required")
+	}
+	body, status, _, err := api.postAuthForm(ctx, api.botToken, "/bots.info", url.Values{
+		"bot": []string{botID},
+	})
+	if err != nil {
+		return slackUserIdentity{}, err
+	}
+	if status < 200 || status >= 300 {
+		return slackUserIdentity{}, fmt.Errorf("slack bots.info http %d", status)
+	}
+	var out slackBotInfoResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return slackUserIdentity{}, err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		return slackUserIdentity{}, fmt.Errorf("slack bots.info failed: %s", code)
+	}
+	userID := strings.TrimSpace(out.Bot.UserID)
+	if userID == "" {
+		return slackUserIdentity{}, fmt.Errorf("slack bots.info returned empty user_id")
+	}
+	name := strings.TrimSpace(out.Bot.Name)
+	if name == "" {
+		name = userID
+	}
+	return slackUserIdentity{
+		UserID:      userID,
+		Username:    name,
+		DisplayName: name,
+		AvatarURL:   strings.TrimSpace(out.Bot.Icons.Image72),
+	}, nil
+}
+
+func (api *slackAPI) listEmojiNames(ctx context.Context) ([]string, error) {
+	if api == nil {
+		return nil, fmt.Errorf("slack api is not initialized")
+	}
+	body, status, _, err := api.postAuthForm(ctx, api.botToken, "/emoji.list", url.Values{
+		"include_categories": []string{"true"},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("slack emoji.list http %d", status)
+	}
+
+	var out slackEmojiListResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return nil, err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		return nil, fmt.Errorf("slack emoji.list failed: %s", code)
+	}
+
+	seen := make(map[string]bool)
+	for rawName := range out.Emoji {
+		addSlackEmojiName(seen, rawName)
+	}
+	collectSlackEmojiNamesFromCategories(out.Categories, seen)
+	if len(seen) == 0 {
+		return nil, fmt.Errorf("slack emoji.list returned no emoji names")
+	}
+	names := make([]string, 0, len(seen))
+	for name := range seen {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names, nil
+}
+
+func (api *slackAPI) fileInfo(ctx context.Context, fileID string) (slackEventFile, error) {
+	if api == nil {
+		return slackEventFile{}, fmt.Errorf("slack api is not initialized")
+	}
+	fileID = strings.TrimSpace(fileID)
+	if fileID == "" {
+		return slackEventFile{}, fmt.Errorf("slack file id is required")
+	}
+	body, status, _, err := api.postAuthForm(ctx, api.botToken, "/files.info", url.Values{
+		"file": []string{fileID},
+	})
+	if err != nil {
+		return slackEventFile{}, err
+	}
+	if status < 200 || status >= 300 {
+		return slackEventFile{}, fmt.Errorf("slack files.info http %d", status)
+	}
+	var out slackFileInfoResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return slackEventFile{}, err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		return slackEventFile{}, fmt.Errorf("slack files.info failed: %s", code)
+	}
+	file := out.File
+	if strings.TrimSpace(file.ID) == "" {
+		file.ID = fileID
+	}
+	return file, nil
+}
+
+func collectSlackEmojiNamesFromCategories(raw json.RawMessage, out map[string]bool) {
+	if len(raw) == 0 || out == nil {
+		return
+	}
+	var decoded any
+	if err := json.Unmarshal(raw, &decoded); err != nil {
+		return
+	}
+	collectSlackEmojiNames(decoded, out, false)
+}
+
+func collectSlackEmojiNames(v any, out map[string]bool, allowScalarString bool) {
+	if out == nil {
+		return
+	}
+	switch typed := v.(type) {
+	case map[string]any:
+		for rawKey, item := range typed {
+			key := strings.ToLower(strings.TrimSpace(rawKey))
+			switch key {
+			case "name", "emoji_name", "short_name":
+				if s, ok := item.(string); ok {
+					addSlackEmojiName(out, s)
+				}
+			case "emoji_names", "short_names", "aliases", "emoji", "emojis":
+				collectSlackEmojiNames(item, out, true)
+			default:
+				collectSlackEmojiNames(item, out, false)
+			}
+		}
+	case []any:
+		for _, item := range typed {
+			collectSlackEmojiNames(item, out, allowScalarString)
+		}
+	case string:
+		if allowScalarString {
+			addSlackEmojiName(out, typed)
+		}
+	}
+}
+
+func addSlackEmojiName(out map[string]bool, raw string) {
+	if out == nil {
+		return
+	}
+	name := strings.TrimSpace(raw)
+	if strings.HasPrefix(name, ":") && strings.HasSuffix(name, ":") && len(name) >= 2 {
+		name = strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(name, ":"), ":"))
+	}
+	if name == "" {
+		return
+	}
+	if !slackEmojiNameRegexp.MatchString(name) {
+		return
+	}
+	out[strings.ToLower(name)] = true
+}
+
+type slackOpenConnectionResponse struct {
+	OK    bool   `json:"ok"`
+	Error string `json:"error,omitempty"`
+	URL   string `json:"url,omitempty"`
+}
+
+type slackOpenConversationResponse struct {
+	OK      bool   `json:"ok"`
+	Error   string `json:"error,omitempty"`
+	Channel struct {
+		ID string `json:"id,omitempty"`
+	} `json:"channel,omitempty"`
+}
+
+type slackReactionResponse struct {
+	OK    bool   `json:"ok"`
+	Error string `json:"error,omitempty"`
+}
+
+type slackMessageRef = slackclient.MessageRef
+
+func (api *slackAPI) openSocketURL(ctx context.Context) (string, error) {
+	if api == nil {
+		return "", fmt.Errorf("slack api is not initialized")
+	}
+	body, status, _, err := api.postAuthJSON(ctx, api.appToken, "/apps.connections.open", nil)
+	if err != nil {
+		return "", err
+	}
+	if status < 200 || status >= 300 {
+		return "", fmt.Errorf("slack apps.connections.open http %d", status)
+	}
+	var out slackOpenConnectionResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return "", err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		return "", fmt.Errorf("slack apps.connections.open failed: %s", code)
+	}
+	url := strings.TrimSpace(out.URL)
+	if url == "" {
+		return "", fmt.Errorf("slack apps.connections.open returned empty url")
+	}
+	return url, nil
+}
+
+func (api *slackAPI) connectSocket(ctx context.Context) (*websocket.Conn, error) {
+	url, err := api.openSocketURL(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dialer := *websocket.DefaultDialer
+	conn, _, err := dialer.DialContext(ctx, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+func (api *slackAPI) postMessage(ctx context.Context, channelID, text, threadTS string) error {
+	client := slackclient.New(api.http, api.baseURL, api.botToken)
+	return client.PostMessage(ctx, channelID, text, threadTS)
+}
+
+func (api *slackAPI) postDirectMessage(ctx context.Context, userID, text string) error {
+	if api == nil {
+		return fmt.Errorf("slack api is not initialized")
+	}
+	userID = strings.TrimSpace(userID)
+	text = strings.TrimSpace(text)
+	if userID == "" {
+		return fmt.Errorf("slack user id is required")
+	}
+	if text == "" {
+		return fmt.Errorf("slack direct message is empty")
+	}
+	body, status, _, err := api.postAuthJSON(ctx, api.botToken, "/conversations.open", map[string]any{
+		"users": userID,
+	})
+	if err != nil {
+		return err
+	}
+	if status < 200 || status >= 300 {
+		return fmt.Errorf("slack conversations.open http %d", status)
+	}
+	var out slackOpenConversationResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		return fmt.Errorf("slack conversations.open failed: %s", code)
+	}
+	channelID := strings.TrimSpace(out.Channel.ID)
+	if channelID == "" {
+		return fmt.Errorf("slack conversations.open returned empty channel id")
+	}
+	return api.postMessage(ctx, channelID, text, "")
+}
+
+func (api *slackAPI) postMessageWithBlocks(ctx context.Context, channelID, text, threadTS string, blocks []slackclient.Block) error {
+	if api == nil {
+		return fmt.Errorf("slack api is not initialized")
+	}
+	client := slackclient.New(api.http, api.baseURL, api.botToken)
+	return client.PostMessageWithBlocks(ctx, channelID, text, threadTS, blocks)
+}
+
+func (api *slackAPI) postMessageWithResult(ctx context.Context, channelID, text, threadTS string) (slackMessageRef, error) {
+	if api == nil {
+		return slackMessageRef{}, fmt.Errorf("slack api is not initialized")
+	}
+	client := slackclient.New(api.http, api.baseURL, api.botToken)
+	return client.PostMessageWithResult(ctx, channelID, text, threadTS)
+}
+
+func (api *slackAPI) updateMessage(ctx context.Context, channelID, messageTS, text string) error {
+	if api == nil {
+		return fmt.Errorf("slack api is not initialized")
+	}
+	client := slackclient.New(api.http, api.baseURL, api.botToken)
+	return client.UpdateMessage(ctx, channelID, messageTS, text)
+}
+
+func (api *slackAPI) updateMessageWithBlocks(ctx context.Context, channelID, messageTS, text string, blocks []slackclient.Block) error {
+	if api == nil {
+		return fmt.Errorf("slack api is not initialized")
+	}
+	client := slackclient.New(api.http, api.baseURL, api.botToken)
+	return client.UpdateMessageWithBlocks(ctx, channelID, messageTS, text, blocks)
+}
+
+func (api *slackAPI) addReaction(ctx context.Context, channelID, messageTS, emoji string) error {
+	if api == nil {
+		return fmt.Errorf("slack api is not initialized")
+	}
+	channelID = strings.TrimSpace(channelID)
+	messageTS = strings.TrimSpace(messageTS)
+	emoji = strings.TrimSpace(emoji)
+	if channelID == "" {
+		return fmt.Errorf("channel_id is required")
+	}
+	if messageTS == "" {
+		return fmt.Errorf("message_ts is required")
+	}
+	if emoji == "" {
+		return fmt.Errorf("emoji is required")
+	}
+	body, status, _, err := api.postAuthJSON(ctx, api.botToken, "/reactions.add", map[string]any{
+		"channel":   channelID,
+		"timestamp": messageTS,
+		"name":      emoji,
+	})
+	if err != nil {
+		return err
+	}
+	if status < 200 || status >= 300 {
+		return fmt.Errorf("slack reactions.add http %d", status)
+	}
+	var out slackReactionResponse
+	if err := json.Unmarshal(body, &out); err != nil {
+		return err
+	}
+	if !out.OK {
+		code := strings.TrimSpace(out.Error)
+		if code == "" {
+			code = "unknown_error"
+		}
+		if code == "already_reacted" {
+			return nil
+		}
+		return fmt.Errorf("slack reactions.add failed: %s", code)
+	}
+	return nil
+}
+
+func sleepWithContext(ctx context.Context, d time.Duration) error {
+	if d <= 0 {
+		return nil
+	}
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-timer.C:
+		return nil
+	}
+}
+
+func (api *slackAPI) postAuthJSON(ctx context.Context, token, path string, payload any) ([]byte, int, http.Header, error) {
+	if api == nil || api.http == nil {
+		return nil, 0, nil, fmt.Errorf("slack api is not initialized")
+	}
+	token = strings.TrimSpace(token)
+	if token == "" {
+		return nil, 0, nil, fmt.Errorf("slack token is required")
+	}
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return nil, 0, nil, fmt.Errorf("slack api path is required")
+	}
+
+	var body io.Reader
+	if payload != nil {
+		raw, err := json.Marshal(payload)
+		if err != nil {
+			return nil, 0, nil, err
+		}
+		body = bytes.NewReader(raw)
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, api.baseURL+path, body)
+	if err != nil {
+		return nil, 0, nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := api.http.Do(req)
+	if err != nil {
+		return nil, 0, nil, err
+	}
+	raw, readErr := io.ReadAll(resp.Body)
+	_ = resp.Body.Close()
+	if readErr != nil {
+		return nil, resp.StatusCode, resp.Header, readErr
+	}
+	return raw, resp.StatusCode, resp.Header, nil
+}
+
+func (api *slackAPI) postAuthForm(ctx context.Context, token, path string, payload url.Values) ([]byte, int, http.Header, error) {
+	if api == nil || api.http == nil {
+		return nil, 0, nil, fmt.Errorf("slack api is not initialized")
+	}
+	token = strings.TrimSpace(token)
+	if token == "" {
+		return nil, 0, nil, fmt.Errorf("slack token is required")
+	}
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return nil, 0, nil, fmt.Errorf("slack api path is required")
+	}
+	if payload == nil {
+		payload = url.Values{}
+	}
+	body := strings.NewReader(payload.Encode())
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, api.baseURL+path, body)
+	if err != nil {
+		return nil, 0, nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+
+	resp, err := api.http.Do(req)
+	if err != nil {
+		return nil, 0, nil, err
+	}
+	raw, readErr := io.ReadAll(resp.Body)
+	_ = resp.Body.Close()
+	if readErr != nil {
+		return nil, resp.StatusCode, resp.Header, readErr
+	}
+	return raw, resp.StatusCode, resp.Header, nil
+}

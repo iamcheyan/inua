@@ -1,0 +1,43 @@
+# Go build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+*.cover
+coverage*.out
+
+# Go workspace files
+/go.work
+/go.work.sum
+
+# Build directories
+/bin/
+/dist/
+cmd/imagetest/*.png
+cmd/imagetest/*.jpg
+cmd/imagetest/out/*
+
+# Dependency vendors (optional)
+/vendor/
+
+# Local environment files
+.env
+.env.*
+env.sh
+
+# Editor/OS files
+.DS_Store
+.idea/
+.vscode/
+.codex
+*.swp
+*.swo
+
+.env.*
+patches/
+
+# Eval outputs
+out/*

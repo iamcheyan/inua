@@ -1,0 +1,1151 @@
+package gemini
+
+import (
+	"bytes"
+	"context"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"strings"
+
+	"github.com/lyricat/goutils/structs"
+	"github.com/openai/openai-go/v3/packages/ssestream"
+	"github.com/quailyquaily/uniai/chat"
+	"github.com/quailyquaily/uniai/internal/diag"
+	"github.com/quailyquaily/uniai/internal/httputil"
+	"github.com/quailyquaily/uniai/internal/toolschema"
+)
+
+const defaultGeminiAPIBase = "https://generativelanguage.googleapis.com"
+
+type Config struct {
+	APIKey       string
+	BaseURL      string
+	DefaultModel string
+	Headers      map[string]string
+	Debug        bool
+}
+
+type Provider struct {
+	cfg Config
+}
+
+func New(cfg Config) (*Provider, error) {
+	if strings.TrimSpace(cfg.APIKey) == "" {
+		return nil, fmt.Errorf("gemini api key is required")
+	}
+	cfg.Headers = httputil.CloneHeaders(cfg.Headers)
+	return &Provider{cfg: cfg}, nil
+}
+
+type geminiRequest struct {
+	SystemInstruction *geminiContent          `json:"systemInstruction,omitempty"`
+	Contents          []geminiContent         `json:"contents"`
+	Tools             []geminiTool            `json:"tools,omitempty"`
+	ToolConfig        *geminiToolConfig       `json:"toolConfig,omitempty"`
+	GenerationConfig  *geminiGenerationConfig `json:"generationConfig,omitempty"`
+}
+
+type geminiContent struct {
+	Role  string       `json:"role,omitempty"`
+	Parts []geminiPart `json:"parts,omitempty"`
+}
+
+type geminiPart struct {
+	Text             string                  `json:"text,omitempty"`
+	Thought          bool                    `json:"thought,omitempty"`
+	InlineData       *geminiInlineData       `json:"inlineData,omitempty"`
+	FunctionCall     *geminiFunctionCall     `json:"functionCall,omitempty"`
+	FunctionResponse *geminiFunctionResponse `json:"functionResponse,omitempty"`
+	ThoughtSignature string                  `json:"thoughtSignature,omitempty"`
+}
+
+type geminiInlineData struct {
+	MimeType string `json:"mimeType,omitempty"`
+	Data     string `json:"data,omitempty"`
+}
+
+type geminiFunctionCall struct {
+	Name string `json:"name,omitempty"`
+	Args any    `json:"args,omitempty"`
+}
+
+type geminiFunctionResponse struct {
+	Name     string `json:"name,omitempty"`
+	Response any    `json:"response,omitempty"`
+}
+
+type geminiTool struct {
+	FunctionDeclarations []geminiFunctionDeclaration `json:"functionDeclarations,omitempty"`
+}
+
+type geminiFunctionDeclaration struct {
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Parameters  any    `json:"parameters,omitempty"`
+}
+
+type geminiToolConfig struct {
+	FunctionCallingConfig *geminiFunctionCallingConfig `json:"functionCallingConfig,omitempty"`
+}
+
+type geminiFunctionCallingConfig struct {
+	Mode                 string   `json:"mode,omitempty"`
+	AllowedFunctionNames []string `json:"allowedFunctionNames,omitempty"`
+}
+
+type geminiGenerationConfig struct {
+	Temperature      *float64              `json:"temperature,omitempty"`
+	TopP             *float64              `json:"topP,omitempty"`
+	TopK             *int                  `json:"topK,omitempty"`
+	MaxOutputTokens  *int                  `json:"maxOutputTokens,omitempty"`
+	StopSequences    []string              `json:"stopSequences,omitempty"`
+	CandidateCount   *int                  `json:"candidateCount,omitempty"`
+	ResponseMIMEType string                `json:"responseMimeType,omitempty"`
+	ResponseSchema   any                   `json:"responseSchema,omitempty"`
+	ThinkingConfig   *geminiThinkingConfig `json:"thinkingConfig,omitempty"`
+}
+
+type geminiThinkingConfig struct {
+	IncludeThoughts *bool  `json:"includeThoughts,omitempty"`
+	ThinkingBudget  *int   `json:"thinkingBudget,omitempty"`
+	ThinkingLevel   string `json:"thinkingLevel,omitempty"`
+}
+
+type geminiResponse struct {
+	Candidates     []geminiCandidate     `json:"candidates,omitempty"`
+	Usage          geminiUsage           `json:"usageMetadata,omitempty"`
+	Model          string                `json:"modelVersion,omitempty"`
+	Error          *geminiError          `json:"error,omitempty"`
+	PromptFeedback *geminiPromptFeedback `json:"promptFeedback,omitempty"`
+}
+
+type geminiPromptFeedback struct {
+	BlockReason string `json:"blockReason,omitempty"`
+}
+
+type geminiCandidate struct {
+	Content      geminiContent `json:"content,omitempty"`
+	FinishReason string        `json:"finishReason,omitempty"`
+}
+
+type geminiUsage struct {
+	InputTokens       int `json:"promptTokenCount,omitempty"`
+	CachedInputTokens int `json:"cachedContentTokenCount,omitempty"`
+	OutputTokens      int `json:"candidatesTokenCount,omitempty"`
+	TotalTokens       int `json:"totalTokenCount,omitempty"`
+	ThoughtsTokens    int `json:"thoughtsTokenCount,omitempty"`
+}
+
+type geminiError struct {
+	Message string `json:"message,omitempty"`
+}
+
+type geminiErrorEnvelope struct {
+	Error geminiError `json:"error"`
+}
+
+func (p *Provider) Chat(ctx context.Context, req *chat.Request) (*chat.Result, error) {
+	debugFn := req.Options.DebugFn
+	if err := chat.ValidateNoScopedCacheControl(req, "gemini"); err != nil {
+		return nil, err
+	}
+
+	model := strings.TrimSpace(req.Model)
+	if model == "" {
+		model = strings.TrimSpace(p.cfg.DefaultModel)
+	}
+	if model == "" {
+		return nil, fmt.Errorf("model is required")
+	}
+
+	payload, err := buildRequest(req, model)
+	if err != nil {
+		return nil, fmt.Errorf("gemini provider model %q: %w", model, err)
+	}
+
+	if len(payload.Contents) == 0 {
+		return nil, fmt.Errorf("at least one non-system message is required")
+	}
+
+	reqBody, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	diag.LogText(p.cfg.Debug, debugFn, "gemini.chat.request", string(reqBody))
+
+	base := normalizeGeminiBase(p.cfg.BaseURL)
+	operation := "generateContent"
+	query := url.Values{"key": []string{p.cfg.APIKey}}
+	if req.Options.OnStream != nil {
+		operation = "streamGenerateContent"
+		query.Set("alt", "sse")
+	}
+	endpoint := fmt.Sprintf("%s/v1beta/models/%s:%s?%s",
+		base,
+		url.PathEscape(normalizeGeminiModel(model)),
+		operation,
+		query.Encode(),
+	)
+
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(reqBody))
+	if err != nil {
+		return nil, err
+	}
+	httpReq.Header.Set("Content-Type", "application/json")
+	httputil.ApplyHeaders(httpReq.Header, p.cfg.Headers)
+
+	resp, err := httputil.ClientForContext(ctx).Do(httpReq)
+	if err != nil {
+		diag.LogError(p.cfg.Debug, debugFn, "gemini.chat.response", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if req.Options.OnStream != nil {
+		if resp.StatusCode != http.StatusOK {
+			respData, err := httputil.ReadBody(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			diag.LogText(p.cfg.Debug, debugFn, "gemini.chat.response", string(respData))
+			return nil, fmt.Errorf("gemini api error: status %d: %s", resp.StatusCode, parseGeminiError(respData))
+		}
+		result, err := p.chatStream(resp.Body, model, req.Options.ReasoningDetails, req.Options.OnStream)
+		if err != nil {
+			diag.LogError(p.cfg.Debug, debugFn, "gemini.chat.response", err)
+			return nil, err
+		}
+		return result, nil
+	}
+
+	respData, err := httputil.ReadBody(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	diag.LogText(p.cfg.Debug, debugFn, "gemini.chat.response", string(respData))
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("gemini api error: status %d: %s", resp.StatusCode, parseGeminiError(respData))
+	}
+
+	var out geminiResponse
+	if err := json.Unmarshal(respData, &out); err != nil {
+		return nil, err
+	}
+
+	result, err := toChatResult(&out, model, req.Options.ReasoningDetails)
+	if err != nil {
+		return nil, err
+	}
+	result.Raw = out
+	return result, nil
+}
+
+func (p *Provider) chatStream(body io.Reader, fallbackModel string, reasoningDetails bool, onStream chat.OnStreamFunc) (*chat.Result, error) {
+	decoder := ssestream.NewDecoder(&http.Response{Body: io.NopCloser(body)})
+
+	var (
+		parts                []geminiPart
+		usage                geminiUsage
+		model                string
+		rawChunks            []json.RawMessage
+		toolIndex            int
+		activeThoughtPart    = -1
+		activeReasoningIndex = -1
+		nextReasoningIndex   int
+		finishReason         string
+		promptFeedback       *geminiPromptFeedback
+	)
+
+	for decoder.Next() {
+		data := bytes.TrimSpace(decoder.Event().Data)
+		if len(data) == 0 {
+			continue
+		}
+		if string(data) == "[DONE]" {
+			break
+		}
+
+		raw := json.RawMessage(append([]byte(nil), data...))
+		var chunk geminiResponse
+		if err := json.Unmarshal(raw, &chunk); err != nil {
+			return nil, fmt.Errorf("gemini stream response: %w", err)
+		}
+		if chunk.Error != nil {
+			if message := strings.TrimSpace(chunk.Error.Message); message != "" {
+				return nil, fmt.Errorf("gemini stream error: %s", message)
+			}
+			return nil, fmt.Errorf("gemini stream error")
+		}
+		rawChunks = append(rawChunks, raw)
+		if chunk.Model != "" {
+			model = chunk.Model
+		}
+		mergeGeminiUsage(&usage, chunk.Usage)
+		if chunk.PromptFeedback != nil {
+			promptFeedback = chunk.PromptFeedback
+		}
+		if len(chunk.Candidates) == 0 {
+			continue
+		}
+		if chunk.Candidates[0].FinishReason != "" {
+			finishReason = chunk.Candidates[0].FinishReason
+		}
+
+		for _, part := range chunk.Candidates[0].Content.Parts {
+			partIndex, merged := appendGeminiStreamPart(&parts, part)
+			if part.Text != "" {
+				if part.Thought {
+					if reasoningDetails {
+						if !merged || activeThoughtPart != partIndex {
+							activeThoughtPart = partIndex
+							activeReasoningIndex = nextReasoningIndex
+							nextReasoningIndex++
+						}
+						if err := onStream(chat.StreamEvent{
+							ReasoningDelta: &chat.ReasoningDelta{
+								Index: activeReasoningIndex,
+								Type:  chat.ReasoningDeltaSummary,
+								Delta: part.Text,
+							},
+							Raw: raw,
+						}); err != nil {
+							return nil, err
+						}
+					}
+				} else {
+					activeThoughtPart = -1
+					activeReasoningIndex = -1
+					if err := onStream(chat.StreamEvent{Delta: part.Text, Raw: raw}); err != nil {
+						return nil, err
+					}
+				}
+			}
+
+			if part.FunctionCall != nil {
+				activeThoughtPart = -1
+				activeReasoningIndex = -1
+				args, err := json.Marshal(part.FunctionCall.Args)
+				if err != nil {
+					return nil, err
+				}
+				if len(args) == 0 || string(args) == "null" {
+					args = []byte("{}")
+				}
+				signature := strings.TrimSpace(part.ThoughtSignature)
+				if err := onStream(chat.StreamEvent{
+					ToolCallDelta: &chat.ToolCallDelta{
+						Index:     toolIndex,
+						ID:        encodeToolCallID(fmt.Sprintf("call_%d", partIndex+1), signature),
+						Name:      part.FunctionCall.Name,
+						ArgsChunk: string(args),
+					},
+					Raw: raw,
+				}); err != nil {
+					return nil, err
+				}
+				toolIndex++
+			}
+		}
+	}
+	if err := decoder.Err(); err != nil {
+		return nil, err
+	}
+	accumulated := &geminiResponse{
+		Candidates:     []geminiCandidate{{Content: geminiContent{Parts: parts}, FinishReason: finishReason}},
+		Usage:          usage,
+		Model:          model,
+		PromptFeedback: promptFeedback,
+	}
+	result, err := toChatResult(accumulated, fallbackModel, reasoningDetails)
+	if err != nil {
+		return nil, err
+	}
+	if result.FinishReason == "" {
+		return nil, fmt.Errorf("gemini stream ended without a finish reason")
+	}
+	result.Raw = rawChunks
+	if err := onStream(chat.StreamEvent{
+		FinishReason: result.FinishReason,
+		Done:         true,
+		Usage:        &result.Usage,
+		Raw:          rawChunks,
+	}); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func appendGeminiStreamPart(parts *[]geminiPart, part geminiPart) (int, bool) {
+	if parts != nil && len(*parts) > 0 && isGeminiTextOnlyPart(part) {
+		last := &(*parts)[len(*parts)-1]
+		if isGeminiTextOnlyPart(*last) && last.Thought == part.Thought {
+			last.Text += part.Text
+			if last.ThoughtSignature == "" {
+				last.ThoughtSignature = part.ThoughtSignature
+			}
+			return len(*parts) - 1, true
+		}
+	}
+	*parts = append(*parts, part)
+	return len(*parts) - 1, false
+}
+
+func isGeminiTextOnlyPart(part geminiPart) bool {
+	return part.Text != "" && part.InlineData == nil && part.FunctionCall == nil && part.FunctionResponse == nil
+}
+
+func mergeGeminiUsage(dst *geminiUsage, src geminiUsage) {
+	if dst == nil {
+		return
+	}
+	if src.InputTokens != 0 {
+		dst.InputTokens = src.InputTokens
+	}
+	if src.CachedInputTokens != 0 {
+		dst.CachedInputTokens = src.CachedInputTokens
+	}
+	if src.OutputTokens != 0 {
+		dst.OutputTokens = src.OutputTokens
+	}
+	if src.TotalTokens != 0 {
+		dst.TotalTokens = src.TotalTokens
+	}
+	if src.ThoughtsTokens != 0 {
+		dst.ThoughtsTokens = src.ThoughtsTokens
+	}
+}
+
+func buildRequest(req *chat.Request, model string) (*geminiRequest, error) {
+	out := &geminiRequest{}
+
+	systemParts := make([]geminiPart, 0, 1)
+	contents := make([]geminiContent, 0, len(req.Messages))
+	callNameByID := map[string]string{}
+
+	for _, msg := range req.Messages {
+		switch msg.Role {
+		case chat.RoleSystem:
+			for _, part := range chat.NormalizeMessageParts(msg) {
+				if err := chat.ValidatePart(part); err != nil {
+					return nil, fmt.Errorf("role %q: %w", msg.Role, err)
+				}
+				if part.Type != chat.PartTypeText {
+					return nil, fmt.Errorf("role %q: unsupported part type %q", msg.Role, part.Type)
+				}
+				if strings.TrimSpace(part.Text) != "" {
+					systemParts = append(systemParts, geminiPart{Text: part.Text})
+				}
+			}
+		case chat.RoleUser:
+			for _, part := range chat.NormalizeMessageParts(msg) {
+				if err := chat.ValidatePart(part); err != nil {
+					return nil, fmt.Errorf("role %q: %w", msg.Role, err)
+				}
+				switch part.Type {
+				case chat.PartTypeText:
+					if strings.TrimSpace(part.Text) == "" {
+						continue
+					}
+					appendContent(&contents, "user", geminiPart{Text: part.Text})
+				case chat.PartTypeImageBase64:
+					mimeType := strings.TrimSpace(part.MIMEType)
+					if mimeType == "" {
+						mimeType = "image/png"
+					}
+					appendContent(&contents, "user", geminiPart{
+						InlineData: &geminiInlineData{
+							MimeType: mimeType,
+							Data:     strings.TrimSpace(part.DataBase64),
+						},
+					})
+				case chat.PartTypeImageURL:
+					return nil, fmt.Errorf("role %q: unsupported part type %q", msg.Role, part.Type)
+				default:
+					return nil, fmt.Errorf("role %q: unsupported part type %q", msg.Role, part.Type)
+				}
+			}
+		case chat.RoleAssistant:
+			assistantParts := make([]geminiPart, 0, 1+len(msg.ToolCalls))
+			for _, part := range chat.NormalizeMessageParts(msg) {
+				if err := chat.ValidatePart(part); err != nil {
+					return nil, fmt.Errorf("role %q: %w", msg.Role, err)
+				}
+				if part.Type != chat.PartTypeText {
+					return nil, fmt.Errorf("role %q: unsupported part type %q", msg.Role, part.Type)
+				}
+				if strings.TrimSpace(part.Text) != "" {
+					assistantParts = append(assistantParts, geminiPart{Text: part.Text})
+				}
+			}
+			seenFunctionCall := false
+			for _, call := range msg.ToolCalls {
+				if call.Type != "" && call.Type != "function" {
+					continue
+				}
+				if strings.TrimSpace(call.Function.Name) == "" {
+					return nil, fmt.Errorf("assistant tool call name is required")
+				}
+				callID := strings.TrimSpace(call.ID)
+				sig := strings.TrimSpace(call.ThoughtSignature)
+				normalizedCallID := callID
+				if sig == "" && callID != "" {
+					normalizedID, decoded := splitToolCallIDAndThoughtSignature(callID)
+					if decoded != "" {
+						sig = decoded
+						normalizedCallID = normalizedID
+					}
+				}
+				if sig == "" && !seenFunctionCall {
+					return nil, fmt.Errorf("assistant tool call %q (id=%q) is missing thought_signature; preserve prior resp.ToolCalls as-is when sending tool results", call.Function.Name, call.ID)
+				}
+				args := parseFunctionArgs(call.Function.Arguments)
+				part := geminiPart{
+					FunctionCall: &geminiFunctionCall{
+						Name: call.Function.Name,
+						Args: args,
+					},
+				}
+				if sig != "" {
+					part.ThoughtSignature = sig
+				}
+				if callID != "" {
+					callNameByID[callID] = call.Function.Name
+				}
+				if normalizedCallID != "" {
+					callNameByID[normalizedCallID] = call.Function.Name
+				}
+				assistantParts = append(assistantParts, part)
+				seenFunctionCall = true
+			}
+			for _, part := range assistantParts {
+				appendContent(&contents, "model", part)
+			}
+		case chat.RoleTool:
+			if msg.ToolCallID == "" {
+				return nil, fmt.Errorf("tool_call_id is required for tool messages")
+			}
+			contentText, err := chat.MessageText(msg)
+			if err != nil {
+				return nil, fmt.Errorf("role %q: %w", msg.Role, err)
+			}
+			name := callNameByID[msg.ToolCallID]
+			if name == "" {
+				return nil, fmt.Errorf("tool message references unknown tool_call_id: %s", msg.ToolCallID)
+			}
+			appendContent(&contents, "user", geminiPart{
+				FunctionResponse: &geminiFunctionResponse{
+					Name:     name,
+					Response: parseFunctionResponse(contentText),
+				},
+			})
+		default:
+			return nil, fmt.Errorf("gemini provider does not support role %q", msg.Role)
+		}
+	}
+
+	if len(systemParts) > 0 {
+		out.SystemInstruction = &geminiContent{Parts: systemParts}
+	}
+	out.Contents = contents
+
+	if len(req.Tools) > 0 {
+		tools, err := toGeminiTools(req.Tools)
+		if err != nil {
+			return nil, err
+		}
+		if len(tools) > 0 {
+			out.Tools = tools
+		}
+	}
+	if len(out.Tools) > 0 && req.ToolChoice != nil {
+		cfg, err := toFunctionCallingConfig(req.ToolChoice)
+		if err != nil {
+			return nil, err
+		}
+		if cfg != nil {
+			out.ToolConfig = &geminiToolConfig{FunctionCallingConfig: cfg}
+		}
+	}
+
+	gen, err := toGenerationConfig(model, req.Options)
+	if err != nil {
+		return nil, err
+	}
+	if gen != nil {
+		out.GenerationConfig = gen
+	}
+
+	return out, nil
+}
+
+func appendContent(contents *[]geminiContent, role string, part geminiPart) {
+	if contents == nil {
+		return
+	}
+	if len(*contents) == 0 || (*contents)[len(*contents)-1].Role != role {
+		*contents = append(*contents, geminiContent{
+			Role:  role,
+			Parts: []geminiPart{part},
+		})
+		return
+	}
+	last := &(*contents)[len(*contents)-1]
+	last.Parts = append(last.Parts, part)
+}
+
+func parseFunctionArgs(raw string) any {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return map[string]any{}
+	}
+	var out any
+	if err := json.Unmarshal([]byte(raw), &out); err == nil {
+		return out
+	}
+	return map[string]any{"raw": raw}
+}
+
+func parseFunctionResponse(raw string) any {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return map[string]any{}
+	}
+	var out any
+	if err := json.Unmarshal([]byte(raw), &out); err == nil {
+		return out
+	}
+	return map[string]any{"content": raw}
+}
+
+func toGeminiTools(tools []chat.Tool) ([]geminiTool, error) {
+	decls := make([]geminiFunctionDeclaration, 0, len(tools))
+	for _, tool := range tools {
+		if tool.Type != "function" {
+			continue
+		}
+		if strings.TrimSpace(tool.Function.Name) == "" {
+			continue
+		}
+
+		decl := geminiFunctionDeclaration{
+			Name:        tool.Function.Name,
+			Description: tool.Function.Description,
+		}
+		if len(tool.Function.ParametersJSONSchema) > 0 {
+			var schema map[string]any
+			if err := json.Unmarshal(tool.Function.ParametersJSONSchema, &schema); err != nil {
+				return nil, err
+			}
+			toolschema.Normalize(schema)
+			decl.Parameters = toGeminiSchema(schema)
+		} else {
+			decl.Parameters = map[string]any{
+				"type":       "OBJECT",
+				"properties": map[string]any{},
+			}
+		}
+		decls = append(decls, decl)
+	}
+
+	if len(decls) == 0 {
+		return nil, nil
+	}
+	return []geminiTool{{FunctionDeclarations: decls}}, nil
+}
+
+func toGeminiSchema(in any) any {
+	switch node := in.(type) {
+	case map[string]any:
+		out := make(map[string]any, len(node))
+		for k, v := range node {
+			if shouldDropGeminiSchemaKey(k) {
+				continue
+			}
+			out[k] = toGeminiSchema(v)
+		}
+		typeNames, nullable := normalizeTypeValue(node["type"])
+		if len(typeNames) > 0 {
+			out["type"] = typeNames[0]
+		}
+		if nullable {
+			out["nullable"] = true
+		}
+		if _, ok := out["type"]; !ok {
+			if _, hasProps := out["properties"]; hasProps {
+				out["type"] = "OBJECT"
+			} else if _, hasItems := out["items"]; hasItems {
+				out["type"] = "ARRAY"
+			}
+		}
+		if t, _ := out["type"].(string); t == "ARRAY" {
+			if _, ok := out["items"]; !ok {
+				out["items"] = map[string]any{}
+			}
+		}
+		return out
+	case []any:
+		out := make([]any, 0, len(node))
+		for _, item := range node {
+			out = append(out, toGeminiSchema(item))
+		}
+		return out
+	default:
+		return in
+	}
+}
+
+func shouldDropGeminiSchemaKey(key string) bool {
+	switch key {
+	case "additionalProperties":
+		return true
+	default:
+		return false
+	}
+}
+
+func normalizeTypeValue(raw any) ([]string, bool) {
+	switch t := raw.(type) {
+	case string:
+		upper := strings.ToUpper(strings.TrimSpace(t))
+		if upper == "NULL" {
+			return nil, true
+		}
+		if upper == "" {
+			return nil, false
+		}
+		return []string{upper}, false
+	case []string:
+		names := make([]string, 0, len(t))
+		nullable := false
+		for _, item := range t {
+			upper := strings.ToUpper(strings.TrimSpace(item))
+			if upper == "" {
+				continue
+			}
+			if upper == "NULL" {
+				nullable = true
+				continue
+			}
+			names = append(names, upper)
+		}
+		return names, nullable
+	case []any:
+		names := make([]string, 0, len(t))
+		nullable := false
+		for _, item := range t {
+			s, ok := item.(string)
+			if !ok {
+				continue
+			}
+			upper := strings.ToUpper(strings.TrimSpace(s))
+			if upper == "" {
+				continue
+			}
+			if upper == "NULL" {
+				nullable = true
+				continue
+			}
+			names = append(names, upper)
+		}
+		return names, nullable
+	default:
+		return nil, false
+	}
+}
+
+func toFunctionCallingConfig(choice *chat.ToolChoice) (*geminiFunctionCallingConfig, error) {
+	if choice == nil {
+		return nil, nil
+	}
+	switch choice.Mode {
+	case "", "auto":
+		return &geminiFunctionCallingConfig{Mode: "AUTO"}, nil
+	case "none":
+		return &geminiFunctionCallingConfig{Mode: "NONE"}, nil
+	case "required":
+		return &geminiFunctionCallingConfig{Mode: "ANY"}, nil
+	case "function":
+		name := strings.TrimSpace(choice.FunctionName)
+		if name == "" {
+			return nil, fmt.Errorf("tool_choice function_name is required when mode=function")
+		}
+		return &geminiFunctionCallingConfig{
+			Mode:                 "ANY",
+			AllowedFunctionNames: []string{name},
+		}, nil
+	default:
+		return nil, fmt.Errorf("unsupported tool_choice mode %q", choice.Mode)
+	}
+}
+
+func toGenerationConfig(model string, opts chat.Options) (*geminiGenerationConfig, error) {
+	cfg := &geminiGenerationConfig{}
+	has := false
+
+	if opts.Temperature != nil {
+		cfg.Temperature = opts.Temperature
+		has = true
+	}
+	if opts.TopP != nil {
+		cfg.TopP = opts.TopP
+		has = true
+	}
+	if opts.MaxTokens != nil {
+		cfg.MaxOutputTokens = opts.MaxTokens
+		has = true
+	}
+	if len(opts.Stop) > 0 {
+		cfg.StopSequences = append([]string{}, opts.Stop...)
+		has = true
+	}
+
+	applyGeminiOptions(cfg, opts.OpenAI)
+	applyGeminiOptions(cfg, opts.Azure)
+	applyGeminiOptions(cfg, opts.Cloudflare)
+	if err := applyGeminiReasoningOptions(model, cfg, opts); err != nil {
+		return nil, err
+	}
+
+	if !has {
+		if cfg.TopK == nil && cfg.CandidateCount == nil && cfg.ResponseMIMEType == "" && cfg.ResponseSchema == nil && cfg.ThinkingConfig == nil {
+			return nil, nil
+		}
+	}
+	return cfg, nil
+}
+
+func applyGeminiReasoningOptions(model string, cfg *geminiGenerationConfig, opts chat.Options) error {
+	if cfg == nil {
+		return nil
+	}
+	if opts.ReasoningEffort == nil && opts.ReasoningBudget == nil && !opts.ReasoningDetails {
+		return nil
+	}
+	if opts.ReasoningEffort != nil && opts.ReasoningBudget != nil {
+		return fmt.Errorf("gemini provider does not support reasoning effort and reasoning budget tokens together")
+	}
+
+	model = strings.ToLower(normalizeGeminiModel(model))
+	thinking := cfg.ThinkingConfig
+	if thinking == nil {
+		thinking = &geminiThinkingConfig{}
+	}
+	if opts.ReasoningDetails {
+		thinking.IncludeThoughts = boolPtr(true)
+	}
+
+	switch {
+	case strings.HasPrefix(model, "gemini-3"):
+		if opts.ReasoningBudget != nil {
+			return fmt.Errorf("gemini model %q uses reasoning effort, not reasoning budget tokens", model)
+		}
+		if opts.ReasoningEffort != nil {
+			level, err := geminiThinkingLevelForEffort(*opts.ReasoningEffort)
+			if err != nil {
+				return err
+			}
+			if (model == "gemini-3.8-flash" || strings.HasPrefix(model, "gemini-3.8-flash-")) && level == "minimal" {
+				return fmt.Errorf("gemini model %q does not support minimal reasoning effort; use low, medium, or high", model)
+			}
+			thinking.ThinkingLevel = level
+		}
+	case strings.HasPrefix(model, "gemini-2.5"):
+		if opts.ReasoningBudget != nil {
+			if err := validateGemini25ReasoningBudget(model, *opts.ReasoningBudget); err != nil {
+				return err
+			}
+			thinking.ThinkingBudget = opts.ReasoningBudget
+		}
+		if opts.ReasoningEffort != nil {
+			budget, err := gemini25BudgetForEffort(*opts.ReasoningEffort)
+			if err != nil {
+				return err
+			}
+			if err := validateGemini25ReasoningBudget(model, budget); err != nil {
+				return err
+			}
+			thinking.ThinkingBudget = intPtr(budget)
+		}
+	default:
+		if opts.ReasoningEffort != nil || opts.ReasoningBudget != nil {
+			return fmt.Errorf("gemini provider model %q does not support unified reasoning controls", model)
+		}
+	}
+
+	if thinking.IncludeThoughts != nil || thinking.ThinkingBudget != nil || strings.TrimSpace(thinking.ThinkingLevel) != "" {
+		cfg.ThinkingConfig = thinking
+	}
+	return nil
+}
+
+func geminiThinkingLevelForEffort(effort chat.ReasoningEffort) (string, error) {
+	switch effort {
+	case chat.ReasoningEffortMinimal:
+		return "minimal", nil
+	case chat.ReasoningEffortLow:
+		return "low", nil
+	case chat.ReasoningEffortMedium:
+		return "medium", nil
+	case chat.ReasoningEffortHigh:
+		return "high", nil
+	default:
+		return "", fmt.Errorf("gemini provider does not support reasoning effort %q", effort)
+	}
+}
+
+func gemini25BudgetForEffort(effort chat.ReasoningEffort) (int, error) {
+	switch effort {
+	case chat.ReasoningEffortNone:
+		return 0, nil
+	case chat.ReasoningEffortMinimal:
+		return 1024, nil
+	case chat.ReasoningEffortLow:
+		return 4096, nil
+	case chat.ReasoningEffortMedium:
+		return 16384, nil
+	case chat.ReasoningEffortHigh:
+		return 24576, nil
+	default:
+		return 0, fmt.Errorf("gemini 2.5 provider does not support reasoning effort %q", effort)
+	}
+}
+
+func validateGemini25ReasoningBudget(model string, budget int) error {
+	switch {
+	case strings.Contains(model, "flash-lite"):
+		if budget == -1 || budget == 0 {
+			return nil
+		}
+		if budget < 512 || budget > 24576 {
+			return fmt.Errorf("gemini model %q reasoning budget must be -1, 0, or 512..24576", model)
+		}
+		return nil
+	case strings.Contains(model, "flash"):
+		if budget == -1 {
+			return nil
+		}
+		if budget < 0 || budget > 24576 {
+			return fmt.Errorf("gemini model %q reasoning budget must be -1 or 0..24576", model)
+		}
+		return nil
+	default:
+		if budget == -1 {
+			return nil
+		}
+		if budget < 128 || budget > 32768 {
+			return fmt.Errorf("gemini model %q reasoning budget must be -1 or 128..32768", model)
+		}
+		return nil
+	}
+}
+
+func applyGeminiOptions(cfg *geminiGenerationConfig, opts structs.JSONMap) {
+	if cfg == nil || len(opts) == 0 {
+		return
+	}
+	opt := &opts
+	if opt.HasKey("top_k") && cfg.TopK == nil {
+		if topK := int(opt.GetInt64("top_k")); topK > 0 {
+			cfg.TopK = &topK
+		}
+	}
+	if opt.HasKey("n") && cfg.CandidateCount == nil {
+		if n := int(opt.GetInt64("n")); n > 0 {
+			cfg.CandidateCount = &n
+		}
+	}
+	if opt.HasKey("candidate_count") && cfg.CandidateCount == nil {
+		if n := int(opt.GetInt64("candidate_count")); n > 0 {
+			cfg.CandidateCount = &n
+		}
+	}
+	if opt.HasKey("response_mime_type") && cfg.ResponseMIMEType == "" {
+		if v := strings.TrimSpace(opt.GetString("response_mime_type")); v != "" {
+			cfg.ResponseMIMEType = v
+		}
+	}
+	if opt.HasKey("response_schema") && cfg.ResponseSchema == nil {
+		if schemaMap := opt.GetMap("response_schema"); schemaMap != nil && len(*schemaMap) > 0 {
+			cfg.ResponseSchema = toGeminiSchema(map[string]any(*schemaMap))
+			return
+		}
+		if schemaArray := opt.GetArray("response_schema"); len(schemaArray) > 0 {
+			cfg.ResponseSchema = toGeminiSchema(schemaArray)
+			return
+		}
+		if schemaJSON := strings.TrimSpace(opt.GetString("response_schema")); schemaJSON != "" {
+			var schemaAny any
+			if err := json.Unmarshal([]byte(schemaJSON), &schemaAny); err == nil {
+				cfg.ResponseSchema = toGeminiSchema(schemaAny)
+			}
+		}
+	}
+}
+
+func toChatResult(in *geminiResponse, fallbackModel string, reasoningDetails bool) (*chat.Result, error) {
+	if in == nil {
+		return &chat.Result{Model: fallbackModel}, nil
+	}
+	result := &chat.Result{
+		Model: in.Model,
+		Usage: chat.Usage{
+			InputTokens:  in.Usage.InputTokens,
+			OutputTokens: in.Usage.OutputTokens + in.Usage.ThoughtsTokens,
+			TotalTokens:  in.Usage.TotalTokens,
+			Cache: chat.UsageCache{
+				CachedInputTokens: in.Usage.CachedInputTokens,
+			},
+		},
+	}
+	if result.Model == "" {
+		result.Model = fallbackModel
+	}
+	if in.PromptFeedback != nil && in.PromptFeedback.BlockReason != "" && in.PromptFeedback.BlockReason != "BLOCK_REASON_UNSPECIFIED" {
+		result.FinishReason = "content_filter"
+	}
+
+	if len(in.Candidates) == 0 {
+		return result, nil
+	}
+
+	parts := in.Candidates[0].Content.Parts
+	text := make([]string, 0, len(parts))
+	outParts := make([]chat.Part, 0, len(parts))
+	calls := make([]chat.ToolCall, 0)
+	for i, part := range parts {
+		if strings.TrimSpace(part.Text) != "" {
+			if part.Thought {
+				if reasoningDetails {
+					result.Reasoning = appendGeminiReasoningDetail(result.Reasoning, part.Text)
+				}
+			} else {
+				text = append(text, part.Text)
+				outParts = append(outParts, chat.TextPart(part.Text))
+			}
+		}
+		if part.FunctionCall != nil {
+			args, err := json.Marshal(part.FunctionCall.Args)
+			if err != nil {
+				return nil, err
+			}
+			if len(args) == 0 || string(args) == "null" {
+				args = []byte("{}")
+			}
+			signature := strings.TrimSpace(part.ThoughtSignature)
+			calls = append(calls, chat.ToolCall{
+				ID:   encodeToolCallID(fmt.Sprintf("call_%d", i+1), signature),
+				Type: "function",
+				Function: chat.ToolCallFunction{
+					Name:      part.FunctionCall.Name,
+					Arguments: string(args),
+				},
+				ThoughtSignature: signature,
+			})
+		}
+	}
+	result.Text = strings.Join(text, "")
+	result.Parts = outParts
+	result.ToolCalls = calls
+	if result.FinishReason == "" {
+		switch reason := in.Candidates[0].FinishReason; reason {
+		case "", "FINISH_REASON_UNSPECIFIED":
+		case "STOP":
+			result.FinishReason = "stop"
+			if len(calls) > 0 {
+				result.FinishReason = "tool_calls"
+			}
+		case "MAX_TOKENS":
+			result.FinishReason = "length"
+		case "SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII", "IMAGE_SAFETY", "IMAGE_PROHIBITED_CONTENT", "IMAGE_RECITATION":
+			result.FinishReason = "content_filter"
+		default:
+			return nil, fmt.Errorf("gemini response contains unsupported finish reason %q", reason)
+		}
+	}
+	return result, nil
+}
+
+func appendGeminiReasoningDetail(reasoning *chat.ReasoningResult, text string) *chat.ReasoningResult {
+	text = strings.TrimSpace(text)
+	if text == "" {
+		return reasoning
+	}
+	if reasoning == nil {
+		reasoning = &chat.ReasoningResult{}
+	}
+	reasoning.Summary = append(reasoning.Summary, text)
+	return reasoning
+}
+
+func boolPtr(v bool) *bool { return &v }
+
+func intPtr(v int) *int { return &v }
+
+func encodeToolCallID(callID, thoughtSignature string) string {
+	callID = strings.TrimSpace(callID)
+	thoughtSignature = strings.TrimSpace(thoughtSignature)
+	if callID == "" || thoughtSignature == "" {
+		return callID
+	}
+	return callID + "|ts:" + base64.RawURLEncoding.EncodeToString([]byte(thoughtSignature))
+}
+
+func splitToolCallIDAndThoughtSignature(callID string) (string, string) {
+	callID = strings.TrimSpace(callID)
+	if callID == "" {
+		return "", ""
+	}
+	idx := strings.LastIndex(callID, "|ts:")
+	if idx <= 0 || idx+4 >= len(callID) {
+		return callID, ""
+	}
+	encoded := callID[idx+4:]
+	decoded, err := base64.RawURLEncoding.DecodeString(encoded)
+	if err != nil {
+		return callID, ""
+	}
+	baseID := callID[:idx]
+	if strings.TrimSpace(baseID) == "" {
+		return callID, ""
+	}
+	return baseID, string(decoded)
+}
+
+func parseGeminiError(data []byte) string {
+	if len(data) == 0 {
+		return ""
+	}
+	var env geminiErrorEnvelope
+	if err := json.Unmarshal(data, &env); err == nil {
+		if msg := strings.TrimSpace(env.Error.Message); msg != "" {
+			return msg
+		}
+	}
+	return strings.TrimSpace(string(data))
+}
+
+func normalizeGeminiBase(base string) string {
+	trimmed := strings.TrimRight(strings.TrimSpace(base), "/")
+	if trimmed == "" {
+		return defaultGeminiAPIBase
+	}
+	trimmed = strings.TrimSuffix(trimmed, "/v1beta/openai")
+	trimmed = strings.TrimSuffix(trimmed, "/v1/openai")
+	trimmed = strings.TrimSuffix(trimmed, "/openai")
+	trimmed = strings.TrimSuffix(trimmed, "/v1beta")
+	trimmed = strings.TrimSuffix(trimmed, "/v1")
+	if trimmed == "" {
+		return defaultGeminiAPIBase
+	}
+	return trimmed
+}
+
+func normalizeGeminiModel(model string) string {
+	model = strings.TrimSpace(model)
+	model = strings.TrimPrefix(model, "models/")
+	return model
+}

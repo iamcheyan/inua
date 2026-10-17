@@ -16,9 +16,12 @@ disk; the CLI reports a profile adjusted to host resources. Docker socket
 access is a privileged host boundary and should be limited to trusted users.
 
 The drawer's SYSTEM group has a **Windows VM** entry that opens the manager
-window: the recommended profile (RAM, CPU cores, disk) with an advanced
-editor, host checks, and the lifecycle buttons. The same actions are on the
-control socket for scripts:
+window. The window shows one page at a time: host checks to fix when something
+is missing; **Install Windows** when nothing is installed yet; progress and
+the web console while Windows is installing; **Start** when the guest is
+installed and off; a starting screen while it comes up; **Connect** and
+**Stop** while it is running. The same actions are on the control socket for
+scripts:
 
 ```
 inua call vm install       write the project and start the first installation
@@ -26,7 +29,7 @@ inua call vm console       open the container's web console
 inua call vm connect       open FreeRDP once Windows is ready
 inua call vm stop          stop the container, keeping the disk
 inua call vm start         start it again
-inua call vm remove        delete the container, project and password, keeping the disk
+inua call vm remove        delete the container and project, keeping the disk and password
 inua call vm remove-data   delete the guest disk itself
 ```
 
@@ -266,7 +269,23 @@ run with `LD_PRELOAD`, `LD_AUDIT` or `LD_LIBRARY_PATH` can only be
 allowed once. The list is kept in `~/.local/state/inua/keyring-trust.json`,
 sealed with a key kept in pass; changed outside inua-keyring, it is not
 trusted until you trust it again in Settings → Keyring. Its Trusted apps
-page lists them, with a filter and Remove; the Pass app shows, under an
+page lists them, with a filter and Remove.
+
+An app that updates itself every day (`~/.local/share/claude/versions/…`)
+would be asked about after each update. An allowed path lets any program
+at it read every secret, whatever its hash: a pattern, `*` matching
+within a folder (`~/.local/share/claude/versions/*`); for a script, the
+script's path. Add one under Allowed paths on the Trusted apps page, or
+with `inua keyring allow PATTERN`: inua-keyring asks you in its own
+dialog first, so another program cannot add one; `inua keyring paths`
+lists them, `inua keyring disallow PATTERN` and Remove drop one. A
+pattern that lets too much through (`/*`, your home folder itself, less
+than two folders before its first wildcard) is refused. The paths are
+sealed with the rest of the list; an app run with `LD_PRELOAD` and the
+like is still only allowed once. Allow only a folder that only you and
+the app's updater write to: any program put there reads everything.
+
+The Pass app shows, under an
 entry of inua-keyring's, the apps trusted with it and its last reads. With no inua shell to ask in,
 `keyring.untrusted` decides ("allow", the default, or "deny"). This keeps
 programs from reading secrets they were never given; a program running

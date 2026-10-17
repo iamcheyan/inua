@@ -1,0 +1,61 @@
+package line
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	busruntime "github.com/quailyquaily/mistermorph/internal/bus"
+	linebus "github.com/quailyquaily/mistermorph/internal/bus/adapters/line"
+	"github.com/quailyquaily/mistermorph/internal/chatcommands"
+	"github.com/quailyquaily/mistermorph/internal/topiccontext"
+	"github.com/quailyquaily/mistermorph/internal/workspace"
+)
+
+func maybeHandleLineCommand(ctx context.Context, d Dependencies, inprocBus *busruntime.Inproc, store *workspace.Store, conversationKey string, inbound linebus.InboundMessage, currentSkills []string) (bool, error) {
+	reg := chatcommands.NewRuntimeRegistry(chatcommands.RuntimeRegistryOptions{
+		ModelCommand:        d.HandleModelCommand,
+		SkillCommand:        skillCommandForRuntime(d.HandleSkillCommand, currentSkills),
+		ContextCommand:      topiccontext.NewStore(d.RuntimePaths.TopicContextPath).CommandFunc(conversationKey),
+		WorkspaceStore:      store,
+		WorkspaceKey:        conversationKey,
+		DefaultWorkspaceDir: d.DefaultWorkspaceDir,
+	})
+	result, handled, err := reg.Dispatch(ctx, inbound.Text)
+	if !handled {
+		return false, nil
+	}
+	if result != nil && result.Action == chatcommands.ActionContextCompact {
+		return false, nil
+	}
+	output := ""
+	if err != nil {
+		output = "error: " + strings.TrimSpace(err.Error())
+	} else if result != nil {
+		output = strings.TrimSpace(result.Reply)
+	}
+	if output == "" {
+		return true, nil
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	correlationID := fmt.Sprintf("line:command:%s:%s", inbound.ChatID, inbound.MessageID)
+	_, publishErr := publishLineBusOutbound(ctx, inprocBus, inbound.ChatID, output, inbound.ReplyToken, correlationID)
+	return true, publishErr
+}
+
+func isLineStopCommand(text string) bool {
+	cmdWord, _ := chatcommands.ParseCommand(text)
+	return chatcommands.NormalizeCommand(cmdWord) == "/stop"
+}
+
+func skillCommandForRuntime(fn HandleSkillCommandFunc, currentSkills []string) chatcommands.SkillCommandFunc {
+	if fn == nil {
+		return nil
+	}
+	snapshot := append([]string(nil), currentSkills...)
+	return func() (string, error) {
+		return fn(snapshot)
+	}
+}

@@ -21,7 +21,18 @@ Use Go 1.26 or later; running the UI needs Hyprland, GTK4 and gtk4-layer-shell.
 - `make generate`: compiles `.blp` into `.ui` with `blueprint-compiler`; after changing a layout, commit both.
 - `make i18n`: gathers the translatable text into `po/inua.pot` and updates the catalogs in `internal/i18n/locales`.
 - `make nested`: runs in a nested Hyprland window; `make run`: runs in the current Hyprland session.
-- `bin/inua-shell -ui-dir ui`: reads layouts and styles from disk.
+
+
+### Rebuilding the running desktop shell
+When a change must be visible in the current Hyprland session, build the shell binary first, then replace the running shell without leaving duplicate instances:
+
+1. Before building, record the `inua-shell` PID and `/proc/<pid>/exe`; confirm the default IPC endpoint is `/run/user/$UID/inua/default.sock` and note whether `inua call shell state` responds.
+2. Build the current source to the exact executable path used by that PID. For a local checkout build, use `go build -o bin/inua-shell ./cmd/inua-shell` and keep its required Go/GTK environment available. Do not copy a differently configured binary over the active path.
+3. After the build succeeds, stop the one confirmed old `inua-shell` process with `TERM`, then start exactly one replacement from the current Hyprland session using the same environment, config path and UI directory. Do not use `shell restart` for a shell owned by a persistent terminal supervisor: `exec` can make that supervisor mark the service failed.
+4. Wait for `ipc: serving on /run/user/$UID/inua/default.sock`, then verify `inua call shell state`, the new PID, `/proc/<pid>/exe`, expected bars/overview surfaces, and exactly one default `inua-shell` process. If the listener does not appear, inspect its startup log and process state; do not launch another copy while the first may still be initializing.
+5. For repeated local builds, run the gitignored `./reload-shell` helper. It builds to a temporary file, replaces `bin/inua-shell` only after success, stops the one old shell, starts one replacement, and waits for IPC and process identity verification. It refuses multiple instances and refuses to start a duplicate when an old shell will not exit. Keep this helper local; do not add it to commits or PRs.
+
+Do not report a desktop change as applied until the running executable and IPC state confirm that the rebuilt shell is active.
 
 ## Code Style and Architecture
 

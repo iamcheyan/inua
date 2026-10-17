@@ -1,0 +1,132 @@
+package agent
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/quailyquaily/mistermorph/tools"
+)
+
+const spawnToolName = "spawn"
+
+type spawnTool struct {
+	deps spawnToolDeps
+}
+
+func newSpawnTool(deps spawnToolDeps) *spawnTool {
+	return &spawnTool{deps: deps}
+}
+
+func (t *spawnTool) Name() string { return spawnToolName }
+
+func (t *spawnTool) Description() string {
+	return "Spawn a sub-agent to handle a self-contained sub-task. " +
+		"The sub-agent runs with its own context and a restricted set of tools you specify, and does not see this conversation. " +
+		"This call blocks until the sub-agent completes and returns a structured JSON envelope; sub-agents run one at a time."
+}
+
+func (t *spawnTool) ParameterSchema() string {
+	s := map[string]any{
+		"type": "object",
+		"properties": map[string]any{
+			"task": map[string]any{
+				"type":        "string",
+				"description": "Task prompt for the sub-agent.",
+			},
+			"tools": map[string]any{
+				"type":        "array",
+				"items":       map[string]any{"type": "string"},
+				"description": "Whitelist of tool names the sub-agent can use. Cannot include 'spawn'.",
+			},
+			"model_profile": map[string]any{
+				"type":        "string",
+				"description": "Optional model profile name for the sub-agent. Omit it to use the current model.",
+			},
+			"output_schema": map[string]any{
+				"type":        "string",
+				"description": "Optional schema identifier for the child task's structured output.",
+			},
+			"observe_profile": map[string]any{
+				"type":        "string",
+				"description": "Optional local observer profile for this child task. Supported values: default, long_shell, web_extract.",
+			},
+		},
+		"required": []string{"task", "tools"},
+	}
+	b, _ := json.MarshalIndent(s, "", "  ")
+	return string(b)
+}
+
+func (t *spawnTool) Execute(ctx context.Context, params map[string]any) (string, error) {
+	task, _ := params["task"].(string)
+	task = strings.TrimSpace(task)
+	if task == "" {
+		return "", fmt.Errorf("missing required param: task")
+	}
+	if _, ok := params["model"]; ok {
+		return "", fmt.Errorf("param model is not supported; use model_profile with a profile name, or omit it to use the current model")
+	}
+
+	rawTools, _ := params["tools"].([]any)
+	if len(rawTools) == 0 {
+		return "", fmt.Errorf("missing required param: tools (must be a non-empty array of tool names)")
+	}
+
+	subRegistry := tools.NewRegistry()
+	for _, raw := range rawTools {
+		name, ok := raw.(string)
+		if !ok {
+			continue
+		}
+		name = strings.TrimSpace(name)
+		if name == "" || strings.EqualFold(name, spawnToolName) {
+			continue
+		}
+		if t.deps.LookupTool == nil {
+			return "", fmt.Errorf("spawn tool lookup is unavailable")
+		}
+		if tool, found := t.deps.LookupTool(name); found {
+			if err := subRegistry.Register(tool); err != nil {
+				return "", fmt.Errorf("register subtask tool %q: %w", name, err)
+			}
+		}
+	}
+	if len(subRegistry.All()) == 0 {
+		return "", fmt.Errorf("none of the requested tools are available in the parent registry")
+	}
+
+	modelProfile, _ := params["model_profile"].(string)
+	outputSchema, _ := params["output_schema"].(string)
+	outputSchema = strings.TrimSpace(outputSchema)
+	observeProfile, _ := params["observe_profile"].(string)
+
+	req := SubtaskRequest{
+		Task:           task,
+		ModelProfile:   strings.TrimSpace(modelProfile),
+		OutputSchema:   outputSchema,
+		ObserveProfile: NormalizeObserveProfile(observeProfile),
+		Registry:       subRegistry,
+	}
+
+	runner := t.deps.Runner
+	if runner == nil {
+		return "", fmt.Errorf("subtask runner unavailable")
+	}
+	result, err := runner.RunSubtask(ctx, req)
+	if err != nil {
+		if result == nil {
+			result = FailedSubtaskResult("", err)
+		}
+	}
+	if result == nil {
+		result = FailedSubtaskResult("", fmt.Errorf("subtask returned nil result"))
+	}
+
+	b, err := json.Marshal(result)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}

@@ -1,0 +1,505 @@
+package guard
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net/url"
+	"strings"
+	"time"
+)
+
+type Guard struct {
+	cfg       Config
+	redactor  *Redactor
+	audit     AuditSink
+	approvals ApprovalStore
+	warnings  []string
+}
+
+func New(cfg Config, audit AuditSink, approvals ApprovalStore) *Guard {
+	return &Guard{
+		cfg:       cfg,
+		redactor:  NewRedactor(cfg.Redaction),
+		audit:     audit,
+		approvals: approvals,
+	}
+}
+
+func NewWithWarnings(cfg Config, audit AuditSink, approvals ApprovalStore, warnings []string) *Guard {
+	g := New(cfg, audit, approvals)
+	g.warnings = normalizeWarnings(warnings)
+	return g
+}
+
+func (g *Guard) Warnings() []string {
+	if g == nil || len(g.warnings) == 0 {
+		return nil
+	}
+	return append([]string(nil), g.warnings...)
+}
+
+func normalizeWarnings(warnings []string) []string {
+	seen := make(map[string]bool, len(warnings))
+	out := make([]string, 0, len(warnings))
+	for _, raw := range warnings {
+		message := strings.TrimSpace(raw)
+		key := strings.ToLower(message)
+		if message == "" || seen[key] {
+			continue
+		}
+		seen[key] = true
+		out = append(out, message)
+	}
+	return out
+}
+
+func (g *Guard) Enabled() bool { return g != nil && g.cfg.Enabled }
+
+// RedactString applies this Guard's configured redaction rules without writing
+// an audit event. It is intended for transient UI previews; guarded output
+// publication should continue to use Evaluate.
+func (g *Guard) RedactString(content string) (string, bool) {
+	if !g.Enabled() || g.redactor == nil {
+		return content, false
+	}
+	return g.redactor.RedactString(content)
+}
+
+func (g *Guard) NetworkPolicyForURLFetch() (NetworkPolicy, bool) {
+	if g == nil || !g.cfg.Enabled {
+		return NetworkPolicy{}, false
+	}
+	p := g.cfg.Network.URLFetch
+	return NetworkPolicy{
+		AllowedURLPrefixes: append([]string{}, p.AllowedURLPrefixes...),
+		DenyPrivateIPs:     p.DenyPrivateIPs,
+		FollowRedirects:    p.FollowRedirects,
+		AllowProxy:         p.AllowProxy,
+	}, true
+}
+
+func (g *Guard) Evaluate(ctx context.Context, meta Meta, a Action) (Result, error) {
+	if g == nil || !g.cfg.Enabled {
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}, nil
+	}
+	if meta.Time.IsZero() {
+		meta.Time = time.Now().UTC()
+	}
+
+	res := Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+
+	switch a.Type {
+	case ActionToolCallPre:
+		res = g.evalToolCallPre(ctx, a)
+	case ActionToolCallPost:
+		res = g.evalToolCallPost(a)
+	case ActionOutputPublish:
+		res = g.evalOutputPublish(a)
+	default:
+		res = Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+
+	if err := g.emitAudit(ctx, meta, a, res, "", "", ""); err != nil {
+		return res, err
+	}
+	return res, nil
+}
+
+func (g *Guard) RequestApproval(ctx context.Context, meta Meta, a Action, pre Result, actionSummaryRedacted string, resumeState []byte) (string, error) {
+	// Forced-approval tools can always ask, including on an approvals-only guard.
+	forced := a.Type == ActionToolCallPre && RequiresForcedApproval(a.ToolName)
+	if g == nil || (!g.cfg.Enabled && !forced) {
+		return "", fmt.Errorf("guard is disabled")
+	}
+	if g.approvals == nil || (!g.cfg.Approvals.Enabled && !forced) {
+		return "", fmt.Errorf("approvals are not enabled")
+	}
+	if meta.Time.IsZero() {
+		meta.Time = time.Now().UTC()
+	}
+
+	h, err := ActionHash(a)
+	if err != nil {
+		return "", err
+	}
+	now := time.Now().UTC()
+	// M1: hard-coded TTL. If you need configurable expiry/SLAs, add it later with a clear threat model.
+	expiresAt := now.Add(5 * time.Minute)
+
+	rec := ApprovalRecord{
+		RunID:                 meta.RunID,
+		CreatedAt:             now,
+		ExpiresAt:             expiresAt,
+		Status:                ApprovalPending,
+		ActionType:            a.Type,
+		ToolName:              strings.TrimSpace(a.ToolName),
+		ActionHash:            h,
+		RiskLevel:             pre.RiskLevel,
+		Decision:              pre.Decision,
+		Reasons:               append([]string{}, pre.Reasons...),
+		ActionSummaryRedacted: strings.TrimSpace(actionSummaryRedacted),
+		ResumeState:           resumeState,
+	}
+	id, err := g.approvals.Create(ctx, rec)
+	if err != nil {
+		return "", err
+	}
+
+	if err := g.emitAudit(ctx, meta, a, pre, id, string(ApprovalPending), ""); err != nil {
+		compensationCtx := ctx
+		if compensationCtx == nil {
+			compensationCtx = context.Background()
+		} else {
+			compensationCtx = context.WithoutCancel(compensationCtx)
+		}
+		compensationErr := g.approvals.Resolve(
+			compensationCtx,
+			id,
+			ApprovalExpired,
+			"system:audit_failure",
+			"approval request audit failed",
+		)
+		return "", errors.Join(err, compensationErr)
+	}
+	return id, nil
+}
+
+func (g *Guard) GetApproval(ctx context.Context, id string) (ApprovalRecord, bool, error) {
+	if g == nil || g.approvals == nil {
+		return ApprovalRecord{}, false, nil
+	}
+	return g.approvals.Get(ctx, id)
+}
+
+func (g *Guard) ConsumeApproval(ctx context.Context, id string) (ApprovalRecord, error) {
+	if g == nil || g.approvals == nil {
+		return ApprovalRecord{}, fmt.Errorf("approvals not configured")
+	}
+	return g.approvals.ConsumeApproved(ctx, id)
+}
+
+func (g *Guard) ResolveApproval(ctx context.Context, id string, status ApprovalStatus, actor, comment string) error {
+	if g == nil || g.approvals == nil {
+		return fmt.Errorf("approvals not configured")
+	}
+	if err := g.approvals.Resolve(ctx, id, status, actor, comment); err != nil {
+		return err
+	}
+	// Emit a follow-up audit event for the resolution (safe/redacted by construction).
+	rec, ok, err := g.approvals.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+	if ok {
+		return g.emitApprovalResolutionAudit(ctx, rec)
+	}
+	return nil
+}
+
+func (g *Guard) Close() error {
+	if g == nil {
+		return nil
+	}
+	if g.audit != nil {
+		return g.audit.Close()
+	}
+	return nil
+}
+
+func (g *Guard) evalToolCallPre(_ context.Context, a Action) Result {
+	name := strings.TrimSpace(strings.ToLower(a.ToolName))
+	switch name {
+	case "bash", "powershell":
+		if g.cfg.Approvals.Enabled {
+			return Result{
+				RiskLevel: RiskHigh,
+				Decision:  DecisionRequireApproval,
+				Reasons:   []string{name + "_requires_approval"},
+			}
+		}
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	case "url_fetch":
+		rawURL := ""
+		if a.ToolParams != nil {
+			if v, ok := a.ToolParams["url"].(string); ok {
+				rawURL = strings.TrimSpace(v)
+			}
+		}
+		if rawURL == "" {
+			return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+		}
+		// If the call uses auth_profile, the auth_profile's allow policy is the primary destination boundary.
+		// Guard still audits, but does not add an extra allowlist layer by default.
+		if a.ToolParams != nil {
+			if v, ok := a.ToolParams["auth_profile"].(string); ok && strings.TrimSpace(v) != "" {
+				return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+			}
+		}
+
+		policy, _ := g.NetworkPolicyForURLFetch()
+		if reason := policy.URLDenyReason(rawURL); reason != "" {
+			return Result{RiskLevel: RiskHigh, Decision: DecisionDeny, Reasons: []string{reason}}
+		}
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	default:
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+}
+
+func (g *Guard) evalToolCallPost(a Action) Result {
+	obs := a.Content
+	if strings.TrimSpace(obs) == "" {
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+	if g.redactor == nil {
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+	red, changed, reasons := g.redactor.RedactStringDetailed(obs)
+	if !changed {
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+	if len(reasons) == 0 {
+		reasons = []string{"sensitive_content_redacted"}
+	}
+	return Result{
+		RiskLevel:       RiskHigh,
+		Decision:        DecisionAllowWithRedact,
+		Reasons:         reasons,
+		RedactedContent: red,
+	}
+}
+
+func (g *Guard) evalOutputPublish(a Action) Result {
+	if a.Value != nil && g.redactor != nil {
+		red, changed, reasons := g.redactor.redactValueDetailed(a.Value)
+		if !changed {
+			return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+		}
+		if len(reasons) == 0 {
+			reasons = []string{"sensitive_content_redacted"}
+		}
+		return Result{
+			RiskLevel:     RiskHigh,
+			Decision:      DecisionAllowWithRedact,
+			Reasons:       reasons,
+			RedactedValue: red,
+		}
+	}
+	out := a.Content
+	if strings.TrimSpace(out) == "" || g.redactor == nil {
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+	red, changed, reasons := g.redactor.RedactStringDetailed(out)
+	if !changed {
+		return Result{RiskLevel: RiskLow, Decision: DecisionAllow}
+	}
+	if len(reasons) == 0 {
+		reasons = []string{"sensitive_content_redacted"}
+	}
+	return Result{
+		RiskLevel:       RiskHigh,
+		Decision:        DecisionAllowWithRedact,
+		Reasons:         reasons,
+		RedactedContent: red,
+	}
+}
+
+func (g *Guard) emitAudit(ctx context.Context, meta Meta, a Action, res Result, approvalID string, approvalStatus string, actor string) error {
+	if g == nil || g.audit == nil || !g.cfg.Enabled {
+		return nil
+	}
+	if meta.Time.IsZero() {
+		meta.Time = time.Now().UTC()
+	}
+
+	sum := g.summarizeActionRedacted(a)
+	hash, err := ActionHash(a)
+	if err != nil {
+		return err
+	}
+	ev := AuditEvent{
+		EventID:               newEventID(meta),
+		RunID:                 meta.RunID,
+		Timestamp:             meta.Time.UTC(),
+		Step:                  meta.Step,
+		ActionType:            a.Type,
+		ToolName:              strings.TrimSpace(a.ToolName),
+		ActionSummaryRedacted: sum,
+		BodyOmittedFromAudit:  auditBodyOmittedFromAudit(a.Type),
+		ActionHash:            hash,
+		RiskLevel:             res.RiskLevel,
+		Decision:              res.Decision,
+		Reasons:               append([]string{}, res.Reasons...),
+		ApprovalRequestID:     approvalID,
+		ApprovalStatus:        approvalStatus,
+		Actor:                 actor,
+	}
+	return g.audit.Emit(ctx, ev)
+}
+
+func (g *Guard) emitApprovalResolutionAudit(ctx context.Context, rec ApprovalRecord) error {
+	if g == nil || g.audit == nil || !g.cfg.Enabled {
+		return nil
+	}
+	meta := Meta{RunID: strings.TrimSpace(rec.RunID), Step: -1, Time: time.Now().UTC()}
+	ev := AuditEvent{
+		EventID:               newEventID(meta),
+		RunID:                 meta.RunID,
+		Timestamp:             meta.Time.UTC(),
+		Step:                  meta.Step,
+		ActionType:            rec.ActionType,
+		ToolName:              strings.TrimSpace(rec.ToolName),
+		ActionSummaryRedacted: strings.TrimSpace(rec.ActionSummaryRedacted),
+		BodyOmittedFromAudit:  auditBodyOmittedFromAudit(rec.ActionType),
+		ActionHash:            strings.TrimSpace(rec.ActionHash),
+		RiskLevel:             rec.RiskLevel,
+		Decision:              rec.Decision,
+		Reasons:               append([]string{}, rec.Reasons...),
+		ApprovalRequestID:     strings.TrimSpace(rec.ID),
+		ApprovalStatus:        string(rec.Status),
+		Actor:                 strings.TrimSpace(rec.Actor),
+	}
+	return g.audit.Emit(ctx, ev)
+}
+
+func auditBodyOmittedFromAudit(actionType ActionType) bool {
+	return actionType == ActionOutputPublish
+}
+
+func (g *Guard) summarizeActionRedacted(a Action) string {
+	switch a.Type {
+	case ActionToolCallPre, ActionToolCallPost:
+		if strings.TrimSpace(a.ToolName) == "" {
+			return string(a.Type)
+		}
+		toolName := strings.TrimSpace(strings.ToLower(a.ToolName))
+		switch toolName {
+		case "read_file":
+			rawPath := toolParamString(a.ToolParams, "path")
+			if rawPath == "" {
+				return string(a.Type) + " tool=read_file"
+			}
+			return fmt.Sprintf("%s tool=read_file path=%q", string(a.Type), g.redactAuditValue(rawPath, 280))
+		case "web_search":
+			rawQuery := toolParamString(a.ToolParams, "q", "query")
+			if rawQuery == "" {
+				return string(a.Type) + " tool=web_search"
+			}
+			return fmt.Sprintf("%s tool=web_search q=%q", string(a.Type), g.redactAuditValue(rawQuery, 280))
+		case "url_fetch":
+			rawURL := toolParamString(a.ToolParams, "url")
+			if rawURL == "" {
+				rawURL = strings.TrimSpace(a.URL)
+			}
+			method := strings.ToUpper(toolParamString(a.ToolParams, "method"))
+			if method == "" {
+				method = strings.ToUpper(strings.TrimSpace(a.Method))
+			}
+			var b strings.Builder
+			b.WriteString(string(a.Type))
+			b.WriteString(" tool=url_fetch")
+			if method != "" {
+				b.WriteString(" method=")
+				b.WriteString(method)
+			}
+			if rawURL != "" {
+				b.WriteString(" url=")
+				b.WriteString(clipAuditValue(redactURLQuery(rawURL), 420))
+			}
+			return b.String()
+		case "bash", "powershell":
+			rawCmd := toolParamString(a.ToolParams, "cmd")
+			if rawCmd == "" {
+				return string(a.Type) + " tool=" + toolName
+			}
+			return fmt.Sprintf("%s tool=%s cmd=%q", string(a.Type), toolName, g.redactAuditValue(rawCmd, 320))
+		}
+		return string(a.Type) + " tool=" + strings.TrimSpace(a.ToolName)
+	case ActionOutputPublish:
+		return "OutputPublish content=[redacted_summary]"
+	case ActionFileSend:
+		return g.summarizeFileSend(a)
+	default:
+		return string(a.Type)
+	}
+}
+
+func (g *Guard) redactAuditValue(raw string, maxLen int) string {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return ""
+	}
+	value = strings.Join(strings.Fields(value), " ")
+	if g != nil && g.redactor != nil {
+		if red, changed := g.redactor.RedactString(value); changed {
+			value = red
+		}
+	}
+	return clipAuditValue(value, maxLen)
+}
+
+func clipAuditValue(value string, maxLen int) string {
+	value = strings.TrimSpace(value)
+	if maxLen <= 0 || len(value) <= maxLen {
+		return value
+	}
+	return strings.TrimSpace(value[:maxLen]) + "..."
+}
+
+func toolParamString(params map[string]any, keys ...string) string {
+	if len(params) == 0 {
+		return ""
+	}
+	for _, key := range keys {
+		key = strings.TrimSpace(key)
+		if key == "" {
+			continue
+		}
+		v, ok := params[key]
+		if !ok || v == nil {
+			continue
+		}
+		switch x := v.(type) {
+		case string:
+			s := strings.TrimSpace(x)
+			if s != "" {
+				return s
+			}
+		case fmt.Stringer:
+			s := strings.TrimSpace(x.String())
+			if s != "" {
+				return s
+			}
+		default:
+			s := strings.TrimSpace(fmt.Sprintf("%v", x))
+			if s != "" && s != "<nil>" {
+				return s
+			}
+		}
+	}
+	return ""
+}
+
+func redactURLQuery(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return raw
+	}
+	u, err := url.Parse(raw)
+	if err != nil {
+		return raw
+	}
+	q := u.Query()
+	changed := false
+	for k := range q {
+		if IsSensitiveKey(k) {
+			q.Set(k, "[redacted]")
+			changed = true
+		}
+	}
+	if changed {
+		u.RawQuery = q.Encode()
+	}
+	return u.String()
+}

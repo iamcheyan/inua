@@ -37,7 +37,7 @@ and a settings window, in one calm visual language. It works with
 | **Viewer** | Images, PDFs, Markdown and plain text: steps through the files of a folder, zooms, shows the details; `inua-viewer`, see [docs/apps.md](docs/apps.md#viewer). |
 | **Light apps** | Clock, Weather, Stocks, Calculator, Calendar, Color Picker, System Monitor, Tailscale, Pass, GPG, Music (a player in Winamp's spirit, with an equalizer and a spectrum) and Video. |
 | **Workshop** | Write your own light apps in any language: the program describes its window in inua's building blocks and inua draws it in the shell's look. `inua workshop new`, `dev`, `install`; see [docs/workshop.md](docs/workshop.md). |
-| **Games** | Three offline light games: Minesweeper, Space Pinball and Small Fortune, a short property game against the computer, with others at the screen or, on the same network, in a browser. Each has its own launcher, or run `inua-games minesweeper`. |
+| **Games** | Three offline light games: Minesweeper, Space Pinball and Small Fortune, a short property game against the computer or your AI, with others at the screen or, on the same network, in a browser. Each has its own launcher, or run `inua-games minesweeper`. |
 | **Keyboard and touchpad** | Swap Ctrl and Alt, remap Caps Lock, set the touchpad's speed. |
 | **Themes** | Seven colour themes, Phosphor icons, matching Fcitx 5 themes; your wallpaper or the theme's. |
 
@@ -80,18 +80,20 @@ groups or package settings.
 ### Using it
 
 The drawer's SYSTEM group holds a **Windows VM** entry, present whether or
-not a VM exists. Opening it shows the recommended resources and one
-**Accept recommended profile** button, with **Advanced configuration** for
-RAM, CPU cores and disk size. **Download and install Windows** is a separate
-step: it writes the Compose project, keeps the guest password in the Secret
-Service, pulls the image and starts the container. The first Windows
-installation downloads several gigabytes and needs many minutes; the guest
-password is never written to the configuration file, and **Open web console**
-shows the installer's progress in the browser. **Connect** opens FreeRDP
-after the guest is ready, and **Stop** keeps the disk.
+not a VM exists. Opening it walks one path, one screen at a time: if the host
+is missing something (KVM, Docker, FreeRDP, …), it shows those checks and how
+to fix them; if Windows is not installed, it offers a recommended profile
+(with **Advanced configuration** for RAM, CPU cores and disk size) and
+**Install Windows**; while Windows is installing, **Open web console** shows
+the installer in the browser; once Windows is installed, **Start** brings it
+up, a starting screen waits for it, and **Connect** opens FreeRDP when it is
+running. **Install Windows** writes the Compose project, keeps the guest
+password in the Secret Service, pulls the image and starts the container. The
+first installation downloads several gigabytes and needs many minutes. The
+guest password is never written to the configuration file.
 
 Removing is two separate, explicitly confirmed actions: **Remove VM** deletes
-the container, project and stored password but keeps the guest disk, while
+the container and project but keeps the guest disk and its password, while
 **Delete disk data** permanently deletes the Windows disk and asks first.
 Stopping or removing a VM never deletes its data.
 

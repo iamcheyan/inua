@@ -1,0 +1,92 @@
+package uniai
+
+const (
+	deepseekAPIBase = "https://api.deepseek.com"
+	xaiAPIBase      = "https://api.x.ai/v1"
+	groqAPIBase     = "https://api.groq.com/openai/v1"
+	sakanaAPIBase   = "https://api.sakana.ai/v1"
+	metaAPIBase     = "https://api.ai.meta.com/v1"
+)
+
+// ClientConfigView is a non-sensitive view of runtime client config.
+// It is intended for diagnostics and helper tools.
+type ClientConfigView struct {
+	Provider string
+	Model    string
+	APIBase  string
+}
+
+// GetConfig returns a non-sensitive client configuration snapshot.
+// It intentionally excludes secrets such as API keys.
+func (c *Client) GetConfig() ClientConfigView {
+	provider := c.cfg.Provider
+	if provider == "" {
+		provider = "openai"
+	}
+
+	out := ClientConfigView{
+		Provider: provider,
+	}
+
+	switch provider {
+	case "openai":
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = c.cfg.OpenAIAPIBase
+	case "deepseek":
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = deepseekAPIBase
+	case "xai":
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = xaiAPIBase
+	case "groq":
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = groqAPIBase
+	case "sakana":
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = resolveSakanaAPIBase(c.cfg.OpenAIAPIBase)
+	case "meta":
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = resolveMetaAPIBase(c.cfg.OpenAIAPIBase)
+	case "gemini":
+		out.Model = c.cfg.GeminiModel
+		if out.Model == "" {
+			out.Model = c.cfg.OpenAIModel
+		}
+		out.APIBase = c.cfg.GeminiAPIBase
+	case "azure":
+		out.Model = c.cfg.AzureOpenAIModel
+		out.APIBase = c.cfg.AzureOpenAIEndpoint
+	case "anthropic":
+		out.Model = c.cfg.AnthropicModel
+		out.APIBase = c.cfg.AnthropicAPIBase
+	case "claude_oauth":
+		out.Model = c.cfg.AnthropicModel
+		out.APIBase = DefaultAnthropicAPIBase
+	case "bedrock":
+		out.Model = c.cfg.AwsBedrockModelArn
+		out.APIBase = c.cfg.AwsRegion
+	case "cloudflare":
+		// Cloudflare chat requires request model; callers usually set this in OpenAIModel.
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = c.cfg.CloudflareAPIBase
+	default:
+		out.Model = c.cfg.OpenAIModel
+		out.APIBase = c.cfg.OpenAIAPIBase
+	}
+
+	return out
+}
+
+func resolveSakanaAPIBase(openAIAPIBase string) string {
+	if openAIAPIBase == "" || openAIAPIBase == DefaultOpenAIAPIBase {
+		return sakanaAPIBase
+	}
+	return openAIAPIBase
+}
+
+func resolveMetaAPIBase(openAIAPIBase string) string {
+	if openAIAPIBase == "" || openAIAPIBase == DefaultOpenAIAPIBase {
+		return metaAPIBase
+	}
+	return openAIAPIBase
+}

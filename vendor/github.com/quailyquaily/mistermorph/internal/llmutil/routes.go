@@ -1,0 +1,929 @@
+package llmutil
+
+import (
+	"fmt"
+	"sort"
+	"strconv"
+	"strings"
+
+	"github.com/quailyquaily/mistermorph/internal/llmconfig"
+)
+
+const (
+	RoutePurposeMainLoop   = "main_loop"
+	RoutePurposeAddressing = "addressing"
+	RoutePurposeDecision   = "decision"
+	RoutePurposeAwareness  = "awareness"
+	RoutePurposeHeartbeat  = "heartbeat"
+	RoutePurposeThink      = "think"
+	RoutePurposePlanCreate = "plan_create"
+	RoutePurposeImage      = "image"
+	RouteProfileDefault    = "default"
+	ProfileSourceConfig    = "config"
+	ReasoningEffortXHigh   = "xhigh"
+)
+
+type MissingProfileError struct {
+	Profile string
+}
+
+func (e *MissingProfileError) Error() string {
+	if e == nil {
+		return "missing profile"
+	}
+	return fmt.Sprintf("missing profile %q", strings.TrimSpace(e.Profile))
+}
+
+type ProfileConfig struct {
+	// Description tells the model what the profile is good for when it picks one for a subtask.
+	Description string `mapstructure:"description" yaml:"description"`
+	// Abilities lists what the profile can be used for (see NormalizeAbilities); empty means text.
+	Abilities          []string          `mapstructure:"abilities" yaml:"abilities"`
+	InferenceProvider  string            `mapstructure:"inference_provider" yaml:"inference_provider"`
+	Provider           string            `mapstructure:"provider" yaml:"provider"`
+	Endpoint           string            `mapstructure:"endpoint" yaml:"endpoint"`
+	APIKey             string            `mapstructure:"api_key" yaml:"api_key"`
+	Model              string            `mapstructure:"model" yaml:"model"`
+	SupportsImageParts *bool             `mapstructure:"supports_image_parts" yaml:"supports_image_parts"`
+	ContextWindowRaw   string            `mapstructure:"context_window_tokens" yaml:"context_window_tokens"`
+	Headers            map[string]string `mapstructure:"headers" yaml:"headers"`
+	CacheTTL           string            `mapstructure:"cache_ttl" yaml:"cache_ttl"`
+	CacheKeyPrefix     string            `mapstructure:"cache_key_prefix" yaml:"cache_key_prefix"`
+	RequestTimeoutRaw  string            `mapstructure:"request_timeout" yaml:"request_timeout"`
+	ToolsEmulationMode string            `mapstructure:"tools_emulation_mode" yaml:"tools_emulation_mode"`
+	TemperatureRaw     string            `mapstructure:"temperature" yaml:"temperature"`
+	ReasoningEffortRaw string            `mapstructure:"reasoning_effort" yaml:"reasoning_effort"`
+	ReasoningBudgetRaw string            `mapstructure:"reasoning_budget_tokens" yaml:"reasoning_budget_tokens"`
+	Azure              struct {
+		Deployment string `mapstructure:"deployment" yaml:"deployment"`
+	} `mapstructure:"azure" yaml:"azure"`
+	Bedrock struct {
+		AWSKey          string `mapstructure:"aws_key" yaml:"aws_key"`
+		AWSSecret       string `mapstructure:"aws_secret" yaml:"aws_secret"`
+		AWSSessionToken string `mapstructure:"aws_session_token" yaml:"aws_session_token"`
+		AWSProfile      string `mapstructure:"aws_profile" yaml:"aws_profile"`
+		Region          string `mapstructure:"region" yaml:"region"`
+		ModelARN        string `mapstructure:"model_arn" yaml:"model_arn"`
+	} `mapstructure:"bedrock" yaml:"bedrock"`
+	Cloudflare struct {
+		AccountID string `mapstructure:"account_id" yaml:"account_id"`
+		APIToken  string `mapstructure:"api_token" yaml:"api_token"`
+	} `mapstructure:"cloudflare" yaml:"cloudflare"`
+	Source string `mapstructure:"-" yaml:"-"`
+}
+
+type RouteCandidateConfig struct {
+	Profile string `mapstructure:"profile" yaml:"profile"`
+	Weight  int    `mapstructure:"weight" yaml:"weight"`
+}
+
+type RoutePolicyConfig struct {
+	Profile          string                 `mapstructure:"profile" yaml:"profile"`
+	Candidates       []RouteCandidateConfig `mapstructure:"candidates" yaml:"candidates"`
+	FallbackProfiles []string               `mapstructure:"fallback_profiles" yaml:"fallback_profiles"`
+}
+
+type PurposeRoutes struct {
+	MainLoop   RoutePolicyConfig `mapstructure:"main_loop"`
+	Addressing RoutePolicyConfig `mapstructure:"addressing"`
+	Decision   RoutePolicyConfig `mapstructure:"decision"`
+	Awareness  RoutePolicyConfig `mapstructure:"awareness"`
+	Heartbeat  RoutePolicyConfig `mapstructure:"heartbeat"`
+	Think      RoutePolicyConfig `mapstructure:"think"`
+	PlanCreate RoutePolicyConfig `mapstructure:"plan_create"`
+	// Image picks the profile for image_generate and image_edit. It takes one profile:
+	// image requests have no candidates or fallbacks.
+	Image RoutePolicyConfig `mapstructure:"image"`
+}
+
+type RoutesConfig struct {
+	PurposeRoutes `mapstructure:",squash"`
+	ParseErr      error `mapstructure:"-"`
+}
+
+type ResolvedCandidate struct {
+	Profile      string
+	Source       string
+	Values       RuntimeValues
+	ClientConfig llmconfig.ClientConfig
+	Weight       int
+}
+
+type ResolvedFallback struct {
+	Profile      string
+	Source       string
+	Values       RuntimeValues
+	ClientConfig llmconfig.ClientConfig
+}
+
+type ResolvedProfile struct {
+	Name         string
+	Source       string
+	Values       RuntimeValues
+	ClientConfig llmconfig.ClientConfig
+}
+
+type ResolvedRoute struct {
+	Purpose      string
+	Identity     string
+	Profile      string
+	Source       string
+	Values       RuntimeValues
+	ClientConfig llmconfig.ClientConfig
+	Candidates   []ResolvedCandidate
+	Fallbacks    []ResolvedFallback
+}
+
+func ResolvedRouteWithReasoningEffort(route ResolvedRoute, effort string) ResolvedRoute {
+	effort = strings.ToLower(strings.TrimSpace(effort))
+	if effort == "" {
+		return route
+	}
+	route.Values.ReasoningEffortRaw = effort
+	for idx := range route.Candidates {
+		route.Candidates[idx].Values.ReasoningEffortRaw = effort
+	}
+	for idx := range route.Fallbacks {
+		route.Fallbacks[idx].Values.ReasoningEffortRaw = effort
+	}
+	return route
+}
+
+func (r ResolvedRoute) SameProfile(other ResolvedRoute) bool {
+	if strings.TrimSpace(r.Identity) != "" || strings.TrimSpace(other.Identity) != "" {
+		return strings.TrimSpace(r.Identity) == strings.TrimSpace(other.Identity)
+	}
+	return strings.TrimSpace(r.Profile) == strings.TrimSpace(other.Profile)
+}
+
+func ResolveRoute(values RuntimeValues, purpose string) (ResolvedRoute, error) {
+	purpose = normalizeRoutePurpose(purpose)
+	if !isSupportedRoutePurpose(purpose) {
+		return ResolvedRoute{}, fmt.Errorf("unsupported llm route purpose %q", strings.TrimSpace(purpose))
+	}
+	if values.Routes.ParseErr != nil {
+		return ResolvedRoute{}, values.Routes.ParseErr
+	}
+
+	policy := routeTargetForPurpose(values.Routes.PurposeRoutes, purpose)
+	if err := validateRoutePolicy(policy, purpose); err != nil {
+		return ResolvedRoute{}, err
+	}
+
+	if len(policy.Candidates) > 0 {
+		candidates, err := resolveRouteCandidates(values, policy.Candidates, purpose)
+		if err != nil {
+			return ResolvedRoute{}, err
+		}
+		primary := displayCandidate(candidates)
+		fallbacks, err := resolveFallbacks(values, policy.FallbackProfiles, candidateProfiles(candidates))
+		if err != nil {
+			return ResolvedRoute{}, err
+		}
+		return ResolvedRoute{
+			Purpose:      purpose,
+			Identity:     routePolicyIdentity(policy),
+			Profile:      primary.Profile,
+			Source:       primary.Source,
+			Values:       primary.Values,
+			ClientConfig: primary.ClientConfig,
+			Candidates:   candidates,
+			Fallbacks:    fallbacks,
+		}, nil
+	}
+
+	profileName := strings.TrimSpace(policy.Profile)
+	if profileName == "" {
+		profileName = RouteProfileDefault
+	}
+	resolvedValues, err := resolveProfileValues(values, profileName)
+	if err != nil {
+		return ResolvedRoute{}, err
+	}
+	resolvedValues, err = ResolveRuntimeValuesInferenceProvider(resolvedValues)
+	if err != nil {
+		return ResolvedRoute{}, err
+	}
+	cfg, err := resolvedClientConfig(resolvedValues)
+	if err != nil {
+		return ResolvedRoute{}, err
+	}
+	fallbacks, err := resolveFallbacks(values, policy.FallbackProfiles, []string{profileName})
+	if err != nil {
+		return ResolvedRoute{}, err
+	}
+	return ResolvedRoute{
+		Purpose:      purpose,
+		Identity:     routePolicyIdentity(policy),
+		Profile:      profileName,
+		Source:       profileSource(values, profileName),
+		Values:       resolvedValues,
+		ClientConfig: cfg,
+		Fallbacks:    fallbacks,
+	}, nil
+}
+
+func ResolveProfile(values RuntimeValues, profileName string) (ResolvedProfile, error) {
+	if values.Routes.ParseErr != nil {
+		return ResolvedProfile{}, values.Routes.ParseErr
+	}
+	profileName = strings.TrimSpace(profileName)
+	if profileName == "" {
+		profileName = RouteProfileDefault
+	}
+	resolvedValues, err := resolveProfileValues(values, profileName)
+	if err != nil {
+		return ResolvedProfile{}, err
+	}
+	abilities, err := NormalizeAbilities(resolvedValues.Abilities)
+	if err != nil {
+		return ResolvedProfile{}, fmt.Errorf("%s: %w", profileConfigKey(profileName, "abilities"), err)
+	}
+	resolvedValues.Abilities = abilities
+	resolvedValues, err = ResolveRuntimeValuesInferenceProvider(resolvedValues)
+	if err != nil {
+		return ResolvedProfile{}, err
+	}
+	cfg, err := resolvedClientConfig(resolvedValues)
+	if err != nil {
+		return ResolvedProfile{}, err
+	}
+	return ResolvedProfile{
+		Name:         profileName,
+		Source:       profileSource(values, profileName),
+		Values:       resolvedValues,
+		ClientConfig: cfg,
+	}, nil
+}
+
+func ListProfiles(values RuntimeValues) ([]ResolvedProfile, error) {
+	if values.Routes.ParseErr != nil {
+		return nil, values.Routes.ParseErr
+	}
+	names := make([]string, 0, 1+len(values.Profiles))
+	names = append(names, RouteProfileDefault)
+	for name := range values.Profiles {
+		name = strings.TrimSpace(name)
+		if name == "" || name == RouteProfileDefault {
+			continue
+		}
+		names = append(names, name)
+	}
+	if len(names) > 1 {
+		sort.Strings(names[1:])
+	}
+	out := make([]ResolvedProfile, 0, len(names))
+	for _, name := range names {
+		profile, err := ResolveProfile(values, name)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, profile)
+	}
+	return out, nil
+}
+
+func ResolveRouteWithProfileOverride(values RuntimeValues, purpose string, profileName string) (ResolvedRoute, error) {
+	purpose = normalizeRoutePurpose(purpose)
+	if !isSupportedRoutePurpose(purpose) {
+		return ResolvedRoute{}, fmt.Errorf("unsupported llm route purpose %q", strings.TrimSpace(purpose))
+	}
+	if values.Routes.ParseErr != nil {
+		return ResolvedRoute{}, values.Routes.ParseErr
+	}
+	policy := routeTargetForPurpose(values.Routes.PurposeRoutes, purpose)
+	if err := validateRoutePolicy(policy, purpose); err != nil {
+		return ResolvedRoute{}, err
+	}
+	profile, err := ResolveProfile(values, profileName)
+	if err != nil {
+		return ResolvedRoute{}, err
+	}
+	fallbacks, err := resolveFallbacks(values, policy.FallbackProfiles, []string{profile.Name})
+	if err != nil {
+		return ResolvedRoute{}, err
+	}
+	overridePolicy := policy
+	overridePolicy.Profile = profile.Name
+	overridePolicy.Candidates = nil
+	return ResolvedRoute{
+		Purpose:      purpose,
+		Identity:     routePolicyIdentity(overridePolicy),
+		Profile:      profile.Name,
+		Source:       profile.Source,
+		Values:       profile.Values,
+		ClientConfig: profile.ClientConfig,
+		Fallbacks:    fallbacks,
+	}, nil
+}
+
+func loadLLMProfilesFromReader(r ConfigReader) (map[string]ProfileConfig, error) {
+	raw := map[string]ProfileConfig{}
+	if err := r.UnmarshalKey("llm.profiles", &raw); err != nil {
+		return nil, fmt.Errorf("decode llm.profiles: %w", err)
+	}
+	if len(raw) == 0 {
+		return nil, nil
+	}
+	out := make(map[string]ProfileConfig, len(raw))
+	for name, cfg := range raw {
+		key := strings.TrimSpace(name)
+		if key == "" {
+			continue
+		}
+		cfg = normalizeProfileConfig(cfg)
+		cfg.Source = ProfileSourceConfig
+		out[key] = cfg
+	}
+	if len(out) == 0 {
+		return nil, nil
+	}
+	return out, nil
+}
+
+func loadLLMRoutesFromReader(r ConfigReader) (RoutesConfig, error) {
+	raw := map[string]any{}
+	if err := r.UnmarshalKey("llm.routes", &raw); err != nil {
+		return RoutesConfig{}, fmt.Errorf("decode llm.routes: %w", err)
+	}
+	if len(raw) == 0 {
+		return RoutesConfig{}, nil
+	}
+	routes, err := parseRoutesConfig(raw)
+	if err != nil {
+		return RoutesConfig{}, fmt.Errorf("decode llm.routes: %w", err)
+	}
+	return normalizeRoutesConfig(routes), nil
+}
+
+func normalizeProfileConfig(cfg ProfileConfig) ProfileConfig {
+	cfg.Description = strings.TrimSpace(cfg.Description)
+	cfg.Abilities = append([]string(nil), cfg.Abilities...)
+	cfg.InferenceProvider = strings.TrimSpace(cfg.InferenceProvider)
+	cfg.Provider = strings.TrimSpace(cfg.Provider)
+	cfg.Endpoint = strings.TrimSpace(cfg.Endpoint)
+	cfg.APIKey = strings.TrimSpace(cfg.APIKey)
+	cfg.Model = strings.TrimSpace(cfg.Model)
+	if cfg.SupportsImageParts != nil {
+		value := *cfg.SupportsImageParts
+		cfg.SupportsImageParts = &value
+	}
+	cfg.ContextWindowRaw = strings.TrimSpace(cfg.ContextWindowRaw)
+	cfg.Headers = cloneStringMap(cfg.Headers)
+	cfg.CacheTTL = strings.TrimSpace(cfg.CacheTTL)
+	cfg.CacheKeyPrefix = strings.TrimSpace(cfg.CacheKeyPrefix)
+	cfg.RequestTimeoutRaw = strings.TrimSpace(cfg.RequestTimeoutRaw)
+	cfg.ToolsEmulationMode = strings.TrimSpace(cfg.ToolsEmulationMode)
+	cfg.TemperatureRaw = strings.TrimSpace(cfg.TemperatureRaw)
+	cfg.ReasoningEffortRaw = strings.TrimSpace(cfg.ReasoningEffortRaw)
+	cfg.ReasoningBudgetRaw = strings.TrimSpace(cfg.ReasoningBudgetRaw)
+	cfg.Azure.Deployment = strings.TrimSpace(cfg.Azure.Deployment)
+	cfg.Bedrock.AWSKey = strings.TrimSpace(cfg.Bedrock.AWSKey)
+	cfg.Bedrock.AWSSecret = strings.TrimSpace(cfg.Bedrock.AWSSecret)
+	cfg.Bedrock.AWSSessionToken = strings.TrimSpace(cfg.Bedrock.AWSSessionToken)
+	cfg.Bedrock.AWSProfile = strings.TrimSpace(cfg.Bedrock.AWSProfile)
+	cfg.Bedrock.Region = strings.TrimSpace(cfg.Bedrock.Region)
+	cfg.Bedrock.ModelARN = strings.TrimSpace(cfg.Bedrock.ModelARN)
+	cfg.Cloudflare.AccountID = strings.TrimSpace(cfg.Cloudflare.AccountID)
+	cfg.Cloudflare.APIToken = strings.TrimSpace(cfg.Cloudflare.APIToken)
+	cfg.Source = strings.TrimSpace(cfg.Source)
+	return cfg
+}
+
+func normalizeRoutesConfig(cfg RoutesConfig) RoutesConfig {
+	cfg.PurposeRoutes = normalizePurposeRoutes(cfg.PurposeRoutes)
+	return cfg
+}
+
+func normalizePurposeRoutes(cfg PurposeRoutes) PurposeRoutes {
+	cfg.MainLoop = normalizeRoutePolicy(cfg.MainLoop)
+	cfg.Addressing = normalizeRoutePolicy(cfg.Addressing)
+	cfg.Decision = normalizeRoutePolicy(cfg.Decision)
+	cfg.Awareness = normalizeRoutePolicy(cfg.Awareness)
+	cfg.Heartbeat = normalizeRoutePolicy(cfg.Heartbeat)
+	cfg.Think = normalizeRoutePolicy(cfg.Think)
+	cfg.PlanCreate = normalizeRoutePolicy(cfg.PlanCreate)
+	cfg.Image = normalizeRoutePolicy(cfg.Image)
+	return cfg
+}
+
+func normalizeRoutePolicy(cfg RoutePolicyConfig) RoutePolicyConfig {
+	cfg.Profile = strings.TrimSpace(cfg.Profile)
+	cfg.FallbackProfiles = normalizeProfileNames(cfg.FallbackProfiles)
+	if len(cfg.Candidates) == 0 {
+		cfg.Candidates = nil
+		return cfg
+	}
+	out := make([]RouteCandidateConfig, 0, len(cfg.Candidates))
+	for _, candidate := range cfg.Candidates {
+		candidate.Profile = strings.TrimSpace(candidate.Profile)
+		out = append(out, candidate)
+	}
+	cfg.Candidates = out
+	return cfg
+}
+
+func routeTargetForPurpose(routes PurposeRoutes, purpose string) RoutePolicyConfig {
+	switch purpose {
+	case RoutePurposeMainLoop:
+		return routes.MainLoop
+	case RoutePurposeDecision, RoutePurposeAddressing:
+		if !routePolicyEmpty(routes.Decision) {
+			return routes.Decision
+		}
+		return routes.Addressing
+	case RoutePurposeAwareness:
+		if !routePolicyEmpty(routes.Awareness) {
+			return routes.Awareness
+		}
+		return routes.Heartbeat
+	case RoutePurposeHeartbeat:
+		return routes.Heartbeat
+	case RoutePurposeThink:
+		return routes.Think
+	case RoutePurposePlanCreate:
+		return routes.PlanCreate
+	case RoutePurposeImage:
+		return routes.Image
+	default:
+		return RoutePolicyConfig{}
+	}
+}
+
+func normalizeRoutePurpose(purpose string) string {
+	return strings.ToLower(strings.TrimSpace(purpose))
+}
+
+func isSupportedRoutePurpose(purpose string) bool {
+	switch purpose {
+	case RoutePurposeMainLoop, RoutePurposeDecision, RoutePurposeAddressing, RoutePurposeAwareness, RoutePurposeHeartbeat, RoutePurposeThink, RoutePurposePlanCreate:
+		return true
+	default:
+		return false
+	}
+}
+
+func routePolicyEmpty(policy RoutePolicyConfig) bool {
+	return strings.TrimSpace(policy.Profile) == "" && len(policy.Candidates) == 0 && len(policy.FallbackProfiles) == 0
+}
+
+func runtimeValuesForDefaultProfile(values RuntimeValues) RuntimeValues {
+	out := values
+	if values.SupportsImageParts != nil {
+		value := *values.SupportsImageParts
+		out.SupportsImageParts = &value
+	}
+	out.Profiles = nil
+	out.Routes = RoutesConfig{}
+	return out
+}
+
+func runtimeValuesForNamedProfile(shared RuntimeValues, profile ProfileConfig) RuntimeValues {
+	out := RuntimeValues{
+		UserAgent:              shared.UserAgent,
+		Description:            profile.Description,
+		Abilities:              append([]string(nil), profile.Abilities...),
+		InferenceProvider:      profile.InferenceProvider,
+		Provider:               profile.Provider,
+		Endpoint:               profile.Endpoint,
+		APIKey:                 profile.APIKey,
+		Model:                  profile.Model,
+		ContextWindowRaw:       profile.ContextWindowRaw,
+		Headers:                cloneStringMap(profile.Headers),
+		CacheTTL:               profile.CacheTTL,
+		CacheKeyPrefix:         profile.CacheKeyPrefix,
+		AzureDeployment:        profile.Azure.Deployment,
+		RequestTimeoutRaw:      profile.RequestTimeoutRaw,
+		ToolsEmulationMode:     profile.ToolsEmulationMode,
+		TemperatureRaw:         profile.TemperatureRaw,
+		ReasoningEffortRaw:     profile.ReasoningEffortRaw,
+		ReasoningBudgetRaw:     profile.ReasoningBudgetRaw,
+		PricingFile:            shared.PricingFile,
+		ConfigPath:             shared.ConfigPath,
+		FileStateDir:           shared.FileStateDir,
+		ImageTimeoutRaw:        shared.ImageTimeoutRaw,
+		ImageOptions:           shared.ImageOptions,
+		BedrockAWSKey:          profile.Bedrock.AWSKey,
+		BedrockAWSSecret:       profile.Bedrock.AWSSecret,
+		BedrockAWSSessionToken: profile.Bedrock.AWSSessionToken,
+		BedrockAWSProfile:      profile.Bedrock.AWSProfile,
+		BedrockAWSRegion:       profile.Bedrock.Region,
+		BedrockModelARN:        profile.Bedrock.ModelARN,
+		CloudflareAccountID:    profile.Cloudflare.AccountID,
+		CloudflareAPIToken:     profile.Cloudflare.APIToken,
+	}
+	if profile.SupportsImageParts != nil {
+		value := *profile.SupportsImageParts
+		out.SupportsImageParts = &value
+	}
+	return out
+}
+
+func resolveProfileValues(values RuntimeValues, profileName string) (RuntimeValues, error) {
+	if profileName == "" || profileName == RouteProfileDefault {
+		return runtimeValuesForDefaultProfile(values), nil
+	}
+	profile, ok := values.Profiles[profileName]
+	if !ok {
+		return RuntimeValues{}, &MissingProfileError{Profile: profileName}
+	}
+	return runtimeValuesForNamedProfile(values, profile), nil
+}
+
+func profileSource(values RuntimeValues, profileName string) string {
+	profileName = strings.TrimSpace(profileName)
+	if profileName == "" || profileName == RouteProfileDefault {
+		return ProfileSourceConfig
+	}
+	if cfg, ok := values.Profiles[profileName]; ok {
+		if source := strings.TrimSpace(cfg.Source); source != "" {
+			return source
+		}
+	}
+	return ProfileSourceConfig
+}
+
+func resolvedClientConfig(values RuntimeValues) (llmconfig.ClientConfig, error) {
+	requestTimeout, err := requestTimeoutFromValue(values.RequestTimeoutRaw, "llm.request_timeout")
+	if err != nil {
+		return llmconfig.ClientConfig{}, err
+	}
+	contextWindowTokens, err := optionalNonNegativeInt64FromValue(values.ContextWindowRaw, "llm.context_window_tokens")
+	if err != nil {
+		return llmconfig.ClientConfig{}, err
+	}
+	provider := normalizeProvider(values.Provider)
+	return llmconfig.ClientConfig{
+		Provider:            provider,
+		Endpoint:            EndpointForProviderWithValues(provider, values),
+		APIKey:              APIKeyForProviderWithValues(provider, values),
+		Model:               ModelForProviderWithValues(provider, values),
+		ContextWindowTokens: contextWindowTokens,
+		Headers:             cloneStringMap(values.Headers),
+		RequestTimeout:      requestTimeout,
+		EvaluateOnly:        IsEvaluateOnly(values),
+	}, nil
+}
+
+func mergeStringMaps(base, override map[string]string) map[string]string {
+	if len(base) == 0 && len(override) == 0 {
+		return nil
+	}
+	out := cloneStringMap(base)
+	if out == nil {
+		out = map[string]string{}
+	}
+	for key, value := range cloneStringMap(override) {
+		out[key] = value
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+func resolveFallbacks(values RuntimeValues, names []string, excludedProfiles []string) ([]ResolvedFallback, error) {
+	names = normalizeProfileNames(names)
+	if len(names) == 0 {
+		return nil, nil
+	}
+	excluded := make(map[string]struct{}, len(excludedProfiles))
+	for _, profile := range normalizeProfileNames(excludedProfiles) {
+		excluded[profile] = struct{}{}
+	}
+	seen := make(map[string]struct{}, len(names))
+	out := make([]ResolvedFallback, 0, len(names))
+	for _, name := range names {
+		if _, skip := excluded[name]; skip {
+			continue
+		}
+		if _, ok := seen[name]; ok {
+			continue
+		}
+		seen[name] = struct{}{}
+		resolvedValues, err := resolveProfileValues(values, name)
+		if err != nil {
+			return nil, err
+		}
+		resolvedValues, err = ResolveRuntimeValuesInferenceProvider(resolvedValues)
+		if err != nil {
+			return nil, err
+		}
+		cfg, err := resolvedClientConfig(resolvedValues)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, ResolvedFallback{
+			Profile:      name,
+			Source:       profileSource(values, name),
+			Values:       resolvedValues,
+			ClientConfig: cfg,
+		})
+	}
+	if len(out) == 0 {
+		return nil, nil
+	}
+	return out, nil
+}
+
+func resolveRouteCandidates(values RuntimeValues, cfgs []RouteCandidateConfig, purpose string) ([]ResolvedCandidate, error) {
+	if len(cfgs) == 0 {
+		return nil, nil
+	}
+	seen := make(map[string]struct{}, len(cfgs))
+	out := make([]ResolvedCandidate, 0, len(cfgs))
+	for idx, candidate := range cfgs {
+		profileName := strings.TrimSpace(candidate.Profile)
+		if profileName == "" {
+			return nil, fmt.Errorf("llm.routes.%s.candidates[%d].profile is required", purpose, idx)
+		}
+		if candidate.Weight <= 0 {
+			return nil, fmt.Errorf("llm.routes.%s.candidates[%d].weight must be > 0", purpose, idx)
+		}
+		if _, ok := seen[profileName]; ok {
+			return nil, fmt.Errorf("llm.routes.%s.candidates[%d].profile %q is duplicated", purpose, idx, profileName)
+		}
+		seen[profileName] = struct{}{}
+		resolvedValues, err := resolveProfileValues(values, profileName)
+		if err != nil {
+			return nil, err
+		}
+		resolvedValues, err = ResolveRuntimeValuesInferenceProvider(resolvedValues)
+		if err != nil {
+			return nil, err
+		}
+		cfg, err := resolvedClientConfig(resolvedValues)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, ResolvedCandidate{
+			Profile:      profileName,
+			Source:       profileSource(values, profileName),
+			Values:       resolvedValues,
+			ClientConfig: cfg,
+			Weight:       candidate.Weight,
+		})
+	}
+	return out, nil
+}
+
+func normalizeProfileNames(values []string) []string {
+	if len(values) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(values))
+	for _, value := range values {
+		if value = strings.TrimSpace(value); value != "" {
+			out = append(out, value)
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+func validateRoutePolicy(policy RoutePolicyConfig, purpose string) error {
+	if strings.TrimSpace(policy.Profile) != "" && len(policy.Candidates) > 0 {
+		return fmt.Errorf("llm.routes.%s cannot set both profile and candidates", purpose)
+	}
+	if purpose == RoutePurposeImage && (len(policy.Candidates) > 0 || len(policy.FallbackProfiles) > 0) {
+		return fmt.Errorf("llm.routes.%s takes one profile; candidates and fallback_profiles are not supported", purpose)
+	}
+	return nil
+}
+
+func candidateProfiles(candidates []ResolvedCandidate) []string {
+	out := make([]string, 0, len(candidates))
+	for _, candidate := range candidates {
+		out = append(out, candidate.Profile)
+	}
+	return out
+}
+
+func displayCandidate(candidates []ResolvedCandidate) ResolvedCandidate {
+	for _, candidate := range candidates {
+		if candidate.Profile == RouteProfileDefault {
+			return candidate
+		}
+	}
+	return candidates[0]
+}
+
+func routePolicyIdentity(policy RoutePolicyConfig) string {
+	parts := make([]string, 0, 1+len(policy.Candidates)+len(policy.FallbackProfiles))
+	if profile := strings.TrimSpace(policy.Profile); profile != "" {
+		parts = append(parts, "profile="+profile)
+	}
+	if len(policy.Candidates) > 0 {
+		candidateParts := make([]string, 0, len(policy.Candidates))
+		for _, candidate := range policy.Candidates {
+			candidateParts = append(candidateParts, strings.TrimSpace(candidate.Profile)+"="+strconv.Itoa(candidate.Weight))
+		}
+		parts = append(parts, "candidates="+strings.Join(candidateParts, ","))
+	}
+	if len(policy.FallbackProfiles) > 0 {
+		parts = append(parts, "fallbacks="+strings.Join(policy.FallbackProfiles, ","))
+	}
+	if len(parts) == 0 {
+		return "profile=" + RouteProfileDefault
+	}
+	return strings.Join(parts, "|")
+}
+
+func parseRoutesConfig(raw map[string]any) (RoutesConfig, error) {
+	decision, err := parseRoutePolicyValue(raw[RoutePurposeDecision], "llm.routes."+RoutePurposeDecision)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	mainLoop, err := parseRoutePolicyValue(raw[RoutePurposeMainLoop], "llm.routes."+RoutePurposeMainLoop)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	addressing, err := parseRoutePolicyValue(raw[RoutePurposeAddressing], "llm.routes."+RoutePurposeAddressing)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	heartbeat, err := parseRoutePolicyValue(raw[RoutePurposeHeartbeat], "llm.routes."+RoutePurposeHeartbeat)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	awareness, err := parseRoutePolicyValue(raw[RoutePurposeAwareness], "llm.routes."+RoutePurposeAwareness)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	think, err := parseRoutePolicyValue(raw[RoutePurposeThink], "llm.routes."+RoutePurposeThink)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	planCreate, err := parseRoutePolicyValue(raw[RoutePurposePlanCreate], "llm.routes."+RoutePurposePlanCreate)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	image, err := parseRoutePolicyValue(raw[RoutePurposeImage], "llm.routes."+RoutePurposeImage)
+	if err != nil {
+		return RoutesConfig{}, err
+	}
+	return RoutesConfig{
+		PurposeRoutes: PurposeRoutes{
+			MainLoop:   mainLoop,
+			Addressing: addressing,
+			Decision:   decision,
+			Awareness:  awareness,
+			Heartbeat:  heartbeat,
+			Think:      think,
+			PlanCreate: planCreate,
+			Image:      image,
+		},
+	}, nil
+}
+
+func parseRoutePolicyValue(raw any, path string) (RoutePolicyConfig, error) {
+	switch value := raw.(type) {
+	case nil:
+		return RoutePolicyConfig{}, nil
+	case string:
+		return RoutePolicyConfig{Profile: strings.TrimSpace(value)}, nil
+	case map[string]any:
+		return parseRoutePolicyMap(value, path)
+	case map[any]any:
+		return parseRoutePolicyMap(normalizeStringAnyMap(value), path)
+	default:
+		return RoutePolicyConfig{}, fmt.Errorf("%s must be a string or object", path)
+	}
+}
+
+func parseRoutePolicyMap(raw map[string]any, path string) (RoutePolicyConfig, error) {
+	profile, err := stringValue(raw["profile"], path+".profile")
+	if err != nil {
+		return RoutePolicyConfig{}, err
+	}
+	fallbacks, err := stringSliceValue(raw["fallback_profiles"], path+".fallback_profiles")
+	if err != nil {
+		return RoutePolicyConfig{}, err
+	}
+	candidates, err := candidateConfigsValue(raw["candidates"], path+".candidates")
+	if err != nil {
+		return RoutePolicyConfig{}, err
+	}
+	return RoutePolicyConfig{
+		Profile:          profile,
+		Candidates:       candidates,
+		FallbackProfiles: fallbacks,
+	}, nil
+}
+
+func candidateConfigsValue(raw any, path string) ([]RouteCandidateConfig, error) {
+	if raw == nil {
+		return nil, nil
+	}
+	var items []any
+	switch value := raw.(type) {
+	case []any:
+		items = value
+	case []map[string]any:
+		items = make([]any, 0, len(value))
+		for _, item := range value {
+			items = append(items, item)
+		}
+	case []map[any]any:
+		items = make([]any, 0, len(value))
+		for _, item := range value {
+			items = append(items, item)
+		}
+	default:
+		return nil, fmt.Errorf("%s must be a list", path)
+	}
+	out := make([]RouteCandidateConfig, 0, len(items))
+	for idx, item := range items {
+		var m map[string]any
+		switch value := item.(type) {
+		case map[string]any:
+			m = value
+		case map[any]any:
+			m = normalizeStringAnyMap(value)
+		default:
+			return nil, fmt.Errorf("%s[%d] must be an object", path, idx)
+		}
+		profile, err := stringValue(m["profile"], fmt.Sprintf("%s[%d].profile", path, idx))
+		if err != nil {
+			return nil, err
+		}
+		weight, err := intValue(m["weight"])
+		if err != nil {
+			return nil, fmt.Errorf("%s[%d].weight is invalid", path, idx)
+		}
+		out = append(out, RouteCandidateConfig{
+			Profile: profile,
+			Weight:  weight,
+		})
+	}
+	if len(out) == 0 {
+		return nil, nil
+	}
+	return out, nil
+}
+
+func stringValue(raw any, path string) (string, error) {
+	switch value := raw.(type) {
+	case nil:
+		return "", nil
+	case string:
+		return strings.TrimSpace(value), nil
+	default:
+		return "", fmt.Errorf("%s must be a string", path)
+	}
+}
+
+func stringSliceValue(raw any, path string) ([]string, error) {
+	switch value := raw.(type) {
+	case nil:
+		return nil, nil
+	case []string:
+		return normalizeProfileNames(value), nil
+	case []any:
+		out := make([]string, 0, len(value))
+		for idx, item := range value {
+			s, err := stringValue(item, fmt.Sprintf("%s[%d]", path, idx))
+			if err != nil {
+				return nil, err
+			}
+			if s != "" {
+				out = append(out, s)
+			}
+		}
+		return normalizeProfileNames(out), nil
+	default:
+		return nil, fmt.Errorf("%s must be a list", path)
+	}
+}
+
+func intValue(raw any) (int, error) {
+	switch value := raw.(type) {
+	case int:
+		return value, nil
+	case int64:
+		return int(value), nil
+	case float64:
+		return int(value), nil
+	case string:
+		return strconv.Atoi(strings.TrimSpace(value))
+	default:
+		return 0, fmt.Errorf("invalid int value")
+	}
+}
+
+func normalizeStringAnyMap(raw map[any]any) map[string]any {
+	if len(raw) == 0 {
+		return nil
+	}
+	out := make(map[string]any, len(raw))
+	for key, value := range raw {
+		k, ok := key.(string)
+		if !ok {
+			continue
+		}
+		out[k] = value
+	}
+	return out
+}

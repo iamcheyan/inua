@@ -88,6 +88,29 @@ func TestBuildSnapshot(t *testing.T) {
 	}
 }
 
+func TestBuildSnapshotKeepsDisabledMonitorWithActiveWorkspace(t *testing.T) {
+	s, err := BuildSnapshot(QueryResult{
+		Monitors: []byte(`[
+            {"id":0,"name":"HDMI-A-1","width":1280,"height":1024,"scale":1,"focused":true,"disabled":true,"activeWorkspace":{"id":0}},
+            {"id":1,"name":"HDMI-A-2","width":3840,"height":2160,"scale":2,"disabled":true,"activeWorkspace":{"id":0}},
+            {"id":2,"name":"disconnected","disabled":true,"activeWorkspace":{"id":0}}
+		]`),
+		Workspaces: []byte(`[
+			{"id":1,"name":"1","monitor":"HDMI-A-1"},
+			{"id":2,"name":"2","monitor":"HDMI-A-2"}
+		]`),
+		Clients: []byte(clientsJSON), ActiveWindow: []byte(`{"address":"0xaa"}`),
+	}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Monitors) != 2 || s.Monitors[0].Name != "HDMI-A-1" || s.Monitors[1].Width != 3840 {
+		t.Fatalf("active monitors not retained: %+v", s.Monitors)
+	}
+	if s.FocusedMonitor != "HDMI-A-1" {
+		t.Fatalf("focused monitor = %q", s.FocusedMonitor)
+	}
+}
 func TestBuildSnapshotNoActiveWindow(t *testing.T) {
 	s, err := BuildSnapshot(QueryResult{
 		Monitors: []byte(`[]`), Workspaces: []byte(`[]`), Clients: []byte(`[]`), ActiveWindow: []byte(`{}`),
@@ -285,5 +308,36 @@ func TestStoreManualRefresh(t *testing.T) {
 	waitFor(t, r.updated, "manual refresh")
 	if len(r.last().Toplevels) != 2 {
 		t.Fatal("manual refresh did not query")
+	}
+}
+
+// The room to a window's right: to its monitor's edge in layout pixels
+// (scaled, turned), less what is reserved there and the outer gap.
+func TestRoomRight(t *testing.T) {
+	clients := `[{"pid":7,"mapped":true,"at":[2266,200],"size":[860,620],"monitor":0},
+		{"pid":8,"mapped":true,"at":[3000,0],"size":[100,100],"monitor":1},
+		{"pid":9,"mapped":true,"at":[3500,0],"size":[600,100],"monitor":0}]`
+	monitors := `[{"id":0,"x":2256,"width":3840,"height":2160,"scale":1.5,"transform":0,"reserved":[0,36,0,0]},
+		{"id":1,"x":2256,"width":1080,"height":1920,"scale":1,"transform":1,"reserved":[0,0,20,0]}]`
+	r, room, err := roomRight([]byte(clients), []byte(monitors), 8, 7)
+	// 3840/1.5 = 2560: the edge at 2256+2560-8 = 4808; the window ends at 3126.
+	if err != nil || r != (Rect{2266, 200, 860, 620}) || room != 1682 {
+		t.Errorf("%+v %d %v", r, room, err)
+	}
+	// Turned: 1920 wide, less 20 reserved and the gap; it ends at 3100.
+	if _, room, _ := roomRight([]byte(clients), []byte(monitors), 8, 8); room != 2256+1920-20-8-3100 {
+		t.Errorf("turned: %d", room)
+	}
+	// Nearer the edge: what is left, 4808 less where it ends.
+	if _, room, _ := roomRight([]byte(clients), []byte(monitors), 8, 9); room != 4808-4100 {
+		t.Errorf("near the edge: %d", room)
+	}
+	if _, _, err := roomRight([]byte(clients), []byte(monitors), 8, 1); err == nil {
+		t.Error("no window")
+	}
+	for in, want := range map[string]int{`{"int":10}`: 10, `{"custom":"5 12 5 5"}`: 12, `{"custom":"6"}`: 6, `nope`: 0} {
+		if got := gapsOut([]byte(in)); got != want {
+			t.Errorf("gaps %s: %d", in, got)
+		}
 	}
 }

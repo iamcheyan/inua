@@ -106,6 +106,7 @@ type shellUI struct {
 	onWorkspaceSettle      glib.SourceFunc
 	onClock                glib.SourceFunc
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onLauncherScroll       func(gtk.EventControllerScroll, float64, float64) bool
 	onOverviewKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onOverviewButton       func(gtk.Button)
 	onWorkspaceOverview    func(gtk.GestureClick, int32, float64, float64)
@@ -136,6 +137,9 @@ type shellUI struct {
 	onTrayMenuClosed       func(gtk.Popover)
 	onSettingsEntry        func(uintptr, uintptr)
 	onSettingsSwitch       func(gtk.Switch, bool) bool
+	onAIAbility            func(gtk.ToggleButton)
+	onAIModelSearch        func(gtk.SearchEntry)
+	onAIModelPick          func(gtk.Button)
 	onSettingsDrop         func(uintptr, uintptr, uintptr)
 	onSettingsPage         func(uintptr, uintptr, uintptr)
 	onDefaultApp           func(uintptr, uintptr, uintptr)

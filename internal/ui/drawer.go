@@ -219,6 +219,9 @@ func (s *shellUI) closeVMManager() {
 		return
 	}
 	s.vm.win.closed = true
+	if s.vm.win.watchCancel != nil {
+		s.vm.win.watchCancel()
+	}
 	s.vm.win.win.Destroy()
 	s.vm.win.refs.Release()
 	s.vm.win = nil

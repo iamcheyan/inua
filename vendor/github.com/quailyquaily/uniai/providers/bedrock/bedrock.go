@@ -1,0 +1,602 @@
+package bedrock
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
+	smithyhttp "github.com/aws/smithy-go/transport/http"
+	"github.com/lyricat/goutils/structs"
+	"github.com/quailyquaily/uniai/chat"
+	"github.com/quailyquaily/uniai/internal/anthropicstream"
+	"github.com/quailyquaily/uniai/internal/diag"
+	"github.com/quailyquaily/uniai/internal/httputil"
+	"github.com/quailyquaily/uniai/internal/modelcompat"
+)
+
+type Config struct {
+	AwsKey          string
+	AwsSecret       string
+	AwsSessionToken string
+	AwsRegion       string
+	ModelArn        string
+	Headers         map[string]string
+	Debug           bool
+}
+
+type Provider struct {
+	client   bedrockRuntimeClient
+	modelArn string
+	headers  map[string]string
+	debug    bool
+}
+
+type bedrockRuntimeClient interface {
+	CountTokens(context.Context, *bedrockruntime.CountTokensInput, ...func(*bedrockruntime.Options)) (*bedrockruntime.CountTokensOutput, error)
+	InvokeModel(context.Context, *bedrockruntime.InvokeModelInput, ...func(*bedrockruntime.Options)) (*bedrockruntime.InvokeModelOutput, error)
+	InvokeModelWithResponseStream(context.Context, *bedrockruntime.InvokeModelWithResponseStreamInput, ...func(*bedrockruntime.Options)) (bedrockResponseStream, error)
+}
+
+type bedrockRuntimeClientAdapter struct {
+	client *bedrockruntime.Client
+}
+
+func (c bedrockRuntimeClientAdapter) CountTokens(ctx context.Context, input *bedrockruntime.CountTokensInput, opts ...func(*bedrockruntime.Options)) (*bedrockruntime.CountTokensOutput, error) {
+	return c.client.CountTokens(ctx, input, opts...)
+}
+
+func (c bedrockRuntimeClientAdapter) InvokeModel(ctx context.Context, input *bedrockruntime.InvokeModelInput, optFns ...func(*bedrockruntime.Options)) (*bedrockruntime.InvokeModelOutput, error) {
+	return c.client.InvokeModel(ctx, input, optFns...)
+}
+
+func (c bedrockRuntimeClientAdapter) InvokeModelWithResponseStream(ctx context.Context, input *bedrockruntime.InvokeModelWithResponseStreamInput, optFns ...func(*bedrockruntime.Options)) (bedrockResponseStream, error) {
+	out, err := c.client.InvokeModelWithResponseStream(ctx, input, optFns...)
+	if err != nil {
+		return nil, err
+	}
+	return out.GetStream(), nil
+}
+
+type bedrockResponseStream interface {
+	Events() <-chan types.ResponseStream
+	Close() error
+	Err() error
+}
+
+func New(cfg Config) *Provider {
+	region := cfg.AwsRegion
+	if region == "" {
+		region = "us-east-1"
+	}
+	awsCfg := aws.Config{
+		Region:      region,
+		Credentials: credentials.NewStaticCredentialsProvider(cfg.AwsKey, cfg.AwsSecret, cfg.AwsSessionToken),
+	}
+	return &Provider{
+		client:   bedrockRuntimeClientAdapter{client: bedrockruntime.NewFromConfig(awsCfg)},
+		modelArn: cfg.ModelArn,
+		headers:  httputil.CloneHeaders(cfg.Headers),
+		debug:    cfg.Debug,
+	}
+}
+
+type bedrockMessage struct {
+	Role    string              `json:"role"`
+	Content []bedrockMsgContent `json:"content"`
+}
+
+type bedrockMsgContent struct {
+	Type         string               `json:"type"`
+	Text         string               `json:"text,omitempty"`
+	Thinking     string               `json:"thinking,omitempty"`
+	Signature    string               `json:"signature,omitempty"`
+	Data         string               `json:"data,omitempty"`
+	CacheControl *bedrockCacheControl `json:"cache_control,omitempty"`
+}
+
+type bedrockResponse struct {
+	Content    []bedrockMsgContent `json:"content"`
+	Usage      bedrockUsage        `json:"usage"`
+	StopReason string              `json:"stop_reason"`
+}
+
+type bedrockCacheControl struct {
+	Type string `json:"type"`
+	TTL  string `json:"ttl,omitempty"`
+}
+
+type bedrockUsage struct {
+	InputTokens              int            `json:"input_tokens,omitempty"`
+	OutputTokens             int            `json:"output_tokens,omitempty"`
+	CacheReadInputTokens     int            `json:"cache_read_input_tokens,omitempty"`
+	CacheCreationInputTokens int            `json:"cache_creation_input_tokens,omitempty"`
+	CacheWriteInputTokens    int            `json:"cache_write_input_tokens,omitempty"`
+	CacheCreation            map[string]int `json:"cache_creation,omitempty"`
+	CacheDetails             map[string]int `json:"cache_details,omitempty"`
+}
+
+func (p *Provider) Chat(ctx context.Context, req *chat.Request) (*chat.Result, error) {
+	debugFn := req.Options.DebugFn
+	body, err := buildRequest(req, p.modelArn, false)
+	if err != nil {
+		return nil, err
+	}
+
+	diag.LogText(p.debug, debugFn, "bedrock.chat.request", string(body))
+
+	if req.Options.OnStream != nil {
+		result, err := p.chatStream(ctx, body, req.Options.ReasoningDetails, req.Options.OnStream, req.Tools)
+		if err != nil {
+			diag.LogError(p.debug, debugFn, "bedrock.chat.response", err)
+			return nil, err
+		}
+		return result, nil
+	}
+
+	resp, err := p.client.InvokeModel(ctx, &bedrockruntime.InvokeModelInput{
+		ModelId:     aws.String(p.modelArn),
+		Body:        body,
+		Accept:      aws.String("application/json"),
+		ContentType: aws.String("application/json"),
+	}, p.requestOptions()...)
+	if err != nil {
+		diag.LogError(p.debug, debugFn, "bedrock.chat.response", err)
+		return nil, err
+	}
+	diag.LogText(p.debug, debugFn, "bedrock.chat.response", string(resp.Body))
+
+	var out bedrockResponse
+	if err := json.Unmarshal(resp.Body, &out); err != nil {
+		return nil, err
+	}
+	usage := parseBedrockUsage(out.Usage)
+	finishReason := out.StopReason
+	switch finishReason {
+	case "end_turn", "stop_sequence":
+		finishReason = "stop"
+	case "max_tokens":
+		finishReason = "length"
+	case "refusal":
+		finishReason = "content_filter"
+	case "tool_use":
+		finishReason = "tool_calls"
+	}
+
+	var textParts []string
+	for _, c := range out.Content {
+		if c.Type == "tool_use" && (finishReason == "" || finishReason == "stop") {
+			finishReason = "tool_calls"
+		}
+		if c.Type == "text" && c.Text != "" {
+			textParts = append(textParts, c.Text)
+		}
+	}
+	text := strings.Join(textParts, "")
+
+	result := &chat.Result{
+		FinishReason: finishReason,
+		Text:         text,
+		Reasoning:    bedrockReasoningResult(out.Content, req.Options.ReasoningDetails),
+		Parts: func() []chat.Part {
+			if text == "" {
+				return nil
+			}
+			return []chat.Part{chat.TextPart(text)}
+		}(),
+		Usage: usage,
+		Raw:   out,
+	}
+	if len(req.Tools) > 0 {
+		result.Warnings = append(result.Warnings, "tools not supported for bedrock provider yet")
+	}
+	return result, nil
+}
+
+// buildRequest is shared by inference and counting so model overlays and cache
+// markers use the same wire representation. Counting permits empty prefixes.
+func buildRequest(req *chat.Request, modelArn string, allowPartial bool) ([]byte, error) {
+	if req == nil {
+		return nil, fmt.Errorf("bedrock request is nil")
+	}
+	if modelArn == "" {
+		return nil, fmt.Errorf("bedrock model arn is required")
+	}
+	if err := validateBedrockCacheControl(req, modelArn); err != nil {
+		return nil, err
+	}
+
+	systemParts := make([]string, 0, 1)
+	messages := make([]bedrockMessage, 0, len(req.Messages))
+	for _, m := range req.Messages {
+		switch m.Role {
+		case chat.RoleSystem:
+			text, err := chat.MessageText(m)
+			if err != nil {
+				return nil, fmt.Errorf("bedrock provider model %q: role %q: %w", modelArn, m.Role, err)
+			}
+			if text != "" {
+				systemParts = append(systemParts, text)
+			}
+		case chat.RoleUser, chat.RoleAssistant:
+			content, err := toBedrockContent(m)
+			if err != nil {
+				return nil, fmt.Errorf("bedrock provider model %q: role %q: %w", modelArn, m.Role, err)
+			}
+			if len(content) == 0 {
+				continue
+			}
+			messages = append(messages, bedrockMessage{
+				Role:    m.Role,
+				Content: content,
+			})
+		default:
+			return nil, fmt.Errorf("bedrock provider does not support role %q", m.Role)
+		}
+	}
+	if len(messages) == 0 && !allowPartial {
+		return nil, fmt.Errorf("at least one user or assistant message is required")
+	}
+
+	maxTokens := 10000
+	if req.Options.MaxTokens != nil {
+		maxTokens = *req.Options.MaxTokens
+	}
+
+	payload := map[string]any{
+		"anthropic_version": "bedrock-2023-05-31",
+		"max_tokens":        maxTokens,
+		"messages":          messages,
+	}
+	if len(systemParts) > 0 {
+		payload["system"] = strings.Join(systemParts, "\n")
+	}
+	if err := applyBedrockReasoningOptions(payload, modelArn, req.Options); err != nil {
+		return nil, err
+	}
+	applyBedrockOptions(payload, req.Options.Bedrock)
+	applyBedrockModelOverlay(payload, modelArn)
+
+	return json.Marshal(payload)
+}
+
+func bedrockReasoningResult(content []bedrockMsgContent, enabled bool) *chat.ReasoningResult {
+	if !enabled {
+		return nil
+	}
+	var state anthropicstream.ReasoningState
+	for index, part := range content {
+		if part.Type != "thinking" && part.Type != "redacted_thinking" {
+			continue
+		}
+		event := anthropicstream.Event{Type: "content_block_start", Index: index}
+		event.ContentBlock.Type = part.Type
+		event.ContentBlock.Thinking = part.Thinking
+		event.ContentBlock.Signature = part.Signature
+		event.ContentBlock.Data = part.Data
+		state.Apply(event, true)
+	}
+	return state.Result()
+}
+
+// bedrockStreamEvent represents a single event from the Bedrock streaming response.
+// Each PayloadPart.Bytes contains a JSON object with a "type" field.
+type bedrockStreamEvent struct {
+	Type         string `json:"type"`
+	Index        int    `json:"index,omitempty"`
+	ContentBlock *struct {
+		Type string `json:"type"`
+	} `json:"content_block,omitempty"`
+	Delta *struct {
+		Type string `json:"type"`
+		Text string `json:"text,omitempty"`
+	} `json:"delta,omitempty"`
+	Message *struct {
+		Model string        `json:"model,omitempty"`
+		Usage *bedrockUsage `json:"usage,omitempty"`
+	} `json:"message,omitempty"`
+	Usage *bedrockUsage `json:"usage,omitempty"`
+}
+
+func (p *Provider) chatStream(ctx context.Context, body []byte, reasoningDetails bool, onStream chat.OnStreamFunc, tools []chat.Tool) (*chat.Result, error) {
+	stream, err := p.client.InvokeModelWithResponseStream(ctx, &bedrockruntime.InvokeModelWithResponseStreamInput{
+		ModelId:     aws.String(p.modelArn),
+		Body:        body,
+		Accept:      aws.String("application/json"),
+		ContentType: aws.String("application/json"),
+	}, p.requestOptions()...)
+	if err != nil {
+		return nil, err
+	}
+	defer stream.Close()
+
+	var (
+		textParts []string
+		model     string
+		usage     chat.Usage
+		reasoning anthropicstream.ReasoningState
+	)
+
+	for event := range stream.Events() {
+		chunk, ok := event.(*types.ResponseStreamMemberChunk)
+		if !ok || len(chunk.Value.Bytes) == 0 {
+			continue
+		}
+
+		var ev bedrockStreamEvent
+		if err := json.Unmarshal(chunk.Value.Bytes, &ev); err != nil {
+			continue
+		}
+		if protocolEvent, err := anthropicstream.Decode(chunk.Value.Bytes); err == nil {
+			if reasoningEvent := reasoning.Apply(protocolEvent, reasoningDetails); reasoningEvent != nil {
+				if err := onStream(*reasoningEvent); err != nil {
+					return nil, err
+				}
+			}
+		}
+
+		switch ev.Type {
+		case "message_start":
+			if ev.Message != nil {
+				model = ev.Message.Model
+				if ev.Message.Usage != nil {
+					applyBedrockUsage(&usage, *ev.Message.Usage)
+				}
+			}
+		case "content_block_delta":
+			if ev.Delta != nil && ev.Delta.Type == "text_delta" && ev.Delta.Text != "" {
+				textParts = append(textParts, ev.Delta.Text)
+				if err := onStream(chat.StreamEvent{
+					Delta: ev.Delta.Text,
+					Raw:   json.RawMessage(append([]byte(nil), chunk.Value.Bytes...)),
+				}); err != nil {
+					return nil, err
+				}
+			}
+		case "message_delta":
+			if ev.Usage != nil {
+				applyBedrockUsage(&usage, *ev.Usage)
+			}
+		}
+	}
+
+	if err := stream.Err(); err != nil {
+		return nil, err
+	}
+
+	usage.InputTokens += usage.Cache.CachedInputTokens + usage.Cache.CacheCreationInputTokens
+	usage.TotalTokens = usage.InputTokens + usage.OutputTokens
+	if err := onStream(chat.StreamEvent{
+		Done:  true,
+		Usage: &usage,
+	}); err != nil {
+		return nil, err
+	}
+
+	result := &chat.Result{
+		Text:  strings.Join(textParts, ""),
+		Model: model,
+		Parts: func() []chat.Part {
+			text := strings.Join(textParts, "")
+			if text == "" {
+				return nil
+			}
+			return []chat.Part{chat.TextPart(text)}
+		}(),
+		Reasoning: reasoning.Result(),
+		Usage:     usage,
+	}
+	if len(tools) > 0 {
+		result.Warnings = append(result.Warnings, "tools not supported for bedrock provider yet")
+	}
+	return result, nil
+}
+
+func applyBedrockReasoningOptions(payload map[string]any, model string, opts chat.Options) error {
+	thinkingType := opts.Bedrock.GetString("thinking_type")
+	if payload == nil || (opts.ReasoningEffort == nil && opts.ReasoningBudget == nil && !opts.ReasoningDetails && thinkingType == "") {
+		return nil
+	}
+
+	model = normalizeBedrockModel(model)
+	if thinkingType != "" && (!modelcompat.AnthropicSupportsBetweenTools(model) ||
+		(thinkingType != "adaptive" && thinkingType != "between_tools")) {
+		return fmt.Errorf("bedrock anthropic model %q does not support thinking_type %q", model, thinkingType)
+	}
+	if opts.ReasoningBudget != nil {
+		if *opts.ReasoningBudget < 1024 {
+			return fmt.Errorf("bedrock anthropic reasoning budget must be at least 1024")
+		}
+		if modelcompat.AnthropicPrefersReasoningEffort(model) {
+			return fmt.Errorf("bedrock anthropic model %q prefers reasoning effort; reasoning budget tokens are not supported in this path", model)
+		}
+		payload["thinking"] = map[string]any{
+			"type":          "enabled",
+			"budget_tokens": *opts.ReasoningBudget,
+		}
+	}
+
+	if opts.ReasoningEffort != nil {
+		if !modelcompat.AnthropicSupportsReasoningEffort(model) {
+			return fmt.Errorf("bedrock anthropic model %q does not support reasoning effort", model)
+		}
+		if !modelcompat.AnthropicReasoningEffortSupported(model, string(*opts.ReasoningEffort)) {
+			return fmt.Errorf("bedrock anthropic model %q does not support reasoning effort %q", model, *opts.ReasoningEffort)
+		}
+		payload["output_config"] = map[string]any{"effort": string(*opts.ReasoningEffort)}
+	}
+
+	if thinkingType == "between_tools" {
+		if opts.ReasoningEffort != nil && (*opts.ReasoningEffort == chat.ReasoningEffortXHigh || *opts.ReasoningEffort == chat.ReasoningEffortMax) {
+			return fmt.Errorf("bedrock anthropic between_tools thinking supports only low, medium, or high effort")
+		}
+		payload["thinking"] = map[string]any{"type": "between_tools"}
+	} else if thinkingType == "adaptive" || (opts.ReasoningDetails && modelcompat.AnthropicPrefersReasoningEffort(model)) {
+		thinking := map[string]any{"type": "adaptive"}
+		if opts.ReasoningDetails && modelcompat.AnthropicSummarizesThinkingDetails(model) {
+			thinking["display"] = "summarized"
+		}
+		payload["thinking"] = thinking
+	}
+
+	return nil
+}
+
+func applyBedrockOptions(payload map[string]any, opts structs.JSONMap) {
+	if payload == nil || len(opts) == 0 {
+		return
+	}
+	opt := &opts
+	if opt.HasKey("top_k") {
+		if top := int(opt.GetInt64("top_k")); top > 0 {
+			payload["top_k"] = top
+		}
+	}
+}
+
+func applyBedrockModelOverlay(payload map[string]any, model string) {
+	if payload == nil {
+		return
+	}
+	model = normalizeBedrockModel(model)
+	if !modelcompat.AnthropicDropsSamplingParameters(model) {
+		return
+	}
+	delete(payload, "top_k")
+	delete(payload, "top_p")
+	delete(payload, "temperature")
+}
+
+func normalizeBedrockModel(model string) string {
+	model = strings.ToLower(strings.TrimSpace(model))
+	if !strings.Contains(model, ".") {
+		return model
+	}
+	var b strings.Builder
+	b.Grow(len(model))
+	for i := 0; i < len(model); i++ {
+		ch := model[i]
+		if ch == '.' && i > 0 && i+1 < len(model) && isASCIIDigit(model[i-1]) && isASCIIDigit(model[i+1]) {
+			b.WriteByte('-')
+			continue
+		}
+		b.WriteByte(ch)
+	}
+	return b.String()
+}
+
+func isASCIIDigit(ch byte) bool {
+	return ch >= '0' && ch <= '9'
+}
+
+func (p *Provider) requestOptions() []func(*bedrockruntime.Options) {
+	if len(p.headers) == 0 {
+		return nil
+	}
+	headers := httputil.CloneHeaders(p.headers)
+	return []func(*bedrockruntime.Options){
+		func(opts *bedrockruntime.Options) {
+			for key, value := range headers {
+				opts.APIOptions = append(opts.APIOptions, smithyhttp.SetHeaderValue(key, value))
+			}
+		},
+	}
+}
+
+func validateBedrockCacheControl(req *chat.Request, modelArn string) error {
+	if req == nil || !chat.RequestHasExplicitCacheControl(req) {
+		return nil
+	}
+	if !strings.Contains(strings.ToLower(strings.TrimSpace(modelArn)), "anthropic.") {
+		return fmt.Errorf("bedrock provider explicit cache control currently supports Anthropic Claude model arns only")
+	}
+	for i, msg := range req.Messages {
+		if msg.Role != chat.RoleSystem {
+			continue
+		}
+		for _, part := range msg.Parts {
+			if part.CacheControl != nil {
+				return fmt.Errorf("bedrock provider does not support explicit cache control on system parts yet (message[%d])", i)
+			}
+		}
+	}
+	for i, tool := range req.Tools {
+		if tool.CacheControl != nil {
+			return fmt.Errorf("bedrock provider does not support explicit cache control on tools yet (tool[%d])", i)
+		}
+	}
+	return nil
+}
+
+func toBedrockContent(msg chat.Message) ([]bedrockMsgContent, error) {
+	parts := chat.NormalizeMessageParts(msg)
+	if len(parts) == 0 {
+		return nil, nil
+	}
+	out := make([]bedrockMsgContent, 0, len(parts))
+	for _, part := range parts {
+		if err := chat.ValidatePart(part); err != nil {
+			return nil, err
+		}
+		if part.Type != chat.PartTypeText {
+			return nil, fmt.Errorf("unsupported part type %q", part.Type)
+		}
+		if strings.TrimSpace(part.Text) == "" && part.CacheControl == nil {
+			continue
+		}
+		out = append(out, bedrockMsgContent{
+			Type:         "text",
+			Text:         part.Text,
+			CacheControl: toBedrockCacheControl(part.CacheControl),
+		})
+	}
+	return out, nil
+}
+
+func toBedrockCacheControl(ctrl *chat.CacheControl) *bedrockCacheControl {
+	if ctrl == nil {
+		return nil
+	}
+	out := &bedrockCacheControl{Type: "ephemeral"}
+	if ttl := strings.TrimSpace(ctrl.TTL); ttl != "" {
+		out.TTL = ttl
+	}
+	return out
+}
+
+func parseBedrockUsage(typed bedrockUsage) chat.Usage {
+	var usage chat.Usage
+	applyBedrockUsage(&usage, typed)
+	usage.InputTokens += usage.Cache.CachedInputTokens + usage.Cache.CacheCreationInputTokens
+	usage.TotalTokens = usage.InputTokens + usage.OutputTokens
+	return usage
+}
+
+// applyBedrockUsage merges cumulative upstream counters. InputTokens remains
+// uncached until finalization adds cache reads and writes once.
+func applyBedrockUsage(dst *chat.Usage, src bedrockUsage) {
+	if dst == nil {
+		return
+	}
+	if src.InputTokens > 0 {
+		dst.InputTokens = src.InputTokens
+	}
+	if src.OutputTokens > 0 {
+		dst.OutputTokens = src.OutputTokens
+	}
+	if src.CacheReadInputTokens > 0 {
+		dst.Cache.CachedInputTokens = src.CacheReadInputTokens
+	}
+	switch {
+	case src.CacheCreationInputTokens > 0:
+		dst.Cache.CacheCreationInputTokens = src.CacheCreationInputTokens
+	case src.CacheWriteInputTokens > 0:
+		dst.Cache.CacheCreationInputTokens = src.CacheWriteInputTokens
+	}
+	chat.AddUsageCacheDetails(dst, src.CacheCreation)
+	chat.AddUsageCacheDetails(dst, src.CacheDetails)
+}

@@ -1,11 +1,103 @@
 package vm
 
 import (
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 )
+
+func TestPageFor(t *testing.T) {
+	for _, tc := range []struct {
+		name                             string
+		available, hasProject, installed bool
+		state                            State
+		busy                             bool
+		want                             Page
+	}{
+		{"host missing", false, false, false, StateStopped, false, PagePrereq},
+		{"host missing even with a guest", false, true, true, StateRunning, false, PagePrereq},
+		{"fresh setup", true, false, false, StateStopped, false, PageSetup},
+		{"install just started", true, false, false, StateStopped, true, PageProvisioning},
+		{"paused install", true, true, false, StateStopped, false, PageProvisioning},
+		{"windows installing", true, true, false, StateStarting, true, PageProvisioning},
+		{"installed stopped", true, true, true, StateStopped, false, PageStopped},
+		{"installed starting", true, true, true, StateStarting, false, PageStarting},
+		{"installed start clicked", true, true, true, StateStopped, true, PageStarting},
+		{"installed running", true, true, true, StateRunning, false, PageRunning},
+		{"installed stopping", true, true, true, StateStopping, false, PageStarting},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := PageFor(tc.available, tc.hasProject, tc.installed, tc.state, tc.busy); got != tc.want {
+				t.Fatalf("PageFor = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestGuestDiskPresent(t *testing.T) {
+	dir := t.TempDir()
+	if GuestDiskPresent(dir) || GuestDataPresent(dir) {
+		t.Fatal("empty directory should not count as a disk or leftover data")
+	}
+	if GuestDiskPresent(filepath.Join(dir, "missing")) {
+		t.Fatal("missing directory should not count as a disk")
+	}
+	if err := os.WriteFile(filepath.Join(dir, ".keep"), []byte("x"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if GuestDiskPresent(dir) {
+		t.Fatal("dotfiles alone should not count as a disk")
+	}
+	if err := os.Mkdir(filepath.Join(dir, "tmp"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "tmp", "win11x64.iso"), []byte("iso"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if GuestDiskPresent(dir) {
+		t.Fatal("a download cache should not count as a guest disk")
+	}
+	if !GuestDataPresent(dir) {
+		t.Fatal("a download cache should count as leftover data")
+	}
+	if err := os.WriteFile(filepath.Join(dir, "data.img"), []byte("windows"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if !GuestDiskPresent(dir) {
+		t.Fatal("a guest image should count as a disk")
+	}
+}
+
+func TestParsePersisted(t *testing.T) {
+	cfg := DefaultConfig()
+	wrapped, err := json.Marshal(Persisted{Config: cfg, Installed: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := ParsePersisted(wrapped)
+	if err != nil {
+		t.Fatalf("wrapped: %v", err)
+	}
+	if got.Config.Name != cfg.Name || !got.Installed {
+		t.Fatalf("wrapped = %+v", got)
+	}
+	bare, err := json.Marshal(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err = ParsePersisted(bare)
+	if err != nil {
+		t.Fatalf("bare: %v", err)
+	}
+	if got.Config.Name != cfg.Name || got.Installed {
+		t.Fatalf("bare = %+v", got)
+	}
+	if _, err := ParsePersisted([]byte(`{"nope":true}`)); err == nil {
+		t.Fatal("invalid JSON was accepted")
+	}
+}
 
 func TestConfigValidate(t *testing.T) {
 	cfg := DefaultConfig()

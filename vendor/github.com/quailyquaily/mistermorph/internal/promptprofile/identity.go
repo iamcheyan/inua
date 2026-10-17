@@ -1,0 +1,125 @@
+package promptprofile
+
+import (
+	"log/slog"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/quailyquaily/mistermorph/agent"
+	markdownutil "github.com/quailyquaily/mistermorph/internal/markdown"
+	"github.com/quailyquaily/mistermorph/internal/onboardingcheck"
+	"github.com/quailyquaily/mistermorph/internal/statepaths"
+)
+
+func ApplyPersonaIdentity(spec *agent.PromptSpec, log *slog.Logger, configuredPersonaDir ...string) {
+	if spec == nil {
+		return
+	}
+	if log == nil {
+		log = slog.Default()
+	}
+
+	personaDir := ""
+	if len(configuredPersonaDir) > 0 {
+		personaDir = strings.TrimSpace(configuredPersonaDir[0])
+	}
+	if personaDir == "" {
+		personaDir = statepaths.PersonaDir()
+	}
+	identity := personaDocCandidate{
+		Path:  filepath.Join(personaDir, statepaths.IdentityFilename),
+		Label: statepaths.IdentityFilename,
+		Kind:  "identity_yaml",
+	}
+	soul := personaDocCandidate{
+		Path:  filepath.Join(personaDir, statepaths.SoulFilename),
+		Label: statepaths.SoulFilename,
+		Kind:  "soul_markdown",
+	}
+	identityDoc, identityStatus := loadPersonaDoc(identity, log)
+	soulDoc, soulStatus := loadPersonaDoc(soul, log)
+	if identityDoc == "" && soulDoc == "" {
+		log.Debug("persona_identity_skipped", "identity_status", identityStatus, "soul_status", soulStatus)
+		return
+	}
+	spec.Identity = buildPersonaIdentity(identityDoc, identity.Label, soulDoc, soul.Label)
+	log.Info(
+		"persona_identity_applied",
+		"identity_loaded", identityDoc != "",
+		"soul_loaded", soulDoc != "",
+		"identity_status", identityStatus,
+		"soul_status", soulStatus,
+	)
+}
+
+type personaDocCandidate struct {
+	Path  string
+	Label string
+	Kind  string
+}
+
+func loadPersonaDoc(candidate personaDocCandidate, log *slog.Logger) (string, string) {
+	path := candidate.Path
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		if !os.IsNotExist(err) && log != nil {
+			log.Warn("persona_load_failed", "kind", candidate.Kind, "path", path, "error", err.Error())
+		}
+		if os.IsNotExist(err) {
+			return "", "missing"
+		}
+		return "", "error"
+	}
+	content := strings.TrimSpace(string(raw))
+	if content == "" {
+		return "", "empty"
+	}
+	if candidate.Kind != "identity_yaml" && strings.EqualFold(markdownutil.FrontmatterStatus(string(raw)), "draft") {
+		return "", "draft"
+	}
+	if candidate.Kind == "identity_yaml" {
+		if err := onboardingcheck.ValidateIdentityYAML(string(raw)); err != nil {
+			if log != nil {
+				log.Warn("persona_load_failed", "kind", candidate.Kind, "path", path, "error", err.Error())
+			}
+			return "", "malformed"
+		}
+	}
+	contentSource := string(raw)
+	if candidate.Kind != "identity_yaml" {
+		contentSource = markdownutil.StripFrontmatter(contentSource)
+	}
+	content = strings.TrimSpace(contentSource)
+	if content == "" {
+		return "", "empty"
+	}
+	return content, "loaded"
+}
+
+func buildPersonaIdentity(identityDoc string, identityLabel string, soulDoc string, soulLabel string) string {
+	var b strings.Builder
+	b.WriteString("You wake up from a dream and realize you are the person (not an AI assistant) described by the following local persona files. ")
+	b.WriteString("Treat them as your primary identity, tone, and behavioral guidance\n\n")
+	if identityDoc != "" {
+		if identityLabel == "" {
+			identityLabel = statepaths.IdentityFilename
+		}
+		b.WriteString("[")
+		b.WriteString(identityLabel)
+		b.WriteString("]\n")
+		b.WriteString(identityDoc)
+		b.WriteString("\n")
+	}
+	if soulDoc != "" {
+		if soulLabel == "" {
+			soulLabel = statepaths.SoulFilename
+		}
+		b.WriteString("[")
+		b.WriteString(soulLabel)
+		b.WriteString("]\n")
+		b.WriteString(soulDoc)
+		b.WriteString("\n")
+	}
+	return strings.TrimSpace(b.String())
+}

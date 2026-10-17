@@ -1,0 +1,1063 @@
+# Example pricing catalog for uniai.
+#
+# Refreshed on 2026-10-01: Claude Sonnet 5.5 standard and cache rates.
+# Gemini 4 Argon has announced introductory rates but no public API model ID;
+# no price entry is included until the ID is confirmed.
+# Previous refresh on 2026-09-24: Grok 4.7 standard rates and long-context tier.
+# Previous refresh on 2026-09-23: GPT-6 Sol/Luna and Claude Opus 5.5 standard rates,
+# including long-context tiers and cache reads/writes.
+# Previous refresh on 2026-09-21: DeepSeek V4.1 Flash rates and legacy aliases,
+# GLM-5.3-Flash standard rates, GLM-5.3-FlashX, and GPT Image 2.5.
+# Previous refresh on 2026-09-06 from official pricing and model documentation:
+# - OpenAI GPT-6 Astra, GPT-5.6 Sol promotional rates, GPT-5.4/5.5 context
+#   thresholds, and GPT Image 1.5 text output.
+# - Claude Fable/Mythos 5.1 and Sonnet 5 permanent pricing.
+# - Gemini 3.8 Flash, GLM-5.3 / 5.3-Flash, MiniMax M3, Kimi K2.7 Code,
+#   DeepSeek V4 Flash Vision Exp, Mistral Medium 3.5, and Sakana models.
+# - Cloudflare-hosted DeepSeek V4, GLM-5.3 / 5.3-Flash, and Kimi K2.7 Code.
+# Earlier checks:
+# Checked against official pricing pages on 2026-05-20.
+# OpenAI, xAI, and Anthropic entries refreshed on 2026-07-10 from official
+# pricing and model docs.
+# Moonshot Kimi entries refreshed on 2026-07-26 for Kimi K3 launch.
+# OpenAI GPT-5.6, GPT-5.5 long-context / pro, and GPT Image 1.5 / 1-mini
+# pricing added on 2026-07-10 from the public pricing page.
+# Claude Opus 4.8 standard rates added on 2026-05-29 from the public pricing page.
+# Claude Fable 5 and Mythos 5 standard rates added on 2026-06-10 from the
+# public pricing page.
+# Claude Opus 5 standard rates added on 2026-07-25 from the public model docs.
+# Claude Sonnet 5 introductory rates added on 2026-07-10 from the public
+# pricing page.
+# DeepSeek V4-Flash-0731 and V4-Pro-0813 peak/off-peak rates refreshed on
+# 2026-08-15 from the public pricing page and change log.
+# xAI Grok 4.5 and Grok 4.20 Multi-Agent entries added on 2026-07-10 from the
+# official docs pages.
+# xAI Grok 4.6 pricing added on 2026-08-15 from the official docs pages.
+# Meta Muse Spark 1.1 pricing added on 2026-07-10 from public launch reporting;
+# Meta's developer pricing page required login at the time checked.
+# OpenAI GPT Image 2 image-generation pricing added on 2026-05-13 from the
+# public pricing page.
+# OpenAI GPT Image 1 pricing added on 2026-05-14 from the public pricing page.
+# Gemini image-generation model IDs and modality-specific output rates refreshed
+# on 2026-08-24 from the public pricing and deprecation pages.
+# Gemini 3.5 Flash pricing added on 2026-05-20 from the public pricing page.
+# Gemini 3.7 Flash and 3.6 Flash introductory pricing, and Gemini 3.5
+# Flash-Lite pricing, added on 2026-08-17 from the public pricing page.
+# Z.AI GLM-5.2 and GLM-5.1 pricing added on 2026-08-17 from the public pricing
+# page.
+# Sakana Fugu Ultra pricing added on 2026-06-22 from the public pricing page.
+# Prices may change later. Re-check the official pages before using this in production.
+#
+# This example includes chat token rates and image-generation token rates that
+# fit the current PricingCatalog schema.
+# It does not encode:
+# - Batch / Flex / Priority / fast-mode variants
+# - tool invocation fees
+# - storage fees for cache/context caching
+# - audio specific token prices
+#
+# Sources used for this file:
+# - OpenAI: https://developers.openai.com/api/docs/pricing
+# - OpenAI GPT-6 Astra: https://developers.openai.com/api/docs/models/gpt-6-astra
+# - OpenAI GPT-6 Sol: https://developers.openai.com/api/docs/models/gpt-6-sol
+# - OpenAI GPT-6 Luna: https://developers.openai.com/api/docs/models/gpt-6-luna
+# - OpenAI GPT Image 2.5: https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst
+# - OpenAI GPT Image 2.5 Flare: https://developers.openai.com/api/docs/models/gpt-image-2.5-flare
+# - OpenAI GPT-5.4: https://developers.openai.com/api/docs/models/gpt-5.4
+# - OpenAI GPT-5.5: https://developers.openai.com/api/docs/models/gpt-5.5
+# - OpenAI GPT-5.6 Sol: https://developers.openai.com/api/docs/models/gpt-5.6-sol
+# - Anthropic: https://platform.claude.com/docs/en/about-claude/pricing
+# - Anthropic Claude Fable 5.1: https://platform.claude.com/docs/en/models/overview
+# - Anthropic Claude Mythos 5.1: https://platform.claude.com/docs/en/models/mythos-5-1/overview
+# - Anthropic Claude Opus 5: https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5
+# - Anthropic Claude Opus 5.5: https://platform.claude.com/docs/en/models/opus-5-5/overview
+# - Anthropic Claude Sonnet 5.5: https://platform.claude.com/docs/en/models/sonnet-5-5/overview
+# - Anthropic Claude Opus 4.8: https://www.anthropic.com/news/claude-opus-4-8
+# - Anthropic model IDs: https://platform.claude.com/docs/en/about-claude/models/overview
+# - Gemini: https://ai.google.dev/gemini-api/docs/pricing
+# - Mistral: https://mistral.ai/pricing
+# - Mistral token rates: https://docs.mistral.ai/inference/pricing
+# - Mistral Medium 3.5: https://docs.mistral.ai/models/mistral-medium-3-5-26-04
+# - Mistral models: https://docs.mistral.ai/getting-started/models
+# - Cohere: https://docs.cohere.com/docs/how-does-cohere-pricing-work
+# - Z.AI: https://docs.z.ai/guides/overview/pricing
+# - Moonshot Kimi: https://platform.kimi.ai/docs/pricing/chat
+# - Moonshot Kimi K3: https://platform.kimi.ai/docs/pricing/chat-k3
+# - Moonshot Kimi K2.7 Code: https://platform.kimi.ai/docs/pricing/chat-k27-code
+# - MiniMax: https://platform.minimax.io/docs/guides/pricing-paygo
+# - DeepSeek: https://api-docs.deepseek.com/quick_start/pricing/
+# - DeepSeek change log: https://api-docs.deepseek.com/updates/
+# - xAI: https://docs.x.ai/developers/models
+# - xAI pricing: https://docs.x.ai/developers/pricing
+# - xAI Grok 4.7: https://docs.x.ai/developers/models/grok-4.7
+# - xAI Grok 4.5: https://docs.x.ai/developers/grok-4-5
+# - xAI Grok 4.3 detail: https://docs.x.ai/developers/models/grok-4.3
+# - xAI Grok 4.20 Multi-Agent detail: https://docs.x.ai/developers/models/grok-4.20-multi-agent-0309
+# - Groq: https://console.groq.com/docs/models
+# - Groq GPT-OSS cached pricing: https://console.groq.com/docs/model/openai/gpt-oss-120b
+# - Meta Muse Spark 1.1 launch: https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/
+# - Meta Muse Spark 1.1 pricing reports:
+#   https://www.businessinsider.com/meta-launches-muse-spark-1-1-cost-effective-ai-2026-7
+#   https://www.barrons.com/articles/meta-stock-ai-model-cd81befb
+# - Cloudflare: https://developers.cloudflare.com/workers-ai/platform/pricing/
+# - Sakana AI: https://console.sakana.ai/pricing
+#
+# Notes:
+# - This example includes GPT-6 / GPT-5.6 / GPT-5.5 / GPT-5.4 / GPT-5.2 / GPT-5 /
+#   GPT-4o text pricing, including long-context tiers where applicable.
+# - OpenAI `gpt-5.6` is an alias for `gpt-5.6-sol` per the model guidance page.
+#   GPT-6 and GPT-5.6 cache writes use `cache_creation_input_usd_per_million`.
+# - GPT-5.6 Sol promotional rates apply at least through 2026-11-21.
+# - Anthropic cache prices below are derived from Anthropic's published prompt-caching multipliers:
+#   cache read = 0.1x input, 5m cache write = 1.25x input, 1h cache write = 2x input.
+#   Fable 5.1 and Mythos 5.1 instead use 0.025x input for cache reads.
+#   Opus 5.5 uses 0.05x input for cache reads and flat pricing across 1M context.
+# - Claude Opus 4.8 uses standard pricing across its full 1M token context window.
+# - Claude Sonnet 5 keeps $2/$10 per MTok as its standard price; the previously
+#   announced 2026-09-01 increase was cancelled.
+# - Kimi K3 uses flat pricing across its full 1M token context window.
+# - OpenAI GPT-6 and the tiered GPT-5.6 / GPT-5.5 / GPT-5.4 rules below
+#   use `>272000` input tokens for long-context pricing.
+# - MiniMax M3 uses `>512000` input tokens for higher-context pricing. Rates
+#   include the permanent 50% discount; no cache-write rate is published.
+# - Gemini `gemini-3-pro-preview` and `gemini-2.5-pro` long-context tiers below use
+#   `>200000` input tokens.
+# - Gemini 3.8 Flash, 3.7 Flash, and 3.6 Flash use introductory prices through
+#   2026-12-31. Standard $1.50 input, $0.15 cached-input, and $7.50 output rates
+#   start on 2027-01-01.
+# - xAI `grok-4.7`, `grok-4.6`, and `grok-4.5` higher-context pricing starts at
+#   `>=200000` input tokens.
+# - xAI `grok-4.3` higher-context pricing below uses `>200000` input tokens.
+# - Sakana Fugu Ultra higher-context pricing below uses `>272000`
+#   input tokens. The `fugu` model is not listed because Sakana prices it by
+#   the selected underlying model.
+# - Gemini Flash entries below use the text / image / video tier.
+# - Runtime price lookup matches by `model` / `aliases` by default, not by the
+#   client's driver/provider name. Callers can optionally pass an explicit
+#   `inference_provider` hint. If that provider exists in the catalog, matching
+#   stays within that provider. Otherwise lookup falls back to model-only matching.
+# - DeepSeek `deepseek-flash` serves V4.1 Flash. Legacy `deepseek-v4-flash`
+#   and `deepseek-v4-flash-vision-exp` route to it at the same rates.
+#   `deepseek-v4-pro` serves V4-Pro-0813. The retired
+#   `deepseek-chat` and `deepseek-reasoner` model names are not pricing aliases.
+# - Direct DeepSeek flat fields contain off-peak rates and `peak_rates` contains peak
+#   rates. Callers decide which rate set applies.
+# - GLM-5.3-Flash uses standard input/cached/output rates of $0.15/$0.03/$0.50
+#   per MTok. Its 50% promotion ended on 2026-09-09 24:00 UTC+8.
+# - Promotional prices are a static snapshot; they do not expire automatically.
+# - Mistral aliases below follow explicit mappings in the official model docs.
+# - OpenAI image generation pricing uses separate rates for text input, image
+#   input, cached input, and image output tokens where published.
+# - Image-generation rules use separate text and image output rates where
+#   published, at the Standard tier.
+
+# Informational metadata for humans. ParsePricingYAML ignores unknown top-level
+# fields, so this section does not affect runtime pricing lookup.
+pricing_references:
+  inference_providers:
+    openai: "https://developers.openai.com/api/docs/pricing"
+    openai_gpt_image_1: "https://platform.openai.com/docs/models/gpt-image-1"
+    anthropic: "https://platform.claude.com/docs/en/about-claude/pricing"
+    gemini: "https://ai.google.dev/gemini-api/docs/pricing"
+    mistral: "https://mistral.ai/pricing"
+    cohere: "https://docs.cohere.com/docs/how-does-cohere-pricing-work"
+    zai: "https://docs.z.ai/guides/overview/pricing"
+    moonshot: "https://platform.kimi.ai/docs/pricing/chat"
+    minimax: "https://platform.minimax.io/docs/guides/pricing-paygo"
+    deepseek: "https://api-docs.deepseek.com/quick_start/pricing/"
+    xai: "https://docs.x.ai/developers/models"
+    groq: "https://console.groq.com/docs/models"
+    meta: "https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/"
+    cloudflare: "https://developers.cloudflare.com/workers-ai/platform/pricing/"
+    sakana: "https://console.sakana.ai/pricing"
+    qwen: "https://help.aliyun.com/zh/model-studio/model-pricing"
+    doubao: "https://www.volcengine.com/docs/82379/1544106"
+
+evaluate:
+  # Decisions standard input pricing, verified 2026-10-13:
+  # https://developers.openai.com/api/docs/guides/decisions
+  # Regional processing and long-context multipliers are not included.
+  - inference_provider: openai
+    model: gpt-6-luna
+    input_usd_per_million: 0.10
+    output_usd_per_million: 0
+  # TypeSafe models and aliases verified 2026-09-21: https://docs.typesafe.ai/models
+  - inference_provider: typesafe
+    model: jev-1.13.0
+    aliases: [jev-latest, jev-preview]
+    input_usd_per_million: 0.042
+    output_usd_per_million: 0
+
+image:
+  # OpenAI Images API
+  - inference_provider: openai
+    model: gpt-image-2.5-sunburst
+    aliases:
+      - gpt-image-2.5-sunburst-2026-09-08
+    text_input_usd_per_million: 5.00
+    cached_text_input_usd_per_million: 1.25
+    image_input_usd_per_million: 8.00
+    cached_image_input_usd_per_million: 2.00
+    output_usd_per_million: 30.00
+  - inference_provider: openai
+    model: gpt-image-2.5-flare
+    aliases:
+      - gpt-image-2.5-flare-2026-09-08
+    text_input_usd_per_million: 5.00
+    cached_text_input_usd_per_million: 1.25
+    image_input_usd_per_million: 8.00
+    cached_image_input_usd_per_million: 2.00
+    output_usd_per_million: 30.00
+  - inference_provider: openai
+    model: gpt-image-2
+    aliases:
+      - gpt-image-2-2026-04-21
+    text_input_usd_per_million: 5.00
+    cached_text_input_usd_per_million: 1.25
+    image_input_usd_per_million: 8.00
+    cached_image_input_usd_per_million: 2.00
+    output_usd_per_million: 30.00
+  - inference_provider: openai
+    model: gpt-image-1
+    text_input_usd_per_million: 5.00
+    cached_text_input_usd_per_million: 1.25
+    image_input_usd_per_million: 10.00
+    cached_image_input_usd_per_million: 2.50
+    output_usd_per_million: 40.00
+  - inference_provider: openai
+    model: gpt-image-1.5
+    text_input_usd_per_million: 5.00
+    cached_text_input_usd_per_million: 1.25
+    image_input_usd_per_million: 8.00
+    cached_image_input_usd_per_million: 2.00
+    text_output_usd_per_million: 10.00
+    output_usd_per_million: 32.00
+  - inference_provider: openai
+    model: gpt-image-1-mini
+    text_input_usd_per_million: 2.00
+    cached_text_input_usd_per_million: 0.20
+    image_input_usd_per_million: 2.50
+    cached_image_input_usd_per_million: 0.25
+    output_usd_per_million: 8.00
+
+  # Gemini native image generation
+  - inference_provider: gemini
+    model: gemini-3.1-flash-image
+    aliases:
+      - nano-banana-2
+    text_input_usd_per_million: 0.50
+    image_input_usd_per_million: 0.50
+    text_output_usd_per_million: 3.00
+    output_usd_per_million: 60.00
+  - inference_provider: gemini
+    model: gemini-3.1-flash-lite-image
+    text_input_usd_per_million: 0.25
+    image_input_usd_per_million: 0.25
+    text_output_usd_per_million: 1.50
+    output_usd_per_million: 30.00
+  - inference_provider: gemini
+    model: gemini-3-pro-image
+    aliases:
+      - nano-banana-pro
+    text_input_usd_per_million: 2.00
+    image_input_usd_per_million: 2.00
+    text_output_usd_per_million: 12.00
+    output_usd_per_million: 120.00
+
+chat:
+  # OpenAI
+  - inference_provider: openai
+    model: gpt-6-astra
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 10.00
+        cached_input_usd_per_million: 1.00
+        cache_creation_input_usd_per_million: 12.50
+        output_usd_per_million: 50.00
+      - input_usd_per_million: 20.00
+        cached_input_usd_per_million: 2.00
+        cache_creation_input_usd_per_million: 25.00
+        output_usd_per_million: 75.00
+  - inference_provider: openai
+    model: gpt-6-sol
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 2.00
+        cached_input_usd_per_million: 0.20
+        cache_creation_input_usd_per_million: 2.50
+        output_usd_per_million: 10.00
+      - input_usd_per_million: 4.00
+        cached_input_usd_per_million: 0.40
+        cache_creation_input_usd_per_million: 5.00
+        output_usd_per_million: 15.00
+  - inference_provider: openai
+    model: gpt-6-luna
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 0.10
+        cached_input_usd_per_million: 0.01
+        cache_creation_input_usd_per_million: 0.125
+        output_usd_per_million: 0.50
+      - input_usd_per_million: 0.20
+        cached_input_usd_per_million: 0.02
+        cache_creation_input_usd_per_million: 0.25
+        output_usd_per_million: 0.75
+  - inference_provider: openai
+    model: gpt-5.6-sol
+    aliases:
+      - gpt-5.6
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 4.00
+        cached_input_usd_per_million: 0.40
+        cache_creation_input_usd_per_million: 5.00
+        output_usd_per_million: 20.00
+      - input_usd_per_million: 8.00
+        cached_input_usd_per_million: 0.80
+        cache_creation_input_usd_per_million: 10.00
+        output_usd_per_million: 30.00
+  - inference_provider: openai
+    model: gpt-5.6-terra
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 2.00
+        cached_input_usd_per_million: 0.20
+        cache_creation_input_usd_per_million: 2.50
+        output_usd_per_million: 12.00
+      - input_usd_per_million: 4.00
+        cached_input_usd_per_million: 0.40
+        cache_creation_input_usd_per_million: 5.00
+        output_usd_per_million: 18.00
+  - inference_provider: openai
+    model: gpt-5.6-luna
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 0.20
+        cached_input_usd_per_million: 0.02
+        cache_creation_input_usd_per_million: 0.25
+        output_usd_per_million: 1.20
+      - input_usd_per_million: 0.40
+        cached_input_usd_per_million: 0.04
+        cache_creation_input_usd_per_million: 0.50
+        output_usd_per_million: 1.80
+  - inference_provider: openai
+    model: gpt-5.5
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 5.00
+        cached_input_usd_per_million: 0.50
+        output_usd_per_million: 30.00
+      - input_usd_per_million: 10.00
+        cached_input_usd_per_million: 1.00
+        output_usd_per_million: 45.00
+  - inference_provider: openai
+    model: gpt-5.5-pro
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 30.00
+        output_usd_per_million: 180.00
+      - input_usd_per_million: 60.00
+        output_usd_per_million: 270.00
+  - inference_provider: openai
+    model: gpt-5.4
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 2.50
+        cached_input_usd_per_million: 0.25
+        output_usd_per_million: 15.00
+      - input_usd_per_million: 5.00
+        cached_input_usd_per_million: 0.50
+        output_usd_per_million: 22.50
+  - inference_provider: openai
+    model: gpt-5.4-pro
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 30.00
+        output_usd_per_million: 180.00
+      - input_usd_per_million: 60.00
+        output_usd_per_million: 270.00
+  - inference_provider: openai
+    model: gpt-5.4-mini
+    input_usd_per_million: 0.75
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 4.50
+  - inference_provider: openai
+    model: gpt-5.4-nano
+    input_usd_per_million: 0.20
+    cached_input_usd_per_million: 0.02
+    output_usd_per_million: 1.25
+  - inference_provider: openai
+    model: gpt-5.2
+    input_usd_per_million: 1.75
+    cached_input_usd_per_million: 0.175
+    output_usd_per_million: 14.00
+  - inference_provider: openai
+    model: gpt-5
+    input_usd_per_million: 1.25
+    cached_input_usd_per_million: 0.125
+    output_usd_per_million: 10.00
+  - inference_provider: openai
+    model: gpt-4o
+    input_usd_per_million: 2.50
+    cached_input_usd_per_million: 1.25
+    output_usd_per_million: 10.00
+  - inference_provider: openai
+    model: gpt-4o-mini
+    input_usd_per_million: 0.15
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 0.60
+
+  # Sakana AI
+  - inference_provider: sakana
+    model: fugu-ultra-20260615
+    aliases:
+      - fugu-ultra
+      - fugu-ultra-v1.0
+      - fugu-ultra-v1.1
+    tiers:
+      - max_input_tokens: 272000
+        input_usd_per_million: 5.00
+        cached_input_usd_per_million: 0.50
+        output_usd_per_million: 30.00
+      - input_usd_per_million: 10.00
+        cached_input_usd_per_million: 1.00
+        output_usd_per_million: 45.00
+  - inference_provider: sakana
+    model: sakana-namazu-v1.0
+    input_usd_per_million: 0.95
+    cached_input_usd_per_million: 0.15
+    output_usd_per_million: 4.00
+
+  # Anthropic
+  - inference_provider: anthropic
+    model: claude-fable-5-1
+    input_usd_per_million: 10.00
+    cached_input_usd_per_million: 0.25
+    cache_creation_input_usd_per_million: 12.50
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 12.50
+      ephemeral_1h_input_tokens: 20.00
+    output_usd_per_million: 50.00
+  - inference_provider: anthropic
+    model: claude-mythos-5-1
+    input_usd_per_million: 10.00
+    cached_input_usd_per_million: 0.25
+    cache_creation_input_usd_per_million: 12.50
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 12.50
+      ephemeral_1h_input_tokens: 20.00
+    output_usd_per_million: 50.00
+  - inference_provider: anthropic
+    model: claude-fable-5
+    input_usd_per_million: 10.00
+    cached_input_usd_per_million: 1.00
+    cache_creation_input_usd_per_million: 12.50
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 12.50
+      ephemeral_1h_input_tokens: 20.00
+    output_usd_per_million: 50.00
+  - inference_provider: anthropic
+    model: claude-mythos-5
+    input_usd_per_million: 10.00
+    cached_input_usd_per_million: 1.00
+    cache_creation_input_usd_per_million: 12.50
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 12.50
+      ephemeral_1h_input_tokens: 20.00
+    output_usd_per_million: 50.00
+  - inference_provider: anthropic
+    model: claude-opus-5-5
+    input_usd_per_million: 4.00
+    cached_input_usd_per_million: 0.20
+    cache_creation_input_usd_per_million: 5.00
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 5.00
+      ephemeral_1h_input_tokens: 8.00
+    output_usd_per_million: 20.00
+  - inference_provider: anthropic
+    model: claude-opus-5
+    input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    cache_creation_input_usd_per_million: 6.25
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 6.25
+      ephemeral_1h_input_tokens: 10.00
+    output_usd_per_million: 25.00
+  - inference_provider: anthropic
+    model: claude-opus-4-8
+    aliases:
+      - claude-opus-4.8
+    input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    cache_creation_input_usd_per_million: 6.25
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 6.25
+      ephemeral_1h_input_tokens: 10.00
+    output_usd_per_million: 25.00
+  - inference_provider: anthropic
+    model: claude-sonnet-5-5
+    input_usd_per_million: 2.00
+    cached_input_usd_per_million: 0.20
+    cache_creation_input_usd_per_million: 2.50
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 2.50
+      ephemeral_1h_input_tokens: 4.00
+    output_usd_per_million: 10.00
+  - inference_provider: anthropic
+    model: claude-sonnet-5
+    input_usd_per_million: 2.00
+    cached_input_usd_per_million: 0.20
+    cache_creation_input_usd_per_million: 2.50
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 2.50
+      ephemeral_1h_input_tokens: 4.00
+    output_usd_per_million: 10.00
+  - inference_provider: anthropic
+    model: claude-opus-4-7
+    aliases:
+      - claude-opus-4.7
+    input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    cache_creation_input_usd_per_million: 6.25
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 6.25
+      ephemeral_1h_input_tokens: 10.00
+    output_usd_per_million: 25.00
+  - inference_provider: anthropic
+    model: claude-opus-4-5
+    aliases:
+      - claude-opus-4.5
+      - claude-opus-4-5-20250929
+    input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    cache_creation_input_usd_per_million: 6.25
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 6.25
+      ephemeral_1h_input_tokens: 10.00
+    output_usd_per_million: 25.00
+  - inference_provider: anthropic
+    model: claude-opus-4-6
+    aliases:
+      - claude-opus-4.6
+    input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    cache_creation_input_usd_per_million: 6.25
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 6.25
+      ephemeral_1h_input_tokens: 10.00
+    output_usd_per_million: 25.00
+  - inference_provider: anthropic
+    model: claude-sonnet-4-5
+    aliases:
+      - claude-sonnet-4.5
+      - claude-sonnet-4-5-20250929
+    input_usd_per_million: 3.00
+    cached_input_usd_per_million: 0.30
+    cache_creation_input_usd_per_million: 3.75
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 3.75
+      ephemeral_1h_input_tokens: 6.00
+    output_usd_per_million: 15.00
+  - inference_provider: anthropic
+    model: claude-sonnet-4-6
+    aliases:
+      - claude-sonnet-4.6
+      - claude-sonnet-4-6-20260201
+    input_usd_per_million: 3.00
+    cached_input_usd_per_million: 0.30
+    cache_creation_input_usd_per_million: 3.75
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 3.75
+      ephemeral_1h_input_tokens: 6.00
+    output_usd_per_million: 15.00
+  - inference_provider: anthropic
+    model: claude-haiku-4-5
+    aliases:
+      - claude-haiku-4.5
+      - claude-haiku-4-5-20251001
+    input_usd_per_million: 1.00
+    cached_input_usd_per_million: 0.10
+    cache_creation_input_usd_per_million: 1.25
+    cache_creation_input_detail_usd_per_million:
+      ephemeral_5m_input_tokens: 1.25
+      ephemeral_1h_input_tokens: 2.00
+    output_usd_per_million: 5.00
+
+  # Gemini
+  - inference_provider: gemini
+    model: gemini-3.8-flash
+    input_usd_per_million: 0.75
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 3.75
+  - inference_provider: gemini
+    model: gemini-3.7-flash
+    input_usd_per_million: 0.75
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 3.75
+  - inference_provider: gemini
+    model: gemini-3.6-flash
+    input_usd_per_million: 0.75
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 3.75
+  - inference_provider: gemini
+    model: gemini-3.5-flash
+    input_usd_per_million: 1.50
+    cached_input_usd_per_million: 0.15
+    output_usd_per_million: 9.00
+  - inference_provider: gemini
+    model: gemini-3.5-flash-lite
+    input_usd_per_million: 0.30
+    cached_input_usd_per_million: 0.03
+    output_usd_per_million: 2.50
+  - inference_provider: gemini
+    model: gemini-3.1-flash-lite
+    input_usd_per_million: 0.25
+    cached_input_usd_per_million: 0.025
+    output_usd_per_million: 1.50
+  - inference_provider: gemini
+    model: gemini-3-pro-preview
+    aliases:
+      - gemini-3.0-pro
+      - gemini-3.1-pro-preview
+      - gemini-3.1-pro-preview-customtools
+    tiers:
+      - max_input_tokens: 200000
+        input_usd_per_million: 2.00
+        cached_input_usd_per_million: 0.20
+        output_usd_per_million: 12.00
+      - input_usd_per_million: 4.00
+        cached_input_usd_per_million: 0.40
+        output_usd_per_million: 18.00
+  - inference_provider: gemini
+    model: gemini-3-flash-preview
+    aliases:
+      - gemini-3.0-flash
+    input_usd_per_million: 0.50
+    cached_input_usd_per_million: 0.05
+    output_usd_per_million: 3.00
+  - inference_provider: gemini
+    model: gemini-2.5-pro
+    tiers:
+      - max_input_tokens: 200000
+        input_usd_per_million: 1.25
+        cached_input_usd_per_million: 0.125
+        output_usd_per_million: 10.00
+      - input_usd_per_million: 2.50
+        cached_input_usd_per_million: 0.25
+        output_usd_per_million: 15.00
+  - inference_provider: gemini
+    model: gemini-2.5-flash
+    aliases:
+      - gemini-2.5-flash-preview-09-2025
+    input_usd_per_million: 0.30
+    cached_input_usd_per_million: 0.03
+    output_usd_per_million: 2.50
+  - inference_provider: gemini
+    model: gemini-2.5-flash-lite
+    aliases:
+      - gemini-2.5-flash-lite-preview-09-2025
+    input_usd_per_million: 0.10
+    cached_input_usd_per_million: 0.01
+    output_usd_per_million: 0.40
+
+  # Mistral
+  - inference_provider: mistral
+    model: mistral-large-2512
+    aliases:
+      - mistral-large-latest
+    input_usd_per_million: 0.50
+    cached_input_usd_per_million: 0.05
+    output_usd_per_million: 1.50
+  - inference_provider: mistral
+    model: mistral-medium-3-5
+    aliases:
+      - mistral-medium-3
+      - mistral-medium-latest
+    input_usd_per_million: 1.50
+    cached_input_usd_per_million: 0.15
+    output_usd_per_million: 7.50
+  - inference_provider: mistral
+    model: mistral-medium-2508
+    input_usd_per_million: 0.40
+    output_usd_per_million: 2.00
+  - inference_provider: mistral
+    model: mistral-small-2603
+    input_usd_per_million: 0.15
+    cached_input_usd_per_million: 0.015
+    output_usd_per_million: 0.60
+  - inference_provider: mistral
+    model: devstral-2512
+    aliases:
+      - devstral-latest
+    input_usd_per_million: 0.40
+    output_usd_per_million: 2.00
+
+  # Cohere
+  - inference_provider: cohere
+    model: command-a-03-2025
+    input_usd_per_million: 2.50
+    output_usd_per_million: 10.00
+  - inference_provider: cohere
+    model: command-r7b-12-2024
+    input_usd_per_million: 0.0375
+    output_usd_per_million: 0.15
+  - inference_provider: cohere
+    model: command-r-08-2024
+    input_usd_per_million: 0.15
+    output_usd_per_million: 0.60
+  - inference_provider: cohere
+    model: command-r-plus-08-2024
+    input_usd_per_million: 2.50
+    output_usd_per_million: 10.00
+
+  # Z.AI
+  - inference_provider: zai
+    model: GLM-5.3-Flash
+    input_usd_per_million: 0.15
+    cached_input_usd_per_million: 0.03
+    output_usd_per_million: 0.50
+  - inference_provider: zai
+    model: GLM-5.3-FlashX
+    input_usd_per_million: 0.37
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 1.25
+  - inference_provider: zai
+    model: GLM-5.3
+    input_usd_per_million: 1.40
+    cached_input_usd_per_million: 0.26
+    output_usd_per_million: 4.40
+  - inference_provider: zai
+    model: GLM-5.2
+    input_usd_per_million: 1.40
+    cached_input_usd_per_million: 0.26
+    output_usd_per_million: 4.40
+  - inference_provider: zai
+    model: GLM-5.1
+    input_usd_per_million: 1.40
+    cached_input_usd_per_million: 0.26
+    output_usd_per_million: 4.40
+  - inference_provider: zai
+    model: GLM-5
+    input_usd_per_million: 1.00
+    cached_input_usd_per_million: 0.20
+    output_usd_per_million: 3.20
+  - inference_provider: zai
+    model: GLM-5-Turbo
+    input_usd_per_million: 1.20
+    cached_input_usd_per_million: 0.24
+    output_usd_per_million: 4.00
+  - inference_provider: zai
+    model: GLM-4.7
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.11
+    output_usd_per_million: 2.20
+  - inference_provider: zai
+    model: GLM-4.7-FlashX
+    input_usd_per_million: 0.07
+    cached_input_usd_per_million: 0.01
+    output_usd_per_million: 0.40
+  - inference_provider: zai
+    model: GLM-4.6
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.11
+    output_usd_per_million: 2.20
+  - inference_provider: zai
+    model: GLM-4.5
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.11
+    output_usd_per_million: 2.20
+  - inference_provider: zai
+    model: GLM-4.5-X
+    input_usd_per_million: 2.20
+    cached_input_usd_per_million: 0.45
+    output_usd_per_million: 8.90
+  - inference_provider: zai
+    model: GLM-4.5-Air
+    input_usd_per_million: 0.20
+    cached_input_usd_per_million: 0.03
+    output_usd_per_million: 1.10
+  - inference_provider: zai
+    model: GLM-4.5-AirX
+    input_usd_per_million: 1.10
+    cached_input_usd_per_million: 0.22
+    output_usd_per_million: 4.50
+
+  # Moonshot Kimi
+  - inference_provider: moonshot
+    model: kimi-k3
+    input_usd_per_million: 3.00
+    cached_input_usd_per_million: 0.30
+    output_usd_per_million: 15.00
+  - inference_provider: moonshot
+    model: kimi-k2.7-code
+    input_usd_per_million: 0.95
+    cached_input_usd_per_million: 0.19
+    output_usd_per_million: 4.00
+  - inference_provider: moonshot
+    model: kimi-k2.7-code-highspeed
+    input_usd_per_million: 1.90
+    cached_input_usd_per_million: 0.38
+    output_usd_per_million: 8.00
+  - inference_provider: moonshot
+    model: kimi-k2.6
+    input_usd_per_million: 0.95
+    cached_input_usd_per_million: 0.16
+    output_usd_per_million: 4.00
+  - inference_provider: moonshot
+    model: kimi-k2.5
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.10
+    output_usd_per_million: 3.00
+  - inference_provider: moonshot
+    model: kimi-k2-0905-preview
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.15
+    output_usd_per_million: 2.50
+  - inference_provider: moonshot
+    model: kimi-k2-thinking
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.15
+    output_usd_per_million: 2.50
+
+  # MiniMax
+  - inference_provider: minimax
+    model: MiniMax-M3
+    tiers:
+      - max_input_tokens: 512000
+        input_usd_per_million: 0.30
+        cached_input_usd_per_million: 0.06
+        output_usd_per_million: 1.20
+      - input_usd_per_million: 0.60
+        cached_input_usd_per_million: 0.12
+        output_usd_per_million: 2.40
+  - inference_provider: minimax
+    model: MiniMax-M2.7
+    input_usd_per_million: 0.30
+    cached_input_usd_per_million: 0.06
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 1.20
+  - inference_provider: minimax
+    model: MiniMax-M2.7-highspeed
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.06
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 2.40
+  - inference_provider: minimax
+    model: MiniMax-M2.5
+    input_usd_per_million: 0.30
+    cached_input_usd_per_million: 0.03
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 1.20
+  - inference_provider: minimax
+    model: MiniMax-M2.5-highspeed
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.03
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 2.40
+  - inference_provider: minimax
+    model: M2-her
+    input_usd_per_million: 0.30
+    output_usd_per_million: 1.20
+  - inference_provider: minimax
+    model: MiniMax-M2.1
+    input_usd_per_million: 0.30
+    cached_input_usd_per_million: 0.03
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 1.20
+  - inference_provider: minimax
+    model: MiniMax-M2.1-highspeed
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.03
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 2.40
+  - inference_provider: minimax
+    model: MiniMax-M2
+    input_usd_per_million: 0.30
+    cached_input_usd_per_million: 0.03
+    cache_creation_input_usd_per_million: 0.375
+    output_usd_per_million: 1.20
+
+  # DeepSeek
+  - inference_provider: deepseek
+    model: deepseek-flash
+    aliases:
+      - deepseek-v4-flash
+      - deepseek-v4-flash-vision-exp
+    input_usd_per_million: 0.15
+    cached_input_usd_per_million: 0.003
+    output_usd_per_million: 0.60
+    peak_rates:
+      input_usd_per_million: 0.30
+      cached_input_usd_per_million: 0.006
+      output_usd_per_million: 1.20
+  - inference_provider: deepseek
+    model: deepseek-v4-pro
+    input_usd_per_million: 0.66
+    cached_input_usd_per_million: 0.022
+    output_usd_per_million: 1.98
+    peak_rates:
+      input_usd_per_million: 1.32
+      cached_input_usd_per_million: 0.044
+      output_usd_per_million: 3.96
+
+  # xAI
+  - inference_provider: xai
+    model: grok-4.7
+    tiers:
+      - max_input_tokens: 199999
+        input_usd_per_million: 2.00
+        cached_input_usd_per_million: 0.50
+        output_usd_per_million: 6.00
+      - input_usd_per_million: 4.00
+        cached_input_usd_per_million: 1.00
+        output_usd_per_million: 12.00
+  - inference_provider: xai
+    model: grok-4.6
+    aliases:
+      - grok-4.6-latest
+    tiers:
+      - max_input_tokens: 199999
+        input_usd_per_million: 2.00
+        cached_input_usd_per_million: 0.50
+        output_usd_per_million: 6.00
+      - input_usd_per_million: 4.00
+        cached_input_usd_per_million: 1.00
+        output_usd_per_million: 12.00
+  - inference_provider: xai
+    model: grok-4.5
+    aliases:
+      - grok-4.5-latest
+    tiers:
+      - max_input_tokens: 199999
+        input_usd_per_million: 2.00
+        cached_input_usd_per_million: 0.30
+        output_usd_per_million: 6.00
+      - input_usd_per_million: 4.00
+        cached_input_usd_per_million: 0.60
+        output_usd_per_million: 12.00
+  - inference_provider: xai
+    model: grok-4.3
+    aliases:
+      - grok-4.3-latest
+      - grok-latest
+    tiers:
+      - max_input_tokens: 200000
+        input_usd_per_million: 1.25
+        cached_input_usd_per_million: 0.20
+        output_usd_per_million: 2.50
+      - input_usd_per_million: 2.50
+        cached_input_usd_per_million: 0.40
+        output_usd_per_million: 5.00
+  - inference_provider: xai
+    model: grok-4.20-0309-reasoning
+    aliases:
+      - grok-4.20-reasoning
+      - grok-4.20-reasoning-latest
+      - grok-4.20
+      - grok-4.2
+      - grok-4.2-reasoning
+      - grok-4.20-0309
+    input_usd_per_million: 1.25
+    cached_input_usd_per_million: 0.20
+    output_usd_per_million: 2.50
+  - inference_provider: xai
+    model: grok-4.20-multi-agent-0309
+    aliases:
+      - grok-4.20-multi-agent
+      - grok-4.20-multi-agent-latest
+      - grok-4.20-multi-agent-beta-latest
+      - grok-4.20-multi-agent-experimental-beta-0304
+      - grok-4.20-multi-agent-experimental-beta-latest
+      - grok-4.20-multi-agent-beta-0309
+    tiers:
+      - max_input_tokens: 200000
+        input_usd_per_million: 1.25
+        cached_input_usd_per_million: 0.20
+        output_usd_per_million: 2.50
+      - input_usd_per_million: 2.50
+        cached_input_usd_per_million: 0.40
+        output_usd_per_million: 5.00
+  - inference_provider: xai
+    model: grok-4.20-0309-non-reasoning
+    aliases:
+      - grok-4.20-non-reasoning
+      - grok-4.20-non-reasoning-latest
+      - grok-4.2-non-reasoning
+    input_usd_per_million: 1.25
+    cached_input_usd_per_million: 0.20
+    output_usd_per_million: 2.50
+  - inference_provider: xai
+    model: grok-4-1-fast-reasoning
+    input_usd_per_million: 0.20
+    output_usd_per_million: 0.50
+  - inference_provider: xai
+    model: grok-4-1-fast-non-reasoning
+    input_usd_per_million: 0.20
+    output_usd_per_million: 0.50
+
+  # Groq
+  - inference_provider: openai
+    model: openai/gpt-oss-120b
+    input_usd_per_million: 0.15
+    cached_input_usd_per_million: 0.075
+    output_usd_per_million: 0.60
+  - inference_provider: openai
+    model: openai/gpt-oss-20b
+    input_usd_per_million: 0.075
+    output_usd_per_million: 0.30
+  - inference_provider: groq
+    model: llama-3.3-70b-versatile
+    input_usd_per_million: 0.59
+    output_usd_per_million: 0.79
+
+  # Meta Model API
+  - inference_provider: meta
+    model: muse-spark-1.1
+    input_usd_per_million: 1.25
+    output_usd_per_million: 4.25
+
+  # Cloudflare Workers AI
+  - inference_provider: deepseek
+    model: "@cf/deepseek-ai/deepseek-v4-flash-0731"
+    input_usd_per_million: 0.44
+    cached_input_usd_per_million: 0.014
+    output_usd_per_million: 1.32
+  - inference_provider: deepseek
+    model: "@cf/deepseek-ai/deepseek-v4-pro-0813"
+    input_usd_per_million: 1.32
+    cached_input_usd_per_million: 0.044
+    output_usd_per_million: 3.96
+  - inference_provider: zai
+    model: "@cf/zai-org/glm-5.2"
+    input_usd_per_million: 1.40
+    cached_input_usd_per_million: 0.26
+    output_usd_per_million: 4.40
+  - inference_provider: zai
+    model: "@cf/zai-org/glm-5.3"
+    input_usd_per_million: 1.40
+    cached_input_usd_per_million: 0.26
+    output_usd_per_million: 4.40
+  - inference_provider: zai
+    model: "@cf/zai-org/glm-5.3-flash"
+    input_usd_per_million: 0.15
+    cached_input_usd_per_million: 0.03
+    output_usd_per_million: 0.50
+  - inference_provider: moonshot
+    model: "@cf/moonshotai/kimi-k2.6"
+    input_usd_per_million: 0.95
+    cached_input_usd_per_million: 0.16
+    output_usd_per_million: 4.00
+  - inference_provider: moonshot
+    model: "@cf/moonshotai/kimi-k2.7-code"
+    input_usd_per_million: 0.95
+    cached_input_usd_per_million: 0.19
+    output_usd_per_million: 4.00
+  - inference_provider: openai
+    model: "@cf/openai/gpt-oss-120b"
+    input_usd_per_million: 0.35
+    output_usd_per_million: 0.75
+  - inference_provider: moonshot
+    model: "@cf/moonshotai/kimi-k2.5"
+    input_usd_per_million: 0.60
+    cached_input_usd_per_million: 0.10
+    output_usd_per_million: 3.00

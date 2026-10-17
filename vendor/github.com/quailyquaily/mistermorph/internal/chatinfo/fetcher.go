@@ -1,0 +1,392 @@
+package chatinfo
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+
+	refid "github.com/quailyquaily/mistermorph/internal/entryutil/refid"
+	"github.com/quailyquaily/mistermorph/internal/larkapi"
+	"github.com/quailyquaily/mistermorph/internal/telegramapi"
+)
+
+const (
+	defaultTelegramBaseURL = "https://api.telegram.org"
+	defaultSlackBaseURL    = "https://slack.com/api"
+	defaultLineBaseURL     = "https://api.line.me"
+	defaultLarkBaseURL     = "https://open.feishu.cn/open-apis"
+	defaultDiscordBaseURL  = "https://discord.com/api/v10"
+)
+
+type FetcherOptions struct {
+	HTTPClient       *http.Client
+	TelegramBotToken string
+	TelegramBaseURL  string
+	SlackBotToken    string
+	SlackBaseURL     string
+	LineChannelToken string
+	LineBaseURL      string
+	LarkAppID        string
+	LarkAppSecret    string
+	LarkBaseURL      string
+	DiscordBotToken  string
+	DiscordBaseURL   string
+}
+
+type FetcherOptionsReader interface {
+	GetString(string) string
+}
+
+func FetcherOptionsFromReader(reader FetcherOptionsReader) FetcherOptions {
+	if reader == nil {
+		return FetcherOptions{}
+	}
+	return FetcherOptions{
+		TelegramBotToken: strings.TrimSpace(reader.GetString("telegram.bot_token")),
+		SlackBotToken:    strings.TrimSpace(reader.GetString("slack.bot_token")),
+		SlackBaseURL:     strings.TrimSpace(reader.GetString("slack.base_url")),
+		LineChannelToken: strings.TrimSpace(reader.GetString("line.channel_access_token")),
+		LineBaseURL:      strings.TrimSpace(reader.GetString("line.base_url")),
+		LarkAppID:        strings.TrimSpace(reader.GetString("lark.app_id")),
+		LarkAppSecret:    strings.TrimSpace(reader.GetString("lark.app_secret")),
+		LarkBaseURL:      strings.TrimSpace(reader.GetString("lark.base_url")),
+		DiscordBotToken:  strings.TrimSpace(reader.GetString("discord.bot_token")),
+		DiscordBaseURL:   strings.TrimSpace(reader.GetString("discord.base_url")),
+	}
+}
+
+type Fetcher struct {
+	client           *http.Client
+	telegramBotToken string
+	telegramBaseURL  string
+	slackBotToken    string
+	slackBaseURL     string
+	lineChannelToken string
+	lineBaseURL      string
+	larkBaseURL      string
+	larkTokenClient  *larkapi.TenantTokenClient
+	discordBotToken  string
+	discordBaseURL   string
+}
+
+func NewFetcher(opts FetcherOptions) *Fetcher {
+	client := opts.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 30 * time.Second}
+	}
+	larkBaseURL := baseURLOrDefault(opts.LarkBaseURL, defaultLarkBaseURL)
+	return &Fetcher{
+		client:           client,
+		telegramBotToken: strings.TrimSpace(opts.TelegramBotToken),
+		telegramBaseURL:  baseURLOrDefault(opts.TelegramBaseURL, defaultTelegramBaseURL),
+		slackBotToken:    strings.TrimSpace(opts.SlackBotToken),
+		slackBaseURL:     baseURLOrDefault(opts.SlackBaseURL, defaultSlackBaseURL),
+		lineChannelToken: strings.TrimSpace(opts.LineChannelToken),
+		lineBaseURL:      baseURLOrDefault(opts.LineBaseURL, defaultLineBaseURL),
+		larkBaseURL:      larkBaseURL,
+		larkTokenClient:  larkapi.NewTenantTokenClient(client, larkBaseURL, opts.LarkAppID, opts.LarkAppSecret),
+		discordBotToken:  strings.TrimSpace(opts.DiscordBotToken),
+		discordBaseURL:   baseURLOrDefault(opts.DiscordBaseURL, defaultDiscordBaseURL),
+	}
+}
+
+func (f *Fetcher) RefreshChatInfo(ctx context.Context, chatID string) (Info, error) {
+	chatID, err := NormalizeChatID(chatID)
+	if err != nil {
+		return Info{}, err
+	}
+	protocol, _, _ := refid.Parse(chatID)
+	switch protocol {
+	case "tg":
+		return f.fetchTelegram(ctx, chatID)
+	case "slack":
+		return f.fetchSlack(ctx, chatID)
+	case "line":
+		return f.fetchLine(ctx, chatID)
+	case "lark":
+		return f.fetchLark(ctx, chatID)
+	case "discord":
+		return f.fetchDiscord(ctx, chatID)
+	case "wechat", "whatsapp", "bluesky", "x":
+		// These chats are private chats with one user, and there is no chat info to fetch.
+		return Info{ChatID: chatID, Platform: protocol, Type: "private"}, nil
+	default:
+		return Info{}, fmt.Errorf("unsupported chat_id: %s", chatID)
+	}
+}
+
+func (f *Fetcher) fetchTelegram(ctx context.Context, chatID string) (Info, error) {
+	if f == nil || f.telegramBotToken == "" {
+		return Info{}, fmt.Errorf("telegram bot token is required")
+	}
+	numericChatID, _, err := refid.ParseTelegramChatIDHint(chatID)
+	if err != nil {
+		return Info{}, err
+	}
+	reqURL, err := url.Parse(joinURL(f.telegramBaseURL, "/bot"+f.telegramBotToken+"/getChat"))
+	if err != nil {
+		return Info{}, err
+	}
+	q := reqURL.Query()
+	q.Set("chat_id", strconv.FormatInt(numericChatID, 10))
+	reqURL.RawQuery = q.Encode()
+	var resp struct {
+		OK          bool   `json:"ok"`
+		Description string `json:"description"`
+		Result      struct {
+			ID        int64  `json:"id"`
+			Type      string `json:"type"`
+			Title     string `json:"title"`
+			Username  string `json:"username"`
+			FirstName string `json:"first_name"`
+			LastName  string `json:"last_name"`
+		} `json:"result"`
+	}
+	if err := f.doJSON(ctx, http.MethodGet, reqURL.String(), "", nil, &resp); err != nil {
+		return Info{}, err
+	}
+	if !resp.OK {
+		return Info{}, fmt.Errorf("telegram getChat failed: %s", strings.TrimSpace(resp.Description))
+	}
+	name := firstNonEmpty(resp.Result.Title, resp.Result.Username, strings.TrimSpace(strings.Join([]string{resp.Result.FirstName, resp.Result.LastName}, " ")))
+	return Info{
+		ChatID:   chatID,
+		Platform: "telegram",
+		Type:     strings.TrimSpace(resp.Result.Type),
+		Name:     name,
+	}, nil
+}
+
+func (f *Fetcher) fetchSlack(ctx context.Context, chatID string) (Info, error) {
+	if f == nil || f.slackBotToken == "" {
+		return Info{}, fmt.Errorf("slack bot token is required")
+	}
+	_, channelID, _, err := refid.ParseSlackChatIDHint(chatID)
+	if err != nil {
+		return Info{}, err
+	}
+	reqURL, err := url.Parse(joinURL(f.slackBaseURL, "/conversations.info"))
+	if err != nil {
+		return Info{}, err
+	}
+	q := reqURL.Query()
+	q.Set("channel", channelID)
+	reqURL.RawQuery = q.Encode()
+	var resp struct {
+		OK      bool   `json:"ok"`
+		Error   string `json:"error"`
+		Channel struct {
+			ID        string `json:"id"`
+			Name      string `json:"name"`
+			User      string `json:"user"`
+			IsChannel bool   `json:"is_channel"`
+			IsGroup   bool   `json:"is_group"`
+			IsIM      bool   `json:"is_im"`
+			IsMPIM    bool   `json:"is_mpim"`
+		} `json:"channel"`
+	}
+	if err := f.doJSON(ctx, http.MethodGet, reqURL.String(), "Bearer "+f.slackBotToken, nil, &resp); err != nil {
+		return Info{}, err
+	}
+	if !resp.OK {
+		return Info{}, fmt.Errorf("slack conversations.info failed: %s", strings.TrimSpace(resp.Error))
+	}
+	name := strings.TrimSpace(resp.Channel.Name)
+	if resp.Channel.IsIM && strings.TrimSpace(resp.Channel.User) != "" {
+		userURL, err := url.Parse(joinURL(f.slackBaseURL, "/users.info"))
+		if err != nil {
+			return Info{}, err
+		}
+		query := userURL.Query()
+		query.Set("user", strings.TrimSpace(resp.Channel.User))
+		userURL.RawQuery = query.Encode()
+		var userResp struct {
+			OK   bool `json:"ok"`
+			User struct {
+				Name     string `json:"name"`
+				RealName string `json:"real_name"`
+				Profile  struct {
+					DisplayName string `json:"display_name"`
+					RealName    string `json:"real_name"`
+				} `json:"profile"`
+			} `json:"user"`
+		}
+		if err := f.doJSON(ctx, http.MethodGet, userURL.String(), "Bearer "+f.slackBotToken, nil, &userResp); err == nil && userResp.OK {
+			for _, candidate := range []string{userResp.User.Profile.DisplayName, userResp.User.Profile.RealName, userResp.User.RealName, userResp.User.Name} {
+				if candidate = strings.TrimSpace(candidate); candidate != "" {
+					name = candidate
+					break
+				}
+			}
+		}
+	}
+	if name == "" {
+		name = chatID
+	}
+	return Info{
+		ChatID:   chatID,
+		Platform: "slack",
+		Type:     slackChatType(resp.Channel.IsIM, resp.Channel.IsMPIM, resp.Channel.IsGroup),
+		Name:     name,
+	}, nil
+}
+
+func (f *Fetcher) fetchLine(ctx context.Context, chatID string) (Info, error) {
+	if f == nil || f.lineChannelToken == "" {
+		return Info{}, fmt.Errorf("line channel access token is required")
+	}
+	lineID, _, err := refid.ParseLineChatIDHint(chatID)
+	if err != nil {
+		return Info{}, err
+	}
+	if strings.HasPrefix(strings.ToUpper(lineID), "R") {
+		return Info{}, fmt.Errorf("line room summary is not supported: %s", chatID)
+	}
+	if !strings.HasPrefix(strings.ToUpper(lineID), "C") {
+		return Info{}, fmt.Errorf("line group chat_id is required: %s", chatID)
+	}
+	var resp struct {
+		GroupID   string `json:"groupId"`
+		GroupName string `json:"groupName"`
+	}
+	reqURL := joinURL(f.lineBaseURL, "/v2/bot/group/"+url.PathEscape(lineID)+"/summary")
+	if err := f.doJSON(ctx, http.MethodGet, reqURL, "Bearer "+f.lineChannelToken, nil, &resp); err != nil {
+		return Info{}, err
+	}
+	return Info{
+		ChatID:   chatID,
+		Platform: "line",
+		Type:     "group",
+		Name:     strings.TrimSpace(resp.GroupName),
+	}, nil
+}
+
+// fetchDiscord reads a channel's name. A DM channel has none; a thread is named for itself.
+func (f *Fetcher) fetchDiscord(ctx context.Context, chatID string) (Info, error) {
+	if f == nil || f.discordBotToken == "" {
+		return Info{}, fmt.Errorf("discord bot token is required")
+	}
+	channelID, _, err := refid.ParseDiscordChatIDHint(chatID)
+	if err != nil {
+		return Info{}, err
+	}
+	var resp struct {
+		ID   string `json:"id"`
+		Type int    `json:"type"`
+		Name string `json:"name"`
+	}
+	if err := f.doJSON(ctx, http.MethodGet, joinURL(f.discordBaseURL, "/channels/"+channelID), "Bot "+f.discordBotToken, nil, &resp); err != nil {
+		return Info{}, err
+	}
+	chatType := "group"
+	if resp.Type == 1 || resp.Type == 3 {
+		chatType = "private"
+	}
+	return Info{ChatID: chatID, Platform: "discord", Type: chatType, Name: strings.TrimSpace(resp.Name)}, nil
+}
+
+func (f *Fetcher) fetchLark(ctx context.Context, chatID string) (Info, error) {
+	if f == nil || f.larkTokenClient == nil {
+		return Info{}, fmt.Errorf("lark token client is required")
+	}
+	larkID, _, err := refid.ParseLarkChatIDHint(chatID)
+	if err != nil {
+		return Info{}, err
+	}
+	token, err := f.larkTokenClient.Token(ctx)
+	if err != nil {
+		return Info{}, err
+	}
+	var resp struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+		Data struct {
+			ChatID   string `json:"chat_id"`
+			Name     string `json:"name"`
+			ChatType string `json:"chat_type"`
+		} `json:"data"`
+	}
+	reqURL := joinURL(f.larkBaseURL, "/im/v1/chats/"+url.PathEscape(larkID))
+	if err := f.doJSON(ctx, http.MethodGet, reqURL, "Bearer "+token, nil, &resp); err != nil {
+		return Info{}, err
+	}
+	if resp.Code != 0 {
+		return Info{}, fmt.Errorf("lark chat get failed: %s", strings.TrimSpace(resp.Msg))
+	}
+	return Info{
+		ChatID:   chatID,
+		Platform: "lark",
+		Type:     strings.TrimSpace(resp.Data.ChatType),
+		Name:     strings.TrimSpace(resp.Data.Name),
+	}, nil
+}
+
+func (f *Fetcher) doJSON(ctx context.Context, method string, reqURL string, auth string, body []byte, out any) error {
+	if f == nil || f.client == nil {
+		return fmt.Errorf("http client is required")
+	}
+	req, err := http.NewRequestWithContext(ctx, method, reqURL, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	if len(body) > 0 {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	if auth = strings.TrimSpace(auth); auth != "" {
+		req.Header.Set("Authorization", auth)
+	}
+	resp, err := telegramapi.Do(f.client, req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("chat profile fetch failed: %s", resp.Status)
+	}
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(out); err != nil {
+		return err
+	}
+	return nil
+}
+
+func baseURLOrDefault(raw string, fallback string) string {
+	raw = strings.TrimRight(strings.TrimSpace(raw), "/")
+	if raw == "" {
+		return fallback
+	}
+	return raw
+}
+
+func joinURL(baseURL string, path string) string {
+	return strings.TrimRight(baseURL, "/") + "/" + strings.TrimLeft(path, "/")
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value != "" {
+			return value
+		}
+	}
+	return ""
+}
+
+func slackChatType(isIM bool, isMPIM bool, isGroup bool) string {
+	switch {
+	case isIM:
+		return "im"
+	case isMPIM:
+		return "mpim"
+	case isGroup:
+		return "private_channel"
+	default:
+		return "channel"
+	}
+}

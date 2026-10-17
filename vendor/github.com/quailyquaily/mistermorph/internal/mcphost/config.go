@@ -1,0 +1,129 @@
+package mcphost
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+
+	"github.com/spf13/cast"
+	"github.com/spf13/viper"
+)
+
+type ServerConfig struct {
+	Name         string            `json:"name" yaml:"name"`
+	Enable       bool              `json:"enable" yaml:"enable"`                                   // set false to disable; default true
+	OnDemand     bool              `json:"on_demand,omitempty" yaml:"on_demand,omitempty"`         // connect only for tasks that reference $mcp_<name>
+	Description  string            `json:"description,omitempty" yaml:"description,omitempty"`     // helps tool_search find the server before connecting it
+	Type         string            `json:"type" yaml:"type"`                                       // "stdio" (default) | "http"
+	Command      string            `json:"command,omitempty" yaml:"command,omitempty"`             // stdio only
+	Args         []string          `json:"args,omitempty" yaml:"args,omitempty"`                   // stdio only
+	Env          map[string]string `json:"env,omitempty" yaml:"env,omitempty"`                     // stdio only
+	URL          string            `json:"url,omitempty" yaml:"url,omitempty"`                     // http only
+	Headers      map[string]string `json:"headers,omitempty" yaml:"headers,omitempty"`             // http only: custom HTTP headers (auth etc.)
+	AllowedTools []string          `json:"allowed_tools,omitempty" yaml:"allowed_tools,omitempty"` // whitelist; empty = all
+}
+
+var serverNamePattern = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_-]*$`)
+
+// ValidateName checks the identifier used in MCP tool names, including for disabled servers.
+func (c *ServerConfig) ValidateName() error {
+	if strings.TrimSpace(c.Name) == "" {
+		return fmt.Errorf("mcp server name is required")
+	}
+	if !serverNamePattern.MatchString(c.Name) {
+		return fmt.Errorf("mcp server name %q must start with an ASCII letter and contain only ASCII letters, digits, underscores, or hyphens", c.Name)
+	}
+	return nil
+}
+
+func (c *ServerConfig) Validate() error {
+	if err := c.ValidateName(); err != nil {
+		return err
+	}
+	typ := strings.ToLower(strings.TrimSpace(c.Type))
+	if typ == "" {
+		typ = "stdio"
+	}
+	switch typ {
+	case "stdio":
+		if strings.TrimSpace(c.Command) == "" {
+			return fmt.Errorf("mcp server %q: command is required for stdio transport", c.Name)
+		}
+	case "http":
+		if strings.TrimSpace(c.URL) == "" {
+			return fmt.Errorf("mcp server %q: url is required for http transport", c.Name)
+		}
+	default:
+		return fmt.Errorf("mcp server %q: unsupported type %q (supported: stdio, http)", c.Name, typ)
+	}
+	return nil
+}
+
+// AllowedToolSet returns a set of allowed tool names for fast lookup.
+// Returns nil if no whitelist is configured (all tools allowed).
+func (c *ServerConfig) AllowedToolSet() map[string]bool {
+	if len(c.AllowedTools) == 0 {
+		return nil
+	}
+	set := make(map[string]bool, len(c.AllowedTools))
+	for _, name := range c.AllowedTools {
+		name = strings.TrimSpace(name)
+		if name != "" {
+			set[name] = true
+		}
+	}
+	if len(set) == 0 {
+		return nil
+	}
+	return set
+}
+
+// MCPConfigFromViper reads MCP server configs from the global viper instance.
+func MCPConfigFromViper() []ServerConfig {
+	return ParseServers(viper.Get("mcp.servers"))
+}
+
+// MCPConfigFromReader reads MCP server configs from a local viper instance,
+// preserving the integration library's config isolation guarantees.
+func MCPConfigFromReader(v *viper.Viper) []ServerConfig {
+	if v == nil {
+		return nil
+	}
+	return ParseServers(v.Get("mcp.servers"))
+}
+
+// ParseServers converts the generic map shape produced by Viper or yaml.v3
+// into MCP server configuration.
+func ParseServers(raw any) []ServerConfig {
+	if raw == nil {
+		return nil
+	}
+
+	items, ok := raw.([]any)
+	if !ok {
+		return nil
+	}
+
+	var configs []ServerConfig
+	for _, item := range items {
+		m, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+		cfg := ServerConfig{
+			Name:         cast.ToString(m["name"]),
+			Enable:       m["enable"] == nil || cast.ToBool(m["enable"]),
+			OnDemand:     cast.ToBool(m["on_demand"]),
+			Description:  strings.TrimSpace(cast.ToString(m["description"])),
+			Type:         cast.ToString(m["type"]),
+			Command:      cast.ToString(m["command"]),
+			URL:          cast.ToString(m["url"]),
+			Args:         cast.ToStringSlice(m["args"]),
+			Env:          cast.ToStringMapString(m["env"]),
+			Headers:      cast.ToStringMapString(m["headers"]),
+			AllowedTools: cast.ToStringSlice(m["allowed_tools"]),
+		}
+		configs = append(configs, cfg)
+	}
+	return configs
+}

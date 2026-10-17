@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"github.com/godbus/dbus/v5"
 
 	"github.com/lyricat/inua/internal/ipc"
@@ -22,21 +23,28 @@ import (
 	"github.com/lyricat/inua/internal/vm"
 )
 
-// shellVMManager is the shell's implementation of VMManager: it owns the
-// Docker backend, the persisted configuration and the operation lock.
+// vmService owns the Docker backend, the persisted configuration and the
+// operation lock.
+//
+// Two things are true of a guest, and they are not the same: a project may
+// be configured (the Compose file and password exist) while Windows is still
+// installing, and only later does the guest become usable. The distinction
+// decides which page the window shows and which actions make sense, so both
+// are tracked.
 type vmService struct {
-	mu         sync.Mutex
-	backend    *vm.DockerBackend
-	config     vm.Config
-	host       vm.Host
-	platform   vm.Platform
-	hasConfig  bool
-	busy       bool
-	err        error
-	state      vm.State
-	stateErr   error
-	refreshing bool
-	secretConn *dbus.Conn // the Secret Service session, held for the shell's life
+	mu           sync.Mutex
+	backend      *vm.DockerBackend
+	config       vm.Config
+	host         vm.Host
+	platform     vm.Platform
+	hasProject   bool // the Compose project and password exist
+	installed    bool // Windows has come up at least once
+	busy         bool
+	err          error
+	state        vm.State
+	stateErr     error
+	progressText string
+	secretConn   *dbus.Conn // the Secret Service session, held for the shell's life
 }
 
 // vmSecretStore keeps the guest password in the Secret Service under inua's
@@ -63,11 +71,6 @@ func (s vmSecretStore) Delete(_ context.Context, id string) error {
 	return s.client.Delete(vmSecretAttrs(id))
 }
 
-type vmPersisted struct {
-	Config    vm.Config `json:"config"`
-	Installed bool      `json:"installed"`
-}
-
 func newVMService() *vmService {
 	s := &vmService{host: vm.DetectHost(""), platform: vm.DetectPlatform("", vm.PlatformProbes{})}
 	s.config = vm.DefaultConfig()
@@ -91,14 +94,26 @@ func (s *vmService) load() {
 	if err != nil {
 		return
 	}
-	var saved vmPersisted
-	if json.Unmarshal(data, &saved) != nil || saved.Config.Validate() != nil {
+	saved, err := vm.ParsePersisted(data)
+	if err != nil {
 		return
 	}
 	s.mu.Lock()
-	s.config, s.hasConfig = saved.Config, saved.Installed
-	s.backend.SetInstalled(saved.Config)
+	s.config = saved.Config
+	// The project exists when its Compose file does; the flag in the file
+	// only says whether Windows had come up, which a removal resets.
+	s.hasProject = s.backend.SetInstalled(saved.Config) == nil
+	// A saved "installed" flag is only true if the guest disk is still
+	// there: a compose project that never got a Windows image is still
+	// installing, not a stopped guest.
+	s.installed = saved.Installed && vm.GuestDiskPresent(saved.Config.DataDir)
+	corrected := saved.Installed && !s.installed
 	s.mu.Unlock()
+	if corrected {
+		if err := s.save(false); err != nil {
+			logErr("vm state", err)
+		}
+	}
 }
 
 // snapshot is non-blocking: it reports the state last observed by refresh,
@@ -106,15 +121,18 @@ func (s *vmService) load() {
 // subprocess, up to seconds) would stall the whole shell.
 func (s *vmService) snapshot() VMSnapshot {
 	s.mu.Lock()
-	cfg, has, busy, oldErr, state, stateErr := s.config, s.hasConfig, s.busy, s.err, s.state, s.stateErr
+	cfg, hasProject, installed := s.config, s.hasProject, s.installed
+	busy, oldErr, state, stateErr := s.busy, s.err, s.state, s.stateErr
+	progressText := s.progressText
+	platform, host := s.platform, s.host
 	s.mu.Unlock()
-	if !has {
+	if !hasProject {
 		state = vm.StateStopped
 	}
 	// The host checks, one line each, so the window can show every check and
 	// mark the ones that fail.
-	checks := make([]vm.DoctorItem, 0, len(s.platform.Doctor)+1)
-	checks = append(checks, s.platform.Doctor...)
+	checks := make([]vm.DoctorItem, 0, len(platform.Doctor)+1)
+	checks = append(checks, platform.Doctor...)
 	if s.backend.Secrets == nil {
 		checks = append(checks, vm.DoctorItem{
 			Name:   "Secret Service",
@@ -122,47 +140,79 @@ func (s *vmService) snapshot() VMSnapshot {
 			Reason: vm.ReasonMissing,
 		})
 	}
-	available := s.platform.Supported && s.platform.KVM.Available && s.platform.KVM.Accessible &&
-		s.platform.DockerSocket.Available && s.platform.DockerSocket.Accessible &&
-		s.platform.ComposeV2.Available && s.platform.FreeRDP.Available && s.backend.Secrets != nil
+	available := platform.Supported && platform.KVM.Available && platform.KVM.Accessible &&
+		platform.DockerSocket.Available && platform.DockerSocket.Accessible &&
+		platform.ComposeV2.Available && platform.FreeRDP.Available &&
+		platform.TUN.Available && platform.TUN.Accessible && s.backend.Secrets != nil
 	err := stateErr
 	if err == nil {
 		err = oldErr
 	}
+	progress := vm.ParsePercent(progressText)
 	return VMSnapshot{Config: cfg, State: state, Checks: checks, Busy: busy,
-		Available: available, HasConfig: has, Recommended: vm.RecommendProfile(s.host), Host: s.host, Err: err}
+		Available: available, HasProject: hasProject, Installed: installed,
+		HasDisk: vm.GuestDataPresent(cfg.DataDir), Progress: progress, ProgressText: progressText,
+		Recommended: vm.RecommendProfile(host), Host: host,
+		Distribution: platform.Distribution, Err: err}
 }
 
-// refresh reads the backend state off the main thread and records it for
-// snapshot; overlapping calls collapse into the one already running.
-func (s *vmService) refresh() {
+// Refresh reads Docker off the GTK thread and returns a snapshot the window
+// can paint. It is also where "Windows is installed" is decided: the guest
+// is taken to be installed once Dockur has said it started, so a later stop
+// does not send the window back to "still installing".
+func (s *vmService) Refresh() VMSnapshot {
+	// Re-read the host while the window is open: the user may have installed
+	// Docker or joined a group since the shell started, and the prereq page
+	// has to notice that without a restart.
+	host := vm.DetectHost("")
+	platform := vm.DetectPlatform("", vm.PlatformProbes{})
 	s.mu.Lock()
-	if s.refreshing {
-		s.mu.Unlock()
-		return
-	}
-	s.refreshing = true
-	has := s.hasConfig
+	s.host, s.platform = host, platform
 	s.mu.Unlock()
-	go func() {
-		var state vm.State
-		var err error
-		if has {
-			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-			state, err = s.backend.State(ctx)
-			cancel()
-		} else {
-			state = vm.StateStopped
+	s.sync()
+	return s.snapshot()
+}
+
+func (s *vmService) refresh() { go s.sync() }
+
+func (s *vmService) sync() {
+	s.mu.Lock()
+	hasProject := s.hasProject
+	dataDir := s.config.DataDir
+	s.mu.Unlock()
+	var state vm.State
+	var err error
+	var progress string
+	if hasProject {
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		state, err = s.backend.State(ctx)
+		if err == nil {
+			progress = s.backend.RecentOutput(ctx)
 		}
-		s.mu.Lock()
-		if has {
-			s.state, s.stateErr = state, err
-		} else {
-			s.state, s.stateErr = vm.StateStopped, nil
+		cancel()
+	} else {
+		state = vm.StateStopped
+	}
+	disk := vm.GuestDiskPresent(dataDir)
+	s.mu.Lock()
+	if hasProject {
+		s.state, s.stateErr, s.progressText = state, err, progress
+	} else {
+		s.state, s.stateErr, s.progressText = vm.StateStopped, nil, ""
+	}
+	if s.installed && !disk {
+		s.installed = false
+	}
+	firstReady := err == nil && state == vm.StateRunning && disk && !s.installed
+	if firstReady {
+		s.installed = true
+	}
+	s.mu.Unlock()
+	if firstReady {
+		if err := s.save(true); err != nil {
+			logErr("vm state", err)
 		}
-		s.refreshing = false
-		s.mu.Unlock()
-	}()
+	}
 }
 
 // Snapshot, Doctor and Status are the UI-facing reads; all are non-blocking.
@@ -200,16 +250,17 @@ func (s *vmService) Fix(r vm.Remedy) (string, bool, error) {
 	s.mu.Lock()
 	s.platform = vm.DetectPlatform("", vm.PlatformProbes{})
 	s.mu.Unlock()
-	s.refresh()
+	s.sync()
 	return done, relogin, err
 }
 
-// AcceptProfile saves the recommendation as the VM's configuration.
-func (s *vmService) AcceptProfile(c vm.Config) error { return s.Configure(c) }
-
-// Configure writes the Compose project and remembers the configuration, but
-// does not start the VM: the image download and first Windows installation are
-// their own, visible step (Start).
+// Configure writes the Compose project for c and remembers the
+// configuration. It does not start anything: installing Windows is its own,
+// visible step.
+//
+// Writing the project again is what applying a changed memory, CPU count or
+// disk size does, so this runs for a guest that already has one. It does not
+// make the guest "installed" - only Windows coming up does.
 func (s *vmService) Configure(c vm.Config) error {
 	if err := c.Validate(); err != nil {
 		return err
@@ -226,17 +277,40 @@ func (s *vmService) Configure(c vm.Config) error {
 		return err
 	}
 	s.mu.Lock()
-	s.config, s.hasConfig = c, true
+	s.config, s.hasProject = c, true
 	s.mu.Unlock()
-	if err := s.save(true); err != nil {
+	if err := s.save(s.installedNow()); err != nil {
 		opErr = err
 		return err
 	}
 	return nil
 }
 
-func (s *vmService) Install() error { return s.Start() }
+// installedNow reports whether Windows has been seen up, for persisting.
+func (s *vmService) installedNow() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.installed
+}
 
+// Install writes the project from c and starts the container, which
+// downloads the image and installs Windows. It returns once the start has
+// been asked for; the window follows the rest on the provisioning page.
+func (s *vmService) Install(c vm.Config) error {
+	if err := s.Configure(c); err != nil {
+		return err
+	}
+	return s.Start()
+}
+
+func (s *vmService) hasProjectNow() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.hasProject
+}
+
+// Start brings the container up and waits for the guest to answer on RDP:
+// the wait is what takes the minutes on a first install.
 func (s *vmService) Start() error {
 	if err := s.begin(); err != nil {
 		return err
@@ -247,20 +321,30 @@ func (s *vmService) Start() error {
 		opErr = errors.New("the Secret Service is unavailable; the Windows VM password cannot be kept safely")
 		return opErr
 	}
+	// The wait is unbounded in practice on a first install: the image
+	// download and Windows' own setup run inside it.
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Hour)
 	defer cancel()
 	opErr = s.backend.Start(ctx)
 	return opErr
 }
 
-func (s *vmService) Connect() error {
+func (s *vmService) Connect(display *rdpDisplay) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	c, err := s.backend.Connect(ctx)
 	if err != nil {
 		return err
 	}
-	return startRDPClient(c.Address, c.Port)
+	if s.backend.Secrets == nil || s.backend.SecretID() == "" {
+		return errors.New("the Windows VM password is missing from the Secret Service")
+	}
+	password, err := s.backend.Secrets.Load(ctx, s.backend.SecretID())
+	if err != nil {
+		return err
+	}
+	defer clear(password)
+	return startRDPClient(c.Address, c.Port, vm.GuestUser, string(password), display)
 }
 
 // Console opens the container's web console in the browser: during the first
@@ -319,7 +403,10 @@ func (s *vmService) Remove() error {
 		return err
 	}
 	s.mu.Lock()
-	s.hasConfig, s.config = false, vm.DefaultConfig()
+	// The project and the guest are both gone; a fresh start is a fresh
+	// setup, not a guest that is merely stopped.
+	s.hasProject, s.installed = false, false
+	s.config = vm.DefaultConfig()
 	s.mu.Unlock()
 	return nil
 }
@@ -332,18 +419,27 @@ func (s *vmService) RemoveData() error {
 	}
 	var opErr error
 	defer func() { s.end(opErr) }()
+	s.mu.Lock()
+	// The backend may have no project (leftover disk after Remove, or a
+	// fresh shell looking at DataDir). Point it at the configured directory
+	// before deleting, so it does not refuse an empty path.
+	s.backend.Config = s.config
+	s.mu.Unlock()
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
 	if opErr = s.backend.RemoveData(ctx); opErr != nil {
 		return opErr
 	}
-	if err := os.Remove(vm.ConfigPath()); err != nil && !errors.Is(err, os.ErrNotExist) {
-		opErr = err
-		return err
-	}
 	s.mu.Lock()
-	s.hasConfig, s.config = false, vm.DefaultConfig()
+	s.installed = false
+	hasProject := s.hasProject
 	s.mu.Unlock()
+	if hasProject {
+		if err := s.save(false); err != nil {
+			opErr = err
+			return err
+		}
+	}
 	return nil
 }
 
@@ -368,7 +464,7 @@ func (s *vmService) save(installed bool) error {
 		return err
 	}
 	s.mu.Lock()
-	data, err := json.MarshalIndent(vmPersisted{Config: s.config, Installed: installed}, "", "  ")
+	data, err := json.MarshalIndent(vm.Persisted{Config: s.config, Installed: installed}, "", "  ")
 	s.mu.Unlock()
 	if err != nil {
 		return err
@@ -425,19 +521,10 @@ func (s *shellUI) vmRequest(fn string) ipc.Response {
 		// Write the project from the recommended profile, without starting.
 		return asyncVM(fn, func() error { return m.Configure(m.profileConfig()) })
 	case "install":
-		// A one-shot first install, as the name suggests: write the project
-		// from the recommended profile when there is none, then start the
-		// container, which downloads the image and installs Windows.
-		return asyncVM(fn, func() error {
-			if !m.Snapshot().HasConfig {
-				if err := m.Configure(m.profileConfig()); err != nil {
-					return err
-				}
-			}
-			return m.Start()
-		})
+		return asyncVM(fn, func() error { return m.Install(m.profileConfig()) })
 	case "connect":
-		return asyncVM(fn, m.Connect)
+		display := s.rdpDisplay()
+		return asyncVM(fn, func() error { return m.Connect(display) })
 	case "stop":
 		return asyncVM(fn, m.Stop)
 	case "remove":
@@ -494,15 +581,86 @@ func asyncVM(name string, action func() error) ipc.Response {
 	return ipc.Response{OK: true}
 }
 
-// startRDPClient opens FreeRDP on a loopback endpoint.
-func startRDPClient(address string, port int) error {
-	for _, name := range []string{"xfreerdp3", "xfreerdp"} {
+// rdpDisplay reports the focused monitor's layout size and scale. FreeRDP
+// opens there fullscreen, so this is the screen whose HiDPI scale the guest
+// must follow.
+func (s *shellUI) rdpDisplay() *rdpDisplay {
+	name := s.snap.FocusedMonitor
+	if name == "" {
+		return nil
+	}
+	mon := s.monitorByName(name)
+	if mon == nil {
+		return nil
+	}
+	scale := 1.0
+	for _, m := range s.snap.Monitors {
+		if m.Name == name {
+			scale = m.Scale
+			break
+		}
+	}
+	var rect gdk.Rectangle
+	mon.GetGeometry(&rect)
+	return &rdpDisplay{Width: int(rect.Width), Height: int(rect.Height), Scale: scale}
+}
+
+// rdpDisplay is the monitor FreeRDP's window appears on: its logical size and
+// Hyprland's scale, which the guest's own display scaling follows.
+type rdpDisplay struct {
+	Width, Height int
+	Scale         float64
+}
+
+// rdpScale is FreeRDP's desktop scale for a monitor. XWayland here forces
+// scale 1, so the monitor scale must become the remote DPI: otherwise Windows
+// renders at 100% into a 2x physical screen and its UI looks too small.
+func rdpScale(scale float64) int {
+	if scale <= 0 {
+		return 100
+	}
+	return min(500, max(100, int(scale*100+0.5)))
+}
+
+// rdpArgs builds FreeRDP's arguments for a monitor. It opens a normal window,
+// not fullscreen, at 80% of the monitor's logical size so the desktop remains
+// usable; the remote resolution matches that window and follows resizes.
+func rdpArgs(address string, port int, user, password string, d *rdpDisplay) []string {
+	args := []string{
+		"/v:" + net.JoinHostPort(address, fmt.Sprint(port)),
+		"/u:" + user,
+		"/p:" + password,
+		"/dynamic-resolution", "/cert:tofu", "/clipboard",
+	}
+	if d == nil || d.Width <= 0 || d.Height <= 0 {
+		return args
+	}
+	width, height := rdpWindowSize(d.Width, d.Height)
+	args = append(args,
+		fmt.Sprintf("/size:%dx%d", width, height),
+		fmt.Sprintf("/scale-desktop:%d", rdpScale(d.Scale)),
+		fmt.Sprintf("/scale-device:%d", min(180, max(100, rdpScale(d.Scale)))),
+	)
+	return args
+}
+
+// rdpWindowSize keeps a margin around the remote desktop on its monitor.
+func rdpWindowSize(width, height int) (int, int) {
+	w, h := int(float64(width)*0.8), int(float64(height)*0.8)
+	return max(800, w), max(600, h)
+}
+
+// startRDPClient opens FreeRDP on a loopback endpoint. The SDL3 client is
+// preferred: it is the maintained Wayland client and draws the remote cursor.
+// wlfreerdp is deprecated and loses the pointer on Hyprland, so it is only a
+// last compatibility fallback. X11 runs through XWayland at scale 1 here.
+func startRDPClient(address string, port int, user, password string, d *rdpDisplay) error {
+	for _, name := range []string{"sdl-freerdp3", "sdl-freerdp", "wlfreerdp3", "wlfreerdp", "xfreerdp3", "xfreerdp"} {
 		bin, err := exec.LookPath(name)
 		if err != nil {
 			continue
 		}
-		args := []string{"/v:" + net.JoinHostPort(address, fmt.Sprint(port)), "/f", "/dynamic-resolution", "/cert:tofu", "/clipboard"}
-		cmd := exec.Command(bin, args...)
+		cmd := exec.Command(bin, rdpArgs(address, port, user, password, d)...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		if err := cmd.Start(); err != nil {
 			return err

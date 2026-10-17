@@ -1,6 +1,7 @@
 package fortunenet
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/lyricat/inua/internal/games"
+	"github.com/lyricat/inua/internal/games/fortuneai"
 )
 
 func init() {
@@ -360,5 +362,162 @@ func TestFortuneNetBridges(t *testing.T) {
 		if bridge(name) != want {
 			t.Errorf("%s: bridge %v", name, !want)
 		}
+	}
+}
+
+// The game's pictures, by the names the page may ask for, each drawn
+// once; and its icons, from the shell's own.
+func TestFortuneNetArt(t *testing.T) {
+	drawn := map[string]int{}
+	x := &testHost{}
+	x.Host = NewHost(Options{
+		Settings: games.FortuneSettings{Rivals: 1},
+		Local:    []string{"Ann"},
+		Run:      func(f func()) { x.mu.Lock(); defer x.mu.Unlock(); f() },
+		Art: func(city int, name string) *Picture {
+			drawn[name]++
+			pic := &Picture{PNG: []byte("png:" + name)}
+			if name == "piece-0" {
+				pic.W, pic.H, pic.FootX, pic.Dv = 40, 120, 20, 4
+			}
+			return pic
+		},
+	})
+	if err := x.Serve("127.0.0.1:0"); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { x.do(func() { x.Close() }) })
+	x.do(func() { x.Start() })
+	get := func(path string) (int, string) {
+		t.Helper()
+		res, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d%s", x.Port(), path))
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer res.Body.Close()
+		b, _ := io.ReadAll(res.Body)
+		return res.StatusCode, string(b)
+	}
+	for _, name := range []string{"card-3", "card-11-price", "card-back", "sign-80", "house-1-3", "hotel-0-0", "piece-0", "card-3"} {
+		if code, body := get("/art/" + name + ".png"); code != 200 || body != "png:"+name {
+			t.Errorf("%s: %d %q", name, code, body)
+		}
+	}
+	res, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d/art/piece-0.png", x.Port()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res.Body.Close()
+	if got := res.Header.Get("X-Piece"); got != "40.00 120.00 20.00 4.00" {
+		t.Errorf("piece: %q", got)
+	}
+	if drawn["card-3"] != 1 {
+		t.Errorf("card-3 drawn %d times", drawn["card-3"])
+	}
+	for _, name := range []string{"board", "card-", "sign-1234", "../texts.json", "card-3.png.png", "house-2-0", "hotel-1-4"} {
+		if code, _ := get("/art/" + name + ".png"); code != http.StatusNotFound {
+			t.Errorf("%s: %d", name, code)
+		}
+	}
+	if code, body := get("/icons/fortune-house.svg"); code != 200 || !strings.Contains(body, "<svg") {
+		t.Errorf("icon: %d %.40q", code, body)
+	}
+	for _, path := range []string{"/icons/fortune-house", "/icons/view-app-grid.svg", "/icons/..%2Fui.go"} {
+		if code, _ := get(path); code != http.StatusNotFound {
+			t.Errorf("%s: %d", path, code)
+		}
+	}
+}
+
+// Open seats cap the visitors: one more joins to watch.
+func TestFortuneNetOpenSeats(t *testing.T) {
+	x := &testHost{}
+	x.Host = NewHost(Options{
+		Settings: games.FortuneSettings{Rivals: 0},
+		Local:    []string{"Ann"},
+		Open:     1,
+		Run:      func(f func()) { x.mu.Lock(); defer x.mu.Unlock(); f() },
+	})
+	if err := x.Serve("127.0.0.1:0"); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { x.do(func() { x.Close() }) })
+	_, ben := x.join(t, "Ben", "")
+	_, cy := x.join(t, "Cy", "")
+	if ben.Seat != 1 || cy.Seat != -1 {
+		t.Errorf("Ben %d, Cy %d", ben.Seat, cy.Seat)
+	}
+}
+
+// Restarting: a new game, the visitor in the same seat, the computer
+// players asked for again.
+func TestFortuneNetRestart(t *testing.T) {
+	x := newTestHost(t, []string{"Ann"}, 1)
+	ben, hello := x.join(t, "Ben", "")
+	x.do(func() { x.Start() })
+	var start startMsg
+	ben.expect("start", &start)
+	x.do(func() {
+		x.Act(0, Action{Do: "roll"})
+		if !x.Restart() {
+			t.Fatal("not restarted")
+		}
+		if len(x.Seats) != 3 || x.Seats[1].Name != "Ben" || x.Seats[2].Kind != Computer || x.Game.Round != 1 || x.Game.Turn != 0 {
+			t.Fatalf("seats %d, round %d, turn %d", len(x.Seats), x.Game.Round, x.Game.Turn)
+		}
+	})
+	ben.expect("start", &start)
+	if start.You != hello.Seat || len(start.Players) != 3 {
+		t.Fatalf("restarted as %d with %d players", start.You, len(start.Players))
+	}
+}
+
+// An AI player sits after the people, and the host has the AI play it.
+func TestFortuneNetAI(t *testing.T) {
+	var mu sync.Mutex
+	asked := 0
+	x := &testHost{}
+	run := func(f func()) { x.mu.Lock(); defer x.mu.Unlock(); f() }
+	x.Host = NewHost(Options{
+		Settings: games.FortuneSettings{AIs: []string{"AI"}, Rivals: 1, Rounds: 30, Cash: 1500},
+		Local:    []string{"Ann"},
+		Run:      run,
+		AI: fortuneai.New(func(context.Context, string, string, string, []string) (int, error) {
+			mu.Lock()
+			defer mu.Unlock()
+			asked++
+			return 0, nil
+		}, run),
+		Seed: 1,
+	})
+	t.Cleanup(func() { x.do(func() { x.Close() }) })
+	x.do(func() {
+		if x.Room() != 1 {
+			t.Errorf("room %d, want 1", x.Room())
+		}
+		x.Start()
+		if kinds := []SeatKind{x.Seats[0].Kind, x.Seats[1].Kind, x.Seats[2].Kind}; kinds[1] != AI || kinds[2] != Computer {
+			t.Errorf("seats %v", kinds)
+		}
+		if x.Act(1, Action{Do: "roll"}) {
+			t.Error("a move made for the AI's seat")
+		}
+		x.Game.SetAway(0, true) // the computer plays Ann's turns
+		x.Flush()
+	})
+	deadline := time.Now().Add(20 * time.Second)
+	for {
+		var round int
+		x.do(func() { round = x.Game.Round })
+		mu.Lock()
+		n := asked
+		mu.Unlock()
+		if round >= 4 && n > 0 {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("round %d, the AI asked %d times", round, n)
+		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }

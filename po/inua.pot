@@ -3,13 +3,30 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
+#: cmd/inua-assistant/answer.go:36
+#: internal/assistantui/assistantui.go:277
+msgid "The assistant is turned off. Turn it on in Settings → AI."
+msgstr ""
+
+#: cmd/inua-assistant/answer.go:52
+msgid "No profile makes quick choices. Turn on Decision for one in Settings → AI."
+msgstr ""
+
+#: cmd/inua-assistant/bench.go:47
+msgid "No profile %s"
+msgstr ""
+
+#: cmd/inua-assistant/bench.go:60
+msgid "No API key for %s: type one and Save first."
+msgstr ""
+
 #: cmd/inua-assistant/mcp.go:57
 msgid "inua's assistant"
 msgstr ""
 
 #: cmd/inua-keyring/main.go:117
-#: internal/ui/settings_keyring.go:250
-#: ui/settings.ui:3469
+#: internal/ui/settings_keyring.go:324
+#: ui/settings.ui:3579
 msgid "Keyring"
 msgstr ""
 
@@ -27,7 +44,7 @@ msgstr ""
 
 #: internal/apps/calendar/calendar.go:69
 #: internal/appui/clock.go:218
-#: internal/ui/control.go:300
+#: internal/ui/control.go:302
 #: internal/ui/lock.go:238
 msgid "Monday, January 2"
 msgstr ""
@@ -450,7 +467,7 @@ msgid "System Monitor"
 msgstr ""
 
 #: internal/appui/app.go:70
-#: ui/control.ui:474
+#: ui/control.ui:498
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
 msgid "Tailscale"
 msgstr ""
@@ -490,11 +507,11 @@ msgstr ""
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/ui/vm.go:244
+#: internal/ui/vm.go:298
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
-#: ui/vm.ui:1175
+#: ui/vm.ui:1398
 msgid "Delete"
 msgstr ""
 
@@ -603,10 +620,11 @@ msgstr ""
 
 #: internal/appui/clock.go:491
 #: internal/games/fortune.go:65
+#: internal/gamesui/fortune_menu.go:174
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:923
-#: ui/vm.ui:944
+#: ui/vm.ui:1247
+#: ui/vm.ui:1268
 msgid "Start"
 msgstr ""
 
@@ -616,11 +634,13 @@ msgid "Reset"
 msgstr ""
 
 #: internal/appui/clock.go:496
-#: internal/assistantui/assistantui.go:458
+#: internal/assistantui/assistantui.go:431
 #: internal/ui/alarms.go:108
-#: ui/vm.ui:639
-#: ui/vm.ui:1024
-#: ui/vm.ui:1045
+#: ui/vm.ui:755
+#: ui/vm.ui:940
+#: ui/vm.ui:961
+#: ui/vm.ui:1568
+#: ui/vm.ui:1589
 msgid "Stop"
 msgstr ""
 
@@ -699,7 +719,7 @@ msgid "5 years"
 msgstr ""
 
 #: internal/appui/gpg.go:144
-#: ui/settings.ui:3661
+#: ui/settings.ui:3771
 msgid "Never"
 msgstr ""
 
@@ -717,12 +737,13 @@ msgstr ""
 #: internal/appui/gpg.go:602
 #: internal/appui/gpg.go:624
 #: internal/shell/notify.go:32
-#: internal/ui/askpass.go:366
-#: internal/ui/askpass.go:427
-#: internal/ui/askpass.go:431
-#: internal/ui/askpass.go:433
-#: internal/ui/settings_about.go:187
-#: internal/ui/settings_keyring.go:555
+#: internal/ui/askpass.go:380
+#: internal/ui/askpass.go:448
+#: internal/ui/askpass.go:452
+#: internal/ui/askpass.go:454
+#: internal/ui/settings_about.go:196
+#: internal/ui/settings_keyring.go:640
+#: internal/ui/settings_keyring.go:674
 msgid "Jan 2, 2006"
 msgstr ""
 
@@ -880,7 +901,7 @@ msgstr ""
 
 #: internal/appui/gpg.go:883
 #: internal/appui/tailscale.go:469
-#: internal/ui/askpass.go:516
+#: internal/ui/askpass.go:537
 #: internal/viewerui/app.go:548
 msgid "Copied"
 msgstr ""
@@ -1192,8 +1213,8 @@ msgid "Top level"
 msgstr ""
 
 #: internal/appui/pass.go:360
-#: internal/ui/settings.go:673
-#: internal/ui/settings.go:700
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:704
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] ""
@@ -1245,10 +1266,10 @@ msgstr ""
 #: internal/appui/pass.go:601
 #: internal/appui/pass.go:626
 #: internal/filesui/window.go:712
-#: internal/ui/askpass.go:200
+#: internal/ui/askpass.go:203
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
-#: ui/settings.ui:2675
+#: ui/settings.ui:2721
 msgid "Copy"
 msgstr ""
 
@@ -1348,7 +1369,7 @@ msgstr ""
 
 #: internal/appui/pass.go:1035
 #: internal/appui/workshop_manager.go:50
-#: internal/ui/settings_keyring.go:475
+#: internal/ui/settings_keyring.go:551
 msgid "%d app"
 msgid_plural "%d apps"
 msgstr[0] ""
@@ -1359,30 +1380,34 @@ msgid "None: an app reading it is asked about first."
 msgstr ""
 
 #: internal/appui/pass.go:1043
-#: internal/ui/askpass.go:357
-#: internal/ui/settings_keyring.go:539
+#: internal/ui/askpass.go:371
+#: internal/ui/settings_keyring.go:624
 msgid "Flatpak: %s"
 msgstr ""
 
 #: internal/appui/pass.go:1048
 #: internal/appui/pass.go:1070
-#: internal/ui/settings_keyring.go:394
-#: internal/ui/settings_keyring.go:402
-#: internal/ui/settings_keyring.go:544
+#: internal/ui/settings_keyring.go:469
+#: internal/ui/settings_keyring.go:477
+#: internal/ui/settings_keyring.go:629
 msgid "%s · %s"
 msgstr ""
 
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
-#: internal/ui/settings_keyring.go:560
-#: internal/ui/vm.go:235
+#: internal/ui/settings_ai.go:549
+#: internal/ui/settings_keyring.go:645
+#: internal/ui/settings_keyring.go:679
+#: internal/ui/vm.go:286
+#: internal/ui/vm.go:287
 #: ui/stocks.ui:292
-#: ui/vm.ui:1131
+#: ui/vm.ui:799
+#: ui/vm.ui:1354
 msgid "Remove"
 msgstr ""
 
 #: internal/appui/pass.go:1055
-#: internal/ui/settings_keyring.go:564
+#: internal/ui/settings_keyring.go:649
 msgid "Stop trusting it: it is asked about at its next read"
 msgstr ""
 
@@ -1397,7 +1422,7 @@ msgstr ""
 #: internal/appui/pass.go:1066
 #: internal/appui/sysmon.go:965
 #: internal/filesui/pane.go:1358
-#: internal/ui/settings_keyring.go:433
+#: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
 msgstr ""
@@ -1409,27 +1434,27 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: internal/appui/pass.go:1080
-#: internal/ui/settings_keyring.go:575
+#: internal/ui/settings_keyring.go:694
 msgid "trusted"
 msgstr ""
 
 #: internal/appui/pass.go:1082
-#: internal/ui/settings_keyring.go:577
+#: internal/ui/settings_keyring.go:696
 msgid "allowed once"
 msgstr ""
 
 #: internal/appui/pass.go:1084
-#: internal/ui/settings_keyring.go:579
+#: internal/ui/settings_keyring.go:698
 msgid "allowed, and trusted from now on"
 msgstr ""
 
 #: internal/appui/pass.go:1086
-#: internal/ui/settings_keyring.go:581
+#: internal/ui/settings_keyring.go:700
 msgid "denied"
 msgstr ""
 
 #: internal/appui/pass.go:1088
-#: internal/ui/settings_keyring.go:583
+#: internal/ui/settings_keyring.go:702
 msgid "allowed: no one to ask"
 msgstr ""
 
@@ -1475,7 +1500,7 @@ msgstr ""
 
 #: internal/appui/pass_otp.go:340
 #: internal/desktop/defaults.go:48
-#: internal/ui/settings.go:810
+#: internal/ui/settings.go:814
 msgid "Images"
 msgstr ""
 
@@ -1504,12 +1529,12 @@ msgid "Range start"
 msgstr ""
 
 #: internal/appui/stocks.go:322
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "High"
 msgstr ""
 
 #: internal/appui/stocks.go:322
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Low"
 msgstr ""
 
@@ -1756,7 +1781,7 @@ msgstr ""
 
 #: internal/appui/sysmon.go:786
 #: internal/filesui/kinds.go:38
-#: internal/ui/settings_keyring.go:252
+#: internal/ui/settings_keyring.go:326
 msgid "Program"
 msgstr ""
 
@@ -1793,7 +1818,7 @@ msgid "%s · %s ago"
 msgstr ""
 
 #: internal/appui/sysmon.go:836
-#: internal/ui/settings_keyring.go:224
+#: internal/ui/settings_keyring.go:298
 msgid "Jan 2 15:04:05"
 msgstr ""
 
@@ -1859,16 +1884,16 @@ msgstr ""
 
 #: internal/appui/sysmon.go:959
 #: internal/appui/sysmon.go:971
-#: internal/ui/settings_ai.go:323
+#: internal/ui/settings_ai.go:464
 msgid "Model"
 msgstr ""
 
 #: internal/appui/sysmon.go:960
 #: internal/appui/tailscale.go:630
-#: internal/ui/settings_ai.go:321
+#: internal/ui/settings_ai.go:453
 #: internal/viewerui/app.go:791
 #: ui/gpg.ui:1342
-#: ui/settings.ui:4394
+#: ui/settings.ui:4657
 #: ui/sysmon.ui:96
 msgid "Name"
 msgstr ""
@@ -1987,7 +2012,7 @@ msgid "wired"
 msgstr ""
 
 #: internal/appui/sysmon.go:1035
-#: ui/control.ui:249
+#: ui/control.ui:273
 msgid "Wi-Fi"
 msgstr ""
 
@@ -2268,7 +2293,7 @@ msgid "IN USE"
 msgstr ""
 
 #: internal/appui/tailscale.go:601
-#: internal/gamesui/fortune.go:375
+#: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
 msgid "None"
 msgstr ""
@@ -2410,7 +2435,7 @@ msgstr ""
 #: internal/shell/status.go:88
 #: internal/shell/status.go:107
 #: internal/shell/status.go:122
-#: ui/settings.ui:4611
+#: ui/settings.ui:4874
 msgid "Off"
 msgstr ""
 
@@ -2529,10 +2554,11 @@ msgstr ""
 #: internal/filesui/cards.go:389
 #: internal/filesui/cards.go:427
 #: internal/filesui/cards.go:610
-#: internal/games/fortunenet/texts.go:75
-#: internal/gamesui/fortune_host.go:229
-#: internal/ui/askpass.go:267
-#: internal/ui/askpass.go:395
+#: internal/games/fortunenet/texts.go:76
+#: internal/gamesui/fortune_host.go:236
+#: internal/ui/askpass.go:270
+#: internal/ui/askpass.go:412
+#: internal/ui/askpass.go:416
 #: ui/clock.ui:244
 #: ui/clock.ui:454
 #: ui/files.ui:155
@@ -2547,7 +2573,7 @@ msgid "Cancel"
 msgstr ""
 
 #: internal/appui/workshop.go:995
-#: internal/ui/askpass.go:266
+#: internal/ui/askpass.go:269
 msgid "OK"
 msgstr ""
 
@@ -2561,7 +2587,7 @@ msgid "Open"
 msgstr ""
 
 #: internal/appui/workshop_blocks.go:438
-#: internal/ui/settings_ai.go:328
+#: internal/ui/settings_ai.go:496
 #: ui/clock.ui:252
 #: ui/pass.ui:490
 msgid "Save"
@@ -2653,8 +2679,7 @@ msgid "Replace the installed %s?"
 msgstr ""
 
 #: internal/appui/workshop_manager.go:154
-#: internal/ui/vm.go:436
-#: ui/vm.ui:475
+#: internal/ui/vm.go:543
 msgid "Install"
 msgstr ""
 
@@ -2662,7 +2687,24 @@ msgstr ""
 msgid "Installed %s; the launcher and the dock's drawer list it."
 msgstr ""
 
-#: internal/assistant/assistant.go:430
+#: internal/assistant/assistant.go:137
+msgid "Cannot read the saved keys: %s"
+msgstr ""
+
+#: internal/assistant/assistant.go:145
+msgid "Cannot read the key of %s: %v"
+msgstr ""
+
+#: internal/assistant/assistant.go:150
+#: internal/ui/settings_ai.go:922
+msgid "Cannot read the Console token: %s"
+msgstr ""
+
+#: internal/assistant/assistant.go:156
+msgid "No API key for %s (%s): type one in Settings → AI."
+msgstr ""
+
+#: internal/assistant/assistant.go:585
 msgid "Remote Console: %s"
 msgstr ""
 
@@ -2676,7 +2718,7 @@ msgstr ""
 
 #: internal/assistantui/assistantui.go:37
 #: ui/assistant.ui:35
-#: ui/settings.ui:2004
+#: ui/settings.ui:2007
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:3
 msgid "Assistant"
 msgstr ""
@@ -2705,76 +2747,56 @@ msgstr ""
 msgid "%s answers from here"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:277
-msgid "The assistant is turned off. Turn it on in Settings → AI."
-msgstr ""
-
-#: internal/assistantui/assistantui.go:289
-msgid "Cannot read the saved keys: %s"
-msgstr ""
-
-#: internal/assistantui/assistantui.go:298
-msgid "Cannot read the key of %s: %v"
-msgstr ""
-
-#: internal/assistantui/assistantui.go:304
-#: internal/ui/settings_ai.go:602
-msgid "Cannot read the Console token: %s"
-msgstr ""
-
-#: internal/assistantui/assistantui.go:311
-msgid "No API key for %s (%s): type one in Settings → AI."
-msgstr ""
-
-#: internal/assistantui/assistantui.go:360
+#: internal/assistantui/assistantui.go:333
 msgid "Could not start the Console endpoint: %s"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:465
+#: internal/assistantui/assistantui.go:438
 msgid "✕ Not done: %s"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:476
+#: internal/assistantui/assistantui.go:449
 #: ui/assistant.ui:136
 msgid "Ask"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:480
+#: internal/assistantui/assistantui.go:453
 msgid "Stopped."
 msgstr ""
 
-#: internal/assistantui/assistantui.go:483
+#: internal/assistantui/assistantui.go:456
+#: internal/ui/vm.go:698
 msgid "Something went wrong: %s"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:486
+#: internal/assistantui/assistantui.go:459
 msgid "(no answer)"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:516
+#: internal/assistantui/assistantui.go:489
 msgid "Don't"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:516
-#: internal/ui/askpass.go:390
+#: internal/assistantui/assistantui.go:489
+#: internal/ui/askpass.go:407
 #: internal/workshop/session.go:406
 msgid "Allow"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:537
+#: internal/assistantui/assistantui.go:510
 msgid "Not allowed"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:539
+#: internal/assistantui/assistantui.go:512
 msgid "Canceled"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:541
-#: ui/settings.ui:3716
+#: internal/assistantui/assistantui.go:514
+#: ui/settings.ui:3826
 msgid "Allowed"
 msgstr ""
 
-#: internal/assistantui/assistantui.go:630
+#: internal/assistantui/assistantui.go:603
 msgid "TRY"
 msgstr ""
 
@@ -3526,7 +3548,9 @@ msgstr[1] ""
 
 #: internal/filesui/cards.go:454
 #: internal/filesui/cards.go:735
-#: ui/settings.ui:4149
+#: internal/ui/settings_bench.go:139
+#: ui/settings.ui:2880
+#: ui/settings.ui:4412
 msgid "Close"
 msgstr ""
 
@@ -3547,8 +3571,8 @@ msgid "smb://server/share, sftp://user@host/folder, ftp://, dav://, nfs://"
 msgstr ""
 
 #: internal/filesui/cards.go:503
-#: ui/vm.ui:966
-#: ui/vm.ui:1000
+#: ui/vm.ui:1482
+#: ui/vm.ui:1503
 msgid "Connect"
 msgstr ""
 
@@ -4176,8 +4200,9 @@ msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr ""
 
 #: internal/games/fortune.go:54
-#: internal/games/fortunenet/texts.go:61
+#: internal/games/fortunenet/texts.go:62
 #: internal/gamesui/fortune_board.go:881
+#: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:144
 msgid "Chance"
 msgstr ""
@@ -4189,18 +4214,22 @@ msgid "Card Shop"
 msgstr ""
 
 #: internal/games/fortune.go:66
+#: internal/gamesui/fortune_menu.go:183
 msgid "Income Tax"
 msgstr ""
 
 #: internal/games/fortune.go:70
+#: internal/gamesui/fortune_menu.go:175
 msgid "Jail"
 msgstr ""
 
 #: internal/games/fortune.go:75
+#: internal/gamesui/fortune_menu.go:176
 msgid "Fountain"
 msgstr ""
 
 #: internal/games/fortune.go:80
+#: internal/gamesui/fortune_menu.go:177
 msgid "Go to Jail"
 msgstr ""
 
@@ -4208,220 +4237,212 @@ msgstr ""
 msgid "Luxury Tax"
 msgstr ""
 
-#: internal/games/fortune.go:307
-#: internal/gamesui/fortune.go:375
-msgid "Mika"
-msgstr ""
-
-#: internal/games/fortune.go:307
-msgid "Ren"
-msgstr ""
-
-#: internal/games/fortune.go:307
-msgid "Sol"
-msgstr ""
-
-#: internal/games/fortune.go:315
+#: internal/games/fortune.go:314
+#: internal/gamesui/fortune.go:648
 msgid "You"
 msgstr ""
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/fortune_host.go:41
+#: internal/gamesui/fortune.go:644
+#: internal/gamesui/fortune_host.go:44
 msgid "Player %d"
 msgstr ""
 
-#: internal/games/fortune.go:495
+#: internal/games/fortune.go:502
 msgid "a house"
 msgstr ""
 
-#: internal/games/fortune.go:497
+#: internal/games/fortune.go:504
 msgid "a hotel"
 msgstr ""
 
-#: internal/games/fortune.go:499
+#: internal/games/fortune.go:506
 msgid "%s built %s on %s ($%d)."
 msgstr ""
 
-#: internal/games/fortune.go:510
+#: internal/games/fortune.go:517
 msgid "%s sold a building on %s for $%d."
 msgstr ""
 
-#: internal/games/fortune.go:548
+#: internal/games/fortune.go:555
 msgid "%s paid $%d bail."
 msgstr ""
 
-#: internal/games/fortune.go:584
+#: internal/games/fortune.go:591
 #: internal/games/fortune_cards.go:136
 msgid "%s bought %s for $%d."
 msgstr ""
 
-#: internal/games/fortune.go:598
+#: internal/games/fortune.go:605
+#: internal/games/fortunenet/texts.go:89
+#: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr ""
 
-#: internal/games/fortune.go:600
+#: internal/games/fortune.go:607
+#: internal/games/fortunenet/texts.go:90
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr ""
 
-#: internal/games/fortune.go:602
+#: internal/games/fortune.go:609
 msgid "%s rolled %s and walked out of jail."
 msgstr ""
 
-#: internal/games/fortune.go:605
+#: internal/games/fortune.go:612
 msgid "%s stays in jail."
 msgstr ""
 
-#: internal/games/fortune.go:609
+#: internal/games/fortune.go:616
 msgid "%s paid $%d bail after three tries."
 msgstr ""
 
-#: internal/games/fortune.go:618
+#: internal/games/fortune.go:625
 msgid "%s is a turtle: one square."
 msgstr ""
 
-#: internal/games/fortune.go:623
+#: internal/games/fortune.go:630
 msgid "Three doubles in a row: %s goes to jail."
 msgstr ""
 
-#: internal/games/fortune.go:684
+#: internal/games/fortune.go:691
 msgid "%s took the road through %s."
 msgstr ""
 
-#: internal/games/fortune.go:687
+#: internal/games/fortune.go:694
 msgid "%s passed Start: +$%d."
 msgstr ""
 
-#: internal/games/fortune.go:730
+#: internal/games/fortune.go:737
 msgid "%s cannot afford %s."
 msgstr ""
 
-#: internal/games/fortune.go:734
+#: internal/games/fortune.go:741
 msgid "%s owed %s rent for %s and paid nothing: Free Rent."
 msgstr ""
 
-#: internal/games/fortune.go:740
+#: internal/games/fortune.go:747
 msgid "%s paid %s $%d rent for %s."
 msgstr ""
 
-#: internal/games/fortune.go:746
+#: internal/games/fortune.go:753
 msgid "%s paid $%d %s into the fountain."
 msgstr ""
 
-#: internal/games/fortune.go:749
+#: internal/games/fortune.go:756
 msgid "%s took $%d from the fountain."
 msgstr ""
 
-#: internal/games/fortune.go:753
+#: internal/games/fortune.go:760
 msgid "The fountain is empty."
 msgstr ""
 
-#: internal/games/fortune.go:756
+#: internal/games/fortune.go:763
 msgid "%s goes to jail."
 msgstr ""
 
-#: internal/games/fortune.go:780
+#: internal/games/fortune.go:787
 msgid "A double: roll again."
 msgstr ""
 
-#: internal/games/fortune.go:795
+#: internal/games/fortune.go:802
 msgid "A street fair pays out: collect $60."
 msgstr ""
 
-#: internal/games/fortune.go:796
+#: internal/games/fortune.go:803
 msgid "Advance to Start."
 msgstr ""
 
-#: internal/games/fortune.go:797
+#: internal/games/fortune.go:804
 msgid "Your bicycle needs a new chain: pay $40."
 msgstr ""
 
-#: internal/games/fortune.go:798
+#: internal/games/fortune.go:805
 msgid "Go back three squares."
 msgstr ""
 
-#: internal/games/fortune.go:799
+#: internal/games/fortune.go:806
 msgid "It is your birthday: every player gives you $25."
 msgstr ""
 
-#: internal/games/fortune.go:800
+#: internal/games/fortune.go:807
 msgid "Roof repairs: pay $25 for each building."
 msgstr ""
 
-#: internal/games/fortune.go:801
+#: internal/games/fortune.go:808
 msgid "A refund from the tax office: collect $80."
 msgstr ""
 
-#: internal/games/fortune.go:802
+#: internal/games/fortune.go:809
 msgid "Catch a ride to the next station or pier."
 msgstr ""
 
-#: internal/games/fortune.go:803
+#: internal/games/fortune.go:810
 msgid "A night out: go to %s."
 msgstr ""
 
-#: internal/games/fortune.go:804
+#: internal/games/fortune.go:811
 msgid "Your shares paid a dividend: collect $100."
 msgstr ""
 
-#: internal/games/fortune.go:805
+#: internal/games/fortune.go:812
 msgid "Hotel inspection: pay $40 for each building."
 msgstr ""
 
-#: internal/games/fortune.go:806
+#: internal/games/fortune.go:813
 msgid "A parking fine: pay $30."
 msgstr ""
 
-#: internal/games/fortune.go:807
+#: internal/games/fortune.go:814
 msgid "You won a crossword: collect $50."
 msgstr ""
 
-#: internal/games/fortune.go:808
+#: internal/games/fortune.go:815
 msgid "Buy everyone lunch: pay each player $15."
 msgstr ""
 
-#: internal/games/fortune.go:809
+#: internal/games/fortune.go:816
 msgid "Caught jaywalking: go to jail."
 msgstr ""
 
-#: internal/games/fortune.go:810
+#: internal/games/fortune.go:817
 msgid "A card left on a bench: take it."
 msgstr ""
 
-#: internal/games/fortune.go:811
+#: internal/games/fortune.go:818
 msgid "The shopkeeper owes you a favour: take a card."
 msgstr ""
 
-#: internal/games/fortune.go:812
+#: internal/games/fortune.go:819
 msgid "You won a raffle: take a card."
 msgstr ""
 
-#: internal/games/fortune.go:841
+#: internal/games/fortune.go:848
 msgid "Chance for %s: %s"
 msgstr ""
 
-#: internal/games/fortune.go:844
+#: internal/games/fortune.go:851
 msgid "%s takes a card: %s."
 msgstr ""
 
-#: internal/games/fortune.go:941
+#: internal/games/fortune.go:948
 msgid "%s sold a house on %s for $%d."
 msgstr ""
 
-#: internal/games/fortune.go:945
+#: internal/games/fortune.go:952
 msgid "%s sold %s to the bank for $%d."
 msgstr ""
 
-#: internal/games/fortune.go:959
+#: internal/games/fortune.go:966
 msgid "%s is bankrupt and out of the game."
 msgstr ""
 
-#: internal/games/fortune.go:994
+#: internal/games/fortune.go:1001
 msgid "%s sleeps through their turn."
 msgstr ""
 
-#: internal/games/fortune.go:1014
+#: internal/games/fortune.go:1021
 msgid "%s won with $%d in worth."
 msgstr ""
 
@@ -4550,7 +4571,7 @@ msgid "%s played %s and took %s from %s."
 msgstr ""
 
 #: internal/games/fortune_cards.go:276
-#: internal/games/fortunenet/texts.go:83
+#: internal/games/fortunenet/texts.go:82
 msgid "a card"
 msgstr ""
 
@@ -5855,15 +5876,59 @@ msgstr ""
 msgid "Lungotevere"
 msgstr ""
 
-#: internal/games/fortunenet/host.go:154
+#: internal/games/fortune_rivals.go:29
+msgid "Mika"
+msgstr ""
+
+#: internal/games/fortune_rivals.go:29
+msgid "the careful banker"
+msgstr ""
+
+#: internal/games/fortune_rivals.go:30
+msgid "Keeps cash in hand, passes on the dearest streets, buys few cards and pays bail early."
+msgstr ""
+
+#: internal/games/fortune_rivals.go:36
+msgid "Ren"
+msgstr ""
+
+#: internal/games/fortune_rivals.go:36
+msgid "the bold developer"
+msgstr ""
+
+#: internal/games/fortune_rivals.go:37
+msgid "Buys whatever the dice land on, with little cash to spare, and sits out jail rather than pay."
+msgstr ""
+
+#: internal/games/fortune_rivals.go:43
+msgid "Sol"
+msgstr ""
+
+#: internal/games/fortune_rivals.go:43
+msgid "the trickster"
+msgstr ""
+
+#: internal/games/fortune_rivals.go:44
+msgid "Lives by the cards: sleeping pills, turtles and audits for whoever leads; builds anywhere."
+msgstr ""
+
+#: internal/games/fortuneai/fortuneai.go:425
+msgid "The AI keeps not answering: the computer plays for %s from now on."
+msgstr ""
+
+#: internal/games/fortuneai/fortuneai.go:427
+msgid "No answer from the AI: the computer plays this turn for %s."
+msgstr ""
+
+#: internal/games/fortunenet/host.go:233
 msgid "The host sent you away."
 msgstr ""
 
-#: internal/games/fortunenet/host.go:291
+#: internal/games/fortunenet/host.go:373
 msgid "That is not this game's code."
 msgstr ""
 
-#: internal/games/fortunenet/host.go:298
+#: internal/games/fortunenet/host.go:380
 msgid "Your seat was taken up in another window."
 msgstr ""
 
@@ -5906,7 +5971,7 @@ msgid "%s · %d rounds · $%s each"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:26
-#: internal/gamesui/fortune_host.go:135
+#: internal/gamesui/fortune_host.go:142
 msgid "Room for %d more"
 msgstr ""
 
@@ -5915,288 +5980,374 @@ msgid "at the host's screen"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:28
-#: internal/gamesui/fortune_host.go:123
+#: internal/gamesui/fortune_host.go:130
 msgid "in a browser"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:30
-#: internal/gamesui/fortune.go:831
+#: internal/gamesui/fortune.go:1106
 msgid " · away, the computer plays"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:31
-#: internal/gamesui/fortune.go:205
-msgid "PLAYERS"
+#: internal/gamesui/fortune.go:1109
+msgid " · the AI plays"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/fortune.go:209
-msgid "SQUARE"
+#: internal/gamesui/fortune.go:252
+#: internal/gamesui/fortune.go:408
+msgid "PLAYERS"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:33
-#: internal/gamesui/fortune.go:229
-msgid "WHAT HAPPENED"
+#: internal/gamesui/fortune.go:256
+msgid "SQUARE"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/fortune.go:163
-msgid "ROUND"
+#: internal/gamesui/fortune.go:276
+msgid "WHAT HAPPENED"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/fortune.go:164
-msgid "FOUNTAIN"
+#: internal/gamesui/fortune.go:208
+msgid "ROUND"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:36
-#: internal/gamesui/fortune.go:216
-#: internal/gamesui/fortune.go:871
-msgid "Roll the dice"
+#: internal/gamesui/fortune.go:209
+msgid "FOUNTAIN"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:37
-#: internal/gamesui/fortune.go:874
-msgid "Roll for a double"
+#: internal/gamesui/fortune.go:263
+#: internal/gamesui/fortune.go:1152
+msgid "Roll the dice"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:38
-#: internal/gamesui/fortune.go:874
-msgid "Roll for a six"
+#: internal/gamesui/fortune.go:1155
+msgid "Roll for a double"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:39
-msgid "Pay $%d bail"
+#: internal/gamesui/fortune.go:1155
+msgid "Roll for a six"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:40
-#: internal/gamesui/fortune.go:881
+msgid "Pay $%d bail"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:41
+#: internal/gamesui/fortune.go:1162
 #: internal/gamesui/fortune_panel.go:464
 msgid "Buy it for $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:41
-#: internal/gamesui/fortune.go:883
+#: internal/games/fortunenet/texts.go:42
+#: internal/gamesui/fortune.go:1164
 msgid "Don't buy"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:42
-#: internal/gamesui/fortune.go:887
+#: internal/games/fortunenet/texts.go:43
+#: internal/gamesui/fortune.go:1168
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:43
-#: internal/gamesui/fortune.go:890
+#: internal/games/fortunenet/texts.go:44
+#: internal/gamesui/fortune.go:1171
 msgid "End turn"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:44
-#: internal/gamesui/fortune.go:865
+#: internal/games/fortunenet/texts.go:45
+#: internal/gamesui/fortune.go:1143
 msgid "%s is playing…"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:45
-#: internal/gamesui/fortune_board.go:1112
+#: internal/games/fortunenet/texts.go:46
+#: internal/gamesui/fortune_board.go:1115
 msgid "Your turn"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:46
-#: internal/gamesui/fortune_board.go:1110
+#: internal/games/fortunenet/texts.go:47
+#: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/fortune_board.go:1136
+#: internal/games/fortunenet/texts.go:48
+#: internal/gamesui/fortune_board.go:1139
 msgid "round %d of %d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:48
-#: internal/gamesui/fortune.go:810
+#: internal/games/fortunenet/texts.go:49
+#: internal/gamesui/fortune.go:1085
 msgid "worth $%s"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:49
-#: internal/gamesui/fortune.go:813
+#: internal/games/fortunenet/texts.go:50
+#: internal/gamesui/fortune.go:1088
 msgid "bankrupt"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:50
-#: internal/gamesui/fortune.go:815
+#: internal/games/fortunenet/texts.go:51
+#: internal/gamesui/fortune.go:1090
 msgid " · in jail"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:51
-#: internal/gamesui/fortune.go:822
+#: internal/games/fortunenet/texts.go:52
+#: internal/gamesui/fortune.go:1097
 msgid " · free rent"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:52
-#: internal/gamesui/fortune.go:825
+#: internal/games/fortunenet/texts.go:53
+#: internal/gamesui/fortune.go:1100
 msgid " · turtle"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:53
-#: internal/gamesui/fortune.go:828
+#: internal/games/fortunenet/texts.go:54
+#: internal/gamesui/fortune.go:1103
 msgid " · asleep"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:54
+#: internal/games/fortunenet/texts.go:55
 #: internal/gamesui/fortune_panel.go:160
 msgid "For sale: $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:55
+#: internal/games/fortunenet/texts.go:56
 #: internal/gamesui/fortune_panel.go:162
 msgid "%s owns it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:56
+#: internal/games/fortunenet/texts.go:57
 #: internal/gamesui/fortune_panel.go:164
 msgid "You own it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:57
+#: internal/games/fortunenet/texts.go:58
 #: internal/gamesui/fortune_panel.go:168
 msgid "rent now"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:58
+#: internal/games/fortunenet/texts.go:59
 #: internal/gamesui/fortune_panel.go:138
 msgid "Street · price $%d · building $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:59
+#: internal/games/fortunenet/texts.go:60
 #: internal/gamesui/fortune_panel.go:140
 msgid "Station or pier · price $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:60
+#: internal/games/fortunenet/texts.go:61
 #: internal/gamesui/fortune_panel.go:142
 msgid "Utility · price $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:62
+#: internal/games/fortunenet/texts.go:63
+#: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:63
+#: internal/games/fortunenet/texts.go:64
 #: internal/gamesui/fortune_panel.go:148
 msgid "Tax · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:64
+#: internal/games/fortunenet/texts.go:65
 #: internal/gamesui/fortune_panel.go:150
 msgid "Corner"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:65
+#: internal/games/fortunenet/texts.go:66
 #: internal/gamesui/fortune_panel.go:125
 msgid "House · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:66
+#: internal/games/fortunenet/texts.go:67
 #: internal/gamesui/fortune_panel.go:122
 msgid "Hotel · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:67
+#: internal/games/fortunenet/texts.go:68
 #: internal/gamesui/fortune_panel.go:119
 msgid "Hotel built"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:68
+#: internal/games/fortunenet/texts.go:69
 #: internal/gamesui/fortune_panel.go:127
 msgid "Sell · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:69
+#: internal/games/fortunenet/texts.go:70
 #: internal/gamesui/fortune_panel.go:480
 msgid "Your cards · %d of %d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:70
+#: internal/games/fortunenet/texts.go:71
 #: internal/gamesui/fortune_panel.go:478
 msgid "Your cards · %d of %d · click one to play it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:71
+#: internal/games/fortunenet/texts.go:72
 #: internal/gamesui/fortune_panel.go:368
 msgid "Click a card to buy it: any of them, or none."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:72
+#: internal/games/fortunenet/texts.go:73
 #: internal/gamesui/fortune_panel.go:511
 msgid "On whom?"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:73
+#: internal/games/fortunenet/texts.go:74
 #: internal/gamesui/fortune_panel.go:513
 msgid "How many squares?"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:74
+#: internal/games/fortunenet/texts.go:75
 msgid "Pick a square on the board"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:76
-#: internal/gamesui/fortune_board.go:1080
+#: internal/games/fortunenet/texts.go:77
+#: internal/gamesui/fortune_board.go:1083
 msgid "%s won."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:77
-#: internal/gamesui/fortune_board.go:1082
+#: internal/games/fortunenet/texts.go:78
+#: internal/gamesui/fortune_board.go:1085
 msgid "You won!"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:78
-#: internal/gamesui/fortune_board.go:1097
+#: internal/games/fortunenet/texts.go:79
+#: internal/gamesui/fortune_board.go:1100
 msgid "%s (bankrupt)"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:79
+#: internal/games/fortunenet/texts.go:80
 #: internal/gamesui/fortune_panel.go:234
 msgid "Bare"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:80
+#: internal/games/fortunenet/texts.go:81
 #: internal/gamesui/fortune_panel.go:237
 msgid "Hotel"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:81
-msgid "%s got a card"
-msgstr ""
-
-#: internal/games/fortunenet/texts.go:82
-msgid "%s played %s"
-msgstr ""
-
-#: internal/games/fortunenet/texts.go:84
+#: internal/games/fortunenet/texts.go:83
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
 msgstr ""
 
+#: internal/games/fortunenet/texts.go:84
+msgid "Sound on: M turns it off"
+msgstr ""
+
 #: internal/games/fortunenet/texts.go:85
+msgid "Sound off: M turns it on"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:86
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:88
-#: internal/gamesui/fortune.go:819
+#: internal/gamesui/fortune_menu.go:174
+#: internal/gamesui/fortune_panel.go:273
+msgid "Collect $%d every time you pass."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:89
+#: internal/games/fortunenet/texts.go:90
+#: internal/gamesui/fortune_menu.go:175
+#: internal/gamesui/fortune_panel.go:275
+msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:91
+#: internal/gamesui/fortune_panel.go:278
+msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:92
+#: internal/gamesui/fortune_menu.go:177
+#: internal/gamesui/fortune_panel.go:280
+msgid "Straight to jail, without passing Start."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:93
+#: internal/gamesui/fortune_menu.go:181
+#: internal/gamesui/fortune_panel.go:282
+msgid "Draw a card: money, a fine, a trip, or a card for your hand."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:94
+#: internal/gamesui/fortune_menu.go:182
+#: internal/gamesui/fortune_panel.go:284
+msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:95
+#: internal/gamesui/fortune_menu.go:183
+#: internal/gamesui/fortune_panel.go:286
+msgid "Pay $%d into the fountain."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:96
+#: internal/gamesui/fortune_panel.go:244
+msgid "The whole group: bare rent doubled, built rents half again."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:97
+#: internal/gamesui/fortune_menu.go:178
+#: internal/gamesui/fortune_panel.go:246
+msgid "With the whole group: bare rent doubled, built rents half again."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:98
+#: internal/gamesui/fortune_panel.go:259
+msgid "Group:"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:99
+#: internal/gamesui/fortune_panel.go:269
+msgid "× %d"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:101
+#: internal/gamesui/fortune_panel.go:263
+msgid "%d pier"
+msgid_plural "%d piers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/games/fortunenet/texts.go:104
+#: internal/gamesui/fortune_panel.go:269
+msgid "%d utility"
+msgid_plural "%d utilities"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/games/fortunenet/texts.go:107
+#: internal/gamesui/fortune.go:1094
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/fortunenet/texts.go:91
+#: internal/games/fortunenet/texts.go:110
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/fortunenet/texts.go:94
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
@@ -6537,85 +6688,128 @@ msgstr ""
 msgid "Space the main action  ·  R roll  ·  B buy  ·  X pass  ·  E end turn  ·  J pay bail  ·  H build on the square in focus  ·  N new game  ·  M sound  ·  click a square to see it  ·  drag, scroll or arrows to look about  ·  Home your pawn"
 msgstr ""
 
-#: internal/gamesui/fortune.go:165
+#: internal/gamesui/fortune.go:210
 msgid "JOIN CODE"
 msgstr ""
 
-#: internal/gamesui/fortune.go:272
-msgid "Where do you play?"
-msgstr ""
-
-#: internal/gamesui/fortune.go:337
-msgid "%s and %s"
-msgstr ""
-
-#: internal/gamesui/fortune.go:372
-msgid "Rounds"
-msgstr ""
-
-#: internal/gamesui/fortune.go:373
-msgid "Starting money"
-msgstr ""
-
-#: internal/gamesui/fortune.go:374
-msgid "People at this screen"
-msgstr ""
-
-#: internal/gamesui/fortune.go:375
-msgid "Rivals"
-msgstr ""
-
-#: internal/gamesui/fortune.go:375
-msgid "Mika, Ren"
-msgstr ""
-
-#: internal/gamesui/fortune.go:375
-msgid "Mika, Ren, Sol"
-msgstr ""
-
-#: internal/gamesui/fortune.go:377
-msgid "Dice"
-msgstr ""
-
-#: internal/gamesui/fortune.go:377
-msgid "One die"
-msgstr ""
-
-#: internal/gamesui/fortune.go:377
-msgid "Two dice"
-msgstr ""
-
-#: internal/gamesui/fortune.go:378
-msgid "Build the day you buy"
-msgstr ""
-
-#: internal/gamesui/fortune.go:392
-msgid "A street you buy may go up a level that same turn"
-msgstr ""
-
-#: internal/gamesui/fortune.go:396
-msgid "On the network"
-msgstr ""
-
-#: internal/gamesui/fortune.go:411
-msgid "Others on this network join from a browser; you may play or only host"
-msgstr ""
-
-#: internal/gamesui/fortune.go:461
-msgid "Open the game to the network"
-msgstr ""
-
-#: internal/gamesui/fortune.go:463
-msgid "Start in %s"
-msgstr ""
-
-#: internal/gamesui/fortune.go:862
+#: internal/gamesui/fortune.go:322
+#: internal/gamesui/fortune.go:1140
 #: ui/game.ui:76
 msgid "New game"
 msgstr ""
 
-#: internal/gamesui/fortune.go:875
+#: internal/gamesui/fortune.go:412
+msgid "Hot seat"
+msgstr ""
+
+#: internal/gamesui/fortune.go:416
+#: internal/gamesui/fortune_ai.go:199
+#: ui/settings.ui:1928
+msgid "AI"
+msgstr ""
+
+#: internal/gamesui/fortune.go:416
+#: internal/gamesui/fortune.go:653
+msgid "Open seat"
+msgstr ""
+
+#: internal/gamesui/fortune.go:468
+msgid "On the network"
+msgstr ""
+
+#: internal/gamesui/fortune.go:473
+msgid "MAP"
+msgstr ""
+
+#: internal/gamesui/fortune.go:529
+msgid "Rounds"
+msgstr ""
+
+#: internal/gamesui/fortune.go:530
+msgid "Starting money"
+msgstr ""
+
+#: internal/gamesui/fortune.go:531
+msgid "Dice"
+msgstr ""
+
+#: internal/gamesui/fortune.go:531
+msgid "One die"
+msgstr ""
+
+#: internal/gamesui/fortune.go:531
+msgid "Two dice"
+msgstr ""
+
+#: internal/gamesui/fortune.go:536
+msgid "Build the day you buy"
+msgstr ""
+
+#: internal/gamesui/fortune.go:562
+msgid "%s and %s"
+msgstr ""
+
+#: internal/gamesui/fortune.go:641
+#: internal/gamesui/fortune_host.go:130
+msgid "at this screen"
+msgstr ""
+
+#: internal/gamesui/fortune.go:654
+msgid "empty: no one plays here"
+msgstr ""
+
+#: internal/gamesui/fortune.go:656
+msgid "for a visitor in a browser"
+msgstr ""
+
+#: internal/gamesui/fortune.go:723
+msgid "Open the game to the network"
+msgstr ""
+
+#: internal/gamesui/fortune.go:725
+msgid "Start in %s"
+msgstr ""
+
+#: internal/gamesui/fortune.go:1145
+msgid "%s is thinking…"
+msgstr ""
+
+#: internal/gamesui/fortune.go:1156
 msgid "Pay $50 bail"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:80
+#: internal/ui/settings_bench.go:217
+msgid "inua-assistant is not installed"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:113
+msgid "the AI picked the wrong option"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:143
+msgid "the AI did not answer in time"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:156
+#: internal/gamesui/fortune_ai.go:162
+msgid "checking the AI…"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:164
+msgid "this profile did not answer"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:172
+msgid "the AI: %s"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:202
+msgid "AI %d"
+msgstr ""
+
+#: internal/gamesui/fortune_ai.go:216
+msgid "The profile of Settings → AI this player asks"
 msgstr ""
 
 #: internal/gamesui/fortune_board.go:890
@@ -6634,11 +6828,11 @@ msgstr ""
 msgid "GO TO\nJAIL"
 msgstr ""
 
-#: internal/gamesui/fortune_board.go:1102
+#: internal/gamesui/fortune_board.go:1105
 msgid "Press N or Space for a new game"
 msgstr ""
 
-#: internal/gamesui/fortune_board.go:1138
+#: internal/gamesui/fortune_board.go:1141
 msgid "%s · sound off"
 msgstr ""
 
@@ -6674,88 +6868,83 @@ msgstr ""
 msgid "palazzi"
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:55
+#: internal/gamesui/fortune_host.go:62
 msgid "The game could not open to the network: %v"
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:83
+#: internal/gamesui/fortune_host.go:90
 msgid "Host"
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:123
-msgid "at this screen"
-msgstr ""
-
-#: internal/gamesui/fortune_host.go:127
+#: internal/gamesui/fortune_host.go:134
 msgid "Send away"
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:133
+#: internal/gamesui/fortune_host.go:140
 msgid "Waiting for visitors: open the link on a phone or a computer on the same network."
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:173
+#: internal/gamesui/fortune_host.go:180
 msgid "Others join from a browser"
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:224
+#: internal/gamesui/fortune_host.go:231
 msgid "Start the game"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:244
-msgid "The whole group: bare rent doubled, built rents half again."
+#: internal/gamesui/fortune_menu.go:25
+msgid "Game"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:246
-msgid "With the whole group: bare rent doubled, built rents half again."
+#: internal/gamesui/fortune_menu.go:43
+msgid "Restart game"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:259
-msgid "Group:"
+#: internal/gamesui/fortune_menu.go:44
+#: internal/gamesui/fortune_menu.go:103
+msgid "Compendium"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:263
-msgid "%d pier"
-msgid_plural "%d piers"
-msgstr[0] ""
-msgstr[1] ""
-
-#: internal/gamesui/fortune_panel.go:269
-msgid "× %d"
+#: internal/gamesui/fortune_menu.go:45
+msgid "Quit to menu"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:269
-msgid "%d utility"
-msgid_plural "%d utilities"
-msgstr[0] ""
-msgstr[1] ""
-
-#: internal/gamesui/fortune_panel.go:273
-msgid "Collect $%d every time you pass."
+#: internal/gamesui/fortune_menu.go:109
+#: ui/gpg.ui:633
+#: ui/settings.ui:4112
+msgid "Back"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:275
-msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
+#: internal/gamesui/fortune_menu.go:163
+msgid "CARDS"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:278
-msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
+#: internal/gamesui/fortune_menu.go:176
+msgid "Taxes and fines go into the fountain; the next player to land there takes them all."
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:280
-msgid "Straight to jail, without passing Start."
+#: internal/gamesui/fortune_menu.go:178
+msgid "Street"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:282
-msgid "Draw a card: money, a fine, a trip, or a card for your hand."
+#: internal/gamesui/fortune_menu.go:179
+msgid "Station or pier"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:284
-msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
+#: internal/gamesui/fortune_menu.go:180
+msgid "Utility"
 msgstr ""
 
-#: internal/gamesui/fortune_panel.go:286
-msgid "Pay $%d into the fountain."
+#: internal/gamesui/fortune_menu.go:211
+msgid "SQUARES"
+msgstr ""
+
+#: internal/gamesui/fortune_menu.go:236
+msgid "RIVALS"
+msgstr ""
+
+#: internal/gamesui/fortune_menu.go:242
+msgid "RULES"
 msgstr ""
 
 #: internal/gamesui/fortune_panel.go:474
@@ -7191,7 +7380,7 @@ msgid "Lock Screen"
 msgstr ""
 
 #: internal/shell/commands.go:27
-#: ui/settings.ui:3613
+#: ui/settings.ui:3723
 msgid "Lock now"
 msgstr ""
 
@@ -7204,8 +7393,8 @@ msgid "Suspend, locking first"
 msgstr ""
 
 #: internal/shell/commands.go:29
-#: internal/ui/control.go:479
-#: ui/control.ui:148
+#: internal/ui/control.go:482
+#: ui/control.ui:172
 msgid "Restart"
 msgstr ""
 
@@ -7305,7 +7494,7 @@ msgstr ""
 #: internal/shell/commands.go:40
 #: internal/ui/notify.go:850
 #: ui/center.ui:71
-#: ui/control.ui:411
+#: ui/control.ui:435
 msgid "Focus"
 msgstr ""
 
@@ -7427,7 +7616,8 @@ msgid "Capture an area, a window or a screen"
 msgstr ""
 
 #: internal/shell/dock.go:289
-#: internal/ui/vm.go:305
+#: internal/ui/vm.go:361
+#: internal/ui/vm.go:726
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 msgid "Windows VM"
@@ -7630,177 +7820,197 @@ msgstr ""
 msgid "Snooze"
 msgstr ""
 
-#: internal/ui/askpass.go:69
+#: internal/ui/askpass.go:72
 msgid "password: want one JSON request"
 msgstr ""
 
-#: internal/ui/askpass.go:111
+#: internal/ui/askpass.go:114
 msgid "not ok"
 msgstr ""
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Passphrase Required"
 msgstr ""
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Confirm"
 msgstr ""
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Message"
 msgstr ""
 
-#: internal/ui/askpass.go:228
+#: internal/ui/askpass.go:231
 msgid "Unlock OpenPGP Key"
 msgstr ""
 
-#: internal/ui/askpass.go:244
+#: internal/ui/askpass.go:247
 msgid "Passphrase"
 msgstr ""
 
-#: internal/ui/askpass.go:327
 #: internal/ui/askpass.go:330
+#: internal/ui/askpass.go:333
 #: internal/workshop/session.go:406
 msgid "Let %s do this?"
 msgstr ""
 
-#: internal/ui/askpass.go:328
+#: internal/ui/askpass.go:331
 msgid "The assistant needs this to answer you. Deny, and it will say it could not."
 msgstr ""
 
-#: internal/ui/askpass.go:331
+#: internal/ui/askpass.go:334
 msgid "An AI agent asks to use inua's tools on your desktop. Allow it once, or for the rest of its session."
 msgstr ""
 
-#: internal/ui/askpass.go:333
+#: internal/ui/askpass.go:336
+msgid "Let programs at this path read every secret?"
+msgstr ""
+
+#: internal/ui/askpass.go:337
+msgid "Any program at this path will read every secret without asking, even after it changes. Allow only if you just added it in Settings or with inua keyring allow, and only for a place you trust."
+msgstr ""
+
+#: internal/ui/askpass.go:339
 msgid "Trust the list of apps again?"
 msgstr ""
 
-#: internal/ui/askpass.go:334
+#: internal/ui/askpass.go:340
 msgid "The list of apps trusted with your secrets was changed outside inua-keyring. Trust it again only if you just asked for it in Settings: it lets %d app read secrets without asking."
 msgid_plural "The list of apps trusted with your secrets was changed outside inua-keyring. Trust it again only if you just asked for it in Settings: it lets %d apps read secrets without asking."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/askpass.go:337
+#: internal/ui/askpass.go:343
 msgid "%s has changed since you allowed it"
 msgstr ""
 
-#: internal/ui/askpass.go:338
+#: internal/ui/askpass.go:344
 msgid "Its program is not the one you allowed. If you did not update it, deny."
 msgstr ""
 
-#: internal/ui/askpass.go:340
+#: internal/ui/askpass.go:346
 msgid "Allow %s to read a secret?"
 msgstr ""
 
-#: internal/ui/askpass.go:341
+#: internal/ui/askpass.go:347
 msgid "It is not trusted with this secret yet. Always allow lets it read the secret from now on without asking."
 msgstr ""
 
-#: internal/ui/askpass.go:344
+#: internal/ui/askpass.go:350
 msgid "It can only be allowed once: %s."
 msgstr ""
 
-#: internal/ui/askpass.go:365
+#: internal/ui/askpass.go:360
+msgid "<span alpha='55%'>[</span>PATH<span alpha='55%'>]</span>"
+msgstr ""
+
+#: internal/ui/askpass.go:361
+msgid "PATH"
+msgstr ""
+
+#: internal/ui/askpass.go:379
 msgid "Changed since you allowed it"
 msgstr ""
 
-#: internal/ui/askpass.go:368
+#: internal/ui/askpass.go:382
 msgid "%s · as %s"
 msgstr ""
 
-#: internal/ui/askpass.go:384
+#: internal/ui/askpass.go:401
 msgid "Deny"
 msgstr ""
 
-#: internal/ui/askpass.go:385
-#: internal/ui/askpass.go:399
+#: internal/ui/askpass.go:402
+#: internal/ui/askpass.go:420
 msgid "Allow once"
 msgstr ""
 
-#: internal/ui/askpass.go:386
+#: internal/ui/askpass.go:403
 msgid "Always allow"
 msgstr ""
 
-#: internal/ui/askpass.go:393
+#: internal/ui/askpass.go:410
 msgid "Allow for this session"
 msgstr ""
 
-#: internal/ui/askpass.go:396
+#: internal/ui/askpass.go:413
 msgid "Trust"
 msgstr ""
 
-#: internal/ui/askpass.go:415
+#: internal/ui/askpass.go:417
+msgid "Allow every secret"
+msgstr ""
+
+#: internal/ui/askpass.go:436
 msgid "Enter the passphrase so inua-keyring can give %s its secret."
 msgstr ""
 
-#: internal/ui/askpass.go:417
+#: internal/ui/askpass.go:438
 msgid "Enter the passphrase so %s can use this key."
 msgstr ""
 
-#: internal/ui/askpass.go:419
+#: internal/ui/askpass.go:440
 msgid "Enter the passphrase to use this key."
 msgstr ""
 
-#: internal/ui/askpass.go:431
+#: internal/ui/askpass.go:452
 msgid "%s · expired %s"
 msgstr ""
 
-#: internal/ui/askpass.go:433
+#: internal/ui/askpass.go:454
 msgid "%s · expires %s"
 msgstr ""
 
-#: internal/ui/askpass.go:448
+#: internal/ui/askpass.go:469
 #: ui/polkit.ui:566
 msgid "FOR"
 msgstr ""
 
-#: internal/ui/askpass.go:450
+#: internal/ui/askpass.go:471
 msgid "SECRET"
 msgstr ""
 
-#: internal/ui/askpass.go:453
+#: internal/ui/askpass.go:474
 msgid "ACTION"
 msgstr ""
 
-#: internal/ui/askpass.go:535
+#: internal/ui/askpass.go:556
 msgid "Encryption subkey"
 msgstr ""
 
-#: internal/ui/askpass.go:537
+#: internal/ui/askpass.go:558
 msgid "Signing subkey"
 msgstr ""
 
-#: internal/ui/askpass.go:539
+#: internal/ui/askpass.go:560
 msgid "Authentication subkey"
 msgstr ""
 
-#: internal/ui/askpass.go:541
+#: internal/ui/askpass.go:562
 msgid "Subkey"
 msgstr ""
 
-#: internal/ui/askpass.go:543
+#: internal/ui/askpass.go:564
 msgid "Primary key"
 msgstr ""
 
-#: internal/ui/askpass.go:590
+#: internal/ui/askpass.go:611
 msgid "Show the private details (Ctrl+H)"
 msgstr ""
 
-#: internal/ui/askpass.go:593
+#: internal/ui/askpass.go:614
 msgid "Hide the private details: the key's owner, its fingerprint and the pass entry (Ctrl+H)"
 msgstr ""
 
-#: internal/ui/askpass.go:652
+#: internal/ui/askpass.go:673
 msgid "Hidden while the screen is being recorded or shared."
 msgstr ""
 
-#: internal/ui/askpass.go:655
+#: internal/ui/askpass.go:676
 msgid "Hidden for the screenshot."
 msgstr ""
 
-#: internal/ui/askpass.go:702
+#: internal/ui/askpass.go:723
 msgid "The passphrases do not match."
 msgstr ""
 
@@ -7834,7 +8044,7 @@ msgid "Search clipboard history"
 msgstr ""
 
 #: internal/ui/clipboard.go:335
-#: ui/settings.ui:3065
+#: ui/settings.ui:3175
 msgid "Clipboard"
 msgstr ""
 
@@ -7886,34 +8096,43 @@ msgstr ""
 msgid "[COPIED %s]"
 msgstr ""
 
-#: internal/ui/control.go:277
+#: internal/ui/control.go:279
 msgid "inua control center"
 msgstr ""
 
-#: internal/ui/control.go:478
+#: internal/ui/control.go:480
 #: ui/control.ui:124
 msgid "Suspend"
 msgstr ""
 
-#: internal/ui/control.go:479
+#: internal/ui/control.go:481
+#: ui/control.ui:148
+msgid "Hibernate"
+msgstr ""
+
+#: internal/ui/control.go:481
+msgid "Hibernate?"
+msgstr ""
+
+#: internal/ui/control.go:482
 msgid "Restart?"
 msgstr ""
 
-#: internal/ui/control.go:480
-#: ui/control.ui:172
+#: internal/ui/control.go:483
+#: ui/control.ui:196
 msgid "Shut down"
 msgstr ""
 
-#: internal/ui/control.go:480
+#: internal/ui/control.go:483
 msgid "Shut down?"
 msgstr ""
 
-#: internal/ui/control.go:481
-#: ui/control.ui:196
+#: internal/ui/control.go:484
+#: ui/control.ui:220
 msgid "Log out"
 msgstr ""
 
-#: internal/ui/control.go:481
+#: internal/ui/control.go:484
 msgid "Log out?"
 msgstr ""
 
@@ -7933,16 +8152,16 @@ msgstr ""
 msgid "Quit (%d windows)"
 msgstr ""
 
-#: internal/ui/drawer.go:235
+#: internal/ui/drawer.go:238
 #: ui/settings.ui:1756
 msgid "Apps"
 msgstr ""
 
-#: internal/ui/drawer.go:238
+#: internal/ui/drawer.go:241
 msgid "Workshop apps"
 msgstr ""
 
-#: internal/ui/drawer.go:339
+#: internal/ui/drawer.go:342
 msgid "The light apps are not installed (make install)."
 msgstr ""
 
@@ -7984,7 +8203,7 @@ msgstr ""
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr ""
 
-#: internal/ui/launcher.go:286
+#: internal/ui/launcher.go:302
 msgid "inua launcher"
 msgstr ""
 
@@ -8007,7 +8226,7 @@ msgstr ""
 
 #: internal/ui/lock.go:269
 #: internal/ui/polkit.go:294
-#: internal/ui/settings_about.go:144
+#: internal/ui/settings_about.go:153
 msgid "Checking…"
 msgstr ""
 
@@ -8017,7 +8236,7 @@ msgstr ""
 
 #: internal/ui/notify.go:318
 #: ui/bar.ui:122
-#: ui/settings.ui:2801
+#: ui/settings.ui:2911
 msgid "Notifications"
 msgstr ""
 
@@ -8230,313 +8449,417 @@ msgstr ""
 msgid "Screenshot taken"
 msgstr ""
 
-#: internal/ui/settings.go:252
+#: internal/ui/settings.go:253
 msgid "Not restarted: %s"
 msgstr ""
 
-#: internal/ui/settings.go:270
-#: internal/ui/settings.go:646
-#: internal/ui/settings.go:663
+#: internal/ui/settings.go:271
+#: internal/ui/settings.go:650
+#: internal/ui/settings.go:667
 msgid "%d%%"
 msgstr ""
 
-#: internal/ui/settings.go:626
+#: internal/ui/settings.go:630
 #: ui/settings.ui:384
 msgid "Phosphor"
 msgstr ""
 
-#: internal/ui/settings.go:626
+#: internal/ui/settings.go:630
 #: ui/settings.ui:385
 msgid "System theme"
 msgstr ""
 
-#: internal/ui/settings.go:699
+#: internal/ui/settings.go:703
 msgid "%s (%s, %s) · %s"
 msgstr ""
 
-#: internal/ui/settings.go:701
+#: internal/ui/settings.go:705
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings.go:702
+#: internal/ui/settings.go:706
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings.go:703
+#: internal/ui/settings.go:707
 msgid "%.1f KB"
 msgstr ""
 
-#: internal/ui/settings.go:782
+#: internal/ui/settings.go:786
 #: internal/ui/settings_apps.go:168
 msgid "Not saved: %s"
 msgstr ""
 
-#: internal/ui/settings.go:808
+#: internal/ui/settings.go:812
 msgid "Choose a wallpaper"
 msgstr ""
 
-#: internal/ui/settings.go:850
+#: internal/ui/settings.go:854
 msgid "Off: another notification daemon can show them"
 msgstr ""
 
-#: internal/ui/settings.go:852
+#: internal/ui/settings.go:856
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr ""
 
-#: internal/ui/settings.go:854
+#: internal/ui/settings.go:858
 msgid "Waiting: another notification daemon is running"
 msgstr ""
 
-#: internal/ui/settings.go:872
+#: internal/ui/settings.go:876
 msgid "Nothing pinned"
 msgstr ""
 
-#: internal/ui/settings.go:888
+#: internal/ui/settings.go:892
 msgid "%s (not installed)"
 msgstr ""
 
-#: internal/ui/settings.go:901
+#: internal/ui/settings.go:905
 msgid "Move earlier"
 msgstr ""
 
-#: internal/ui/settings.go:902
+#: internal/ui/settings.go:906
 msgid "Move later"
 msgstr ""
 
-#: internal/ui/settings.go:903
+#: internal/ui/settings.go:907
 msgid "Remove from the dock"
 msgstr ""
 
-#: internal/ui/settings_about.go:132
+#: internal/ui/settings_about.go:141
 msgid "inua %s, built from source"
 msgstr ""
 
-#: internal/ui/settings_about.go:139
+#: internal/ui/settings_about.go:148
 msgid "Upgrade to %s"
 msgstr ""
 
-#: internal/ui/settings_about.go:142
+#: internal/ui/settings_about.go:151
 msgid "Upgrading… the shell restarts on the new version"
 msgstr ""
 
-#: internal/ui/settings_about.go:148
+#: internal/ui/settings_about.go:157
 msgid "Could not reach GitHub: %s"
 msgstr ""
 
-#: internal/ui/settings_about.go:150
+#: internal/ui/settings_about.go:159
 msgid "Not checked yet"
 msgstr ""
 
-#: internal/ui/settings_about.go:152
+#: internal/ui/settings_about.go:161
 msgid "The latest release is %s; this version cannot be compared with it"
 msgstr ""
 
-#: internal/ui/settings_about.go:154
+#: internal/ui/settings_about.go:163
 msgid "inua %s is out; upgrading replaces this build from source"
 msgstr ""
 
-#: internal/ui/settings_about.go:156
+#: internal/ui/settings_about.go:165
 #: internal/ui/updates.go:90
 msgid "inua %s is out"
 msgstr ""
 
-#: internal/ui/settings_about.go:158
+#: internal/ui/settings_about.go:167
 msgid "Up to date: %s is the latest release (checked %s)"
 msgstr ""
 
-#: internal/ui/settings_about.go:160
+#: internal/ui/settings_about.go:169
 msgid "Newer than the latest release, %s"
 msgstr ""
 
-#: internal/ui/settings_about.go:170
+#: internal/ui/settings_about.go:179
 msgid "Shown once the releases are read"
 msgstr ""
 
-#: internal/ui/settings_about.go:172
+#: internal/ui/settings_about.go:181
 msgid "Reading the releases…"
 msgstr ""
 
-#: internal/ui/settings_about.go:193
+#: internal/ui/settings_about.go:202
 msgid "installed"
 msgstr ""
 
-#: internal/ui/settings_about.go:197
+#: internal/ui/settings_about.go:206
 msgid "On GitHub"
 msgstr ""
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Model default"
 msgstr ""
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Minimal"
 msgstr ""
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 #: ui/settings.ui:1415
 msgid "Medium"
 msgstr ""
 
-#: internal/ui/settings_ai.go:111
+#: internal/ui/settings_ai.go:156
 msgid "Keys typed here are kept in %s"
 msgstr ""
 
-#: internal/ui/settings_ai.go:150
+#: internal/ui/settings_ai.go:195
 msgid "key not moved"
 msgstr ""
 
-#: internal/ui/settings_ai.go:181
+#: internal/ui/settings_ai.go:226
 msgid "Use this URL and the token in Console. From another computer, use this desktop's reachable address."
 msgstr ""
 
-#: internal/ui/settings_ai.go:184
+#: internal/ui/settings_ai.go:229
 msgid "Turn on Assistant to serve this endpoint."
 msgstr ""
 
-#: internal/ui/settings_ai.go:186
+#: internal/ui/settings_ai.go:231
 msgid "HTTP serving is off. The assistant still runs in the background."
 msgstr ""
 
-#: internal/ui/settings_ai.go:188
+#: internal/ui/settings_ai.go:233
 msgid "Create a token to allow Console connections."
 msgstr ""
 
-#: internal/ui/settings_ai.go:195
+#: internal/ui/settings_ai.go:240
 msgid "Reading keyring…"
 msgstr ""
 
-#: internal/ui/settings_ai.go:197
+#: internal/ui/settings_ai.go:242
 msgid "Hide token"
 msgstr ""
 
-#: internal/ui/settings_ai.go:199
-#: ui/settings.ui:2469
+#: internal/ui/settings_ai.go:244
+#: ui/settings.ui:2515
 msgid "Create token"
 msgstr ""
 
-#: internal/ui/settings_ai.go:201
+#: internal/ui/settings_ai.go:246
 msgid "Show token"
 msgstr ""
 
-#: internal/ui/settings_ai.go:216
+#: internal/ui/settings_ai.go:257
+msgid "The one that answers"
+msgstr ""
+
+#: internal/ui/settings_ai.go:265
 msgid "Then, when it fails: %s"
 msgstr ""
 
-#: internal/ui/settings_ai.go:218
+#: internal/ui/settings_ai.go:267
 msgid "The profile asked first; turn on Fallback on others to try them when it fails"
 msgstr ""
 
-#: internal/ui/settings_ai.go:274
-msgid "Move up (fallbacks are tried in this order)"
-msgstr ""
-
-#: internal/ui/settings_ai.go:275
-msgid "Move down"
-msgstr ""
-
-#: internal/ui/settings_ai.go:276
-msgid "Remove this profile"
-msgstr ""
-
-#: internal/ui/settings_ai.go:299
+#: internal/ui/settings_ai.go:432
 msgid "a name: work, fast, local …"
 msgstr ""
 
-#: internal/ui/settings_ai.go:301
+#: internal/ui/settings_ai.go:434
 msgid "the model's ID"
 msgstr ""
 
-#: internal/ui/settings_ai.go:302
+#: internal/ui/settings_ai.go:435
 msgid "the provider's own"
 msgstr ""
 
-#: internal/ui/settings_ai.go:308
-#: internal/ui/settings_ai.go:407
+#: internal/ui/settings_ai.go:441
+#: internal/ui/settings_ai.go:682
 msgid "Paste a key, then Save"
 msgstr ""
 
-#: internal/ui/settings_ai.go:322
+#: internal/ui/settings_ai.go:454
 msgid "Provider"
 msgstr ""
 
-#: internal/ui/settings_ai.go:324
+#: internal/ui/settings_ai.go:460
+#: internal/ui/settings_ai.go:628
+msgid "List the provider's models"
+msgstr ""
+
+#: internal/ui/settings_ai.go:466
 msgid "Reasoning"
 msgstr ""
 
-#: internal/ui/settings_ai.go:325
+#: internal/ui/settings_ai.go:467
 msgid "Endpoint"
 msgstr ""
 
-#: internal/ui/settings_ai.go:329
+#: internal/ui/settings_ai.go:485
+msgid "Chat"
+msgstr ""
+
+#: internal/ui/settings_ai.go:486
+#: internal/ui/settings_keyring.go:322
+msgid "Decision"
+msgstr ""
+
+#: internal/ui/settings_ai.go:493
+msgid "Abilities"
+msgstr ""
+
+#: internal/ui/settings_ai.go:497
 msgid "Forget"
 msgstr ""
 
-#: internal/ui/settings_ai.go:337
+#: internal/ui/settings_ai.go:505
 msgid "API key"
 msgstr ""
 
-#: internal/ui/settings_ai.go:342
+#: internal/ui/settings_ai.go:508
 msgid "Fallback: answers when the profiles above it fail"
 msgstr ""
 
-#: internal/ui/settings_ai.go:384
+#: internal/ui/settings_ai.go:543
+#: internal/ui/settings_bench.go:115
+msgid "Benchmark"
+msgstr ""
+
+#: internal/ui/settings_ai.go:543
+msgid "Try the profile as inua uses it"
+msgstr ""
+
+#: internal/ui/settings_ai.go:547
+msgid "Move up (fallbacks are tried in this order)"
+msgstr ""
+
+#: internal/ui/settings_ai.go:548
+msgid "Move down"
+msgstr ""
+
+#: internal/ui/settings_ai.go:549
+msgid "Remove this profile"
+msgstr ""
+
+#: internal/ui/settings_ai.go:618
+msgid "This provider makes quick choices only"
+msgstr ""
+
+#: internal/ui/settings_ai.go:620
+msgid "The profile that answers chats"
+msgstr ""
+
+#: internal/ui/settings_ai.go:626
+#: internal/ui/settings_ai.go:1119
+msgid "This provider does not list its models"
+msgstr ""
+
+#: internal/ui/settings_ai.go:640
 msgid "Answers first. "
 msgstr ""
 
-#: internal/ui/settings_ai.go:386
+#: internal/ui/settings_ai.go:642
 msgid "Fallback %d. "
 msgstr ""
 
-#: internal/ui/settings_ai.go:391
+#: internal/ui/settings_ai.go:645
+msgid "Makes the quick choices. "
+msgstr ""
+
+#: internal/ui/settings_ai.go:650
 msgid "The saved keys cannot be read: %s"
 msgstr ""
 
-#: internal/ui/settings_ai.go:393
+#: internal/ui/settings_ai.go:652
 msgid "Key saved"
 msgstr ""
 
-#: internal/ui/settings_ai.go:395
+#: internal/ui/settings_ai.go:654
 msgid "No key (a local server may want none)"
 msgstr ""
 
-#: internal/ui/settings_ai.go:397
+#: internal/ui/settings_ai.go:656
 msgid "No key yet: the assistant cannot answer"
 msgstr ""
 
-#: internal/ui/settings_ai.go:399
+#: internal/ui/settings_ai.go:658
 msgid "No key yet: this profile is skipped"
 msgstr ""
 
-#: internal/ui/settings_ai.go:405
-msgid "Saved; paste another to replace it"
+#: internal/ui/settings_ai.go:666
+msgid "Answers"
 msgstr ""
 
-#: internal/ui/settings_ai.go:566
-msgid "Command copied"
+#: internal/ui/settings_ai.go:668
+msgid "Fallback %d"
 msgstr ""
 
-#: internal/ui/settings_ai.go:573
-msgid "Endpoint URL copied"
-msgstr ""
-
-#: internal/ui/settings_ai.go:604
-msgid "No Console token. Create one first."
-msgstr ""
-
-#: internal/ui/settings_ai.go:609
-msgid "Token copied"
+#: internal/ui/settings_ai.go:671
+msgid "Quick choices"
 msgstr ""
 
 #: internal/ui/settings_ai.go:674
+msgid "No key"
+msgstr ""
+
+#: internal/ui/settings_ai.go:680
+msgid "Saved; paste another to replace it"
+msgstr ""
+
+#: internal/ui/settings_ai.go:886
+msgid "Command copied"
+msgstr ""
+
+#: internal/ui/settings_ai.go:893
+msgid "Endpoint URL copied"
+msgstr ""
+
+#: internal/ui/settings_ai.go:924
+msgid "No Console token. Create one first."
+msgstr ""
+
+#: internal/ui/settings_ai.go:929
+msgid "Token copied"
+msgstr ""
+
+#: internal/ui/settings_ai.go:1029
 msgid "key not removed"
 msgstr ""
 
-#: internal/ui/settings_ai.go:685
+#: internal/ui/settings_ai.go:1040
 msgid "key not saved"
+msgstr ""
+
+#: internal/ui/settings_ai.go:1051
+msgid "Chats and runs tasks with inua's tools. Also makes quick choices from a list, as the games' AI players do."
+msgstr ""
+
+#: internal/ui/settings_ai.go:1053
+msgid "Chats and runs tasks with inua's tools. The games' AI players do not use it."
+msgstr ""
+
+#: internal/ui/settings_ai.go:1055
+msgid "Makes only quick choices from a list (yes or no, one of a few), as the games' AI players do. It cannot chat or run tasks."
+msgstr ""
+
+#: internal/ui/settings_ai.go:1057
+msgid "Neither chats nor makes quick choices: inua does not use it."
+msgstr ""
+
+#: internal/ui/settings_ai.go:1067
+msgid "Search models"
+msgstr ""
+
+#: internal/ui/settings_ai.go:1097
+msgid "Listing models…"
+msgstr ""
+
+#: internal/ui/settings_ai.go:1121
+msgid "Type the server's endpoint first."
+msgstr ""
+
+#: internal/ui/settings_ai.go:1123
+msgid "Cannot list the models: %s"
+msgstr ""
+
+#: internal/ui/settings_ai.go:1125
+msgid "The provider lists no models."
+msgstr ""
+
+#: internal/ui/settings_ai.go:1161
+msgid "No model matches."
 msgstr ""
 
 #: internal/ui/settings_apps.go:88
@@ -8545,6 +8868,68 @@ msgstr ""
 
 #: internal/ui/settings_apps.go:110
 msgid "%s (inua)"
+msgstr ""
+
+#: internal/ui/settings_bench.go:73
+msgid "Text reply"
+msgstr ""
+
+#: internal/ui/settings_bench.go:73
+msgid "The model answered"
+msgstr ""
+
+#: internal/ui/settings_bench.go:73
+msgid "The model did not answer"
+msgstr ""
+
+#: internal/ui/settings_bench.go:75
+msgid "Tool calling"
+msgstr ""
+
+#: internal/ui/settings_bench.go:75
+msgid "The model can call tools"
+msgstr ""
+
+#: internal/ui/settings_bench.go:75
+msgid "The model did not call the tool"
+msgstr ""
+
+#: internal/ui/settings_bench.go:77
+msgid "Quick choice (decision route)"
+msgstr ""
+
+#: internal/ui/settings_bench.go:77
+msgid "The model picks from a list"
+msgstr ""
+
+#: internal/ui/settings_bench.go:77
+msgid "The model did not pick the right option"
+msgstr ""
+
+#: internal/ui/settings_bench.go:137
+#: internal/ui/settings_bench.go:204
+msgid "Run again"
+msgstr ""
+
+#: internal/ui/settings_bench.go:187
+#: internal/ui/settings_bench.go:332
+msgid "Running…"
+msgstr ""
+
+#: internal/ui/settings_bench.go:296
+msgid "Show what the model answered"
+msgstr ""
+
+#: internal/ui/settings_bench.go:347
+msgid "Passed"
+msgstr ""
+
+#: internal/ui/settings_bench.go:350
+msgid "Failed"
+msgstr ""
+
+#: internal/ui/settings_bench.go:363
+msgid "No answer"
 msgstr ""
 
 #: internal/ui/settings_custom.go:74
@@ -8576,209 +8961,235 @@ msgid "Not added: the folder has no SVG files"
 msgstr ""
 
 #: internal/ui/settings_custom.go:165
+#: internal/ui/settings_keyring.go:181
 msgid "Not added: %s"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:197
-#: ui/settings.ui:4137
+#: internal/ui/settings_keyring.go:176
+msgid "Cannot reach inua-keyring"
+msgstr ""
+
+#: internal/ui/settings_keyring.go:183
+msgid "Not added: you said no."
+msgstr ""
+
+#: internal/ui/settings_keyring.go:185
+msgid "Added %s."
+msgstr ""
+
+#: internal/ui/settings_keyring.go:270
+#: ui/settings.ui:4400
 msgid "<span alpha='55%'>[</span>READ<span alpha='55%'>]</span>"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:199
+#: internal/ui/settings_keyring.go:272
 msgid "<span alpha='55%'>[</span>PASSPHRASE<span alpha='55%'>]</span>"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:219
+#: internal/ui/settings_keyring.go:293
 msgid "Not in pass: the session keyring is kept in memory"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:221
+#: internal/ui/settings_keyring.go:295
 msgid "Not recorded"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:227
+#: internal/ui/settings_keyring.go:301
 msgid "%d reads, %s to %s"
 msgid_plural "%d reads, %s to %s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings_keyring.go:229
+#: internal/ui/settings_keyring.go:303
 msgid "Not known"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:232
-#: internal/ui/settings_keyring.go:392
-#: internal/ui/settings_keyring.go:399
+#: internal/ui/settings_keyring.go:306
+#: internal/ui/settings_keyring.go:467
+#: internal/ui/settings_keyring.go:474
 msgid "pid %d"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:234
+#: internal/ui/settings_keyring.go:308
 msgid "pid %d, still running"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:236
+#: internal/ui/settings_keyring.go:310
 msgid "pid %d, ended"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:238
+#: internal/ui/settings_keyring.go:312
 msgid "Secret"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:240
+#: internal/ui/settings_keyring.go:314
 msgid "For"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:247
+#: internal/ui/settings_keyring.go:321
 msgid "Answer"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:248
-msgid "Decision"
-msgstr ""
-
-#: internal/ui/settings_keyring.go:249
+#: internal/ui/settings_keyring.go:323
 msgid "In pass"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:251
+#: internal/ui/settings_keyring.go:325
 msgid "App"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:253
+#: internal/ui/settings_keyring.go:327
 msgid "Command line"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:254
+#: internal/ui/settings_keyring.go:328
 msgid "Runs under"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:255
+#: internal/ui/settings_keyring.go:329
 msgid "Process"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:256
+#: internal/ui/settings_keyring.go:330
 msgid "Bus name"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:257
+#: internal/ui/settings_keyring.go:331
 msgid "When"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:272
+#: internal/ui/settings_keyring.go:346
 msgid "Entered"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:274
+#: internal/ui/settings_keyring.go:348
 msgid "cancelled"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:276
+#: internal/ui/settings_keyring.go:350
 msgid "the dialog could not be shown"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:309
+#: internal/ui/settings_keyring.go:383
 msgid "Looking…"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:312
+#: internal/ui/settings_keyring.go:386
 msgid "Cannot reach the session bus"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:313
+#: internal/ui/settings_keyring.go:387
 msgid "inua-keyring is not running"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:317
+#: internal/ui/settings_keyring.go:391
 msgid "%s serves it, keeping the secrets in pass"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:320
+#: internal/ui/settings_keyring.go:394
 msgid "Locked: the next read decrypts with gpg, which may ask for your passphrase"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:322
+#: internal/ui/settings_keyring.go:396
 msgid "Kept in protected memory since the first read, so reads ask for nothing"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:326
+#: internal/ui/settings_keyring.go:400
 msgid "%s serves it, not inua-keyring; inua keyring replace switches"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:328
+#: internal/ui/settings_keyring.go:402
 msgid "No one serves it now; D-Bus starts it on the first request"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:347
+#: internal/ui/settings_keyring.go:422
 msgid "The record of reads cannot be read: %s"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:349
-#: ui/settings.ui:3929
+#: internal/ui/settings_keyring.go:424
+#: ui/settings.ui:4039
 msgid "No app has read a secret yet."
 msgstr ""
 
-#: internal/ui/settings_keyring.go:370
+#: internal/ui/settings_keyring.go:445
 msgid "%s read “%s”"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:372
+#: internal/ui/settings_keyring.go:447
 msgid "%s was denied “%s”"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:375
+#: internal/ui/settings_keyring.go:450
 msgid "%s asked for the passphrase"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:397
+#: internal/ui/settings_keyring.go:472
 msgid "session keyring, in memory"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:405
+#: internal/ui/settings_keyring.go:480
 msgid "%s · %d times in a row"
 msgid_plural "%s · %d times in a row"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings_keyring.go:423
+#: internal/ui/settings_keyring.go:498
 msgid "Show the details"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:439
+#: internal/ui/settings_keyring.go:514
 msgid "It was changed outside inua-keyring, so every app is asked about until you trust it again. Look through it first."
 msgstr ""
 
-#: internal/ui/settings_keyring.go:441
+#: internal/ui/settings_keyring.go:516
 msgid "It cannot be read: %s. Every app is asked about."
 msgstr ""
 
-#: internal/ui/settings_keyring.go:477
+#: internal/ui/settings_keyring.go:553
 msgid "%s, trusted with %d secret"
 msgid_plural "%s, trusted with %d secrets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings_keyring.go:483
+#: internal/ui/settings_keyring.go:559
 msgid "Not trusted: changed outside inua-keyring. Every app is asked about."
 msgstr ""
 
-#: internal/ui/settings_keyring.go:485
+#: internal/ui/settings_keyring.go:561
 msgid "None yet: each app is asked about the first time it reads a secret"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:518
+#: internal/ui/settings_keyring.go:564
+msgid "%s · %d allowed path"
+msgid_plural "%s · %d allowed paths"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/ui/settings_keyring.go:570
+msgid "%d path"
+msgid_plural "%d paths"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/ui/settings_keyring.go:603
 msgid "No app is trusted yet: each app is asked about the first time it reads a secret."
 msgstr ""
 
-#: internal/ui/settings_keyring.go:520
+#: internal/ui/settings_keyring.go:605
 msgid "No trusted app matches “%s”."
 msgstr ""
 
-#: internal/ui/settings_keyring.go:531
+#: internal/ui/settings_keyring.go:616
 msgid "%s reads “%s”"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:555
+#: internal/ui/settings_keyring.go:640
+#: internal/ui/settings_keyring.go:674
 msgid "since %s"
+msgstr ""
+
+#: internal/ui/settings_keyring.go:683
+msgid "Stop allowing it: its programs are asked about again"
 msgstr ""
 
 #: internal/ui/shortcuts.go:88
@@ -8843,7 +9254,7 @@ msgid "%s Upgrade with: inua upgrade"
 msgstr ""
 
 #: internal/ui/updates.go:99
-#: ui/settings.ui:5200
+#: ui/settings.ui:5463
 msgid "Upgrade"
 msgstr ""
 
@@ -8864,153 +9275,185 @@ msgstr ""
 msgid "Could not upgrade: %s"
 msgstr ""
 
-#: internal/ui/vm.go:231
+#: internal/ui/vm.go:280
 msgid "Confirm remove"
 msgstr ""
 
-#: internal/ui/vm.go:240
+#: internal/ui/vm.go:292
 msgid "Confirm delete"
 msgstr ""
 
-#: internal/ui/vm.go:273
+#: internal/ui/vm.go:299
+#: ui/vm.ui:547
+msgid "Delete disk"
+msgstr ""
+
+#: internal/ui/vm.go:329
 msgid "The fix did not work: %v"
 msgstr ""
 
-#: internal/ui/vm.go:278
+#: internal/ui/vm.go:334
 msgid "Done. Log out and back in for it to take effect."
 msgstr ""
 
-#: internal/ui/vm.go:281
+#: internal/ui/vm.go:337
 msgid "Done."
 msgstr ""
 
-#: internal/ui/vm.go:296
+#: internal/ui/vm.go:352
 msgid "Log out to finish"
 msgstr ""
 
-#: internal/ui/vm.go:297
+#: internal/ui/vm.go:353
 msgid "The change takes effect the next time you log in."
 msgstr ""
 
-#: internal/ui/vm.go:312
+#: internal/ui/vm.go:368
 msgid "Log out now"
 msgstr ""
 
-#: internal/ui/vm.go:390
+#: internal/ui/vm.go:468
 msgid "Fix"
 msgstr ""
 
-#: internal/ui/vm.go:392
+#: internal/ui/vm.go:470
 msgid "Add me to %s"
 msgstr ""
 
-#: internal/ui/vm.go:444
+#: internal/ui/vm.go:504
+msgid "Start inua-keyring, or install a Secret Service."
+msgstr ""
+
+#: internal/ui/vm.go:507
+msgid "Windows VM needs NixOS, Ubuntu or Debian."
+msgstr ""
+
+#: internal/ui/vm.go:539
+msgid "Add %s to your NixOS configuration."
+msgstr ""
+
+#: internal/ui/vm.go:551
 msgid "Operating system"
 msgstr ""
 
-#: internal/ui/vm.go:446
+#: internal/ui/vm.go:553
 msgid "Hardware virtualization (KVM)"
 msgstr ""
 
-#: internal/ui/vm.go:448
+#: internal/ui/vm.go:555
 msgid "Docker"
 msgstr ""
 
-#: internal/ui/vm.go:450
+#: internal/ui/vm.go:557
 msgid "Docker Compose v2"
 msgstr ""
 
-#: internal/ui/vm.go:452
+#: internal/ui/vm.go:559
 msgid "FreeRDP"
 msgstr ""
 
-#: internal/ui/vm.go:454
+#: internal/ui/vm.go:561
 msgid "Browser opener"
 msgstr ""
 
-#: internal/ui/vm.go:456
+#: internal/ui/vm.go:563
 msgid "Disk space"
 msgstr ""
 
-#: internal/ui/vm.go:458
+#: internal/ui/vm.go:565
 msgid "Network device (TUN)"
 msgstr ""
 
-#: internal/ui/vm.go:460
-#: ui/settings.ui:3556
+#: internal/ui/vm.go:567
+#: ui/settings.ui:3666
 msgid "Secret Service"
 msgstr ""
 
-#: internal/ui/vm.go:469
+#: internal/ui/vm.go:576
 msgid "Not installed on this system."
 msgstr ""
 
-#: internal/ui/vm.go:471
+#: internal/ui/vm.go:578
 msgid "Installed, but your user may not use it."
 msgstr ""
 
-#: internal/ui/vm.go:473
+#: internal/ui/vm.go:580
 msgid "Installed, but not running."
 msgstr ""
 
-#: internal/ui/vm.go:475
+#: internal/ui/vm.go:582
 msgid "This Linux distribution is not supported."
 msgstr ""
 
-#: internal/ui/vm.go:477
+#: internal/ui/vm.go:584
 msgid "Could not be checked."
 msgstr ""
 
-#: internal/ui/vm.go:491
+#: internal/ui/vm.go:602
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr ""
 
-#: internal/ui/vm.go:506
-msgid "Stopping…"
+#: internal/ui/vm.go:604
+msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
 msgstr ""
 
-#: internal/ui/vm.go:508
+#: internal/ui/vm.go:606
+#: ui/vm.ui:447
+msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
+msgstr ""
+
+#: internal/ui/vm.go:630
 msgid "Windows is installing; this takes a while."
 msgstr ""
 
-#: internal/ui/vm.go:510
-msgid "Starting the guest…"
+#: internal/ui/vm.go:632
+#: internal/ui/vm.go:675
+msgid "Stopping…"
 msgstr ""
 
-#: internal/ui/vm.go:550
-msgid "Something went wrong"
+#: internal/ui/vm.go:634
+msgid "The installation is paused. Continue to resume."
 msgstr ""
 
-#: internal/ui/vm.go:554
+#: internal/ui/vm.go:677
+msgid "Windows is starting; ready in a minute or two."
+msgstr ""
+
+#: internal/ui/vm.go:702
 msgid "This system is missing something Windows needs"
 msgstr ""
 
-#: internal/ui/vm.go:556
+#: internal/ui/vm.go:705
+msgid "Files from a previous attempt are still here"
+msgstr ""
+
+#: internal/ui/vm.go:707
 msgid "Not installed yet"
 msgstr ""
 
-#: internal/ui/vm.go:559
+#: internal/ui/vm.go:710
+#: internal/ui/vm.go:718
 msgid "Stopping"
 msgstr ""
 
-#: internal/ui/vm.go:561
+#: internal/ui/vm.go:713
 msgid "Installing Windows"
 msgstr ""
 
-#: internal/ui/vm.go:565
+#: internal/ui/vm.go:715
+msgid "Installation paused"
+msgstr ""
+
+#: internal/ui/vm.go:720
+msgid "Windows is starting"
+msgstr ""
+
+#: internal/ui/vm.go:722
 msgid "Windows is running"
 msgstr ""
 
-#: internal/ui/vm.go:567
+#: internal/ui/vm.go:724
 msgid "Stopped"
-msgstr ""
-
-#: internal/ui/vm.go:569
-msgid "Failed"
-msgstr ""
-
-#: internal/ui/vm.go:571
-msgid "Ready"
 msgstr ""
 
 #: internal/viewerui/app.go:36
@@ -9401,34 +9844,34 @@ msgid "Screenshot an area"
 msgstr ""
 
 #: ui/control.ui:91
-msgid "Suspend, restart, shut down, log out"
+msgid "Suspend, hibernate, restart, shut down, log out"
 msgstr ""
 
-#: ui/control.ui:301
+#: ui/control.ui:325
 msgid "Bluetooth"
 msgstr ""
 
-#: ui/control.ui:359
+#: ui/control.ui:383
 msgid "Low Power"
 msgstr ""
 
-#: ui/control.ui:499
+#: ui/control.ui:523
 msgid "Open Tailscale"
 msgstr ""
 
-#: ui/control.ui:528
+#: ui/control.ui:552
 msgid "Display"
 msgstr ""
 
-#: ui/control.ui:590
+#: ui/control.ui:614
 msgid "Sound"
 msgstr ""
 
-#: ui/control.ui:618
+#: ui/control.ui:642
 msgid "Mute"
 msgstr ""
 
-#: ui/control.ui:658
+#: ui/control.ui:682
 msgid "Now playing"
 msgstr ""
 
@@ -9567,11 +10010,6 @@ msgstr ""
 
 #: ui/gpg.ui:572
 msgid "<span alpha='55%'>[</span>ENCRYPTED<span alpha='55%'>]</span>"
-msgstr ""
-
-#: ui/gpg.ui:633
-#: ui/settings.ui:4002
-msgid "Back"
 msgstr ""
 
 #: ui/gpg.ui:652
@@ -9963,7 +10401,7 @@ msgstr ""
 
 #: ui/settings.ui:173
 #: ui/settings.ui:431
-#: ui/settings.ui:4413
+#: ui/settings.ui:4676
 msgid "Add…"
 msgstr ""
 
@@ -10304,568 +10742,592 @@ msgstr ""
 msgid "Saved where other apps read them too: ~/.config/mimeapps.list, and for the terminal xdg-terminals.list and the launcher's terminal."
 msgstr ""
 
-#: ui/settings.ui:1928
-msgid "AI"
-msgstr ""
-
-#: ui/settings.ui:1966
+#: ui/settings.ui:1969
 msgid "<span alpha='55%'>[</span>ASSISTANT<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:1974
+#: ui/settings.ui:1977
 msgid "An agent with inua's tools, run by Mister Morph"
 msgstr ""
 
-#: ui/settings.ui:2013
+#: ui/settings.ui:2016
 msgid "Ask it from the launcher (the last row, or ? first) or open Assistant"
 msgstr ""
 
-#: ui/settings.ui:2047
+#: ui/settings.ui:2050
 msgid "Answers with"
 msgstr ""
 
-#: ui/settings.ui:2056
+#: ui/settings.ui:2059
 msgid "The profile asked first; the assistant's window can switch for a conversation"
 msgstr ""
 
-#: ui/settings.ui:2090
-#: ui/settings.ui:2631
+#: ui/settings.ui:2093
+msgid "Quick choices with"
+msgstr ""
+
+#: ui/settings.ui:2102
+msgid "The profile that picks from a fixed list, as an AI player in the games does"
+msgstr ""
+
+#: ui/settings.ui:2136
+#: ui/settings.ui:2677
 msgid "Ask before changes"
 msgstr ""
 
-#: ui/settings.ui:2099
+#: ui/settings.ui:2145
 msgid "Wi-Fi, volume, windows, the clipboard …; power, ending processes and closing windows always ask"
 msgstr ""
 
-#: ui/settings.ui:2133
+#: ui/settings.ui:2179
 msgid "Search the web"
 msgstr ""
 
-#: ui/settings.ui:2142
+#: ui/settings.ui:2188
 msgid "Mister Morph's web search and page reading"
 msgstr ""
 
-#: ui/settings.ui:2176
+#: ui/settings.ui:2222
 msgid "Read files"
 msgstr ""
 
-#: ui/settings.ui:2185
+#: ui/settings.ui:2231
 msgid "Any file you can read; asks each time"
 msgstr ""
 
-#: ui/settings.ui:2219
+#: ui/settings.ui:2265
 msgid "Run commands"
 msgstr ""
 
-#: ui/settings.ui:2228
+#: ui/settings.ui:2274
 msgid "A shell, as you; asks each time"
 msgstr ""
 
-#: ui/settings.ui:2273
+#: ui/settings.ui:2319
 msgid "<span alpha='55%'>[</span>CONSOLE ENDPOINT<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:2281
+#: ui/settings.ui:2327
 msgid "Connect other Consoles to this desktop"
 msgstr ""
 
-#: ui/settings.ui:2311
-#: ui/settings.ui:2330
+#: ui/settings.ui:2357
+#: ui/settings.ui:2376
 msgid "Serve endpoint"
 msgstr ""
 
-#: ui/settings.ui:2320
+#: ui/settings.ui:2366
 msgid "Allow Console connections; the assistant keeps running when this is off"
 msgstr ""
 
-#: ui/settings.ui:2355
+#: ui/settings.ui:2401
 msgid "Listen address"
 msgstr ""
 
-#: ui/settings.ui:2364
+#: ui/settings.ui:2410
 msgid "Host:port; kept when serving is off"
 msgstr ""
 
-#: ui/settings.ui:2375
+#: ui/settings.ui:2421
 msgid "Use host:port, with a port from 1 to 65535. For IPv6, use [address]:port."
 msgstr ""
 
-#: ui/settings.ui:2397
+#: ui/settings.ui:2443
 msgid "Endpoint URL"
 msgstr ""
 
-#: ui/settings.ui:2408
+#: ui/settings.ui:2454
 msgid "Set a listen address first"
 msgstr ""
 
-#: ui/settings.ui:2417
+#: ui/settings.ui:2463
 msgid "Copy URL"
 msgstr ""
 
-#: ui/settings.ui:2448
+#: ui/settings.ui:2494
 msgid "Access token"
 msgstr ""
 
-#: ui/settings.ui:2460
+#: ui/settings.ui:2506
 msgid "Token hidden"
 msgstr ""
 
-#: ui/settings.ui:2478
+#: ui/settings.ui:2524
 msgid "Copy token"
 msgstr ""
 
-#: ui/settings.ui:2488
+#: ui/settings.ui:2534
 msgid "Kept in the keyring (pass with inua-keyring). Creating or reading it may ask for your passphrase."
 msgstr ""
 
-#: ui/settings.ui:2525
+#: ui/settings.ui:2571
 msgid "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:2533
+#: ui/settings.ui:2579
 msgid "Let AI agents on this computer use inua's tools"
 msgstr ""
 
-#: ui/settings.ui:2563
-#: ui/settings.ui:2582
+#: ui/settings.ui:2609
+#: ui/settings.ui:2628
 msgid "MCP server"
 msgstr ""
 
-#: ui/settings.ui:2572
+#: ui/settings.ui:2618
 msgid "Agents such as Claude Code or Codex see the windows, open apps, change settings and more, through inua mcp. The assistant uses these tools either way."
 msgstr ""
 
-#: ui/settings.ui:2607
+#: ui/settings.ui:2653
 msgid "What agents may do"
 msgstr ""
 
-#: ui/settings.ui:2616
+#: ui/settings.ui:2662
 msgid "Closing windows, ending processes, power, the clipboard and notifications always ask"
 msgstr ""
 
-#: ui/settings.ui:2630
+#: ui/settings.ui:2676
 msgid "Look only"
 msgstr ""
 
-#: ui/settings.ui:2632
+#: ui/settings.ui:2678
 msgid "Change without asking"
 msgstr ""
 
-#: ui/settings.ui:2655
+#: ui/settings.ui:2701
 msgid "Connect an agent"
 msgstr ""
 
-#: ui/settings.ui:2685
+#: ui/settings.ui:2731
 msgid "Other agents: a stdio server that runs inua mcp. Each call is recorded; asking happens in inua's dialog."
 msgstr ""
 
-#: ui/settings.ui:2722
+#: ui/settings.ui:2768
 msgid "<span alpha='55%'>[</span>PROFILES<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:2730
+#: ui/settings.ui:2776
 msgid "The models it can use; fallbacks answer when the first fails"
 msgstr ""
 
-#: ui/settings.ui:2760
+#: ui/settings.ui:2806
 msgid "Add Profile"
 msgstr ""
 
-#: ui/settings.ui:2839
+#: ui/settings.ui:2949
 msgid "<span alpha='55%'>[</span>NOTIFICATIONS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:2847
+#: ui/settings.ui:2957
 msgid "Banners, then the notification center"
 msgstr ""
 
-#: ui/settings.ui:2877
+#: ui/settings.ui:2987
 msgid "Show notifications"
 msgstr ""
 
-#: ui/settings.ui:2919
+#: ui/settings.ui:3029
 msgid "Banner duration"
 msgstr ""
 
-#: ui/settings.ui:2928
+#: ui/settings.ui:3038
 msgid "How long a banner shows; critical ones stay"
 msgstr ""
 
-#: ui/settings.ui:2942
+#: ui/settings.ui:3052
 msgid "3 seconds"
 msgstr ""
 
-#: ui/settings.ui:2943
+#: ui/settings.ui:3053
 msgid "5 seconds"
 msgstr ""
 
-#: ui/settings.ui:2944
+#: ui/settings.ui:3054
 msgid "8 seconds"
 msgstr ""
 
-#: ui/settings.ui:2945
+#: ui/settings.ui:3055
 msgid "12 seconds"
 msgstr ""
 
-#: ui/settings.ui:2972
+#: ui/settings.ui:3082
 msgid "Critical during Focus"
 msgstr ""
 
-#: ui/settings.ui:2981
+#: ui/settings.ui:3091
 msgid "Critical notifications still show banners"
 msgstr ""
 
-#: ui/settings.ui:3015
+#: ui/settings.ui:3125
 msgid "Keep a history"
 msgstr ""
 
-#: ui/settings.ui:3024
+#: ui/settings.ui:3134
 msgid "The last 500 notifications, dismissed ones too, for the assistant, agents and workshop apps allowed to read them. Off clears it."
 msgstr ""
 
-#: ui/settings.ui:3103
+#: ui/settings.ui:3213
 msgid "<span alpha='55%'>[</span>CLIPBOARD<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:3111
+#: ui/settings.ui:3221
 msgid "History, panel appearance and pasting"
 msgstr ""
 
-#: ui/settings.ui:3141
+#: ui/settings.ui:3251
 msgid "Keep a clipboard history"
 msgstr ""
 
-#: ui/settings.ui:3150
+#: ui/settings.ui:3260
 msgid "Text and images you copy, kept on this computer; a password manager's copies are left out"
 msgstr ""
 
-#: ui/settings.ui:3180
+#: ui/settings.ui:3290
 msgid "Never record copies from"
 msgstr ""
 
-#: ui/settings.ui:3190
+#: ui/settings.ui:3300
 msgid "pass, keepassxc, …"
 msgstr ""
 
-#: ui/settings.ui:3198
+#: ui/settings.ui:3308
 msgid "Programs or window classes, separated by commas. The program that ran wl-copy and the focused window are checked; hover over an entry in the history to see where it came from"
 msgstr ""
 
-#: ui/settings.ui:3224
+#: ui/settings.ui:3334
 msgid "Show in top bar"
 msgstr ""
 
-#: ui/settings.ui:3233
+#: ui/settings.ui:3343
 msgid "A button in the status area opens the clipboard history"
 msgstr ""
 
-#: ui/settings.ui:3267
+#: ui/settings.ui:3377
 msgid "Paste on click"
 msgstr ""
 
-#: ui/settings.ui:3276
+#: ui/settings.ui:3386
 msgid "Clicking an entry pastes it into the window you were in; off only copies it"
 msgstr ""
 
-#: ui/settings.ui:3310
+#: ui/settings.ui:3420
 msgid "Panel opacity"
 msgstr ""
 
-#: ui/settings.ui:3361
+#: ui/settings.ui:3471
 msgid "History limit"
 msgstr ""
 
-#: ui/settings.ui:3370
+#: ui/settings.ui:3480
 msgid "How many entries it keeps; the oldest go first"
 msgstr ""
 
-#: ui/settings.ui:3404
+#: ui/settings.ui:3514
 msgid "History storage"
 msgstr ""
 
-#: ui/settings.ui:3413
+#: ui/settings.ui:3523
 msgid "Loading history…"
 msgstr ""
 
-#: ui/settings.ui:3426
+#: ui/settings.ui:3536
 msgid "Reveal in File Manager"
 msgstr ""
 
-#: ui/settings.ui:3437
+#: ui/settings.ui:3547
 msgid "Clear the history"
 msgstr ""
 
-#: ui/settings.ui:3518
+#: ui/settings.ui:3628
 msgid "<span alpha='55%'>[</span>KEYRING<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:3526
+#: ui/settings.ui:3636
 msgid "Apps' secrets: browsers' keys, Wi-Fi passwords, API keys"
 msgstr ""
 
-#: ui/settings.ui:3592
+#: ui/settings.ui:3702
 msgid "Unlocked secrets"
 msgstr ""
 
-#: ui/settings.ui:3638
+#: ui/settings.ui:3748
 msgid "Lock when unused"
 msgstr ""
 
-#: ui/settings.ui:3647
+#: ui/settings.ui:3757
 msgid "It locks with the screen and before suspend, and after this long without a read"
 msgstr ""
 
-#: ui/settings.ui:3662
+#: ui/settings.ui:3772
 msgid "5 minutes"
 msgstr ""
 
-#: ui/settings.ui:3663
+#: ui/settings.ui:3773
 msgid "15 minutes"
 msgstr ""
 
-#: ui/settings.ui:3664
+#: ui/settings.ui:3774
 msgid "30 minutes"
 msgstr ""
 
-#: ui/settings.ui:3665
+#: ui/settings.ui:3775
 msgid "1 hour"
 msgstr ""
 
-#: ui/settings.ui:3666
+#: ui/settings.ui:3776
 msgid "4 hours"
 msgstr ""
 
-#: ui/settings.ui:3693
+#: ui/settings.ui:3803
 msgid "With no one to ask"
 msgstr ""
 
-#: ui/settings.ui:3702
+#: ui/settings.ui:3812
 msgid "A read by an app not trusted with the secret, while the inua shell is not running"
 msgstr ""
 
-#: ui/settings.ui:3717
+#: ui/settings.ui:3827
 msgid "Denied"
 msgstr ""
 
-#: ui/settings.ui:3744
+#: ui/settings.ui:3854
 msgid "Tell when an app reads a secret"
 msgstr ""
 
-#: ui/settings.ui:3753
+#: ui/settings.ui:3863
 msgid "A notification for each app's first read since inua-keyring started"
 msgstr ""
 
-#: ui/settings.ui:3798
-#: ui/settings.ui:4012
+#: ui/settings.ui:3908
+#: ui/settings.ui:4122
 msgid "<span alpha='55%'>[</span>TRUSTED APPS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:3806
+#: ui/settings.ui:3916
 msgid "Apps that read a secret without asking; any other app is asked about first"
 msgstr ""
 
-#: ui/settings.ui:3842
+#: ui/settings.ui:3952
 msgid "Trusted apps"
 msgstr ""
 
-#: ui/settings.ui:3897
+#: ui/settings.ui:4007
 msgid "<span alpha='55%'>[</span>READS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:3905
+#: ui/settings.ui:4015
 msgid "Every secret inua-keyring handed out and passphrase asked for, newest first"
 msgstr ""
 
-#: ui/settings.ui:3951
+#: ui/settings.ui:4061
 msgid "Refresh"
 msgstr ""
 
-#: ui/settings.ui:4027
-msgid "Filter by app, program or secret"
-msgstr ""
-
-#: ui/settings.ui:4052
+#: ui/settings.ui:4155
 msgid "The list is not trusted"
 msgstr ""
 
-#: ui/settings.ui:4073
+#: ui/settings.ui:4176
 msgid "Trust this list again"
 msgstr ""
 
-#: ui/settings.ui:4181
+#: ui/settings.ui:4216
+msgid "<span alpha='55%'>[</span>ALLOWED PATHS<span alpha='55%'>]</span>"
+msgstr ""
+
+#: ui/settings.ui:4243
+msgid "Any program at one of these paths reads every secret without asking, even after it changes: for an app that updates every day. inua-keyring asks you before a path is added."
+msgstr ""
+
+#: ui/settings.ui:4263
+msgid "A path; * within a folder: ~/.local/share/app/versions/*"
+msgstr ""
+
+#: ui/settings.ui:4272
+msgid "Allow path"
+msgstr ""
+
+#: ui/settings.ui:4317
+msgid "<span alpha='55%'>[</span>APPS<span alpha='55%'>]</span>"
+msgstr ""
+
+#: ui/settings.ui:4332
+msgid "Filter by app, program or secret"
+msgstr ""
+
+#: ui/settings.ui:4444
 msgid "Shortcuts"
 msgstr ""
 
-#: ui/settings.ui:4211
+#: ui/settings.ui:4474
 msgid "Press the new shortcut. Esc cancels; Backspace turns it off."
 msgstr ""
 
-#: ui/settings.ui:4240
-#: ui/settings.ui:5099
+#: ui/settings.ui:4503
+#: ui/settings.ui:5362
 msgid "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4248
+#: ui/settings.ui:4511
 msgid "The shell's own actions"
 msgstr ""
 
-#: ui/settings.ui:4297
+#: ui/settings.ui:4560
 msgid "<span alpha='55%'>[</span>SCREENSHOTS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4305
+#: ui/settings.ui:4568
 msgid "With grim and slurp"
 msgstr ""
 
-#: ui/settings.ui:4354
+#: ui/settings.ui:4617
 msgid "<span alpha='55%'>[</span>CUSTOM<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4362
+#: ui/settings.ui:4625
 msgid "Your own commands"
 msgstr ""
 
-#: ui/settings.ui:4404
+#: ui/settings.ui:4667
 msgid "Command, e.g. kitty"
 msgstr ""
 
-#: ui/settings.ui:4414
+#: ui/settings.ui:4677
 msgid "Add, then press its shortcut"
 msgstr ""
 
-#: ui/settings.ui:4449
+#: ui/settings.ui:4712
 msgid "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4457
+#: ui/settings.ui:4720
 msgid "Other shortcuts, from hyprland.conf"
 msgstr ""
 
-#: ui/settings.ui:4502
+#: ui/settings.ui:4765
 msgid "Keyboard"
 msgstr ""
 
-#: ui/settings.ui:4550
+#: ui/settings.ui:4813
 msgid "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4558
+#: ui/settings.ui:4821
 msgid "Every keyboard"
 msgstr ""
 
-#: ui/settings.ui:4588
+#: ui/settings.ui:4851
 msgid "Swap Ctrl and Alt"
 msgstr ""
 
-#: ui/settings.ui:4597
+#: ui/settings.ui:4860
 msgid "Alt acts as Ctrl, and Ctrl as Alt"
 msgstr ""
 
-#: ui/settings.ui:4612
+#: ui/settings.ui:4875
 msgid "Left side"
 msgstr ""
 
-#: ui/settings.ui:4613
+#: ui/settings.ui:4876
 msgid "Both sides"
 msgstr ""
 
-#: ui/settings.ui:4640
-#: ui/settings.ui:4663
+#: ui/settings.ui:4903
+#: ui/settings.ui:4926
 msgid "Caps Lock"
 msgstr ""
 
-#: ui/settings.ui:4649
+#: ui/settings.ui:4912
 msgid "What the Caps Lock key does"
 msgstr ""
 
-#: ui/settings.ui:4664
+#: ui/settings.ui:4927
 msgid "Escape"
 msgstr ""
 
-#: ui/settings.ui:4665
+#: ui/settings.ui:4928
 msgid "Ctrl"
 msgstr ""
 
-#: ui/settings.ui:4703
-#: ui/settings.ui:4985
+#: ui/settings.ui:4966
+#: ui/settings.ui:5248
 msgid "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4711
-#: ui/settings.ui:4993
+#: ui/settings.ui:4974
+#: ui/settings.ui:5256
 msgid "inua writes these to Hyprland's inua.conf"
 msgstr ""
 
-#: ui/settings.ui:4762
-#: ui/settings.ui:5029
+#: ui/settings.ui:5025
+#: ui/settings.ui:5292
 msgid "Use hyprland.conf"
 msgstr ""
 
-#: ui/settings.ui:4763
+#: ui/settings.ui:5026
 msgid "Stop setting keyboard options in inua"
 msgstr ""
 
-#: ui/settings.ui:4794
+#: ui/settings.ui:5057
 msgid "Mouse & Touch"
 msgstr ""
 
-#: ui/settings.ui:4842
+#: ui/settings.ui:5105
 msgid "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:4850
+#: ui/settings.ui:5113
 msgid "Every touchpad"
 msgstr ""
 
-#: ui/settings.ui:4880
+#: ui/settings.ui:5143
 msgid "Pointer speed"
 msgstr ""
 
-#: ui/settings.ui:4931
+#: ui/settings.ui:5194
 msgid "Acceleration"
 msgstr ""
 
-#: ui/settings.ui:4940
+#: ui/settings.ui:5203
 msgid "Faster swipes move the pointer further"
 msgstr ""
 
-#: ui/settings.ui:5030
+#: ui/settings.ui:5293
 msgid "Stop setting the touchpad in inua"
 msgstr ""
 
-#: ui/settings.ui:5061
+#: ui/settings.ui:5324
 msgid "About"
 msgstr ""
 
-#: ui/settings.ui:5107
+#: ui/settings.ui:5370
 msgid "The version, and new releases"
 msgstr ""
 
-#: ui/settings.ui:5137
+#: ui/settings.ui:5400
 msgid "Version"
 msgstr ""
 
-#: ui/settings.ui:5173
+#: ui/settings.ui:5436
 msgid "Updates"
 msgstr ""
 
-#: ui/settings.ui:5209
+#: ui/settings.ui:5472
 msgid "Check for updates"
 msgstr ""
 
-#: ui/settings.ui:5235
+#: ui/settings.ui:5498
 msgid "Check every day"
 msgstr ""
 
-#: ui/settings.ui:5244
+#: ui/settings.ui:5507
 msgid "A notification says when a new release is out, with a button to upgrade"
 msgstr ""
 
-#: ui/settings.ui:5289
+#: ui/settings.ui:5552
 msgid "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:5297
+#: ui/settings.ui:5560
 msgid "What the latest release changed"
 msgstr ""
 
@@ -11032,7 +11494,8 @@ msgid "[HOST]"
 msgstr ""
 
 #: ui/vm.ui:159
-#: ui/vm.ui:687
+#: ui/vm.ui:1009
+#: ui/vm.ui:1445
 msgid "[GUEST]"
 msgstr ""
 
@@ -11053,111 +11516,149 @@ msgid "Set memory, CPU cores and disk size yourself."
 msgstr ""
 
 #: ui/vm.ui:284
-#: ui/vm.ui:718
+#: ui/vm.ui:1040
 msgid "Memory (MiB)"
 msgstr ""
 
-#: ui/vm.ui:317
-#: ui/vm.ui:766
+#: ui/vm.ui:318
+#: ui/vm.ui:1089
 msgid "CPU cores"
 msgstr ""
 
-#: ui/vm.ui:350
-#: ui/vm.ui:814
+#: ui/vm.ui:352
+#: ui/vm.ui:1138
 msgid "Disk size (GiB)"
 msgstr ""
 
-#: ui/vm.ui:385
-msgid "Save profile"
-msgstr ""
-
-#: ui/vm.ui:424
+#: ui/vm.ui:409
 msgid "[INSTALL]"
 msgstr ""
 
-#: ui/vm.ui:453
-msgid "Download and install Windows"
+#: ui/vm.ui:438
+#: ui/vm.ui:460
+msgid "Install Windows"
 msgstr ""
 
-#: ui/vm.ui:462
-msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
+#: ui/vm.ui:496
+msgid "[DISK]"
 msgstr ""
 
-#: ui/vm.ui:522
+#: ui/vm.ui:525
+msgid "Previous files"
+msgstr ""
+
+#: ui/vm.ui:534
+msgid "Permanently deletes leftover install files. Cannot be undone."
+msgstr ""
+
+#: ui/vm.ui:594
+#: ui/vm.ui:844
 msgid "[PROGRESS]"
 msgstr ""
 
-#: ui/vm.ui:574
+#: ui/vm.ui:646
 msgid "Watch the installation"
 msgstr ""
 
-#: ui/vm.ui:583
+#: ui/vm.ui:655
 msgid "The installer screen is in your browser."
 msgstr ""
 
-#: ui/vm.ui:595
+#: ui/vm.ui:667
+#: ui/vm.ui:918
+#: ui/vm.ui:1546
 msgid "Open web console"
 msgstr ""
 
-#: ui/vm.ui:617
+#: ui/vm.ui:689
+msgid "Continue installation"
+msgstr ""
+
+#: ui/vm.ui:698
+msgid "Starts the container; Windows installs itself inside it."
+msgstr ""
+
+#: ui/vm.ui:711
+msgid "Continue"
+msgstr ""
+
+#: ui/vm.ui:733
 msgid "Stop waiting"
 msgstr ""
 
-#: ui/vm.ui:626
+#: ui/vm.ui:742
 msgid "Stops the container; the disk is kept. Reopen to resume."
 msgstr ""
 
-#: ui/vm.ui:748
-#: ui/vm.ui:796
-msgid "Takes effect on next start."
+#: ui/vm.ui:777
+msgid "Abandon installation"
 msgstr ""
 
-#: ui/vm.ui:838
-msgid "Enlarging needs a manual partition resize inside Windows."
+#: ui/vm.ui:786
+msgid "Removes the project so you can start over. Downloaded files stay."
 msgstr ""
 
-#: ui/vm.ui:859
-msgid "Apply"
-msgstr ""
-
-#: ui/vm.ui:894
-msgid "[ACTIONS]"
-msgstr ""
-
-#: ui/vm.ui:932
-msgid "Starts the guest; ready in a minute or two."
-msgstr ""
-
-#: ui/vm.ui:975
-msgid "Opens FreeRDP."
-msgstr ""
-
-#: ui/vm.ui:990
+#: ui/vm.ui:896
+#: ui/vm.ui:1525
 msgid "Web console"
 msgstr ""
 
-#: ui/vm.ui:1033
+#: ui/vm.ui:905
+msgid "The guest screen is in your browser until RDP is ready."
+msgstr ""
+
+#: ui/vm.ui:949
+#: ui/vm.ui:1577
 msgid "Stops the guest; the disk is kept."
 msgstr ""
 
-#: ui/vm.ui:1080
-msgid "[REMOVE]"
-msgstr ""
-
-#: ui/vm.ui:1109
-msgid "Remove VM"
-msgstr ""
-
-#: ui/vm.ui:1118
-msgid "Deletes the container, project and password. The disk stays."
-msgstr ""
-
-#: ui/vm.ui:1153
-msgid "Delete disk data"
+#: ui/vm.ui:1071
+#: ui/vm.ui:1120
+msgid "Takes effect on next start."
 msgstr ""
 
 #: ui/vm.ui:1162
+msgid "Enlarging needs a manual partition resize inside Windows."
+msgstr ""
+
+#: ui/vm.ui:1183
+msgid "Apply"
+msgstr ""
+
+#: ui/vm.ui:1218
+msgid "[ACTIONS]"
+msgstr ""
+
+#: ui/vm.ui:1256
+msgid "Starts the guest; ready in a minute or two."
+msgstr ""
+
+#: ui/vm.ui:1303
+msgid "[REMOVE]"
+msgstr ""
+
+#: ui/vm.ui:1332
+msgid "Remove VM"
+msgstr ""
+
+#: ui/vm.ui:1341
+msgid "Deletes the container and project. The disk and its password stay."
+msgstr ""
+
+#: ui/vm.ui:1376
+msgid "Delete disk data"
+msgstr ""
+
+#: ui/vm.ui:1385
 msgid "Permanently deletes the Windows disk. Cannot be undone."
+msgstr ""
+
+#: ui/vm.ui:1491
+msgid "Opens FreeRDP."
+msgstr ""
+
+#: ui/vm.ui:1534
+msgid "The guest screen in the browser."
 msgstr ""
 
 #: ui/weather.ui:30

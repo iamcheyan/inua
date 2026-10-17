@@ -1,0 +1,443 @@
+package configutil
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+
+	"github.com/quailyquaily/mistermorph/internal/secref"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
+)
+
+// envVarRe matches only the ${NAME} form (not bare $NAME).
+// This avoids corrupting values like bcrypt hashes ($2a$10$...) or
+// regex patterns that contain literal dollar signs.
+var envVarRe = regexp.MustCompile(`\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}`)
+
+// ScalarReferenceError identifies the config field whose reference could not
+// be resolved. Error omits the reference value so secret identifiers do not
+// leak into logs or user-facing validation messages.
+type ScalarReferenceError struct {
+	Path []string
+	Ref  secref.Ref
+	Err  error
+}
+
+func (e *ScalarReferenceError) Error() string {
+	if e == nil {
+		return "config reference error"
+	}
+	if e.Err == nil {
+		return "config reference error"
+	}
+	if len(e.Path) == 0 {
+		return e.Err.Error()
+	}
+	return fmt.Sprintf("%s: %v", strings.Join(e.Path, "."), e.Err)
+}
+
+func (e *ScalarReferenceError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.Err
+}
+
+// ExpandStrictEnv replaces only ${VAR} references with their environment
+// values. Bare $VAR references are left untouched. It returns the expanded
+// string and the names of referenced-but-unset variables.
+func ExpandStrictEnv(s string) (string, []string) {
+	var missing []string
+	result := envVarRe.ReplaceAllStringFunc(s, func(match string) string {
+		name := envVarRe.FindStringSubmatch(match)[1]
+		val, ok := os.LookupEnv(name)
+		if !ok {
+			missing = append(missing, name)
+			return ""
+		}
+		return val
+	})
+	return result, missing
+}
+
+// ReadExpandedConfig reads a config file, expands ${ENV_VAR} and secret
+// references in scalar values, then feeds the result into the provided viper
+// instance.
+//
+// Unset environment variables are replaced with empty strings and
+// reported via the optional warn callback. Pass nil to suppress warnings.
+func ReadExpandedConfig(v *viper.Viper, path string, warn func(format string, args ...any)) error {
+	return readExpandedConfigFile(v, path, nil, nil, warn)
+}
+
+// ReadExpandedConfigWithSource reads config with an explicit secret source.
+// It is used by config owners that must keep one injected OS store across a
+// read-modify-write transaction.
+func ReadExpandedConfigWithSource(v *viper.Viper, path string, source secref.Source, warn func(format string, args ...any)) error {
+	return readExpandedConfigFile(v, path, source, nil, warn)
+}
+
+// ReadExpandedConfigWithOverrides applies explicit command-line values before
+// resolving lower-priority secret references.
+func ReadExpandedConfigWithOverrides(
+	v *viper.Viper,
+	path string,
+	overrides map[string]string,
+	warn func(format string, args ...any),
+) error {
+	return readExpandedConfigFile(v, path, nil, overrides, warn)
+}
+
+func readExpandedConfigFile(
+	v *viper.Viper,
+	path string,
+	source secref.Source,
+	overrides map[string]string,
+	warn func(format string, args ...any),
+) error {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	if source == nil {
+		source = secref.NewDefaultSource(awsSecretsManagerConfigFromRawYAML(raw, warn))
+	}
+	return readExpandedConfigRaw(v, path, raw, source, overrides, warn)
+}
+
+type secretRefConfigReader interface {
+	GetString(string) string
+}
+
+func SecretRefSourceFromReader(reader secretRefConfigReader) secref.Source {
+	return secref.NewDefaultSource(AWSSecretsManagerConfigFromReader(reader))
+}
+
+func DefaultSecretRefSource() secref.Source {
+	return SecretRefSourceFromReader(viper.GetViper())
+}
+
+func AWSSecretsManagerConfigFromReader(reader secretRefConfigReader) secref.AWSSecretsManagerConfig {
+	if reader == nil {
+		return secref.AWSSecretsManagerConfig{}
+	}
+	return secref.AWSSecretsManagerConfig{
+		Region:  strings.TrimSpace(reader.GetString("secrets.aws_secrets_manager.region")),
+		Profile: strings.TrimSpace(reader.GetString("secrets.aws_secrets_manager.profile")),
+	}
+}
+
+func readExpandedConfigRaw(
+	v *viper.Viper,
+	path string,
+	raw []byte,
+	source secref.Source,
+	overrides map[string]string,
+	warn func(format string, args ...any),
+) error {
+	ext := strings.TrimPrefix(filepath.Ext(path), ".")
+	if ext == "" {
+		ext = "yaml"
+	}
+
+	resolver := secref.NewResolver(source)
+	var result secref.Result
+	var err error
+	override := configValueOverride(overrides)
+	if isYAMLConfigType(ext) {
+		result, err = expandYAMLScalarRefsWithOverride(context.Background(), string(raw), resolver, override)
+	} else {
+		result, err = expandStructuredConfigScalarRefs(context.Background(), ext, raw, resolver, override)
+	}
+	if err != nil {
+		return err
+	}
+	missing := result.MissingEnv
+	if len(missing) > 0 && warn != nil {
+		warn("config %s: unset environment variable(s) replaced with empty string: %s",
+			filepath.Base(path), strings.Join(missing, ", "))
+	}
+	if len(result.Warnings) > 0 && warn != nil {
+		for _, warning := range result.Warnings {
+			warn("config %s: %s; replaced with empty string", filepath.Base(path), warning.String())
+		}
+	}
+	if !isYAMLConfigType(ext) {
+		v.SetConfigType("json")
+	} else {
+		v.SetConfigType(ext)
+	}
+	if err := v.ReadConfig(strings.NewReader(result.Value)); err != nil {
+		return err
+	}
+	warnRemovedConfigKeys(v, filepath.Base(path), warn)
+	return nil
+}
+
+// removedImageModelKeys were replaced by llm.routes.image, which points at a profile. They are no
+// longer read; llm.image.request_timeout and llm.image.options still are.
+var removedImageModelKeys = []string{
+	"llm.image.provider",
+	"llm.image.endpoint",
+	"llm.image.api_key",
+	"llm.image.model",
+}
+
+func warnRemovedConfigKeys(v *viper.Viper, name string, warn func(format string, args ...any)) {
+	if v == nil || warn == nil {
+		return
+	}
+	var found []string
+	for _, key := range removedImageModelKeys {
+		if v.InConfig(key) {
+			found = append(found, key)
+		}
+	}
+	if len(found) == 0 {
+		return
+	}
+	verb := "are"
+	if len(found) == 1 {
+		verb = "is"
+	}
+	warn("config %s: %s %s no longer used; add the image model as a profile under llm.profiles and set llm.routes.image to its name",
+		name, strings.Join(found, ", "), verb)
+}
+
+func expandStructuredConfigScalarRefs(
+	ctx context.Context,
+	configType string,
+	raw []byte,
+	resolver *secref.Resolver,
+	override func([]string) (string, bool),
+) (secref.Result, error) {
+	parsed := viper.New()
+	parsed.SetConfigType(configType)
+	if err := parsed.ReadConfig(bytes.NewReader(raw)); err != nil {
+		return secref.Result{}, err
+	}
+	values := parsed.AllSettings()
+	var out secref.Result
+	if err := expandStructuredConfigValue(ctx, values, nil, resolver, override, &out); err != nil {
+		return out, err
+	}
+	encoded, err := json.Marshal(values)
+	if err != nil {
+		return out, err
+	}
+	out.Value = string(encoded)
+	return out, nil
+}
+
+func expandStructuredConfigValue(
+	ctx context.Context,
+	value any,
+	path []string,
+	resolver *secref.Resolver,
+	override func([]string) (string, bool),
+	out *secref.Result,
+) error {
+	switch current := value.(type) {
+	case map[string]any:
+		for key, child := range current {
+			childPath := append(append([]string(nil), path...), key)
+			if text, ok := child.(string); ok {
+				resolved, err := resolveConfigScalar(ctx, text, childPath, resolver, override, out)
+				if err != nil {
+					return err
+				}
+				current[key] = resolved
+				continue
+			}
+			if err := expandStructuredConfigValue(ctx, child, childPath, resolver, override, out); err != nil {
+				return err
+			}
+		}
+	case []any:
+		for i, child := range current {
+			if text, ok := child.(string); ok {
+				resolved, err := resolveConfigScalar(ctx, text, path, resolver, nil, out)
+				if err != nil {
+					return err
+				}
+				current[i] = resolved
+				continue
+			}
+			if err := expandStructuredConfigValue(ctx, child, path, resolver, nil, out); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func resolveConfigScalar(
+	ctx context.Context,
+	value string,
+	path []string,
+	resolver *secref.Resolver,
+	override func([]string) (string, bool),
+	out *secref.Result,
+) (string, error) {
+	if override != nil {
+		if replacement, ok := override(path); ok {
+			value = replacement
+		}
+	}
+	result, err := resolver.ResolveString(ctx, value, secref.Options{EnvMissing: secref.EnvMissingWarn})
+	if err != nil {
+		ref, _ := secref.ParseSingleRef(value)
+		return "", &ScalarReferenceError{
+			Path: append([]string(nil), path...),
+			Ref:  ref,
+			Err:  err,
+		}
+	}
+	out.MissingEnv = append(out.MissingEnv, result.MissingEnv...)
+	out.Warnings = append(out.Warnings, result.Warnings...)
+	return result.Value, nil
+}
+
+func isYAMLConfigType(ext string) bool {
+	switch strings.ToLower(strings.TrimSpace(ext)) {
+	case "yaml", "yml":
+		return true
+	default:
+		return false
+	}
+}
+
+func expandYAMLScalarRefs(ctx context.Context, raw string, resolver *secref.Resolver) (secref.Result, error) {
+	return expandYAMLScalarRefsWithOverride(ctx, raw, resolver, nil)
+}
+
+func expandYAMLScalarRefsWithOverride(
+	ctx context.Context,
+	raw string,
+	resolver *secref.Resolver,
+	override func([]string) (string, bool),
+) (secref.Result, error) {
+	if strings.TrimSpace(raw) == "" {
+		return secref.Result{Value: ""}, nil
+	}
+	var node yaml.Node
+	if err := yaml.Unmarshal([]byte(raw), &node); err != nil {
+		return secref.Result{}, err
+	}
+	var out secref.Result
+	if err := expandYAMLScalarNodeRefs(ctx, &node, nil, resolver, override, &out); err != nil {
+		return out, err
+	}
+	var buf bytes.Buffer
+	enc := yaml.NewEncoder(&buf)
+	enc.SetIndent(2)
+	if err := enc.Encode(&node); err != nil {
+		_ = enc.Close()
+		return out, err
+	}
+	if err := enc.Close(); err != nil {
+		return out, err
+	}
+	out.Value = buf.String()
+	return out, nil
+}
+
+func expandYAMLScalarNodeRefs(
+	ctx context.Context,
+	node *yaml.Node,
+	path []string,
+	resolver *secref.Resolver,
+	override func([]string) (string, bool),
+	out *secref.Result,
+) error {
+	if node == nil {
+		return nil
+	}
+	switch node.Kind {
+	case yaml.DocumentNode, yaml.SequenceNode:
+		for _, child := range node.Content {
+			if err := expandYAMLScalarNodeRefs(ctx, child, path, resolver, override, out); err != nil {
+				return err
+			}
+		}
+	case yaml.MappingNode:
+		for i := 1; i < len(node.Content); i += 2 {
+			childPath := append(append([]string(nil), path...), node.Content[i-1].Value)
+			if err := expandYAMLScalarNodeRefs(ctx, node.Content[i], childPath, resolver, override, out); err != nil {
+				return err
+			}
+		}
+	case yaml.ScalarNode:
+		value, err := resolveConfigScalar(ctx, node.Value, path, resolver, override, out)
+		if err != nil {
+			return err
+		}
+		if value != node.Value {
+			node.Value = value
+			node.Tag = "!!str"
+		}
+	}
+	return nil
+}
+
+func configValueOverride(overrides map[string]string) func([]string) (string, bool) {
+	return func(path []string) (string, bool) {
+		if value, ok := overrides[strings.ToLower(strings.Join(path, "."))]; ok {
+			return value, true
+		}
+		return misterMorphEnvironmentOverride(path)
+	}
+}
+
+func misterMorphEnvironmentOverride(path []string) (string, bool) {
+	if len(path) == 0 {
+		return "", false
+	}
+	name := "MISTER_MORPH_" + strings.ToUpper(strings.NewReplacer("-", "_", ".", "_").Replace(strings.Join(path, "_")))
+	return os.LookupEnv(name)
+}
+
+func awsSecretsManagerConfigFromRawYAML(raw []byte, warn func(format string, args ...any)) secref.AWSSecretsManagerConfig {
+	var doc struct {
+		Secrets struct {
+			AWSSecretsManager struct {
+				Region  string `yaml:"region"`
+				Profile string `yaml:"profile"`
+			} `yaml:"aws_secrets_manager"`
+		} `yaml:"secrets"`
+	}
+	if err := yaml.Unmarshal(raw, &doc); err != nil {
+		if warn != nil {
+			warn("config: unable to read secrets.aws_secrets_manager bootstrap config: %v", err)
+		}
+		return secref.AWSSecretsManagerConfig{}
+	}
+	return secref.AWSSecretsManagerConfig{
+		Region:  expandBootstrapEnv(doc.Secrets.AWSSecretsManager.Region, "secrets.aws_secrets_manager.region", warn),
+		Profile: expandBootstrapEnv(doc.Secrets.AWSSecretsManager.Profile, "secrets.aws_secrets_manager.profile", warn),
+	}
+}
+
+func expandBootstrapEnv(value, field string, warn func(format string, args ...any)) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+	if strings.Contains(value, "${aws-sm:") {
+		if warn != nil {
+			warn("config %s: AWS Secrets Manager refs are not supported in bootstrap config; using empty string", field)
+		}
+		return ""
+	}
+	expanded, missing := ExpandStrictEnv(value)
+	if len(missing) > 0 && warn != nil {
+		warn("config %s: unset environment variable(s) replaced with empty string: %s", field, strings.Join(missing, ", "))
+	}
+	return strings.TrimSpace(expanded)
+}

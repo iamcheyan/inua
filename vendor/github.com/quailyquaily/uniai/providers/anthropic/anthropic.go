@@ -1,0 +1,1126 @@
+package anthropic
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+
+	"github.com/lyricat/goutils/structs"
+	"github.com/openai/openai-go/v3/packages/ssestream"
+	"github.com/quailyquaily/uniai/chat"
+	"github.com/quailyquaily/uniai/internal/anthropicstream"
+	"github.com/quailyquaily/uniai/internal/diag"
+	"github.com/quailyquaily/uniai/internal/httputil"
+	"github.com/quailyquaily/uniai/internal/modelcompat"
+	"github.com/quailyquaily/uniai/subscription"
+	"github.com/quailyquaily/uniai/subscription/claude/claudecode"
+)
+
+type Config struct {
+	APIKey       string
+	APIBase      string
+	DefaultModel string
+	Headers      map[string]string
+	Debug        bool
+	// CredentialSource selects Claude subscription authentication and a fixed
+	// upstream URL. APIKey and APIBase are ignored in this mode.
+	CredentialSource subscription.CredentialSource
+	HTTPClient       *http.Client
+	ClaudeCode       claudecode.Profile
+}
+
+type Provider struct {
+	cfg Config
+}
+
+// DefaultAPIBase is the official Anthropic Messages API base URL.
+const DefaultAPIBase = "https://api.anthropic.com/v1"
+
+func New(cfg Config) *Provider {
+	cfg.Headers = httputil.CloneHeaders(cfg.Headers)
+	return &Provider{cfg: cfg}
+}
+
+type anthropicMessage struct {
+	Role       string                 `json:"role"`
+	Content    []anthropicContentPart `json:"content,omitempty"`
+	RawContent json.RawMessage        `json:"-"`
+}
+
+func (m anthropicMessage) MarshalJSON() ([]byte, error) {
+	type wireMessage anthropicMessage
+	if len(m.RawContent) == 0 {
+		return json.Marshal(wireMessage(m))
+	}
+	return json.Marshal(struct {
+		Role    string          `json:"role"`
+		Content json.RawMessage `json:"content"`
+	}{m.Role, m.RawContent})
+}
+
+type anthropicContentPart struct {
+	Type         string                 `json:"type"`
+	Text         string                 `json:"text,omitempty"`
+	Thinking     string                 `json:"thinking,omitempty"`
+	Signature    string                 `json:"signature,omitempty"`
+	Data         string                 `json:"data,omitempty"`
+	Source       *anthropicImageSource  `json:"source,omitempty"`
+	ID           string                 `json:"id,omitempty"`
+	Name         string                 `json:"name,omitempty"`
+	Input        json.RawMessage        `json:"input,omitempty"`
+	ToolUseID    string                 `json:"tool_use_id,omitempty"`
+	Content      any                    `json:"content,omitempty"`
+	IsError      *bool                  `json:"is_error,omitempty"`
+	CacheControl *anthropicCacheControl `json:"cache_control,omitempty"`
+}
+
+type anthropicImageSource struct {
+	Type      string `json:"type"`
+	MediaType string `json:"media_type,omitempty"`
+	Data      string `json:"data,omitempty"`
+	URL       string `json:"url,omitempty"`
+}
+
+type anthropicRequest struct {
+	Model         string                 `json:"model"`
+	System        any                    `json:"system,omitempty"`
+	Messages      []anthropicMessage     `json:"messages"`
+	MaxTokens     int                    `json:"max_tokens"`
+	Temperature   *float64               `json:"temperature,omitempty"`
+	TopP          *float64               `json:"top_p,omitempty"`
+	TopK          *int                   `json:"top_k,omitempty"`
+	StopSequences []string               `json:"stop_sequences,omitempty"`
+	Metadata      *anthropicMetadata     `json:"metadata,omitempty"`
+	Tools         []anthropicTool        `json:"tools,omitempty"`
+	ToolChoice    *anthropicToolChoice   `json:"tool_choice,omitempty"`
+	Thinking      *anthropicThinking     `json:"thinking,omitempty"`
+	OutputConfig  *anthropicOutputConfig `json:"output_config,omitempty"`
+	Stream        bool                   `json:"stream,omitempty"`
+}
+
+type anthropicResponse struct {
+	ID         string                 `json:"id"`
+	Content    []anthropicContentPart `json:"content"`
+	Model      string                 `json:"model"`
+	StopReason string                 `json:"stop_reason,omitempty"`
+	Usage      anthropicUsage         `json:"usage"`
+	RawContent json.RawMessage        `json:"-"`
+}
+
+func (r *anthropicResponse) UnmarshalJSON(data []byte) error {
+	type wireResponse anthropicResponse
+	var decoded wireResponse
+	wire := struct {
+		*wireResponse
+		Content json.RawMessage `json:"content"`
+	}{wireResponse: &decoded}
+	if err := json.Unmarshal(data, &wire); err != nil {
+		return err
+	}
+	if len(wire.Content) > 0 {
+		if err := json.Unmarshal(wire.Content, &decoded.Content); err != nil {
+			return err
+		}
+	}
+	decoded.RawContent = wire.Content
+	*r = anthropicResponse(decoded)
+	return nil
+}
+
+type anthropicMetadata struct {
+	UserID string `json:"user_id,omitempty"`
+}
+
+type anthropicTool struct {
+	Name         string                 `json:"name"`
+	Description  string                 `json:"description,omitempty"`
+	InputSchema  any                    `json:"input_schema"`
+	Strict       *bool                  `json:"strict,omitempty"`
+	CacheControl *anthropicCacheControl `json:"cache_control,omitempty"`
+}
+
+type anthropicToolChoice struct {
+	Type                   string `json:"type"`
+	Name                   string `json:"name,omitempty"`
+	DisableParallelToolUse *bool  `json:"disable_parallel_tool_use,omitempty"`
+}
+
+type anthropicThinking struct {
+	Type         string `json:"type"`
+	BudgetTokens *int   `json:"budget_tokens,omitempty"`
+	Display      string `json:"display,omitempty"`
+}
+
+type anthropicOutputConfig struct {
+	Effort string `json:"effort,omitempty"`
+}
+
+type anthropicCacheControl struct {
+	Type string `json:"type"`
+	TTL  string `json:"ttl,omitempty"`
+}
+
+type anthropicSystemPart struct {
+	Type         string                 `json:"type"`
+	Text         string                 `json:"text,omitempty"`
+	CacheControl *anthropicCacheControl `json:"cache_control,omitempty"`
+}
+
+type anthropicUsage struct {
+	InputTokens              int            `json:"input_tokens,omitempty"`
+	OutputTokens             int            `json:"output_tokens,omitempty"`
+	CacheReadInputTokens     int            `json:"cache_read_input_tokens,omitempty"`
+	CacheCreationInputTokens int            `json:"cache_creation_input_tokens,omitempty"`
+	CacheCreation            map[string]int `json:"cache_creation,omitempty"`
+}
+
+func (p *Provider) Chat(ctx context.Context, req *chat.Request) (*chat.Result, error) {
+	if req == nil {
+		return nil, fmt.Errorf("anthropic request is nil")
+	}
+	debugFn := req.Options.DebugFn
+	if p.cfg.APIKey == "" && p.cfg.CredentialSource == nil {
+		return nil, fmt.Errorf("anthropic api key is required")
+	}
+	model := req.Model
+	if model == "" {
+		model = p.cfg.DefaultModel
+	}
+	if model == "" {
+		return nil, fmt.Errorf("model is required")
+	}
+
+	body, err := buildRequest(req, model)
+	if err != nil {
+		return nil, fmt.Errorf("anthropic provider model %q: %w", model, err)
+	}
+
+	if len(body.Messages) == 0 {
+		return nil, fmt.Errorf("at least one non-system message is required")
+	}
+
+	if req.Options.OnStream != nil {
+		body.Stream = true
+	}
+
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	var resp *http.Response
+	if p.cfg.CredentialSource != nil {
+		resp, err = p.doSubscription(ctx, data, debugFn)
+	} else {
+		diag.LogText(p.cfg.Debug, debugFn, "anthropic.chat.request", string(data))
+		var httpReq *http.Request
+		httpReq, err = http.NewRequestWithContext(ctx, http.MethodPost, messagesURL(p.cfg.APIBase), bytes.NewReader(data))
+		if err != nil {
+			return nil, err
+		}
+		httpReq.Header.Set("Content-Type", "application/json")
+		httpReq.Header.Set("x-api-key", p.cfg.APIKey)
+		httpReq.Header.Set("anthropic-version", "2023-06-01")
+		httputil.ApplyHeaders(httpReq.Header, p.cfg.Headers)
+		resp, err = httputil.ClientForContext(ctx).Do(httpReq)
+	}
+	if err != nil {
+		diag.LogError(p.cfg.Debug, debugFn, "anthropic.chat.response", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if req.Options.OnStream != nil {
+		if resp.StatusCode != http.StatusOK {
+			respData, err := httputil.ReadBody(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			diag.LogText(p.cfg.Debug, debugFn, "anthropic.chat.response", string(respData))
+			return nil, fmt.Errorf("anthropic api error: status %d: %s", resp.StatusCode, strings.TrimSpace(string(respData)))
+		}
+		result, err := p.chatStream(resp.Body, req.Options.ReasoningDetails, req.Options.OnStream)
+		if err != nil {
+			diag.LogError(p.cfg.Debug, debugFn, "anthropic.chat.response", err)
+			return nil, err
+		}
+		return result, nil
+	}
+
+	respData, err := httputil.ReadBody(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	diag.LogText(p.cfg.Debug, debugFn, "anthropic.chat.response", string(respData))
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("anthropic api error: status %d: %s", resp.StatusCode, strings.TrimSpace(string(respData)))
+	}
+
+	var out anthropicResponse
+	if err := json.Unmarshal(respData, &out); err != nil {
+		return nil, err
+	}
+
+	result, err := toResult(&out, req.Options.ReasoningDetails)
+	if err != nil {
+		return nil, err
+	}
+	result.Raw = out
+	return result, nil
+}
+
+func messagesURL(base string) string {
+	return normalizeAPIBase(base) + "/messages"
+}
+
+func normalizeAPIBase(base string) string {
+	trimmed := strings.TrimRight(strings.TrimSpace(base), "/")
+	if trimmed == "" {
+		return DefaultAPIBase
+	}
+	return trimmed
+}
+
+func normalizeAnthropicModel(model string) string {
+	model = strings.TrimSpace(strings.ToLower(model))
+	model = strings.TrimPrefix(model, "models/")
+	if !strings.Contains(model, ".") {
+		return model
+	}
+	var b strings.Builder
+	b.Grow(len(model))
+	for i := 0; i < len(model); i++ {
+		ch := model[i]
+		if ch == '.' && i > 0 && i+1 < len(model) && isASCIIDigit(model[i-1]) && isASCIIDigit(model[i+1]) {
+			b.WriteByte('-')
+			continue
+		}
+		b.WriteByte(ch)
+	}
+	return b.String()
+}
+
+func isASCIIDigit(ch byte) bool {
+	return ch >= '0' && ch <= '9'
+}
+
+func buildRequest(req *chat.Request, model string) (*anthropicRequest, error) {
+	modelKey := normalizeAnthropicModel(model)
+	systemTextParts := make([]string, 0, 1)
+	systemParts := make([]anthropicSystemPart, 0, 1)
+	structuredSystem := false
+	messages := make([]anthropicMessage, 0, len(req.Messages))
+
+	for _, m := range req.Messages {
+		switch m.Role {
+		case chat.RoleSystem:
+			for _, part := range chat.NormalizeMessageParts(m) {
+				systemPart, ok, err := toAnthropicSystemPart(part)
+				if err != nil {
+					return nil, fmt.Errorf("role %q: %w", m.Role, err)
+				}
+				if !ok {
+					continue
+				}
+				if systemPart.CacheControl != nil {
+					structuredSystem = true
+				}
+				systemTextParts = append(systemTextParts, systemPart.Text)
+				systemParts = append(systemParts, systemPart)
+			}
+		case chat.RoleUser:
+			msg := anthropicMessage{Role: "user"}
+			for _, part := range chat.NormalizeMessageParts(m) {
+				contentPart, ok, err := toAnthropicContentPart(part)
+				if err != nil {
+					return nil, fmt.Errorf("role %q: %w", m.Role, err)
+				}
+				if !ok {
+					continue
+				}
+				msg.Content = append(msg.Content, contentPart)
+			}
+			if len(msg.Content) > 0 {
+				messages = append(messages, msg)
+			}
+		case chat.RoleAssistant:
+			msg := anthropicMessage{Role: "assistant"}
+			if len(m.AnthropicContent) > 0 {
+				var blocks []json.RawMessage
+				if err := json.Unmarshal(m.AnthropicContent, &blocks); err != nil || len(blocks) == 0 {
+					return nil, fmt.Errorf("anthropic assistant replay content must be a non-empty JSON array")
+				}
+				msg.RawContent = bytes.Clone(m.AnthropicContent)
+				messages = append(messages, msg)
+				continue
+			}
+			for _, part := range chat.NormalizeMessageParts(m) {
+				contentPart, ok, err := toAnthropicContentPart(part)
+				if err != nil {
+					return nil, fmt.Errorf("role %q: %w", m.Role, err)
+				}
+				if !ok {
+					continue
+				}
+				if contentPart.Type != "text" {
+					return nil, fmt.Errorf("role %q: unsupported part type %q", m.Role, part.Type)
+				}
+				msg.Content = append(msg.Content, contentPart)
+			}
+			if len(m.ToolCalls) > 0 {
+				toolParts, err := toAnthropicToolUses(m.ToolCalls)
+				if err != nil {
+					return nil, err
+				}
+				msg.Content = append(msg.Content, toolParts...)
+			}
+			if len(msg.Content) > 0 {
+				messages = append(messages, msg)
+			}
+		case chat.RoleTool:
+			if m.ToolCallID == "" {
+				return nil, fmt.Errorf("tool_call_id is required for tool messages")
+			}
+			text, err := chat.MessageText(m)
+			if err != nil {
+				return nil, fmt.Errorf("role %q: %w", m.Role, err)
+			}
+			messages = append(messages, anthropicMessage{
+				Role: "user",
+				Content: []anthropicContentPart{{
+					Type:      "tool_result",
+					ToolUseID: m.ToolCallID,
+					Content:   text,
+				}},
+			})
+		default:
+			return nil, fmt.Errorf("anthropic provider does not support role %q", m.Role)
+		}
+	}
+
+	maxTokens := 8192
+	if req.Options.MaxTokens != nil {
+		maxTokens = *req.Options.MaxTokens
+	}
+
+	body := &anthropicRequest{
+		Model:         model,
+		Messages:      messages,
+		MaxTokens:     maxTokens,
+		Temperature:   req.Options.Temperature,
+		TopP:          req.Options.TopP,
+		StopSequences: req.Options.Stop,
+	}
+	switch {
+	case structuredSystem:
+		body.System = systemParts
+	case len(systemTextParts) > 0:
+		body.System = strings.Join(systemTextParts, "\n")
+	}
+	if len(req.Tools) > 0 {
+		tools, err := toAnthropicTools(req.Tools)
+		if err != nil {
+			return nil, err
+		}
+		if len(tools) > 0 {
+			body.Tools = tools
+		}
+	}
+	if req.ToolChoice != nil {
+		if modelcompat.AnthropicRejectsForcedToolChoice(modelKey) &&
+			(req.ToolChoice.Mode == "required" || req.ToolChoice.Mode == "function") {
+			return nil, fmt.Errorf("anthropic model %q does not support forced tool_choice %q; use auto or none", model, req.ToolChoice.Mode)
+		}
+		choice, err := toAnthropicToolChoice(req.ToolChoice)
+		if err != nil {
+			return nil, err
+		}
+		if choice != nil {
+			body.ToolChoice = choice
+		}
+	}
+	if err := applyAnthropicReasoningOptions(body, modelKey, req.Options); err != nil {
+		return nil, err
+	}
+	applyAnthropicOptions(body, req.Options.Anthropic)
+	applyAnthropicModelOverlay(body, modelKey)
+	return body, nil
+}
+
+func applyAnthropicReasoningOptions(body *anthropicRequest, model string, opts chat.Options) error {
+	if body == nil {
+		return nil
+	}
+	thinkingType := opts.Anthropic.GetString("thinking_type")
+	if opts.ReasoningEffort == nil && opts.ReasoningBudget == nil && !opts.ReasoningDetails && thinkingType == "" {
+		return nil
+	}
+	if thinkingType != "" && (!modelcompat.AnthropicSupportsBetweenTools(model) ||
+		(thinkingType != "adaptive" && thinkingType != "between_tools")) {
+		return fmt.Errorf("anthropic model %q does not support thinking_type %q", model, thinkingType)
+	}
+
+	if opts.ReasoningBudget != nil {
+		budget := *opts.ReasoningBudget
+		if budget < 1024 {
+			return fmt.Errorf("anthropic reasoning budget must be at least 1024")
+		}
+		if modelcompat.AnthropicPrefersReasoningEffort(model) {
+			return fmt.Errorf("anthropic model %q prefers reasoning effort; reasoning budget tokens are not supported in this path", model)
+		}
+		body.Thinking = &anthropicThinking{
+			Type:         "enabled",
+			BudgetTokens: opts.ReasoningBudget,
+		}
+	}
+
+	if opts.ReasoningEffort != nil {
+		if !modelcompat.AnthropicSupportsReasoningEffort(model) {
+			return fmt.Errorf("anthropic model %q does not support reasoning effort", model)
+		}
+		if !modelcompat.AnthropicReasoningEffortSupported(model, string(*opts.ReasoningEffort)) {
+			return fmt.Errorf("anthropic model %q does not support reasoning effort %q", model, *opts.ReasoningEffort)
+		}
+		body.OutputConfig = &anthropicOutputConfig{Effort: string(*opts.ReasoningEffort)}
+	}
+
+	if thinkingType == "between_tools" {
+		if opts.ReasoningEffort != nil && (*opts.ReasoningEffort == chat.ReasoningEffortXHigh || *opts.ReasoningEffort == chat.ReasoningEffortMax) {
+			return fmt.Errorf("anthropic between_tools thinking supports only low, medium, or high effort")
+		}
+		body.Thinking = &anthropicThinking{Type: "between_tools"}
+	} else if thinkingType == "adaptive" || (opts.ReasoningDetails && modelcompat.AnthropicPrefersReasoningEffort(model)) {
+		body.Thinking = &anthropicThinking{Type: "adaptive"}
+		if opts.ReasoningDetails && modelcompat.AnthropicSummarizesThinkingDetails(model) {
+			body.Thinking.Display = "summarized"
+		}
+	}
+
+	return nil
+}
+
+func applyAnthropicModelOverlay(body *anthropicRequest, model string) {
+	if body == nil || !modelcompat.AnthropicDropsSamplingParameters(model) {
+		return
+	}
+	body.Temperature = nil
+	body.TopP = nil
+	body.TopK = nil
+}
+
+func applyAnthropicOptions(body *anthropicRequest, opts structs.JSONMap) {
+	if body == nil || len(opts) == 0 {
+		return
+	}
+	opt := &opts
+	if opt.HasKey("top_k") {
+		if top := int(opt.GetInt64("top_k")); top > 0 {
+			body.TopK = &top
+		}
+	}
+	if userID := readUserID(opt); userID != "" {
+		body.Metadata = &anthropicMetadata{UserID: userID}
+	}
+	if opt.HasKey("disable_parallel_tool_use") && len(body.Tools) > 0 {
+		if body.ToolChoice == nil {
+			body.ToolChoice = &anthropicToolChoice{Type: "auto"}
+		}
+		if body.ToolChoice.Type != "none" {
+			disabled := opt.GetBool("disable_parallel_tool_use")
+			body.ToolChoice.DisableParallelToolUse = &disabled
+		}
+	}
+}
+
+func toAnthropicTools(tools []chat.Tool) ([]anthropicTool, error) {
+	out := make([]anthropicTool, 0, len(tools))
+	for _, tool := range tools {
+		if tool.Type != "function" {
+			continue
+		}
+		if tool.Function.Name == "" {
+			continue
+		}
+		var schema any
+		if len(tool.Function.ParametersJSONSchema) > 0 {
+			if err := json.Unmarshal(tool.Function.ParametersJSONSchema, &schema); err != nil {
+				return nil, err
+			}
+		} else {
+			schema = map[string]any{"type": "object"}
+		}
+		at := anthropicTool{
+			Name:         tool.Function.Name,
+			Description:  tool.Function.Description,
+			InputSchema:  schema,
+			Strict:       tool.Function.Strict,
+			CacheControl: toAnthropicCacheControl(tool.CacheControl),
+		}
+		out = append(out, at)
+	}
+	return out, nil
+}
+
+func toAnthropicToolChoice(choice *chat.ToolChoice) (*anthropicToolChoice, error) {
+	if choice == nil {
+		return nil, nil
+	}
+	switch choice.Mode {
+	case "auto":
+		return &anthropicToolChoice{Type: "auto"}, nil
+	case "none":
+		return &anthropicToolChoice{Type: "none"}, nil
+	case "required":
+		return &anthropicToolChoice{Type: "any"}, nil
+	case "function":
+		if strings.TrimSpace(choice.FunctionName) == "" {
+			return nil, fmt.Errorf("tool_choice function_name is required")
+		}
+		return &anthropicToolChoice{Type: "tool", Name: choice.FunctionName}, nil
+	default:
+		return nil, nil
+	}
+}
+
+func toAnthropicToolUses(calls []chat.ToolCall) ([]anthropicContentPart, error) {
+	out := make([]anthropicContentPart, 0, len(calls))
+	for _, call := range calls {
+		if call.Function.Name == "" {
+			continue
+		}
+		id := strings.TrimSpace(call.ID)
+		if id == "" {
+			return nil, fmt.Errorf("tool call id is required for anthropic tool_use")
+		}
+		args := strings.TrimSpace(call.Function.Arguments)
+		if args == "" {
+			args = "{}"
+		}
+		var input json.RawMessage
+		if err := json.Unmarshal([]byte(args), &input); err != nil {
+			return nil, fmt.Errorf("invalid tool call arguments: %w", err)
+		}
+		out = append(out, anthropicContentPart{
+			Type:  "tool_use",
+			ID:    id,
+			Name:  call.Function.Name,
+			Input: input,
+		})
+	}
+	return out, nil
+}
+
+func fromAnthropicToolUse(part anthropicContentPart) (chat.ToolCall, error) {
+	if strings.TrimSpace(part.ID) == "" || strings.TrimSpace(part.Name) == "" {
+		return chat.ToolCall{}, fmt.Errorf("anthropic tool_use missing id or name")
+	}
+	args := "{}"
+	if part.Input != nil {
+		data, err := json.Marshal(part.Input)
+		if err != nil {
+			return chat.ToolCall{}, err
+		}
+		args = string(data)
+	}
+	return chat.ToolCall{
+		ID:   part.ID,
+		Type: "function",
+		Function: chat.ToolCallFunction{
+			Name:      part.Name,
+			Arguments: args,
+		},
+	}, nil
+}
+
+func toResult(out *anthropicResponse, reasoningDetails bool) (*chat.Result, error) {
+	if out == nil {
+		return &chat.Result{}, nil
+	}
+	finishReason, err := anthropicFinishReason(out.StopReason)
+	if err != nil {
+		return nil, err
+	}
+	textParts := make([]string, 0, len(out.Content))
+	toolCalls := make([]chat.ToolCall, 0)
+	var reasoning *chat.ReasoningResult
+	for _, part := range out.Content {
+		switch part.Type {
+		case "text":
+			if strings.TrimSpace(part.Text) != "" {
+				textParts = append(textParts, part.Text)
+			}
+		case "tool_use":
+			call, err := fromAnthropicToolUse(part)
+			if err != nil {
+				return nil, err
+			}
+			toolCalls = append(toolCalls, call)
+		case "thinking":
+			if reasoningDetails {
+				reasoning = appendAnthropicReasoning(reasoning, "thinking", part.Thinking, part.Signature, "")
+			}
+		case "redacted_thinking":
+			if reasoningDetails {
+				reasoning = appendAnthropicReasoning(reasoning, "redacted_thinking", "", part.Signature, part.Data)
+			}
+		}
+	}
+	text := strings.Join(textParts, "\n")
+
+	usage := usageFromAnthropicUsage(out.Usage)
+	result := &chat.Result{
+		FinishReason: finishReason,
+		ID:           out.ID,
+		Text:         text,
+		Model:        out.Model,
+		Parts:        []chat.Part{},
+		ToolCalls:    toolCalls,
+		Reasoning:    reasoning,
+		Usage:        usage,
+	}
+	if text != "" {
+		result.Parts = append(result.Parts, chat.TextPart(text))
+	}
+	if len(out.RawContent) > 0 {
+		result.Messages = []chat.Message{{Role: chat.RoleAssistant, Content: text,
+			ToolCalls: chat.CloneToolCalls(toolCalls), AnthropicContent: bytes.Clone(out.RawContent)}}
+	}
+	return result, nil
+}
+
+func anthropicFinishReason(reason string) (string, error) {
+	switch reason {
+	case "":
+		// Older compatible endpoints may omit the termination reason.
+		return "", nil
+	case "end_turn", "stop_sequence":
+		return "stop", nil
+	case "max_tokens", "model_context_window_exceeded":
+		return "length", nil
+	case "tool_use":
+		return "tool_calls", nil
+	case "refusal":
+		return "content_filter", nil
+	case "pause_turn":
+		return "", fmt.Errorf("anthropic stop_reason pause_turn requires unsupported server-tool continuation")
+	default:
+		// Do not turn an unrecognized terminal state into a successful stop or
+		// echo arbitrary upstream text in subscription errors.
+		return "", fmt.Errorf("anthropic response contains an unsupported stop_reason")
+	}
+}
+
+func appendAnthropicReasoning(reasoning *chat.ReasoningResult, typ, text, signature, data string) *chat.ReasoningResult {
+	text = strings.TrimSpace(text)
+	signature = strings.TrimSpace(signature)
+	data = strings.TrimSpace(data)
+	if text == "" && signature == "" && data == "" {
+		return reasoning
+	}
+	if reasoning == nil {
+		reasoning = &chat.ReasoningResult{}
+	}
+	if text != "" {
+		reasoning.Summary = append(reasoning.Summary, text)
+	}
+	reasoning.Blocks = append(reasoning.Blocks, chat.ReasoningBlock{
+		Type:      typ,
+		Text:      text,
+		Signature: signature,
+		Data:      data,
+	})
+	return reasoning
+}
+
+// SSE event data types for streaming.
+
+type sseMessageStart struct {
+	Message struct {
+		ID    string         `json:"id"`
+		Model string         `json:"model"`
+		Usage anthropicUsage `json:"usage"`
+	} `json:"message"`
+}
+
+type sseContentBlockStart struct {
+	Index        int `json:"index"`
+	ContentBlock struct {
+		Type string `json:"type"`
+		ID   string `json:"id,omitempty"`
+		Name string `json:"name,omitempty"`
+	} `json:"content_block"`
+}
+
+type sseContentBlockDelta struct {
+	Index int `json:"index"`
+	Delta struct {
+		Type        string `json:"type"`
+		Text        string `json:"text,omitempty"`
+		PartialJSON string `json:"partial_json,omitempty"`
+	} `json:"delta"`
+}
+
+type sseMessageDelta struct {
+	Delta struct {
+		StopReason string `json:"stop_reason"`
+	} `json:"delta"`
+	Usage anthropicUsage `json:"usage"`
+}
+
+func (p *Provider) chatStream(body io.Reader, reasoningDetails bool, onStream chat.OnStreamFunc) (*chat.Result, error) {
+	decoder := ssestream.NewDecoder(&http.Response{Body: io.NopCloser(body)})
+
+	var (
+		id            string
+		model         string
+		usage         chat.Usage
+		textParts     []string
+		toolCalls     []chat.ToolCall
+		stopReason    string
+		replayBlocks  []map[string]json.RawMessage
+		replayIndexes = make(map[int]int)
+
+		// per-tool-call accumulator
+		currentToolIndex int = -1
+		currentToolID    string
+		currentToolName  string
+		currentToolArgs  strings.Builder
+		reasoningState   anthropicstream.ReasoningState
+	)
+	appendReplayString := func(index int, key, delta string) {
+		position, ok := replayIndexes[index]
+		if !ok {
+			return
+		}
+		var value string
+		_ = json.Unmarshal(replayBlocks[position][key], &value)
+		replayBlocks[position][key], _ = json.Marshal(value + delta)
+	}
+
+	flushToolCall := func() {
+		if currentToolIndex >= 0 && currentToolName != "" {
+			toolCalls = append(toolCalls, chat.ToolCall{
+				ID:   currentToolID,
+				Type: "function",
+				Function: chat.ToolCallFunction{
+					Name:      currentToolName,
+					Arguments: currentToolArgs.String(),
+				},
+			})
+		}
+		currentToolIndex = -1
+		currentToolID = ""
+		currentToolName = ""
+		currentToolArgs.Reset()
+	}
+
+	stopped := false
+streamLoop:
+	for decoder.Next() {
+		event := decoder.Event()
+		data := bytes.TrimSpace(event.Data)
+		if len(data) == 0 {
+			continue
+		}
+		protocolEvent, err := anthropicstream.Decode(data)
+		if err != nil {
+			return nil, fmt.Errorf("invalid anthropic stream event")
+		}
+		eventType := event.Type
+		if eventType == "" {
+			eventType = protocolEvent.Type
+		}
+		if eventType == "error" || protocolEvent.Type == "error" {
+			if p.cfg.CredentialSource != nil {
+				return nil, fmt.Errorf("Claude subscription stream returned an upstream error")
+			}
+			var envelope struct {
+				Error struct{ Type, Message string } `json:"error"`
+			}
+			if err := json.Unmarshal(data, &envelope); err != nil {
+				return nil, fmt.Errorf("invalid anthropic stream error")
+			}
+			return nil, fmt.Errorf("anthropic stream error: %s: %s", envelope.Error.Type, envelope.Error.Message)
+		}
+		raw := json.RawMessage(append([]byte(nil), data...))
+		if reasoningEvent := reasoningState.Apply(protocolEvent, reasoningDetails); reasoningEvent != nil {
+			if err := onStream(*reasoningEvent); err != nil {
+				return nil, err
+			}
+		}
+
+		switch eventType {
+		case "message_start":
+			var ev sseMessageStart
+			if err := json.Unmarshal([]byte(data), &ev); err == nil {
+				id = ev.Message.ID
+				model = ev.Message.Model
+				applyAnthropicUsage(&usage, ev.Message.Usage)
+			} else {
+				return nil, fmt.Errorf("invalid anthropic message_start event")
+			}
+
+		case "content_block_start":
+			var replay struct {
+				Index int                        `json:"index"`
+				Block map[string]json.RawMessage `json:"content_block"`
+			}
+			if err := json.Unmarshal(data, &replay); err != nil || replay.Block == nil {
+				return nil, fmt.Errorf("invalid anthropic replay content block")
+			}
+			replayIndexes[replay.Index] = len(replayBlocks)
+			replayBlocks = append(replayBlocks, replay.Block)
+			var ev sseContentBlockStart
+			if err := json.Unmarshal([]byte(data), &ev); err == nil {
+				if ev.ContentBlock.Type == "tool_use" {
+					flushToolCall()
+					currentToolIndex = ev.Index
+					currentToolID = ev.ContentBlock.ID
+					currentToolName = ev.ContentBlock.Name
+					if err := onStream(chat.StreamEvent{
+						ToolCallDelta: &chat.ToolCallDelta{
+							Index: ev.Index,
+							ID:    ev.ContentBlock.ID,
+							Name:  ev.ContentBlock.Name,
+						},
+						Raw: raw,
+					}); err != nil {
+						return nil, err
+					}
+				}
+			} else {
+				return nil, fmt.Errorf("invalid anthropic content_block_start event")
+			}
+
+		case "content_block_delta":
+			var ev sseContentBlockDelta
+			if err := json.Unmarshal([]byte(data), &ev); err == nil {
+				switch ev.Delta.Type {
+				case "text_delta":
+					appendReplayString(ev.Index, "text", ev.Delta.Text)
+					textParts = append(textParts, ev.Delta.Text)
+					if err := onStream(chat.StreamEvent{
+						Delta: ev.Delta.Text,
+						Raw:   raw,
+					}); err != nil {
+						return nil, err
+					}
+				case "input_json_delta":
+					currentToolArgs.WriteString(ev.Delta.PartialJSON)
+					if position, ok := replayIndexes[ev.Index]; ok {
+						replayBlocks[position]["input"] = json.RawMessage(currentToolArgs.String())
+					}
+					if err := onStream(chat.StreamEvent{
+						ToolCallDelta: &chat.ToolCallDelta{
+							Index:     currentToolIndex,
+							ArgsChunk: ev.Delta.PartialJSON,
+						},
+						Raw: raw,
+					}); err != nil {
+						return nil, err
+					}
+				case "thinking_delta":
+					appendReplayString(ev.Index, "thinking", protocolEvent.Delta.Thinking)
+				case "signature_delta":
+					appendReplayString(ev.Index, "signature", protocolEvent.Delta.Signature)
+				}
+			} else {
+				return nil, fmt.Errorf("invalid anthropic content_block_delta event")
+			}
+
+		case "content_block_stop":
+			flushToolCall()
+
+		case "message_delta":
+			var ev sseMessageDelta
+			if err := json.Unmarshal([]byte(data), &ev); err == nil {
+				applyAnthropicUsage(&usage, ev.Usage)
+				if ev.Delta.StopReason != "" {
+					stopReason = ev.Delta.StopReason
+				}
+			} else {
+				return nil, fmt.Errorf("invalid anthropic message_delta event")
+			}
+
+		case "message_stop":
+			stopped = true
+			break streamLoop
+		}
+	}
+	if err := decoder.Err(); err != nil {
+		return nil, err
+	}
+	if !stopped {
+		return nil, fmt.Errorf("anthropic stream ended before message_stop")
+	}
+
+	flushToolCall()
+
+	finishReason, err := anthropicFinishReason(stopReason)
+	if err != nil {
+		return nil, err
+	}
+	usage.InputTokens += usage.Cache.CachedInputTokens + usage.Cache.CacheCreationInputTokens
+	usage.TotalTokens = usage.InputTokens + usage.OutputTokens
+	replayContent, err := json.Marshal(replayBlocks)
+	if err != nil && finishReason != "length" {
+		return nil, fmt.Errorf("invalid anthropic replay content: %w", err)
+	}
+	var replayMessages []chat.Message
+	// A token-limited tool call may contain incomplete JSON and cannot be replayed.
+	if err == nil && len(replayBlocks) > 0 {
+		replayMessages = []chat.Message{{Role: chat.RoleAssistant, Content: strings.Join(textParts, ""),
+			ToolCalls: chat.CloneToolCalls(toolCalls), AnthropicContent: replayContent}}
+	}
+	if err := onStream(chat.StreamEvent{
+		FinishReason: finishReason,
+		Done:         true,
+		Usage:        &usage,
+	}); err != nil {
+		return nil, err
+	}
+
+	return &chat.Result{
+		FinishReason: finishReason,
+		ID:           id,
+		Text:         strings.Join(textParts, ""),
+		Model:        model,
+		Parts: func() []chat.Part {
+			text := strings.Join(textParts, "")
+			if text == "" {
+				return nil
+			}
+			return []chat.Part{chat.TextPart(text)}
+		}(),
+		ToolCalls: toolCalls,
+		Messages:  replayMessages,
+		Reasoning: reasoningState.Result(),
+		Usage:     usage,
+	}, nil
+}
+
+func toAnthropicSystemPart(part chat.Part) (anthropicSystemPart, bool, error) {
+	if err := chat.ValidatePart(part); err != nil {
+		return anthropicSystemPart{}, false, err
+	}
+	if part.Type != chat.PartTypeText {
+		return anthropicSystemPart{}, false, fmt.Errorf("unsupported part type %q", part.Type)
+	}
+	if strings.TrimSpace(part.Text) == "" && part.CacheControl == nil {
+		return anthropicSystemPart{}, false, nil
+	}
+	return anthropicSystemPart{
+		Type:         "text",
+		Text:         part.Text,
+		CacheControl: toAnthropicCacheControl(part.CacheControl),
+	}, true, nil
+}
+
+func toAnthropicContentPart(part chat.Part) (anthropicContentPart, bool, error) {
+	if err := chat.ValidatePart(part); err != nil {
+		return anthropicContentPart{}, false, err
+	}
+	switch part.Type {
+	case chat.PartTypeText:
+		if strings.TrimSpace(part.Text) == "" && part.CacheControl == nil {
+			return anthropicContentPart{}, false, nil
+		}
+		return anthropicContentPart{
+			Type:         "text",
+			Text:         part.Text,
+			CacheControl: toAnthropicCacheControl(part.CacheControl),
+		}, true, nil
+	case chat.PartTypeImageBase64:
+		mimeType := strings.TrimSpace(part.MIMEType)
+		if mimeType == "" {
+			mimeType = "image/png"
+		}
+		return anthropicContentPart{
+			Type: "image",
+			Source: &anthropicImageSource{
+				Type:      "base64",
+				MediaType: mimeType,
+				Data:      strings.TrimSpace(part.DataBase64),
+			},
+			CacheControl: toAnthropicCacheControl(part.CacheControl),
+		}, true, nil
+	case chat.PartTypeImageURL:
+		return anthropicContentPart{
+			Type: "image",
+			Source: &anthropicImageSource{
+				Type: "url",
+				URL:  strings.TrimSpace(part.URL),
+			},
+			CacheControl: toAnthropicCacheControl(part.CacheControl),
+		}, true, nil
+	default:
+		return anthropicContentPart{}, false, fmt.Errorf("unsupported part type %q", part.Type)
+	}
+}
+
+func toAnthropicCacheControl(ctrl *chat.CacheControl) *anthropicCacheControl {
+	if ctrl == nil {
+		return nil
+	}
+	out := &anthropicCacheControl{Type: "ephemeral"}
+	if ttl := strings.TrimSpace(ctrl.TTL); ttl != "" {
+		out.TTL = ttl
+	}
+	return out
+}
+
+func usageFromAnthropicUsage(src anthropicUsage) chat.Usage {
+	var usage chat.Usage
+	applyAnthropicUsage(&usage, src)
+	usage.InputTokens += usage.Cache.CachedInputTokens + usage.Cache.CacheCreationInputTokens
+	usage.TotalTokens = usage.InputTokens + usage.OutputTokens
+	return usage
+}
+
+// applyAnthropicUsage merges cumulative upstream counters. InputTokens remains
+// uncached until finalization adds cache reads and writes once.
+func applyAnthropicUsage(dst *chat.Usage, src anthropicUsage) {
+	if dst == nil {
+		return
+	}
+	if src.InputTokens > 0 {
+		dst.InputTokens = src.InputTokens
+	}
+	if src.OutputTokens > 0 {
+		dst.OutputTokens = src.OutputTokens
+	}
+	if src.CacheReadInputTokens > 0 {
+		dst.Cache.CachedInputTokens = src.CacheReadInputTokens
+	}
+	if src.CacheCreationInputTokens > 0 {
+		dst.Cache.CacheCreationInputTokens = src.CacheCreationInputTokens
+	}
+	chat.AddUsageCacheDetails(dst, src.CacheCreation)
+}
+
+func readUserID(opt *structs.JSONMap) string {
+	if opt == nil {
+		return ""
+	}
+	if opt.HasKey("user_id") {
+		return strings.TrimSpace(opt.GetString("user_id"))
+	}
+	if !opt.HasKey("metadata") {
+		return ""
+	}
+	raw := (*opt)["metadata"]
+	switch v := raw.(type) {
+	case map[string]any:
+		if id, ok := v["user_id"].(string); ok {
+			return strings.TrimSpace(id)
+		}
+	case structs.JSONMap:
+		if id, ok := v["user_id"].(string); ok {
+			return strings.TrimSpace(id)
+		}
+	}
+	return ""
+}
