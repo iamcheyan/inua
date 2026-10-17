@@ -1,9 +1,8 @@
-// Package vm contains toolkit-free Windows virtual machine configuration,
-// host recommendations, and backend contracts.
+// Package vm contains toolkit-free machine configuration, host
+// recommendations, and the backends that run a guest.
 package vm
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -238,22 +237,4 @@ func freeSpace(path string) uint64 {
 		return 0
 	}
 	return stat.Bfree * uint64(stat.Bsize)
-}
-
-// Backend is the lifecycle boundary implemented by the Docker/Dockur backend;
-// capability detection lives in DetectPlatform.
-type Backend interface {
-	Install(context.Context, Config) error
-	State(context.Context) (State, error)
-	Start(context.Context) error
-	Stop(context.Context) error
-	Connect(context.Context) (Connection, error)
-	Console(context.Context) (string, error)
-	Remove(context.Context) error
-}
-
-// Connection describes the local RDP endpoint of a running VM.
-type Connection struct {
-	Address string
-	Port    int
 }

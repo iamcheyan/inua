@@ -2,14 +2,11 @@ package vmui
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"sync"
 	"syscall"
@@ -21,81 +18,165 @@ import (
 	"github.com/lyricat/inua/internal/vm"
 )
 
-// vmService owns the Docker backend, the persisted configuration and the
-// operation lock.
+// vmService owns the machines, the backends and the host checks. It touches no
+// GTK: the command line uses it for --list, --start and --stop, the window for
+// everything else.
 //
-// Two things are true of a guest, and they are not the same: a project may
-// be configured (the Compose file and password exist) while Windows is still
-// installing, and only later does the guest become usable. The distinction
-// decides which page the window shows and which actions make sense, so both
-// are tracked.
+// Reading what a guest is doing is slow (a Docker call, a QMP round trip on a
+// Unix socket), so it never happens on the GTK thread: Refresh reads a machine
+// off-thread and keeps the result here, and the window paints from that.
 type vmService struct {
-	mu           sync.Mutex
-	backend      *vm.DockerBackend
-	config       vm.Config
-	host         vm.Host
-	platform     vm.Platform
-	hasProject   bool // the Compose project and password exist
-	installed    bool // Windows has come up at least once
-	busy         bool
-	err          error
-	state        vm.State
-	stateErr     error
-	progressText string
-	secretConn   *dbus.Conn // the Secret Service session, held for the app's life
+	mu       sync.Mutex
+	store    vm.Store
+	host     vm.Host
+	platform vm.Platform
+	backends map[vm.BackendKind]vm.Backend
+	seen     map[string]observed // what each machine was last seen doing
+	busy     map[string]bool     // a machine with an operation in flight
+
+	// The Secret Service session, once it is there, and whether this service
+	// has been closed. The connection is made in the background (see
+	// connectSecrets), so both are read under mu.
+	secretConn *dbus.Conn
+	secrets    vm.GuestSecretStore
+	closed     bool
 }
 
-// vmSecretStore keeps the guest password in the Secret Service under inua's
-// own attributes; the Compose environment file is written from it at start.
+// observed is what a machine was last seen doing. Everything the window shows
+// about a machine comes from here plus its machine.toml.
+type observed struct {
+	state    vm.State
+	err      error
+	progress string
+	prepared bool // the backend has made what it needs
+	guest    bool // the guest's own files are on disk
+	display  vm.Display
+}
+
+// MachineView is one machine as the window shows it. Building one never touches
+// a backend: it is the machine's own definition plus the last observation.
+type MachineView struct {
+	Name     string
+	Machine  vm.Machine
+	Problems []vm.Problem
+
+	State        vm.State
+	Prepared     bool // the backend has made what it needs (the project, the disk)
+	Installed    bool // the guest has been installed: its own files are there
+	Leftovers    bool // guest files are there without a project: a removal left them
+	Busy         bool
+	Progress     float64
+	ProgressText string
+	Err          error
+	Page         vm.Page
+
+	// Ready: this build has a backend for the machine's kind. Available: the
+	// host gives that backend what it needs (the same checks as the prereq
+	// page). Checks are the host checks, in the window's words.
+	Ready        bool
+	Available    bool
+	Checks       []vm.DoctorItem
+	Display      vm.Display
+	Recommended  vm.Profile
+	Distribution string
+}
+
+// vmSecretStore keeps a guest's password in the Secret Service where the rest
+// of the user's secrets are: labelled with the machine's name, found by its
+// attributes, never in the machine's folder.
 type vmSecretStore struct{ client *keyring.Client }
 
-func vmSecretAttrs(id string) map[string]string {
-	return map[string]string{"application": "inua", "kind": "windows-vm", "id": id}
+func (s vmSecretStore) Store(ctx context.Context, m vm.Machine, value []byte) error {
+	return s.client.Store(ctx, vm.GuestSecretLabel(m), vm.GuestSecretAttrs(m), value)
 }
-func (s vmSecretStore) Store(ctx context.Context, id string, value []byte) error {
-	return s.client.Store(ctx, "Inua Windows VM", vmSecretAttrs(id), value)
-}
-func (s vmSecretStore) Load(ctx context.Context, id string) ([]byte, error) {
-	v, ok, err := s.client.Lookup(ctx, vmSecretAttrs(id))
+
+// Load reads a machine's password. A machine installed by step 1 kept its
+// password under the old label; it is read there and moved to the machine's
+// own, so an installed Windows keeps the password it was installed with.
+func (s vmSecretStore) Load(ctx context.Context, m vm.Machine) ([]byte, error) {
+	v, ok, err := s.client.Lookup(ctx, vm.GuestSecretAttrs(m))
 	if err != nil {
 		return nil, err
 	}
-	if !ok {
-		return nil, errors.New("the Windows VM password is missing from the Secret Service")
+	if ok {
+		return v, nil
 	}
-	return v, nil
-}
-func (s vmSecretStore) Delete(_ context.Context, id string) error {
-	return s.client.Delete(vmSecretAttrs(id))
+	legacy, ok, err := s.client.Lookup(ctx, vm.LegacyGuestSecretAttrs(m))
+	if err != nil || !ok {
+		return nil, errors.New("the guest password is missing from the Secret Service")
+	}
+	if err := s.Store(ctx, m, legacy); err != nil {
+		return legacy, nil // it is usable where it is
+	}
+	if err := s.client.Delete(vm.LegacyGuestSecretAttrs(m)); err != nil {
+		logErr("vm secret", err)
+	}
+	return legacy, nil
 }
 
-// newService wires the Docker backend, the host's resources and the Secret
-// Service, then reads what is on disk. It touches no GTK: the command line
-// uses it for --start and --stop, the window for everything.
-func newService() *vmService {
-	s := &vmService{host: vm.DetectHost(""), platform: vm.DetectPlatform("", vm.PlatformProbes{})}
-	s.config = vm.DefaultConfig()
-	s.backend = vm.NewDockerBackend(nil)
-	// The Secret Service session must outlive this call: closing the bus
-	// connection here would break every later password read.
-	if conn, err := dbus.ConnectSessionBus(); err == nil {
-		if client, err := keyring.Connect(conn, keyring.AlgDH); err == nil {
-			s.secretConn = conn
-			s.backend.Secrets = vmSecretStore{client: client}
-		} else {
-			_ = conn.Close()
-		}
+func (s vmSecretStore) Delete(_ context.Context, m vm.Machine) error {
+	if err := s.client.Delete(vm.GuestSecretAttrs(m)); err != nil {
+		return err
 	}
-	s.load()
+	return s.client.Delete(vm.LegacyGuestSecretAttrs(m))
+}
+
+// newService reads the machines and wires the backends this build has. The
+// Secret Service is found in the background: it is where a guest's password
+// lives, and a keyring that wants a password nobody can be asked for must not
+// keep the window - or `inua-vm --list` - waiting.
+func newService() *vmService {
+	s := &vmService{
+		store:    vm.DefaultStore(),
+		host:     vm.DetectHost(""),
+		platform: vm.DetectPlatform("", vm.PlatformProbes{}),
+		backends: map[vm.BackendKind]vm.Backend{},
+		seen:     map[string]observed{},
+		busy:     map[string]bool{},
+	}
+	s.backends[vm.BackendDockur] = vm.NewDockerBackend(s.store, nil)
+	go s.connectSecrets()
 	return s
+}
+
+// connectSecrets finds the Secret Service once, in the background, and keeps
+// the session bus open for as long as this service lives: a password read must
+// not find the bus closed under it.
+func (s *vmService) connectSecrets() {
+	conn, err := dbus.ConnectSessionBus()
+	if err != nil {
+		return
+	}
+	client, err := keyring.Connect(conn, keyring.AlgDH)
+	if err != nil {
+		_ = conn.Close()
+		return
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.closed {
+		_ = conn.Close()
+		return
+	}
+	s.secretConn, s.secrets = conn, vmSecretStore{client: client}
+}
+
+// secretStore is the Secret Service, when it is there.
+func (s *vmService) secretStore() (vm.GuestSecretStore, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.secrets, s.secrets != nil
 }
 
 // close drops the Secret Service session. The window keeps it for the app's
 // life; a run from the command line has nobody else to do it.
 func (s *vmService) close() {
-	if s.secretConn != nil {
-		_ = s.secretConn.Close()
-		s.secretConn = nil
+	s.mu.Lock()
+	conn := s.secretConn
+	s.secretConn, s.secrets, s.closed = nil, nil, true
+	s.mu.Unlock()
+	if conn != nil {
+		_ = conn.Close()
 	}
 }
 
@@ -105,139 +186,448 @@ func logErr(what string, err error) {
 	}
 }
 
-func (s *vmService) load() {
-	data, err := os.ReadFile(vm.ConfigPath())
-	if err != nil {
-		return
-	}
-	saved, err := vm.ParsePersisted(data)
-	if err != nil {
-		return
-	}
+// secretsReady reports whether guest passwords can be kept safely. Without the
+// Secret Service nothing may be installed: the password would have nowhere to
+// go but the machine's folder.
+func (s *vmService) secretsReady() bool {
+	_, ok := s.secretStore()
+	return ok
+}
+
+// checks is the host, in the window's words: one line per check. The Secret
+// Service is one of them: it is where a machine's password lives.
+func (s *vmService) checks() []vm.DoctorItem {
 	s.mu.Lock()
-	s.config = saved.Config
-	// The project exists when its Compose file does; the flag in the file
-	// only says whether Windows had come up, which a removal resets.
-	s.hasProject = s.backend.SetInstalled(saved.Config) == nil
-	// A saved "installed" flag is only true if the guest disk is still
-	// there: a compose project that never got a Windows image is still
-	// installing, not a stopped guest.
-	s.installed = saved.Installed && vm.GuestDiskPresent(saved.Config.DataDir)
-	corrected := saved.Installed && !s.installed
+	platform := s.platform
 	s.mu.Unlock()
-	if corrected {
-		if err := s.save(false); err != nil {
-			logErr("vm state", err)
+	out := make([]vm.DoctorItem, 0, len(platform.Doctor)+1)
+	out = append(out, platform.Doctor...)
+	if !s.secretsReady() {
+		out = append(out, vm.DoctorItem{Name: "Secret Service", OK: false, Reason: vm.ReasonMissing})
+	}
+	return out
+}
+
+// availability is whether the host gives this machine's backend what it needs.
+// Only the checks that backend uses count: a missing Docker does not keep a
+// QEMU machine from running.
+func (s *vmService) availability(m vm.Machine) bool {
+	s.mu.Lock()
+	p := s.platform
+	s.mu.Unlock()
+	switch m.Backend {
+	case vm.BackendDockur:
+		return p.Supported && p.KVM.Available && p.KVM.Accessible &&
+			p.DockerSocket.Available && p.DockerSocket.Accessible &&
+			p.ComposeV2.Available && p.TUN.Available && p.TUN.Accessible &&
+			s.secretsReady()
+	default:
+		// The QEMU and Waydroid checks come with their backends.
+		return false
+	}
+}
+
+// backendOf is the backend that runs this machine, when this build has one.
+// A backend that keeps a guest's password is handed the Secret Service here, so
+// an install or a start that needs it has it.
+func (s *vmService) backendOf(m vm.Machine) (vm.Backend, bool) {
+	s.mu.Lock()
+	be, ok := s.backends[m.Backend]
+	s.mu.Unlock()
+	if ok && m.Backend == vm.BackendDockur {
+		if docker, isDocker := be.(*vm.DockerBackend); isDocker && docker.Secrets == nil {
+			if store, ready := s.secretStore(); ready {
+				docker.Secrets = store
+			}
 		}
 	}
+	return be, ok
 }
 
-// snapshot is non-blocking: it reports the state last observed by refresh,
-// because its callers run on the GTK main thread. Reading Docker there (a
-// subprocess, up to seconds) would stall the whole shell.
-func (s *vmService) snapshot() VMSnapshot {
+// machines reads the store. A machine whose machine.toml does not hold is left
+// out: the window's list is what can be run.
+func (s *vmService) machines() []vm.Machine {
+	list, err := s.store.List()
+	if err != nil {
+		logErr("vm machines", err)
+		return nil
+	}
+	return list
+}
+
+// Machines is the list, for the window's rows: no backend is read here.
+func (s *vmService) Machines() []MachineView {
+	list := s.machines()
+	out := make([]MachineView, 0, len(list))
+	for _, m := range list {
+		out = append(out, s.view(m))
+	}
+	return out
+}
+
+// Names is the machines' names, for the command line.
+func (s *vmService) Names() []string {
+	list := s.machines()
+	out := make([]string, 0, len(list))
+	for _, m := range list {
+		out = append(out, m.Name)
+	}
+	return out
+}
+
+// Lookup reads one machine.
+func (s *vmService) Lookup(name string) (vm.Machine, error) {
+	return s.store.Load(name)
+}
+
+// Snapshot is one machine's view as last observed.
+func (s *vmService) Snapshot(name string) MachineView {
+	m, err := s.store.Load(name)
+	if err != nil {
+		// A machine whose machine.toml does not hold is shown with what is
+		// wrong with it, on the page that explains a host problem.
+		return MachineView{Name: name, Err: err, Page: vm.PagePrereq, Checks: s.checks()}
+	}
+	return s.view(m)
+}
+
+// view builds a machine's view from its definition and the last observation.
+func (s *vmService) view(m vm.Machine) MachineView {
+	_, ready := s.backendOf(m)
+	available := ready && s.availability(m)
 	s.mu.Lock()
-	cfg, hasProject, installed := s.config, s.hasProject, s.installed
-	busy, oldErr, state, stateErr := s.busy, s.err, s.state, s.stateErr
-	progressText := s.progressText
-	platform, host := s.platform, s.host
+	o, busy := s.seen[m.Name], s.busy[m.Name]
 	s.mu.Unlock()
-	if !hasProject {
-		state = vm.StateStopped
+	if !o.prepared {
+		o.state = vm.StateStopped
 	}
-	// The host checks, one line each, so the window can show every check and
-	// mark the ones that fail.
-	checks := make([]vm.DoctorItem, 0, len(platform.Doctor)+1)
-	checks = append(checks, platform.Doctor...)
-	if s.backend.Secrets == nil {
-		checks = append(checks, vm.DoctorItem{
-			Name:   "Secret Service",
-			OK:     false,
-			Reason: vm.ReasonMissing,
-		})
+	s.mu.Lock()
+	recommended, distribution := vm.RecommendProfile(s.host), s.platform.Distribution
+	s.mu.Unlock()
+	// Installed is the guest's own files *and* the backend's project: a removal
+	// that kept the disk leaves the files, and its Install makes the project
+	// again - so that machine is set up, not stopped.
+	installed := o.prepared && o.guest
+	v := MachineView{
+		Name: m.Name, Machine: m, Problems: m.Problems(),
+		State: o.state, Prepared: o.prepared, Installed: installed, Leftovers: o.guest,
+		Busy: busy, Progress: vm.ParsePercent(o.progress), ProgressText: o.progress,
+		Err: o.err, Ready: ready, Available: available, Checks: s.checks(),
+		Display: o.display, Recommended: recommended, Distribution: distribution,
 	}
-	available := platform.Supported && platform.KVM.Available && platform.KVM.Accessible &&
-		platform.DockerSocket.Available && platform.DockerSocket.Accessible &&
-		platform.ComposeV2.Available && platform.FreeRDP.Available &&
-		platform.TUN.Available && platform.TUN.Accessible && s.backend.Secrets != nil
-	err := stateErr
-	if err == nil {
-		err = oldErr
-	}
-	progress := vm.ParsePercent(progressText)
-	return VMSnapshot{Config: cfg, State: state, Checks: checks, Busy: busy,
-		Available: available, HasProject: hasProject, Installed: installed,
-		HasDisk: vm.GuestDataPresent(cfg.DataDir), Progress: progress, ProgressText: progressText,
-		Recommended: vm.RecommendProfile(host), Host: host,
-		Distribution: platform.Distribution, Err: err}
+	v.Page = vm.PageFor(v.Available, v.Prepared, v.Installed, v.State, v.Busy)
+	return v
 }
 
-// Refresh reads Docker off the GTK thread and returns a snapshot the window
-// can paint. It is also where "Windows is installed" is decided: the guest
-// is taken to be installed once Dockur has said it started, so a later stop
-// does not send the window back to "still installing".
-func (s *vmService) Refresh() VMSnapshot {
-	// Re-read the host while the window is open: the user may have installed
-	// Docker or joined a group since the shell started, and the prereq page
-	// has to notice that without a restart.
+// Refresh reads one machine's backend off the GTK thread and returns its view.
+// It is what the window's watch calls, and what --status uses.
+func (s *vmService) Refresh(name string) MachineView {
+	m, err := s.store.Load(name)
+	if err != nil {
+		s.mu.Lock()
+		s.seen[name] = observed{}
+		s.mu.Unlock()
+		return MachineView{Name: name, Err: err, Page: vm.PagePrereq, Checks: s.checks()}
+	}
+	o := observed{guest: vm.GuestDiskPresent(m.Dir(s.store))}
+	if be, ok := s.backendOf(m); ok {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		if p, ok := be.(vm.Prepared); ok {
+			o.prepared = p.Prepared(m)
+		}
+		if o.prepared {
+			o.state, o.err = be.State(ctx, m)
+			if o.err == nil {
+				if prog, ok := be.(vm.Progress); ok {
+					o.progress = prog.RecentOutput(ctx, m)
+				}
+				if d, err := be.Display(ctx, m); err == nil {
+					o.display = d
+				}
+			}
+		}
+		cancel()
+	}
+	s.mu.Lock()
+	s.seen[name] = o
+	s.mu.Unlock()
+	return s.view(m)
+}
+
+// RefreshAll reads every machine, for the window's slower sweep. The host is
+// re-read too: the user may have installed Docker or joined a group since the
+// shell started, and the prereq page has to notice without a restart.
+func (s *vmService) RefreshAll() []MachineView {
 	host := vm.DetectHost("")
 	platform := vm.DetectPlatform("", vm.PlatformProbes{})
 	s.mu.Lock()
 	s.host, s.platform = host, platform
 	s.mu.Unlock()
-	s.sync()
-	return s.snapshot()
+	list := s.machines()
+	out := make([]MachineView, 0, len(list))
+	for _, m := range list {
+		out = append(out, s.Refresh(m.Name))
+	}
+	return out
 }
 
-func (s *vmService) refresh() { go s.sync() }
+// Templates are what a new machine can be made from.
+func (s *vmService) Templates() []vm.Template { return vm.Templates() }
 
-func (s *vmService) sync() {
-	s.mu.Lock()
-	hasProject := s.hasProject
-	dataDir := s.config.DataDir
-	s.mu.Unlock()
-	var state vm.State
-	var err error
-	var progress string
-	if hasProject {
-		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-		state, err = s.backend.State(ctx)
-		if err == nil {
-			progress = s.backend.RecentOutput(ctx)
-		}
-		cancel()
-	} else {
-		state = vm.StateStopped
+// Create writes a new machine from a template. It makes nothing and starts
+// nothing: which page the machine shows follows from what is on disk.
+func (s *vmService) Create(templateID, name string) (vm.Machine, error) {
+	t, ok := vm.TemplateByID(templateID)
+	if !ok {
+		return vm.Machine{}, fmt.Errorf("there is no %q template", templateID)
 	}
-	disk := vm.GuestDiskPresent(dataDir)
-	s.mu.Lock()
-	if hasProject {
-		s.state, s.stateErr, s.progressText = state, err, progress
-	} else {
-		s.state, s.stateErr, s.progressText = vm.StateStopped, nil, ""
+	name = strings.TrimSpace(name)
+	if name == "" {
+		name = t.Name
 	}
-	if s.installed && !disk {
-		s.installed = false
+	unique, err := vm.UniqueName(s.store, name)
+	if err != nil {
+		return vm.Machine{}, err
 	}
-	firstReady := err == nil && state == vm.StateRunning && disk && !s.installed
-	if firstReady {
-		s.installed = true
+	m := t.Machine(unique, vm.RecommendProfile(s.host))
+	if err := s.store.Save(m); err != nil {
+		return vm.Machine{}, err
 	}
-	s.mu.Unlock()
-	if firstReady {
-		if err := s.save(true); err != nil {
-			logErr("vm state", err)
-		}
-	}
+	return m, nil
 }
 
-// Snapshot, Doctor and Status are the UI-facing reads; all are non-blocking.
-func (s *vmService) Snapshot() VMSnapshot { return s.snapshot() }
+// Save writes a machine's definition and asks its backend to make what it
+// needs: the Compose project for Windows, the disk for QEMU. It does not start
+// anything, and it never touches a disk that is already there - writing the
+// definition again is how a changed memory, CPU count or disk size takes
+// effect.
+func (s *vmService) Save(m vm.Machine) error {
+	if err := s.begin(m.Name); err != nil {
+		return err
+	}
+	var opErr error
+	defer func() { s.end(m.Name, opErr) }()
+	if err := s.store.Save(m); err != nil {
+		opErr = err
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		opErr = s.noBackend(m)
+		return opErr
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+	defer cancel()
+	opErr = be.Install(ctx, m)
+	return opErr
+}
 
-// Doctor is the checks as plain lines, for `inua call vm doctor`.
+// noBackend is what a machine whose backend this build does not have reports.
+func (s *vmService) noBackend(m vm.Machine) error {
+	return fmt.Errorf("this build has no %s backend", m.Backend)
+}
+
+// Install writes the machine and starts it: for Windows that is the image
+// download and the unattended setup, which the window then follows on the
+// provisioning page.
+func (s *vmService) Install(m vm.Machine) error {
+	if err := s.Save(m); err != nil {
+		return err
+	}
+	return s.Start(m.Name)
+}
+
+// Start brings a machine up and returns before the guest is ready: a first
+// Windows install is tens of minutes, and the window shows the progress.
+func (s *vmService) Start(name string) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		return s.noBackend(m)
+	}
+	if m.Backend == vm.BackendDockur && !s.secretsReady() {
+		return errors.New("the Secret Service is unavailable: the guest password cannot be kept safely")
+	}
+	if err := s.begin(name); err != nil {
+		return err
+	}
+	var opErr error
+	defer func() { s.end(name, opErr) }()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Hour)
+	defer cancel()
+	opErr = be.Start(ctx, m)
+	return opErr
+}
+
+// Stop shuts a machine down, keeping its disk and its password.
+func (s *vmService) Stop(name string) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		return s.noBackend(m)
+	}
+	if err := s.begin(name); err != nil {
+		return err
+	}
+	var opErr error
+	defer func() { s.end(name, opErr) }()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancel()
+	opErr = be.Stop(ctx, m)
+	return opErr
+}
+
+// Connect opens what shows the running machine: FreeRDP for Windows on a
+// loopback port, the web console while it installs, the guest's own window
+// when the backend draws it.
+func (s *vmService) Connect(name string, display *rdpDisplay) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		return s.noBackend(m)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	d, err := be.Display(ctx, m)
+	if err != nil {
+		return err
+	}
+	switch d.Kind {
+	case vm.DisplayRDP:
+		host, port, err := splitHostPort(d.Address)
+		if err != nil {
+			return err
+		}
+		password, err := s.password(ctx, m)
+		if err != nil {
+			return err
+		}
+		defer clear(password)
+		return startRDPClient(host, port, vm.GuestUser, string(password), display)
+	case vm.DisplayWeb:
+		if d.Console == "" {
+			return errors.New("this machine has no web console")
+		}
+		return openBrowser(d.Console)
+	case vm.DisplaySPICE:
+		return openSpice(d.Address)
+	case vm.DisplayGTK:
+		// The guest's own window is already on screen.
+		return nil
+	case vm.DisplaySerial:
+		return errors.New("this machine is seen through its serial console")
+	}
+	return fmt.Errorf("this machine has no viewer (%s)", d.Kind)
+}
+
+// Console opens the machine's web console in the browser: during a first
+// Windows installation it is the only usable view of the guest.
+func (s *vmService) Console(name string) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		return s.noBackend(m)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	d, err := be.Display(ctx, m)
+	if err != nil {
+		return err
+	}
+	if d.Console == "" {
+		return errors.New("this machine has no web console")
+	}
+	return openBrowser(d.Console)
+}
+
+// password reads a machine's guest password, for the viewer that needs it.
+func (s *vmService) password(ctx context.Context, m vm.Machine) ([]byte, error) {
+	store, ok := s.secretStore()
+	if !ok {
+		return nil, errors.New("the Secret Service is unavailable: the guest password cannot be read")
+	}
+	return store.Load(ctx, m)
+}
+
+// Remove takes the machine's container or process apart and leaves the guest's
+// own files alone: its disk, its password and its definition stay, so the same
+// Windows can be started again.
+func (s *vmService) Remove(name string) error {
+	return s.remove(name, true, false)
+}
+
+// DeleteDisk is the destructive one: it removes the guest's own files, so the
+// machine has nothing installed and can be installed from scratch. The
+// machine's definition stays. Callers ask first.
+func (s *vmService) DeleteDisk(name string) error {
+	return s.remove(name, false, false)
+}
+
+// Delete takes the machine away entirely: its guest's files and its definition,
+// so it is gone from the list. Callers ask first.
+func (s *vmService) Delete(name string) error {
+	return s.remove(name, false, true)
+}
+
+func (s *vmService) remove(name string, keepDisk, forget bool) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		return s.noBackend(m)
+	}
+	if err := s.begin(name); err != nil {
+		return err
+	}
+	var opErr error
+	defer func() { s.end(name, opErr) }()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancel()
+	if err := be.Remove(ctx, m, keepDisk); err != nil {
+		opErr = err
+		return err
+	}
+	if forget {
+		if err := s.store.Delete(name); err != nil {
+			opErr = err
+			return err
+		}
+		s.mu.Lock()
+		delete(s.seen, name)
+		s.mu.Unlock()
+	}
+	return nil
+}
+
+// Fix applies a failing check's remedy. A privileged one goes through pkexec,
+// so the shell's own polkit dialog takes the password; this runs on a
+// goroutine, because that dialog is on the main thread and this call waits.
+func (s *vmService) Fix(r vm.Remedy) (string, bool, error) {
+	done, relogin, err := vm.ApplyRemedy(r)
+	s.mu.Lock()
+	s.platform = vm.DetectPlatform("", vm.PlatformProbes{})
+	s.mu.Unlock()
+	return done, relogin, err
+}
+
+// Doctor is the host checks as plain lines, for `inua-vm --doctor`.
 func (s *vmService) Doctor() string {
 	var b strings.Builder
-	for _, c := range s.snapshot().Checks {
+	for _, c := range s.checks() {
 		if c.OK {
 			fmt.Fprintf(&b, "OK   %s\n", c.Name)
 			continue
@@ -247,132 +637,129 @@ func (s *vmService) Doctor() string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func (s *vmService) Status() (vm.State, error) {
-	x := s.snapshot()
-	if x.Err != nil {
-		return x.State, x.Err
-	}
-	return x.State, nil
+// Status is what the machines are doing now, for scripts: the host's checks
+// and one entry per machine, each read from its backend.
+type StatusReport struct {
+	Checks   []StatusCheck   `json:"checks"`
+	Machines []StatusMachine `json:"machines"`
+	Dir      string          `json:"machines_dir"`
 }
 
-// Fix applies a check's remedy. A privileged one goes through pkexec, so the
-// shell's own polkit dialog takes the password; this runs on a goroutine,
-// because that dialog is on the main thread and this call waits for it.
-//
-// It re-reads the platform afterwards, so the window shows the new state
-// rather than the one it was looking at.
-func (s *vmService) Fix(r vm.Remedy) (string, bool, error) {
-	done, relogin, err := vm.ApplyRemedy(r)
-	s.mu.Lock()
-	s.platform = vm.DetectPlatform("", vm.PlatformProbes{})
-	s.mu.Unlock()
-	s.sync()
-	return done, relogin, err
+// StatusCheck is one host check, as --status reports it.
+type StatusCheck struct {
+	Name   string `json:"name"`
+	OK     bool   `json:"ok"`
+	Reason string `json:"reason,omitempty"`
 }
 
-// Configure writes the Compose project for c and remembers the
-// configuration. It does not start anything: installing Windows is its own,
-// visible step.
-//
-// Writing the project again is what applying a changed memory, CPU count or
-// disk size does, so this runs for a guest that already has one. It does not
-// make the guest "installed" - only Windows coming up does.
-func (s *vmService) Configure(c vm.Config) error {
-	if err := c.Validate(); err != nil {
-		return err
+// StatusMachine is one machine, as --status reports it.
+type StatusMachine struct {
+	Name      string `json:"name"`
+	OS        string `json:"os"`
+	Backend   string `json:"backend"`
+	State     string `json:"state"`
+	Installed bool   `json:"installed"`
+	Ready     bool   `json:"ready"`
+	Problem   string `json:"problem,omitempty"`
+}
+
+// Status reads every machine, for `inua-vm --status`.
+func (s *vmService) Status() StatusReport {
+	st := StatusReport{Dir: s.store.Root}
+	for _, c := range s.checks() {
+		st.Checks = append(st.Checks, StatusCheck{Name: c.Name, OK: c.OK, Reason: string(c.Reason)})
 	}
-	if err := s.begin(); err != nil {
-		return err
+	for _, v := range s.RefreshAll() {
+		e := StatusMachine{
+			Name: v.Name, OS: string(v.Machine.OS), Backend: string(v.Machine.Backend),
+			State: string(v.State), Installed: v.Installed, Ready: v.Ready,
+		}
+		switch {
+		case v.Err != nil:
+			e.Problem = v.Err.Error()
+		case len(v.Problems) > 0:
+			e.Problem = v.Problems[0].Field + ": " + string(v.Problems[0].Reason)
+		}
+		st.Machines = append(st.Machines, e)
 	}
-	var opErr error
-	defer func() { s.end(opErr) }()
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
-	defer cancel()
-	if err := s.backend.Install(ctx, c); err != nil {
-		opErr = err
-		return err
+	return st
+}
+
+// StatusText is the status as both the command line and the shell print it.
+func StatusText(st StatusReport) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "Machines: %s\n", st.Dir)
+	for _, c := range st.Checks {
+		if c.OK {
+			fmt.Fprintf(&b, "OK: %s\n", c.Name)
+			continue
+		}
+		fmt.Fprintf(&b, "FAIL: %s (%s)\n", c.Name, c.Reason)
 	}
+	if len(st.Machines) == 0 {
+		fmt.Fprintln(&b, "No machines.")
+		return b.String()
+	}
+	for _, m := range st.Machines {
+		fmt.Fprintf(&b, "%s: %s, %s, %s", m.Name, m.OS, m.Backend, m.State)
+		if !m.Ready {
+			fmt.Fprintf(&b, " (no %s backend in this build)", m.Backend)
+		}
+		if m.Problem != "" {
+			fmt.Fprintf(&b, " — %s", m.Problem)
+		}
+		fmt.Fprintln(&b)
+	}
+	return b.String()
+}
+
+// State is what one machine is doing now, for the command line and for a
+// script that wants a single answer.
+func (s *vmService) State(name string) (vm.State, error) {
+	v := s.Refresh(name)
+	if v.Err != nil {
+		return v.State, v.Err
+	}
+	if !v.Ready {
+		return v.State, s.noBackend(v.Machine)
+	}
+	return v.State, nil
+}
+
+// begin takes a machine's operation lock, so two long operations - a start and
+// a delete - never overlap on one machine. Machines are independent: two of
+// them can be worked on at once.
+func (s *vmService) begin(name string) error {
 	s.mu.Lock()
-	s.config, s.hasProject = c, true
-	s.mu.Unlock()
-	if err := s.save(s.installedNow()); err != nil {
-		opErr = err
-		return err
+	defer s.mu.Unlock()
+	if s.busy[name] {
+		return fmt.Errorf("%s already has an operation in progress", name)
 	}
+	s.busy[name] = true
 	return nil
 }
 
-// installedNow reports whether Windows has been seen up, for persisting.
-func (s *vmService) installedNow() bool {
+func (s *vmService) end(name string, err error) {
 	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.installed
+	s.busy[name] = false
+	o := s.seen[name]
+	o.err = err
+	s.seen[name] = o
+	s.mu.Unlock()
 }
 
-// Install writes the project from c and starts the container, which
-// downloads the image and installs Windows. It returns once the start has
-// been asked for; the window follows the rest on the provisioning page.
-func (s *vmService) Install(c vm.Config) error {
-	if err := s.Configure(c); err != nil {
-		return err
-	}
-	return s.Start()
-}
-
-func (s *vmService) hasProjectNow() bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.hasProject
-}
-
-// Start brings the container up and waits for the guest to answer on RDP:
-// the wait is what takes the minutes on a first install.
-func (s *vmService) Start() error {
-	if err := s.begin(); err != nil {
-		return err
-	}
-	var opErr error
-	defer func() { s.end(opErr) }()
-	if s.backend.Secrets == nil {
-		opErr = errors.New("the Secret Service is unavailable; the Windows VM password cannot be kept safely")
-		return opErr
-	}
-	// The wait is unbounded in practice on a first install: the image
-	// download and Windows' own setup run inside it.
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Hour)
-	defer cancel()
-	opErr = s.backend.Start(ctx)
-	return opErr
-}
-
-func (s *vmService) Connect(display *rdpDisplay) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	c, err := s.backend.Connect(ctx)
+// splitHostPort reads "127.0.0.1:3389" apart, for a viewer that takes them one
+// by one.
+func splitHostPort(address string) (string, int, error) {
+	host, portText, err := net.SplitHostPort(address)
 	if err != nil {
-		return err
+		return "", 0, err
 	}
-	if s.backend.Secrets == nil || s.backend.SecretID() == "" {
-		return errors.New("the Windows VM password is missing from the Secret Service")
-	}
-	password, err := s.backend.Secrets.Load(ctx, s.backend.SecretID())
+	port, err := net.LookupPort("tcp", portText)
 	if err != nil {
-		return err
+		return "", 0, err
 	}
-	defer clear(password)
-	return startRDPClient(c.Address, c.Port, vm.GuestUser, string(password), display)
-}
-
-// Console opens the container's web console in the browser: during the first
-// Windows installation it is the only usable view of the guest.
-func (s *vmService) Console() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	url, err := s.backend.Console(ctx)
-	if err != nil {
-		return err
-	}
-	return openBrowser(url)
+	return host, port, nil
 }
 
 // openBrowser hands a URL to the desktop's opener.
@@ -390,127 +777,22 @@ func openBrowser(url string) error {
 	return nil
 }
 
-func (s *vmService) Stop() error {
-	if err := s.begin(); err != nil {
-		return err
+// openSpice shows a guest whose display is SPICE on a Unix socket.
+func openSpice(socket string) error {
+	if socket == "" {
+		return errors.New("this machine has no SPICE socket")
 	}
-	var opErr error
-	defer func() { s.end(opErr) }()
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
-	defer cancel()
-	opErr = s.backend.Stop(ctx)
-	return opErr
-}
-
-func (s *vmService) Remove() error {
-	if err := s.begin(); err != nil {
-		return err
-	}
-	var opErr error
-	defer func() { s.end(opErr) }()
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
-	defer cancel()
-	if err := s.backend.Remove(ctx); err != nil {
-		opErr = err
-		return err
-	}
-	if err := os.Remove(vm.ConfigPath()); err != nil && !errors.Is(err, os.ErrNotExist) {
-		opErr = err
-		return err
-	}
-	s.mu.Lock()
-	// The project and the guest are both gone; a fresh start is a fresh
-	// setup, not a guest that is merely stopped.
-	s.hasProject, s.installed = false, false
-	s.config = vm.DefaultConfig()
-	s.mu.Unlock()
-	return nil
-}
-
-// RemoveData deletes the guest disk. It runs only after Remove (or when no
-// configuration remains), so the container that had the disk mounted is gone.
-func (s *vmService) RemoveData() error {
-	if err := s.begin(); err != nil {
-		return err
-	}
-	var opErr error
-	defer func() { s.end(opErr) }()
-	s.mu.Lock()
-	// The backend may have no project (leftover disk after Remove, or a
-	// fresh shell looking at DataDir). Point it at the configured directory
-	// before deleting, so it does not refuse an empty path.
-	s.backend.Config = s.config
-	s.mu.Unlock()
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
-	defer cancel()
-	if opErr = s.backend.RemoveData(ctx); opErr != nil {
-		return opErr
-	}
-	s.mu.Lock()
-	s.installed = false
-	hasProject := s.hasProject
-	s.mu.Unlock()
-	if hasProject {
-		if err := s.save(false); err != nil {
-			opErr = err
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *vmService) begin() error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.busy {
-		return errors.New("another Windows VM operation is in progress")
-	}
-	s.busy, s.err = true, nil
-	return nil
-}
-func (s *vmService) end(err error) {
-	s.mu.Lock()
-	s.busy, s.err = false, err
-	s.mu.Unlock()
-	s.refresh() // so the next status shows what the operation did
-}
-
-func (s *vmService) save(installed bool) error {
-	if err := os.MkdirAll(filepath.Dir(vm.ConfigPath()), 0700); err != nil {
-		return err
-	}
-	s.mu.Lock()
-	data, err := json.MarshalIndent(vm.Persisted{Config: s.config, Installed: installed}, "", "  ")
-	s.mu.Unlock()
+	bin, err := exec.LookPath("remote-viewer")
 	if err != nil {
+		return errors.New("remote-viewer (virt-viewer) is not installed")
+	}
+	cmd := exec.Command(bin, "spice+unix://"+socket)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+	if err := cmd.Start(); err != nil {
 		return err
 	}
-	tmp, err := os.CreateTemp(filepath.Dir(vm.ConfigPath()), ".vm-*.tmp")
-	if err != nil {
-		return err
-	}
-	name := tmp.Name()
-	defer os.Remove(name)
-	if err = tmp.Chmod(0600); err == nil {
-		_, err = tmp.Write(append(data, '\n'))
-	}
-	if err == nil {
-		err = tmp.Sync()
-	}
-	if closeErr := tmp.Close(); err == nil {
-		err = closeErr
-	}
-	if err != nil {
-		return err
-	}
-	return os.Rename(name, vm.ConfigPath())
-}
-
-func (s *vmService) profileConfig() vm.Config {
-	p := vm.RecommendProfile(s.host)
-	c := vm.DefaultConfig()
-	c.MemoryMiB, c.CPUs, c.DiskGiB = p.MemoryMiB, p.CPUs, p.DiskGiB
-	return c
+	go cmd.Wait()
+	return nil
 }
 
 // rdpDisplay is the monitor FreeRDP's window appears on: its logical size and

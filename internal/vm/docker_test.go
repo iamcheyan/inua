@@ -39,57 +39,68 @@ func (f *fakeRunner) Run(_ context.Context, name string, args ...string) (string
 	return "", nil
 }
 
+func (f *fakeRunner) ran(prefix string) bool {
+	for _, call := range f.calls {
+		if strings.HasPrefix(call, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
 type fakeSecrets struct{ items map[string][]byte }
 
-func (f *fakeSecrets) Store(_ context.Context, id string, v []byte) error {
-	f.items[id] = append([]byte(nil), v...)
+func (f *fakeSecrets) Store(_ context.Context, m Machine, v []byte) error {
+	f.items[m.Name] = append([]byte(nil), v...)
 	return nil
 }
-func (f *fakeSecrets) Load(_ context.Context, id string) ([]byte, error) {
-	v, ok := f.items[id]
+func (f *fakeSecrets) Load(_ context.Context, m Machine) ([]byte, error) {
+	v, ok := f.items[m.Name]
 	if !ok {
 		return nil, os.ErrNotExist
 	}
 	return v, nil
 }
-func (f *fakeSecrets) Delete(_ context.Context, id string) error {
-	delete(f.items, id)
+func (f *fakeSecrets) Delete(_ context.Context, m Machine) error {
+	delete(f.items, m.Name)
 	return nil
 }
 
-// newTestBackend puts the backend's configuration under a temporary root so
-// nothing touches the user's real XDG directories.
-func newTestBackend(t *testing.T) (*DockerBackend, Config, *fakeRunner, *fakeSecrets) {
+// newTestBackend puts the store under a temporary root, so nothing touches the
+// user's real directories, and hands back a Windows machine of the Dockur
+// template's shape.
+func newTestBackend(t *testing.T) (*DockerBackend, Machine, *fakeRunner, *fakeSecrets) {
 	t.Helper()
 	root := t.TempDir()
-	t.Setenv("XDG_CONFIG_HOME", filepath.Join(root, "config"))
-	t.Setenv("XDG_DATA_HOME", filepath.Join(root, "data"))
-	cfg := DefaultConfig()
-	cfg.DataDir = filepath.Join(root, "data", "inua", "vm", "windows")
-	if err := os.MkdirAll(cfg.DataDir, 0700); err != nil {
-		t.Fatal(err)
-	}
+	store := Store{Root: filepath.Join(root, "vm"), Runtime: filepath.Join(root, "run")}
+	m := DockurTemplate("windows")
+	m.MemoryMiB, m.CPUs, m.DiskGiB = 4096, 2, 64
 	runner := &fakeRunner{fail: map[string]error{}}
 	secrets := &fakeSecrets{items: map[string][]byte{}}
-	b := NewDockerBackend(runner)
+	b := NewDockerBackend(store, runner)
 	b.Secrets = secrets
-	return b, cfg, runner, secrets
+	return b, m, runner, secrets
+}
+
+func ctxT(t *testing.T) context.Context {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	t.Cleanup(cancel)
+	return ctx
 }
 
 func TestInstallWritesComposeAndEnvWithoutLeakingSecret(t *testing.T) {
-	b, cfg, _, secrets := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, _, secrets := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	dir := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "inua", "vm", cfg.Name)
+	dir := b.Store.Dir(m.Name)
 	compose, err := os.ReadFile(filepath.Join(dir, dockerComposeFile))
 	if err != nil {
 		t.Fatalf("compose: %v", err)
 	}
-	envPath := filepath.Join(dir, ".guest.env")
+	envPath := filepath.Join(dir, dockerGuestEnv)
 	info, err := os.Stat(envPath)
 	if err != nil {
 		t.Fatalf("env file: %v", err)
@@ -97,7 +108,7 @@ func TestInstallWritesComposeAndEnvWithoutLeakingSecret(t *testing.T) {
 	if perm := info.Mode().Perm(); perm != 0600 {
 		t.Errorf("env file mode = %o, want 0600", perm)
 	}
-	password, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	password, err := secrets.Load(ctx, m)
 	if err != nil {
 		t.Fatalf("stored password: %v", err)
 	}
@@ -108,47 +119,51 @@ func TestInstallWritesComposeAndEnvWithoutLeakingSecret(t *testing.T) {
 	if strings.Contains(string(compose), string(password)) {
 		t.Error("the guest password leaked into the Compose project")
 	}
-	// Ports must stay on the loopback interface.
-	if !strings.Contains(string(compose), "127.0.0.1:") {
-		t.Error("Compose does not publish ports on the loopback interface")
+	// Ports must stay on the loopback interface, and the console port must be
+	// the one this machine reserved, not a fixed 8006 anyone could collide with.
+	if !strings.Contains(string(compose), `"127.0.0.1:`) {
+		t.Errorf("Compose does not publish ports on the loopback interface:\n%s", compose)
+	}
+	if strings.Contains(string(compose), `- "8006:8006"`) {
+		t.Error("the web console is published on every interface")
 	}
 	// The image is pinned: the container runs with /dev/kvm, /dev/net/tun and
 	// NET_ADMIN, so a tag that moved would change what runs with those rights.
 	if !strings.Contains(string(compose), dockerImage) || !strings.Contains(dockerImage, "@sha256:") {
 		t.Errorf("the image is not pinned by version and digest: %q", dockerImage)
 	}
-	if strings.Contains(string(compose), "\n      - \"8006:8006\"") {
-		t.Error("the web console is published on every interface")
-	}
 	if !strings.Contains(string(compose), `USERNAME: "`+GuestUser+`"`) {
 		t.Errorf("compose does not set the guest user %q:\n%s", GuestUser, compose)
 	}
+	// The guest's disk is the machine's own folder.
+	if !strings.Contains(string(compose), b.Store.Dir(m.Name)+":/storage") {
+		t.Errorf("the guest is not stored in the machine's folder:\n%s", compose)
+	}
 }
 
-// Applying a configuration is what the window's Apply does, and it has to
-// work on a project that already exists - that is how a changed memory, CPU
-// count or disk size takes effect. The guest's password, though, is the one
-// Windows was installed with and must survive.
+// Applying a machine is what the window's Apply does, and it has to work on a
+// project that already exists - that is how a changed memory, CPU count or
+// disk size takes effect. The guest's password, though, is the one Windows was
+// installed with and must survive.
 func TestInstallRewritesTheProjectAndKeepsThePassword(t *testing.T) {
-	b, cfg, _, secrets := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, _, secrets := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("first install: %v", err)
 	}
-	first, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	first, err := secrets.Load(ctx, m)
 	if err != nil {
 		t.Fatalf("stored password: %v", err)
 	}
 
-	bigger := cfg
-	bigger.MemoryMiB = cfg.MemoryMiB * 2
-	bigger.CPUs = cfg.CPUs + 2
+	bigger := m
+	bigger.MemoryMiB = m.MemoryMiB * 2
+	bigger.CPUs = m.CPUs + 2
 	if err := b.Install(ctx, bigger); err != nil {
 		t.Fatalf("applying a new configuration: %v", err)
 	}
 
-	compose, err := os.ReadFile(b.composePath)
+	compose, err := os.ReadFile(b.composePath(m))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -158,8 +173,7 @@ func TestInstallRewritesTheProjectAndKeepsThePassword(t *testing.T) {
 	if !strings.Contains(string(compose), fmt.Sprintf("CPU_CORES: \"%d\"", bigger.CPUs)) {
 		t.Errorf("the new CPU count is not in the project:\n%s", compose)
 	}
-
-	again, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	again, err := secrets.Load(ctx, m)
 	if err != nil {
 		t.Fatalf("password after the rewrite: %v", err)
 	}
@@ -169,87 +183,171 @@ func TestInstallRewritesTheProjectAndKeepsThePassword(t *testing.T) {
 }
 
 func TestInstallRefusesWithoutSecretStore(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
+	b, m, _, _ := newTestBackend(t)
 	b.Secrets = nil
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err == nil {
+	if err := b.Install(ctxT(t), m); err == nil {
 		t.Fatal("install succeeded without a secure password store")
 	}
-	if _, err := os.Stat(filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "inua", "vm", cfg.Name, dockerComposeFile)); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(b.Store.Dir(m.Name), dockerComposeFile)); !os.IsNotExist(err) {
 		t.Error("a refused install left a Compose project behind")
 	}
 }
 
+// A machine that is not the Dockur backend's - a Linux guest, say - is refused
+// before anything is written.
+func TestInstallRefusesAMachineOfAnotherBackend(t *testing.T) {
+	b, m, _, _ := newTestBackend(t)
+	m.Backend = BackendQEMU
+	if err := b.Install(ctxT(t), m); err == nil {
+		t.Fatal("the Docker backend accepted a QEMU machine")
+	} else if !strings.Contains(err.Error(), ErrNotThisBackend.Error()) {
+		t.Errorf("the refusal does not say what happened: %v", err)
+	}
+}
+
 func TestRemoveDeletesProjectAndKeepsThePassword(t *testing.T) {
-	b, cfg, _, secrets := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, runner, secrets := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	first, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	first, err := secrets.Load(ctx, m)
 	if err != nil {
 		t.Fatalf("stored password: %v", err)
 	}
-	if err := b.Remove(ctx); err != nil {
+	if err := b.Remove(ctx, m, true); err != nil {
 		t.Fatalf("remove: %v", err)
 	}
-	dir := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "inua", "vm", cfg.Name)
-	for _, name := range []string{dockerComposeFile, ".guest.env"} {
+	dir := b.Store.Dir(m.Name)
+	for _, name := range []string{dockerComposeFile, dockerGuestEnv, dockerPortsFile} {
 		if _, err := os.Stat(filepath.Join(dir, name)); !os.IsNotExist(err) {
 			t.Errorf("%s survived removal", name)
 		}
 	}
-	again, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	again, err := secrets.Load(ctx, m)
 	if err != nil {
 		t.Fatalf("password after remove: %v", err)
 	}
 	if !bytes.Equal(first, again) {
 		t.Error("remove dropped the password of the disk it kept")
 	}
+	if !runner.ran("docker compose -p inua-vm-" + m.Name + " -f " + filepath.Join(dir, dockerComposeFile) + " down") {
+		t.Errorf("the container was not taken down: %v", runner.calls)
+	}
 }
 
-func TestConsoleURLIsLoopbackOnly(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+// Two machines publish different loopback ports: a second Windows guest cannot
+// take the first one's, and the ports it chose are the ones recorded in its
+// runtime directory.
+func TestPortsAreReservedPerMachine(t *testing.T) {
+	b, m, _, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	second := m
+	second.Name = "windows-2"
+	for _, machine := range []Machine{m, second} {
+		if err := b.Install(ctx, machine); err != nil {
+			t.Fatalf("install %s: %v", machine.Name, err)
+		}
+	}
+	ports := func(machine Machine) (rdp, console int) {
+		t.Helper()
+		data, err := os.ReadFile(filepath.Join(b.Store.RuntimeDir(machine.Name), dockerPortsFile))
+		if err != nil {
+			t.Fatalf("ports of %s: %v", machine.Name, err)
+		}
+		if _, err := fmt.Sscanf(strings.TrimSpace(string(data)), "%d %d", &rdp, &console); err != nil {
+			t.Fatalf("ports of %s: %v", machine.Name, err)
+		}
+		info, err := os.Stat(filepath.Join(b.Store.RuntimeDir(machine.Name), dockerPortsFile))
+		if err != nil || info.Mode().Perm() != 0600 {
+			t.Errorf("the ports file is not 0600: %v %v", info, err)
+		}
+		return rdp, console
+	}
+	rdp1, console1 := ports(m)
+	rdp2, console2 := ports(second)
+	if rdp1 == rdp2 || console1 == console2 {
+		t.Errorf("two machines share a port: %d/%d and %d/%d", rdp1, console1, rdp2, console2)
+	}
+	// And the project publishes exactly what was recorded.
+	compose, err := os.ReadFile(b.composePath(second))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{fmt.Sprintf(`"127.0.0.1:%d:3389/tcp"`, rdp2), fmt.Sprintf(`"127.0.0.1:%d:8006"`, console2)} {
+		if !strings.Contains(string(compose), want) {
+			t.Errorf("the project does not publish %s:\n%s", want, compose)
+		}
+	}
+}
+
+// Before Windows is up, the display is the web console - the only view there
+// is while it installs; once it is up, it is RDP.
+func TestDisplayIsLoopbackOnlyAndFollowsTheGuest(t *testing.T) {
+	b, m, runner, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	url, err := b.ConsoleURL()
-	if err != nil {
-		t.Fatalf("console url: %v", err)
+	prefix := "docker compose -p inua-vm-" + m.Name + " -f " + b.composePath(m)
+	runner.out = map[string]string{
+		prefix:        "windows\n",
+		"docker logs": "Windows started successfully, visit http://127.0.0.1:8006/\n",
 	}
-	if !strings.HasPrefix(url, "http://127.0.0.1:") {
-		t.Errorf("console url is not loopback: %q", url)
+	d, err := b.Display(ctx, m)
+	if err != nil {
+		t.Fatalf("display: %v", err)
+	}
+	if d.Kind != DisplayRDP {
+		t.Errorf("a running guest is reached over RDP: %+v", d)
+	}
+	if !strings.HasPrefix(d.Address, "127.0.0.1:") || !strings.HasPrefix(d.Console, "http://127.0.0.1:") {
+		t.Errorf("the display is not loopback: %+v", d)
+	}
+
+	// The same machine before its guest is ready: the console, not RDP.
+	runner.out = map[string]string{prefix: "windows\n"}
+	d, err = b.Display(ctx, m)
+	if err != nil {
+		t.Fatalf("display while installing: %v", err)
+	}
+	if d.Kind != DisplayWeb {
+		t.Errorf("an installing guest is watched in the console: %+v", d)
 	}
 }
 
-func TestSetInstalledRestoresManagedLocations(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
-	b.SetInstalled(cfg)
-	if b.composePath != filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "inua", "vm", cfg.Name, dockerComposeFile) {
-		t.Errorf("compose path not restored: %q", b.composePath)
+func TestInstalledReportsTheProject(t *testing.T) {
+	b, m, _, _ := newTestBackend(t)
+	if err := b.installed(m); err == nil {
+		t.Error("installed accepted a project that was never written")
 	}
-	if b.secretID != "inua/windows/"+cfg.Name {
-		t.Errorf("secret id not restored: %q", b.secretID)
+	if err := b.Install(ctxT(t), m); err != nil {
+		t.Fatalf("install: %v", err)
 	}
-	if err := b.ensureInstalled(); err == nil {
-		t.Error("ensureInstalled accepted a project that was never written")
+	if err := b.installed(m); err != nil {
+		t.Errorf("installed rejected the project it wrote: %v", err)
+	}
+	// The password is found again by the machine's own name, and the label
+	// the user sees in their keyring names the machine.
+	if got := GuestSecretLabel(m); got != "inua-vm · windows" {
+		t.Errorf("secret label = %q, want %q", got, "inua-vm · windows")
+	}
+	if got := GuestSecretAttrs(m)["machine"]; got != m.Name {
+		t.Errorf("secret attributes name %q, want %q", got, m.Name)
+	}
+	if got := LegacyGuestSecretAttrs(m)["id"]; got != "inua/windows/windows" {
+		t.Errorf("the step 1 secret id changed: %q", got)
 	}
 }
 
 // The Compose project must be valid YAML: a quoted volume source followed by
 // a bare ": /storage" made Docker refuse the project outright.
 func TestInstallWritesParsableCompose(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, _, _ := newTestBackend(t)
+	if err := b.Install(ctxT(t), m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	data, err := os.ReadFile(b.composePath)
+	data, err := os.ReadFile(b.composePath(m))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -258,56 +356,71 @@ func TestInstallWritesParsableCompose(t *testing.T) {
 		t.Fatalf("compose is not valid YAML: %v\n%s", err, data)
 	}
 	services, _ := doc["services"].(map[string]any)
-	if services == nil {
-		t.Fatalf("compose has no services: %s", data)
-	}
 	if _, ok := services["windows"]; !ok {
 		t.Fatalf("compose has no windows service: %s", data)
 	}
 }
 
+// Removing the machine keeps its disk until the disk is explicitly deleted:
+// losing a Windows installation is a second, deliberate step.
 func TestRemoveKeepsDataUntilExplicitlyDeleted(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, _, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	// The guest image stands in for a real disk.
-	disk := filepath.Join(cfg.DataDir, "data.img")
-	if err := os.WriteFile(disk, []byte("windows"), 0600); err != nil {
+	disk := filepath.Join(b.Store.Dir(m.Name), "data.img")
+	if err := os.WriteFile(disk, []byte("guest"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	if err := b.Remove(ctx); err != nil {
+	if err := b.Remove(ctx, m, true); err != nil {
 		t.Fatalf("remove: %v", err)
 	}
 	if _, err := os.Stat(disk); err != nil {
-		t.Fatalf("remove deleted the guest disk: %v", err)
+		t.Fatalf("remove deleted the guest's disk: %v", err)
 	}
-	if err := b.RemoveData(ctx); err != nil {
-		t.Fatalf("remove-data: %v", err)
+
+	// And with keepDisk false, the guest's files go while the machine's own
+	// definition stays: it can be installed again.
+	if err := os.WriteFile(filepath.Join(b.Store.Dir(m.Name), "win11x64.iso"), []byte("iso"), 0600); err != nil {
+		t.Fatal(err)
 	}
-	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
-		t.Errorf("the VM data directory survived RemoveData")
+	if err := b.Remove(ctx, m, false); err != nil {
+		t.Fatalf("removing the data: %v", err)
+	}
+	if _, err := os.Stat(disk); !os.IsNotExist(err) {
+		t.Error("the disk survived the deletion it was asked for")
+	}
+	if _, err := os.Stat(filepath.Join(b.Store.Dir(m.Name), "win11x64.iso")); !os.IsNotExist(err) {
+		t.Error("the install media survived the deletion")
+	}
+	if _, err := os.Stat(b.Store.File(m.Name)); err != nil {
+		t.Errorf("the machine's own definition went with its data: %v", err)
+	}
+	if got, err := b.Store.Load(m.Name); err != nil || got.Name != m.Name {
+		t.Errorf("the machine no longer loads: %+v (%v)", got, err)
 	}
 }
 
-func TestRemoveDataRefusesDangerousPaths(t *testing.T) {
-	for name, dir := range map[string]string{
-		"root":     "/",
-		"home":     os.Getenv("HOME"),
-		"empty":    "",
-		"relative": "vm/windows",
-	} {
-		t.Run(name, func(t *testing.T) {
-			b, cfg, _, _ := newTestBackend(t)
-			b.Config = cfg
-			cfg.DataDir = dir
-			b.Config = cfg
-			if err := b.RemoveData(context.Background()); err == nil {
-				t.Fatalf("RemoveData accepted %q", dir)
+// A machine folder is only ever removed through the guards: never the
+// filesystem root, never the home directory, never a path that is not clean
+// and absolute.
+func TestRemovalRefusesDangerousPaths(t *testing.T) {
+	home, _ := os.UserHomeDir()
+	for _, dir := range []string{"", "/", "relative/path", "//double//slash", home, home + "/"} {
+		if dir == home+"/" {
+			// A trailing separator is dirty, and dirty is refused as well.
+			if err := validateOwnedDataDir(dir); err == nil {
+				t.Errorf("validateOwnedDataDir(%q) was allowed", dir)
 			}
-		})
+			continue
+		}
+		if err := validateOwnedDataDir(dir); err == nil {
+			t.Errorf("validateOwnedDataDir(%q) was allowed", dir)
+		}
+	}
+	if err := validateOwnedDataDir("/var/lib/inua/vm/windows"); err != nil {
+		t.Errorf("a plain machine folder was refused: %v", err)
 	}
 }
 
@@ -316,29 +429,17 @@ func TestRemoveDataRefusesDangerousPaths(t *testing.T) {
 // the same project to Docker, so `up -d` would tear down the other one's
 // container. The backend must pin a namespaced project name instead.
 func TestComposePinsNamespacedProject(t *testing.T) {
-	b, cfg, runner, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, runner, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	// State reads through compose, without waiting for RDP readiness.
-	if _, err := b.State(ctx); err != nil {
+	if _, err := b.State(ctx, m); err != nil {
 		t.Fatalf("state: %v", err)
 	}
-	var sawProject bool
-	for _, call := range runner.calls {
-		if !strings.HasPrefix(call, "docker compose ") {
-			continue
-		}
-		if !strings.Contains(call, "-p inua-vm-windows") {
-			t.Errorf("compose call does not pin the project name: %s", call)
-			continue
-		}
-		sawProject = true
-	}
-	if !sawProject {
-		t.Fatalf("no compose call was made: %v", runner.calls)
+	want := "docker compose -p inua-vm-" + m.Name + " -f " + b.composePath(m)
+	if !runner.ran(want) {
+		t.Errorf("no call pinned the project:\n%v", runner.calls)
 	}
 }
 
@@ -346,110 +447,106 @@ func TestComposeProjectNamesAreNamespaced(t *testing.T) {
 	if got := composeProject("windows"); got != "inua-vm-windows" {
 		t.Errorf("composeProject = %q", got)
 	}
-	if composeProject("windows") == "windows" {
-		t.Error("the project name is the bare VM name, which collides with a user's own")
-	}
 }
 
 func TestStateReportsStartingUntilGuestReady(t *testing.T) {
-	b, cfg, runner, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, runner, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
+	// The container is up, so its RDP port answers; Windows is still installing.
+	prefix := "docker compose -p inua-vm-" + m.Name + " -f " + b.composePath(m)
 	runner.out = map[string]string{
-		"docker compose": "windows\n",
-		"docker logs":    "Downloading Windows 11... 12%\n",
+		prefix + " ps --status running --services": "windows\n",
+		"docker logs": "Waiting for the system to become ready",
 	}
-	state, err := b.State(ctx)
+	state, err := b.State(ctx, m)
 	if err != nil {
 		t.Fatalf("state: %v", err)
 	}
 	if state != StateStarting {
-		t.Fatalf("state = %q, want starting", state)
+		t.Errorf("state = %q, want %q", state, StateStarting)
 	}
 }
 
 func TestStateReportsRunningWhenLogsSayStarted(t *testing.T) {
-	b, cfg, runner, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, runner, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
+	prefix := "docker compose -p inua-vm-" + m.Name + " -f " + b.composePath(m)
 	runner.out = map[string]string{
-		"docker compose": "windows\n",
-		"docker logs":    "Windows started successfully, visit http://127.0.0.1:8006/\n",
+		prefix + " ps --status running --services": "windows\n",
+		prefix + " ps -q windows":                  "abc123\n",
+		"docker logs":                              "Windows started successfully, visit http://127.0.0.1:8006/\n",
 	}
-	state, err := b.State(ctx)
+	state, err := b.State(ctx, m)
 	if err != nil {
 		t.Fatalf("state: %v", err)
 	}
 	if state != StateRunning {
-		t.Fatalf("state = %q, want running", state)
+		t.Errorf("state = %q, want %q", state, StateRunning)
+	}
+	// With the container down, the same machine is stopped.
+	runner.out = map[string]string{prefix + " ps --status running --services": ""}
+	if state, err = b.State(ctx, m); err != nil || state != StateStopped {
+		t.Errorf("state = %q (%v), want %q", state, err, StateStopped)
 	}
 }
 
 func TestRecentOutputIsLastLogLine(t *testing.T) {
-	b, cfg, runner, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+	b, m, runner, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
+	prefix := "docker compose -p inua-vm-" + m.Name + " -f " + b.composePath(m)
 	runner.out = map[string]string{
-		"docker compose": "abc123\n",
-		"docker logs":    "\x1b[32mDownloading\x1b[0m\nExtracting 45%\n",
+		prefix + " ps -q windows": "abc123\n",
+		"docker logs":             "\x1b[36mDownloading Windows...\x1b[0m\nExtracting: 42%\n\n",
 	}
-	got := b.RecentOutput(ctx)
-	if got != "Extracting 45%" {
-		t.Fatalf("RecentOutput = %q", got)
+	if got := b.RecentOutput(ctx, m); got != "Extracting: 42%" {
+		t.Errorf("RecentOutput = %q", got)
 	}
-	if p := ParsePercent(got); p != 0.45 {
-		t.Fatalf("ParsePercent = %v", p)
+	if p := ParsePercent("Extracting: 42%"); p < 0.41 || p > 0.43 {
+		t.Errorf("ParsePercent = %v", p)
 	}
 }
 
-func TestRemoveDataUnmountsThenDeletesTheDisk(t *testing.T) {
-	b, cfg, runner, _ := newTestBackend(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := b.Install(ctx, cfg); err != nil {
+// Removing a machine's data takes its container down first, so the disk is
+// never pulled out from under a running guest.
+func TestRemovingTheDataGoesThroughAContainerThatIsUp(t *testing.T) {
+	b, m, runner, _ := newTestBackend(t)
+	ctx := ctxT(t)
+	if err := b.Install(ctx, m); err != nil {
 		t.Fatalf("install: %v", err)
 	}
-	disk := filepath.Join(cfg.DataDir, "data.img")
-	if err := os.WriteFile(disk, []byte("windows"), 0600); err != nil {
-		t.Fatal(err)
+	if err := b.Remove(ctx, m, false); err != nil {
+		t.Fatalf("remove: %v", err)
 	}
-	if err := b.RemoveData(ctx); err != nil {
-		t.Fatalf("remove-data: %v", err)
+	down := "docker compose -p inua-vm-" + m.Name + " -f " + b.composePath(m) + " down"
+	if !runner.ran(down) {
+		t.Errorf("the container was not stopped first:\n%v", runner.calls)
 	}
-	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
-		t.Errorf("the VM data directory survived RemoveData")
-	}
-	var down bool
-	for _, call := range runner.calls {
-		if strings.Contains(call, " compose ") && strings.HasSuffix(call, " down") {
-			down = true
-		}
-	}
-	if !down {
-		t.Error("RemoveData did not bring the container down before deleting the disk")
-	}
-}
 
-func TestRemoveDataDeletesLeftoverDiskWithoutProject(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
-	disk := filepath.Join(cfg.DataDir, "data.img")
-	if err := os.WriteFile(disk, []byte("windows"), 0600); err != nil {
+	// And a folder with no project at all is still cleaned.
+	second := m
+	second.Name = "windows-2"
+	if err := os.MkdirAll(b.Store.Dir(second.Name), 0700); err != nil {
 		t.Fatal(err)
 	}
-	b.Config = cfg
-	if err := b.RemoveData(context.Background()); err != nil {
-		t.Fatalf("remove leftover disk: %v", err)
+	if err := b.Store.Save(second); err != nil {
+		t.Fatal(err)
 	}
-	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
-		t.Errorf("leftover disk survived")
+	if err := os.WriteFile(filepath.Join(b.Store.Dir(second.Name), "data.img"), []byte("guest"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Remove(ctx, second, false); err != nil {
+		t.Fatalf("remove without a project: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(b.Store.Dir(second.Name), "data.img")); !os.IsNotExist(err) {
+		t.Error("a leftover disk survived the deletion")
 	}
 }
