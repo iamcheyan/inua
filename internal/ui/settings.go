@@ -78,6 +78,7 @@ type settings struct {
 	ai      aiSettings      // the AI page
 	about   aboutSettings   // the About page
 	keyring keyringSettings // the Keyring page
+	backup  backupSettings  // the Backup page
 	apps    appsSettings    // the Default Apps page
 
 	sticky map[uintptr]*stickyHead // by the pages' vertical adjustments
@@ -159,6 +160,10 @@ func (s *shellUI) bindSettingsHandlers() {
 				c.Input.TouchpadAccel = "adaptive"
 			}
 		default:
+			if strings.HasPrefix(sw.GetName(), "backup_") {
+				s.onBackupSave()
+				return false
+			}
 			s.aiSwitch(sw.GetName(), on, &c)
 		}
 		s.changeSettings(c)
@@ -170,6 +175,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			return
 		}
 		i := int(d.GetSelected())
+		if d.GetName() == "backup_interval" {
+			s.onBackupSave()
+			return
+		}
 		c := s.cfg
 		switch d.GetName() {
 		case "bg_fit":
@@ -226,6 +235,9 @@ func (s *shellUI) bindSettingsHandlers() {
 	s.onSettingsButton = func(b gtk.Button) {
 		name := b.GetName()
 		if s.shortcutButton(name) || s.aiButton(name) || s.aboutButton(name) || s.keyringButton(name) || s.customButton(name) {
+			return
+		}
+		if s.backupButton(name) {
 			return
 		}
 		c := s.cfg
@@ -450,6 +462,7 @@ func (s *shellUI) openSettings() {
 	s.getAboutSettings(ui)
 	s.getKeyringSettings(ui)
 	s.getAppsSettings(ui)
+	s.getBackupSettings(ui)
 	s.buildSettingsIndex()
 	ui.Close()
 
@@ -489,7 +502,7 @@ func (s *shellUI) openSettings() {
 }
 
 // settingsPages are the pages' names in settings.ui, in order.
-var settingsPages = []string{"appearance", "bar", "launcher", "apps", "ai", "notifications", "clipboard", "keyring", "shortcuts", "keyboard", "mouse", "about"}
+var settingsPages = []string{"appearance", "bar", "launcher", "apps", "ai", "notifications", "clipboard", "keyring", "backup", "shortcuts", "keyboard", "mouse", "about"}
 
 // settingsPageAliases name the page that now holds a section that was once
 // a page of its own.
@@ -762,6 +775,10 @@ func (s *shellUI) settingsEntryChanged(e *gtk.Entry) {
 	valid := true
 	if strings.HasPrefix(e.GetName(), "ai-key:") {
 		return // saved with its button
+	}
+	if e.GetName() == "backup_repo" {
+		s.onBackupSave()
+		return
 	}
 	switch e.GetName() {
 	case "clock":

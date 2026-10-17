@@ -197,6 +197,7 @@ type shellUI struct {
 	onPassMask             func(gtk.Button)
 	onPassRow              func(gtk.Button)
 	onAlarmTick            glib.SourceFunc
+	onBackupTick           glib.SourceFunc
 	onRecordTimeout        glib.SourceFunc
 	onSettingsSave         glib.SourceFunc
 	onNoteButton           func(gtk.Button)
@@ -389,6 +390,7 @@ func (s *shellUI) start() {
 	log.Printf("started: layer=%v bars=%s", s.layer, strings.Join(s.barNames(), ","))
 	s.startNotify()
 	s.startAlarms()
+	s.startBackupSchedule()
 	s.startUpdates()
 	s.startSystem()
 	s.startAssistant()

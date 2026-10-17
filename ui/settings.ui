@@ -5473,6 +5473,414 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
             </child>
             <child>
               <object class="GtkStackPage">
+                <property name="name">backup</property>
+                <property name="title" translatable="yes">Backup</property>
+                <property name="child">
+                  <object class="GtkOverlay">
+                    <property name="child">
+                      <object class="GtkScrolledWindow" id="scroll_backup">
+                        <property name="hscrollbar-policy">2</property>
+                        <child>
+                          <object class="GtkBox">
+                            <style>
+                              <class name="page"/>
+                            </style>
+                            <property name="orientation">1</property>
+                            <child>
+                              <object class="GtkBox">
+                                <style>
+                                  <class name="section"/>
+                                </style>
+                                <property name="orientation">1</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-head"/>
+                                    </style>
+                                    <property name="spacing">10</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="mark"/>
+                                        </style>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-label"/>
+                                        </style>
+                                        <property name="use-markup">true</property>
+                                        <property name="label" translatable="yes">&lt;span alpha='55%'&gt;[&lt;/span&gt;GITHUB&lt;span alpha='55%'&gt;]&lt;/span&gt;</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-meta"/>
+                                        </style>
+                                        <property name="label" translatable="yes">The settings, in a repository of your own</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="ellipsize">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-body"/>
+                                    </style>
+                                    <property name="orientation">1</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Repository</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="backup_repo">
+                                            <property name="name">backup_repo</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <property name="placeholder-text" translatable="yes">owner/name</property>
+                                            <property name="tooltip-text" translatable="yes">A repository your token may write, such as your-name/inua-settings. Its address works too.</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Token</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkPasswordEntry" id="backup_token">
+                                            <property name="name">backup_token</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <property name="show-peek-icon">true</property>
+                                            <property name="placeholder-text" translatable="yes">kept in the keyring, never in a file</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="backup_token_save">
+                                            <property name="name">backup_token_save</property>
+                                            <property name="label" translatable="yes">Save</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="backup_token_clear">
+                                            <property name="name">backup_token_clear</property>
+                                            <property name="label" translatable="yes">Forget</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Token state</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="backup_token_state">
+                                            <property name="name">backup_token_state</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="ellipsize">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Check</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="backup_check">
+                                            <property name="name">backup_check</property>
+                                            <property name="label" translatable="yes">Check the repository</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="backup_check_state">
+                                            <property name="name">backup_check_state</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="ellipsize">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <style>
+                                  <class name="section"/>
+                                </style>
+                                <property name="orientation">1</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-head"/>
+                                    </style>
+                                    <property name="spacing">10</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="mark"/>
+                                        </style>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-label"/>
+                                        </style>
+                                        <property name="use-markup">true</property>
+                                        <property name="label" translatable="yes">&lt;span alpha='55%'&gt;[&lt;/span&gt;WHAT GOES&lt;span alpha='55%'&gt;]&lt;/span&gt;</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-meta"/>
+                                        </style>
+                                        <property name="label" translatable="yes">The parts of the setup to carry</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="ellipsize">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-body"/>
+                                    </style>
+                                    <property name="orientation">1</property>
+                                    <child>
+                                      <object class="GtkBox" id="backup_parts">
+                                        <property name="name">backup_parts</property>
+                                        <property name="orientation">1</property>
+                                        <property name="spacing">4</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <style>
+                                  <class name="section"/>
+                                </style>
+                                <property name="orientation">1</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-head"/>
+                                    </style>
+                                    <property name="spacing">10</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="mark"/>
+                                        </style>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-label"/>
+                                        </style>
+                                        <property name="use-markup">true</property>
+                                        <property name="label" translatable="yes">&lt;span alpha='55%'&gt;[&lt;/span&gt;WHEN&lt;span alpha='55%'&gt;]&lt;/span&gt;</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-meta"/>
+                                        </style>
+                                        <property name="label" translatable="yes">How often the shell carries it</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="ellipsize">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-body"/>
+                                    </style>
+                                    <property name="orientation">1</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Carry it</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="backup_enable">
+                                            <property name="name">backup_enable</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">on a schedule</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Every</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkDropDown" id="backup_interval">
+                                            <property name="name">backup_interval</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Now</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="width-chars">18</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="backup_now">
+                                            <property name="name">backup_now</property>
+                                            <property name="label" translatable="yes">Back up now</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="backup_open">
+                                            <property name="name">backup_open</property>
+                                            <property name="label" translatable="yes">Open the repository</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="backup_state">
+                                            <property name="name">backup_state</property>
+                                            <property name="xalign">0</property>
+                                            <property name="valign">3</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="ellipsize">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <child type="overlay">
+                      <object class="GtkBox" id="sticky_backup">
+                        <style>
+                          <class name="section-head"/>
+                          <class name="sticky"/>
+                        </style>
+                        <property name="spacing">10</property>
+                        <property name="valign">1</property>
+                        <property name="visible">false</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage">
                 <property name="name">about</property>
                 <property name="title" translatable="yes">About</property>
                 <property name="child">

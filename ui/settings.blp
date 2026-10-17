@@ -3910,6 +3910,312 @@ ApplicationWindow settings {
       }
 
       StackPage {
+        name: "backup";
+        title:  _("Backup");
+
+        child: Overlay {
+          child: ScrolledWindow scroll_backup {
+            hscrollbar-policy: never;
+
+            Box {
+              styles ["page"]
+              orientation: vertical;
+
+              // [GITHUB]
+              Box {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    use-markup: true;
+                    label:  _("<span alpha='55%'>[</span>GITHUB<span alpha='55%'>]</span>");
+                  }
+
+                  Label {
+                    styles ["section-meta"]
+                    label:  _("The settings, in a repository of your own");
+                    hexpand: true;
+                    xalign: 0;
+                    ellipsize: end;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Repository");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    Entry backup_repo {
+                      name: "backup_repo";
+                      hexpand: true;
+                      valign: center;
+                      placeholder-text:  _("owner/name");
+                      tooltip-text:  _("A repository your token may write, such as your-name/inua-settings. Its address works too.");
+                    }
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Token");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    PasswordEntry backup_token {
+                      name: "backup_token";
+                      hexpand: true;
+                      valign: center;
+                      show-peek-icon: true;
+                      placeholder-text:  _("kept in the keyring, never in a file");
+                    }
+
+                    Button backup_token_save {
+                      name: "backup_token_save";
+                      label:  _("Save");
+                      valign: center;
+                    }
+
+                    Button backup_token_clear {
+                      name: "backup_token_clear";
+                      label:  _("Forget");
+                      valign: center;
+                    }
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Token state");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    Label backup_token_state {
+                      name: "backup_token_state";
+                      xalign: 0;
+                      valign: center;
+                      hexpand: true;
+                      ellipsize: end;
+                    }
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Check");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    Button backup_check {
+                      name: "backup_check";
+                      label:  _("Check the repository");
+                      valign: center;
+                    }
+
+                    Label backup_check_state {
+                      name: "backup_check_state";
+                      xalign: 0;
+                      valign: center;
+                      hexpand: true;
+                      ellipsize: end;
+                    }
+                  }
+                }
+              }
+
+              // [WHAT GOES]
+              Box {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    use-markup: true;
+                    label:  _("<span alpha='55%'>[</span>WHAT GOES<span alpha='55%'>]</span>");
+                  }
+
+                  Label {
+                    styles ["section-meta"]
+                    label:  _("The parts of the setup to carry");
+                    hexpand: true;
+                    xalign: 0;
+                    ellipsize: end;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box backup_parts {
+                    name: "backup_parts";
+                    orientation: vertical;
+                    spacing: 4;
+                  }
+                }
+              }
+
+              // [WHEN]
+              Box {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    use-markup: true;
+                    label:  _("<span alpha='55%'>[</span>WHEN<span alpha='55%'>]</span>");
+                  }
+
+                  Label {
+                    styles ["section-meta"]
+                    label:  _("How often the shell carries it");
+                    hexpand: true;
+                    xalign: 0;
+                    ellipsize: end;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Carry it");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    Switch backup_enable {
+                      name: "backup_enable";
+                      valign: center;
+                    }
+
+                    Label {
+                      label:  _("on a schedule");
+                      xalign: 0;
+                      valign: center;
+                    }
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Every");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    DropDown backup_interval {
+                      name: "backup_interval";
+                      valign: center;
+                    }
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Label {
+                      label:  _("Now");
+                      xalign: 0;
+                      valign: center;
+                      width-chars: 18;
+                    }
+
+                    Button backup_now {
+                      name: "backup_now";
+                      label:  _("Back up now");
+                      valign: center;
+                    }
+
+                    Button backup_open {
+                      name: "backup_open";
+                      label:  _("Open the repository");
+                      valign: center;
+                    }
+
+                    Label backup_state {
+                      name: "backup_state";
+                      xalign: 0;
+                      valign: center;
+                      hexpand: true;
+                      ellipsize: end;
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          // The head of the section scrolled under the top edge.
+          [overlay]
+          Box sticky_backup {
+            styles ["section-head", "sticky"]
+            spacing: 10;
+            valign: start;
+            visible: false;
+          }
+        };
+      }
+
+      StackPage {
         name: "about";
         title:  _("About");
 

@@ -71,6 +71,8 @@ func main() {
 		err = cmdWorkshop(os.Args[2:])
 	case "mcp":
 		err = cmdMCP()
+	case "backup":
+		err = cmdBackup(os.Args[2:])
 	case "upgrade":
 		err = cmdUpgrade(os.Args[2:])
 	case "terminal":
@@ -98,6 +100,7 @@ func usage() {
   inua keyring status|import [-n]|enable|disable|replace|lock
   inua keyring paths | allow PATTERN | disallow PATTERN
   inua workshop list|new [--js] DIR [NAME]|install [-y] URL|DIR|remove ID|run ID|DIR|dev DIR
+  inua backup [push|pull|parts|token]
   inua mcp
   inua upgrade [-check] [-force] [-version vX.Y.Z]
   inua clipboard capture [history-path]
