@@ -7197,7 +7197,7 @@ msgstr "スクリーンショットを撮る"
 
 #: internal/hyprconf/keys.go:34
 msgid "Silent screenshot"
-msgstr ""
+msgstr "スクリーンショットを撮る(ドロワーなし)"
 
 #: internal/hyprconf/keys.go:35
 msgid "The whole screen, at once"

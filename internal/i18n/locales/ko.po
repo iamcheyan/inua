@@ -7197,7 +7197,7 @@ msgstr "스크린샷 찍기"
 
 #: internal/hyprconf/keys.go:34
 msgid "Silent screenshot"
-msgstr ""
+msgstr "조용히 스크린샷 찍기"
 
 #: internal/hyprconf/keys.go:35
 msgid "The whole screen, at once"

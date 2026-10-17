@@ -7231,7 +7231,7 @@ msgstr "Prendre une capture d'écran"
 
 #: internal/hyprconf/keys.go:34
 msgid "Silent screenshot"
-msgstr ""
+msgstr "Capture d'écran silencieuse"
 
 #: internal/hyprconf/keys.go:35
 msgid "The whole screen, at once"

@@ -7197,7 +7197,7 @@ msgstr "截圖"
 
 #: internal/hyprconf/keys.go:34
 msgid "Silent screenshot"
-msgstr ""
+msgstr "靜默截圖"
 
 #: internal/hyprconf/keys.go:35
 msgid "The whole screen, at once"
