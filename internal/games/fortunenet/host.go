@@ -14,11 +14,13 @@ package fortunenet
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"slices"
 	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/lyricat/inua/internal/games"
+	"github.com/lyricat/inua/internal/games/fortuneai"
 	"github.com/lyricat/inua/internal/i18n"
 )
 
@@ -29,6 +31,7 @@ const (
 	Local    SeatKind = iota // a person at the host's screen
 	Visitor                  // a person in a browser
 	Computer                 // a computer player
+	AI                       // the host's AI (fortuneai)
 )
 
 // Seat is a player of the game, or of the lobby before it.
@@ -46,12 +49,15 @@ type Seat struct {
 
 // Options set up a Host.
 type Options struct {
-	// The game's settings: its Rivals are the computer players after the
-	// people, as many as there is room for.
+	// The game's settings: its AIs and Rivals are the AI and computer
+	// players after the people, as many as there is room for.
 	Settings games.FortuneSettings
 	// Local are the names of the people at the host's screen, playing
 	// first; none when the host only hosts.
 	Local []string
+	// Open is how many seats are open to visitors: 0 for as many as there
+	// is room for.
+	Open int
 	// Run runs f where the Host lives, one f at a time.
 	Run func(f func())
 	// Changed tells the host's screen that the lobby or the game changed;
@@ -61,7 +67,36 @@ type Options struct {
 	// Print is the board's print for a city, as the host's screen shows
 	// it: a JPEG for the browsers' board; nil, a plain board.
 	Print func(city int) []byte
-	Seed  uint64
+	// Art is a picture of the game's as the host's screen draws it:
+	// "card-N" (card kind N), "card-N-price" (with its price tag),
+	// "card-back", "sign-N" (square N's sign), "house-A-O" and "hotel-A-O"
+	// (along the track or across it, A 1 or 0, its owner O), and the
+	// pieces Pieces names; nil when it has none.
+	Art func(city int, name string) *Picture
+	// Pieces are what stands on a city's board where the host's screen
+	// has it: landmarks, trees, the fountain.
+	Pieces func(city int) []Piece
+	// AI plays the AI players, with the host's AI; nil when none play.
+	AI   *fortuneai.Driver
+	Seed uint64
+}
+
+// Picture is a picture of the game's, a PNG. A piece that stands on the
+// board has its size too, in board units, and its foot: FootX from its
+// left, its lowest edge Dv in front of the point it stands at (towards
+// the viewer, as the host's screen looks at the board).
+type Picture struct {
+	PNG       []byte
+	W, H      float64
+	FootX, Dv float64
+}
+
+// Piece is something standing on the board: its picture's name (Art),
+// and the board point it stands at.
+type Piece struct {
+	Name string  `json:"name"`
+	X    float64 `json:"x"`
+	Y    float64 `json:"y"`
 }
 
 // MaxPlayers is how many players a game has at most.
@@ -77,7 +112,8 @@ type Host struct {
 	cpu     *time.Timer // the computer's next move, paced to the board
 	closed  bool
 	srv     *server
-	print   []byte // the board's print, once asked for
+	print   []byte              // the board's print, once asked for
+	art     map[string]*Picture // the pictures, each once asked for
 }
 
 // paceScale speeds the computer's pace up, for tests.
@@ -97,12 +133,23 @@ func NewHost(opt Options) *Host {
 }
 
 // Room is how many more visitors the lobby takes: up to four players
-// with the computer players asked for, while the game has not started.
+// with the computer players asked for, and the seats open (Options.Open),
+// while the game has not started.
 func (h *Host) Room() int {
 	if h.Game != nil {
 		return 0
 	}
-	return max(0, MaxPlayers-len(h.Seats)-h.opt.Settings.Rivals)
+	room := MaxPlayers - len(h.Seats) - len(h.opt.Settings.AIs) - h.opt.Settings.Rivals
+	if h.opt.Open > 0 {
+		visitors := 0
+		for _, s := range h.Seats {
+			if s.Kind == Visitor {
+				visitors++
+			}
+		}
+		room = min(room, h.opt.Open-visitors)
+	}
+	return max(0, room)
 }
 
 // CanStart reports whether the game can start: one person at least, two
@@ -125,10 +172,15 @@ func (h *Host) Start() bool {
 	if len(s.Humans) == 1 && h.Seats[0].Kind == Local {
 		s.Humans = nil // one person at the screen: "You"
 	}
-	s.Rivals = min(s.Rivals, MaxPlayers-len(h.Seats))
+	s.AIs = s.AIs[:min(len(s.AIs), MaxPlayers-len(h.Seats))]
+	s.Rivals = min(s.Rivals, MaxPlayers-len(h.Seats)-len(s.AIs))
 	h.Game = games.NewFortune(s, h.opt.Seed)
 	for _, p := range h.Game.Players[len(h.Seats):] {
-		h.Seats = append(h.Seats, &Seat{Name: p.Name, Kind: Computer})
+		kind := Computer
+		if p.AI {
+			kind = AI
+		}
+		h.Seats = append(h.Seats, &Seat{Name: p.Name, Kind: kind})
 	}
 	for i, seat := range h.Seats {
 		if seat.Kind == Visitor && !seat.Here {
@@ -141,6 +193,33 @@ func (h *Host) Start() bool {
 	}
 	h.Flush()
 	return true
+}
+
+// Restart starts the game again with the same people and visitors, and
+// the computer players asked for; those sent away stay away. Every
+// browser starts over in its seat. False before a game.
+func (h *Host) Restart() bool {
+	if h.Game == nil {
+		return false
+	}
+	if h.cpu != nil {
+		h.cpu.Stop()
+		h.cpu = nil
+	}
+	old := h.Seats
+	h.Seats = nil
+	for _, s := range old {
+		if s.Kind != Computer && s.Kind != AI && !s.Kicked {
+			h.Seats = append(h.Seats, s)
+		}
+	}
+	for c := range h.clients { // their seats, where they are now
+		if c.seat >= 0 && c.seat < len(old) {
+			c.seat = slices.Index(h.Seats, old[c.seat])
+		}
+	}
+	h.Game = nil
+	return h.Start()
 }
 
 // Kick sends a visitor away: out of the lobby, or, in a game, their seat
@@ -172,7 +251,7 @@ func (h *Host) Kick(seat int) {
 // or a visitor; false when it is not theirs to do now.
 func (h *Host) Act(seat int, a Action) bool {
 	g := h.Game
-	if g == nil || seat != g.Turn || g.Players[seat].Computer() {
+	if g == nil || seat != g.Turn || g.Players[seat].Computer() || g.Players[seat].AI {
 		return false
 	}
 	var ok bool
@@ -232,6 +311,9 @@ func (h *Host) Flush() {
 		c.send(h.stateMsg(c))
 	}
 	h.changed()
+	if h.opt.AI != nil {
+		h.opt.AI.Next(h.Game, time.Duration(float64(pace(events))*paceScale), h.Flush)
+	}
 	if h.Game.Phase == games.PhaseCPU && h.cpu == nil {
 		h.cpu = time.AfterFunc(time.Duration(float64(pace(events))*paceScale), func() {
 			h.opt.Run(func() {

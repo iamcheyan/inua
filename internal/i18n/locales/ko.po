@@ -5,13 +5,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: cmd/inua-assistant/answer.go:36
+#: internal/assistantui/assistantui.go:277
+msgid "The assistant is turned off. Turn it on in Settings → AI."
+msgstr "어시스턴트가 꺼진다. 설정 → AI에서 켜주세요."
+
+#: cmd/inua-assistant/answer.go:52
+msgid "No profile makes quick choices. Turn on Decision for one in Settings → AI."
+msgstr "빠른 선택을 하는 프로필이 없습니다. 설정 → AI에서 프로필 하나의 결정을 켜세요."
+
+#: cmd/inua-assistant/bench.go:47
+msgid "No profile %s"
+msgstr "%s 프로필이 없습니다"
+
+#: cmd/inua-assistant/bench.go:60
+msgid "No API key for %s: type one and Save first."
+msgstr "%s의 API 키가 없습니다. 먼저 입력하고 저장하세요."
+
 #: cmd/inua-assistant/mcp.go:57
 msgid "inua's assistant"
 msgstr "inua 어시스턴트"
 
 #: cmd/inua-keyring/main.go:117
-#: internal/ui/settings_keyring.go:250
-#: ui/settings.ui:3469
+#: internal/ui/settings_keyring.go:324
+#: ui/settings.ui:3579
 msgid "Keyring"
 msgstr "키링"
 
@@ -29,7 +46,7 @@ msgstr "“%s” · %s"
 
 #: internal/apps/calendar/calendar.go:69
 #: internal/appui/clock.go:218
-#: internal/ui/control.go:300
+#: internal/ui/control.go:308
 #: internal/ui/lock.go:238
 msgid "Monday, January 2"
 msgstr "1월 2일 Monday"
@@ -452,7 +469,7 @@ msgid "System Monitor"
 msgstr "시스템 모니터"
 
 #: internal/appui/app.go:70
-#: ui/control.ui:474
+#: ui/control.ui:498
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
 msgid "Tailscale"
 msgstr "Tailscale"
@@ -602,6 +619,7 @@ msgstr "편집하다"
 
 #: internal/appui/clock.go:491
 #: internal/games/fortune.go:65
+#: internal/gamesui/fortune_menu.go:174
 #: ui/clock.ui:339
 #: ui/clock.ui:406
 msgid "Start"
@@ -613,7 +631,7 @@ msgid "Reset"
 msgstr "초기화"
 
 #: internal/appui/clock.go:496
-#: internal/assistantui/assistantui.go:458
+#: internal/assistantui/assistantui.go:431
 #: internal/ui/alarms.go:108
 msgid "Stop"
 msgstr "중지"
@@ -693,7 +711,7 @@ msgid "5 years"
 msgstr "5년"
 
 #: internal/appui/gpg.go:144
-#: ui/settings.ui:3661
+#: ui/settings.ui:3771
 msgid "Never"
 msgstr "만료 없음"
 
@@ -711,12 +729,13 @@ msgstr "%s 생성"
 #: internal/appui/gpg.go:602
 #: internal/appui/gpg.go:624
 #: internal/shell/notify.go:32
-#: internal/ui/askpass.go:366
-#: internal/ui/askpass.go:427
-#: internal/ui/askpass.go:431
-#: internal/ui/askpass.go:433
-#: internal/ui/settings_about.go:187
-#: internal/ui/settings_keyring.go:555
+#: internal/ui/askpass.go:380
+#: internal/ui/askpass.go:448
+#: internal/ui/askpass.go:452
+#: internal/ui/askpass.go:454
+#: internal/ui/settings_about.go:196
+#: internal/ui/settings_keyring.go:640
+#: internal/ui/settings_keyring.go:674
 msgid "Jan 2, 2006"
 msgstr "2006년 1월 2일"
 
@@ -871,7 +890,7 @@ msgstr "삭제…"
 
 #: internal/appui/gpg.go:883
 #: internal/appui/tailscale.go:469
-#: internal/ui/askpass.go:516
+#: internal/ui/askpass.go:537
 #: internal/viewerui/app.go:548
 msgid "Copied"
 msgstr "복사됨"
@@ -1180,8 +1199,8 @@ msgid "Top level"
 msgstr "최상위"
 
 #: internal/appui/pass.go:360
-#: internal/ui/settings.go:673
-#: internal/ui/settings.go:700
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:704
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d개"
@@ -1232,10 +1251,10 @@ msgstr "숨기기"
 #: internal/appui/pass.go:601
 #: internal/appui/pass.go:626
 #: internal/filesui/window.go:712
-#: internal/ui/askpass.go:200
+#: internal/ui/askpass.go:203
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
-#: ui/settings.ui:2675
+#: ui/settings.ui:2721
 msgid "Copy"
 msgstr "복사"
 
@@ -1333,7 +1352,7 @@ msgstr "신뢰하는 앱"
 
 #: internal/appui/pass.go:1035
 #: internal/appui/workshop_manager.go:50
-#: internal/ui/settings_keyring.go:475
+#: internal/ui/settings_keyring.go:551
 msgid "%d app"
 msgid_plural "%d apps"
 msgstr[0] "앱 %d개"
@@ -1343,28 +1362,30 @@ msgid "None: an app reading it is asked about first."
 msgstr "없음: 읽으려는 앱은 먼저 묻습니다."
 
 #: internal/appui/pass.go:1043
-#: internal/ui/askpass.go:357
-#: internal/ui/settings_keyring.go:539
+#: internal/ui/askpass.go:371
+#: internal/ui/settings_keyring.go:624
 msgid "Flatpak: %s"
 msgstr "Flatpak: %s"
 
 #: internal/appui/pass.go:1048
 #: internal/appui/pass.go:1070
-#: internal/ui/settings_keyring.go:394
-#: internal/ui/settings_keyring.go:402
-#: internal/ui/settings_keyring.go:544
+#: internal/ui/settings_keyring.go:469
+#: internal/ui/settings_keyring.go:477
+#: internal/ui/settings_keyring.go:629
 msgid "%s · %s"
 msgstr "%s · %s"
 
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
-#: internal/ui/settings_keyring.go:560
+#: internal/ui/settings_ai.go:549
+#: internal/ui/settings_keyring.go:645
+#: internal/ui/settings_keyring.go:679
 #: ui/stocks.ui:292
 msgid "Remove"
 msgstr "제거"
 
 #: internal/appui/pass.go:1055
-#: internal/ui/settings_keyring.go:564
+#: internal/ui/settings_keyring.go:649
 msgid "Stop trusting it: it is asked about at its next read"
 msgstr "신뢰를 그만둡니다. 다음 읽기 때 묻습니다"
 
@@ -1379,7 +1400,7 @@ msgstr "아직 읽은 앱이 없습니다."
 #: internal/appui/pass.go:1066
 #: internal/appui/sysmon.go:965
 #: internal/filesui/pane.go:1358
-#: internal/ui/settings_keyring.go:433
+#: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
 msgstr "1월 2일 15:04"
@@ -1390,27 +1411,27 @@ msgid_plural "%s · %d times"
 msgstr[0] "%s · %d회"
 
 #: internal/appui/pass.go:1080
-#: internal/ui/settings_keyring.go:575
+#: internal/ui/settings_keyring.go:694
 msgid "trusted"
 msgstr "신뢰됨"
 
 #: internal/appui/pass.go:1082
-#: internal/ui/settings_keyring.go:577
+#: internal/ui/settings_keyring.go:696
 msgid "allowed once"
 msgstr "한 번 허용됨"
 
 #: internal/appui/pass.go:1084
-#: internal/ui/settings_keyring.go:579
+#: internal/ui/settings_keyring.go:698
 msgid "allowed, and trusted from now on"
 msgstr "허용됨, 이제부터 신뢰"
 
 #: internal/appui/pass.go:1086
-#: internal/ui/settings_keyring.go:581
+#: internal/ui/settings_keyring.go:700
 msgid "denied"
 msgstr "거부됨"
 
 #: internal/appui/pass.go:1088
-#: internal/ui/settings_keyring.go:583
+#: internal/ui/settings_keyring.go:702
 msgid "allowed: no one to ask"
 msgstr "허용됨: 물어볼 곳 없음"
 
@@ -1456,7 +1477,7 @@ msgstr "QR 코드가 있는 이미지"
 
 #: internal/appui/pass_otp.go:340
 #: internal/desktop/defaults.go:48
-#: internal/ui/settings.go:810
+#: internal/ui/settings.go:814
 msgid "Images"
 msgstr "이미지"
 
@@ -1485,12 +1506,12 @@ msgid "Range start"
 msgstr "범위 시작"
 
 #: internal/appui/stocks.go:322
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "High"
 msgstr "높음"
 
 #: internal/appui/stocks.go:322
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Low"
 msgstr "낮음"
 
@@ -1737,7 +1758,7 @@ msgstr "명령"
 
 #: internal/appui/sysmon.go:786
 #: internal/filesui/kinds.go:38
-#: internal/ui/settings_keyring.go:252
+#: internal/ui/settings_keyring.go:326
 msgid "Program"
 msgstr "프로그램"
 
@@ -1774,7 +1795,7 @@ msgid "%s · %s ago"
 msgstr "%[1]s · %[2]s 전"
 
 #: internal/appui/sysmon.go:836
-#: internal/ui/settings_keyring.go:224
+#: internal/ui/settings_keyring.go:298
 msgid "Jan 2 15:04:05"
 msgstr "1월 2일 15:04:05"
 
@@ -1838,16 +1859,16 @@ msgstr "컴퓨터"
 
 #: internal/appui/sysmon.go:959
 #: internal/appui/sysmon.go:971
-#: internal/ui/settings_ai.go:323
+#: internal/ui/settings_ai.go:464
 msgid "Model"
 msgstr "모델"
 
 #: internal/appui/sysmon.go:960
 #: internal/appui/tailscale.go:630
-#: internal/ui/settings_ai.go:321
+#: internal/ui/settings_ai.go:453
 #: internal/viewerui/app.go:791
 #: ui/gpg.ui:1342
-#: ui/settings.ui:4394
+#: ui/settings.ui:4657
 #: ui/sysmon.ui:96
 msgid "Name"
 msgstr "이름"
@@ -1964,7 +1985,7 @@ msgid "wired"
 msgstr "유선"
 
 #: internal/appui/sysmon.go:1035
-#: ui/control.ui:249
+#: ui/control.ui:273
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
@@ -2245,7 +2266,7 @@ msgid "IN USE"
 msgstr "사용 중"
 
 #: internal/appui/tailscale.go:601
-#: internal/gamesui/fortune.go:375
+#: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
 msgid "None"
 msgstr "없음"
@@ -2387,7 +2408,7 @@ msgstr "재생할 수 없습니다: %s"
 #: internal/shell/status.go:88
 #: internal/shell/status.go:107
 #: internal/shell/status.go:122
-#: ui/settings.ui:4611
+#: ui/settings.ui:4874
 msgid "Off"
 msgstr "꺼짐"
 
@@ -2506,10 +2527,11 @@ msgstr "알 수 없는 블록 %q"
 #: internal/filesui/cards.go:389
 #: internal/filesui/cards.go:427
 #: internal/filesui/cards.go:610
-#: internal/games/fortunenet/texts.go:75
-#: internal/gamesui/fortune_host.go:229
-#: internal/ui/askpass.go:267
-#: internal/ui/askpass.go:395
+#: internal/games/fortunenet/texts.go:76
+#: internal/gamesui/fortune_host.go:236
+#: internal/ui/askpass.go:270
+#: internal/ui/askpass.go:412
+#: internal/ui/askpass.go:416
 #: ui/clock.ui:244
 #: ui/clock.ui:454
 #: ui/files.ui:155
@@ -2524,7 +2546,7 @@ msgid "Cancel"
 msgstr "취소"
 
 #: internal/appui/workshop.go:995
-#: internal/ui/askpass.go:266
+#: internal/ui/askpass.go:269
 msgid "OK"
 msgstr "OK"
 
@@ -2538,7 +2560,7 @@ msgid "Open"
 msgstr "열기"
 
 #: internal/appui/workshop_blocks.go:438
-#: internal/ui/settings_ai.go:328
+#: internal/ui/settings_ai.go:496
 #: ui/clock.ui:252
 #: ui/pass.ui:490
 msgid "Save"
@@ -2637,7 +2659,24 @@ msgstr "설치"
 msgid "Installed %s; the launcher and the dock's drawer list it."
 msgstr "%s을(를) 설치했습니다. 런처와 독의 서랍에 나타납니다."
 
-#: internal/assistant/assistant.go:430
+#: internal/assistant/assistant.go:137
+msgid "Cannot read the saved keys: %s"
+msgstr "저장된 키를 읽을 수 없습니다: %s"
+
+#: internal/assistant/assistant.go:145
+msgid "Cannot read the key of %s: %v"
+msgstr "%[1]s의 키를 읽을 수 없습니다: %[2]v"
+
+#: internal/assistant/assistant.go:150
+#: internal/ui/settings_ai.go:922
+msgid "Cannot read the Console token: %s"
+msgstr "콘솔 토큰을 읽을 수 없습니다: %s"
+
+#: internal/assistant/assistant.go:156
+msgid "No API key for %s (%s): type one in Settings → AI."
+msgstr "%[1]s(%[2]s)에 대한 API 키가 없음: 설정 → AI에 하나를 입력합니다."
+
+#: internal/assistant/assistant.go:585
 msgid "Remote Console: %s"
 msgstr "원격 콘솔: %s"
 
@@ -2651,7 +2690,7 @@ msgstr "도구를 쓰는 스크립트 실행 중"
 
 #: internal/assistantui/assistantui.go:37
 #: ui/assistant.ui:35
-#: ui/settings.ui:2004
+#: ui/settings.ui:2007
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:3
 msgid "Assistant"
 msgstr "도우미"
@@ -2680,76 +2719,55 @@ msgstr "오늘 오후 교토 날씨는 어떻습니까?"
 msgid "%s answers from here"
 msgstr "%s는 여기에서 답변합니다."
 
-#: internal/assistantui/assistantui.go:277
-msgid "The assistant is turned off. Turn it on in Settings → AI."
-msgstr "어시스턴트가 꺼진다. 설정 → AI에서 켜주세요."
-
-#: internal/assistantui/assistantui.go:289
-msgid "Cannot read the saved keys: %s"
-msgstr "저장된 키를 읽을 수 없습니다: %s"
-
-#: internal/assistantui/assistantui.go:298
-msgid "Cannot read the key of %s: %v"
-msgstr "%[1]s의 키를 읽을 수 없습니다: %[2]v"
-
-#: internal/assistantui/assistantui.go:304
-#: internal/ui/settings_ai.go:602
-msgid "Cannot read the Console token: %s"
-msgstr "콘솔 토큰을 읽을 수 없습니다: %s"
-
-#: internal/assistantui/assistantui.go:311
-msgid "No API key for %s (%s): type one in Settings → AI."
-msgstr "%[1]s(%[2]s)에 대한 API 키가 없음: 설정 → AI에 하나를 입력합니다."
-
-#: internal/assistantui/assistantui.go:360
+#: internal/assistantui/assistantui.go:333
 msgid "Could not start the Console endpoint: %s"
 msgstr "콘솔 끝점을 시작할 수 없습니다: %s"
 
-#: internal/assistantui/assistantui.go:465
+#: internal/assistantui/assistantui.go:438
 msgid "✕ Not done: %s"
 msgstr "✕ 완료되지 않음: %s"
 
-#: internal/assistantui/assistantui.go:476
+#: internal/assistantui/assistantui.go:449
 #: ui/assistant.ui:136
 msgid "Ask"
 msgstr "질문하다"
 
-#: internal/assistantui/assistantui.go:480
+#: internal/assistantui/assistantui.go:453
 msgid "Stopped."
 msgstr "중지되었습니다."
 
-#: internal/assistantui/assistantui.go:483
+#: internal/assistantui/assistantui.go:456
 msgid "Something went wrong: %s"
 msgstr "문제가 발생했습니다: %s"
 
-#: internal/assistantui/assistantui.go:486
+#: internal/assistantui/assistantui.go:459
 msgid "(no answer)"
 msgstr "(대답 없음)"
 
-#: internal/assistantui/assistantui.go:516
+#: internal/assistantui/assistantui.go:489
 msgid "Don't"
 msgstr "거부"
 
-#: internal/assistantui/assistantui.go:516
-#: internal/ui/askpass.go:390
+#: internal/assistantui/assistantui.go:489
+#: internal/ui/askpass.go:407
 #: internal/workshop/session.go:406
 msgid "Allow"
 msgstr "허용하다"
 
-#: internal/assistantui/assistantui.go:537
+#: internal/assistantui/assistantui.go:510
 msgid "Not allowed"
 msgstr "허용되지 않음"
 
-#: internal/assistantui/assistantui.go:539
+#: internal/assistantui/assistantui.go:512
 msgid "Canceled"
 msgstr "취소됨"
 
-#: internal/assistantui/assistantui.go:541
-#: ui/settings.ui:3716
+#: internal/assistantui/assistantui.go:514
+#: ui/settings.ui:3826
 msgid "Allowed"
 msgstr "허용됨"
 
-#: internal/assistantui/assistantui.go:630
+#: internal/assistantui/assistantui.go:603
 msgid "TRY"
 msgstr "시도하다"
 
@@ -3498,7 +3516,9 @@ msgstr[0] "… 그 외 %d개"
 
 #: internal/filesui/cards.go:454
 #: internal/filesui/cards.go:735
-#: ui/settings.ui:4149
+#: internal/ui/settings_bench.go:139
+#: ui/settings.ui:2880
+#: ui/settings.ui:4412
 msgid "Close"
 msgstr "닫기"
 
@@ -4136,8 +4156,9 @@ msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr "터미널을 찾을 수 없습니다. xdg-terminal-exec를 설치하거나 $TERMINAL을 설정하세요."
 
 #: internal/games/fortune.go:54
-#: internal/games/fortunenet/texts.go:61
+#: internal/games/fortunenet/texts.go:62
 #: internal/gamesui/fortune_board.go:881
+#: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:144
 msgid "Chance"
 msgstr "기회"
@@ -4149,18 +4170,22 @@ msgid "Card Shop"
 msgstr ""
 
 #: internal/games/fortune.go:66
+#: internal/gamesui/fortune_menu.go:183
 msgid "Income Tax"
 msgstr "소득세"
 
 #: internal/games/fortune.go:70
+#: internal/gamesui/fortune_menu.go:175
 msgid "Jail"
 msgstr "감옥"
 
 #: internal/games/fortune.go:75
+#: internal/gamesui/fortune_menu.go:176
 msgid "Fountain"
 msgstr "분수"
 
 #: internal/games/fortune.go:80
+#: internal/gamesui/fortune_menu.go:177
 msgid "Go to Jail"
 msgstr "감옥에 가다"
 
@@ -4168,220 +4193,212 @@ msgstr "감옥에 가다"
 msgid "Luxury Tax"
 msgstr "사치세"
 
-#: internal/games/fortune.go:307
-#: internal/gamesui/fortune.go:375
-msgid "Mika"
-msgstr "미카"
-
-#: internal/games/fortune.go:307
-msgid "Ren"
-msgstr "렌"
-
-#: internal/games/fortune.go:307
-msgid "Sol"
-msgstr "솔"
-
-#: internal/games/fortune.go:315
+#: internal/games/fortune.go:314
+#: internal/gamesui/fortune.go:648
 msgid "You"
 msgstr "당신"
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/fortune_host.go:41
+#: internal/gamesui/fortune.go:644
+#: internal/gamesui/fortune_host.go:44
 msgid "Player %d"
 msgstr "플레이어 %d"
 
-#: internal/games/fortune.go:495
+#: internal/games/fortune.go:502
 msgid "a house"
 msgstr "집"
 
-#: internal/games/fortune.go:497
+#: internal/games/fortune.go:504
 msgid "a hotel"
 msgstr "호텔"
 
-#: internal/games/fortune.go:499
+#: internal/games/fortune.go:506
 msgid "%s built %s on %s ($%d)."
 msgstr "%[1]s는 %[3]s($%[4]d)에 %[2]s를 구축했습니다."
 
-#: internal/games/fortune.go:510
+#: internal/games/fortune.go:517
 msgid "%s sold a building on %s for $%d."
 msgstr "%[1]s는 %[2]s에 있는 건물을 $%[3]d에 매각했습니다."
 
-#: internal/games/fortune.go:548
+#: internal/games/fortune.go:555
 msgid "%s paid $%d bail."
 msgstr "%[1]s는 $%[2]d 보석금을 지불했습니다."
 
-#: internal/games/fortune.go:584
+#: internal/games/fortune.go:591
 #: internal/games/fortune_cards.go:136
 msgid "%s bought %s for $%d."
 msgstr "%[1]s는 $%[3]d에 %[2]s를 구입했습니다."
 
-#: internal/games/fortune.go:598
+#: internal/games/fortune.go:605
+#: internal/games/fortunenet/texts.go:89
+#: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr "더블"
 
-#: internal/games/fortune.go:600
+#: internal/games/fortune.go:607
+#: internal/games/fortunenet/texts.go:90
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr "6"
 
-#: internal/games/fortune.go:602
+#: internal/games/fortune.go:609
 msgid "%s rolled %s and walked out of jail."
 msgstr "%[1]s는 %[2]s를 굴려 감옥에서 나왔습니다."
 
-#: internal/games/fortune.go:605
+#: internal/games/fortune.go:612
 msgid "%s stays in jail."
 msgstr "%s는 감옥에 갇혀 있다."
 
-#: internal/games/fortune.go:609
+#: internal/games/fortune.go:616
 msgid "%s paid $%d bail after three tries."
 msgstr "%[1]s는 세 번의 시도 끝에 $%[2]d의 보석금을 지불했습니다."
 
-#: internal/games/fortune.go:618
+#: internal/games/fortune.go:625
 msgid "%s is a turtle: one square."
 msgstr ""
 
-#: internal/games/fortune.go:623
+#: internal/games/fortune.go:630
 msgid "Three doubles in a row: %s goes to jail."
 msgstr "세 번의 연속 복식: %s가 감옥에 갑니다."
 
-#: internal/games/fortune.go:684
+#: internal/games/fortune.go:691
 msgid "%s took the road through %s."
 msgstr "%[1]s는 %[2]s를 통과하는 길을 택했습니다."
 
-#: internal/games/fortune.go:687
+#: internal/games/fortune.go:694
 msgid "%s passed Start: +$%d."
 msgstr "%[1]s는 시작: +$%[2]d를 통과했습니다."
 
-#: internal/games/fortune.go:730
+#: internal/games/fortune.go:737
 msgid "%s cannot afford %s."
 msgstr "%[1]s는 %[2]s를 감당할 수 없습니다."
 
-#: internal/games/fortune.go:734
+#: internal/games/fortune.go:741
 msgid "%s owed %s rent for %s and paid nothing: Free Rent."
 msgstr ""
 
-#: internal/games/fortune.go:740
+#: internal/games/fortune.go:747
 msgid "%s paid %s $%d rent for %s."
 msgstr "%[1]s는 %[4]s에 대해 %[2]s $%[3]d 임대료를 지불했습니다."
 
-#: internal/games/fortune.go:746
+#: internal/games/fortune.go:753
 msgid "%s paid $%d %s into the fountain."
 msgstr "%[1]s는 $%[2]d %[3]s를 분수에 지불했습니다."
 
-#: internal/games/fortune.go:749
+#: internal/games/fortune.go:756
 msgid "%s took $%d from the fountain."
 msgstr "%[1]s는 분수에서 $%[2]d를 가져갔습니다."
 
-#: internal/games/fortune.go:753
+#: internal/games/fortune.go:760
 msgid "The fountain is empty."
 msgstr "분수는 비어 있다."
 
-#: internal/games/fortune.go:756
+#: internal/games/fortune.go:763
 msgid "%s goes to jail."
 msgstr "%s는 감옥에 간다."
 
-#: internal/games/fortune.go:780
+#: internal/games/fortune.go:787
 msgid "A double: roll again."
 msgstr "더블: 다시 굴린다."
 
-#: internal/games/fortune.go:795
+#: internal/games/fortune.go:802
 msgid "A street fair pays out: collect $60."
 msgstr "거리 박람회는 보상을 받습니다: $60를 모금합니다."
 
-#: internal/games/fortune.go:796
+#: internal/games/fortune.go:803
 msgid "Advance to Start."
 msgstr "시작으로 진행합니다."
 
-#: internal/games/fortune.go:797
+#: internal/games/fortune.go:804
 msgid "Your bicycle needs a new chain: pay $40."
 msgstr "귀하의 자전거에는 새로운 체인이 필요합니다. 비용은 $40입니다."
 
-#: internal/games/fortune.go:798
+#: internal/games/fortune.go:805
 msgid "Go back three squares."
 msgstr "세 칸 뒤로 이동합니다."
 
-#: internal/games/fortune.go:799
+#: internal/games/fortune.go:806
 msgid "It is your birthday: every player gives you $25."
 msgstr "당신의 생일입니다. 모든 플레이어가 당신에게 $25를 줍니다."
 
-#: internal/games/fortune.go:800
+#: internal/games/fortune.go:807
 msgid "Roof repairs: pay $25 for each building."
 msgstr "지붕 수리: 건물당 $25를 지불합니다."
 
-#: internal/games/fortune.go:801
+#: internal/games/fortune.go:808
 msgid "A refund from the tax office: collect $80."
 msgstr "세무서로부터의 환급금: $80를 징수합니다."
 
-#: internal/games/fortune.go:802
+#: internal/games/fortune.go:809
 msgid "Catch a ride to the next station or pier."
 msgstr "다음 역이나 부두까지 차를 타세요."
 
-#: internal/games/fortune.go:803
+#: internal/games/fortune.go:810
 msgid "A night out: go to %s."
 msgstr "밤 외출: %s로 가세요."
 
-#: internal/games/fortune.go:804
+#: internal/games/fortune.go:811
 msgid "Your shares paid a dividend: collect $100."
 msgstr "귀하의 주식은 배당금을 지불했습니다. 100달러를 모았습니다."
 
-#: internal/games/fortune.go:805
+#: internal/games/fortune.go:812
 msgid "Hotel inspection: pay $40 for each building."
 msgstr "호텔 검사: 각 건물에 대해 $40를 지불합니다."
 
-#: internal/games/fortune.go:806
+#: internal/games/fortune.go:813
 msgid "A parking fine: pay $30."
 msgstr "주차 벌금: $30 지불."
 
-#: internal/games/fortune.go:807
+#: internal/games/fortune.go:814
 msgid "You won a crossword: collect $50."
 msgstr "당신은 십자말 풀이에 당첨되어 $50를 모았습니다."
 
-#: internal/games/fortune.go:808
+#: internal/games/fortune.go:815
 msgid "Buy everyone lunch: pay each player $15."
 msgstr "모두에게 점심 구매: 각 플레이어에게 $15를 지불합니다."
 
-#: internal/games/fortune.go:809
+#: internal/games/fortune.go:816
 msgid "Caught jaywalking: go to jail."
 msgstr "무단횡단하다 적발되어 감옥에 갑니다."
 
-#: internal/games/fortune.go:810
+#: internal/games/fortune.go:817
 msgid "A card left on a bench: take it."
 msgstr ""
 
-#: internal/games/fortune.go:811
+#: internal/games/fortune.go:818
 msgid "The shopkeeper owes you a favour: take a card."
 msgstr ""
 
-#: internal/games/fortune.go:812
+#: internal/games/fortune.go:819
 msgid "You won a raffle: take a card."
 msgstr ""
 
-#: internal/games/fortune.go:841
+#: internal/games/fortune.go:848
 msgid "Chance for %s: %s"
 msgstr "%[1]s에 대한 기회: %[2]s"
 
-#: internal/games/fortune.go:844
+#: internal/games/fortune.go:851
 msgid "%s takes a card: %s."
 msgstr ""
 
-#: internal/games/fortune.go:941
+#: internal/games/fortune.go:948
 msgid "%s sold a house on %s for $%d."
 msgstr "%[1]s는 %[2]s의 집을 $%[3]d에 판매했습니다."
 
-#: internal/games/fortune.go:945
+#: internal/games/fortune.go:952
 msgid "%s sold %s to the bank for $%d."
 msgstr "%[1]s는 %[2]s를 $%[3]d에 은행에 판매했습니다."
 
-#: internal/games/fortune.go:959
+#: internal/games/fortune.go:966
 msgid "%s is bankrupt and out of the game."
 msgstr "%s는 파산하여 게임에서 제외되었습니다."
 
-#: internal/games/fortune.go:994
+#: internal/games/fortune.go:1001
 msgid "%s sleeps through their turn."
 msgstr ""
 
-#: internal/games/fortune.go:1014
+#: internal/games/fortune.go:1021
 msgid "%s won with $%d in worth."
 msgstr "%[1]s는 $%[2]d 가치로 승리했습니다."
 
@@ -4510,7 +4527,7 @@ msgid "%s played %s and took %s from %s."
 msgstr ""
 
 #: internal/games/fortune_cards.go:276
-#: internal/games/fortunenet/texts.go:83
+#: internal/games/fortunenet/texts.go:82
 msgid "a card"
 msgstr ""
 
@@ -5815,15 +5832,59 @@ msgstr ""
 msgid "Lungotevere"
 msgstr ""
 
-#: internal/games/fortunenet/host.go:154
+#: internal/games/fortune_rivals.go:29
+msgid "Mika"
+msgstr "미카"
+
+#: internal/games/fortune_rivals.go:29
+msgid "the careful banker"
+msgstr "신중한 은행가"
+
+#: internal/games/fortune_rivals.go:30
+msgid "Keeps cash in hand, passes on the dearest streets, buys few cards and pays bail early."
+msgstr "현금을 손에 쥐고, 가장 비싼 거리는 지나치며, 카드는 적게 사고, 보석금은 일찍 냅니다."
+
+#: internal/games/fortune_rivals.go:36
+msgid "Ren"
+msgstr "렌"
+
+#: internal/games/fortune_rivals.go:36
+msgid "the bold developer"
+msgstr "대담한 개발자"
+
+#: internal/games/fortune_rivals.go:37
+msgid "Buys whatever the dice land on, with little cash to spare, and sits out jail rather than pay."
+msgstr "주사위가 멈춘 곳은 무엇이든 사고, 여윳돈은 거의 없으며, 보석금을 내느니 감옥에서 버팁니다."
+
+#: internal/games/fortune_rivals.go:43
+msgid "Sol"
+msgstr "솔"
+
+#: internal/games/fortune_rivals.go:43
+msgid "the trickster"
+msgstr "책략가"
+
+#: internal/games/fortune_rivals.go:44
+msgid "Lives by the cards: sleeping pills, turtles and audits for whoever leads; builds anywhere."
+msgstr "카드로 살아갑니다: 앞서는 사람에게 수면제, 거북이, 세무조사. 어디든 짓습니다."
+
+#: internal/games/fortuneai/fortuneai.go:425
+msgid "The AI keeps not answering: the computer plays for %s from now on."
+msgstr "AI가 계속 응답하지 않아 이제부터 컴퓨터가 %s 대신 플레이합니다."
+
+#: internal/games/fortuneai/fortuneai.go:427
+msgid "No answer from the AI: the computer plays this turn for %s."
+msgstr "AI가 응답하지 않습니다. 이번 차례는 컴퓨터가 %s 대신 플레이합니다."
+
+#: internal/games/fortunenet/host.go:233
 msgid "The host sent you away."
 msgstr "호스트가 당신을 내보냈습니다."
 
-#: internal/games/fortunenet/host.go:291
+#: internal/games/fortunenet/host.go:373
 msgid "That is not this game's code."
 msgstr "이 게임의 코드가 아닙니다."
 
-#: internal/games/fortunenet/host.go:298
+#: internal/games/fortunenet/host.go:380
 msgid "Your seat was taken up in another window."
 msgstr "다른 창에서 당신의 자리를 열었습니다."
 
@@ -5866,7 +5927,7 @@ msgid "%s · %d rounds · $%s each"
 msgstr "%s · %d라운드 · 각자 $%s"
 
 #: internal/games/fortunenet/texts.go:26
-#: internal/gamesui/fortune_host.go:135
+#: internal/gamesui/fortune_host.go:142
 msgid "Room for %d more"
 msgstr "%d명 더 참가 가능"
 
@@ -5875,286 +5936,370 @@ msgid "at the host's screen"
 msgstr "호스트 화면에서"
 
 #: internal/games/fortunenet/texts.go:28
-#: internal/gamesui/fortune_host.go:123
+#: internal/gamesui/fortune_host.go:130
 msgid "in a browser"
 msgstr "브라우저에서"
 
 #: internal/games/fortunenet/texts.go:30
-#: internal/gamesui/fortune.go:831
+#: internal/gamesui/fortune.go:1106
 msgid " · away, the computer plays"
 msgstr " · 자리 비움, 컴퓨터가 대신 플레이"
 
 #: internal/games/fortunenet/texts.go:31
-#: internal/gamesui/fortune.go:205
+#: internal/gamesui/fortune.go:1109
+msgid " · the AI plays"
+msgstr " · AI가 플레이"
+
+#: internal/games/fortunenet/texts.go:32
+#: internal/gamesui/fortune.go:252
+#: internal/gamesui/fortune.go:408
 msgid "PLAYERS"
 msgstr "플레이어"
 
-#: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/fortune.go:209
+#: internal/games/fortunenet/texts.go:33
+#: internal/gamesui/fortune.go:256
 msgid "SQUARE"
 msgstr "칸"
 
-#: internal/games/fortunenet/texts.go:33
-#: internal/gamesui/fortune.go:229
+#: internal/games/fortunenet/texts.go:34
+#: internal/gamesui/fortune.go:276
 msgid "WHAT HAPPENED"
 msgstr "무슨 일이 일어났는가"
 
-#: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/fortune.go:163
+#: internal/games/fortunenet/texts.go:35
+#: internal/gamesui/fortune.go:208
 msgid "ROUND"
 msgstr "라운드"
 
-#: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/fortune.go:164
+#: internal/games/fortunenet/texts.go:36
+#: internal/gamesui/fortune.go:209
 msgid "FOUNTAIN"
 msgstr "분수"
 
-#: internal/games/fortunenet/texts.go:36
-#: internal/gamesui/fortune.go:216
-#: internal/gamesui/fortune.go:871
+#: internal/games/fortunenet/texts.go:37
+#: internal/gamesui/fortune.go:263
+#: internal/gamesui/fortune.go:1152
 msgid "Roll the dice"
 msgstr "주사위를 굴려라"
 
-#: internal/games/fortunenet/texts.go:37
-#: internal/gamesui/fortune.go:874
+#: internal/games/fortunenet/texts.go:38
+#: internal/gamesui/fortune.go:1155
 msgid "Roll for a double"
 msgstr "같은 눈을 노리세요"
 
-#: internal/games/fortunenet/texts.go:38
-#: internal/gamesui/fortune.go:874
+#: internal/games/fortunenet/texts.go:39
+#: internal/gamesui/fortune.go:1155
 msgid "Roll for a six"
 msgstr "6에 대한 롤"
 
-#: internal/games/fortunenet/texts.go:39
+#: internal/games/fortunenet/texts.go:40
 msgid "Pay $%d bail"
 msgstr "보석금 $%d 내기"
 
-#: internal/games/fortunenet/texts.go:40
-#: internal/gamesui/fortune.go:881
+#: internal/games/fortunenet/texts.go:41
+#: internal/gamesui/fortune.go:1162
 #: internal/gamesui/fortune_panel.go:464
 msgid "Buy it for $%d"
 msgstr "$%d에 구매하세요."
 
-#: internal/games/fortunenet/texts.go:41
-#: internal/gamesui/fortune.go:883
+#: internal/games/fortunenet/texts.go:42
+#: internal/gamesui/fortune.go:1164
 msgid "Don't buy"
 msgstr "사지 않기"
 
-#: internal/games/fortunenet/texts.go:42
-#: internal/gamesui/fortune.go:887
+#: internal/games/fortunenet/texts.go:43
+#: internal/gamesui/fortune.go:1168
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:43
-#: internal/gamesui/fortune.go:890
+#: internal/games/fortunenet/texts.go:44
+#: internal/gamesui/fortune.go:1171
 msgid "End turn"
 msgstr "턴 종료"
 
-#: internal/games/fortunenet/texts.go:44
-#: internal/gamesui/fortune.go:865
+#: internal/games/fortunenet/texts.go:45
+#: internal/gamesui/fortune.go:1143
 msgid "%s is playing…"
 msgstr "%s 차례…"
 
-#: internal/games/fortunenet/texts.go:45
-#: internal/gamesui/fortune_board.go:1112
+#: internal/games/fortunenet/texts.go:46
+#: internal/gamesui/fortune_board.go:1115
 msgid "Your turn"
 msgstr "당신의 차례"
 
-#: internal/games/fortunenet/texts.go:46
-#: internal/gamesui/fortune_board.go:1110
+#: internal/games/fortunenet/texts.go:47
+#: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr "%s의 차례"
 
-#: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/fortune_board.go:1136
+#: internal/games/fortunenet/texts.go:48
+#: internal/gamesui/fortune_board.go:1139
 msgid "round %d of %d"
 msgstr "%[2]d의 둥근 %[1]d"
 
-#: internal/games/fortunenet/texts.go:48
-#: internal/gamesui/fortune.go:810
+#: internal/games/fortunenet/texts.go:49
+#: internal/gamesui/fortune.go:1085
 msgid "worth $%s"
 msgstr "$%s 상당"
 
-#: internal/games/fortunenet/texts.go:49
-#: internal/gamesui/fortune.go:813
+#: internal/games/fortunenet/texts.go:50
+#: internal/gamesui/fortune.go:1088
 msgid "bankrupt"
 msgstr "파산하다"
 
-#: internal/games/fortunenet/texts.go:50
-#: internal/gamesui/fortune.go:815
+#: internal/games/fortunenet/texts.go:51
+#: internal/gamesui/fortune.go:1090
 msgid " · in jail"
 msgstr "· 감옥에 있다"
 
-#: internal/games/fortunenet/texts.go:51
-#: internal/gamesui/fortune.go:822
+#: internal/games/fortunenet/texts.go:52
+#: internal/gamesui/fortune.go:1097
 msgid " · free rent"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:52
-#: internal/gamesui/fortune.go:825
+#: internal/games/fortunenet/texts.go:53
+#: internal/gamesui/fortune.go:1100
 msgid " · turtle"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:53
-#: internal/gamesui/fortune.go:828
+#: internal/games/fortunenet/texts.go:54
+#: internal/gamesui/fortune.go:1103
 msgid " · asleep"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:54
+#: internal/games/fortunenet/texts.go:55
 #: internal/gamesui/fortune_panel.go:160
 msgid "For sale: $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:55
+#: internal/games/fortunenet/texts.go:56
 #: internal/gamesui/fortune_panel.go:162
 msgid "%s owns it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:56
+#: internal/games/fortunenet/texts.go:57
 #: internal/gamesui/fortune_panel.go:164
 msgid "You own it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:57
+#: internal/games/fortunenet/texts.go:58
 #: internal/gamesui/fortune_panel.go:168
 msgid "rent now"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:58
+#: internal/games/fortunenet/texts.go:59
 #: internal/gamesui/fortune_panel.go:138
 msgid "Street · price $%d · building $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:59
+#: internal/games/fortunenet/texts.go:60
 #: internal/gamesui/fortune_panel.go:140
 msgid "Station or pier · price $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:60
+#: internal/games/fortunenet/texts.go:61
 #: internal/gamesui/fortune_panel.go:142
 msgid "Utility · price $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:62
+#: internal/games/fortunenet/texts.go:63
+#: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:63
+#: internal/games/fortunenet/texts.go:64
 #: internal/gamesui/fortune_panel.go:148
 msgid "Tax · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:64
+#: internal/games/fortunenet/texts.go:65
 #: internal/gamesui/fortune_panel.go:150
 msgid "Corner"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:65
+#: internal/games/fortunenet/texts.go:66
 #: internal/gamesui/fortune_panel.go:125
 msgid "House · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:66
+#: internal/games/fortunenet/texts.go:67
 #: internal/gamesui/fortune_panel.go:122
 msgid "Hotel · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:67
+#: internal/games/fortunenet/texts.go:68
 #: internal/gamesui/fortune_panel.go:119
 msgid "Hotel built"
 msgstr "호텔 건설"
 
-#: internal/games/fortunenet/texts.go:68
+#: internal/games/fortunenet/texts.go:69
 #: internal/gamesui/fortune_panel.go:127
 msgid "Sell · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:69
+#: internal/games/fortunenet/texts.go:70
 #: internal/gamesui/fortune_panel.go:480
 msgid "Your cards · %d of %d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:70
+#: internal/games/fortunenet/texts.go:71
 #: internal/gamesui/fortune_panel.go:478
 msgid "Your cards · %d of %d · click one to play it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:71
+#: internal/games/fortunenet/texts.go:72
 #: internal/gamesui/fortune_panel.go:368
 msgid "Click a card to buy it: any of them, or none."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:72
+#: internal/games/fortunenet/texts.go:73
 #: internal/gamesui/fortune_panel.go:511
 msgid "On whom?"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:73
+#: internal/games/fortunenet/texts.go:74
 #: internal/gamesui/fortune_panel.go:513
 msgid "How many squares?"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:74
+#: internal/games/fortunenet/texts.go:75
 msgid "Pick a square on the board"
 msgstr "보드에서 칸을 고르세요"
 
-#: internal/games/fortunenet/texts.go:76
-#: internal/gamesui/fortune_board.go:1080
+#: internal/games/fortunenet/texts.go:77
+#: internal/gamesui/fortune_board.go:1083
 msgid "%s won."
 msgstr "%s가 승리했습니다."
 
-#: internal/games/fortunenet/texts.go:77
-#: internal/gamesui/fortune_board.go:1082
+#: internal/games/fortunenet/texts.go:78
+#: internal/gamesui/fortune_board.go:1085
 msgid "You won!"
 msgstr "당신이 이겼어요!"
 
-#: internal/games/fortunenet/texts.go:78
-#: internal/gamesui/fortune_board.go:1097
+#: internal/games/fortunenet/texts.go:79
+#: internal/gamesui/fortune_board.go:1100
 msgid "%s (bankrupt)"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:79
+#: internal/games/fortunenet/texts.go:80
 #: internal/gamesui/fortune_panel.go:234
 msgid "Bare"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:80
+#: internal/games/fortunenet/texts.go:81
 #: internal/gamesui/fortune_panel.go:237
 msgid "Hotel"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:81
-msgid "%s got a card"
-msgstr "%s 님이 카드를 받았습니다"
-
-#: internal/games/fortunenet/texts.go:82
-msgid "%s played %s"
-msgstr "%s 님이 %s 카드를 썼습니다"
-
-#: internal/games/fortunenet/texts.go:84
+#: internal/games/fortunenet/texts.go:83
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
 msgstr ""
 
+#: internal/games/fortunenet/texts.go:84
+msgid "Sound on: M turns it off"
+msgstr "소리 켜짐: M으로 끄기"
+
 #: internal/games/fortunenet/texts.go:85
+msgid "Sound off: M turns it on"
+msgstr "소리 꺼짐: M으로 켜기"
+
+#: internal/games/fortunenet/texts.go:86
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:88
-#: internal/gamesui/fortune.go:819
+#: internal/gamesui/fortune_menu.go:174
+#: internal/gamesui/fortune_panel.go:273
+msgid "Collect $%d every time you pass."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:89
+#: internal/games/fortunenet/texts.go:90
+#: internal/gamesui/fortune_menu.go:175
+#: internal/gamesui/fortune_panel.go:275
+msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
+msgstr "여기로 보내지 않는 한 방문만 가능합니다. 감옥에서는 %s를 굴려 나가거나 굴리기 전에 $50를 지불합니다. 세 번 시도한 후에는 비용을 지불하고 가십시오."
+
+#: internal/games/fortunenet/texts.go:91
+#: internal/gamesui/fortune_panel.go:278
+msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
+msgstr "세금과 벌금은 분수대로 흘러갑니다. 여기에 착지할 다음 플레이어가 모든 것을 가져갑니다: 지금 $%d."
+
+#: internal/games/fortunenet/texts.go:92
+#: internal/gamesui/fortune_menu.go:177
+#: internal/gamesui/fortune_panel.go:280
+msgid "Straight to jail, without passing Start."
+msgstr "스타트를 통과하지 못한 채 곧장 감옥으로 보내졌습니다."
+
+#: internal/games/fortunenet/texts.go:93
+#: internal/gamesui/fortune_menu.go:181
+#: internal/gamesui/fortune_panel.go:282
+msgid "Draw a card: money, a fine, a trip, or a card for your hand."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:94
+#: internal/gamesui/fortune_menu.go:182
+#: internal/gamesui/fortune_panel.go:284
+msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:95
+#: internal/gamesui/fortune_menu.go:183
+#: internal/gamesui/fortune_panel.go:286
+msgid "Pay $%d into the fountain."
+msgstr "분수대에 $%d를 지불하세요."
+
+#: internal/games/fortunenet/texts.go:96
+#: internal/gamesui/fortune_panel.go:244
+msgid "The whole group: bare rent doubled, built rents half again."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:97
+#: internal/gamesui/fortune_menu.go:178
+#: internal/gamesui/fortune_panel.go:246
+msgid "With the whole group: bare rent doubled, built rents half again."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:98
+#: internal/gamesui/fortune_panel.go:259
+msgid "Group:"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:99
+#: internal/gamesui/fortune_panel.go:269
+msgid "× %d"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:101
+#: internal/gamesui/fortune_panel.go:263
+msgid "%d pier"
+msgid_plural "%d piers"
+msgstr[0] ""
+
+#: internal/games/fortunenet/texts.go:104
+#: internal/gamesui/fortune_panel.go:269
+msgid "%d utility"
+msgid_plural "%d utilities"
+msgstr[0] ""
+
+#: internal/games/fortunenet/texts.go:107
+#: internal/gamesui/fortune.go:1094
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] ""
 
-#: internal/games/fortunenet/texts.go:91
+#: internal/games/fortunenet/texts.go:110
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] "와 컴퓨터 플레이어 %d명"
 
-#: internal/games/fortunenet/texts.go:94
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
@@ -6494,86 +6639,129 @@ msgstr ""
 msgid "Space the main action  ·  R roll  ·  B buy  ·  X pass  ·  E end turn  ·  J pay bail  ·  H build on the square in focus  ·  N new game  ·  M sound  ·  click a square to see it  ·  drag, scroll or arrows to look about  ·  Home your pawn"
 msgstr ""
 
-#: internal/gamesui/fortune.go:165
+#: internal/gamesui/fortune.go:210
 msgid "JOIN CODE"
 msgstr "참가 코드"
 
-#: internal/gamesui/fortune.go:272
-msgid "Where do you play?"
-msgstr "어디에서 플레이하나요?"
-
-#: internal/gamesui/fortune.go:337
-msgid "%s and %s"
-msgstr "%[1]s 및 %[2]s"
-
-#: internal/gamesui/fortune.go:372
-msgid "Rounds"
-msgstr "라운드"
-
-#: internal/gamesui/fortune.go:373
-msgid "Starting money"
-msgstr "돈을 시작하다"
-
-#: internal/gamesui/fortune.go:374
-msgid "People at this screen"
-msgstr "이 화면에서 하는 사람 수"
-
-#: internal/gamesui/fortune.go:375
-msgid "Rivals"
-msgstr "라이벌"
-
-#: internal/gamesui/fortune.go:375
-msgid "Mika, Ren"
-msgstr "미카, 렌"
-
-#: internal/gamesui/fortune.go:375
-msgid "Mika, Ren, Sol"
-msgstr "미카, 렌, 솔"
-
-#: internal/gamesui/fortune.go:377
-msgid "Dice"
-msgstr "주사위"
-
-#: internal/gamesui/fortune.go:377
-msgid "One die"
-msgstr "주사위 1개"
-
-#: internal/gamesui/fortune.go:377
-msgid "Two dice"
-msgstr "두 개의 주사위"
-
-#: internal/gamesui/fortune.go:378
-msgid "Build the day you buy"
-msgstr "구매하는 날에 맞춰 구축하세요"
-
-#: internal/gamesui/fortune.go:392
-msgid "A street you buy may go up a level that same turn"
-msgstr "당신이 구매하는 거리는 같은 방향으로 한 단계 더 올라갈 수 있습니다."
-
-#: internal/gamesui/fortune.go:396
-msgid "On the network"
-msgstr "네트워크"
-
-#: internal/gamesui/fortune.go:411
-msgid "Others on this network join from a browser; you may play or only host"
-msgstr "같은 네트워크의 다른 사람이 브라우저로 참가합니다. 함께 하거나 호스트만 할 수 있습니다"
-
-#: internal/gamesui/fortune.go:461
-msgid "Open the game to the network"
-msgstr "네트워크에 게임 열기"
-
-#: internal/gamesui/fortune.go:463
-msgid "Start in %s"
-msgstr "%s에서 시작"
-
-#: internal/gamesui/fortune.go:862
+#: internal/gamesui/fortune.go:322
+#: internal/gamesui/fortune.go:1140
 #: ui/game.ui:76
 msgid "New game"
 msgstr "새로운 게임"
 
-#: internal/gamesui/fortune.go:875
+#: internal/gamesui/fortune.go:412
+msgid "Hot seat"
+msgstr "같은 화면"
+
+#: internal/gamesui/fortune.go:416
+#: internal/gamesui/fortune_ai.go:199
+#: ui/settings.ui:1928
+msgid "AI"
+msgstr "AI"
+
+#: internal/gamesui/fortune.go:416
+#: internal/gamesui/fortune.go:653
+msgid "Open seat"
+msgstr "빈 자리"
+
+#: internal/gamesui/fortune.go:468
+msgid "On the network"
+msgstr "네트워크"
+
+#: internal/gamesui/fortune.go:473
+msgid "MAP"
+msgstr "지도"
+
+#: internal/gamesui/fortune.go:529
+msgid "Rounds"
+msgstr "라운드"
+
+#: internal/gamesui/fortune.go:530
+msgid "Starting money"
+msgstr "돈을 시작하다"
+
+#: internal/gamesui/fortune.go:531
+msgid "Dice"
+msgstr "주사위"
+
+#: internal/gamesui/fortune.go:531
+msgid "One die"
+msgstr "주사위 1개"
+
+#: internal/gamesui/fortune.go:531
+msgid "Two dice"
+msgstr "두 개의 주사위"
+
+#: internal/gamesui/fortune.go:536
+msgid "Build the day you buy"
+msgstr "구매하는 날에 맞춰 구축하세요"
+
+#: internal/gamesui/fortune.go:562
+msgid "%s and %s"
+msgstr "%[1]s 및 %[2]s"
+
+#: internal/gamesui/fortune.go:641
+#: internal/gamesui/fortune_host.go:130
+msgid "at this screen"
+msgstr "이 화면에서"
+
+#: internal/gamesui/fortune.go:654
+msgid "empty: no one plays here"
+msgstr "비어 있음: 아무도 없음"
+
+#: internal/gamesui/fortune.go:656
+msgid "for a visitor in a browser"
+msgstr "브라우저 방문자용"
+
+#: internal/gamesui/fortune.go:723
+msgid "Open the game to the network"
+msgstr "네트워크에 게임 열기"
+
+#: internal/gamesui/fortune.go:725
+msgid "Start in %s"
+msgstr "%s에서 시작"
+
+#: internal/gamesui/fortune.go:1145
+msgid "%s is thinking…"
+msgstr "%s 생각 중…"
+
+#: internal/gamesui/fortune.go:1156
 msgid "Pay $50 bail"
 msgstr "보석금 $50 지불"
+
+#: internal/gamesui/fortune_ai.go:80
+#: internal/ui/settings_bench.go:217
+msgid "inua-assistant is not installed"
+msgstr "inua-assistant가 설치되어 있지 않습니다"
+
+#: internal/gamesui/fortune_ai.go:113
+msgid "the AI picked the wrong option"
+msgstr "AI가 잘못된 선택지를 골랐습니다"
+
+#: internal/gamesui/fortune_ai.go:143
+msgid "the AI did not answer in time"
+msgstr "AI가 제시간에 답하지 않았습니다"
+
+#: internal/gamesui/fortune_ai.go:156
+#: internal/gamesui/fortune_ai.go:162
+msgid "checking the AI…"
+msgstr "AI 확인 중…"
+
+#: internal/gamesui/fortune_ai.go:164
+msgid "this profile did not answer"
+msgstr "이 프로필이 응답하지 않았습니다"
+
+#: internal/gamesui/fortune_ai.go:172
+msgid "the AI: %s"
+msgstr "AI: %s"
+
+#: internal/gamesui/fortune_ai.go:202
+msgid "AI %d"
+msgstr "AI %d"
+
+#: internal/gamesui/fortune_ai.go:216
+msgid "The profile of Settings → AI this player asks"
+msgstr "이 플레이어가 사용하는 설정 → AI의 프로필"
 
 #: internal/gamesui/fortune_board.go:890
 msgid "START\ncollect $%d"
@@ -6591,11 +6779,11 @@ msgstr "분수\n상금 받기"
 msgid "GO TO\nJAIL"
 msgstr "\n감옥으로 가세요"
 
-#: internal/gamesui/fortune_board.go:1102
+#: internal/gamesui/fortune_board.go:1105
 msgid "Press N or Space for a new game"
 msgstr "새로운 게임을 시작하려면 N 또는 Space를 누르세요."
 
-#: internal/gamesui/fortune_board.go:1138
+#: internal/gamesui/fortune_board.go:1141
 msgid "%s · sound off"
 msgstr ""
 
@@ -6631,87 +6819,84 @@ msgstr "빌라"
 msgid "palazzi"
 msgstr "팔라치"
 
-#: internal/gamesui/fortune_host.go:55
+#: internal/gamesui/fortune_host.go:62
 msgid "The game could not open to the network: %v"
 msgstr "네트워크에 게임을 열 수 없습니다: %v"
 
-#: internal/gamesui/fortune_host.go:83
+#: internal/gamesui/fortune_host.go:90
 msgid "Host"
 msgstr "호스트"
 
-#: internal/gamesui/fortune_host.go:123
-msgid "at this screen"
-msgstr "이 화면에서"
-
-#: internal/gamesui/fortune_host.go:127
+#: internal/gamesui/fortune_host.go:134
 msgid "Send away"
 msgstr "내보내기"
 
-#: internal/gamesui/fortune_host.go:133
+#: internal/gamesui/fortune_host.go:140
 msgid "Waiting for visitors: open the link on a phone or a computer on the same network."
 msgstr "방문자를 기다리는 중: 같은 네트워크의 휴대폰이나 컴퓨터에서 링크를 여세요."
 
-#: internal/gamesui/fortune_host.go:173
+#: internal/gamesui/fortune_host.go:180
 msgid "Others join from a browser"
 msgstr "브라우저로 참가하기"
 
-#: internal/gamesui/fortune_host.go:224
+#: internal/gamesui/fortune_host.go:231
 msgid "Start the game"
 msgstr "게임 시작"
 
-#: internal/gamesui/fortune_panel.go:244
-msgid "The whole group: bare rent doubled, built rents half again."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:25
+msgid "Game"
+msgstr "게임"
 
-#: internal/gamesui/fortune_panel.go:246
-msgid "With the whole group: bare rent doubled, built rents half again."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:43
+msgid "Restart game"
+msgstr "처음부터 다시"
 
-#: internal/gamesui/fortune_panel.go:259
-msgid "Group:"
-msgstr ""
+#: internal/gamesui/fortune_menu.go:44
+#: internal/gamesui/fortune_menu.go:103
+msgid "Compendium"
+msgstr "도감"
 
-#: internal/gamesui/fortune_panel.go:263
-msgid "%d pier"
-msgid_plural "%d piers"
-msgstr[0] ""
+#: internal/gamesui/fortune_menu.go:45
+msgid "Quit to menu"
+msgstr "메뉴로 나가기"
 
-#: internal/gamesui/fortune_panel.go:269
-msgid "× %d"
-msgstr ""
+#: internal/gamesui/fortune_menu.go:109
+#: ui/gpg.ui:633
+#: ui/settings.ui:4112
+msgid "Back"
+msgstr "뒤로"
 
-#: internal/gamesui/fortune_panel.go:269
-msgid "%d utility"
-msgid_plural "%d utilities"
-msgstr[0] ""
+#: internal/gamesui/fortune_menu.go:163
+msgid "CARDS"
+msgstr "카드"
 
-#: internal/gamesui/fortune_panel.go:273
-msgid "Collect $%d every time you pass."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:176
+msgid "Taxes and fines go into the fountain; the next player to land there takes them all."
+msgstr "세금과 벌금은 분수에 모이고, 다음에 그곳에 멈추는 사람이 모두 가져갑니다."
 
-#: internal/gamesui/fortune_panel.go:275
-msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
-msgstr "여기로 보내지 않는 한 방문만 가능합니다. 감옥에서는 %s를 굴려 나가거나 굴리기 전에 $50를 지불합니다. 세 번 시도한 후에는 비용을 지불하고 가십시오."
+#: internal/gamesui/fortune_menu.go:178
+msgid "Street"
+msgstr "거리"
 
-#: internal/gamesui/fortune_panel.go:278
-msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
-msgstr "세금과 벌금은 분수대로 흘러갑니다. 여기에 착지할 다음 플레이어가 모든 것을 가져갑니다: 지금 $%d."
+#: internal/gamesui/fortune_menu.go:179
+msgid "Station or pier"
+msgstr "역 또는 부두"
 
-#: internal/gamesui/fortune_panel.go:280
-msgid "Straight to jail, without passing Start."
-msgstr "스타트를 통과하지 못한 채 곧장 감옥으로 보내졌습니다."
+#: internal/gamesui/fortune_menu.go:180
+msgid "Utility"
+msgstr "공공시설"
 
-#: internal/gamesui/fortune_panel.go:282
-msgid "Draw a card: money, a fine, a trip, or a card for your hand."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:211
+msgid "SQUARES"
+msgstr "칸"
 
-#: internal/gamesui/fortune_panel.go:284
-msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:236
+msgid "RIVALS"
+msgstr "라이벌"
 
-#: internal/gamesui/fortune_panel.go:286
-msgid "Pay $%d into the fountain."
-msgstr "분수대에 $%d를 지불하세요."
+#: internal/gamesui/fortune_menu.go:242
+msgid "RULES"
+msgstr "규칙"
 
 #: internal/gamesui/fortune_panel.go:474
 msgid "%s's cards · %d of %d · click one to play it"
@@ -7149,7 +7334,7 @@ msgid "Lock Screen"
 msgstr "화면 잠금"
 
 #: internal/shell/commands.go:27
-#: ui/settings.ui:3613
+#: ui/settings.ui:3723
 msgid "Lock now"
 msgstr "지금 잠그세요"
 
@@ -7162,8 +7347,8 @@ msgid "Suspend, locking first"
 msgstr "일시 중지, 먼저 잠금"
 
 #: internal/shell/commands.go:29
-#: internal/ui/control.go:479
-#: ui/control.ui:148
+#: internal/ui/control.go:488
+#: ui/control.ui:172
 msgid "Restart"
 msgstr "다시 시작"
 
@@ -7263,7 +7448,7 @@ msgstr "그들 모두"
 #: internal/shell/commands.go:40
 #: internal/ui/notify.go:848
 #: ui/center.ui:71
-#: ui/control.ui:411
+#: ui/control.ui:435
 msgid "Focus"
 msgstr "집중 모드"
 
@@ -7577,176 +7762,196 @@ msgstr "알람 · %02d:%02d"
 msgid "Snooze"
 msgstr "다시 알림"
 
-#: internal/ui/askpass.go:69
+#: internal/ui/askpass.go:72
 msgid "password: want one JSON request"
 msgstr "비밀번호: 하나의 JSON 요청을 원합니다."
 
-#: internal/ui/askpass.go:111
+#: internal/ui/askpass.go:114
 msgid "not ok"
 msgstr "안 괜찮아"
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Passphrase Required"
 msgstr "암호가 필요함"
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Confirm"
 msgstr "확인하다"
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Message"
 msgstr "메시지"
 
-#: internal/ui/askpass.go:228
+#: internal/ui/askpass.go:231
 msgid "Unlock OpenPGP Key"
 msgstr "OpenPGP 키 잠금 해제"
 
-#: internal/ui/askpass.go:244
+#: internal/ui/askpass.go:247
 msgid "Passphrase"
 msgstr "암호문"
 
-#: internal/ui/askpass.go:327
 #: internal/ui/askpass.go:330
+#: internal/ui/askpass.go:333
 #: internal/workshop/session.go:406
 msgid "Let %s do this?"
 msgstr "%s이(가) 이 작업을 하도록 허용할까요?"
 
-#: internal/ui/askpass.go:328
+#: internal/ui/askpass.go:331
 msgid "The assistant needs this to answer you. Deny, and it will say it could not."
 msgstr "어시스턴트가 답하는 데 필요합니다. 거부하면 할 수 없었다고 말합니다."
 
-#: internal/ui/askpass.go:331
+#: internal/ui/askpass.go:334
 msgid "An AI agent asks to use inua's tools on your desktop. Allow it once, or for the rest of its session."
 msgstr "AI 에이전트가 데스크톱에서 inua의 도구를 쓰려고 합니다. 한 번만, 또는 이 세션 동안 허용할 수 있습니다."
 
-#: internal/ui/askpass.go:333
+#: internal/ui/askpass.go:336
+msgid "Let programs at this path read every secret?"
+msgstr "이 경로의 프로그램이 모든 비밀을 읽도록 허용할까요?"
+
+#: internal/ui/askpass.go:337
+msgid "Any program at this path will read every secret without asking, even after it changes. Allow only if you just added it in Settings or with inua keyring allow, and only for a place you trust."
+msgstr "이 경로의 모든 프로그램은 바뀐 뒤에도 묻지 않고 모든 비밀을 읽습니다. 설정이나 inua keyring allow로 방금 추가했고 믿을 수 있는 위치일 때만 허용하세요."
+
+#: internal/ui/askpass.go:339
 msgid "Trust the list of apps again?"
 msgstr "앱 목록을 다시 신뢰할까요?"
 
-#: internal/ui/askpass.go:334
+#: internal/ui/askpass.go:340
 msgid "The list of apps trusted with your secrets was changed outside inua-keyring. Trust it again only if you just asked for it in Settings: it lets %d app read secrets without asking."
 msgid_plural "The list of apps trusted with your secrets was changed outside inua-keyring. Trust it again only if you just asked for it in Settings: it lets %d apps read secrets without asking."
 msgstr[0] "비밀을 신뢰하는 앱 목록이 inua-keyring 밖에서 바뀌었습니다. 방금 설정에서 요청한 경우에만 다시 신뢰하세요. 앱 %d개가 묻지 않고 비밀을 읽게 됩니다."
 
-#: internal/ui/askpass.go:337
+#: internal/ui/askpass.go:343
 msgid "%s has changed since you allowed it"
 msgstr "%s이(가) 허용한 뒤로 바뀌었습니다"
 
-#: internal/ui/askpass.go:338
+#: internal/ui/askpass.go:344
 msgid "Its program is not the one you allowed. If you did not update it, deny."
 msgstr "프로그램이 허용한 것과 다릅니다. 업데이트하지 않았다면 거부하세요."
 
-#: internal/ui/askpass.go:340
+#: internal/ui/askpass.go:346
 msgid "Allow %s to read a secret?"
 msgstr "%s이(가) 비밀을 읽도록 허용할까요?"
 
-#: internal/ui/askpass.go:341
+#: internal/ui/askpass.go:347
 msgid "It is not trusted with this secret yet. Always allow lets it read the secret from now on without asking."
 msgstr "아직 이 비밀에 대해 신뢰되지 않았습니다. ‘항상 허용’하면 이제부터 묻지 않고 읽을 수 있습니다."
 
-#: internal/ui/askpass.go:344
+#: internal/ui/askpass.go:350
 msgid "It can only be allowed once: %s."
 msgstr "한 번만 허용할 수 있습니다: %s."
 
-#: internal/ui/askpass.go:365
+#: internal/ui/askpass.go:360
+msgid "<span alpha='55%'>[</span>PATH<span alpha='55%'>]</span>"
+msgstr "<span alpha='55%'>[</span>경로<span alpha='55%'>]</span>"
+
+#: internal/ui/askpass.go:361
+msgid "PATH"
+msgstr "경로"
+
+#: internal/ui/askpass.go:379
 msgid "Changed since you allowed it"
 msgstr "허용한 뒤로 바뀜"
 
-#: internal/ui/askpass.go:368
+#: internal/ui/askpass.go:382
 msgid "%s · as %s"
 msgstr "%s · %s(으)로"
 
-#: internal/ui/askpass.go:384
+#: internal/ui/askpass.go:401
 msgid "Deny"
 msgstr "거부"
 
-#: internal/ui/askpass.go:385
-#: internal/ui/askpass.go:399
+#: internal/ui/askpass.go:402
+#: internal/ui/askpass.go:420
 msgid "Allow once"
 msgstr "한 번 허용"
 
-#: internal/ui/askpass.go:386
+#: internal/ui/askpass.go:403
 msgid "Always allow"
 msgstr "항상 허용"
 
-#: internal/ui/askpass.go:393
+#: internal/ui/askpass.go:410
 msgid "Allow for this session"
 msgstr "이 세션 동안 허용"
 
-#: internal/ui/askpass.go:396
+#: internal/ui/askpass.go:413
 msgid "Trust"
 msgstr "신뢰"
 
-#: internal/ui/askpass.go:415
+#: internal/ui/askpass.go:417
+msgid "Allow every secret"
+msgstr "모든 비밀 허용"
+
+#: internal/ui/askpass.go:436
 msgid "Enter the passphrase so inua-keyring can give %s its secret."
 msgstr "inua-keyring이 %s에 비밀을 전달할 수 있도록 암호 문구를 입력하세요."
 
-#: internal/ui/askpass.go:417
+#: internal/ui/askpass.go:438
 msgid "Enter the passphrase so %s can use this key."
 msgstr "%s이(가) 이 키를 사용할 수 있도록 암호 문구를 입력하세요."
 
-#: internal/ui/askpass.go:419
+#: internal/ui/askpass.go:440
 msgid "Enter the passphrase to use this key."
 msgstr "이 키를 사용하려면 암호 문구를 입력하세요."
 
-#: internal/ui/askpass.go:431
+#: internal/ui/askpass.go:452
 msgid "%s · expired %s"
 msgstr "%s · %s 만료됨"
 
-#: internal/ui/askpass.go:433
+#: internal/ui/askpass.go:454
 msgid "%s · expires %s"
 msgstr "%s · %s 만료"
 
-#: internal/ui/askpass.go:448
+#: internal/ui/askpass.go:469
 #: ui/polkit.ui:566
 msgid "FOR"
 msgstr "대상"
 
-#: internal/ui/askpass.go:450
+#: internal/ui/askpass.go:471
 msgid "SECRET"
 msgstr "비밀"
 
-#: internal/ui/askpass.go:453
+#: internal/ui/askpass.go:474
 msgid "ACTION"
 msgstr "작업"
 
-#: internal/ui/askpass.go:535
+#: internal/ui/askpass.go:556
 msgid "Encryption subkey"
 msgstr "암호화 하위 키"
 
-#: internal/ui/askpass.go:537
+#: internal/ui/askpass.go:558
 msgid "Signing subkey"
 msgstr "서명 하위 키"
 
-#: internal/ui/askpass.go:539
+#: internal/ui/askpass.go:560
 msgid "Authentication subkey"
 msgstr "인증 하위 키"
 
-#: internal/ui/askpass.go:541
+#: internal/ui/askpass.go:562
 msgid "Subkey"
 msgstr "하위 키"
 
-#: internal/ui/askpass.go:543
+#: internal/ui/askpass.go:564
 msgid "Primary key"
 msgstr "기본 키"
 
-#: internal/ui/askpass.go:590
+#: internal/ui/askpass.go:611
 msgid "Show the private details (Ctrl+H)"
 msgstr "개인 정보 표시 (Ctrl+H)"
 
-#: internal/ui/askpass.go:593
+#: internal/ui/askpass.go:614
 msgid "Hide the private details: the key's owner, its fingerprint and the pass entry (Ctrl+H)"
 msgstr "개인 정보 숨기기: 키 소유자, 지문, pass 항목 (Ctrl+H)"
 
-#: internal/ui/askpass.go:652
+#: internal/ui/askpass.go:673
 msgid "Hidden while the screen is being recorded or shared."
 msgstr "화면을 녹화하거나 공유하는 동안 숨겨집니다."
 
-#: internal/ui/askpass.go:655
+#: internal/ui/askpass.go:676
 msgid "Hidden for the screenshot."
 msgstr "스크린샷을 위해 숨겨집니다."
 
-#: internal/ui/askpass.go:702
+#: internal/ui/askpass.go:723
 msgid "The passphrases do not match."
 msgstr "암호 문구가 일치하지 않습니다."
 
@@ -7780,7 +7985,7 @@ msgid "Search clipboard history"
 msgstr "클립보드 기록 검색"
 
 #: internal/ui/clipboard.go:335
-#: ui/settings.ui:3065
+#: ui/settings.ui:3175
 msgid "Clipboard"
 msgstr "클립보드"
 
@@ -7830,34 +8035,43 @@ msgstr "[%s에 %s에서 복사]"
 msgid "[COPIED %s]"
 msgstr "[%s 복사]"
 
-#: internal/ui/control.go:277
+#: internal/ui/control.go:285
 msgid "inua control center"
 msgstr "이누아 통제 센터"
 
-#: internal/ui/control.go:478
+#: internal/ui/control.go:486
 #: ui/control.ui:124
 msgid "Suspend"
 msgstr "절전"
 
-#: internal/ui/control.go:479
+#: internal/ui/control.go:487
+#: ui/control.ui:148
+msgid "Hibernate"
+msgstr "최대 절전"
+
+#: internal/ui/control.go:487
+msgid "Hibernate?"
+msgstr "최대 절전 모드로 전환하시겠습니까?"
+
+#: internal/ui/control.go:488
 msgid "Restart?"
 msgstr "재시작하시겠습니까?"
 
-#: internal/ui/control.go:480
-#: ui/control.ui:172
+#: internal/ui/control.go:489
+#: ui/control.ui:196
 msgid "Shut down"
 msgstr "종료"
 
-#: internal/ui/control.go:480
+#: internal/ui/control.go:489
 msgid "Shut down?"
 msgstr "종료할까요?"
 
-#: internal/ui/control.go:481
-#: ui/control.ui:196
+#: internal/ui/control.go:490
+#: ui/control.ui:220
 msgid "Log out"
 msgstr "로그아웃"
 
-#: internal/ui/control.go:481
+#: internal/ui/control.go:490
 msgid "Log out?"
 msgstr "로그아웃할까요?"
 
@@ -7928,7 +8142,7 @@ msgstr "hyprland.lua가 inua.lua를 불러온 뒤 이 항목을 다시 설정하
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyporland.conf는 inua.conf를 로드한 후 이를 다시 설정하며, 이는 inua: %s를 이깁니다. 소스 줄을 그 아래로 이동하세요."
 
-#: internal/ui/launcher.go:286
+#: internal/ui/launcher.go:302
 msgid "inua launcher"
 msgstr "이누아 런처"
 
@@ -7951,7 +8165,7 @@ msgstr "잘못된 비밀번호"
 
 #: internal/ui/lock.go:269
 #: internal/ui/polkit.go:294
-#: internal/ui/settings_about.go:144
+#: internal/ui/settings_about.go:153
 msgid "Checking…"
 msgstr "확인 중..."
 
@@ -7961,7 +8175,7 @@ msgstr "비밀번호를 확인할 수 없습니다."
 
 #: internal/ui/notify.go:316
 #: ui/bar.ui:122
-#: ui/settings.ui:2801
+#: ui/settings.ui:2911
 msgid "Notifications"
 msgstr "알림"
 
@@ -8173,312 +8387,416 @@ msgstr "스크린샷이 복사되었습니다."
 msgid "Screenshot taken"
 msgstr "촬영된 스크린샷"
 
-#: internal/ui/settings.go:252
+#: internal/ui/settings.go:253
 msgid "Not restarted: %s"
 msgstr "다시 시작하지 못함: %s"
 
-#: internal/ui/settings.go:270
-#: internal/ui/settings.go:646
-#: internal/ui/settings.go:663
+#: internal/ui/settings.go:271
+#: internal/ui/settings.go:650
+#: internal/ui/settings.go:667
 msgid "%d%%"
 msgstr "%d%%"
 
-#: internal/ui/settings.go:626
+#: internal/ui/settings.go:630
 #: ui/settings.ui:384
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:626
+#: internal/ui/settings.go:630
 #: ui/settings.ui:385
 msgid "System theme"
 msgstr "시스템 테마"
 
-#: internal/ui/settings.go:699
+#: internal/ui/settings.go:703
 msgid "%s (%s, %s) · %s"
 msgstr "%s (%s, %s) · %s"
 
-#: internal/ui/settings.go:701
+#: internal/ui/settings.go:705
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "텍스트 %d개"
 
-#: internal/ui/settings.go:702
+#: internal/ui/settings.go:706
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "이미지 %d개"
 
-#: internal/ui/settings.go:703
+#: internal/ui/settings.go:707
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:782
+#: internal/ui/settings.go:786
 #: internal/ui/settings_apps.go:168
 msgid "Not saved: %s"
 msgstr "저장되지 않음: %s"
 
-#: internal/ui/settings.go:808
+#: internal/ui/settings.go:812
 msgid "Choose a wallpaper"
 msgstr "배경화면을 선택하세요"
 
-#: internal/ui/settings.go:850
+#: internal/ui/settings.go:854
 msgid "Off: another notification daemon can show them"
 msgstr "꺼짐: 다른 알림 데몬이 이를 표시할 수 있습니다."
 
-#: internal/ui/settings.go:852
+#: internal/ui/settings.go:856
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "배너를 표시한 후 알림 센터에 보관(표시줄의 종 또는 Super+N)"
 
-#: internal/ui/settings.go:854
+#: internal/ui/settings.go:858
 msgid "Waiting: another notification daemon is running"
 msgstr "대기 중: 다른 알림 데몬이 실행 중입니다."
 
-#: internal/ui/settings.go:872
+#: internal/ui/settings.go:876
 msgid "Nothing pinned"
 msgstr "고정된 앱 없음"
 
-#: internal/ui/settings.go:888
+#: internal/ui/settings.go:892
 msgid "%s (not installed)"
 msgstr "%s(설치되지 않음)"
 
-#: internal/ui/settings.go:901
+#: internal/ui/settings.go:905
 msgid "Move earlier"
 msgstr "앞으로 이동"
 
-#: internal/ui/settings.go:902
+#: internal/ui/settings.go:906
 msgid "Move later"
 msgstr "뒤로 이동"
 
-#: internal/ui/settings.go:903
+#: internal/ui/settings.go:907
 msgid "Remove from the dock"
 msgstr "독에서 제거"
 
-#: internal/ui/settings_about.go:132
+#: internal/ui/settings_about.go:141
 msgid "inua %s, built from source"
 msgstr "소스에서 빌드된 inua %s"
 
-#: internal/ui/settings_about.go:139
+#: internal/ui/settings_about.go:148
 msgid "Upgrade to %s"
 msgstr "%s로 업그레이드"
 
-#: internal/ui/settings_about.go:142
+#: internal/ui/settings_about.go:151
 msgid "Upgrading… the shell restarts on the new version"
 msgstr "업그레이드 중... 새 버전에서 쉘이 다시 시작됩니다."
 
-#: internal/ui/settings_about.go:148
+#: internal/ui/settings_about.go:157
 msgid "Could not reach GitHub: %s"
 msgstr "GitHub에 연결할 수 없습니다: %s"
 
-#: internal/ui/settings_about.go:150
+#: internal/ui/settings_about.go:159
 msgid "Not checked yet"
 msgstr "아직 확인되지 않음"
 
-#: internal/ui/settings_about.go:152
+#: internal/ui/settings_about.go:161
 msgid "The latest release is %s; this version cannot be compared with it"
 msgstr "최신 릴리스는 %s입니다. 이 버전은 그것과 비교할 수 없습니다"
 
-#: internal/ui/settings_about.go:154
+#: internal/ui/settings_about.go:163
 msgid "inua %s is out; upgrading replaces this build from source"
 msgstr "inua %s이(가) 출시되었습니다. 업데이트하면 현재 소스 빌드를 대체합니다"
 
-#: internal/ui/settings_about.go:156
+#: internal/ui/settings_about.go:165
 #: internal/ui/updates.go:90
 msgid "inua %s is out"
 msgstr "inua %s이(가) 출시되었습니다"
 
-#: internal/ui/settings_about.go:158
+#: internal/ui/settings_about.go:167
 msgid "Up to date: %s is the latest release (checked %s)"
 msgstr "최신: %[1]s가 최신 릴리스입니다(%[2]s 확인)."
 
-#: internal/ui/settings_about.go:160
+#: internal/ui/settings_about.go:169
 msgid "Newer than the latest release, %s"
 msgstr "최신 릴리스인 %s보다 최신 버전입니다."
 
-#: internal/ui/settings_about.go:170
+#: internal/ui/settings_about.go:179
 msgid "Shown once the releases are read"
 msgstr "릴리스가 읽혀지면 표시됩니다."
 
-#: internal/ui/settings_about.go:172
+#: internal/ui/settings_about.go:181
 msgid "Reading the releases…"
 msgstr "릴리스 정보 읽는 중…"
 
-#: internal/ui/settings_about.go:193
+#: internal/ui/settings_about.go:202
 msgid "installed"
 msgstr "설치됨"
 
-#: internal/ui/settings_about.go:197
+#: internal/ui/settings_about.go:206
 msgid "On GitHub"
 msgstr "GitHub에서"
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Model default"
 msgstr "모델 기본값"
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Minimal"
 msgstr "최소"
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 #: ui/settings.ui:1415
 msgid "Medium"
 msgstr "보통"
 
-#: internal/ui/settings_ai.go:111
+#: internal/ui/settings_ai.go:156
 msgid "Keys typed here are kept in %s"
 msgstr "여기에 입력된 키는 %s에 보관됩니다."
 
-#: internal/ui/settings_ai.go:150
+#: internal/ui/settings_ai.go:195
 msgid "key not moved"
 msgstr "키를 옮기지 못함"
 
-#: internal/ui/settings_ai.go:181
+#: internal/ui/settings_ai.go:226
 msgid "Use this URL and the token in Console. From another computer, use this desktop's reachable address."
 msgstr "콘솔에서 이 URL과 토큰을 사용하십시오. 다른 컴퓨터에서 이 데스크톱의 연결 가능한 주소를 사용하세요."
 
-#: internal/ui/settings_ai.go:184
+#: internal/ui/settings_ai.go:229
 msgid "Turn on Assistant to serve this endpoint."
 msgstr "이 엔드포인트를 제공하려면 Assistant를 켜십시오."
 
-#: internal/ui/settings_ai.go:186
+#: internal/ui/settings_ai.go:231
 msgid "HTTP serving is off. The assistant still runs in the background."
 msgstr "HTTP 서비스가 꺼져 있습니다. 어시스턴트는 여전히 백그라운드에서 실행됩니다."
 
-#: internal/ui/settings_ai.go:188
+#: internal/ui/settings_ai.go:233
 msgid "Create a token to allow Console connections."
 msgstr "콘솔 연결을 허용하는 토큰을 생성합니다."
 
-#: internal/ui/settings_ai.go:195
+#: internal/ui/settings_ai.go:240
 msgid "Reading keyring…"
 msgstr "키링을 읽는 중..."
 
-#: internal/ui/settings_ai.go:197
+#: internal/ui/settings_ai.go:242
 msgid "Hide token"
 msgstr "토큰 숨기기"
 
-#: internal/ui/settings_ai.go:199
-#: ui/settings.ui:2469
+#: internal/ui/settings_ai.go:244
+#: ui/settings.ui:2515
 msgid "Create token"
 msgstr "토큰 생성"
 
-#: internal/ui/settings_ai.go:201
+#: internal/ui/settings_ai.go:246
 msgid "Show token"
 msgstr "토큰 표시"
 
-#: internal/ui/settings_ai.go:216
+#: internal/ui/settings_ai.go:257
+msgid "The one that answers"
+msgstr "응답에 사용할 프로필과 같음"
+
+#: internal/ui/settings_ai.go:265
 msgid "Then, when it fails: %s"
 msgstr "그리고, 실패할 경우: %s"
 
-#: internal/ui/settings_ai.go:218
+#: internal/ui/settings_ai.go:267
 msgid "The profile asked first; turn on Fallback on others to try them when it fails"
 msgstr "먼저 사용할 프로필입니다. 실패 시 다른 프로필을 시도하려면 대체 응답을 켜세요"
 
-#: internal/ui/settings_ai.go:274
-msgid "Move up (fallbacks are tried in this order)"
-msgstr "위로 이동(대체는 이 순서대로 시도됩니다)"
-
-#: internal/ui/settings_ai.go:275
-msgid "Move down"
-msgstr "아래로 이동"
-
-#: internal/ui/settings_ai.go:276
-msgid "Remove this profile"
-msgstr "이 프로필 삭제"
-
-#: internal/ui/settings_ai.go:299
+#: internal/ui/settings_ai.go:432
 msgid "a name: work, fast, local …"
 msgstr "이름: 일, 빠른, 지역 ..."
 
-#: internal/ui/settings_ai.go:301
+#: internal/ui/settings_ai.go:434
 msgid "the model's ID"
 msgstr "모델 ID"
 
-#: internal/ui/settings_ai.go:302
+#: internal/ui/settings_ai.go:435
 msgid "the provider's own"
 msgstr "공급자 자신의"
 
-#: internal/ui/settings_ai.go:308
-#: internal/ui/settings_ai.go:407
+#: internal/ui/settings_ai.go:441
+#: internal/ui/settings_ai.go:682
 msgid "Paste a key, then Save"
 msgstr "키를 붙여넣은 다음 저장하세요."
 
-#: internal/ui/settings_ai.go:322
+#: internal/ui/settings_ai.go:454
 msgid "Provider"
 msgstr "제공업체"
 
-#: internal/ui/settings_ai.go:324
+#: internal/ui/settings_ai.go:460
+#: internal/ui/settings_ai.go:628
+msgid "List the provider's models"
+msgstr "제공자의 모델 목록 보기"
+
+#: internal/ui/settings_ai.go:466
 msgid "Reasoning"
 msgstr "추론 수준"
 
-#: internal/ui/settings_ai.go:325
+#: internal/ui/settings_ai.go:467
 msgid "Endpoint"
 msgstr "엔드포인트"
 
-#: internal/ui/settings_ai.go:329
+#: internal/ui/settings_ai.go:485
+msgid "Chat"
+msgstr "채팅"
+
+#: internal/ui/settings_ai.go:486
+#: internal/ui/settings_keyring.go:322
+msgid "Decision"
+msgstr "결정"
+
+#: internal/ui/settings_ai.go:493
+msgid "Abilities"
+msgstr "기능"
+
+#: internal/ui/settings_ai.go:497
 msgid "Forget"
 msgstr "키 삭제"
 
-#: internal/ui/settings_ai.go:337
+#: internal/ui/settings_ai.go:505
 msgid "API key"
 msgstr "API 키"
 
-#: internal/ui/settings_ai.go:342
+#: internal/ui/settings_ai.go:508
 msgid "Fallback: answers when the profiles above it fail"
 msgstr "앞선 프로필이 실패하면 대신 응답"
 
-#: internal/ui/settings_ai.go:384
+#: internal/ui/settings_ai.go:543
+#: internal/ui/settings_bench.go:115
+msgid "Benchmark"
+msgstr "벤치마크"
+
+#: internal/ui/settings_ai.go:543
+msgid "Try the profile as inua uses it"
+msgstr "inua가 쓰는 방식으로 이 프로필을 시험합니다"
+
+#: internal/ui/settings_ai.go:547
+msgid "Move up (fallbacks are tried in this order)"
+msgstr "위로 이동(대체는 이 순서대로 시도됩니다)"
+
+#: internal/ui/settings_ai.go:548
+msgid "Move down"
+msgstr "아래로 이동"
+
+#: internal/ui/settings_ai.go:549
+msgid "Remove this profile"
+msgstr "이 프로필 삭제"
+
+#: internal/ui/settings_ai.go:618
+msgid "This provider makes quick choices only"
+msgstr "이 제공자는 빠른 선택만 합니다"
+
+#: internal/ui/settings_ai.go:620
+msgid "The profile that answers chats"
+msgstr "응답하는 프로필은 채팅을 해야 합니다"
+
+#: internal/ui/settings_ai.go:626
+#: internal/ui/settings_ai.go:1119
+msgid "This provider does not list its models"
+msgstr "이 제공자는 모델 목록을 제공하지 않습니다"
+
+#: internal/ui/settings_ai.go:640
 msgid "Answers first. "
 msgstr "먼저 답변하십시오. "
 
-#: internal/ui/settings_ai.go:386
+#: internal/ui/settings_ai.go:642
 msgid "Fallback %d. "
 msgstr "폴백 %d. "
 
-#: internal/ui/settings_ai.go:391
+#: internal/ui/settings_ai.go:645
+msgid "Makes the quick choices. "
+msgstr "빠른 선택 담당. "
+
+#: internal/ui/settings_ai.go:650
 msgid "The saved keys cannot be read: %s"
 msgstr "저장된 키를 읽을 수 없습니다: %s"
 
-#: internal/ui/settings_ai.go:393
+#: internal/ui/settings_ai.go:652
 msgid "Key saved"
 msgstr "키 저장됨"
 
-#: internal/ui/settings_ai.go:395
+#: internal/ui/settings_ai.go:654
 msgid "No key (a local server may want none)"
 msgstr "키 없음(로컬 서버는 아무 키도 원하지 않을 수 있음)"
 
-#: internal/ui/settings_ai.go:397
+#: internal/ui/settings_ai.go:656
 msgid "No key yet: the assistant cannot answer"
 msgstr "키가 없어 도우미가 응답할 수 없습니다"
 
-#: internal/ui/settings_ai.go:399
+#: internal/ui/settings_ai.go:658
 msgid "No key yet: this profile is skipped"
 msgstr "키가 없어 이 프로필을 건너뜁니다"
 
-#: internal/ui/settings_ai.go:405
+#: internal/ui/settings_ai.go:666
+msgid "Answers"
+msgstr "응답"
+
+#: internal/ui/settings_ai.go:668
+msgid "Fallback %d"
+msgstr "대체 %d"
+
+#: internal/ui/settings_ai.go:671
+msgid "Quick choices"
+msgstr "빠른 선택"
+
+#: internal/ui/settings_ai.go:674
+msgid "No key"
+msgstr "키 없음"
+
+#: internal/ui/settings_ai.go:680
 msgid "Saved; paste another to replace it"
 msgstr "저장되었습니다. 교체하려면 다른 것을 붙여넣으세요."
 
-#: internal/ui/settings_ai.go:566
+#: internal/ui/settings_ai.go:886
 msgid "Command copied"
 msgstr "명령을 복사했습니다"
 
-#: internal/ui/settings_ai.go:573
+#: internal/ui/settings_ai.go:893
 msgid "Endpoint URL copied"
 msgstr "엔드포인트 URL이 복사되었습니다."
 
-#: internal/ui/settings_ai.go:604
+#: internal/ui/settings_ai.go:924
 msgid "No Console token. Create one first."
 msgstr "콘솔 토큰이 없습니다. 먼저 하나를 만드세요."
 
-#: internal/ui/settings_ai.go:609
+#: internal/ui/settings_ai.go:929
 msgid "Token copied"
 msgstr "토큰 복사"
 
-#: internal/ui/settings_ai.go:674
+#: internal/ui/settings_ai.go:1029
 msgid "key not removed"
 msgstr "키를 삭제하지 못함"
 
-#: internal/ui/settings_ai.go:685
+#: internal/ui/settings_ai.go:1040
 msgid "key not saved"
 msgstr "키를 저장하지 못함"
+
+#: internal/ui/settings_ai.go:1051
+msgid "Chats and runs tasks with inua's tools. Also makes quick choices from a list, as the games' AI players do."
+msgstr "채팅하고 inua의 도구로 작업을 합니다. 게임의 AI 플레이어처럼 목록에서 빠르게 고르기도 합니다."
+
+#: internal/ui/settings_ai.go:1053
+msgid "Chats and runs tasks with inua's tools. The games' AI players do not use it."
+msgstr "채팅하고 inua의 도구로 작업을 합니다. 게임의 AI 플레이어는 이 프로필을 쓰지 않습니다."
+
+#: internal/ui/settings_ai.go:1055
+msgid "Makes only quick choices from a list (yes or no, one of a few), as the games' AI players do. It cannot chat or run tasks."
+msgstr "게임의 AI 플레이어처럼 목록에서 빠르게 고르기만 합니다(예/아니요, 몇 개 중 하나). 채팅이나 작업은 할 수 없습니다."
+
+#: internal/ui/settings_ai.go:1057
+msgid "Neither chats nor makes quick choices: inua does not use it."
+msgstr "채팅도 빠른 선택도 하지 않습니다. inua는 이 프로필을 쓰지 않습니다."
+
+#: internal/ui/settings_ai.go:1067
+msgid "Search models"
+msgstr "모델 검색"
+
+#: internal/ui/settings_ai.go:1097
+msgid "Listing models…"
+msgstr "모델 목록을 가져오는 중…"
+
+#: internal/ui/settings_ai.go:1121
+msgid "Type the server's endpoint first."
+msgstr "먼저 서버의 엔드포인트를 입력하세요."
+
+#: internal/ui/settings_ai.go:1123
+msgid "Cannot list the models: %s"
+msgstr "모델 목록을 가져올 수 없습니다: %s"
+
+#: internal/ui/settings_ai.go:1125
+msgid "The provider lists no models."
+msgstr "제공자가 나열한 모델이 없습니다."
+
+#: internal/ui/settings_ai.go:1161
+msgid "No model matches."
+msgstr "일치하는 모델이 없습니다."
 
 #: internal/ui/settings_apps.go:88
 msgid "None chosen"
@@ -8487,6 +8805,68 @@ msgstr "선택 안 함"
 #: internal/ui/settings_apps.go:110
 msgid "%s (inua)"
 msgstr "%s (inua)"
+
+#: internal/ui/settings_bench.go:73
+msgid "Text reply"
+msgstr "텍스트 응답"
+
+#: internal/ui/settings_bench.go:73
+msgid "The model answered"
+msgstr "모델이 응답했습니다"
+
+#: internal/ui/settings_bench.go:73
+msgid "The model did not answer"
+msgstr "모델이 응답하지 않았습니다"
+
+#: internal/ui/settings_bench.go:75
+msgid "Tool calling"
+msgstr "도구 호출"
+
+#: internal/ui/settings_bench.go:75
+msgid "The model can call tools"
+msgstr "모델이 도구를 호출할 수 있습니다"
+
+#: internal/ui/settings_bench.go:75
+msgid "The model did not call the tool"
+msgstr "모델이 도구를 호출하지 않았습니다"
+
+#: internal/ui/settings_bench.go:77
+msgid "Quick choice (decision route)"
+msgstr "빠른 선택 (결정 경로)"
+
+#: internal/ui/settings_bench.go:77
+msgid "The model picks from a list"
+msgstr "모델이 목록에서 고를 수 있습니다"
+
+#: internal/ui/settings_bench.go:77
+msgid "The model did not pick the right option"
+msgstr "모델이 올바른 항목을 고르지 않았습니다"
+
+#: internal/ui/settings_bench.go:137
+#: internal/ui/settings_bench.go:204
+msgid "Run again"
+msgstr "다시 실행"
+
+#: internal/ui/settings_bench.go:187
+#: internal/ui/settings_bench.go:332
+msgid "Running…"
+msgstr "실행 중…"
+
+#: internal/ui/settings_bench.go:296
+msgid "Show what the model answered"
+msgstr "모델의 응답 보기"
+
+#: internal/ui/settings_bench.go:347
+msgid "Passed"
+msgstr "통과"
+
+#: internal/ui/settings_bench.go:350
+msgid "Failed"
+msgstr "실패"
+
+#: internal/ui/settings_bench.go:363
+msgid "No answer"
+msgstr "응답 없음"
 
 #: internal/ui/settings_custom.go:74
 msgid "Not moved to the trash: %s"
@@ -8517,207 +8897,231 @@ msgid "Not added: the folder has no SVG files"
 msgstr ""
 
 #: internal/ui/settings_custom.go:165
+#: internal/ui/settings_keyring.go:181
 msgid "Not added: %s"
-msgstr ""
+msgstr "추가하지 않음: %s"
 
-#: internal/ui/settings_keyring.go:197
-#: ui/settings.ui:4137
+#: internal/ui/settings_keyring.go:176
+msgid "Cannot reach inua-keyring"
+msgstr "inua-keyring에 연결할 수 없습니다"
+
+#: internal/ui/settings_keyring.go:183
+msgid "Not added: you said no."
+msgstr "추가하지 않음: 거부했습니다."
+
+#: internal/ui/settings_keyring.go:185
+msgid "Added %s."
+msgstr "%s 추가함."
+
+#: internal/ui/settings_keyring.go:270
+#: ui/settings.ui:4400
 msgid "<span alpha='55%'>[</span>READ<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>읽기<span alpha='55%'>]</span>"
 
-#: internal/ui/settings_keyring.go:199
+#: internal/ui/settings_keyring.go:272
 msgid "<span alpha='55%'>[</span>PASSPHRASE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>암호 문구<span alpha='55%'>]</span>"
 
-#: internal/ui/settings_keyring.go:219
+#: internal/ui/settings_keyring.go:293
 msgid "Not in pass: the session keyring is kept in memory"
 msgstr "pass에 없음: 세션 키링은 메모리에 보관됩니다"
 
-#: internal/ui/settings_keyring.go:221
+#: internal/ui/settings_keyring.go:295
 msgid "Not recorded"
 msgstr "기록되지 않음"
 
-#: internal/ui/settings_keyring.go:227
+#: internal/ui/settings_keyring.go:301
 msgid "%d reads, %s to %s"
 msgid_plural "%d reads, %s to %s"
 msgstr[0] "%d회, %s~%s"
 
-#: internal/ui/settings_keyring.go:229
+#: internal/ui/settings_keyring.go:303
 msgid "Not known"
 msgstr "알 수 없음"
 
-#: internal/ui/settings_keyring.go:232
-#: internal/ui/settings_keyring.go:392
-#: internal/ui/settings_keyring.go:399
+#: internal/ui/settings_keyring.go:306
+#: internal/ui/settings_keyring.go:467
+#: internal/ui/settings_keyring.go:474
 msgid "pid %d"
 msgstr "pid %d"
 
-#: internal/ui/settings_keyring.go:234
+#: internal/ui/settings_keyring.go:308
 msgid "pid %d, still running"
 msgstr "pid %d, 실행 중"
 
-#: internal/ui/settings_keyring.go:236
+#: internal/ui/settings_keyring.go:310
 msgid "pid %d, ended"
 msgstr "pid %d, 종료됨"
 
-#: internal/ui/settings_keyring.go:238
+#: internal/ui/settings_keyring.go:312
 msgid "Secret"
 msgstr "비밀"
 
-#: internal/ui/settings_keyring.go:240
+#: internal/ui/settings_keyring.go:314
 msgid "For"
 msgstr "대상"
 
-#: internal/ui/settings_keyring.go:247
+#: internal/ui/settings_keyring.go:321
 msgid "Answer"
 msgstr "응답"
 
-#: internal/ui/settings_keyring.go:248
-msgid "Decision"
-msgstr "결정"
-
-#: internal/ui/settings_keyring.go:249
+#: internal/ui/settings_keyring.go:323
 msgid "In pass"
 msgstr "pass 경로"
 
-#: internal/ui/settings_keyring.go:251
+#: internal/ui/settings_keyring.go:325
 msgid "App"
 msgstr "앱"
 
-#: internal/ui/settings_keyring.go:253
+#: internal/ui/settings_keyring.go:327
 msgid "Command line"
 msgstr "명령줄"
 
-#: internal/ui/settings_keyring.go:254
+#: internal/ui/settings_keyring.go:328
 msgid "Runs under"
 msgstr "상위 프로세스"
 
-#: internal/ui/settings_keyring.go:255
+#: internal/ui/settings_keyring.go:329
 msgid "Process"
 msgstr "프로세스"
 
-#: internal/ui/settings_keyring.go:256
+#: internal/ui/settings_keyring.go:330
 msgid "Bus name"
 msgstr "버스 이름"
 
-#: internal/ui/settings_keyring.go:257
+#: internal/ui/settings_keyring.go:331
 msgid "When"
 msgstr "시각"
 
-#: internal/ui/settings_keyring.go:272
+#: internal/ui/settings_keyring.go:346
 msgid "Entered"
 msgstr "입력함"
 
-#: internal/ui/settings_keyring.go:274
+#: internal/ui/settings_keyring.go:348
 msgid "cancelled"
 msgstr "취소됨"
 
-#: internal/ui/settings_keyring.go:276
+#: internal/ui/settings_keyring.go:350
 msgid "the dialog could not be shown"
 msgstr "대화 상자를 표시할 수 없음"
 
-#: internal/ui/settings_keyring.go:309
+#: internal/ui/settings_keyring.go:383
 msgid "Looking…"
 msgstr "확인하는 중…"
 
-#: internal/ui/settings_keyring.go:312
+#: internal/ui/settings_keyring.go:386
 msgid "Cannot reach the session bus"
 msgstr "세션 버스에 연결할 수 없음"
 
-#: internal/ui/settings_keyring.go:313
+#: internal/ui/settings_keyring.go:387
 msgid "inua-keyring is not running"
 msgstr "inua-keyring이 실행 중이 아닙니다"
 
-#: internal/ui/settings_keyring.go:317
+#: internal/ui/settings_keyring.go:391
 msgid "%s serves it, keeping the secrets in pass"
 msgstr "%s이(가) 제공 중이며 비밀은 pass에 보관됩니다"
 
-#: internal/ui/settings_keyring.go:320
+#: internal/ui/settings_keyring.go:394
 msgid "Locked: the next read decrypts with gpg, which may ask for your passphrase"
 msgstr "잠김: 다음 읽기는 gpg로 복호화하므로 암호 문구를 물을 수 있습니다"
 
-#: internal/ui/settings_keyring.go:322
+#: internal/ui/settings_keyring.go:396
 msgid "Kept in protected memory since the first read, so reads ask for nothing"
 msgstr "첫 읽기부터 보호된 메모리에 보관하므로 읽을 때 아무것도 묻지 않습니다"
 
-#: internal/ui/settings_keyring.go:326
+#: internal/ui/settings_keyring.go:400
 msgid "%s serves it, not inua-keyring; inua keyring replace switches"
 msgstr "inua-keyring이 아니라 %s이(가) 제공 중입니다. inua keyring replace로 전환합니다"
 
-#: internal/ui/settings_keyring.go:328
+#: internal/ui/settings_keyring.go:402
 msgid "No one serves it now; D-Bus starts it on the first request"
 msgstr "지금 제공하는 프로세스가 없습니다. 첫 요청 때 D-Bus가 시작합니다"
 
-#: internal/ui/settings_keyring.go:347
+#: internal/ui/settings_keyring.go:422
 msgid "The record of reads cannot be read: %s"
 msgstr "읽기 기록을 읽을 수 없음: %s"
 
-#: internal/ui/settings_keyring.go:349
-#: ui/settings.ui:3929
+#: internal/ui/settings_keyring.go:424
+#: ui/settings.ui:4039
 msgid "No app has read a secret yet."
 msgstr "아직 비밀을 읽은 앱이 없습니다."
 
-#: internal/ui/settings_keyring.go:370
+#: internal/ui/settings_keyring.go:445
 msgid "%s read “%s”"
 msgstr "%s이(가) “%s” 읽음"
 
-#: internal/ui/settings_keyring.go:372
+#: internal/ui/settings_keyring.go:447
 msgid "%s was denied “%s”"
 msgstr "%s의 “%s” 읽기가 거부됨"
 
-#: internal/ui/settings_keyring.go:375
+#: internal/ui/settings_keyring.go:450
 msgid "%s asked for the passphrase"
 msgstr "%s이(가) 암호 문구를 요청함"
 
-#: internal/ui/settings_keyring.go:397
+#: internal/ui/settings_keyring.go:472
 msgid "session keyring, in memory"
 msgstr "세션 키링, 메모리 내"
 
-#: internal/ui/settings_keyring.go:405
+#: internal/ui/settings_keyring.go:480
 msgid "%s · %d times in a row"
 msgid_plural "%s · %d times in a row"
 msgstr[0] "%s · 연속 %d회"
 
-#: internal/ui/settings_keyring.go:423
+#: internal/ui/settings_keyring.go:498
 msgid "Show the details"
 msgstr "자세히 보기"
 
-#: internal/ui/settings_keyring.go:439
+#: internal/ui/settings_keyring.go:514
 msgid "It was changed outside inua-keyring, so every app is asked about until you trust it again. Look through it first."
 msgstr "inua-keyring 밖에서 바뀌었으므로 다시 신뢰할 때까지 모든 앱에 대해 묻습니다. 먼저 살펴보세요."
 
-#: internal/ui/settings_keyring.go:441
+#: internal/ui/settings_keyring.go:516
 msgid "It cannot be read: %s. Every app is asked about."
 msgstr "읽을 수 없습니다: %s. 모든 앱에 대해 묻습니다."
 
-#: internal/ui/settings_keyring.go:477
+#: internal/ui/settings_keyring.go:553
 msgid "%s, trusted with %d secret"
 msgid_plural "%s, trusted with %d secrets"
 msgstr[0] "%s, 비밀 %d개에 대해 신뢰"
 
-#: internal/ui/settings_keyring.go:483
+#: internal/ui/settings_keyring.go:559
 msgid "Not trusted: changed outside inua-keyring. Every app is asked about."
 msgstr "신뢰하지 않음: inua-keyring 밖에서 바뀌었습니다. 모든 앱에 대해 묻습니다."
 
-#: internal/ui/settings_keyring.go:485
+#: internal/ui/settings_keyring.go:561
 msgid "None yet: each app is asked about the first time it reads a secret"
 msgstr "아직 없음: 각 앱은 처음 비밀을 읽을 때 묻습니다"
 
-#: internal/ui/settings_keyring.go:518
+#: internal/ui/settings_keyring.go:564
+msgid "%s · %d allowed path"
+msgid_plural "%s · %d allowed paths"
+msgstr[0] "%s · 허용된 경로 %d개"
+
+#: internal/ui/settings_keyring.go:570
+msgid "%d path"
+msgid_plural "%d paths"
+msgstr[0] "경로 %d개"
+
+#: internal/ui/settings_keyring.go:603
 msgid "No app is trusted yet: each app is asked about the first time it reads a secret."
 msgstr "아직 신뢰하는 앱이 없습니다. 각 앱은 처음 비밀을 읽을 때 묻습니다."
 
-#: internal/ui/settings_keyring.go:520
+#: internal/ui/settings_keyring.go:605
 msgid "No trusted app matches “%s”."
 msgstr "“%s”와(과) 일치하는 신뢰하는 앱이 없습니다."
 
-#: internal/ui/settings_keyring.go:531
+#: internal/ui/settings_keyring.go:616
 msgid "%s reads “%s”"
 msgstr "%s이(가) “%s” 읽기"
 
-#: internal/ui/settings_keyring.go:555
+#: internal/ui/settings_keyring.go:640
+#: internal/ui/settings_keyring.go:674
 msgid "since %s"
 msgstr "%s부터"
+
+#: internal/ui/settings_keyring.go:683
+msgid "Stop allowing it: its programs are asked about again"
+msgstr "허용 중지: 이 경로의 프로그램에 다시 묻습니다"
 
 #: internal/ui/shortcuts.go:88
 msgid "Set in inua"
@@ -8781,7 +9185,7 @@ msgid "%s Upgrade with: inua upgrade"
 msgstr "%s 업그레이드: inua 업그레이드"
 
 #: internal/ui/updates.go:99
-#: ui/settings.ui:5200
+#: ui/settings.ui:5463
 msgid "Upgrade"
 msgstr "업그레이드"
 
@@ -9189,34 +9593,34 @@ msgid "Screenshot an area"
 msgstr "영역 스크린샷"
 
 #: ui/control.ui:91
-msgid "Suspend, restart, shut down, log out"
-msgstr "일시 중지, 다시 시작, 종료, 로그아웃"
+msgid "Suspend, hibernate, restart, shut down, log out"
+msgstr "절전, 최대 절전, 다시 시작, 종료, 로그아웃"
 
-#: ui/control.ui:301
+#: ui/control.ui:325
 msgid "Bluetooth"
 msgstr "블루투스"
 
-#: ui/control.ui:359
+#: ui/control.ui:383
 msgid "Low Power"
 msgstr "절전 모드"
 
-#: ui/control.ui:499
+#: ui/control.ui:523
 msgid "Open Tailscale"
 msgstr "Tailscale 열기"
 
-#: ui/control.ui:528
+#: ui/control.ui:552
 msgid "Display"
 msgstr "디스플레이"
 
-#: ui/control.ui:590
+#: ui/control.ui:614
 msgid "Sound"
 msgstr "소리"
 
-#: ui/control.ui:618
+#: ui/control.ui:642
 msgid "Mute"
 msgstr "음소거"
 
-#: ui/control.ui:658
+#: ui/control.ui:682
 msgid "Now playing"
 msgstr "지금 재생 중"
 
@@ -9356,11 +9760,6 @@ msgstr "암호화"
 #: ui/gpg.ui:572
 msgid "<span alpha='55%'>[</span>ENCRYPTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>암호문<span alpha='55%'>]</span>"
-
-#: ui/gpg.ui:633
-#: ui/settings.ui:4002
-msgid "Back"
-msgstr "뒤로"
 
 #: ui/gpg.ui:652
 #: ui/gpg.ui:896
@@ -9751,7 +10150,7 @@ msgstr ""
 
 #: ui/settings.ui:173
 #: ui/settings.ui:431
-#: ui/settings.ui:4413
+#: ui/settings.ui:4676
 msgid "Add…"
 msgstr "추가..."
 
@@ -10092,572 +10491,596 @@ msgstr "링크, 폴더, 파일을 여는 앱"
 msgid "Saved where other apps read them too: ~/.config/mimeapps.list, and for the terminal xdg-terminals.list and the launcher's terminal."
 msgstr "다른 앱도 읽는 곳에 저장됩니다: ~/.config/mimeapps.list, 터미널은 xdg-terminals.list와 런처의 터미널."
 
-#: ui/settings.ui:1928
-msgid "AI"
-msgstr "AI"
-
-#: ui/settings.ui:1966
+#: ui/settings.ui:1969
 msgid "<span alpha='55%'>[</span>ASSISTANT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>보조<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:1974
+#: ui/settings.ui:1977
 msgid "An agent with inua's tools, run by Mister Morph"
 msgstr "Mister Morph로 실행되며 inua 도구를 사용하는 에이전트"
 
-#: ui/settings.ui:2013
+#: ui/settings.ui:2016
 msgid "Ask it from the launcher (the last row, or ? first) or open Assistant"
 msgstr "런처(마지막 행 또는 ? 첫 번째)에서 요청하거나 어시스턴트를 엽니다."
 
-#: ui/settings.ui:2047
+#: ui/settings.ui:2050
 msgid "Answers with"
 msgstr "응답에 사용할 프로필"
 
-#: ui/settings.ui:2056
+#: ui/settings.ui:2059
 msgid "The profile asked first; the assistant's window can switch for a conversation"
 msgstr "먼저 사용할 프로필이며 도우미 창에서 대화별로 바꿀 수 있습니다"
 
-#: ui/settings.ui:2090
-#: ui/settings.ui:2631
+#: ui/settings.ui:2093
+msgid "Quick choices with"
+msgstr "빠른 선택에 사용할 프로필"
+
+#: ui/settings.ui:2102
+msgid "The profile that picks from a fixed list, as an AI player in the games does"
+msgstr "정해진 목록에서 고르는 프로필 (게임의 AI 플레이어처럼)"
+
+#: ui/settings.ui:2136
+#: ui/settings.ui:2677
 msgid "Ask before changes"
 msgstr "변경 전 질문"
 
-#: ui/settings.ui:2099
+#: ui/settings.ui:2145
 msgid "Wi-Fi, volume, windows, the clipboard …; power, ending processes and closing windows always ask"
 msgstr "Wi-Fi, 볼륨, 창, 클립보드...; 전원, 프로세스 종료 및 창 닫기는 항상 묻습니다."
 
-#: ui/settings.ui:2133
+#: ui/settings.ui:2179
 msgid "Search the web"
 msgstr "웹 검색"
 
-#: ui/settings.ui:2142
+#: ui/settings.ui:2188
 msgid "Mister Morph's web search and page reading"
 msgstr "Mister Morph의 웹 검색 및 페이지 읽기"
 
-#: ui/settings.ui:2176
+#: ui/settings.ui:2222
 msgid "Read files"
 msgstr "파일 읽기"
 
-#: ui/settings.ui:2185
+#: ui/settings.ui:2231
 msgid "Any file you can read; asks each time"
 msgstr "읽을 수 있는 모든 파일; 매번 묻는다"
 
-#: ui/settings.ui:2219
+#: ui/settings.ui:2265
 msgid "Run commands"
 msgstr "실행 명령"
 
-#: ui/settings.ui:2228
+#: ui/settings.ui:2274
 msgid "A shell, as you; asks each time"
 msgstr "사용자 권한으로 셸 명령을 실행하며 매번 확인합니다"
 
-#: ui/settings.ui:2273
+#: ui/settings.ui:2319
 msgid "<span alpha='55%'>[</span>CONSOLE ENDPOINT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>콘솔 엔드포인트<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2281
+#: ui/settings.ui:2327
 msgid "Connect other Consoles to this desktop"
 msgstr "이 데스크탑에 다른 콘솔을 연결합니다."
 
-#: ui/settings.ui:2311
-#: ui/settings.ui:2330
+#: ui/settings.ui:2357
+#: ui/settings.ui:2376
 msgid "Serve endpoint"
 msgstr "엔드포인트 제공"
 
-#: ui/settings.ui:2320
+#: ui/settings.ui:2366
 msgid "Allow Console connections; the assistant keeps running when this is off"
 msgstr "콘솔 연결을 허용합니다. 이 기능이 꺼져도 어시스턴트는 계속 실행됩니다."
 
-#: ui/settings.ui:2355
+#: ui/settings.ui:2401
 msgid "Listen address"
 msgstr "청취 주소"
 
-#: ui/settings.ui:2364
+#: ui/settings.ui:2410
 msgid "Host:port; kept when serving is off"
 msgstr "호스트:포트; 서빙이 중단되었을 때 보관됨"
 
-#: ui/settings.ui:2375
+#: ui/settings.ui:2421
 msgid "Use host:port, with a port from 1 to 65535. For IPv6, use [address]:port."
 msgstr "1부터 65535까지의 포트를 갖는 호스트:포트를 사용하십시오. IPv6의 경우, [주소]:포트를 사용하십시오."
 
-#: ui/settings.ui:2397
+#: ui/settings.ui:2443
 msgid "Endpoint URL"
 msgstr "엔드포인트 URL"
 
-#: ui/settings.ui:2408
+#: ui/settings.ui:2454
 msgid "Set a listen address first"
 msgstr "먼저 청취 주소를 설정하십시오."
 
-#: ui/settings.ui:2417
+#: ui/settings.ui:2463
 msgid "Copy URL"
 msgstr "URL 복사"
 
-#: ui/settings.ui:2448
+#: ui/settings.ui:2494
 msgid "Access token"
 msgstr "액세스 토큰"
 
-#: ui/settings.ui:2460
+#: ui/settings.ui:2506
 msgid "Token hidden"
 msgstr "토큰 숨김"
 
-#: ui/settings.ui:2478
+#: ui/settings.ui:2524
 msgid "Copy token"
 msgstr "복사 토큰"
 
-#: ui/settings.ui:2488
+#: ui/settings.ui:2534
 msgid "Kept in the keyring (pass with inua-keyring). Creating or reading it may ask for your passphrase."
 msgstr "키링에 보관됩니다(inua-keyring으로 전달). 암호를 만들거나 읽으면 암호가 필요할 수 있습니다."
 
-#: ui/settings.ui:2525
+#: ui/settings.ui:2571
 msgid "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2533
+#: ui/settings.ui:2579
 msgid "Let AI agents on this computer use inua's tools"
 msgstr "이 컴퓨터의 AI 에이전트가 inua의 도구를 쓰게 합니다"
 
-#: ui/settings.ui:2563
-#: ui/settings.ui:2582
+#: ui/settings.ui:2609
+#: ui/settings.ui:2628
 msgid "MCP server"
 msgstr "MCP 서버"
 
-#: ui/settings.ui:2572
+#: ui/settings.ui:2618
 msgid "Agents such as Claude Code or Codex see the windows, open apps, change settings and more, through inua mcp. The assistant uses these tools either way."
 msgstr "Claude Code나 Codex 같은 에이전트가 inua mcp를 통해 창을 보고, 앱을 열고, 설정을 바꾸는 등을 할 수 있습니다. 어시스턴트는 어느 쪽이든 이 도구를 씁니다."
 
-#: ui/settings.ui:2607
+#: ui/settings.ui:2653
 msgid "What agents may do"
 msgstr "에이전트가 할 수 있는 일"
 
-#: ui/settings.ui:2616
+#: ui/settings.ui:2662
 msgid "Closing windows, ending processes, power, the clipboard and notifications always ask"
 msgstr "창 닫기, 프로세스 종료, 전원, 클립보드, 알림은 항상 묻습니다"
 
-#: ui/settings.ui:2630
+#: ui/settings.ui:2676
 msgid "Look only"
 msgstr "보기만"
 
-#: ui/settings.ui:2632
+#: ui/settings.ui:2678
 msgid "Change without asking"
 msgstr "묻지 않고 변경"
 
-#: ui/settings.ui:2655
+#: ui/settings.ui:2701
 msgid "Connect an agent"
 msgstr "에이전트 연결"
 
-#: ui/settings.ui:2685
+#: ui/settings.ui:2731
 msgid "Other agents: a stdio server that runs inua mcp. Each call is recorded; asking happens in inua's dialog."
 msgstr "다른 에이전트: inua mcp를 실행하는 stdio 서버로 설정합니다. 모든 호출은 기록되고, 확인은 inua의 대화상자에서 합니다."
 
-#: ui/settings.ui:2722
+#: ui/settings.ui:2768
 msgid "<span alpha='55%'>[</span>PROFILES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>프로필<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2730
+#: ui/settings.ui:2776
 msgid "The models it can use; fallbacks answer when the first fails"
 msgstr "사용할 모델입니다. 첫 모델이 실패하면 대체 모델이 응답합니다"
 
-#: ui/settings.ui:2760
+#: ui/settings.ui:2806
 msgid "Add Profile"
 msgstr "프로필 추가"
 
-#: ui/settings.ui:2839
+#: ui/settings.ui:2949
 msgid "<span alpha='55%'>[</span>NOTIFICATIONS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>알림<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2847
+#: ui/settings.ui:2957
 msgid "Banners, then the notification center"
 msgstr "배너 다음으로 알림 센터"
 
-#: ui/settings.ui:2877
+#: ui/settings.ui:2987
 msgid "Show notifications"
 msgstr "알림 표시"
 
-#: ui/settings.ui:2919
+#: ui/settings.ui:3029
 msgid "Banner duration"
 msgstr "배너 기간"
 
-#: ui/settings.ui:2928
+#: ui/settings.ui:3038
 msgid "How long a banner shows; critical ones stay"
 msgstr "배너가 표시되는 시간; 중요한 사람은 남아"
 
-#: ui/settings.ui:2942
+#: ui/settings.ui:3052
 msgid "3 seconds"
 msgstr "3초"
 
-#: ui/settings.ui:2943
+#: ui/settings.ui:3053
 msgid "5 seconds"
 msgstr "5초"
 
-#: ui/settings.ui:2944
+#: ui/settings.ui:3054
 msgid "8 seconds"
 msgstr "8초"
 
-#: ui/settings.ui:2945
+#: ui/settings.ui:3055
 msgid "12 seconds"
 msgstr "12초"
 
-#: ui/settings.ui:2972
+#: ui/settings.ui:3082
 msgid "Critical during Focus"
 msgstr "집중 모드에서도 긴급 알림 표시"
 
-#: ui/settings.ui:2981
+#: ui/settings.ui:3091
 msgid "Critical notifications still show banners"
 msgstr "중요한 알림에는 여전히 배너가 표시됩니다."
 
-#: ui/settings.ui:3015
+#: ui/settings.ui:3125
 msgid "Keep a history"
 msgstr "기록 남기기"
 
-#: ui/settings.ui:3024
+#: ui/settings.ui:3134
 msgid "The last 500 notifications, dismissed ones too, for the assistant, agents and workshop apps allowed to read them. Off clears it."
 msgstr "최근 알림 500개(닫은 것 포함)를 읽도록 허용된 어시스턴트, 에이전트, 워크숍 앱을 위해 남깁니다. 끄면 지웁니다."
 
-#: ui/settings.ui:3103
+#: ui/settings.ui:3213
 msgid "<span alpha='55%'>[</span>CLIPBOARD<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>클립보드<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3111
+#: ui/settings.ui:3221
 msgid "History, panel appearance and pasting"
 msgstr "기록, 패널 모양과 붙여넣기"
 
-#: ui/settings.ui:3141
+#: ui/settings.ui:3251
 msgid "Keep a clipboard history"
 msgstr "클립보드 기록 보관"
 
-#: ui/settings.ui:3150
+#: ui/settings.ui:3260
 msgid "Text and images you copy, kept on this computer; a password manager's copies are left out"
 msgstr "복사한 텍스트와 이미지를 이 컴퓨터에 보관합니다. 비밀번호 관리자의 복사는 제외됩니다"
 
-#: ui/settings.ui:3180
+#: ui/settings.ui:3290
 msgid "Never record copies from"
 msgstr "기록하지 않을 복사 출처"
 
-#: ui/settings.ui:3190
+#: ui/settings.ui:3300
 msgid "pass, keepassxc, …"
 msgstr "pass, keepassxc, …"
 
-#: ui/settings.ui:3198
+#: ui/settings.ui:3308
 msgid "Programs or window classes, separated by commas. The program that ran wl-copy and the focused window are checked; hover over an entry in the history to see where it came from"
 msgstr "프로그램 또는 창 클래스를 쉼표로 구분합니다. wl-copy를 실행한 프로그램과 포커스된 창을 확인합니다. 기록의 항목에 포인터를 올리면 출처를 볼 수 있습니다"
 
-#: ui/settings.ui:3224
+#: ui/settings.ui:3334
 msgid "Show in top bar"
 msgstr "상단 바에 표시"
 
-#: ui/settings.ui:3233
+#: ui/settings.ui:3343
 msgid "A button in the status area opens the clipboard history"
 msgstr "상태 영역의 버튼으로 클립보드 기록을 엽니다"
 
-#: ui/settings.ui:3267
+#: ui/settings.ui:3377
 msgid "Paste on click"
 msgstr "클릭하여 붙여넣기"
 
-#: ui/settings.ui:3276
+#: ui/settings.ui:3386
 msgid "Clicking an entry pastes it into the window you were in; off only copies it"
 msgstr "항목을 클릭하면 이전 창에 붙여넣습니다. 끄면 복사만 합니다"
 
-#: ui/settings.ui:3310
+#: ui/settings.ui:3420
 msgid "Panel opacity"
 msgstr "패널 불투명도"
 
-#: ui/settings.ui:3361
+#: ui/settings.ui:3471
 msgid "History limit"
 msgstr "기록 한도"
 
-#: ui/settings.ui:3370
+#: ui/settings.ui:3480
 msgid "How many entries it keeps; the oldest go first"
 msgstr "보관할 항목 수. 오래된 것부터 지워집니다"
 
-#: ui/settings.ui:3404
+#: ui/settings.ui:3514
 msgid "History storage"
 msgstr "기록 저장 공간"
 
-#: ui/settings.ui:3413
+#: ui/settings.ui:3523
 msgid "Loading history…"
 msgstr "기록 불러오는 중…"
 
-#: ui/settings.ui:3426
+#: ui/settings.ui:3536
 msgid "Reveal in File Manager"
 msgstr "파일 관리자에서 보기"
 
-#: ui/settings.ui:3437
+#: ui/settings.ui:3547
 msgid "Clear the history"
 msgstr "기록 지우기"
 
-#: ui/settings.ui:3518
+#: ui/settings.ui:3628
 msgid "<span alpha='55%'>[</span>KEYRING<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>키링<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3526
+#: ui/settings.ui:3636
 msgid "Apps' secrets: browsers' keys, Wi-Fi passwords, API keys"
 msgstr "앱의 비밀: 브라우저 키, Wi-Fi 비밀번호, API 키"
 
-#: ui/settings.ui:3556
+#: ui/settings.ui:3666
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: ui/settings.ui:3592
+#: ui/settings.ui:3702
 msgid "Unlocked secrets"
 msgstr "잠금 해제된 비밀"
 
-#: ui/settings.ui:3638
+#: ui/settings.ui:3748
 msgid "Lock when unused"
 msgstr "사용하지 않으면 잠금"
 
-#: ui/settings.ui:3647
+#: ui/settings.ui:3757
 msgid "It locks with the screen and before suspend, and after this long without a read"
 msgstr "화면 잠금과 절전 전, 그리고 이만큼 읽기가 없으면 잠깁니다"
 
-#: ui/settings.ui:3662
+#: ui/settings.ui:3772
 msgid "5 minutes"
 msgstr "5분"
 
-#: ui/settings.ui:3663
+#: ui/settings.ui:3773
 msgid "15 minutes"
 msgstr "15분"
 
-#: ui/settings.ui:3664
+#: ui/settings.ui:3774
 msgid "30 minutes"
 msgstr "30분"
 
-#: ui/settings.ui:3665
+#: ui/settings.ui:3775
 msgid "1 hour"
 msgstr "1시간"
 
-#: ui/settings.ui:3666
+#: ui/settings.ui:3776
 msgid "4 hours"
 msgstr "4시간"
 
-#: ui/settings.ui:3693
+#: ui/settings.ui:3803
 msgid "With no one to ask"
 msgstr "물어볼 곳이 없을 때"
 
-#: ui/settings.ui:3702
+#: ui/settings.ui:3812
 msgid "A read by an app not trusted with the secret, while the inua shell is not running"
 msgstr "inua 셸이 실행 중이 아닐 때, 비밀에 대해 신뢰되지 않은 앱의 읽기"
 
-#: ui/settings.ui:3717
+#: ui/settings.ui:3827
 msgid "Denied"
 msgstr "거부"
 
-#: ui/settings.ui:3744
+#: ui/settings.ui:3854
 msgid "Tell when an app reads a secret"
 msgstr "앱이 비밀을 읽으면 알림"
 
-#: ui/settings.ui:3753
+#: ui/settings.ui:3863
 msgid "A notification for each app's first read since inua-keyring started"
 msgstr "inua-keyring 시작 후 앱마다 처음 읽을 때 알림"
 
-#: ui/settings.ui:3798
-#: ui/settings.ui:4012
+#: ui/settings.ui:3908
+#: ui/settings.ui:4122
 msgid "<span alpha='55%'>[</span>TRUSTED APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>신뢰하는 앱<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3806
+#: ui/settings.ui:3916
 msgid "Apps that read a secret without asking; any other app is asked about first"
 msgstr "묻지 않고 비밀을 읽는 앱. 다른 앱은 먼저 묻습니다"
 
-#: ui/settings.ui:3842
+#: ui/settings.ui:3952
 msgid "Trusted apps"
 msgstr "신뢰하는 앱"
 
-#: ui/settings.ui:3897
+#: ui/settings.ui:4007
 msgid "<span alpha='55%'>[</span>READS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>읽기<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3905
+#: ui/settings.ui:4015
 msgid "Every secret inua-keyring handed out and passphrase asked for, newest first"
 msgstr "inua-keyring이 내준 모든 비밀과 요청된 암호 문구, 최신순"
 
-#: ui/settings.ui:3951
+#: ui/settings.ui:4061
 msgid "Refresh"
 msgstr "새로 고침"
 
-#: ui/settings.ui:4027
-msgid "Filter by app, program or secret"
-msgstr "앱, 프로그램, 비밀로 거르기"
-
-#: ui/settings.ui:4052
+#: ui/settings.ui:4155
 msgid "The list is not trusted"
 msgstr "목록을 신뢰하지 않습니다"
 
-#: ui/settings.ui:4073
+#: ui/settings.ui:4176
 msgid "Trust this list again"
 msgstr "이 목록을 다시 신뢰"
 
-#: ui/settings.ui:4181
+#: ui/settings.ui:4216
+msgid "<span alpha='55%'>[</span>ALLOWED PATHS<span alpha='55%'>]</span>"
+msgstr "<span alpha='55%'>[</span>허용된 경로<span alpha='55%'>]</span>"
+
+#: ui/settings.ui:4243
+msgid "Any program at one of these paths reads every secret without asking, even after it changes: for an app that updates every day. inua-keyring asks you before a path is added."
+msgstr "이 경로들의 모든 프로그램은 바뀐 뒤에도 묻지 않고 모든 비밀을 읽습니다. 매일 업데이트되는 앱을 위한 기능입니다. 경로를 추가하기 전에 inua-keyring이 묻습니다."
+
+#: ui/settings.ui:4263
+msgid "A path; * within a folder: ~/.local/share/app/versions/*"
+msgstr "경로, *는 폴더 안: ~/.local/share/app/versions/*"
+
+#: ui/settings.ui:4272
+msgid "Allow path"
+msgstr "경로 허용"
+
+#: ui/settings.ui:4317
+msgid "<span alpha='55%'>[</span>APPS<span alpha='55%'>]</span>"
+msgstr "<span alpha='55%'>[</span>앱<span alpha='55%'>]</span>"
+
+#: ui/settings.ui:4332
+msgid "Filter by app, program or secret"
+msgstr "앱, 프로그램, 비밀로 거르기"
+
+#: ui/settings.ui:4444
 msgid "Shortcuts"
 msgstr "단축키"
 
-#: ui/settings.ui:4211
+#: ui/settings.ui:4474
 msgid "Press the new shortcut. Esc cancels; Backspace turns it off."
 msgstr "새로운 단축키를 누른다. Esc는 취소합니다. 백스페이스는 이 기능을 끕니다."
 
-#: ui/settings.ui:4240
-#: ui/settings.ui:5099
+#: ui/settings.ui:4503
+#: ui/settings.ui:5362
 msgid "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4248
+#: ui/settings.ui:4511
 msgid "The shell's own actions"
 msgstr "쉘 자체의 동작"
 
-#: ui/settings.ui:4297
+#: ui/settings.ui:4560
 msgid "<span alpha='55%'>[</span>SCREENSHOTS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>스크린샷<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4305
+#: ui/settings.ui:4568
 msgid "With grim and slurp"
 msgstr "grim 및 slurp 사용"
 
-#: ui/settings.ui:4354
+#: ui/settings.ui:4617
 msgid "<span alpha='55%'>[</span>CUSTOM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>맞춤<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4362
+#: ui/settings.ui:4625
 msgid "Your own commands"
 msgstr "자신만의 명령"
 
-#: ui/settings.ui:4404
+#: ui/settings.ui:4667
 msgid "Command, e.g. kitty"
 msgstr "명령(예: kitty)"
 
-#: ui/settings.ui:4414
+#: ui/settings.ui:4677
 msgid "Add, then press its shortcut"
 msgstr "추가한 후 바로가기를 누르세요."
 
-#: ui/settings.ui:4449
+#: ui/settings.ui:4712
 msgid "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>하이프랜드<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4457
+#: ui/settings.ui:4720
 msgid "Other shortcuts, from hyprland.conf"
 msgstr "Hyprland.conf의 기타 바로가기"
 
-#: ui/settings.ui:4502
+#: ui/settings.ui:4765
 msgid "Keyboard"
 msgstr "키보드"
 
-#: ui/settings.ui:4550
+#: ui/settings.ui:4813
 msgid "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>키<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4558
+#: ui/settings.ui:4821
 msgid "Every keyboard"
 msgstr "모든 키보드"
 
-#: ui/settings.ui:4588
+#: ui/settings.ui:4851
 msgid "Swap Ctrl and Alt"
 msgstr "Ctrl과 Alt를 교환합니다."
 
-#: ui/settings.ui:4597
+#: ui/settings.ui:4860
 msgid "Alt acts as Ctrl, and Ctrl as Alt"
 msgstr "Alt는 Ctrl 역할을 하고, Ctrl은 Alt 역할을 합니다."
 
-#: ui/settings.ui:4612
+#: ui/settings.ui:4875
 msgid "Left side"
 msgstr "왼쪽"
 
-#: ui/settings.ui:4613
+#: ui/settings.ui:4876
 msgid "Both sides"
 msgstr "양쪽"
 
-#: ui/settings.ui:4640
-#: ui/settings.ui:4663
+#: ui/settings.ui:4903
+#: ui/settings.ui:4926
 msgid "Caps Lock"
 msgstr "Caps Lock"
 
-#: ui/settings.ui:4649
+#: ui/settings.ui:4912
 msgid "What the Caps Lock key does"
 msgstr "Caps Lock 키의 기능"
 
-#: ui/settings.ui:4664
+#: ui/settings.ui:4927
 msgid "Escape"
 msgstr "Esc"
 
-#: ui/settings.ui:4665
+#: ui/settings.ui:4928
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ui/settings.ui:4703
-#: ui/settings.ui:4985
+#: ui/settings.ui:4966
+#: ui/settings.ui:5248
 msgid "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>소스<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4711
-#: ui/settings.ui:4993
+#: ui/settings.ui:4974
+#: ui/settings.ui:5256
 msgid "inua writes these to Hyprland's inua.conf"
 msgstr "inua는 이것을 Hyprland의 inua.conf에 씁니다."
 
-#: ui/settings.ui:4762
-#: ui/settings.ui:5029
+#: ui/settings.ui:5025
+#: ui/settings.ui:5292
 msgid "Use hyprland.conf"
 msgstr "Hyprland.conf를 사용하십시오."
 
-#: ui/settings.ui:4763
+#: ui/settings.ui:5026
 msgid "Stop setting keyboard options in inua"
 msgstr "inua에서 키보드 옵션 설정을 중지합니다."
 
-#: ui/settings.ui:4794
+#: ui/settings.ui:5057
 msgid "Mouse & Touch"
 msgstr "마우스 및 터치패드"
 
-#: ui/settings.ui:4842
+#: ui/settings.ui:5105
 msgid "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>포인터<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4850
+#: ui/settings.ui:5113
 msgid "Every touchpad"
 msgstr "모든 터치패드"
 
-#: ui/settings.ui:4880
+#: ui/settings.ui:5143
 msgid "Pointer speed"
 msgstr "포인터 속도"
 
-#: ui/settings.ui:4931
+#: ui/settings.ui:5194
 msgid "Acceleration"
 msgstr "가속"
 
-#: ui/settings.ui:4940
+#: ui/settings.ui:5203
 msgid "Faster swipes move the pointer further"
 msgstr "더 빠르게 스와이프하면 포인터가 더 멀리 이동합니다."
 
-#: ui/settings.ui:5030
+#: ui/settings.ui:5293
 msgid "Stop setting the touchpad in inua"
 msgstr "inua에서 터치패드 설정을 중지합니다."
 
-#: ui/settings.ui:5061
+#: ui/settings.ui:5324
 msgid "About"
 msgstr "소개"
 
-#: ui/settings.ui:5107
+#: ui/settings.ui:5370
 msgid "The version, and new releases"
 msgstr "버전 및 새 릴리스"
 
-#: ui/settings.ui:5137
+#: ui/settings.ui:5400
 msgid "Version"
 msgstr "버전"
 
-#: ui/settings.ui:5173
+#: ui/settings.ui:5436
 msgid "Updates"
 msgstr "업데이트"
 
-#: ui/settings.ui:5209
+#: ui/settings.ui:5472
 msgid "Check for updates"
 msgstr "업데이트 확인"
 
-#: ui/settings.ui:5235
+#: ui/settings.ui:5498
 msgid "Check every day"
 msgstr "매일 확인"
 
-#: ui/settings.ui:5244
+#: ui/settings.ui:5507
 msgid "A notification says when a new release is out, with a button to upgrade"
 msgstr "새 릴리스가 출시되면 업그레이드 버튼과 함께 알림이 표시됩니다."
 
-#: ui/settings.ui:5289
+#: ui/settings.ui:5552
 msgid "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5297
+#: ui/settings.ui:5560
 msgid "What the latest release changed"
 msgstr "최신 릴리스에서 변경된 사항"
 
