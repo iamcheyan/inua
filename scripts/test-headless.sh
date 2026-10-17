@@ -1,6 +1,7 @@
 #!/bin/sh
-# Run inua-shell in an isolated headless Wayland session, for a machine whose
-# real desktop must not be touched (a server running XFCE over SSH).
+# Run inua-shell in an isolated headless Wayland session, for checking the
+# shell on a machine whose own desktop must stay untouched: one reached over
+# SSH, one someone is working in, or one running another window manager.
 #
 #   scripts/test-headless.sh [start|stop|status]
 #
@@ -10,18 +11,20 @@
 #
 # The session has its own HOME under $XDG_STATE_HOME/inua-headless, its own
 # Wayland socket, its own XDG_RUNTIME_DIR and a separate inua instance. It
-# never touches the XFCE display, the real Hyprland configuration, the user's
-# config or systemd units. Install the runtime once with:
+# never touches the running desktop, its Hyprland configuration, the user's
+# inua configuration or systemd units. It needs weston and gtk4-layer-shell
+# from the system's packages, and bin/inua-shell and bin/inua (make build).
 #
-#   sudo apt install weston libgtk4-layer-shell0
-#
-# Then verify UI behaviour through the private control socket, for example:
+# Then check the shell through the private control socket, for example:
 #
 #   INUA_INSTANCE=inua-headless XDG_RUNTIME_DIR=$HOME/.local/state/inua-headless/run \
 #     bin/inua call shell state
 #
-# The headless Weston backend supports neither wlr-screencopy nor VNC, so this
-# script makes no screenshot. For a visual check use a real display machine.
+# Weston is not Hyprland: the shell runs with normal windows (-no-layer) and
+# without Hyprland's IPC, so workspaces, the overview and the dock's windows
+# are not there. Its headless backend offers neither wlr-screencopy nor VNC,
+# so there are no screenshots either: this checks state and interaction, not
+# looks. For those, use a nested Hyprland in a session of your own.
 set -eu
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
@@ -35,9 +38,8 @@ mode=${1:-status}
 
 pidfile() { echo "$state/$1.pid"; }
 
-# stop_pid stops exactly the recorded process and its descendants. Never use
-# pkill by program name here: on this server that can match the real XFCE
-# session or the developer's own desktop.
+# stop_pid stops exactly the recorded process. Never use pkill by program
+# name here: that can match the processes of the desktop already running.
 stop_pid() {
 	name=$1
 	file=$(pidfile "$name")
@@ -61,7 +63,7 @@ stop_session() {
 }
 
 start_session() {
-	command -v weston >/dev/null || { echo 'weston is not installed: sudo apt install weston' >&2; exit 1; }
+	command -v weston >/dev/null || { echo 'weston is not installed; install it from the system packages' >&2; exit 1; }
 	if [ ! -x "$binary" ]; then
 		echo "$binary is missing; build it first with: go build -o bin/inua-shell ./cmd/inua-shell" >&2
 		exit 1
@@ -135,7 +137,7 @@ status)
 	fi
 	;;
 *)
-	sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+	sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
 	exit 2
 	;;
 esac
