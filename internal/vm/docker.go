@@ -93,6 +93,9 @@ func (b *DockerBackend) Install(ctx context.Context, cfg Config) error {
 	if err := safeOwnedDir(cfg.DataDir); err != nil {
 		return vmError("install", ErrorInvalidConfig, err)
 	}
+	if err := markDataDir(cfg.DataDir); err != nil {
+		return vmError("install", ErrorBackend, err)
+	}
 	composeDir := filepath.Join(configBase(), "inua", "vm", cfg.Name)
 	if err := safeOwnedDir(composeDir); err != nil {
 		return vmError("install", ErrorInvalidConfig, err)
@@ -369,9 +372,24 @@ func (b *DockerBackend) Down(ctx context.Context) error {
 	return nil
 }
 
+// dataDirMarker is the file Install leaves in a VM data directory, so that
+// RemoveData can tell a folder inua made from one a configuration names.
+const dataDirMarker = ".inua-vm"
+
+// markDataDir leaves dataDirMarker in dir, once.
+func markDataDir(dir string) error {
+	path := filepath.Join(dir, dataDirMarker)
+	if _, err := os.Lstat(path); err == nil {
+		return nil
+	}
+	return writeAtomic(path, []byte("This folder holds a Windows guest of inua-vm; deleting its disk deletes the folder.\n"), 0600)
+}
+
 // RemoveData deletes the guest disk directory. It only ever removes the
 // configured VM data directory itself, after checking that it is the kind of
-// path Inua owns: absolute, not a filesystem root, and not a symlink.
+// path Inua owns: absolute, not a filesystem root, not a symlink, and either
+// the default place or a folder Install marked - a configuration naming a
+// folder of the user's must not turn Delete disk into deleting that folder.
 func (b *DockerBackend) RemoveData(ctx context.Context) error {
 	if err := b.Down(ctx); err != nil {
 		return err
@@ -386,6 +404,24 @@ func (b *DockerBackend) RemoveData(ctx context.Context) error {
 	if _, err := os.Lstat(dir); errors.Is(err, os.ErrNotExist) {
 		return nil
 	} else if err != nil {
+		return vmError("remove-data", ErrorBackend, err)
+	}
+	if _, err := os.Lstat(filepath.Join(dir, dataDirMarker)); err != nil && dir != DefaultDataDir() {
+		return vmError("remove-data", ErrorInvalidConfig, fmt.Errorf("%s is not a folder inua made for the guest", dir))
+	}
+	err := os.RemoveAll(dir)
+	if err == nil || !errors.Is(err, os.ErrPermission) {
+		return err
+	}
+	// Dockur runs as root in its container, so what it leaves in folders of
+	// its own (an unfinished download) is root's, which this user cannot
+	// delete. A container of the same image, which is here once one has run,
+	// has the rights: it empties the folder, and the folder itself is ours.
+	if b.Runner == nil {
+		b.Runner = execCommandRunner{}
+	}
+	if _, err := b.Runner.Run(ctx, "docker", "run", "--rm", "--pull", "never", "--network", "none",
+		"-v", dir+":/storage", "--entrypoint", "find", dockerImage, "/storage", "-mindepth", "1", "-delete"); err != nil {
 		return vmError("remove-data", ErrorBackend, err)
 	}
 	return os.RemoveAll(dir)

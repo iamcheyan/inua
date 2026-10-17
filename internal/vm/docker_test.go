@@ -20,11 +20,17 @@ type fakeRunner struct {
 	calls []string
 	fail  map[string]error
 	out   map[string]string
+	// did, when set, does what the command would (a container deleting
+	// files, say).
+	did func(call string)
 }
 
 func (f *fakeRunner) Run(_ context.Context, name string, args ...string) (string, error) {
 	call := name + " " + strings.Join(args, " ")
 	f.calls = append(f.calls, call)
+	if f.did != nil {
+		f.did(call)
+	}
 	if err, ok := f.fail[call]; ok {
 		return "", err
 	}
@@ -611,6 +617,86 @@ func TestRemoveDataUnmountsThenDeletesTheDisk(t *testing.T) {
 	}
 	if !down {
 		t.Error("RemoveData did not bring the container down before deleting the disk")
+	}
+}
+
+// Delete disk deletes a folder, so it must be one inua made: a
+// configuration naming a folder of the user's is refused, and the folder
+// stays. One Install marked is deleted wherever it is.
+func TestRemoveDataDeletesOnlyAFolderInuaMade(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cfg.DataDir = filepath.Join(t.TempDir(), "Documents")
+	if err := os.MkdirAll(cfg.DataDir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	letter := filepath.Join(cfg.DataDir, "letter.odt")
+	if err := os.WriteFile(letter, []byte("dear"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	b.Config = cfg
+	if err := b.RemoveData(ctx); err == nil {
+		t.Fatal("RemoveData deleted a folder inua did not make")
+	}
+	if _, err := os.Stat(letter); err != nil {
+		t.Fatalf("the user's file is gone: %v", err)
+	}
+
+	cfg.DataDir = filepath.Join(t.TempDir(), "vm")
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	if err := b.RemoveData(ctx); err != nil {
+		t.Fatalf("remove-data: %v", err)
+	}
+	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
+		t.Error("the folder Install made survived RemoveData")
+	}
+}
+
+// Dockur runs as root, so an unfinished download leaves folders this user
+// cannot empty; a container of the image deletes them instead.
+func TestRemoveDataDeletesWhatTheContainerLeftAsRoot(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("root may delete anything")
+	}
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	tmp := filepath.Join(cfg.DataDir, "tmp")
+	if err := os.MkdirAll(tmp, 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmp, "win11x64.iso"), []byte("CD001"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	// Not this user's to empty, as a folder of root's would be.
+	if err := os.Chmod(tmp, 0500); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { os.Chmod(tmp, 0700) })
+	var container string
+	runner.did = func(call string) {
+		if strings.HasPrefix(call, "docker run ") {
+			container = call
+			os.Chmod(tmp, 0700)
+			os.RemoveAll(tmp)
+		}
+	}
+	if err := b.RemoveData(ctx); err != nil {
+		t.Fatalf("remove-data: %v", err)
+	}
+	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
+		t.Error("the VM data directory survived RemoveData")
+	}
+	for _, want := range []string{"--rm", "--network none", cfg.DataDir + ":/storage", dockerImage, "/storage -mindepth 1 -delete"} {
+		if !strings.Contains(container, want) {
+			t.Errorf("the container %q lacks %q", container, want)
+		}
 	}
 }
 
