@@ -229,15 +229,26 @@ func DetectHost(root string) Host {
 			}
 		}
 	}
-	return Host{MemoryBytes: mem, CPUs: runtime.NumCPU(), FreeDiskBytes: freeSpace(filepath.Join(root, "var")), OS: runtime.GOOS}
+	// The free space is where the guest's disk goes, which is often not the
+	// filesystem of /var: a home on a partition of its own, say.
+	return Host{MemoryBytes: mem, CPUs: runtime.NumCPU(), FreeDiskBytes: freeSpace(filepath.Join(root, DefaultDataDir())), OS: runtime.GOOS}
 }
 
+// freeSpace is what this user may still write on the filesystem that holds
+// path, or would hold it before it exists: its nearest folder's. Blocks
+// kept for root are not counted.
 func freeSpace(path string) uint64 {
-	var stat unix.Statfs_t
-	if err := unix.Statfs(path, &stat); err != nil {
-		return 0
+	for {
+		var stat unix.Statfs_t
+		if err := unix.Statfs(path, &stat); err == nil {
+			return stat.Bavail * uint64(stat.Bsize)
+		}
+		parent := filepath.Dir(path)
+		if parent == path {
+			return 0
+		}
+		path = parent
 	}
-	return stat.Bfree * uint64(stat.Bsize)
 }
 
 // Backend is the lifecycle boundary implemented by the Docker/Dockur backend;
