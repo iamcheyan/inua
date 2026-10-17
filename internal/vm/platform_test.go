@@ -200,6 +200,20 @@ func TestAccessibleConnectsToASocket(t *testing.T) {
 	}
 }
 
+// The FreeRDP check takes any client Connect can start, so a host with only
+// the SDL client is not sent to install another.
+func TestFreeRDPCheckTakesEveryClientConnectStarts(t *testing.T) {
+	for _, client := range RDPClients {
+		p := DetectPlatform(t.TempDir(), PlatformProbes{
+			Executable:    func(name string) bool { return name == client },
+			CommandOutput: func(string, ...string) (string, error) { return "", errors.New("no docker") },
+		})
+		if !p.FreeRDP.Available {
+			t.Errorf("FreeRDP not found with only %s installed", client)
+		}
+	}
+}
+
 // The guest's Docker is whatever the docker command reaches: a rootless
 // daemon, which has no socket in /var/run, counts as much as the system's.
 func TestDockerIsWhatTheDockerCommandReaches(t *testing.T) {

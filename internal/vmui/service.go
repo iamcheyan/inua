@@ -558,12 +558,10 @@ func rdpWindowSize(width, height int) (int, int) {
 	return max(800, w), max(600, h)
 }
 
-// startRDPClient opens FreeRDP on a loopback endpoint. The SDL3 client is
-// preferred: it is the maintained Wayland client and draws the remote cursor.
-// wlfreerdp is deprecated and loses the pointer on Hyprland, so it is only a
-// last compatibility fallback. X11 runs through XWayland at scale 1 here.
+// startRDPClient opens FreeRDP on a loopback endpoint, with the first of
+// vm.RDPClients that is installed.
 func startRDPClient(address string, port int, user, password string, d *rdpDisplay) error {
-	for _, name := range []string{"sdl-freerdp3", "sdl-freerdp", "wlfreerdp3", "wlfreerdp", "xfreerdp3", "xfreerdp"} {
+	for _, name := range vm.RDPClients {
 		bin, err := exec.LookPath(name)
 		if err != nil {
 			continue

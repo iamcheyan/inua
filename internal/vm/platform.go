@@ -193,7 +193,7 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	if compose {
 		p.ComposeV2.Detail = "Docker Compose " + composeVersion + " available"
 	}
-	p.FreeRDP = executableCapability(probes, []string{"xfreerdp", "xfreerdp3"}, "FreeRDP unavailable")
+	p.FreeRDP = executableCapability(probes, RDPClients, "FreeRDP unavailable")
 	p.BrowserOpener = executableCapability(probes, []string{"xdg-open"}, "browser opener xdg-open unavailable")
 	tunPath := mapPath("/dev/net/tun")
 	p.TUN = DeviceCapability{Path: tunPath, Available: probes.Exists(tunPath), Accessible: probes.Accessible(tunPath)}
@@ -228,6 +228,13 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	}
 	return p
 }
+
+// RDPClients are FreeRDP's clients, in the order Connect tries them. The SDL3
+// client comes first: it is the maintained Wayland client and draws the
+// remote cursor. wlfreerdp is deprecated and loses the pointer on Hyprland,
+// so it only comes before the X11 client, which runs through XWayland at
+// scale 1.
+var RDPClients = []string{"sdl-freerdp3", "sdl-freerdp", "wlfreerdp3", "wlfreerdp", "xfreerdp3", "xfreerdp"}
 
 // composeVersion reads the Compose v2 plugin's version. Docker prints it bare
 // ("2.39.1") or with a leading "v", depending on the release.
