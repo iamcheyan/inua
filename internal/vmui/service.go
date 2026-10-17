@@ -169,7 +169,7 @@ func (s *vmService) snapshot() VMSnapshot {
 		Available: available, HasProject: hasProject, Installed: installed,
 		HasDisk: vm.GuestDataPresent(cfg.DataDir), Progress: progress, ProgressText: progressText,
 		Recommended: vm.RecommendProfile(host), Host: host,
-		Distribution: platform.Distribution, Err: err}
+		Family: platform.Family, Err: err}
 }
 
 // Refresh reads Docker off the GTK thread and returns a snapshot the window

@@ -27,7 +27,7 @@ func TestDetectPlatformWithInjectedProbes(t *testing.T) {
 		}
 	}
 	platform := DetectPlatform(root, PlatformProbes{Exists: func(string) bool { return true }, Accessible: func(string) bool { return true }, CommandOutput: func(string, ...string) (string, error) { return "v2.29.1", nil }, Executable: func(n string) bool { return n == "xfreerdp3" || n == "xdg-open" }, Filesystem: func(string) string { return "ext4" }})
-	if !platform.Supported || platform.Distribution != "ubuntu" || !platform.KVM.Accessible || !platform.DockerSocket.Accessible || !platform.ComposeV2.Available || !platform.FreeRDP.Available || !platform.BrowserOpener.Available || !platform.Disk.Available || !platform.TUN.Available {
+	if !platform.Supported || platform.Distribution != "ubuntu" || platform.Family != "ubuntu" || !platform.KVM.Accessible || !platform.DockerSocket.Accessible || !platform.ComposeV2.Available || !platform.FreeRDP.Available || !platform.BrowserOpener.Available || !platform.Disk.Available || !platform.TUN.Available {
 		t.Fatalf("incomplete platform detection: %+v", platform)
 	}
 	if len(platform.Doctor) != 8 {
@@ -35,15 +35,54 @@ func TestDetectPlatformWithInjectedProbes(t *testing.T) {
 	}
 }
 
-func TestPlanPackagesRequiresConfirmation(t *testing.T) {
-	for distro, manager := range map[string]string{"nixos": "nix", "ubuntu": "apt", "debian": "apt"} {
-		plan := PlanPackages(distro)
-		if plan.PackageManager != manager || len(plan.Packages) == 0 || !plan.RequiresUserConfirmation || plan.Confirmation == "" {
-			t.Errorf("invalid plan for %s: %+v", distro, plan)
+// The guest needs Docker and KVM, not a particular distribution: any Linux
+// passes, and a derivative (Mint, Manjaro, …) gets its parent's packages.
+func TestAnyLinuxDistributionIsSupported(t *testing.T) {
+	for _, tc := range []struct {
+		osRelease, family string
+	}{
+		{"ID=arch\n", "arch"},
+		{"ID=fedora\n", "fedora"},
+		{"ID=linuxmint\nID_LIKE=\"ubuntu debian\"\n", "ubuntu"},
+		{"ID=manjaro\nID_LIKE=arch\n", "arch"},
+		{"ID=opensuse-tumbleweed\nID_LIKE=\"opensuse suse\"\n", ""},
+	} {
+		root := t.TempDir()
+		if err := os.MkdirAll(filepath.Join(root, "etc"), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(root, "etc", "os-release"), []byte(tc.osRelease), 0600); err != nil {
+			t.Fatal(err)
+		}
+		p := DetectPlatform(root, PlatformProbes{CommandOutput: func(string, ...string) (string, error) { return "", errors.New("no docker") }})
+		if !p.Supported || p.Family != tc.family {
+			t.Errorf("%q: supported %v, family %q; want supported, family %q", tc.osRelease, p.Supported, p.Family, tc.family)
+		}
+		for _, item := range p.Doctor {
+			if item.Name == "Operating system" && !item.OK {
+				t.Errorf("%q: the operating system check failed: %+v", tc.osRelease, item)
+			}
 		}
 	}
-	if p := PlanPackages("arch"); p.PackageManager != "" || len(p.Packages) != 0 {
-		t.Errorf("unexpected unsupported plan: %+v", p)
+}
+
+// Each check names its own package: the Compose check is not answered with
+// the Docker engine's package, and KVM, which no package provides, names none.
+func TestPackageForNamesThePackageOfEachCheck(t *testing.T) {
+	for _, tc := range []struct {
+		family, check, manager, pkg string
+	}{
+		{"ubuntu", "Docker", "apt", "docker.io"},
+		{"ubuntu", "Docker Compose v2", "apt", "docker-compose-v2"},
+		{"arch", "FreeRDP", "pacman", "freerdp"},
+		{"fedora", "Docker", "dnf", "moby-engine"},
+		{"ubuntu", "KVM", "", ""},
+		{"", "Docker", "", ""},
+	} {
+		manager, pkg := PackageFor(tc.family, tc.check)
+		if manager != tc.manager || pkg != tc.pkg {
+			t.Errorf("PackageFor(%q, %q) = %q, %q; want %q, %q", tc.family, tc.check, manager, pkg, tc.manager, tc.pkg)
+		}
 	}
 }
 

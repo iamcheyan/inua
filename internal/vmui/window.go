@@ -3,7 +3,6 @@ package vmui
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
@@ -51,7 +50,7 @@ type VMSnapshot struct {
 	Available    bool
 	Recommended  vm.Profile
 	Host         vm.Host
-	Distribution string
+	Family       string // the distribution family the package hints are for
 	Err          error
 }
 
@@ -464,7 +463,7 @@ func (v *vmWindow) showChecks(s VMSnapshot) {
 			gtkx.Append(row, &btn.Widget)
 		default:
 			// A package to install, named for this distribution.
-			if hint := vmPackageHint(c.Name, s.Distribution); hint != "" {
+			if hint := vmPackageHint(c.Name, s.Family); hint != "" {
 				hintLabel := gtk.NewLabel(hint)
 				hintLabel.AddCssClass("sub")
 				hintLabel.AddCssClass("vm-hint")
@@ -485,48 +484,27 @@ type fixTarget struct {
 // vmPackageHint is how to install a missing tool on this distribution, as a
 // line the user can copy. The window never runs a package manager: choosing
 // packages and changing a system is the user's call, not a button's.
-func vmPackageHint(check, distro string) string {
-	if check == "Secret Service" {
+func vmPackageHint(check, family string) string {
+	switch check {
+	case "Secret Service":
 		return i18n.T("Start inua-keyring, or install a Secret Service.")
+	case "KVM":
+		// The guest brings its own QEMU: no package makes /dev/kvm, the
+		// processor's virtualization does.
+		return i18n.T("Turn on virtualization (Intel VT-x or AMD-V) in the firmware settings.")
 	}
-	if check == "Operating system" {
-		return i18n.T("Windows VM needs NixOS, Ubuntu or Debian.")
-	}
-	plan := vm.PlanPackages(distro)
-	pkg := ""
-	for _, name := range plan.Packages {
-		switch check {
-		case "Docker", "Docker Compose v2":
-			if strings.Contains(strings.ToLower(name), "docker") {
-				pkg = name
-			}
-		case "FreeRDP":
-			if strings.Contains(strings.ToLower(name), "freerdp") {
-				pkg = name
-			}
-		case "Browser opener":
-			if strings.Contains(name, "xdg") {
-				pkg = name
-			}
-		case "KVM":
-			if strings.Contains(strings.ToLower(name), "qemu") || strings.Contains(name, "kvm") {
-				pkg = name
-			}
-		}
-		if pkg != "" {
-			break
-		}
-	}
-	if pkg == "" {
-		return ""
-	}
-	switch plan.PackageManager {
+	manager, pkg := vm.PackageFor(family, check)
+	switch manager {
 	case "nix":
 		return i18n.Tf("Add %s to your NixOS configuration.", pkg)
 	case "apt":
 		return "sudo apt install " + pkg
+	case "dnf":
+		return "sudo dnf install " + pkg
+	case "pacman":
+		return "sudo pacman -S " + pkg
 	}
-	return i18n.T("Install") + ": " + pkg
+	return ""
 }
 
 // vmCheckName is a check's name. The platform names them in English; these
@@ -573,8 +551,8 @@ func vmCheckReason(name string, r vm.DoctorReason) string {
 		return i18n.T("Installed, but your user may not use it.")
 	case vm.ReasonStopped:
 		return i18n.T("Installed, but not running.")
-	case vm.ReasonTooOld:
-		return i18n.T("This Linux distribution is not supported.")
+	case vm.ReasonUnsupported:
+		return i18n.T("Windows VM needs Linux.")
 	}
 	return i18n.T("Could not be checked.")
 }

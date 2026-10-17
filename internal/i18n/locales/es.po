@@ -509,7 +509,7 @@ msgstr "Vídeo"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/vmui/window.go:283
+#: internal/vmui/window.go:282
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1400,8 +1400,8 @@ msgstr "%s · %s"
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
+#: internal/vmui/window.go:270
 #: internal/vmui/window.go:271
-#: internal/vmui/window.go:272
 #: ui/stocks.ui:292
 #: ui/vm.ui:810
 #: ui/vm.ui:1365
@@ -2681,7 +2681,6 @@ msgid "Replace the installed %s?"
 msgstr "¿Reemplazar %s instalada?"
 
 #: internal/appui/workshop_manager.go:154
-#: internal/vmui/window.go:529
 msgid "Install"
 msgstr "Instalar"
 
@@ -2767,7 +2766,7 @@ msgid "Stopped."
 msgstr "Detenido."
 
 #: internal/assistantui/assistantui.go:456
-#: internal/vmui/window.go:693
+#: internal/vmui/window.go:671
 msgid "Something went wrong: %s"
 msgstr "Algo salió mal: %s"
 
@@ -9507,51 +9506,51 @@ msgid "Could not open the link"
 msgstr "No se pudo abrir el enlace"
 
 #: internal/vmui/app.go:21
-#: internal/vmui/window.go:721
+#: internal/vmui/window.go:699
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 #: config/apps/io.github.lyricat.Inua.VM.desktop:3
 msgid "Windows VM"
 msgstr "Máquina virtual de Windows"
 
-#: internal/vmui/window.go:265
+#: internal/vmui/window.go:264
 msgid "Confirm remove"
 msgstr "Confirmar la eliminación"
 
-#: internal/vmui/window.go:277
+#: internal/vmui/window.go:276
 msgid "Confirm delete"
 msgstr "Confirmar la eliminación"
 
-#: internal/vmui/window.go:284
+#: internal/vmui/window.go:283
 #: ui/vm.ui:557
 msgid "Delete disk"
 msgstr "Eliminar el disco"
 
-#: internal/vmui/window.go:311
+#: internal/vmui/window.go:310
 msgid "The fix did not work: %v"
 msgstr "La corrección no funcionó: %v"
 
-#: internal/vmui/window.go:316
+#: internal/vmui/window.go:315
 msgid "Done. Log out and back in for it to take effect."
 msgstr "Listo. Cierra sesión y vuelve a iniciarla para que surta efecto."
 
-#: internal/vmui/window.go:319
+#: internal/vmui/window.go:318
 msgid "Done."
 msgstr "Listo."
 
-#: internal/vmui/window.go:362
+#: internal/vmui/window.go:361
 msgid "Log out to finish"
 msgstr "Cierra sesión para terminar"
 
-#: internal/vmui/window.go:363
+#: internal/vmui/window.go:362
 msgid "The change takes effect the next time you log in."
 msgstr "El cambio surtirá efecto la próxima vez que inicies sesión."
 
-#: internal/vmui/window.go:454
+#: internal/vmui/window.go:453
 msgid "Fix"
 msgstr "Corregir"
 
-#: internal/vmui/window.go:456
+#: internal/vmui/window.go:455
 msgid "Add me to %s"
 msgstr "Añadirme al grupo %s"
 
@@ -9559,139 +9558,139 @@ msgstr "Añadirme al grupo %s"
 msgid "Start inua-keyring, or install a Secret Service."
 msgstr "Inicia inua-keyring o instala un Secret Service."
 
-#: internal/vmui/window.go:493
-msgid "Windows VM needs NixOS, Ubuntu or Debian."
-msgstr "La máquina virtual de Windows necesita NixOS, Ubuntu o Debian."
+#: internal/vmui/window.go:494
+msgid "Turn on virtualization (Intel VT-x or AMD-V) in the firmware settings."
+msgstr "Activa la virtualización (Intel VT-x o AMD-V) en la configuración del firmware."
 
-#: internal/vmui/window.go:525
+#: internal/vmui/window.go:499
 msgid "Add %s to your NixOS configuration."
 msgstr "Añade %s a tu configuración de NixOS."
 
-#: internal/vmui/window.go:537
+#: internal/vmui/window.go:515
 msgid "Operating system"
 msgstr "Sistema operativo"
 
-#: internal/vmui/window.go:539
+#: internal/vmui/window.go:517
 msgid "Hardware virtualization (KVM)"
 msgstr "Virtualización por hardware (KVM)"
 
-#: internal/vmui/window.go:541
+#: internal/vmui/window.go:519
 msgid "Docker"
 msgstr "Docker"
 
-#: internal/vmui/window.go:543
+#: internal/vmui/window.go:521
 msgid "Docker Compose v2"
 msgstr "Docker Compose v2"
 
-#: internal/vmui/window.go:545
+#: internal/vmui/window.go:523
 msgid "FreeRDP"
 msgstr "FreeRDP"
 
-#: internal/vmui/window.go:547
+#: internal/vmui/window.go:525
 msgid "Browser opener"
 msgstr "Abridor de navegador"
 
-#: internal/vmui/window.go:549
+#: internal/vmui/window.go:527
 msgid "Disk space"
 msgstr "Espacio en disco"
 
-#: internal/vmui/window.go:551
+#: internal/vmui/window.go:529
 msgid "Network device (TUN)"
 msgstr "Dispositivo de red (TUN)"
 
-#: internal/vmui/window.go:553
+#: internal/vmui/window.go:531
 #: ui/settings.ui:3819
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/vmui/window.go:567
+#: internal/vmui/window.go:545
 msgid "Your user may not use Docker's socket. Joining the docker group would let anything running as you control this machine as root, so Inua will not do it for you: run `sudo gpasswd -a $USER docker` yourself if you accept that, or use rootless Docker or Podman instead."
 msgstr "Tu usuario no puede usar el socket de Docker. Unirse al grupo docker permitiría que todo lo que se ejecuta como tú controle esta máquina como root, así que Inua no lo hará por ti: ejecuta `sudo gpasswd -a $USER docker` tú mismo si lo aceptas, o usa Docker sin root o Podman en su lugar."
 
-#: internal/vmui/window.go:571
+#: internal/vmui/window.go:549
 msgid "Not installed on this system."
 msgstr "No está instalado en este sistema."
 
-#: internal/vmui/window.go:573
+#: internal/vmui/window.go:551
 msgid "Installed, but your user may not use it."
 msgstr "Instalado, pero tu usuario no puede usarlo."
 
-#: internal/vmui/window.go:575
+#: internal/vmui/window.go:553
 msgid "Installed, but not running."
 msgstr "Instalado, pero no en ejecución."
 
-#: internal/vmui/window.go:577
-msgid "This Linux distribution is not supported."
-msgstr "Esta distribución de Linux no es compatible."
+#: internal/vmui/window.go:555
+msgid "Windows VM needs Linux."
+msgstr "La máquina virtual de Windows necesita Linux."
 
-#: internal/vmui/window.go:579
+#: internal/vmui/window.go:557
 msgid "Could not be checked."
 msgstr "No se pudo comprobar."
 
-#: internal/vmui/window.go:597
+#: internal/vmui/window.go:575
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "Un perfil equilibrado reserva memoria y CPU para tu sistema."
 
-#: internal/vmui/window.go:599
+#: internal/vmui/window.go:577
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
 msgstr "Quedan archivos de un intento anterior. La instalación los reutiliza; bórralos para empezar de nuevo."
 
-#: internal/vmui/window.go:601
+#: internal/vmui/window.go:579
 #: ui/vm.ui:447
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "Descarga unos 8 GB e instala Windows; tarda más de 30 minutos."
 
-#: internal/vmui/window.go:625
+#: internal/vmui/window.go:603
 msgid "Windows is installing; this takes a while."
 msgstr "Windows se está instalando; tarda un rato."
 
-#: internal/vmui/window.go:627
-#: internal/vmui/window.go:670
+#: internal/vmui/window.go:605
+#: internal/vmui/window.go:648
 msgid "Stopping…"
 msgstr "Deteniendo…"
 
-#: internal/vmui/window.go:629
+#: internal/vmui/window.go:607
 msgid "The installation is paused. Continue to resume."
 msgstr "La instalación está en pausa. Continúa para reanudarla."
 
-#: internal/vmui/window.go:672
+#: internal/vmui/window.go:650
 msgid "Windows is starting; ready in a minute or two."
 msgstr "Windows está iniciando; listo en un minuto o dos."
 
-#: internal/vmui/window.go:697
+#: internal/vmui/window.go:675
 msgid "This system is missing something Windows needs"
 msgstr "A este sistema le falta algo que Windows necesita"
 
-#: internal/vmui/window.go:700
+#: internal/vmui/window.go:678
 msgid "Files from a previous attempt are still here"
 msgstr "Quedan archivos de un intento anterior"
 
-#: internal/vmui/window.go:702
+#: internal/vmui/window.go:680
 msgid "Not installed yet"
 msgstr "Sin instalar"
 
-#: internal/vmui/window.go:705
-#: internal/vmui/window.go:713
+#: internal/vmui/window.go:683
+#: internal/vmui/window.go:691
 msgid "Stopping"
 msgstr "Deteniendo"
 
-#: internal/vmui/window.go:708
+#: internal/vmui/window.go:686
 msgid "Installing Windows"
 msgstr "Instalando Windows"
 
-#: internal/vmui/window.go:710
+#: internal/vmui/window.go:688
 msgid "Installation paused"
 msgstr "Instalación en pausa"
 
-#: internal/vmui/window.go:715
+#: internal/vmui/window.go:693
 msgid "Windows is starting"
 msgstr "Windows está iniciando"
 
-#: internal/vmui/window.go:717
+#: internal/vmui/window.go:695
 msgid "Windows is running"
 msgstr "Windows está en ejecución"
 
-#: internal/vmui/window.go:719
+#: internal/vmui/window.go:697
 msgid "Stopped"
 msgstr "Detenido"
 

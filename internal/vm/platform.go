@@ -15,8 +15,11 @@ import (
 
 // Platform describes host facilities needed to run and connect to a Windows VM.
 type Platform struct {
-	OS            string
-	Distribution  string
+	OS           string
+	Distribution string // os-release's ID
+	// Family is the distribution, or the one it derives from (os-release's
+	// ID_LIKE), whose packages PackageFor names; "" when it knows none.
+	Family        string
 	Supported     bool
 	KVM           DeviceCapability
 	DockerSocket  DeviceCapability
@@ -45,11 +48,11 @@ type DeviceCapability struct {
 type DoctorReason string
 
 const (
-	ReasonMissing DoctorReason = "missing" // the device, tool or service is not there
-	ReasonDenied  DoctorReason = "denied"  // it is there, but this user cannot use it
-	ReasonStopped DoctorReason = "stopped" // the service is there but not running
-	ReasonTooOld  DoctorReason = "too_old" // a version older than the one required
-	ReasonUnclear DoctorReason = "unclear" // could not be told apart
+	ReasonMissing     DoctorReason = "missing"     // the device, tool or service is not there
+	ReasonDenied      DoctorReason = "denied"      // it is there, but this user cannot use it
+	ReasonStopped     DoctorReason = "stopped"     // the service is there but not running
+	ReasonUnsupported DoctorReason = "unsupported" // this system cannot run it at all
+	ReasonUnclear     DoctorReason = "unclear"     // could not be told apart
 )
 
 // Remedy is what fixes a failing check, when Inua can do it at all. A check
@@ -137,8 +140,8 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	mapPath := func(p string) string {
 		return filepath.Join(root, strings.TrimPrefix(filepath.Clean(p), string(filepath.Separator)))
 	}
-	osName, distro := hostOS(root)
-	p := Platform{OS: osName, Distribution: distro, Supported: osName == "linux" && supportedDistribution(distro)}
+	osName, distro, like := hostOS(root)
+	p := Platform{OS: osName, Distribution: distro, Family: packageFamily(append([]string{distro}, like...)), Supported: osName == "linux"}
 	kvm := mapPath("/dev/kvm")
 	p.KVM = DeviceCapability{Path: kvm, Available: probes.Exists(kvm), Accessible: probes.Accessible(kvm)}
 	check := func(name string, ok bool, reason DoctorReason) DoctorItem {
@@ -206,10 +209,10 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	}
 	p.Disk = Capability{Available: p.Filesystem != "" && p.Filesystem != "unknown", Detail: "filesystem: " + p.Filesystem}
 
-	osCheck := check("Operating system", p.Supported, ReasonUnclear)
-	if osName == "linux" && distro != "" {
-		osCheck.Reason = ReasonTooOld // an unsupported distribution, said plainly
-	}
+	// Any Linux will do: Docker and KVM are what the guest needs, and they
+	// are checked on their own. The distribution only picks the package
+	// names the window shows.
+	osCheck := check("Operating system", p.Supported, ReasonUnsupported)
 
 	// A check that passes says nothing about why; a failing one carries the
 	// reason, and a remedy when Inua can apply one.
@@ -301,13 +304,16 @@ func executableCapability(p PlatformProbes, names []string, missing string) Capa
 	}
 	return Capability{false, missing}
 }
-func hostOS(root string) (string, string) {
+
+// hostOS is the operating system, and on Linux the distribution's ID and
+// the IDs of those it derives from, as os-release names them.
+func hostOS(root string) (string, string, []string) {
 	if runtime.GOOS != "linux" {
-		return runtime.GOOS, ""
+		return runtime.GOOS, "", nil
 	}
 	f, err := os.Open(filepath.Join(root, "etc", "os-release"))
 	if err != nil {
-		return "linux", ""
+		return "linux", "", nil
 	}
 	defer f.Close()
 	values := map[string]string{}
@@ -319,42 +325,41 @@ func hostOS(root string) (string, string) {
 			values[k] = strings.Trim(strings.TrimSpace(v), "\"'")
 		}
 	}
-	id := strings.ToLower(values["ID"])
-	if id == "" {
-		return "linux", ""
-	}
-	return "linux", id
-}
-func supportedDistribution(d string) bool { return d == "nixos" || d == "ubuntu" || d == "debian" }
-func distroDetail(osName, distro string) string {
-	if osName != "linux" {
-		return "Windows VM host support requires Linux"
-	}
-	if !supportedDistribution(distro) {
-		return "unsupported Linux distribution: " + distro
-	}
-	return distro + " supported"
+	return "linux", strings.ToLower(values["ID"]), strings.Fields(strings.ToLower(values["ID_LIKE"]))
 }
 
-type PackagePlan struct {
-	Distribution             string
-	PackageManager           string
-	Packages                 []string
-	RequiresUserConfirmation bool
-	Confirmation             string
+// packages are, for each distribution family, its package manager and the
+// package each check needs. KVM has none: the guest brings its own QEMU, and
+// a missing /dev/kvm is the firmware's virtualization setting.
+var packages = map[string]struct {
+	manager string
+	byCheck map[string]string
+}{
+	"arch":   {"pacman", map[string]string{"Docker": "docker", "Docker Compose v2": "docker-compose", "FreeRDP": "freerdp", "Browser opener": "xdg-utils"}},
+	"debian": {"apt", map[string]string{"Docker": "docker.io", "Docker Compose v2": "docker-compose", "FreeRDP": "freerdp3-sdl", "Browser opener": "xdg-utils"}},
+	"fedora": {"dnf", map[string]string{"Docker": "moby-engine", "Docker Compose v2": "docker-compose", "FreeRDP": "freerdp", "Browser opener": "xdg-utils"}},
+	"nixos":  {"nix", map[string]string{"Docker": "docker", "Docker Compose v2": "docker", "FreeRDP": "freerdp", "Browser opener": "xdg-utils"}},
+	"ubuntu": {"apt", map[string]string{"Docker": "docker.io", "Docker Compose v2": "docker-compose-v2", "FreeRDP": "freerdp3-sdl", "Browser opener": "xdg-utils"}},
 }
 
-// PlanPackages returns recommendations only; it never runs a package manager or changes groups.
-func PlanPackages(distribution string) PackagePlan {
-	d := strings.ToLower(distribution)
-	p := PackagePlan{Distribution: d, RequiresUserConfirmation: true, Confirmation: "Review and confirm before installing packages or changing system configuration."}
-	switch d {
-	case "nixos":
-		p.PackageManager = "nix"
-		p.Packages = []string{"docker", "freerdp", "xdg-utils", "qemu_kvm"}
-	case "ubuntu", "debian":
-		p.PackageManager = "apt"
-		p.Packages = []string{"docker.io", "docker-compose-v2", "freerdp3-x11", "xdg-utils", "qemu-system-x86", "qemu-utils"}
+// packageFamily is the first of ids whose packages are known: the
+// distribution itself, else the one it derives from.
+func packageFamily(ids []string) string {
+	for _, id := range ids {
+		if _, ok := packages[id]; ok {
+			return id
+		}
 	}
-	return p
+	return ""
+}
+
+// PackageFor is how family installs what check needs: its package manager
+// and the package, or "" for both when there is none to name. It only
+// names them; Inua never runs a package manager.
+func PackageFor(family, check string) (manager, pkg string) {
+	p, ok := packages[family]
+	if !ok || p.byCheck[check] == "" {
+		return "", ""
+	}
+	return p.manager, p.byCheck[check]
 }

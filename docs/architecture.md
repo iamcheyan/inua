@@ -12,8 +12,9 @@ detection, the resource recommendation and the Docker backend contract: KVM,
 the Docker socket, Compose v2, FreeRDP, a browser opener, TUN and disk
 space, each with the reason it failed and, when Inua can apply one itself, a
 remedy through `pkexec`, so the session's polkit agent takes the password and
-the command never runs with the caller's rights. Supported Linux hosts are
-NixOS, Ubuntu and Debian. The image is pinned to a version and digest, ports
+the command never runs with the caller's rights. Any Linux host will do; the
+window names the packages for Arch, Debian, Fedora, NixOS and Ubuntu, and
+for the distributions derived from them. The image is pinned to a version and digest, ports
 bind to the loopback interface, and the guest password lives in the Secret
 Service, never in the project or the configuration.
 

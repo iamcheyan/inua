@@ -509,7 +509,7 @@ msgstr "ビデオ"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/vmui/window.go:283
+#: internal/vmui/window.go:282
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1390,8 +1390,8 @@ msgstr "%s · %s"
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
+#: internal/vmui/window.go:270
 #: internal/vmui/window.go:271
-#: internal/vmui/window.go:272
 #: ui/stocks.ui:292
 #: ui/vm.ui:810
 #: ui/vm.ui:1365
@@ -2666,7 +2666,6 @@ msgid "Replace the installed %s?"
 msgstr "インストール済みの %s を置き換えますか？"
 
 #: internal/appui/workshop_manager.go:154
-#: internal/vmui/window.go:529
 msgid "Install"
 msgstr "インストール"
 
@@ -2752,7 +2751,7 @@ msgid "Stopped."
 msgstr "停止した。"
 
 #: internal/assistantui/assistantui.go:456
-#: internal/vmui/window.go:693
+#: internal/vmui/window.go:671
 msgid "Something went wrong: %s"
 msgstr "問題が発生しました: %s"
 
@@ -9461,51 +9460,51 @@ msgid "Could not open the link"
 msgstr "リンクを開けませんでした"
 
 #: internal/vmui/app.go:21
-#: internal/vmui/window.go:721
+#: internal/vmui/window.go:699
 #: ui/vm.ui:14
 #: ui/vm.ui:37
 #: config/apps/io.github.lyricat.Inua.VM.desktop:3
 msgid "Windows VM"
 msgstr "Windows 仮想マシン"
 
-#: internal/vmui/window.go:265
+#: internal/vmui/window.go:264
 msgid "Confirm remove"
 msgstr "削除を確認"
 
-#: internal/vmui/window.go:277
+#: internal/vmui/window.go:276
 msgid "Confirm delete"
 msgstr "削除を確認"
 
-#: internal/vmui/window.go:284
+#: internal/vmui/window.go:283
 #: ui/vm.ui:557
 msgid "Delete disk"
 msgstr "ディスクを削除"
 
-#: internal/vmui/window.go:311
+#: internal/vmui/window.go:310
 msgid "The fix did not work: %v"
 msgstr "修正できませんでした: %v"
 
-#: internal/vmui/window.go:316
+#: internal/vmui/window.go:315
 msgid "Done. Log out and back in for it to take effect."
 msgstr "完了。変更を有効にするには、一度ログアウトしてから再度ログインしてください。"
 
-#: internal/vmui/window.go:319
+#: internal/vmui/window.go:318
 msgid "Done."
 msgstr "完了。"
 
-#: internal/vmui/window.go:362
+#: internal/vmui/window.go:361
 msgid "Log out to finish"
 msgstr "完了にはログアウトが必要です"
 
-#: internal/vmui/window.go:363
+#: internal/vmui/window.go:362
 msgid "The change takes effect the next time you log in."
 msgstr "変更は次回ログイン時に有効になります。"
 
-#: internal/vmui/window.go:454
+#: internal/vmui/window.go:453
 msgid "Fix"
 msgstr "修正"
 
-#: internal/vmui/window.go:456
+#: internal/vmui/window.go:455
 msgid "Add me to %s"
 msgstr "%s グループに追加"
 
@@ -9513,139 +9512,139 @@ msgstr "%s グループに追加"
 msgid "Start inua-keyring, or install a Secret Service."
 msgstr "inua-keyring を起動するか、Secret Service をインストールしてください。"
 
-#: internal/vmui/window.go:493
-msgid "Windows VM needs NixOS, Ubuntu or Debian."
-msgstr "Windows 仮想マシンには NixOS、Ubuntu、Debian のいずれかが必要です。"
+#: internal/vmui/window.go:494
+msgid "Turn on virtualization (Intel VT-x or AMD-V) in the firmware settings."
+msgstr "ファームウェア設定で仮想化（Intel VT-x または AMD-V）を有効にしてください。"
 
-#: internal/vmui/window.go:525
+#: internal/vmui/window.go:499
 msgid "Add %s to your NixOS configuration."
 msgstr "%s を NixOS の設定に追加します。"
 
-#: internal/vmui/window.go:537
+#: internal/vmui/window.go:515
 msgid "Operating system"
 msgstr "オペレーティングシステム"
 
-#: internal/vmui/window.go:539
+#: internal/vmui/window.go:517
 msgid "Hardware virtualization (KVM)"
 msgstr "ハードウェア仮想化 (KVM)"
 
-#: internal/vmui/window.go:541
+#: internal/vmui/window.go:519
 msgid "Docker"
 msgstr "Docker"
 
-#: internal/vmui/window.go:543
+#: internal/vmui/window.go:521
 msgid "Docker Compose v2"
 msgstr "Docker Compose v2"
 
-#: internal/vmui/window.go:545
+#: internal/vmui/window.go:523
 msgid "FreeRDP"
 msgstr "FreeRDP"
 
-#: internal/vmui/window.go:547
+#: internal/vmui/window.go:525
 msgid "Browser opener"
 msgstr "ブラウザー起動コマンド"
 
-#: internal/vmui/window.go:549
+#: internal/vmui/window.go:527
 msgid "Disk space"
 msgstr "ディスク容量"
 
-#: internal/vmui/window.go:551
+#: internal/vmui/window.go:529
 msgid "Network device (TUN)"
 msgstr "ネットワークデバイス (TUN)"
 
-#: internal/vmui/window.go:553
+#: internal/vmui/window.go:531
 #: ui/settings.ui:3819
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/vmui/window.go:567
+#: internal/vmui/window.go:545
 msgid "Your user may not use Docker's socket. Joining the docker group would let anything running as you control this machine as root, so Inua will not do it for you: run `sudo gpasswd -a $USER docker` yourself if you accept that, or use rootless Docker or Podman instead."
 msgstr "あなたのユーザーは Docker のソケットを使えません。docker グループに加わると、あなたとして動くものすべてがこのマシンを root と同等に操作できるため、Inua は代わりに行いません。それを承知のうえでよければ `sudo gpasswd -a $USER docker` を自分で実行するか、rootless Docker や Podman を使ってください。"
 
-#: internal/vmui/window.go:571
+#: internal/vmui/window.go:549
 msgid "Not installed on this system."
 msgstr "このシステムにはインストールされていません。"
 
-#: internal/vmui/window.go:573
+#: internal/vmui/window.go:551
 msgid "Installed, but your user may not use it."
 msgstr "インストール済みですが、あなたのユーザーでは使えません。"
 
-#: internal/vmui/window.go:575
+#: internal/vmui/window.go:553
 msgid "Installed, but not running."
 msgstr "インストール済みですが、実行されていません。"
 
-#: internal/vmui/window.go:577
-msgid "This Linux distribution is not supported."
-msgstr "この Linux ディストリビューションには対応していません。"
+#: internal/vmui/window.go:555
+msgid "Windows VM needs Linux."
+msgstr "Windows 仮想マシンには Linux が必要です。"
 
-#: internal/vmui/window.go:579
+#: internal/vmui/window.go:557
 msgid "Could not be checked."
 msgstr "確認できませんでした。"
 
-#: internal/vmui/window.go:597
+#: internal/vmui/window.go:575
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "バランスの取れた設定は、システム用にメモリと CPU を残します。"
 
-#: internal/vmui/window.go:599
+#: internal/vmui/window.go:577
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
 msgstr "前回のインストールで残ったファイルがあります。インストールはそれらを使い回します。最初からやり直すには削除してください。"
 
-#: internal/vmui/window.go:601
+#: internal/vmui/window.go:579
 #: ui/vm.ui:447
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes."
 msgstr "約 8 GB をダウンロードして Windows をインストールします。30 分以上かかります。"
 
-#: internal/vmui/window.go:625
+#: internal/vmui/window.go:603
 msgid "Windows is installing; this takes a while."
 msgstr "Windows をインストール中です。しばらくかかります。"
 
-#: internal/vmui/window.go:627
-#: internal/vmui/window.go:670
+#: internal/vmui/window.go:605
+#: internal/vmui/window.go:648
 msgid "Stopping…"
 msgstr "停止中…"
 
-#: internal/vmui/window.go:629
+#: internal/vmui/window.go:607
 msgid "The installation is paused. Continue to resume."
 msgstr "インストールは一時停止しています。続けると再開します。"
 
-#: internal/vmui/window.go:672
+#: internal/vmui/window.go:650
 msgid "Windows is starting; ready in a minute or two."
 msgstr "Windows を起動しています。1〜2 分ほどで使えます。"
 
-#: internal/vmui/window.go:697
+#: internal/vmui/window.go:675
 msgid "This system is missing something Windows needs"
 msgstr "このシステムには Windows に必要なものが欠けています"
 
-#: internal/vmui/window.go:700
+#: internal/vmui/window.go:678
 msgid "Files from a previous attempt are still here"
 msgstr "前回のインストールで残ったファイルがあります"
 
-#: internal/vmui/window.go:702
+#: internal/vmui/window.go:680
 msgid "Not installed yet"
 msgstr "未インストール"
 
-#: internal/vmui/window.go:705
-#: internal/vmui/window.go:713
+#: internal/vmui/window.go:683
+#: internal/vmui/window.go:691
 msgid "Stopping"
 msgstr "停止中"
 
-#: internal/vmui/window.go:708
+#: internal/vmui/window.go:686
 msgid "Installing Windows"
 msgstr "Windows をインストール中"
 
-#: internal/vmui/window.go:710
+#: internal/vmui/window.go:688
 msgid "Installation paused"
 msgstr "インストールは一時停止中"
 
-#: internal/vmui/window.go:715
+#: internal/vmui/window.go:693
 msgid "Windows is starting"
 msgstr "Windows を起動しています"
 
-#: internal/vmui/window.go:717
+#: internal/vmui/window.go:695
 msgid "Windows is running"
 msgstr "Windows 実行中"
 
-#: internal/vmui/window.go:719
+#: internal/vmui/window.go:697
 msgid "Stopped"
 msgstr "停止"
 
