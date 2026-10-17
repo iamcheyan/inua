@@ -5,43 +5,6 @@ inua is a desktop shell that works with Hyprland. Its logic is Go, its interface
 document follows [design.md](design.md); why this toolkit is in
 [toolkit.md](toolkit.md).
 
-## Windows VM boundary
-
-`internal/vm` owns the toolkit-free configuration, the Linux platform
-detection, the resource recommendation and the Docker backend contract: KVM,
-the Docker socket, Compose v2, FreeRDP, a browser opener, TUN and disk
-space, each with the reason it failed and, when Inua can apply one itself, a
-remedy through `pkexec`, so the session's polkit agent takes the password and
-the command never runs with the caller's rights. Any Linux host will do; the
-window names the packages for Arch, Debian, Fedora, NixOS and Ubuntu, and
-for the distributions derived from them. The image is pinned to a version and digest, ports
-bind to the loopback interface, and the guest password lives in the Secret
-Service, never in the project or the configuration.
-
-The manager is an app of its own — `cmd/inua-vm` and `internal/vmui`, an
-`appui` view — not a part of the shell: no VM window, no drawer entry of its
-own and no `vm` control-socket target live in `internal/ui`. The window is
-one page per stage (`internal/vm.PageFor`): fix the host, install Windows,
-then start, wait or connect. A guest is "installed" only after Windows has
-come up *and* a disk image is on disk, so a Compose project with only a
-download cache stays on the install page. Removing a guest deletes the
-container and the project but keeps its disk and its password, so a later
-install reuses that Windows; deleting the disk is a separate, confirmed
-action (`RemoveData`), because losing a Windows installation should take a
-deliberate second step. `inua-vm --doctor` and `--status [--json]` (and
-`inua vm doctor|status`) report the host's checks and the configuration,
-read-only; `--start` and `--stop` drive the backend from a script.
-
-Docker is the daemon the `docker` command reaches, the one `docker compose`
-will use: the current context's or `DOCKER_HOST`'s, the system's or a
-rootless one's, or Podman's behind its `docker` command. When it reaches
-none, the socket it would use says why: not running, or not this user's.
-Docker socket access is privileged host access, so the platform layer
-reports a socket this user cannot use as denied and offers no fix for it:
-membership in the `docker` group is as good as root on the host. The window
-explains that and points at rootless Docker, Podman or a QEMU machine; the
-`kvm` group remedy, which grants one device, stays.
-
 ## 1. Layers
 
 ```
@@ -393,3 +356,40 @@ a fine texture (a 3 × 1.5 px run every 6 px, rows every 26 px), drawn in the
 theme's `field` colour at 4× and written to the runtime directory.
 `background.enable = false` creates none of these and leaves the background
 to another program.
+
+## 15. Windows VM
+
+`internal/vm` owns the toolkit-free configuration, the Linux platform
+detection, the resource recommendation and the Docker backend contract: KVM,
+the Docker socket, Compose v2, FreeRDP, a browser opener, TUN and disk
+space, each with the reason it failed and, when Inua can apply one itself, a
+remedy through `pkexec`, so the session's polkit agent takes the password and
+the command never runs with the caller's rights. Any Linux host will do; the
+window names the packages for Arch, Debian, Fedora, NixOS and Ubuntu, and
+for the distributions derived from them. The image is pinned to a version and digest, ports
+bind to the loopback interface, and the guest password lives in the Secret
+Service, never in the project or the configuration.
+
+The manager is an app of its own — `cmd/inua-vm` and `internal/vmui`, an
+`appui` view — not a part of the shell: no VM window, no drawer entry of its
+own and no `vm` control-socket target live in `internal/ui`. The window is
+one page per stage (`internal/vm.PageFor`): fix the host, install Windows,
+then start, wait or connect. A guest is "installed" only after Windows has
+come up *and* a disk image is on disk, so a Compose project with only a
+download cache stays on the install page. Removing a guest deletes the
+container and the project but keeps its disk and its password, so a later
+install reuses that Windows; deleting the disk is a separate, confirmed
+action (`RemoveData`), because losing a Windows installation should take a
+deliberate second step. `inua-vm --doctor` and `--status [--json]` (and
+`inua vm doctor|status`) report the host's checks and the configuration,
+read-only; `--start` and `--stop` drive the backend from a script.
+
+Docker is the daemon the `docker` command reaches, the one `docker compose`
+will use: the current context's or `DOCKER_HOST`'s, the system's or a
+rootless one's, or Podman's behind its `docker` command. When it reaches
+none, the socket it would use says why: not running, or not this user's.
+Docker socket access is privileged host access, so the platform layer
+reports a socket this user cannot use as denied and offers no fix for it:
+membership in the `docker` group is as good as root on the host. The window
+explains that and points at rootless Docker, Podman or a QEMU machine; the
+`kvm` group remedy, which grants one device, stays.

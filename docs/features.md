@@ -3,50 +3,6 @@
 What each part of inua does. The [README](../README.md) has the short
 version; the light apps have [their own page](apps.md).
 
-## Windows VM
-
-The Windows guest's manager is an app of its own, `inua-vm`
-([docs/inua-vm.md](inua-vm.md)): in the launcher, in the drawer's SYSTEM
-group, and started from the command line. Its window shows one page at a
-time, so it never offers a control that belongs to another stage: the host
-checks to fix when something is missing (**Fix** applies the ones inua can
-apply itself, through the session's polkit dialog); a recommended profile,
-an advanced editor behind it, the installer (Microsoft's download, or an
-ISO of yours with **Choose ISO…**) and **Install Windows** when nothing is
-installed yet; progress and the **web console** while Docker pulls the
-image and Windows installs itself, with starting and stopping beside it; and
-then **Start**, or **Connect** and **Stop** while the guest runs, with its
-memory and CPU for the next start and removal in its own section.
-
-The guest password is generated once and kept in the Secret Service, never
-in the Compose project or in your configuration; the Compose environment
-file that carries it is written 0600. The image is pinned by version and
-digest, and every published port binds to 127.0.0.1. The window says that
-the web console on 127.0.0.1:8006 has no login of its own, and that Windows
-needs a licence.
-
-Removing a guest deletes the container and the project but keeps the disk
-and the password, so a later install reuses that Windows: **Delete disk**
-is a separate, confirmed action. A group change needs a fresh login, since
-a running process cannot change its own group list; the window says so and
-notifies when it happens. Docker socket access is as good as root on this
-machine, so a denied Docker socket is explained, never fixed with one
-click: the window names the command for whoever wants it and points at
-rootless Docker or Podman instead. The `kvm` group fix stays, since it
-grants one device.
-
-From a script or a key binding:
-
-```
-inua-vm --doctor            what this host provides, and what is missing
-inua-vm --status [--json]   the same, for scripts
-inua-vm                     open the manager window
-inua-vm --start             start the guest
-inua-vm --stop              stop the guest, keeping its disk
-```
-
-`inua vm doctor|status` prints the same diagnostics.
-
 ## Bar
 
 Workspaces as square marks, the focused window's title, the clock (a click

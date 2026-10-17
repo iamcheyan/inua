@@ -398,13 +398,22 @@ Every tool, its arguments, results and risk: [mcp.md](mcp.md).
 ## Windows VM
 
 A program of its own: `inua-vm` runs one Windows guest with Docker (Dockur)
-and KVM, and reaches it over RDP. Its window shows one page at a time: the
-host checks with their fixes, the recommended profile and **Install
-Windows**, the progress of the first installation with the web console, and
-then **Start**, **Connect** and **Stop**; memory and CPU for the next start,
-and removal, sit in their own section. `inua-vm --doctor` and
-`inua-vm --status [--json]` print what this host provides, read-only, for
-scripts; `inua-vm --start` and `--stop` run the guest without a window, and
+and KVM, and reaches it over RDP; it is in the launcher and in the drawer's
+SYSTEM group. Its window shows one page at a time: the host checks with
+their fixes, the recommended profile and **Install Windows**, the progress
+of the first installation with the web console, and then **Start**,
+**Connect** and **Stop**; memory and CPU for the next start, and removal,
+sit in their own section. A fix that adds you to a group needs a fresh
+login, since a running program cannot change its own groups: the window
+says so and sends a notification.
+
+```
+inua-vm --doctor            what this host provides, and what is missing
+inua-vm --status [--json]   the same, for scripts
+inua-vm --start             start the guest
+inua-vm --stop              stop the guest, keeping its disk
+```
+
 `inua vm doctor|status` prints the same diagnostics.
 
 It needs Docker Engine with Compose v2, KVM (`/dev/kvm`), FreeRDP,
@@ -418,7 +427,8 @@ Windows 10 one, say): the container takes it read-only, and Windows boots
 from its disk afterwards, so the ISO may go once Windows is installed. The
 image is pinned to a version and digest, every port binds to 127.0.0.1, and
 the guest password is generated once and kept in the Secret Service — never
-in the Compose project or in your configuration. Two things the window says
+in the Compose project or in your configuration; the environment file that
+hands it to the container is written 0600. Two things the window says
 outright: the web console on 127.0.0.1:8006 has no login of its own, and
 Windows needs a licence.
 
