@@ -16,9 +16,12 @@ disk; the CLI reports a profile adjusted to host resources. Docker socket
 access is a privileged host boundary and should be limited to trusted users.
 
 The drawer's SYSTEM group has a **Windows VM** entry that opens the manager
-window: the recommended profile (RAM, CPU cores, disk) with an advanced
-editor, host checks, and the lifecycle buttons. The same actions are on the
-control socket for scripts:
+window. The window shows one page at a time: host checks to fix when something
+is missing; **Install Windows** when nothing is installed yet; progress and
+the web console while Windows is installing; **Start** when the guest is
+installed and off; a starting screen while it comes up; **Connect** and
+**Stop** while it is running. The same actions are on the control socket for
+scripts:
 
 ```
 inua call vm install       write the project and start the first installation
@@ -26,7 +29,7 @@ inua call vm console       open the container's web console
 inua call vm connect       open FreeRDP once Windows is ready
 inua call vm stop          stop the container, keeping the disk
 inua call vm start         start it again
-inua call vm remove        delete the container, project and password, keeping the disk
+inua call vm remove        delete the container and project, keeping the disk and password
 inua call vm remove-data   delete the guest disk itself
 ```
 

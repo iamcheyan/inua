@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -168,8 +169,16 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	p.DockerSocket = DeviceCapability{Path: socket, Available: probes.Exists(socket), Accessible: probes.Accessible(socket)}
 	socketCheck := check("Docker", p.DockerSocket.Available && p.DockerSocket.Accessible, ReasonMissing)
 	if p.DockerSocket.Available && !p.DockerSocket.Accessible {
-		socketCheck.Reason = ReasonDenied
-		socketCheck.Remedy = groupRemedy("docker")
+		// The socket is there; either this user cannot talk to it, or the
+		// daemon is not running. Dial once more to tell the two apart, so
+		// the window does not offer "add me to docker" when Docker is down.
+		if err := dockerDial(socket); err != nil && isConnRefused(err) {
+			socketCheck.Reason = ReasonStopped
+			p.DockerSocket.Detail = "Docker is not running"
+		} else {
+			socketCheck.Reason = ReasonDenied
+			socketCheck.Remedy = groupRemedy("docker")
+		}
 	}
 
 	composeVersion, composeErr := composeVersion(probes)
@@ -259,6 +268,26 @@ func detectFilesystem(root string) string {
 		return "unknown"
 	}
 	return fs
+}
+
+func dockerDial(path string) error {
+	c, err := net.DialTimeout("unix", path, 250*time.Millisecond)
+	if err != nil {
+		return err
+	}
+	_ = c.Close()
+	return nil
+}
+
+func isConnRefused(err error) bool {
+	if err == nil {
+		return false
+	}
+	if errors.Is(err, syscall.ECONNREFUSED) {
+		return true
+	}
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "connection refused") || strings.Contains(msg, "connect: no such file")
 }
 
 func executableCapability(p PlatformProbes, names []string, missing string) Capability {

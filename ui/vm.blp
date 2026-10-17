@@ -1,15 +1,14 @@
-// Windows VM: manages one Windows guest. The window has four pages on a
-// hidden stack; Go switches between them as the guest's state changes.
+// Windows VM: manages one Windows guest. The window has one page per
+// stage; Go switches between them as the guest's state changes.
 //
 //   prereq       — some host requirement is missing; shows what and why
-//   setup        — prerequisites are met but nothing is installed yet;
-//                  the user picks a profile and starts the installation
-//   provisioning — Docker is pulling the image or Windows is installing
-//   ready        — the guest is installed; shows start/connect/stop and
-//                  lets the user adjust the non-disk resource settings
+//   setup        — environment is ready; nothing installed yet
+//   provisioning — first-time Windows install (download / setup)
+//   stopped      — Windows is installed and the guest is off
+//   starting     — Windows is installed and the guest is coming up
+//   running      — Windows is up; connect or stop
 //
-// None of the pages show controls that cannot do anything useful in the
-// current state. Go fills the labels and switches the visible page.
+// None of the pages show controls that belong to a different stage.
 using Gtk 4.0;
 
 ApplicationWindow vm {
@@ -228,6 +227,7 @@ ApplicationWindow vm {
                           value: 8192;
                         };
                         numeric: true;
+                        width-chars: 7;
                         valign: center;
                       }
                     }
@@ -252,6 +252,7 @@ ApplicationWindow vm {
                           value: 4;
                         };
                         numeric: true;
+                        width-chars: 4;
                         valign: center;
                       }
                     }
@@ -276,21 +277,11 @@ ApplicationWindow vm {
                           value: 128;
                         };
                         numeric: true;
+                        width-chars: 5;
                         valign: center;
                       }
                     }
 
-                    Box {
-                      styles ["row"]
-                      halign: end;
-
-                      Button vm_configure {
-                        styles ["outlined"]
-                        name: "configure";
-                        label:  _("Save profile");
-                        valign: center;
-                      }
-                    }
                   }
                 }
               }
@@ -333,11 +324,11 @@ ApplicationWindow vm {
 
                     Label {
                       styles ["label"]
-                      label:  _("Download and install Windows");
+                      label:  _("Install Windows");
                       xalign: 0;
                     }
 
-                    Label {
+                    Label vm_setup_note {
                       styles ["sub"]
                       label:  _("Downloads about 8 GB and installs Windows; takes 30+ minutes.");
                       xalign: 0;
@@ -346,9 +337,68 @@ ApplicationWindow vm {
                   }
 
                   Button vm_install {
-                    styles ["outlined"]
+                    styles ["suggested-action"]
                     name: "install";
-                    label:  _("Install");
+                    label:  _("Install Windows");
+                    valign: center;
+                  }
+                }
+              }
+            }
+
+            Box vm_setup_disk {
+              styles ["section"]
+              orientation: vertical;
+              visible: false;
+
+              Box {
+                styles ["section-head"]
+                spacing: 10;
+
+                Label {
+                  styles ["mark"]
+                  valign: center;
+                }
+
+                Label {
+                  styles ["section-label"]
+                  label:  _("[DISK]");
+                  hexpand: true;
+                  xalign: 0;
+                }
+              }
+
+              Box {
+                styles ["section-body"]
+                orientation: vertical;
+
+                Box {
+                  styles ["row"]
+
+                  Box {
+                    orientation: vertical;
+                    hexpand: true;
+                    valign: center;
+                    spacing: 2;
+
+                    Label {
+                      styles ["label"]
+                      label:  _("Previous files");
+                      xalign: 0;
+                    }
+
+                    Label {
+                      styles ["sub"]
+                      label:  _("Permanently deletes leftover install files. Cannot be undone.");
+                      xalign: 0;
+                      wrap: true;
+                    }
+                  }
+
+                  Button vm_setup_remove_data {
+                    styles ["destructive-action"]
+                    name: "setup_remove_data";
+                    label:  _("Delete disk");
                     valign: center;
                   }
                 }
@@ -446,6 +496,37 @@ ApplicationWindow vm {
 
                   Label {
                     styles ["label"]
+                    label:  _("Continue installation");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("Starts the container; Windows installs itself inside it.");
+                    xalign: 0;
+                    wrap: true;
+                  }
+                }
+
+                Button vm_prov_start {
+                  styles ["suggested-action"]
+                  name: "prov_start";
+                  label:  _("Continue");
+                  valign: center;
+                }
+              }
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
                     label:  _("Stop waiting");
                     xalign: 0;
                   }
@@ -465,21 +546,163 @@ ApplicationWindow vm {
                   valign: center;
                 }
               }
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
+                    label:  _("Abandon installation");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("Removes the project so you can start over. Downloaded files stay.");
+                    xalign: 0;
+                    wrap: true;
+                  }
+                }
+
+                Button vm_prov_remove {
+                  styles ["outlined"]
+                  name: "prov_remove";
+                  label:  _("Remove");
+                  valign: center;
+                }
+              }
             }
           }
         };
       }
 
-      // ── PAGE: ready ── guest is installed ─────────────────────────────
+      // ── PAGE: starting ── installed guest is coming up ───────────────
       StackPage {
-        name: "ready";
+        name: "starting";
+        child: Box {
+          orientation: vertical;
+
+          Box {
+            styles ["section"]
+            orientation: vertical;
+
+            Box {
+              styles ["section-head"]
+              spacing: 10;
+
+              Label {
+                styles ["mark"]
+                valign: center;
+              }
+
+              Label {
+                styles ["section-label"]
+                label:  _("[PROGRESS]");
+                hexpand: true;
+                xalign: 0;
+              }
+            }
+
+            Box {
+              styles ["section-body"]
+              orientation: vertical;
+
+              Box {
+                styles ["row"]
+                orientation: vertical;
+                spacing: 10;
+
+                ProgressBar vm_boot_progress {
+                  show-text: false;
+                }
+
+                Label vm_boot_progress_text {
+                  styles ["sub"]
+                  xalign: 0;
+                  wrap: true;
+                }
+              }
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
+                    label:  _("Web console");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("The guest screen is in your browser until RDP is ready.");
+                    xalign: 0;
+                    wrap: true;
+                  }
+                }
+
+                Button vm_boot_console {
+                  styles ["outlined"]
+                  name: "boot_console";
+                  label:  _("Open web console");
+                  valign: center;
+                }
+              }
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
+                    label:  _("Stop");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("Stops the guest; the disk is kept.");
+                    xalign: 0;
+                  }
+                }
+
+                Button vm_boot_stop {
+                  styles ["outlined"]
+                  name: "boot_stop";
+                  label:  _("Stop");
+                  valign: center;
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // ── PAGE: stopped ── Windows is installed and the guest is off ──
+      StackPage {
+        name: "stopped";
         child: ScrolledWindow {
           hscrollbar-policy: never;
 
           Box {
             orientation: vertical;
 
-            // — config section (partial edit after install) —
             Box {
               styles ["section"]
               orientation: vertical;
@@ -535,6 +758,7 @@ ApplicationWindow vm {
                         value: 8192;
                       };
                       numeric: true;
+                      width-chars: 7;
                     }
 
                     Label {
@@ -570,6 +794,7 @@ ApplicationWindow vm {
                         value: 4;
                       };
                       numeric: true;
+                      width-chars: 4;
                     }
 
                     Label {
@@ -624,7 +849,6 @@ ApplicationWindow vm {
               }
             }
 
-            // — actions section —
             Box {
               styles ["section"]
               orientation: vertical;
@@ -650,8 +874,7 @@ ApplicationWindow vm {
                 styles ["section-body"]
                 orientation: vertical;
 
-                // Start (when stopped)
-                Box vm_row_start {
+                Box {
                   styles ["row"]
 
                   Box {
@@ -674,89 +897,15 @@ ApplicationWindow vm {
                   }
 
                   Button vm_start {
-                    styles ["outlined"]
+                    styles ["suggested-action"]
                     name: "start";
                     label:  _("Start");
-                    valign: center;
-                  }
-                }
-
-                // Connect + console (when running)
-                Box vm_row_connect {
-                  styles ["row"]
-
-                  Box {
-                    orientation: vertical;
-                    hexpand: true;
-                    valign: center;
-                    spacing: 2;
-
-                    Label {
-                      styles ["label"]
-                      label:  _("Connect");
-                      xalign: 0;
-                    }
-
-                    Label {
-                      styles ["sub"]
-                      label:  _("Opens FreeRDP.");
-                      xalign: 0;
-                    }
-                  }
-
-                  Box {
-                    spacing: 8;
-
-                    Button vm_console_ready {
-                      styles ["outlined"]
-                      name: "console_ready";
-                      label:  _("Web console");
-                      valign: center;
-                    }
-
-                    Button vm_connect {
-                      styles ["outlined"]
-                      name: "connect";
-                      label:  _("Connect");
-                      valign: center;
-                    }
-                  }
-                }
-
-                // Stop (when running)
-                Box vm_row_stop {
-                  styles ["row"]
-
-                  Box {
-                    orientation: vertical;
-                    hexpand: true;
-                    valign: center;
-                    spacing: 2;
-
-                    Label {
-                      styles ["label"]
-                      label:  _("Stop");
-                      xalign: 0;
-                    }
-
-                    Label {
-                      styles ["sub"]
-                      label:  _("Stops the guest; the disk is kept.");
-                      xalign: 0;
-                    }
-                  }
-
-                  Button vm_stop {
-                    styles ["outlined"]
-                    name: "stop";
-                    label:  _("Stop");
                     valign: center;
                   }
                 }
               }
             }
 
-            // — destructive actions (separator then two confirmed rows) —
             Box {
               styles ["section"]
               orientation: vertical;
@@ -799,7 +948,7 @@ ApplicationWindow vm {
 
                     Label {
                       styles ["sub"]
-                      label:  _("Deletes the container, project and password. The disk stays.");
+                      label:  _("Deletes the container and project. The disk and its password stay.");
                       xalign: 0;
                       wrap: true;
                     }
@@ -842,6 +991,136 @@ ApplicationWindow vm {
                     label:  _("Delete");
                     valign: center;
                   }
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // ── PAGE: running ── Windows is up ────────────────────────────────
+      StackPage {
+        name: "running";
+        child: Box {
+          orientation: vertical;
+
+          Box {
+            styles ["section"]
+            orientation: vertical;
+
+            Box {
+              styles ["section-head"]
+              spacing: 10;
+
+              Label {
+                styles ["mark"]
+                valign: center;
+              }
+
+              Label {
+                styles ["section-label"]
+                label:  _("[GUEST]");
+                hexpand: true;
+                xalign: 0;
+              }
+
+              Label vm_run_summary {
+                styles ["section-meta"]
+                xalign: 1;
+              }
+            }
+
+            Box {
+              styles ["section-body"]
+              orientation: vertical;
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
+                    label:  _("Connect");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("Opens FreeRDP.");
+                    xalign: 0;
+                  }
+                }
+
+                Button vm_connect {
+                  styles ["suggested-action"]
+                  name: "connect";
+                  label:  _("Connect");
+                  valign: center;
+                }
+              }
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
+                    label:  _("Web console");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("The guest screen in the browser.");
+                    xalign: 0;
+                  }
+                }
+
+                Button vm_console_ready {
+                  styles ["outlined"]
+                  name: "console_ready";
+                  label:  _("Open web console");
+                  valign: center;
+                }
+              }
+
+              Box {
+                styles ["row"]
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+                  spacing: 2;
+
+                  Label {
+                    styles ["label"]
+                    label:  _("Stop");
+                    xalign: 0;
+                  }
+
+                  Label {
+                    styles ["sub"]
+                    label:  _("Stops the guest; the disk is kept.");
+                    xalign: 0;
+                  }
+                }
+
+                Button vm_stop {
+                  styles ["outlined"]
+                  name: "stop";
+                  label:  _("Stop");
+                  valign: center;
                 }
               }
             }

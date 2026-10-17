@@ -18,10 +18,15 @@ host access and should be granted only to trusted users. A baseline is 4 GiB
 memory, 2 CPUs and 64 GiB disk; recommendations adapt to host resources.
 The shell holds the lifecycle: `internal/ui/vm.go` and `vm_service.go` drive
 the backend off the GTK main thread and keep the guest password in the Secret
-Service, never in the project or the configuration. Removing a VM deletes the
-container, project and password but keeps the guest disk; deleting the disk is
-a separate, explicitly confirmed action (`RemoveData`), because losing a
-Windows installation should take a deliberate second step.
+Service, never in the project or the configuration. The manager window is one
+page per stage (`internal/vm.PageFor`): fix the host, install Windows, then
+start, wait, or connect. A guest is "installed" only after Windows has come
+up *and* a disk image is on disk; a compose project with only a download
+cache stays on the install page. Removing a VM deletes the container and
+project but keeps the guest disk and its password, so a later install can
+reuse that Windows; deleting the disk is a separate, explicitly confirmed
+action (`RemoveData`), because losing a Windows installation should take a
+deliberate second step.
 
 ## 1. Layers
 

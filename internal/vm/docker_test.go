@@ -1,19 +1,23 @@
 package vm
 
 import (
+	"bytes"
 	"context"
-	"gopkg.in/yaml.v3"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 // fakeRunner stands in for Docker so the lifecycle runs without a daemon.
 type fakeRunner struct {
 	calls []string
 	fail  map[string]error
+	out   map[string]string
 }
 
 func (f *fakeRunner) Run(_ context.Context, name string, args ...string) (string, error) {
@@ -21,6 +25,16 @@ func (f *fakeRunner) Run(_ context.Context, name string, args ...string) (string
 	f.calls = append(f.calls, call)
 	if err, ok := f.fail[call]; ok {
 		return "", err
+	}
+	if f.out != nil {
+		if s, ok := f.out[call]; ok {
+			return s, nil
+		}
+		for prefix, s := range f.out {
+			if strings.HasPrefix(call, prefix) {
+				return s, nil
+			}
+		}
 	}
 	return "", nil
 }
@@ -101,17 +115,51 @@ func TestInstallWritesComposeAndEnvWithoutLeakingSecret(t *testing.T) {
 	if strings.Contains(string(compose), "\n      - \"8006:8006\"") {
 		t.Error("the web console is published on every interface")
 	}
+	if !strings.Contains(string(compose), `USERNAME: "`+GuestUser+`"`) {
+		t.Errorf("compose does not set the guest user %q:\n%s", GuestUser, compose)
+	}
 }
 
-func TestInstallRefusesToOverwriteAnExistingProject(t *testing.T) {
-	b, cfg, _, _ := newTestBackend(t)
+// Applying a configuration is what the window's Apply does, and it has to
+// work on a project that already exists - that is how a changed memory, CPU
+// count or disk size takes effect. The guest's password, though, is the one
+// Windows was installed with and must survive.
+func TestInstallRewritesTheProjectAndKeepsThePassword(t *testing.T) {
+	b, cfg, _, secrets := newTestBackend(t)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := b.Install(ctx, cfg); err != nil {
 		t.Fatalf("first install: %v", err)
 	}
-	if err := b.Install(ctx, cfg); err == nil {
-		t.Fatal("a second install replaced an existing project")
+	first, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	if err != nil {
+		t.Fatalf("stored password: %v", err)
+	}
+
+	bigger := cfg
+	bigger.MemoryMiB = cfg.MemoryMiB * 2
+	bigger.CPUs = cfg.CPUs + 2
+	if err := b.Install(ctx, bigger); err != nil {
+		t.Fatalf("applying a new configuration: %v", err)
+	}
+
+	compose, err := os.ReadFile(b.composePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(compose), fmt.Sprintf("RAM_SIZE: \"%dG\"", bigger.MemoryMiB/1024)) {
+		t.Errorf("the new memory is not in the project:\n%s", compose)
+	}
+	if !strings.Contains(string(compose), fmt.Sprintf("CPU_CORES: \"%d\"", bigger.CPUs)) {
+		t.Errorf("the new CPU count is not in the project:\n%s", compose)
+	}
+
+	again, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	if err != nil {
+		t.Fatalf("password after the rewrite: %v", err)
+	}
+	if !bytes.Equal(first, again) {
+		t.Error("rewriting the project changed the guest's password")
 	}
 }
 
@@ -128,12 +176,16 @@ func TestInstallRefusesWithoutSecretStore(t *testing.T) {
 	}
 }
 
-func TestRemoveDeletesProjectEnvAndSecret(t *testing.T) {
+func TestRemoveDeletesProjectAndKeepsThePassword(t *testing.T) {
 	b, cfg, _, secrets := newTestBackend(t)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := b.Install(ctx, cfg); err != nil {
 		t.Fatalf("install: %v", err)
+	}
+	first, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	if err != nil {
+		t.Fatalf("stored password: %v", err)
 	}
 	if err := b.Remove(ctx); err != nil {
 		t.Fatalf("remove: %v", err)
@@ -144,8 +196,12 @@ func TestRemoveDeletesProjectEnvAndSecret(t *testing.T) {
 			t.Errorf("%s survived removal", name)
 		}
 	}
-	if _, err := secrets.Load(ctx, "inua/windows/"+cfg.Name); !os.IsNotExist(err) {
-		t.Error("the stored password survived removal")
+	again, err := secrets.Load(ctx, "inua/windows/"+cfg.Name)
+	if err != nil {
+		t.Fatalf("password after remove: %v", err)
+	}
+	if !bytes.Equal(first, again) {
+		t.Error("remove dropped the password of the disk it kept")
 	}
 }
 
@@ -287,5 +343,108 @@ func TestComposeProjectNamesAreNamespaced(t *testing.T) {
 	}
 	if composeProject("windows") == "windows" {
 		t.Error("the project name is the bare VM name, which collides with a user's own")
+	}
+}
+
+func TestStateReportsStartingUntilGuestReady(t *testing.T) {
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	runner.out = map[string]string{
+		"docker compose": "windows\n",
+		"docker logs":    "Downloading Windows 11... 12%\n",
+	}
+	state, err := b.State(ctx)
+	if err != nil {
+		t.Fatalf("state: %v", err)
+	}
+	if state != StateStarting {
+		t.Fatalf("state = %q, want starting", state)
+	}
+}
+
+func TestStateReportsRunningWhenLogsSayStarted(t *testing.T) {
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	runner.out = map[string]string{
+		"docker compose": "windows\n",
+		"docker logs":    "Windows started successfully, visit http://127.0.0.1:8006/\n",
+	}
+	state, err := b.State(ctx)
+	if err != nil {
+		t.Fatalf("state: %v", err)
+	}
+	if state != StateRunning {
+		t.Fatalf("state = %q, want running", state)
+	}
+}
+
+func TestRecentOutputIsLastLogLine(t *testing.T) {
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	runner.out = map[string]string{
+		"docker compose": "abc123\n",
+		"docker logs":    "\x1b[32mDownloading\x1b[0m\nExtracting 45%\n",
+	}
+	got := b.RecentOutput(ctx)
+	if got != "Extracting 45%" {
+		t.Fatalf("RecentOutput = %q", got)
+	}
+	if p := ParsePercent(got); p != 0.45 {
+		t.Fatalf("ParsePercent = %v", p)
+	}
+}
+
+func TestRemoveDataUnmountsThenDeletesTheDisk(t *testing.T) {
+	b, cfg, runner, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	disk := filepath.Join(cfg.DataDir, "data.img")
+	if err := os.WriteFile(disk, []byte("windows"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.RemoveData(ctx); err != nil {
+		t.Fatalf("remove-data: %v", err)
+	}
+	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
+		t.Errorf("the VM data directory survived RemoveData")
+	}
+	var down bool
+	for _, call := range runner.calls {
+		if strings.Contains(call, " compose ") && strings.HasSuffix(call, " down") {
+			down = true
+		}
+	}
+	if !down {
+		t.Error("RemoveData did not bring the container down before deleting the disk")
+	}
+}
+
+func TestRemoveDataDeletesLeftoverDiskWithoutProject(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	disk := filepath.Join(cfg.DataDir, "data.img")
+	if err := os.WriteFile(disk, []byte("windows"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	b.Config = cfg
+	if err := b.RemoveData(context.Background()); err != nil {
+		t.Fatalf("remove leftover disk: %v", err)
+	}
+	if _, err := os.Stat(cfg.DataDir); !os.IsNotExist(err) {
+		t.Errorf("leftover disk survived")
 	}
 }

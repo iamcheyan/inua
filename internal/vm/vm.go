@@ -4,6 +4,7 @@ package vm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -22,6 +23,8 @@ const (
 	MinCPUs          = 1
 	MinDiskGiB       = 32
 	ConfigFileName   = "windows-vm.json"
+	// GuestUser is the Windows account Dockur creates. Connect uses it.
+	GuestUser = "Inua"
 )
 
 // Config describes an isolated Windows VM managed by Inua.
@@ -57,6 +60,62 @@ func ConfigPath() string {
 		base = filepath.Join(home, ".config")
 	}
 	return filepath.Join(base, "inua", "vm", "windows.json")
+}
+
+// Persisted is the on-disk record of a VM: its configuration and whether
+// Windows has come up at least once.
+type Persisted struct {
+	Config    Config `json:"config"`
+	Installed bool   `json:"installed"`
+}
+
+// ParsePersisted reads a configuration file. The current form wraps the
+// guest in a Config field; a bare Config is still accepted so an older
+// file is not treated as missing.
+func ParsePersisted(data []byte) (Persisted, error) {
+	var saved Persisted
+	if json.Unmarshal(data, &saved) == nil && saved.Config.Validate() == nil {
+		return saved, nil
+	}
+	var cfg Config
+	if json.Unmarshal(data, &cfg) == nil && cfg.Validate() == nil {
+		return Persisted{Config: cfg}, nil
+	}
+	return Persisted{}, errors.New("invalid VM configuration")
+}
+
+// GuestDiskPresent reports whether DataDir holds a real guest image.
+// A download cache (tmp/, an ISO) is not a Windows install.
+func GuestDiskPresent(dir string) bool {
+	if dir == "" {
+		return false
+	}
+	for _, name := range []string{"data.img", "data.qcow2", "windows.boot"} {
+		st, err := os.Stat(filepath.Join(dir, name))
+		if err == nil && st.Mode().IsRegular() && st.Size() > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// GuestDataPresent reports whether DataDir has leftover files (an ISO, a
+// tmp download, a disk), so the window can offer to delete them.
+func GuestDataPresent(dir string) bool {
+	if dir == "" {
+		return false
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), ".") {
+			continue
+		}
+		return true
+	}
+	return false
 }
 
 // Validate checks resource limits and rejects paths that could escape the configured VM directory.

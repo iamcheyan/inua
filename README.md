@@ -80,18 +80,20 @@ groups or package settings.
 ### Using it
 
 The drawer's SYSTEM group holds a **Windows VM** entry, present whether or
-not a VM exists. Opening it shows the recommended resources and one
-**Accept recommended profile** button, with **Advanced configuration** for
-RAM, CPU cores and disk size. **Download and install Windows** is a separate
-step: it writes the Compose project, keeps the guest password in the Secret
-Service, pulls the image and starts the container. The first Windows
-installation downloads several gigabytes and needs many minutes; the guest
-password is never written to the configuration file, and **Open web console**
-shows the installer's progress in the browser. **Connect** opens FreeRDP
-after the guest is ready, and **Stop** keeps the disk.
+not a VM exists. Opening it walks one path, one screen at a time: if the host
+is missing something (KVM, Docker, FreeRDP, …), it shows those checks and how
+to fix them; if Windows is not installed, it offers a recommended profile
+(with **Advanced configuration** for RAM, CPU cores and disk size) and
+**Install Windows**; while Windows is installing, **Open web console** shows
+the installer in the browser; once Windows is installed, **Start** brings it
+up, a starting screen waits for it, and **Connect** opens FreeRDP when it is
+running. **Install Windows** writes the Compose project, keeps the guest
+password in the Secret Service, pulls the image and starts the container. The
+first installation downloads several gigabytes and needs many minutes. The
+guest password is never written to the configuration file.
 
 Removing is two separate, explicitly confirmed actions: **Remove VM** deletes
-the container, project and stored password but keeps the guest disk, while
+the container and project but keeps the guest disk and its password, while
 **Delete disk data** permanently deletes the Windows disk and asks first.
 Stopping or removing a VM never deletes its data.
 
