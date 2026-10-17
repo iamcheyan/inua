@@ -11,8 +11,9 @@ runs once: starting it again brings its window to the current workspace.
 Music and Video take files given to a second start (Music adds them,
 Video plays the file). The Assistant is a program of its own,
 `inua-assistant`, and so are the file manager, `inua-files`
-([files.md](files.md)), and Viewer, `inua-viewer`, which opens a
-window for each file opened.
+([files.md](files.md)), Viewer, `inua-viewer`, which opens a
+window for each file opened, and the Windows guest's manager, `inua-vm`
+([the Windows VM](#windows-vm)).
 
 Their data is kept in `~/.local/share/inua`.
 
@@ -393,6 +394,36 @@ the policy, takes effect at the next call.
 
 Every tool, its arguments, results and risk: [mcp.md](mcp.md).
 
+
+## Windows VM
+
+A program of its own: `inua-vm` runs one Windows guest with Docker (Dockur)
+and KVM, and reaches it over RDP. Its window shows one page at a time: the
+host checks with their fixes, the recommended profile and **Install
+Windows**, the progress of the first installation with the web console, and
+then **Start**, **Connect** and **Stop**; memory and CPU for the next start,
+and removal, sit in their own section. `inua-vm --doctor` and
+`inua-vm --status [--json]` print what this host provides, read-only, for
+scripts; `inua-vm --start` and `--stop` run the guest without a window, and
+`inua vm doctor|status` prints the same diagnostics.
+
+It needs Docker Engine with Compose v2, KVM (`/dev/kvm`), FreeRDP,
+`xdg-open` and `/dev/net/tun`; the window names whichever is missing and the
+packages that provide it. The baseline is 4 GiB of memory, 2 CPUs and 64 GiB
+of disk, adjusted to the host's resources. The image is pinned to a version
+and digest, every port binds to 127.0.0.1, and the guest password is
+generated once and kept in the Secret Service — never in the Compose project
+or in your configuration. Two things the window says outright: the web
+console on 127.0.0.1:8006 has no login of its own, and Windows needs a
+licence.
+
+Docker socket access is as good as root on this machine, so inua explains it
+and never offers to add you to the `docker` group; the `kvm` group fix,
+which grants one device, stays. Removing the guest deletes the container and
+the project but keeps its disk and its password, so a later install reuses
+that Windows; **Delete disk** is a separate, confirmed action. Only Windows
+runs today: Linux, FreeBSD, Android and custom systems, and seamless
+windows, are the later steps of [inua-vm.md](inua-vm.md).
 
 ## Files
 
