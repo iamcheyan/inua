@@ -367,5 +367,5 @@ replaces = ["Print"]
 
 [[shortcuts]]
 action = "shot-area"
-keys = "SUPER+SHIFT+P"
-replaces = ["SUPER+SHIFT+P"]
+keys = "CTRL+Print"
+replaces = ["CTRL+Print"]

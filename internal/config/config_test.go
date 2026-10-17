@@ -309,7 +309,7 @@ func TestDefaultScreenshotShortcuts(t *testing.T) {
 	c := Default()
 	want := []Shortcut{
 		{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
-		{Action: "shot-area", Keys: "SUPER+SHIFT+P", Replaces: []string{"SUPER+SHIFT+P"}},
+		{Action: "shot-area", Keys: "CTRL+Print", Replaces: []string{"CTRL+Print"}},
 	}
 	if !reflect.DeepEqual(c.Shortcuts, want) {
 		t.Fatalf("default screenshot shortcuts = %+v, want %+v", c.Shortcuts, want)

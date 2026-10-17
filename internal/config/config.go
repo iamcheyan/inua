@@ -617,7 +617,7 @@ func Default() Config {
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
 		Shortcuts: []Shortcut{
 			{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
-			{Action: "shot-area", Keys: "SUPER+SHIFT+P", Replaces: []string{"SUPER+SHIFT+P"}},
+			{Action: "shot-area", Keys: "CTRL+Print", Replaces: []string{"CTRL+Print"}},
 		},
 		Assistant: Assistant{Enable: true, Profile: "openai", Tools: []string{"web_search", "url_fetch", "bash"}, AskBeforeChanges: true, ServeListen: "127.0.0.1:8794",
 			Profiles: []AIProfile{{Name: "openai", Provider: "openai", Model: "gpt-5.2"}}},

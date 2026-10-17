@@ -135,7 +135,7 @@ func TestKeys(t *testing.T) {
 	}
 	reply := `[
 		{"modmask": 64, "key": "Space", "dispatcher": "exec", "arg": "inua call launcher toggle", "submap": ""},
-		{"modmask": 65, "key": "P", "dispatcher": "exec", "arg": "inua call screenshot area", "submap": ""},
+		{"modmask": 4, "key": "Print", "dispatcher": "exec", "arg": "inua call screenshot area", "submap": ""},
 		{"modmask": 0, "key": "Print", "dispatcher": "exec", "arg": "inua call screenshot silent-area", "submap": ""},
 		{"modmask": 64, "key": "mouse:272", "mouse": true, "dispatcher": "movewindow", "arg": ""},
 		{"modmask": 0, "key": "x", "dispatcher": "exec", "arg": "inua call launcher toggle", "submap": "resize"},
@@ -146,7 +146,7 @@ func TestKeys(t *testing.T) {
 		t.Fatalf("binds %+v %v", binds, err)
 	}
 	c := config.Default()
-	if k := KeysFor(binds, Command(c, "shot-area"), ""); len(k) != 1 || k[0] != "SUPER+SHIFT+P" {
+	if k := KeysFor(binds, Command(c, "shot-area"), ""); len(k) != 1 || k[0] != "CTRL+Print" {
 		t.Errorf("KeysFor shot-area: %v", k)
 	}
 	if k := KeysFor(binds, Command(c, "shot-area-silent"), ""); len(k) != 1 || k[0] != "Print" {
