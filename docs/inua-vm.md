@@ -94,10 +94,11 @@ append = ""             # the kernel's command line
 firmware = "uefi"       # uefi | bios
 arch = "x86_64"         # x86_64 | aarch64 | riscv64 | i386: another than the host's runs without KVM
 machine = "q35"
+accel = "auto"          # auto (KVM when it can, else emulation) | kvm (fail without it) | tcg (always emulate)
 
 [display]
 kind = "spice"          # spice | gtk | rdp | web | serial | none
-gl = true
+gpu = "virgl"           # virgl (3D, OpenGL) | venus (3D, Vulkan; QEMU 9.2 and newer) | basic (2D)
 
 [seamless]
 enabled = true          # the backend's way, below
@@ -212,6 +213,46 @@ Wayland desktops.
 - Without binder, offer Android-x86 or BlissOS on the QEMU backend: the
   whole screen only.
 
+## Hardware acceleration
+
+**The processor: KVM.** QEMU runs the guest's code on the host's processor,
+near native speed, with `-accel kvm -cpu host`, when:
+
+- the guest's architecture is the host's (an x86_64 host runs x86_64
+  guests: Windows, most Linux and FreeBSD, a custom x86_64 OS);
+- the host has virtualisation on (the `vmx` or `svm` CPU flag, the
+  `kvm_intel` or `kvm_amd` module) and the user can open `/dev/kvm`.
+
+The check is whether `/dev/kvm` can be opened, not whether the user is in
+the `kvm` group: on many distributions logind grants the session's user
+access with an ACL, and then no group fix is needed. #18's
+`platform.go` already checks access; its group remedy applies only when
+access is denied.
+
+Otherwise QEMU emulates (TCG, `-accel tcg`): it works, many times slower.
+That is always the case for another architecture: an aarch64 or riscv64
+build of a custom OS on an x86_64 host. `accel = "auto"` takes KVM when it
+can; the window says **Accelerated** or **Emulated (slow)** beside each
+machine, and why (no `/dev/kvm`, no access, another architecture). A
+machine set to `kvm` refuses to start without it.
+
+Also, with KVM: `-cpu host` (the host's features), virtio devices for the
+disk and the network, and memory and CPU counts from #18's profile.
+
+**Graphics.** Per guest:
+
+| Guest | 3D | How |
+|---|---|---|
+| Linux | yes | `-device virtio-vga-gl` with `-display gtk,gl=on` or SPICE with `gl=on` (virgl: OpenGL through the host's GPU). `gpu = "venus"` adds Vulkan (`virtio-gpu-gl,venus=on,blob=on,hostmem=…`), on QEMU 9.2 and newer with a host driver that supports it |
+| FreeBSD | partly | virgl with its virtio-gpu driver; else 2D |
+| Windows | no | no mature driver for virgl: a 2D display (`virtio-vga` with the virtio-win drivers, or Dockur's). Enough for office programs; 3D needs GPU pass-through (VFIO, a second graphics card given to the guest): later, behind a switch, not in these steps |
+| Android (Waydroid) | yes | a container, not a VM: the host's GPU directly |
+| Custom | if it has a driver | a framebuffer (`-vga std` or `virtio-vga` in 2D) until the OS has a virtio-gpu driver |
+
+The window shows what the machine gets (**3D** or **2D**). A host whose GPU
+or QEMU has no virgl falls back to `basic` with a note; `gl=on` needs the
+display to be QEMU's GTK window or SPICE on a local socket, never VNC.
+
 ## Seamless mode
 
 Each backend's own way; the rest is shared (`internal/vm/seamless`).
@@ -282,7 +323,11 @@ folders:
 
 - `machine.toml` read, written and validated; the templates.
 - QEMU's command line per machine (firmware, arch, direct kernel, serial,
-  gdb stub); QMP against a fake on a unix socket (state, power down, quit).
+  gdb stub, KVM or TCG, virgl, venus or 2D); QMP against a fake on a unix
+  socket (state, power down, quit).
+- The acceleration check on a fake `/dev/kvm` and `/proc/cpuinfo`: access
+  by ACL with no group, access denied, no virtualisation, another
+  architecture.
 - Dockur's Compose file and environment file (the pinned image, loopback
   ports, the password only in the 0600 file).
 - Waydroid's checks and commands against a fake `waydroid`.
@@ -303,7 +348,8 @@ Each its own PR, each usable on its own:
 2. **Machines.** `machine.toml`, many machines, the list and the panel,
    templates.
 3. **QEMU.** Linux, FreeBSD and custom systems: ISO, disk or kernel, BIOS
-   or UEFI, other architectures, the serial console, the gdb stub.
+   or UEFI, other architectures, the serial console, the gdb stub; KVM with
+   emulation as the fallback, and virgl 3D for the guests that have it.
 4. **Android.** The Waydroid backend.
 5. **Seamless.** Linux and FreeBSD with waypipe, Android multi-window,
    Windows RemoteApp; the desktop entries and window rules.
@@ -315,3 +361,5 @@ Each its own PR, each usable on its own:
   Windows; which folder by default?
 - USB pass-through for a custom OS on real devices: later, behind a
   switch.
+- GPU pass-through (VFIO) for 3D in Windows: worth it for a second graphics
+  card only; later, if at all.
