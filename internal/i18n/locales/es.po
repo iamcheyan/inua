@@ -9634,7 +9634,7 @@ msgstr "Un perfil equilibrado reserva memoria y CPU para tu sistema."
 
 #: internal/vmui/window.go:599
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
-msgstr ""
+msgstr "Quedan archivos de un intento anterior. La instalación los reutiliza; bórralos para empezar de nuevo."
 
 #: internal/vmui/window.go:601
 #: ui/vm.ui:447
@@ -9656,7 +9656,7 @@ msgstr "La instalación está en pausa. Continúa para reanudarla."
 
 #: internal/vmui/window.go:672
 msgid "Windows is starting; ready in a minute or two."
-msgstr ""
+msgstr "Windows está iniciando; listo en un minuto o dos."
 
 #: internal/vmui/window.go:697
 msgid "This system is missing something Windows needs"
@@ -9664,7 +9664,7 @@ msgstr "A este sistema le falta algo que Windows necesita"
 
 #: internal/vmui/window.go:700
 msgid "Files from a previous attempt are still here"
-msgstr ""
+msgstr "Quedan archivos de un intento anterior"
 
 #: internal/vmui/window.go:702
 msgid "Not installed yet"
@@ -9681,11 +9681,11 @@ msgstr "Instalando Windows"
 
 #: internal/vmui/window.go:710
 msgid "Installation paused"
-msgstr ""
+msgstr "Instalación en pausa"
 
 #: internal/vmui/window.go:715
 msgid "Windows is starting"
-msgstr ""
+msgstr "Windows está iniciando"
 
 #: internal/vmui/window.go:717
 msgid "Windows is running"
@@ -11579,11 +11579,11 @@ msgstr "[DISCO]"
 
 #: ui/vm.ui:535
 msgid "Previous files"
-msgstr ""
+msgstr "Archivos anteriores"
 
 #: ui/vm.ui:544
 msgid "Permanently deletes leftover install files. Cannot be undone."
-msgstr ""
+msgstr "Elimina permanentemente los archivos de la instalación anterior. No se puede deshacer."
 
 #: ui/vm.ui:604
 #: ui/vm.ui:855
@@ -11626,11 +11626,11 @@ msgstr "Detiene el contenedor; el disco se conserva. Reabre para continuar."
 
 #: ui/vm.ui:788
 msgid "Abandon installation"
-msgstr ""
+msgstr "Abandonar la instalación"
 
 #: ui/vm.ui:797
 msgid "Removes the project so you can start over. Downloaded files stay."
-msgstr ""
+msgstr "Elimina el proyecto para empezar de nuevo. Los archivos descargados se conservan."
 
 #: ui/vm.ui:907
 #: ui/vm.ui:1536
@@ -11639,7 +11639,7 @@ msgstr "Consola web"
 
 #: ui/vm.ui:916
 msgid "The guest screen is in your browser until RDP is ready."
-msgstr ""
+msgstr "La pantalla del invitado está en tu navegador hasta que RDP esté listo."
 
 #: ui/vm.ui:960
 #: ui/vm.ui:1588
@@ -11677,7 +11677,7 @@ msgstr "Eliminar la VM"
 
 #: ui/vm.ui:1352
 msgid "Deletes the container and project. The disk and its password stay."
-msgstr ""
+msgstr "Elimina el contenedor y el proyecto. El disco y su contraseña se conservan."
 
 #: ui/vm.ui:1387
 msgid "Delete disk data"
@@ -11693,7 +11693,7 @@ msgstr "Abre FreeRDP."
 
 #: ui/vm.ui:1545
 msgid "The guest screen in the browser."
-msgstr ""
+msgstr "La pantalla del invitado en el navegador."
 
 #: ui/weather.ui:30
 msgid "Previous place"

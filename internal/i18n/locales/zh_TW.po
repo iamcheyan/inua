@@ -9588,7 +9588,7 @@ msgstr "均衡設定會為你的系統保留記憶體與 CPU。"
 
 #: internal/vmui/window.go:599
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
-msgstr ""
+msgstr "上次安裝留下的檔案還在。繼續安裝會重複使用；刪除後則從頭開始。"
 
 #: internal/vmui/window.go:601
 #: ui/vm.ui:447
@@ -9610,7 +9610,7 @@ msgstr "安裝已暫停。繼續即可恢復。"
 
 #: internal/vmui/window.go:672
 msgid "Windows is starting; ready in a minute or two."
-msgstr ""
+msgstr "Windows 正在啟動，大約一兩分鐘後就緒。"
 
 #: internal/vmui/window.go:697
 msgid "This system is missing something Windows needs"
@@ -9618,7 +9618,7 @@ msgstr "此系統缺少 Windows 所需的元件"
 
 #: internal/vmui/window.go:700
 msgid "Files from a previous attempt are still here"
-msgstr ""
+msgstr "上次安裝留下的檔案還在"
 
 #: internal/vmui/window.go:702
 msgid "Not installed yet"
@@ -9635,11 +9635,11 @@ msgstr "正在安裝 Windows"
 
 #: internal/vmui/window.go:710
 msgid "Installation paused"
-msgstr ""
+msgstr "安裝已暫停"
 
 #: internal/vmui/window.go:715
 msgid "Windows is starting"
-msgstr ""
+msgstr "Windows 正在啟動"
 
 #: internal/vmui/window.go:717
 msgid "Windows is running"
@@ -11533,11 +11533,11 @@ msgstr "[磁碟]"
 
 #: ui/vm.ui:535
 msgid "Previous files"
-msgstr ""
+msgstr "上次留下的檔案"
 
 #: ui/vm.ui:544
 msgid "Permanently deletes leftover install files. Cannot be undone."
-msgstr ""
+msgstr "永久刪除上次安裝留下的檔案，無法復原。"
 
 #: ui/vm.ui:604
 #: ui/vm.ui:855
@@ -11580,11 +11580,11 @@ msgstr "停止容器並保留磁碟；重新開啟可繼續。"
 
 #: ui/vm.ui:788
 msgid "Abandon installation"
-msgstr ""
+msgstr "放棄安裝"
 
 #: ui/vm.ui:797
 msgid "Removes the project so you can start over. Downloaded files stay."
-msgstr ""
+msgstr "移除專案以便重新開始。已下載的檔案會保留。"
 
 #: ui/vm.ui:907
 #: ui/vm.ui:1536
@@ -11593,7 +11593,7 @@ msgstr "網頁主控台"
 
 #: ui/vm.ui:916
 msgid "The guest screen is in your browser until RDP is ready."
-msgstr ""
+msgstr "在 RDP 就緒之前，客體畫面在瀏覽器中。"
 
 #: ui/vm.ui:960
 #: ui/vm.ui:1588
@@ -11631,7 +11631,7 @@ msgstr "移除虛擬機"
 
 #: ui/vm.ui:1352
 msgid "Deletes the container and project. The disk and its password stay."
-msgstr ""
+msgstr "刪除容器與專案。磁碟與密碼會保留。"
 
 #: ui/vm.ui:1387
 msgid "Delete disk data"
@@ -11647,7 +11647,7 @@ msgstr "開啟 FreeRDP。"
 
 #: ui/vm.ui:1545
 msgid "The guest screen in the browser."
-msgstr ""
+msgstr "瀏覽器中的客體畫面。"
 
 #: ui/weather.ui:30
 msgid "Previous place"

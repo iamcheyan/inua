@@ -9588,7 +9588,7 @@ msgstr "균형 설정은 시스템을 위해 메모리와 CPU를 남깁니다."
 
 #: internal/vmui/window.go:599
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
-msgstr ""
+msgstr "이전 시도의 파일이 아직 있습니다. 설치는 그것들을 다시 사용합니다. 처음부터 하려면 삭제하세요."
 
 #: internal/vmui/window.go:601
 #: ui/vm.ui:447
@@ -9610,7 +9610,7 @@ msgstr "설치가 일시 중지되었습니다. 계속하면 다시 시작합니
 
 #: internal/vmui/window.go:672
 msgid "Windows is starting; ready in a minute or two."
-msgstr ""
+msgstr "Windows가 시작 중입니다. 1~2분이면 준비됩니다."
 
 #: internal/vmui/window.go:697
 msgid "This system is missing something Windows needs"
@@ -9618,7 +9618,7 @@ msgstr "이 시스템에는 Windows에 필요한 것이 없습니다"
 
 #: internal/vmui/window.go:700
 msgid "Files from a previous attempt are still here"
-msgstr ""
+msgstr "이전 시도의 파일이 아직 있습니다"
 
 #: internal/vmui/window.go:702
 msgid "Not installed yet"
@@ -9635,11 +9635,11 @@ msgstr "Windows 설치 중"
 
 #: internal/vmui/window.go:710
 msgid "Installation paused"
-msgstr ""
+msgstr "설치 일시 중지"
 
 #: internal/vmui/window.go:715
 msgid "Windows is starting"
-msgstr ""
+msgstr "Windows 시작 중"
 
 #: internal/vmui/window.go:717
 msgid "Windows is running"
@@ -11533,11 +11533,11 @@ msgstr "[디스크]"
 
 #: ui/vm.ui:535
 msgid "Previous files"
-msgstr ""
+msgstr "이전 파일"
 
 #: ui/vm.ui:544
 msgid "Permanently deletes leftover install files. Cannot be undone."
-msgstr ""
+msgstr "이전 설치 파일을 영구히 삭제합니다. 되돌릴 수 없습니다."
 
 #: ui/vm.ui:604
 #: ui/vm.ui:855
@@ -11580,11 +11580,11 @@ msgstr "컨테이너를 중지하고 디스크는 남깁니다. 다시 열면 �
 
 #: ui/vm.ui:788
 msgid "Abandon installation"
-msgstr ""
+msgstr "설치 포기"
 
 #: ui/vm.ui:797
 msgid "Removes the project so you can start over. Downloaded files stay."
-msgstr ""
+msgstr "프로젝트를 제거해 다시 시작할 수 있게 합니다. 내려받은 파일은 남습니다."
 
 #: ui/vm.ui:907
 #: ui/vm.ui:1536
@@ -11593,7 +11593,7 @@ msgstr "웹 콘솔"
 
 #: ui/vm.ui:916
 msgid "The guest screen is in your browser until RDP is ready."
-msgstr ""
+msgstr "RDP가 준비될 때까지 게스트 화면은 브라우저에 있습니다."
 
 #: ui/vm.ui:960
 #: ui/vm.ui:1588
@@ -11631,7 +11631,7 @@ msgstr "가상 머신 제거"
 
 #: ui/vm.ui:1352
 msgid "Deletes the container and project. The disk and its password stay."
-msgstr ""
+msgstr "컨테이너와 프로젝트를 삭제합니다. 디스크와 비밀번호는 남습니다."
 
 #: ui/vm.ui:1387
 msgid "Delete disk data"
@@ -11647,7 +11647,7 @@ msgstr "FreeRDP를 엽니다."
 
 #: ui/vm.ui:1545
 msgid "The guest screen in the browser."
-msgstr ""
+msgstr "브라우저에 있는 게스트 화면."
 
 #: ui/weather.ui:30
 msgid "Previous place"

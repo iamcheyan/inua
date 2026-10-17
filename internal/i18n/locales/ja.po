@@ -9588,7 +9588,7 @@ msgstr "バランスの取れた設定は、システム用にメモリと CPU �
 
 #: internal/vmui/window.go:599
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
-msgstr ""
+msgstr "前回のインストールで残ったファイルがあります。インストールはそれらを使い回します。最初からやり直すには削除してください。"
 
 #: internal/vmui/window.go:601
 #: ui/vm.ui:447
@@ -9610,7 +9610,7 @@ msgstr "インストールは一時停止しています。続けると再開し
 
 #: internal/vmui/window.go:672
 msgid "Windows is starting; ready in a minute or two."
-msgstr ""
+msgstr "Windows を起動しています。1〜2 分ほどで使えます。"
 
 #: internal/vmui/window.go:697
 msgid "This system is missing something Windows needs"
@@ -9618,7 +9618,7 @@ msgstr "このシステムには Windows に必要なものが欠けています
 
 #: internal/vmui/window.go:700
 msgid "Files from a previous attempt are still here"
-msgstr ""
+msgstr "前回のインストールで残ったファイルがあります"
 
 #: internal/vmui/window.go:702
 msgid "Not installed yet"
@@ -9635,11 +9635,11 @@ msgstr "Windows をインストール中"
 
 #: internal/vmui/window.go:710
 msgid "Installation paused"
-msgstr ""
+msgstr "インストールは一時停止中"
 
 #: internal/vmui/window.go:715
 msgid "Windows is starting"
-msgstr ""
+msgstr "Windows を起動しています"
 
 #: internal/vmui/window.go:717
 msgid "Windows is running"
@@ -11533,11 +11533,11 @@ msgstr "[ディスク]"
 
 #: ui/vm.ui:535
 msgid "Previous files"
-msgstr ""
+msgstr "前回のファイル"
 
 #: ui/vm.ui:544
 msgid "Permanently deletes leftover install files. Cannot be undone."
-msgstr ""
+msgstr "前回のインストールで残ったファイルを完全に削除します。元に戻せません。"
 
 #: ui/vm.ui:604
 #: ui/vm.ui:855
@@ -11580,11 +11580,11 @@ msgstr "コンテナーを停止し、ディスクは残します。開き直せ
 
 #: ui/vm.ui:788
 msgid "Abandon installation"
-msgstr ""
+msgstr "インストールを中止"
 
 #: ui/vm.ui:797
 msgid "Removes the project so you can start over. Downloaded files stay."
-msgstr ""
+msgstr "プロジェクトを削除してやり直せるようにします。ダウンロード済みのファイルは残ります。"
 
 #: ui/vm.ui:907
 #: ui/vm.ui:1536
@@ -11593,7 +11593,7 @@ msgstr "Web コンソール"
 
 #: ui/vm.ui:916
 msgid "The guest screen is in your browser until RDP is ready."
-msgstr ""
+msgstr "RDP の準備ができるまで、ゲスト画面はブラウザーに表示されます。"
 
 #: ui/vm.ui:960
 #: ui/vm.ui:1588
@@ -11631,7 +11631,7 @@ msgstr "仮想マシンを削除"
 
 #: ui/vm.ui:1352
 msgid "Deletes the container and project. The disk and its password stay."
-msgstr ""
+msgstr "コンテナーとプロジェクトを削除します。ディスクとパスワードは残ります。"
 
 #: ui/vm.ui:1387
 msgid "Delete disk data"
@@ -11647,7 +11647,7 @@ msgstr "FreeRDP を開きます。"
 
 #: ui/vm.ui:1545
 msgid "The guest screen in the browser."
-msgstr ""
+msgstr "ブラウザーに表示されるゲスト画面。"
 
 #: ui/weather.ui:30
 msgid "Previous place"
