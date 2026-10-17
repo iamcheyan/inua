@@ -412,7 +412,10 @@ It needs Docker Engine with Compose v2, KVM (`/dev/kvm`), FreeRDP,
 packages that provide it. The baseline is 4 GiB of memory, 2 CPUs and 64 GiB
 of disk, adjusted to the host's resources. There is no ISO to prepare: the
 container fetches Windows' own installation media and installs it
-unattended, which is why the first installation takes tens of minutes. The
+unattended, which is why the first installation takes tens of minutes.
+**Choose ISO…** on the setup page installs from an ISO of yours instead (a
+Windows 10 one, say): the container takes it read-only, and Windows boots
+from its disk afterwards, so the ISO may go once Windows is installed. The
 image is pinned to a version and digest, every port binds to 127.0.0.1, and
 the guest password is generated once and kept in the Secret Service — never
 in the Compose project or in your configuration. Two things the window says

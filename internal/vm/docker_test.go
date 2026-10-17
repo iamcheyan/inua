@@ -269,6 +269,93 @@ func TestInstallWritesParsableCompose(t *testing.T) {
 	}
 }
 
+// composeVolumes are the windows service's volumes as Compose reads them.
+func composeVolumes(t *testing.T, path string) []any {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc struct {
+		Services map[string]struct {
+			Volumes []any `yaml:"volumes"`
+		} `yaml:"services"`
+	}
+	if err := yaml.Unmarshal(data, &doc); err != nil {
+		t.Fatalf("compose is not valid YAML: %v\n%s", err, data)
+	}
+	return doc.Services["windows"].Volumes
+}
+
+// isoBind is the /boot.iso bind among volumes, nil when there is none.
+func isoBind(volumes []any) map[string]any {
+	for _, v := range volumes {
+		if m, ok := v.(map[string]any); ok && m["target"] == "/boot.iso" {
+			return m
+		}
+	}
+	return nil
+}
+
+// An ISO of the user's is what Dockur installs from, bound read-only so it
+// is never written; with none, nothing is bound there and Dockur downloads.
+func TestInstallBindsTheInstallerISOReadOnly(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	if bind := isoBind(composeVolumes(t, b.composePath)); bind != nil {
+		t.Fatalf("an ISO is bound with none chosen: %v", bind)
+	}
+
+	// A colon in the path would split a short volume entry.
+	cfg.ISOPath = filepath.Join(t.TempDir(), "Win10: 22H2.iso")
+	if err := os.WriteFile(cfg.ISOPath, []byte("CD001"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install with an ISO: %v", err)
+	}
+	bind := isoBind(composeVolumes(t, b.composePath))
+	if bind == nil || bind["type"] != "bind" || bind["source"] != cfg.ISOPath || bind["read_only"] != true {
+		t.Fatalf("the ISO is not bound read-only to /boot.iso: %v", bind)
+	}
+}
+
+func TestInstallRefusesAnISOThatIsNotThere(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	cfg.ISOPath = filepath.Join(t.TempDir(), "missing.iso")
+	if err := b.Install(context.Background(), cfg); err == nil {
+		t.Fatal("Install accepted an ISO that is not there")
+	}
+}
+
+// Once Windows is installed the ISO may go: a start then leaves its bind
+// out, since a bind of a missing file would stop the container starting.
+func TestStartLeavesOutAnISOThatIsGone(t *testing.T) {
+	b, cfg, _, _ := newTestBackend(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cfg.ISOPath = filepath.Join(t.TempDir(), "win.iso")
+	if err := os.WriteFile(cfg.ISOPath, []byte("CD001"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Install(ctx, cfg); err != nil {
+		t.Fatalf("install: %v", err)
+	}
+	if err := os.Remove(cfg.ISOPath); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Start(ctx); err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	if bind := isoBind(composeVolumes(t, b.composePath)); bind != nil {
+		t.Fatalf("a missing ISO is still bound: %v", bind)
+	}
+}
+
 func TestRemoveKeepsDataUntilExplicitlyDeleted(t *testing.T) {
 	b, cfg, _, _ := newTestBackend(t)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

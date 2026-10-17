@@ -18,6 +18,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/keyring"
 	"github.com/lyricat/inua/internal/vm"
 )
@@ -336,6 +337,15 @@ func (s *vmService) Start() error {
 	defer func() { s.end(opErr) }()
 	if s.backend.Secrets == nil {
 		opErr = errors.New("the Secret Service is unavailable; the Windows VM password cannot be kept safely")
+		return opErr
+	}
+	s.mu.Lock()
+	iso, installed := s.config.ISOPath, s.installed
+	s.mu.Unlock()
+	if iso != "" && !installed && !vm.ISOPresent(iso) {
+		// Without it Dockur would download Windows 11 instead, which is
+		// not what was chosen.
+		opErr = errors.New(i18n.Tf("Windows installs from %s, which is not there any more.", iso))
 		return opErr
 	}
 	// The wait is unbounded in practice on a first install: the image

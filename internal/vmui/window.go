@@ -3,10 +3,13 @@ package vmui
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
+	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/appui"
@@ -109,6 +112,11 @@ type vmWindow struct {
 	setupDisk                       gtk.Box
 	setupRemoveData                 gtk.Button
 	setupNote                       gtk.Label
+	isoDesc                         gtk.Label
+	iso, isoClear                   gtk.Button
+	isoPath                         string // the installer ISO chosen, "" to download Windows
+	isoDialog                       *gtk.FileDialog
+	onISOChosen                     gio.AsyncReadyCallback
 
 	// provisioning
 	progress                                 gtk.ProgressBar
@@ -171,6 +179,9 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_setup_disk", &v.setupDisk)
 	builder.Get("vm_setup_remove_data", &v.setupRemoveData)
 	builder.Get("vm_setup_note", &v.setupNote)
+	builder.Get("vm_iso_desc", &v.isoDesc)
+	builder.Get("vm_iso", &v.iso)
+	builder.Get("vm_iso_clear", &v.isoClear)
 	builder.Get("vm_progress", &v.progress)
 	builder.Get("vm_progress_text", &v.progressText)
 	builder.Get("vm_console", &v.console)
@@ -195,7 +206,8 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_stop", &v.stop)
 	builder.Close()
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
-	for _, b := range []*gtk.Button{&v.accept, &v.advancedToggle, &v.install,
+	v.onISOChosen = func(_, result, _ uintptr) { v.isoChosen(result) }
+	for _, b := range []*gtk.Button{&v.accept, &v.advancedToggle, &v.install, &v.iso, &v.isoClear,
 		&v.console, &v.provStart, &v.provStop, &v.provRemove, &v.readySave, &v.start,
 		&v.connect, &v.consoleReady, &v.stop, &v.remove, &v.removeData, &v.setupRemoveData,
 		&v.bootConsole, &v.bootStop} {
@@ -243,6 +255,11 @@ func (v *vmWindow) clicked(b gtk.Button) {
 		v.advanced.SetRevealChild(!v.advanced.GetRevealChild())
 	case "accept":
 		v.acceptProfile()
+	case "iso":
+		v.chooseISO()
+	case "iso_clear":
+		v.isoPath = ""
+		v.showSetup(v.manager.Snapshot())
 	case "ready_save":
 		v.run(func() error { return v.manager.Configure(v.readyConfig()) })
 	case "install":
@@ -569,20 +586,95 @@ func (v *vmWindow) showSetup(s VMSnapshot) {
 		v.memory.SetValue(float64(c.MemoryMiB))
 		v.cpus.SetValue(float64(c.CPUs))
 		v.disk.SetValue(float64(c.DiskGiB))
+		v.isoPath = c.ISOPath
 		v.setupFilled = true
 	}
 	v.setupSummary.SetText(vmProfileText(v.setupConfig()))
 	v.profileDesc.SetText(i18n.T("A balanced profile leaves memory and CPU for your system."))
-	if s.HasDisk {
-		v.setupNote.SetText(i18n.T("Files from a previous attempt are still here. Install reuses them; delete them to start over."))
-	} else {
-		v.setupNote.SetText(i18n.T("Downloads about 8 GB and installs Windows; takes 30+ minutes."))
-	}
+	v.showInstaller(s)
 	v.setupDisk.SetVisible(s.HasDisk)
 	v.accept.SetSensitive(!s.Busy)
-	v.install.SetSensitive(!s.Busy)
+	// An ISO that is gone cannot be installed from; the line above says so.
+	v.install.SetSensitive(!s.Busy && (v.isoPath == "" || vm.ISOPresent(v.isoPath)))
 	v.advancedToggle.SetSensitive(!s.Busy)
 	v.setupRemoveData.SetSensitive(!s.Busy)
+	v.iso.SetSensitive(!s.Busy && v.isoDialog == nil)
+	v.isoClear.SetSensitive(!s.Busy)
+}
+
+// showInstaller says where Windows will come from, and what installing it
+// takes from there.
+func (v *vmWindow) showInstaller(s VMSnapshot) {
+	v.isoClear.SetVisible(v.isoPath != "")
+	switch {
+	case v.isoPath == "":
+		v.isoDesc.SetText(i18n.T("Windows 11, downloaded from Microsoft."))
+		v.iso.SetLabel(i18n.T("Choose ISO…"))
+	case vm.ISOPresent(v.isoPath):
+		v.isoDesc.SetText(filepath.Base(v.isoPath))
+		v.iso.SetLabel(i18n.T("Change…"))
+	default:
+		v.isoDesc.SetText(i18n.Tf("%s is not there any more.", filepath.Base(v.isoPath)))
+		v.iso.SetLabel(i18n.T("Change…"))
+	}
+	switch {
+	case s.HasDisk:
+		v.setupNote.SetText(i18n.T("Files from a previous attempt are still here. Install reuses them; delete them to start over."))
+	case v.isoPath != "":
+		v.setupNote.SetText(i18n.T("Installs Windows from the ISO, which stays as it is; takes 20+ minutes."))
+	default:
+		v.setupNote.SetText(i18n.T("Downloads about 8 GB and installs Windows; takes 30+ minutes."))
+	}
+}
+
+// chooseISO asks for the installer ISO, starting where downloads land.
+func (v *vmWindow) chooseISO() {
+	if v.isoDialog != nil {
+		return
+	}
+	d := gtk.NewFileDialog()
+	d.SetTitle(i18n.T("Choose a Windows ISO"))
+	filter := gtk.NewFileFilter()
+	filter.SetName(i18n.T("Disc images (ISO)"))
+	filter.AddSuffix("iso")
+	d.SetDefaultFilter(filter)
+	filter.Unref()
+	dir := filepath.Dir(v.isoPath)
+	if v.isoPath == "" {
+		if home, err := os.UserHomeDir(); err == nil {
+			dir = filepath.Join(home, "Downloads")
+		}
+	}
+	if dir != "" && dir != "." {
+		f := gio.FileNewForPath(dir)
+		d.SetInitialFolder(f)
+		(&gobject.Object{Ptr: f.GoPointer()}).Unref()
+	}
+	v.isoDialog = d
+	v.iso.SetSensitive(false)
+	d.Open(&v.win.Window, nil, &v.onISOChosen, 0)
+}
+
+// isoChosen takes the dialog's answer: a file, or nothing when cancelled.
+func (v *vmWindow) isoChosen(result uintptr) {
+	d := v.isoDialog
+	v.isoDialog = nil
+	if d == nil {
+		return
+	}
+	defer d.Unref()
+	v.iso.SetSensitive(true)
+	file, err := d.OpenFinish(&gio.AsyncResultBase{Ptr: result})
+	if err != nil || file == nil {
+		return // cancelled
+	}
+	path := file.GetPath()
+	(&gobject.Object{Ptr: file.GoPointer()}).Unref()
+	if path == "" || v.closed {
+		return
+	}
+	v.isoPath = filepath.Clean(path)
+	v.showSetup(v.manager.Snapshot())
 }
 
 // showProvisioning fills the page shown while there is a project whose
@@ -718,6 +810,7 @@ func (v *vmWindow) setupConfig() vm.Config {
 	c.MemoryMiB = int(v.memory.GetValueAsInt())
 	c.CPUs = int(v.cpus.GetValueAsInt())
 	c.DiskGiB = int(v.disk.GetValueAsInt())
+	c.ISOPath = v.isoPath
 	return c
 }
 

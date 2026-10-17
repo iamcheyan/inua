@@ -424,6 +424,61 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                     <style>
                                       <class name="row"/>
                                     </style>
+                                    <property name="spacing">8</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">1</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="valign">3</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <style>
+                                              <class name="label"/>
+                                            </style>
+                                            <property name="label" translatable="yes">Installer</property>
+                                            <property name="xalign">0</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="vm_iso_desc">
+                                            <style>
+                                              <class name="sub"/>
+                                            </style>
+                                            <property name="xalign">0</property>
+                                            <property name="wrap">true</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="vm_iso_clear">
+                                        <style>
+                                          <class name="outlined"/>
+                                        </style>
+                                        <property name="name">iso_clear</property>
+                                        <property name="label" translatable="yes">Download instead</property>
+                                        <property name="valign">3</property>
+                                        <property name="visible">false</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="vm_iso">
+                                        <style>
+                                          <class name="outlined"/>
+                                        </style>
+                                        <property name="name">iso</property>
+                                        <property name="label" translatable="yes">Choose ISO…</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="row"/>
+                                    </style>
                                     <child>
                                       <object class="GtkBox">
                                         <property name="orientation">1</property>

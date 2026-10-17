@@ -73,7 +73,8 @@ installs itself; then **Start**, **Connect** and **Stop**. Removing the
 guest keeps its disk and its password — deleting the Windows installation
 is its own, confirmed action. There is no ISO to prepare: the container
 fetches Windows' own installation media and installs it unattended, which
-is what takes tens of minutes.
+is what takes tens of minutes. **Choose ISO…** installs from an ISO of
+yours instead, which the container only reads.
 
 `inua-vm --doctor` and `inua-vm --status [--json]` print the same checks for
 scripts, and so does `inua vm doctor|status`; `inua-vm --start` and

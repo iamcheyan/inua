@@ -121,16 +121,46 @@ func (b *DockerBackend) Install(ctx context.Context, cfg Config) error {
 	}
 	defer clear(password)
 
+	if cfg.ISOPath != "" && !ISOPresent(cfg.ISOPath) {
+		return vmError("install", ErrorInvalidConfig, fmt.Errorf("the installer ISO %s cannot be read", cfg.ISOPath))
+	}
+
 	envPath := filepath.Join(composeDir, ".guest.env")
 	if err := writeAtomic(envPath, []byte("PASSWORD="+string(password)+"\n"), 0600); err != nil {
 		return vmError("install", ErrorBackend, err)
 	}
-	content := fmt.Sprintf("services:\n  windows:\n    image: %s\n    container_name: inua-%s\n    environment:\n      VERSION: \"11\"\n      USERNAME: \"%s\"\n      RAM_SIZE: \"%dG\"\n      CPU_CORES: \"%d\"\n      DISK_SIZE: \"%dG\"\n    env_file:\n      - %s\n    devices:\n      - /dev/kvm\n      - /dev/net/tun\n    cap_add:\n      - NET_ADMIN\n    ports:\n      - \"127.0.0.1:%d:3389/tcp\"\n      - \"127.0.0.1:%d:3389/udp\"\n      - \"127.0.0.1:8006:8006\"\n    volumes:\n      - %s\n    restart: unless-stopped\n    stop_grace_period: 2m\n", dockerImage, cfg.Name, GuestUser, cfg.MemoryMiB/1024, cfg.CPUs, cfg.DiskGiB, yamlQuote(filepath.Join(composeDir, ".guest.env")), cfg.RDPPort, cfg.RDPPort, yamlQuote(cfg.DataDir+":/storage"))
-	if err := writeAtomic(composePath, []byte(content), 0600); err != nil {
+	if err := writeCompose(composePath, cfg); err != nil {
 		return vmError("install", ErrorBackend, err)
 	}
 	b.Config, b.composePath, b.secretID = cfg, composePath, secretID
 	return nil
+}
+
+// writeCompose writes the Compose project for cfg at path.
+//
+// An installer ISO of the user's is bound read-only to /boot.iso, where
+// Dockur installs from it instead of downloading Windows, and which it never
+// writes. The bind is left out while the file is not there: once Windows is
+// installed it boots from its disk, and a bind of a missing file would stop
+// the container from starting at all.
+func writeCompose(path string, cfg Config) error {
+	volumes := "      - " + yamlQuote(cfg.DataDir+":/storage") + "\n"
+	if cfg.ISOPath != "" && ISOPresent(cfg.ISOPath) {
+		volumes += "      - type: bind\n        source: " + yamlQuote(cfg.ISOPath) + "\n        target: /boot.iso\n        read_only: true\n"
+	}
+	content := fmt.Sprintf("services:\n  windows:\n    image: %s\n    container_name: inua-%s\n    environment:\n      VERSION: \"11\"\n      USERNAME: \"%s\"\n      RAM_SIZE: \"%dG\"\n      CPU_CORES: \"%d\"\n      DISK_SIZE: \"%dG\"\n    env_file:\n      - %s\n    devices:\n      - /dev/kvm\n      - /dev/net/tun\n    cap_add:\n      - NET_ADMIN\n    ports:\n      - \"127.0.0.1:%d:3389/tcp\"\n      - \"127.0.0.1:%d:3389/udp\"\n      - \"127.0.0.1:8006:8006\"\n    volumes:\n%s    restart: unless-stopped\n    stop_grace_period: 2m\n", dockerImage, cfg.Name, GuestUser, cfg.MemoryMiB/1024, cfg.CPUs, cfg.DiskGiB, yamlQuote(filepath.Join(filepath.Dir(path), ".guest.env")), cfg.RDPPort, cfg.RDPPort, volumes)
+	return writeAtomic(path, []byte(content), 0600)
+}
+
+// ISOPresent reports whether path is an installer ISO that can be read.
+func ISOPresent(path string) bool {
+	f, err := os.Open(path)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	st, err := f.Stat()
+	return err == nil && st.Mode().IsRegular() && st.Size() > 0
 }
 
 // Start brings the container up. It does not wait for Windows: on a first
@@ -151,6 +181,10 @@ func (b *DockerBackend) Start(ctx context.Context) error {
 	defer clear(password)
 	envPath := filepath.Join(filepath.Dir(b.composePath), ".guest.env")
 	if err := writeAtomic(envPath, []byte("PASSWORD="+string(password)+"\n"), 0600); err != nil {
+		return vmError("start", ErrorBackend, err)
+	}
+	// Written afresh, so the installer ISO is bound only while it is there.
+	if err := writeCompose(b.composePath, b.Config); err != nil {
 		return vmError("start", ErrorBackend, err)
 	}
 	if _, err := b.compose(ctx, "up", "-d"); err != nil {

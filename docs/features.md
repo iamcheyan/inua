@@ -11,7 +11,8 @@ group, and started from the command line. Its window shows one page at a
 time, so it never offers a control that belongs to another stage: the host
 checks to fix when something is missing (**Fix** applies the ones inua can
 apply itself, through the session's polkit dialog); a recommended profile,
-an advanced editor behind it, and **Install Windows** when nothing is
+an advanced editor behind it, the installer (Microsoft's download, or an
+ISO of yours with **Choose ISO…**) and **Install Windows** when nothing is
 installed yet; progress and the **web console** while Docker pulls the
 image and Windows installs itself, with starting and stopping beside it; and
 then **Start**, or **Connect** and **Stop** while the guest runs, with its

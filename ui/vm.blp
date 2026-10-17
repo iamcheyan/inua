@@ -313,6 +313,47 @@ ApplicationWindow vm {
                 styles ["section-body"]
                 orientation: vertical;
 
+                // Where Windows comes from: Microsoft's download, or an
+                // installer ISO of the user's. Go fills the line under it.
+                Box {
+                  styles ["row"]
+                  spacing: 8;
+
+                  Box {
+                    orientation: vertical;
+                    hexpand: true;
+                    valign: center;
+                    spacing: 2;
+
+                    Label {
+                      styles ["label"]
+                      label:  _("Installer");
+                      xalign: 0;
+                    }
+
+                    Label vm_iso_desc {
+                      styles ["sub"]
+                      xalign: 0;
+                      wrap: true;
+                    }
+                  }
+
+                  Button vm_iso_clear {
+                    styles ["outlined"]
+                    name: "iso_clear";
+                    label:  _("Download instead");
+                    valign: center;
+                    visible: false;
+                  }
+
+                  Button vm_iso {
+                    styles ["outlined"]
+                    name: "iso";
+                    label:  _("Choose ISO…");
+                    valign: center;
+                  }
+                }
+
                 Box {
                   styles ["row"]
 
