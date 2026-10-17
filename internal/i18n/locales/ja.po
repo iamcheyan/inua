@@ -423,7 +423,7 @@ msgstr "雷雨"
 
 #: internal/apps/weather/weather.go:214
 #: internal/appui/sysmon.go:1075
-#: internal/vmui/window.go:1210
+#: internal/vmui/window.go:1213
 msgid "Unknown"
 msgstr "不明"
 
@@ -510,8 +510,8 @@ msgstr "ビデオ"
 #: internal/appui/pass.go:801
 #: internal/filesui/cards.go:373
 #: internal/ui/clipboard.go:459
-#: internal/vmui/window.go:988
-#: internal/vmui/window.go:1013
+#: internal/vmui/window.go:991
+#: internal/vmui/window.go:1016
 #: ui/clock.ui:231
 #: ui/gpg.ui:1572
 #: ui/pass.ui:249
@@ -1393,10 +1393,10 @@ msgstr "%s · %s"
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
-#: internal/vmui/window.go:960
-#: internal/vmui/window.go:961
-#: internal/vmui/window.go:1005
-#: internal/vmui/window.go:1006
+#: internal/vmui/window.go:963
+#: internal/vmui/window.go:964
+#: internal/vmui/window.go:1008
+#: internal/vmui/window.go:1009
 #: ui/stocks.ui:292
 #: ui/vm.ui:1218
 #: ui/vm.ui:1773
@@ -2671,7 +2671,7 @@ msgid "Replace the installed %s?"
 msgstr "インストール済みの %s を置き換えますか？"
 
 #: internal/appui/workshop_manager.go:154
-#: internal/vmui/window.go:757
+#: internal/vmui/window.go:760
 msgid "Install"
 msgstr "インストール"
 
@@ -2757,7 +2757,7 @@ msgid "Stopped."
 msgstr "停止した。"
 
 #: internal/assistantui/assistantui.go:456
-#: internal/vmui/window.go:1148
+#: internal/vmui/window.go:1151
 msgid "Something went wrong: %s"
 msgstr "問題が発生しました: %s"
 
@@ -9466,8 +9466,8 @@ msgid "Could not open the link"
 msgstr "リンクを開けませんでした"
 
 #: internal/vmui/app.go:22
-#: internal/vmui/window.go:484
-#: internal/vmui/window.go:1176
+#: internal/vmui/window.go:486
+#: internal/vmui/window.go:1179
 #: ui/vm.ui:14
 #: ui/vm.ui:38
 #: ui/vm.ui:98
@@ -9475,292 +9475,287 @@ msgstr "リンクを開けませんでした"
 msgid "Virtual machines"
 msgstr "仮想マシン"
 
-#: internal/vmui/window.go:477
+#: internal/vmui/window.go:479
 msgid "New machine"
 msgstr "新しいマシン"
 
-#: internal/vmui/window.go:478
+#: internal/vmui/window.go:480
 msgid "Pick what the new machine runs."
 msgstr "新しいマシンが何を動かすかを選びます。"
 
-#: internal/vmui/window.go:485
+#: internal/vmui/window.go:487
 msgid "Machines keep running with this window closed."
 msgstr "このウィンドウを閉じてもマシンは動き続けます。"
 
-#: internal/vmui/window.go:492
+#: internal/vmui/window.go:494
 #: ui/vm.ui:407
 msgid "No backend for this machine"
 msgstr "このマシンにはバックエンドがありません"
 
-#: internal/vmui/window.go:493
+#: internal/vmui/window.go:495
 msgid "This machine needs the %s backend, which this build does not have."
 msgstr "このマシンには %s バックエンドが必要ですが、このビルドにはありません。"
 
-#: internal/vmui/window.go:591
-#: ui/vm.ui:295
-msgid "The folder and the container are named after it."
-msgstr "フォルダーとコンテナーはこの名前になります。"
-
-#: internal/vmui/window.go:615
+#: internal/vmui/window.go:617
 msgid "That name cannot be used: %v"
 msgstr "その名前は使えません: %v"
 
-#: internal/vmui/window.go:666
+#: internal/vmui/window.go:669
 msgid "Fix"
 msgstr "修正"
 
-#: internal/vmui/window.go:668
+#: internal/vmui/window.go:671
 msgid "Add me to %s"
 msgstr "%s グループに追加"
 
-#: internal/vmui/window.go:706
+#: internal/vmui/window.go:709
 msgid "Start inua-keyring, or install a Secret Service."
 msgstr "inua-keyring を起動するか、Secret Service をインストールしてください。"
 
-#: internal/vmui/window.go:709
+#: internal/vmui/window.go:712
 msgid "This manager needs NixOS, Ubuntu or Debian."
 msgstr "このマネージャーは NixOS、Ubuntu、Debian のいずれかが必要です。"
 
-#: internal/vmui/window.go:753
+#: internal/vmui/window.go:756
 msgid "Add %s to your NixOS configuration."
 msgstr "%s を NixOS の設定に追加します。"
 
-#: internal/vmui/window.go:765
+#: internal/vmui/window.go:768
 msgid "Operating system"
 msgstr "オペレーティングシステム"
 
-#: internal/vmui/window.go:767
+#: internal/vmui/window.go:770
 msgid "Hardware virtualization (KVM)"
 msgstr "ハードウェア仮想化 (KVM)"
 
-#: internal/vmui/window.go:769
+#: internal/vmui/window.go:772
 msgid "Docker"
 msgstr "Docker"
 
-#: internal/vmui/window.go:771
+#: internal/vmui/window.go:774
 msgid "Docker Compose v2"
 msgstr "Docker Compose v2"
 
-#: internal/vmui/window.go:773
+#: internal/vmui/window.go:776
 msgid "FreeRDP"
 msgstr "FreeRDP"
 
-#: internal/vmui/window.go:775
+#: internal/vmui/window.go:778
 msgid "Browser opener"
 msgstr "ブラウザー起動コマンド"
 
-#: internal/vmui/window.go:777
+#: internal/vmui/window.go:780
 msgid "Disk space"
 msgstr "ディスク容量"
 
-#: internal/vmui/window.go:779
+#: internal/vmui/window.go:782
 msgid "Network device (TUN)"
 msgstr "ネットワークデバイス (TUN)"
 
-#: internal/vmui/window.go:781
+#: internal/vmui/window.go:784
 #: ui/settings.ui:3819
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: internal/vmui/window.go:785
+#: internal/vmui/window.go:788
 msgid "UEFI firmware"
 msgstr "UEFI ファームウェア"
 
-#: internal/vmui/window.go:789
+#: internal/vmui/window.go:792
 msgid "Binder (the kernel's Android support)"
 msgstr "Binder（カーネルの Android 対応）"
 
-#: internal/vmui/window.go:803
+#: internal/vmui/window.go:806
 msgid "Your user may not use Docker's socket. Joining the docker group would let anything running as you control this machine as root, so Inua will not do it for you: run `sudo gpasswd -a $USER docker` yourself if you accept that, or use rootless Docker or Podman instead."
 msgstr "あなたのユーザーは Docker のソケットを使えません。docker グループに加わると、あなたとして動くものすべてがこのマシンを root と同等に操作できるため、Inua は代わりに行いません。それを承知のうえでよければ `sudo gpasswd -a $USER docker` を自分で実行するか、rootless Docker や Podman を使ってください。"
 
-#: internal/vmui/window.go:807
+#: internal/vmui/window.go:810
 msgid "Not installed on this system."
 msgstr "このシステムにはインストールされていません。"
 
-#: internal/vmui/window.go:809
+#: internal/vmui/window.go:812
 msgid "Installed, but your user may not use it."
 msgstr "インストール済みですが、あなたのユーザーでは使えません。"
 
-#: internal/vmui/window.go:811
+#: internal/vmui/window.go:814
 msgid "Installed, but not running."
 msgstr "インストール済みですが、実行されていません。"
 
-#: internal/vmui/window.go:813
+#: internal/vmui/window.go:816
 msgid "This Linux distribution is not supported."
 msgstr "この Linux ディストリビューションには対応していません。"
 
-#: internal/vmui/window.go:815
+#: internal/vmui/window.go:818
 msgid "Could not be checked."
 msgstr "確認できませんでした。"
 
-#: internal/vmui/window.go:839
+#: internal/vmui/window.go:842
 msgid "A balanced profile leaves memory and CPU for your system."
 msgstr "バランスの取れた設定は、システム用にメモリと CPU を残します。"
 
-#: internal/vmui/window.go:841
+#: internal/vmui/window.go:844
 msgid "Files from a previous attempt are still here. Install reuses them; delete them to start over."
 msgstr "前回のインストールで残ったファイルがあります。インストールはそれらを使い回します。最初からやり直すには削除してください。"
 
-#: internal/vmui/window.go:866
+#: internal/vmui/window.go:869
 msgid "The system is installing; this takes a while."
 msgstr "システムをインストールしています。しばらくかかります。"
 
-#: internal/vmui/window.go:868
-#: internal/vmui/window.go:908
+#: internal/vmui/window.go:871
+#: internal/vmui/window.go:911
 msgid "Stopping…"
 msgstr "停止中…"
 
-#: internal/vmui/window.go:870
+#: internal/vmui/window.go:873
 msgid "The installation is paused. Continue to resume."
 msgstr "インストールは一時停止しています。続けると再開します。"
 
-#: internal/vmui/window.go:910
+#: internal/vmui/window.go:913
 msgid "The system is starting; ready in a minute or two."
 msgstr "システムを起動しています。1〜2 分で使えるようになります。"
 
-#: internal/vmui/window.go:954
+#: internal/vmui/window.go:957
 msgid "Confirm remove"
 msgstr "削除を確認"
 
-#: internal/vmui/window.go:966
-#: internal/vmui/window.go:975
-#: internal/vmui/window.go:984
+#: internal/vmui/window.go:969
+#: internal/vmui/window.go:978
+#: internal/vmui/window.go:987
 msgid "Confirm delete"
 msgstr "削除を確認"
 
-#: internal/vmui/window.go:970
-#: internal/vmui/window.go:979
-#: internal/vmui/window.go:1009
-#: internal/vmui/window.go:1010
+#: internal/vmui/window.go:973
+#: internal/vmui/window.go:982
+#: internal/vmui/window.go:1012
+#: internal/vmui/window.go:1013
 #: ui/vm.ui:921
 msgid "Delete disk"
 msgstr "ディスクを削除"
 
-#: internal/vmui/window.go:1035
+#: internal/vmui/window.go:1038
 msgid "The fix did not work: %v"
 msgstr "修正できませんでした: %v"
 
-#: internal/vmui/window.go:1040
+#: internal/vmui/window.go:1043
 msgid "Done. Log out and back in for it to take effect."
 msgstr "完了。変更を有効にするには、一度ログアウトしてから再度ログインしてください。"
 
-#: internal/vmui/window.go:1043
+#: internal/vmui/window.go:1046
 msgid "Done."
 msgstr "完了。"
 
-#: internal/vmui/window.go:1065
+#: internal/vmui/window.go:1068
 msgid "That did not work: %v"
 msgstr "うまくいきませんでした: %v"
 
-#: internal/vmui/window.go:1110
+#: internal/vmui/window.go:1113
 msgid "Log out to finish"
 msgstr "完了にはログアウトが必要です"
 
-#: internal/vmui/window.go:1111
+#: internal/vmui/window.go:1114
 msgid "The change takes effect the next time you log in."
 msgstr "変更は次回ログイン時に有効になります。"
 
-#: internal/vmui/window.go:1152
+#: internal/vmui/window.go:1155
 msgid "This system is missing something the guest needs"
 msgstr "このシステムにはゲストに必要なものが足りません"
 
-#: internal/vmui/window.go:1155
+#: internal/vmui/window.go:1158
 msgid "Files from a previous attempt are still here"
 msgstr "前回のインストールで残ったファイルがあります"
 
-#: internal/vmui/window.go:1157
+#: internal/vmui/window.go:1160
 msgid "Not installed yet"
 msgstr "未インストール"
 
-#: internal/vmui/window.go:1160
-#: internal/vmui/window.go:1168
-#: internal/vmui/window.go:1200
+#: internal/vmui/window.go:1163
+#: internal/vmui/window.go:1171
+#: internal/vmui/window.go:1203
 msgid "Stopping"
 msgstr "停止中"
 
-#: internal/vmui/window.go:1163
-#: internal/vmui/window.go:1202
+#: internal/vmui/window.go:1166
+#: internal/vmui/window.go:1205
 msgid "Installing"
 msgstr "インストール中"
 
-#: internal/vmui/window.go:1165
+#: internal/vmui/window.go:1168
 msgid "Installation paused"
 msgstr "インストールは一時停止中"
 
-#: internal/vmui/window.go:1170
-#: internal/vmui/window.go:1204
+#: internal/vmui/window.go:1173
+#: internal/vmui/window.go:1207
 msgid "Starting"
 msgstr "起動中"
 
-#: internal/vmui/window.go:1172
-#: internal/vmui/window.go:1206
+#: internal/vmui/window.go:1175
+#: internal/vmui/window.go:1209
 msgid "Running"
 msgstr "実行中"
 
-#: internal/vmui/window.go:1174
-#: internal/vmui/window.go:1208
+#: internal/vmui/window.go:1177
+#: internal/vmui/window.go:1211
 msgid "Stopped"
 msgstr "停止"
 
-#: internal/vmui/window.go:1182
+#: internal/vmui/window.go:1185
 msgid "%s · no backend in this build"
 msgstr "%s · このビルドにバックエンドがありません"
 
-#: internal/vmui/window.go:1191
+#: internal/vmui/window.go:1194
 msgid "Working"
 msgstr "処理中"
 
-#: internal/vmui/window.go:1195
+#: internal/vmui/window.go:1198
 msgid "Needs the host"
 msgstr "ホスト側の準備が必要"
 
-#: internal/vmui/window.go:1197
+#: internal/vmui/window.go:1200
 msgid "Not installed"
 msgstr "未インストール"
 
-#: internal/vmui/window.go:1227
-#: internal/vmui/window.go:1279
+#: internal/vmui/window.go:1230
+#: internal/vmui/window.go:1282
 msgid "Custom system"
 msgstr "独自システム"
 
-#: internal/vmui/window.go:1256
+#: internal/vmui/window.go:1259
 msgid "Downloads about 8 GB and installs Windows; takes 30+ minutes. Windows needs a licence."
 msgstr "約 8 GB をダウンロードして Windows をインストールします。30 分以上かかります。Windows にはライセンスが必要です。"
 
-#: internal/vmui/window.go:1258
+#: internal/vmui/window.go:1261
 msgid "The guest installs from its own media, as it would on a real machine."
 msgstr "ゲストは実機と同じように、自前のメディアからインストールします。"
 
-#: internal/vmui/window.go:1288
+#: internal/vmui/window.go:1291
 msgid "Windows 11, installed for you in a container."
 msgstr "コンテナーの中で Windows 11 を自動インストールします。"
 
-#: internal/vmui/window.go:1290
+#: internal/vmui/window.go:1293
 msgid "Windows 11 from your own ISO, with the virtio drivers."
 msgstr "手持ちの ISO から Windows 11。virtio ドライバーを使います。"
 
-#: internal/vmui/window.go:1292
+#: internal/vmui/window.go:1295
 msgid "Ubuntu, booted with QEMU from its ISO."
 msgstr "Ubuntu。ISO から QEMU で起動します。"
 
-#: internal/vmui/window.go:1294
+#: internal/vmui/window.go:1297
 msgid "Fedora, booted with QEMU from its ISO."
 msgstr "Fedora。ISO から QEMU で起動します。"
 
-#: internal/vmui/window.go:1296
+#: internal/vmui/window.go:1299
 msgid "Arch Linux, booted with QEMU from its ISO."
 msgstr "Arch Linux。ISO から QEMU で起動します。"
 
-#: internal/vmui/window.go:1298
+#: internal/vmui/window.go:1301
 msgid "FreeBSD, booted with QEMU from its ISO."
 msgstr "FreeBSD。ISO から QEMU で起動します。"
 
-#: internal/vmui/window.go:1300
+#: internal/vmui/window.go:1303
 msgid "Android in Waydroid, with the host's display and GPU."
 msgstr "Waydroid 上の Android。ホストのディスプレイと GPU を使います。"
 
-#: internal/vmui/window.go:1302
+#: internal/vmui/window.go:1305
 msgid "Your own system: an ISO, a disk or a kernel, on any architecture."
 msgstr "独自のシステム: ISO、ディスク、またはカーネルを、任意のアーキテクチャーで。"
 
@@ -11617,6 +11612,10 @@ msgstr "[名前]"
 #: ui/vm.ui:284
 msgid "Machine name"
 msgstr "マシン名"
+
+#: ui/vm.ui:295
+msgid "The folder and the container are named after it."
+msgstr "フォルダーとコンテナーはこの名前になります。"
 
 #: ui/vm.ui:305
 msgid "windows"
