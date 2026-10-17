@@ -5,7 +5,5 @@ docs/feat/*
 /.claude/
 __pycache__/
 
-# Local build artifacts: the symlink `nix build` leaves at the tree's top,
-# and the helper a local rebuild uses.
+# The symlink `nix build` leaves at the tree's top.
 /result
-reload-shell
