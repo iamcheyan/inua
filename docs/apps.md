@@ -410,12 +410,14 @@ scripts; `inua-vm --start` and `--stop` run the guest without a window, and
 It needs Docker Engine with Compose v2, KVM (`/dev/kvm`), FreeRDP,
 `xdg-open` and `/dev/net/tun`; the window names whichever is missing and the
 packages that provide it. The baseline is 4 GiB of memory, 2 CPUs and 64 GiB
-of disk, adjusted to the host's resources. The image is pinned to a version
-and digest, every port binds to 127.0.0.1, and the guest password is
-generated once and kept in the Secret Service — never in the Compose project
-or in your configuration. Two things the window says outright: the web
-console on 127.0.0.1:8006 has no login of its own, and Windows needs a
-licence.
+of disk, adjusted to the host's resources. There is no ISO to prepare: the
+container fetches Windows' own installation media and installs it
+unattended, which is why the first installation takes tens of minutes. The
+image is pinned to a version and digest, every port binds to 127.0.0.1, and
+the guest password is generated once and kept in the Secret Service — never
+in the Compose project or in your configuration. Two things the window says
+outright: the web console on 127.0.0.1:8006 has no login of its own, and
+Windows needs a licence.
 
 Docker socket access is as good as root on this machine, so inua explains it
 and never offers to add you to the `docker` group: it shows the command, for

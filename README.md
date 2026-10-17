@@ -71,7 +71,9 @@ recommended profile and **Install Windows** when nothing is installed yet;
 the web console, and stopping without losing the disk, while Windows
 installs itself; then **Start**, **Connect** and **Stop**. Removing the
 guest keeps its disk and its password — deleting the Windows installation
-is its own, confirmed action.
+is its own, confirmed action. There is no ISO to prepare: the container
+fetches Windows' own installation media and installs it unattended, which
+is what takes tens of minutes.
 
 `inua-vm --doctor` and `inua-vm --status [--json]` print the same checks for
 scripts, and so does `inua vm doctor|status`; `inua-vm --start` and
