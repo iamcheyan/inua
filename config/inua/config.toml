@@ -278,9 +278,14 @@ enable = true
 profile = "openai"
 fallback = []
 
+# The profile that makes quick choices from a fixed list, as the games' AI
+# players do (Mister Morph's decision route); "" for the one that answers,
+# or, when it makes none, the first profile that does.
+decision = ""
+
 # Mister Morph's built-in tools to add to inua's: "web_search", "url_fetch",
 # and, asking before each use, "read_file" and "bash".
-tools = ["web_search", "url_fetch"]
+tools = ["web_search", "url_fetch", "bash"]
 
 # Ask before changing anything (Wi-Fi, volume, windows …). Power, ending a
 # process and closing a window always ask.
@@ -297,12 +302,16 @@ serve_listen = "127.0.0.1:8794"
 # The models, as Mister Morph's profiles: a name, a provider ("openai",
 # "anthropic", "gemini", "xai", "deepseek", "kimi", "openrouter", "groq",
 # "mistermorph_pro", or "openai_chat_compatible", "openai_response_compatible",
-# "anthropic_compatible" with an endpoint), the model, an endpoint ("" for
-# the provider's own), and the reasoning effort ("minimal" to "high"; ""
-# for the model's default). The API key is typed in the settings window
-# (AI) and kept in the keyring (the Secret Service; inua-keyring keeps it
-# in pass), or without one in ~/.local/share/inua/keys.json, readable only
-# by you; keys are never written here.
+# "anthropic_compatible" with an endpoint, or "typesafe", which makes
+# quick choices only), the model, an endpoint ("" for the provider's
+# own), the reasoning effort ("minimal" to "high"; "" for the model's
+# default), and what it is for: abilities "text" answers,
+# "decision" makes quick choices (it alone: only those); [] for both.
+# Another provider of Mister Morph's is kept as it is. The API key is
+# typed in the settings window (AI) and kept in the keyring (the Secret
+# Service; inua-keyring keeps it in pass), or without one in
+# ~/.local/share/inua/keys.json, readable only by you; keys are never
+# written here.
 
 [[assistant.profiles]]
 name = "openai"
@@ -310,12 +319,14 @@ provider = "openai"
 model = "gpt-5.2"
 endpoint = ""
 reasoning = ""
+abilities = []
 
 [keyring]
 # inua-keyring keeps apps' secrets (the Secret Service: browsers' keys,
 # Wi-Fi passwords, the assistant's API keys) in pass, under this folder
 # of the password store (PASSWORD_STORE_DIR, else ~/.password-store).
-# inua keyring status|import|enable|disable: see docs/features.md.
+# inua keyring status|import|enable|disable|paths|allow|disallow: see
+# docs/features.md.
 folder = "inua-keyring"
 
 # A notification when an app reads its first secret since inua-keyring
@@ -350,9 +361,19 @@ policy = "ask"
 # else, and the keys its action had in hyprland.conf ("replaces"). Actions
 # without an entry keep their hyprland.conf shortcuts. An action is one of
 #   launcher windows overview control notifications clipboard focus settings restart lock
-#   shot-area shot-screen shot-window shot-record color
+#   shot-area shot-area-silent shot-screen shot-window shot-record color
 # or "exec" with a command. keys = "" turns the action's shortcut off.
 #
 #   [[shortcuts]]
 #   action = "launcher"
 #   keys = "SUPER+Space"
+
+[[shortcuts]]
+action = "shot-area-silent"
+keys = "Print"
+replaces = ["Print"]
+
+[[shortcuts]]
+action = "shot-area"
+keys = "CTRL+Print"
+replaces = ["CTRL+Print"]

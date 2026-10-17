@@ -56,8 +56,13 @@ type control struct {
 	power       gtk.ToggleButton
 	powerReveal gtk.Revealer
 	powerLabels map[string]*gtk.Label // by action
-	armed       string                // the action waiting for its second click
-	armGen      uintptr
+	// Hibernate shows as logind last said (system.CanHibernate), asked
+	// again off the main loop each time the control center opens.
+	hibernate       *gtk.Button
+	canHibernate    bool
+	askingHibernate bool
+	armed           string // the action waiting for its second click
+	armGen          uintptr
 
 	// A slider the user moved recently is not reset from service updates,
 	// which lag behind the drag.
@@ -227,12 +232,15 @@ func (s *shellUI) buildControl() {
 	ui.Get("power_reveal", &c.powerReveal)
 	powerButtons := map[string]*gtk.Button{}
 	c.powerLabels = map[string]*gtk.Label{}
-	for _, a := range []string{"suspend", "reboot", "poweroff", "logout"} {
+	for _, a := range []string{"suspend", "hibernate", "reboot", "poweroff", "logout"} {
 		b, l := &gtk.Button{}, &gtk.Label{}
 		ui.Get(a, b)
 		ui.Get(a+"_label", l)
 		powerButtons[a], c.powerLabels[a] = b, l
 	}
+	c.hibernate = powerButtons["hibernate"]
+	c.hibernate.SetVisible(c.canHibernate)
+	s.askHibernate()
 	c.armed = ""
 	ui.Get("lock", &lock)
 	ui.Get("screenshot", &screenshot)
@@ -454,7 +462,7 @@ func (s *shellUI) controlAction(name string) {
 	case "lock":
 		s.closeControl()
 		go run(s.cfg.Control.Lock)
-	case "suspend", "reboot", "poweroff", "logout":
+	case "suspend", "hibernate", "reboot", "poweroff", "logout":
 		s.powerAction(name)
 	case "screenshot":
 		s.closeControl()
@@ -475,14 +483,38 @@ func run(script string) {
 
 // powerLabel is each power action's label, and what it asks before going.
 var powerLabel = map[string][2]string{
-	"suspend":  {i18n.M("Suspend"), ""},
-	"reboot":   {i18n.M("Restart"), i18n.M("Restart?")},
-	"poweroff": {i18n.M("Shut down"), i18n.M("Shut down?")},
-	"logout":   {i18n.M("Log out"), i18n.M("Log out?")},
+	"suspend":   {i18n.M("Suspend"), ""},
+	"hibernate": {i18n.M("Hibernate"), i18n.M("Hibernate?")},
+	"reboot":    {i18n.M("Restart"), i18n.M("Restart?")},
+	"poweroff":  {i18n.M("Shut down"), i18n.M("Shut down?")},
+	"logout":    {i18n.M("Log out"), i18n.M("Log out?")},
 }
 
-// powerAction suspends at once (locking the screen first); restart, shut
-// down and log out wait for a second click within a few seconds.
+// askHibernate asks logind whether the machine can hibernate, off the main
+// loop, and shows Hibernate or not as it says.
+func (s *shellUI) askHibernate() {
+	c := &s.control
+	if c.askingHibernate {
+		return
+	}
+	c.askingHibernate = true
+	go func() {
+		can, err := system.CanHibernate(system.SystemBus)
+		if err != nil {
+			log.Printf("control: %v", err)
+		}
+		gtkx.Post(func() {
+			c.askingHibernate = false
+			c.canHibernate = can
+			if c.open && c.hibernate != nil {
+				c.hibernate.SetVisible(can)
+			}
+		})
+	}()
+}
+
+// powerAction suspends at once (locking the screen first); hibernate, restart,
+// shut down and log out wait for a second click within a few seconds.
 func (s *shellUI) powerAction(name string) {
 	c := &s.control
 	if ask := powerLabel[name][1]; ask != "" && c.armed != name {
@@ -499,16 +531,16 @@ func (s *shellUI) powerAction(name string) {
 	s.doPower(name)
 }
 
-// doPower suspends (locking first), restarts, shuts down or logs out.
+// doPower suspends or hibernates (locking first), restarts, shuts down or logs out.
 func (s *shellUI) doPower(name string) {
 	switch name {
-	case "suspend":
+	case "suspend", "hibernate":
 		if err := s.lockScreen(); err != nil {
-			log.Printf("suspend: not locking: %v", err)
+			log.Printf("%s: not locking: %v", name, err)
 		}
 		go func() {
 			time.Sleep(700 * time.Millisecond) // the lock screen is up first
-			run("systemctl suspend")
+			run("systemctl " + name)
 		}()
 	case "reboot":
 		go run("systemctl reboot")

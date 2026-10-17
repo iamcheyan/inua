@@ -25,7 +25,7 @@ func Format(c Config) string {
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Opacity, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
-		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback),
+		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges,
 		c.Assistant.ServeEnable, q(c.Assistant.ServeListen), aiProfiles(c.Assistant.Profiles),
 		q(c.Keyring.Folder), c.Keyring.Notify, q(c.Keyring.Untrusted), c.Keyring.LockAfter,
@@ -75,8 +75,8 @@ func quicklinks(all []Quicklink) string {
 func aiProfiles(all []AIProfile) string {
 	var b strings.Builder
 	for _, p := range all {
-		fmt.Fprintf(&b, "\n\n[[assistant.profiles]]\nname = %s\nprovider = %s\nmodel = %s\nendpoint = %s\nreasoning = %s",
-			q(p.Name), q(p.Provider), q(p.Model), q(p.Endpoint), q(p.Reasoning))
+		fmt.Fprintf(&b, "\n\n[[assistant.profiles]]\nname = %s\nprovider = %s\nmodel = %s\nendpoint = %s\nreasoning = %s\nabilities = %s",
+			q(p.Name), q(p.Provider), q(p.Model), q(p.Endpoint), q(p.Reasoning), list(p.Abilities))
 	}
 	return b.String()
 }
@@ -398,6 +398,11 @@ enable = %t
 profile = %s
 fallback = %s
 
+# The profile that makes quick choices from a fixed list, as the games' AI
+# players do (Mister Morph's decision route); "" for the one that answers,
+# or, when it makes none, the first profile that does.
+decision = %s
+
 # Mister Morph's built-in tools to add to inua's: "web_search", "url_fetch",
 # and, asking before each use, "read_file" and "bash".
 tools = %s
@@ -417,18 +422,23 @@ serve_listen = %s
 # The models, as Mister Morph's profiles: a name, a provider ("openai",
 # "anthropic", "gemini", "xai", "deepseek", "kimi", "openrouter", "groq",
 # "mistermorph_pro", or "openai_chat_compatible", "openai_response_compatible",
-# "anthropic_compatible" with an endpoint), the model, an endpoint ("" for
-# the provider's own), and the reasoning effort ("minimal" to "high"; ""
-# for the model's default). The API key is typed in the settings window
-# (AI) and kept in the keyring (the Secret Service; inua-keyring keeps it
-# in pass), or without one in ~/.local/share/inua/keys.json, readable only
-# by you; keys are never written here.%s
+# "anthropic_compatible" with an endpoint, or "typesafe", which makes
+# quick choices only), the model, an endpoint ("" for the provider's
+# own), the reasoning effort ("minimal" to "high"; "" for the model's
+# default), and what it is for: abilities "text" answers,
+# "decision" makes quick choices (it alone: only those); [] for both.
+# Another provider of Mister Morph's is kept as it is. The API key is
+# typed in the settings window (AI) and kept in the keyring (the Secret
+# Service; inua-keyring keeps it in pass), or without one in
+# ~/.local/share/inua/keys.json, readable only by you; keys are never
+# written here.%s
 
 [keyring]
 # inua-keyring keeps apps' secrets (the Secret Service: browsers' keys,
 # Wi-Fi passwords, the assistant's API keys) in pass, under this folder
 # of the password store (PASSWORD_STORE_DIR, else ~/.password-store).
-# inua keyring status|import|enable|disable: see docs/features.md.
+# inua keyring status|import|enable|disable|paths|allow|disallow: see
+# docs/features.md.
 folder = %s
 
 # A notification when an app reads its first secret since inua-keyring
@@ -463,7 +473,7 @@ policy = %s
 # else, and the keys its action had in hyprland.conf ("replaces"). Actions
 # without an entry keep their hyprland.conf shortcuts. An action is one of
 #   launcher windows overview control notifications clipboard focus settings restart lock
-#   shot-area shot-screen shot-window shot-record color
+#   shot-area shot-area-silent shot-screen shot-window shot-record color
 # or "exec" with a command. keys = "" turns the action's shortcut off.
 #
 #   [[shortcuts]]

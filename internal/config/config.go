@@ -117,9 +117,7 @@ type Screenshot struct {
 	// Empty: they are not saved.
 	Folder string `toml:"folder"`
 	// Copy puts each screenshot on the clipboard as well.
-	Copy bool `toml:"copy"`
-	// Recordings is where screen recordings are saved, "~/" for the home
-	// directory.
+	Copy       bool   `toml:"copy"`
 	Recordings string `toml:"recordings"`
 }
 
@@ -173,7 +171,7 @@ type Shortcut struct {
 // commands behind them are in internal/hyprconf.
 var ShortcutActions = []string{
 	"launcher", "windows", "overview", "control", "notifications", "clipboard", "focus", "settings", "restart", "lock",
-	"shot-area", "shot-screen", "shot-window", "shot-record", "color",
+	"shot-area", "shot-area-silent", "shot-screen", "shot-window", "shot-record", "color",
 }
 
 // renamedActions are actions that became others; a config naming one is
@@ -205,6 +203,11 @@ type Assistant struct {
 	// Fallback are profiles tried in turn when the one answering fails
 	// (an outage, a rate limit): Mister Morph's main_loop route.
 	Fallback []string `toml:"fallback"`
+	// Decision names the profile that makes quick choices from a fixed
+	// list, as the games' AI players do: Mister Morph's decision route;
+	// "" for the one that answers, or, when it makes none, the first that
+	// does.
+	Decision string `toml:"decision"`
 	// Tools are Mister Morph's built-in tools to add to inua's.
 	Tools []string `toml:"tools"`
 	// AskBeforeChanges makes the assistant ask before changing anything;
@@ -220,7 +223,8 @@ type Assistant struct {
 // AIProfile is one model the assistant can use.
 type AIProfile struct {
 	Name string `toml:"name"`
-	// Provider is Mister Morph's inference provider (AIProviders).
+	// Provider is Mister Morph's inference provider: one of AIProviders,
+	// or another Mister Morph knows, kept as it is.
 	Provider string `toml:"provider"`
 	Model    string `toml:"model"`
 	// Endpoint is the API's address, for a compatible server or a proxy;
@@ -229,6 +233,69 @@ type AIProfile struct {
 	// Reasoning is the reasoning effort (ReasoningEfforts); "" for the
 	// model's default.
 	Reasoning string `toml:"reasoning"`
+	// Abilities are what the profile is for (AIAbilities): answering
+	// (AbilityText), quick choices (AbilityDecision); none for both.
+	Abilities []string `toml:"abilities"`
+}
+
+// What a profile is for, as Mister Morph's abilities: "text" answers
+// questions, running the agent; "decision" makes quick choices from a
+// list (Mister Morph's Evaluate), and a profile with it but not "text"
+// only makes those; "image" makes pictures, which inua does not ask for
+// but keeps.
+const (
+	AbilityText     = "text"
+	AbilityDecision = "decision"
+	AbilityImage    = "image"
+)
+
+// AIAbilities are the abilities a profile may list.
+var AIAbilities = []string{AbilityText, AbilityDecision, AbilityImage}
+
+// Can reports whether the profile is for ability; one listing none is for
+// answering and quick choices, and one of a provider that only makes
+// those (DecisionOnly) is for them alone.
+func (p AIProfile) Can(ability string) bool {
+	if DecisionOnly(p.Provider) {
+		return ability == AbilityDecision
+	}
+	return CanDo(p.Abilities, ability)
+}
+
+// CanDo reports whether abilities include ability, none being answering
+// and quick choices.
+func CanDo(abilities []string, ability string) bool {
+	if len(abilities) == 0 {
+		return ability == AbilityText || ability == AbilityDecision
+	}
+	return slices.Contains(abilities, ability)
+}
+
+// WithAbility turns ability on or off in abilities; answering and quick
+// choices alone come back as none.
+func WithAbility(abilities []string, ability string, on bool) []string {
+	var out []string
+	for _, a := range AIAbilities {
+		if a == ability && on || a != ability && CanDo(abilities, a) {
+			out = append(out, a)
+		}
+	}
+	if slices.Equal(out, []string{AbilityText, AbilityDecision}) {
+		return nil
+	}
+	return out
+}
+
+// AbilityList lists what the profile is for, none read as both: for
+// Mister Morph, which reads none differently from one version to another.
+func (p AIProfile) AbilityList() []string {
+	if DecisionOnly(p.Provider) {
+		return []string{AbilityDecision}
+	}
+	if len(p.Abilities) == 0 {
+		return []string{AbilityText, AbilityDecision}
+	}
+	return slices.Clone(p.Abilities)
 }
 
 // ProfileNamed returns the profile named, or false.
@@ -256,7 +323,12 @@ var AIProviders = []struct{ ID, Name string }{
 	{"openai_chat_compatible", "OpenAI-compatible (Chat Completions)"},
 	{"openai_response_compatible", "OpenAI-compatible (Responses)"},
 	{"anthropic_compatible", "Anthropic-compatible"},
+	{"typesafe", "TypeSafe"},
 }
+
+// DecisionOnly reports whether provider only makes quick choices, never
+// chats: TypeSafe, which Mister Morph asks only on the decision route.
+func DecisionOnly(provider string) bool { return provider == "typesafe" }
 
 // AIProviderIDs lists AIProviders' IDs.
 func AIProviderIDs() []string {
@@ -278,7 +350,8 @@ var profileNameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9_-]*$`)
 func ValidProfileName(name string) bool { return profileNameRe.MatchString(name) && name != "default" }
 
 // validate drops profiles without a usable name, provider or model, and
-// points Profile and Fallback at profiles that exist.
+// points Profile, Fallback and Decision at profiles for them. A provider
+// inua does not list is kept: Mister Morph may know it, and says if not.
 func (a *Assistant) validate(d Assistant) []string {
 	var w []string
 	seen := map[string]bool{}
@@ -289,7 +362,7 @@ func (a *Assistant) validate(d Assistant) []string {
 			why = `want a name of lowercase letters, digits, "-" and "_", not "default"`
 		case seen[p.Name]:
 			why = "named twice"
-		case !slices.Contains(AIProviderIDs(), p.Provider):
+		case strings.TrimSpace(p.Provider) == "":
 			why = "want a provider of " + strings.Join(AIProviderIDs(), ", ")
 		case strings.TrimSpace(p.Model) == "":
 			why = "want a model"
@@ -303,32 +376,90 @@ func (a *Assistant) validate(d Assistant) []string {
 		seen[p.Name] = true
 		return false
 	})
+	for i := range a.Profiles {
+		p := &a.Profiles[i]
+		var abilities []string
+		for _, ab := range p.Abilities {
+			switch {
+			case !slices.Contains(AIAbilities, ab):
+				w = append(w, fmt.Sprintf("assistant.profiles %q: ability %q: want %s; leaving it out", p.Name, ab, strings.Join(AIAbilities, ", ")))
+			case !slices.Contains(abilities, ab):
+				abilities = append(abilities, ab)
+			}
+		}
+		p.Abilities = abilities
+		if DecisionOnly(p.Provider) && !slices.Equal(p.Abilities, []string{AbilityDecision}) {
+			if len(p.Abilities) > 0 {
+				w = append(w, fmt.Sprintf(`assistant.profiles %q: %s makes quick choices only; abilities ["decision"]`, p.Name, p.Provider))
+			}
+			p.Abilities = []string{AbilityDecision}
+		}
+	}
 	if len(a.Profiles) == 0 {
 		a.Profiles = slices.Clone(d.Profiles)
 	}
-	if _, ok := a.ProfileNamed(a.Profile); !ok {
-		if a.Profile != "" {
-			w = append(w, fmt.Sprintf("assistant.profile %q: no such profile; using %q", a.Profile, a.Profiles[0].Name))
+	answers := func(name string) bool {
+		p, ok := a.ProfileNamed(name)
+		return ok && p.Can(AbilityText)
+	}
+	if i := slices.IndexFunc(a.Profiles, func(p AIProfile) bool { return p.Can(AbilityText) }); i < 0 {
+		w = append(w, `assistant.profiles: none has the "text" ability; the assistant cannot answer`)
+		if _, ok := a.ProfileNamed(a.Profile); !ok {
+			a.Profile = a.Profiles[0].Name
 		}
-		a.Profile = a.Profiles[0].Name
+	} else if first := a.Profiles[i].Name; !answers(a.Profile) {
+		switch _, ok := a.ProfileNamed(a.Profile); {
+		case !ok && a.Profile != "":
+			w = append(w, fmt.Sprintf("assistant.profile %q: no such profile; using %q", a.Profile, first))
+		case ok:
+			w = append(w, fmt.Sprintf(`assistant.profile %q: does not have the "text" ability; using %q`, a.Profile, first))
+		}
+		a.Profile = first
 	}
 	used := map[string]bool{a.Profile: true}
 	a.Fallback = slices.DeleteFunc(a.Fallback, func(name string) bool {
-		if _, ok := a.ProfileNamed(name); ok && !used[name] {
+		if answers(name) && !used[name] {
 			used[name] = true
 			return false
 		}
-		w = append(w, fmt.Sprintf("assistant.fallback %q: not another profile; leaving it out", name))
+		w = append(w, fmt.Sprintf("assistant.fallback %q: not another profile that answers; leaving it out", name))
 		return true
 	})
 	if len(a.Fallback) == 0 {
 		a.Fallback = nil // as a file with "fallback = []" reads
 	}
+	if a.Decision != "" {
+		switch p, ok := a.ProfileNamed(a.Decision); {
+		case !ok:
+			w = append(w, fmt.Sprintf("assistant.decision %q: no such profile; using the one that answers", a.Decision))
+			a.Decision = ""
+		case !p.Can(AbilityDecision):
+			w = append(w, fmt.Sprintf(`assistant.decision %q: does not have the "decision" ability; using the one that answers`, a.Decision))
+			a.Decision = ""
+		}
+	}
 	return w
 }
 
-// AssistantTools are the built-in tools the assistant may add, the first
-// two by default; the rest read files or run commands, and ask each time.
+// DecisionProfile is the profile that makes quick choices: Decision, else
+// the one that answers, else the first that makes them; "" for none.
+func (a Assistant) DecisionProfile() string {
+	if a.Decision != "" {
+		return a.Decision
+	}
+	if p, ok := a.ProfileNamed(a.Profile); ok && p.Can(AbilityDecision) {
+		return p.Name
+	}
+	for _, p := range a.Profiles {
+		if p.Can(AbilityDecision) {
+			return p.Name
+		}
+	}
+	return ""
+}
+
+// AssistantTools are the built-in tools the assistant may add; all but
+// read_file by default. read_file and bash ask before each use.
 var AssistantTools = []string{"web_search", "url_fetch", "read_file", "bash"}
 
 // Keyring is inua-keyring, the Secret Service kept in pass
@@ -492,7 +623,11 @@ func Default() Config {
 		Screenshot: Screenshot{Folder: "~/Pictures/Screenshots", Copy: true, Recordings: "~/Videos/Screencasts"},
 		Clipboard:  Clipboard{Enable: true, Bar: true, Opacity: 84, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
-		Assistant: Assistant{Enable: true, Profile: "openai", Tools: []string{"web_search", "url_fetch"}, AskBeforeChanges: true, ServeListen: "127.0.0.1:8794",
+		Shortcuts: []Shortcut{
+			{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
+			{Action: "shot-area", Keys: "CTRL+Print", Replaces: []string{"CTRL+Print"}},
+		},
+		Assistant: Assistant{Enable: true, Profile: "openai", Tools: []string{"web_search", "url_fetch", "bash"}, AskBeforeChanges: true, ServeListen: "127.0.0.1:8794",
 			Profiles: []AIProfile{{Name: "openai", Provider: "openai", Model: "gpt-5.2"}}},
 		Keyring: Keyring{Folder: "inua-keyring", Untrusted: "allow"},
 		MCP:     MCP{Policy: "ask"},

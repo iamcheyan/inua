@@ -5,13 +5,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: cmd/inua-assistant/answer.go:36
+#: internal/assistantui/assistantui.go:277
+msgid "The assistant is turned off. Turn it on in Settings → AI."
+msgstr "アシスタントはオフにされる。 「設定」→「AI」でオンにします。"
+
+#: cmd/inua-assistant/answer.go:52
+msgid "No profile makes quick choices. Turn on Decision for one in Settings → AI."
+msgstr "すばやい選択ができる設定がありません。「設定」→「AI」で、いずれかの設定の「判断」をオンにしてください。"
+
+#: cmd/inua-assistant/bench.go:47
+msgid "No profile %s"
+msgstr "設定 %s はありません"
+
+#: cmd/inua-assistant/bench.go:60
+msgid "No API key for %s: type one and Save first."
+msgstr "%s の API キーがありません。先に入力して保存してください。"
+
 #: cmd/inua-assistant/mcp.go:57
 msgid "inua's assistant"
 msgstr "inua のアシスタント"
 
 #: cmd/inua-keyring/main.go:117
-#: internal/ui/settings_keyring.go:250
-#: ui/settings.ui:3622
+#: internal/ui/settings_keyring.go:324
+#: ui/settings.ui:3732
 msgid "Keyring"
 msgstr "キーリング"
 
@@ -29,7 +46,7 @@ msgstr "「%s」 · %s"
 
 #: internal/apps/calendar/calendar.go:69
 #: internal/appui/clock.go:218
-#: internal/ui/control.go:300
+#: internal/ui/control.go:308
 #: internal/ui/lock.go:238
 msgid "Monday, January 2"
 msgstr "1月2日 Monday"
@@ -452,7 +469,7 @@ msgid "System Monitor"
 msgstr "システムモニター"
 
 #: internal/appui/app.go:70
-#: ui/control.ui:474
+#: ui/control.ui:498
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
 msgid "Tailscale"
 msgstr "Tailscale"
@@ -602,6 +619,7 @@ msgstr "編集"
 
 #: internal/appui/clock.go:491
 #: internal/games/fortune.go:65
+#: internal/gamesui/fortune_menu.go:174
 #: ui/clock.ui:339
 #: ui/clock.ui:406
 msgid "Start"
@@ -613,7 +631,7 @@ msgid "Reset"
 msgstr "リセット"
 
 #: internal/appui/clock.go:496
-#: internal/assistantui/assistantui.go:458
+#: internal/assistantui/assistantui.go:431
 #: internal/ui/alarms.go:108
 msgid "Stop"
 msgstr "停止"
@@ -693,7 +711,7 @@ msgid "5 years"
 msgstr "5年"
 
 #: internal/appui/gpg.go:144
-#: ui/settings.ui:3814
+#: ui/settings.ui:3924
 msgid "Never"
 msgstr "なし"
 
@@ -711,12 +729,13 @@ msgstr "%s 作成"
 #: internal/appui/gpg.go:602
 #: internal/appui/gpg.go:624
 #: internal/shell/notify.go:32
-#: internal/ui/askpass.go:366
-#: internal/ui/askpass.go:427
-#: internal/ui/askpass.go:431
-#: internal/ui/askpass.go:433
-#: internal/ui/settings_about.go:187
-#: internal/ui/settings_keyring.go:555
+#: internal/ui/askpass.go:380
+#: internal/ui/askpass.go:448
+#: internal/ui/askpass.go:452
+#: internal/ui/askpass.go:454
+#: internal/ui/settings_about.go:196
+#: internal/ui/settings_keyring.go:640
+#: internal/ui/settings_keyring.go:674
 msgid "Jan 2, 2006"
 msgstr "2006年1月2日"
 
@@ -871,7 +890,7 @@ msgstr "削除…"
 
 #: internal/appui/gpg.go:883
 #: internal/appui/tailscale.go:469
-#: internal/ui/askpass.go:516
+#: internal/ui/askpass.go:537
 #: internal/viewerui/app.go:548
 msgid "Copied"
 msgstr "コピーしました"
@@ -1180,8 +1199,8 @@ msgid "Top level"
 msgstr "最上位"
 
 #: internal/appui/pass.go:360
-#: internal/ui/settings.go:699
-#: internal/ui/settings.go:726
+#: internal/ui/settings.go:703
+#: internal/ui/settings.go:730
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d 件"
@@ -1232,10 +1251,10 @@ msgstr "ヒデ"
 #: internal/appui/pass.go:601
 #: internal/appui/pass.go:626
 #: internal/filesui/window.go:712
-#: internal/ui/askpass.go:200
+#: internal/ui/askpass.go:203
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
-#: ui/settings.ui:2828
+#: ui/settings.ui:2874
 msgid "Copy"
 msgstr "コピー"
 
@@ -1333,7 +1352,7 @@ msgstr "信頼するアプリ"
 
 #: internal/appui/pass.go:1035
 #: internal/appui/workshop_manager.go:50
-#: internal/ui/settings_keyring.go:475
+#: internal/ui/settings_keyring.go:551
 msgid "%d app"
 msgid_plural "%d apps"
 msgstr[0] "%d 個のアプリ"
@@ -1343,28 +1362,30 @@ msgid "None: an app reading it is asked about first."
 msgstr "なし。読もうとするアプリは先に確認します。"
 
 #: internal/appui/pass.go:1043
-#: internal/ui/askpass.go:357
-#: internal/ui/settings_keyring.go:539
+#: internal/ui/askpass.go:371
+#: internal/ui/settings_keyring.go:624
 msgid "Flatpak: %s"
 msgstr "Flatpak: %s"
 
 #: internal/appui/pass.go:1048
 #: internal/appui/pass.go:1070
-#: internal/ui/settings_keyring.go:394
-#: internal/ui/settings_keyring.go:402
-#: internal/ui/settings_keyring.go:544
+#: internal/ui/settings_keyring.go:469
+#: internal/ui/settings_keyring.go:477
+#: internal/ui/settings_keyring.go:629
 msgid "%s · %s"
 msgstr "%s · %s"
 
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
-#: internal/ui/settings_keyring.go:560
+#: internal/ui/settings_ai.go:549
+#: internal/ui/settings_keyring.go:645
+#: internal/ui/settings_keyring.go:679
 #: ui/stocks.ui:292
 msgid "Remove"
 msgstr "削除"
 
 #: internal/appui/pass.go:1055
-#: internal/ui/settings_keyring.go:564
+#: internal/ui/settings_keyring.go:649
 msgid "Stop trusting it: it is asked about at its next read"
 msgstr "信頼をやめます。次の読み取りで確認します"
 
@@ -1379,7 +1400,7 @@ msgstr "まだどのアプリも読んでいません。"
 #: internal/appui/pass.go:1066
 #: internal/appui/sysmon.go:965
 #: internal/filesui/pane.go:1358
-#: internal/ui/settings_keyring.go:433
+#: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
 msgstr "1月2日 15:04"
@@ -1390,27 +1411,27 @@ msgid_plural "%s · %d times"
 msgstr[0] "%s · %d 回"
 
 #: internal/appui/pass.go:1080
-#: internal/ui/settings_keyring.go:575
+#: internal/ui/settings_keyring.go:694
 msgid "trusted"
 msgstr "信頼済み"
 
 #: internal/appui/pass.go:1082
-#: internal/ui/settings_keyring.go:577
+#: internal/ui/settings_keyring.go:696
 msgid "allowed once"
 msgstr "今回だけ許可"
 
 #: internal/appui/pass.go:1084
-#: internal/ui/settings_keyring.go:579
+#: internal/ui/settings_keyring.go:698
 msgid "allowed, and trusted from now on"
 msgstr "許可し、今後は信頼"
 
 #: internal/appui/pass.go:1086
-#: internal/ui/settings_keyring.go:581
+#: internal/ui/settings_keyring.go:700
 msgid "denied"
 msgstr "拒否"
 
 #: internal/appui/pass.go:1088
-#: internal/ui/settings_keyring.go:583
+#: internal/ui/settings_keyring.go:702
 msgid "allowed: no one to ask"
 msgstr "許可: 確認できる相手なし"
 
@@ -1456,7 +1477,7 @@ msgstr "QR コードの入った画像"
 
 #: internal/appui/pass_otp.go:340
 #: internal/desktop/defaults.go:48
-#: internal/ui/settings.go:836
+#: internal/ui/settings.go:840
 msgid "Images"
 msgstr "画像"
 
@@ -1485,12 +1506,12 @@ msgid "Range start"
 msgstr "レンジスタート"
 
 #: internal/appui/stocks.go:322
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "High"
 msgstr "高"
 
 #: internal/appui/stocks.go:322
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Low"
 msgstr "低"
 
@@ -1737,7 +1758,7 @@ msgstr "コマンド"
 
 #: internal/appui/sysmon.go:786
 #: internal/filesui/kinds.go:38
-#: internal/ui/settings_keyring.go:252
+#: internal/ui/settings_keyring.go:326
 msgid "Program"
 msgstr "プログラム"
 
@@ -1774,7 +1795,7 @@ msgid "%s · %s ago"
 msgstr "%[1]s · %[2]s 前"
 
 #: internal/appui/sysmon.go:836
-#: internal/ui/settings_keyring.go:224
+#: internal/ui/settings_keyring.go:298
 msgid "Jan 2 15:04:05"
 msgstr "1月2日 15:04:05"
 
@@ -1838,16 +1859,16 @@ msgstr "コンピュータ"
 
 #: internal/appui/sysmon.go:959
 #: internal/appui/sysmon.go:971
-#: internal/ui/settings_ai.go:323
+#: internal/ui/settings_ai.go:464
 msgid "Model"
 msgstr "モデル"
 
 #: internal/appui/sysmon.go:960
 #: internal/appui/tailscale.go:630
-#: internal/ui/settings_ai.go:321
+#: internal/ui/settings_ai.go:453
 #: internal/viewerui/app.go:791
 #: ui/gpg.ui:1342
-#: ui/settings.ui:4547
+#: ui/settings.ui:4810
 #: ui/sysmon.ui:96
 msgid "Name"
 msgstr "名前"
@@ -1964,7 +1985,7 @@ msgid "wired"
 msgstr "有線"
 
 #: internal/appui/sysmon.go:1035
-#: ui/control.ui:249
+#: ui/control.ui:273
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
@@ -2245,7 +2266,7 @@ msgid "IN USE"
 msgstr "使用中"
 
 #: internal/appui/tailscale.go:601
-#: internal/gamesui/fortune.go:375
+#: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
 msgid "None"
 msgstr "なし"
@@ -2387,7 +2408,7 @@ msgstr "再生できません: %s"
 #: internal/shell/status.go:88
 #: internal/shell/status.go:107
 #: internal/shell/status.go:122
-#: ui/settings.ui:4764
+#: ui/settings.ui:5027
 msgid "Off"
 msgstr "オフ"
 
@@ -2506,10 +2527,11 @@ msgstr "不明な部品 %q"
 #: internal/filesui/cards.go:389
 #: internal/filesui/cards.go:427
 #: internal/filesui/cards.go:610
-#: internal/games/fortunenet/texts.go:75
-#: internal/gamesui/fortune_host.go:229
-#: internal/ui/askpass.go:267
-#: internal/ui/askpass.go:395
+#: internal/games/fortunenet/texts.go:76
+#: internal/gamesui/fortune_host.go:236
+#: internal/ui/askpass.go:270
+#: internal/ui/askpass.go:412
+#: internal/ui/askpass.go:416
 #: ui/clock.ui:244
 #: ui/clock.ui:454
 #: ui/files.ui:155
@@ -2524,7 +2546,7 @@ msgid "Cancel"
 msgstr "キャンセル"
 
 #: internal/appui/workshop.go:995
-#: internal/ui/askpass.go:266
+#: internal/ui/askpass.go:269
 msgid "OK"
 msgstr "わかりました"
 
@@ -2538,7 +2560,7 @@ msgid "Open"
 msgstr "開く"
 
 #: internal/appui/workshop_blocks.go:438
-#: internal/ui/settings_ai.go:328
+#: internal/ui/settings_ai.go:496
 #: ui/clock.ui:252
 #: ui/pass.ui:490
 msgid "Save"
@@ -2637,7 +2659,24 @@ msgstr "インストール"
 msgid "Installed %s; the launcher and the dock's drawer list it."
 msgstr "%s をインストールしました。ランチャーとドックの引き出しに表示されます。"
 
-#: internal/assistant/assistant.go:430
+#: internal/assistant/assistant.go:137
+msgid "Cannot read the saved keys: %s"
+msgstr "保存されたキーを読み取れません: %s"
+
+#: internal/assistant/assistant.go:145
+msgid "Cannot read the key of %s: %v"
+msgstr "%[1]sのキーを読み取れません: %[2]v"
+
+#: internal/assistant/assistant.go:150
+#: internal/ui/settings_ai.go:922
+msgid "Cannot read the Console token: %s"
+msgstr "コンソールトークンを読み取れません: %s"
+
+#: internal/assistant/assistant.go:156
+msgid "No API key for %s (%s): type one in Settings → AI."
+msgstr "%s (%s) には API キーがありません。[設定] → [AI] に API キーを入力します。"
+
+#: internal/assistant/assistant.go:585
 msgid "Remote Console: %s"
 msgstr "リモートコンソール: %s"
 
@@ -2651,7 +2690,7 @@ msgstr "ツールを使うスクリプトを実行中"
 
 #: internal/assistantui/assistantui.go:37
 #: ui/assistant.ui:35
-#: ui/settings.ui:2157
+#: ui/settings.ui:2160
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:3
 msgid "Assistant"
 msgstr "アシスタント"
@@ -2680,76 +2719,55 @@ msgstr "今日の京都の午後の天気はどうですか?"
 msgid "%s answers from here"
 msgstr "%s の回答はこちらから"
 
-#: internal/assistantui/assistantui.go:277
-msgid "The assistant is turned off. Turn it on in Settings → AI."
-msgstr "アシスタントはオフにされる。 「設定」→「AI」でオンにします。"
-
-#: internal/assistantui/assistantui.go:289
-msgid "Cannot read the saved keys: %s"
-msgstr "保存されたキーを読み取れません: %s"
-
-#: internal/assistantui/assistantui.go:298
-msgid "Cannot read the key of %s: %v"
-msgstr "%[1]sのキーを読み取れません: %[2]v"
-
-#: internal/assistantui/assistantui.go:304
-#: internal/ui/settings_ai.go:602
-msgid "Cannot read the Console token: %s"
-msgstr "コンソールトークンを読み取れません: %s"
-
-#: internal/assistantui/assistantui.go:311
-msgid "No API key for %s (%s): type one in Settings → AI."
-msgstr "%s (%s) には API キーがありません。[設定] → [AI] に API キーを入力します。"
-
-#: internal/assistantui/assistantui.go:360
+#: internal/assistantui/assistantui.go:333
 msgid "Could not start the Console endpoint: %s"
 msgstr "コンソールエンドポイントを開始できませんでした: %s"
 
-#: internal/assistantui/assistantui.go:465
+#: internal/assistantui/assistantui.go:438
 msgid "✕ Not done: %s"
 msgstr "✕ 未完了: %s"
 
-#: internal/assistantui/assistantui.go:476
+#: internal/assistantui/assistantui.go:449
 #: ui/assistant.ui:136
 msgid "Ask"
 msgstr "尋ねる"
 
-#: internal/assistantui/assistantui.go:480
+#: internal/assistantui/assistantui.go:453
 msgid "Stopped."
 msgstr "停止した。"
 
-#: internal/assistantui/assistantui.go:483
+#: internal/assistantui/assistantui.go:456
 msgid "Something went wrong: %s"
 msgstr "問題が発生しました: %s"
 
-#: internal/assistantui/assistantui.go:486
+#: internal/assistantui/assistantui.go:459
 msgid "(no answer)"
 msgstr "（答えなし）"
 
-#: internal/assistantui/assistantui.go:516
+#: internal/assistantui/assistantui.go:489
 msgid "Don't"
 msgstr "許可しない"
 
-#: internal/assistantui/assistantui.go:516
-#: internal/ui/askpass.go:390
+#: internal/assistantui/assistantui.go:489
+#: internal/ui/askpass.go:407
 #: internal/workshop/session.go:406
 msgid "Allow"
 msgstr "許可する"
 
-#: internal/assistantui/assistantui.go:537
+#: internal/assistantui/assistantui.go:510
 msgid "Not allowed"
 msgstr "許可されません"
 
-#: internal/assistantui/assistantui.go:539
+#: internal/assistantui/assistantui.go:512
 msgid "Canceled"
 msgstr "キャンセルされました"
 
-#: internal/assistantui/assistantui.go:541
-#: ui/settings.ui:3869
+#: internal/assistantui/assistantui.go:514
+#: ui/settings.ui:3979
 msgid "Allowed"
 msgstr "許可"
 
-#: internal/assistantui/assistantui.go:630
+#: internal/assistantui/assistantui.go:603
 msgid "TRY"
 msgstr "トライ"
 
@@ -3498,7 +3516,9 @@ msgstr[0] "…ほか %d 件"
 
 #: internal/filesui/cards.go:454
 #: internal/filesui/cards.go:735
-#: ui/settings.ui:4302
+#: internal/ui/settings_bench.go:139
+#: ui/settings.ui:3033
+#: ui/settings.ui:4565
 msgid "Close"
 msgstr "閉じる"
 
@@ -4136,8 +4156,9 @@ msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr "端末が見つかりません。xdg-terminal-exec をインストールするか $TERMINAL を設定してください。"
 
 #: internal/games/fortune.go:54
-#: internal/games/fortunenet/texts.go:61
+#: internal/games/fortunenet/texts.go:62
 #: internal/gamesui/fortune_board.go:881
+#: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:144
 msgid "Chance"
 msgstr "チャンス"
@@ -4149,18 +4170,22 @@ msgid "Card Shop"
 msgstr ""
 
 #: internal/games/fortune.go:66
+#: internal/gamesui/fortune_menu.go:183
 msgid "Income Tax"
 msgstr "所得税"
 
 #: internal/games/fortune.go:70
+#: internal/gamesui/fortune_menu.go:175
 msgid "Jail"
 msgstr "刑務所"
 
 #: internal/games/fortune.go:75
+#: internal/gamesui/fortune_menu.go:176
 msgid "Fountain"
 msgstr "噴水"
 
 #: internal/games/fortune.go:80
+#: internal/gamesui/fortune_menu.go:177
 msgid "Go to Jail"
 msgstr "刑務所に行く"
 
@@ -4168,220 +4193,212 @@ msgstr "刑務所に行く"
 msgid "Luxury Tax"
 msgstr "贅沢税"
 
-#: internal/games/fortune.go:307
-#: internal/gamesui/fortune.go:375
-msgid "Mika"
-msgstr "ミカ"
-
-#: internal/games/fortune.go:307
-msgid "Ren"
-msgstr "レン"
-
-#: internal/games/fortune.go:307
-msgid "Sol"
-msgstr "ソル"
-
-#: internal/games/fortune.go:315
+#: internal/games/fortune.go:314
+#: internal/gamesui/fortune.go:648
 msgid "You"
 msgstr "あなた"
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/fortune_host.go:41
+#: internal/gamesui/fortune.go:644
+#: internal/gamesui/fortune_host.go:44
 msgid "Player %d"
 msgstr "プレイヤー %d"
 
-#: internal/games/fortune.go:495
+#: internal/games/fortune.go:502
 msgid "a house"
 msgstr "家"
 
-#: internal/games/fortune.go:497
+#: internal/games/fortune.go:504
 msgid "a hotel"
 msgstr "ホテル"
 
-#: internal/games/fortune.go:499
+#: internal/games/fortune.go:506
 msgid "%s built %s on %s ($%d)."
 msgstr "%[1]sは、%[3]s($%[4]d)上に%[2]sを構築した。"
 
-#: internal/games/fortune.go:510
+#: internal/games/fortune.go:517
 msgid "%s sold a building on %s for $%d."
 msgstr "%[1]sは、%[2]s上の建物を$%[3]dで販売した。"
 
-#: internal/games/fortune.go:548
+#: internal/games/fortune.go:555
 msgid "%s paid $%d bail."
 msgstr "%[1]s は %[2]d ドルの保釈金を支払った。"
 
-#: internal/games/fortune.go:584
+#: internal/games/fortune.go:591
 #: internal/games/fortune_cards.go:136
 msgid "%s bought %s for $%d."
 msgstr "%[1]sは、%[2]sを$%[3]dで購入した。"
 
-#: internal/games/fortune.go:598
+#: internal/games/fortune.go:605
+#: internal/games/fortunenet/texts.go:89
+#: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr "ダブル"
 
-#: internal/games/fortune.go:600
+#: internal/games/fortune.go:607
+#: internal/games/fortunenet/texts.go:90
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr "6"
 
-#: internal/games/fortune.go:602
+#: internal/games/fortune.go:609
 msgid "%s rolled %s and walked out of jail."
 msgstr "%[1]sは%[2]sをロールして刑務所から出た。"
 
-#: internal/games/fortune.go:605
+#: internal/games/fortune.go:612
 msgid "%s stays in jail."
 msgstr "%s は刑務所にいます。"
 
-#: internal/games/fortune.go:609
+#: internal/games/fortune.go:616
 msgid "%s paid $%d bail after three tries."
 msgstr "%[1]s は、3 回の試みの後、$%[2]d の保釈金を支払いました。"
 
-#: internal/games/fortune.go:618
+#: internal/games/fortune.go:625
 msgid "%s is a turtle: one square."
 msgstr ""
 
-#: internal/games/fortune.go:623
+#: internal/games/fortune.go:630
 msgid "Three doubles in a row: %s goes to jail."
 msgstr "ダブルス 3 回連続: %s は刑務所に行きます。"
 
-#: internal/games/fortune.go:684
+#: internal/games/fortune.go:691
 msgid "%s took the road through %s."
 msgstr "%[1]sは%[2]sを通る道を通った。"
 
-#: internal/games/fortune.go:687
+#: internal/games/fortune.go:694
 msgid "%s passed Start: +$%d."
 msgstr "%[1]s は Start: +$%[2]d を渡しました。"
 
-#: internal/games/fortune.go:730
+#: internal/games/fortune.go:737
 msgid "%s cannot afford %s."
 msgstr "%[1]s には %[2]s を支払う余裕はありません。"
 
-#: internal/games/fortune.go:734
+#: internal/games/fortune.go:741
 msgid "%s owed %s rent for %s and paid nothing: Free Rent."
 msgstr ""
 
-#: internal/games/fortune.go:740
+#: internal/games/fortune.go:747
 msgid "%s paid %s $%d rent for %s."
 msgstr "%[1]s は、%[4]s に対して %[2]s $%[3]d の家賃を支払いました。"
 
-#: internal/games/fortune.go:746
+#: internal/games/fortune.go:753
 msgid "%s paid $%d %s into the fountain."
 msgstr "%[1]s は $%[2]d %[3]s を噴水に支払いました。"
 
-#: internal/games/fortune.go:749
+#: internal/games/fortune.go:756
 msgid "%s took $%d from the fountain."
 msgstr "%[1]s は噴水から $%[2]d を受け取りました。"
 
-#: internal/games/fortune.go:753
+#: internal/games/fortune.go:760
 msgid "The fountain is empty."
 msgstr "噴水は空である。"
 
-#: internal/games/fortune.go:756
+#: internal/games/fortune.go:763
 msgid "%s goes to jail."
 msgstr "%sは刑務所に行きます。"
 
-#: internal/games/fortune.go:780
+#: internal/games/fortune.go:787
 msgid "A double: roll again."
 msgstr "ダブル:再度ロールする。"
 
-#: internal/games/fortune.go:795
+#: internal/games/fortune.go:802
 msgid "A street fair pays out: collect $60."
 msgstr "ストリートフェアは支払いを行う:60ドルを集める。"
 
-#: internal/games/fortune.go:796
+#: internal/games/fortune.go:803
 msgid "Advance to Start."
 msgstr "スタートへ進む。"
 
-#: internal/games/fortune.go:797
+#: internal/games/fortune.go:804
 msgid "Your bicycle needs a new chain: pay $40."
 msgstr "あなたの自転車には新しいチェーンが必要です。40ドル支払います。"
 
-#: internal/games/fortune.go:798
+#: internal/games/fortune.go:805
 msgid "Go back three squares."
 msgstr "3マス戻る。"
 
-#: internal/games/fortune.go:799
+#: internal/games/fortune.go:806
 msgid "It is your birthday: every player gives you $25."
 msgstr "今日はあなたの誕生日です。すべてのプレイヤーがあなたに 25 ドルを与えます。"
 
-#: internal/games/fortune.go:800
+#: internal/games/fortune.go:807
 msgid "Roof repairs: pay $25 for each building."
 msgstr "屋根の修理:各建物につき25ドルを支払う。"
 
-#: internal/games/fortune.go:801
+#: internal/games/fortune.go:808
 msgid "A refund from the tax office: collect $80."
 msgstr "税務署からの還付: $80 を徴収します。"
 
-#: internal/games/fortune.go:802
+#: internal/games/fortune.go:809
 msgid "Catch a ride to the next station or pier."
 msgstr "次の駅または桟橋まで乗車します。"
 
-#: internal/games/fortune.go:803
+#: internal/games/fortune.go:810
 msgid "A night out: go to %s."
 msgstr "夜の外出：%sに行きます。"
 
-#: internal/games/fortune.go:804
+#: internal/games/fortune.go:811
 msgid "Your shares paid a dividend: collect $100."
 msgstr "あなたの株は配当金を支払いました: $100 を集めます。"
 
-#: internal/games/fortune.go:805
+#: internal/games/fortune.go:812
 msgid "Hotel inspection: pay $40 for each building."
 msgstr "ホテル検査: 建物ごとに 40 ドルを支払います。"
 
-#: internal/games/fortune.go:806
+#: internal/games/fortune.go:813
 msgid "A parking fine: pay $30."
 msgstr "駐車罰金: 30 ドルを支払います。"
 
-#: internal/games/fortune.go:807
+#: internal/games/fortune.go:814
 msgid "You won a crossword: collect $50."
 msgstr "あなたはクロスワードに当選しました。50 ドルを集めてください。"
 
-#: internal/games/fortune.go:808
+#: internal/games/fortune.go:815
 msgid "Buy everyone lunch: pay each player $15."
 msgstr "全員に昼食を奢る：各プレーヤーに１５ドルを支払う。"
 
-#: internal/games/fortune.go:809
+#: internal/games/fortune.go:816
 msgid "Caught jaywalking: go to jail."
 msgstr "歩道橋を歩いているところを捕まり、刑務所に行きます。"
 
-#: internal/games/fortune.go:810
+#: internal/games/fortune.go:817
 msgid "A card left on a bench: take it."
 msgstr ""
 
-#: internal/games/fortune.go:811
+#: internal/games/fortune.go:818
 msgid "The shopkeeper owes you a favour: take a card."
 msgstr ""
 
-#: internal/games/fortune.go:812
+#: internal/games/fortune.go:819
 msgid "You won a raffle: take a card."
 msgstr ""
 
-#: internal/games/fortune.go:841
+#: internal/games/fortune.go:848
 msgid "Chance for %s: %s"
 msgstr "%[1]s のチャンス: %[2]s"
 
-#: internal/games/fortune.go:844
+#: internal/games/fortune.go:851
 msgid "%s takes a card: %s."
 msgstr ""
 
-#: internal/games/fortune.go:941
+#: internal/games/fortune.go:948
 msgid "%s sold a house on %s for $%d."
 msgstr "%[1]sは、%[2]sの家を$%[3]dで販売した。"
 
-#: internal/games/fortune.go:945
+#: internal/games/fortune.go:952
 msgid "%s sold %s to the bank for $%d."
 msgstr "%[1]sは、%[2]sを$%[3]dで銀行に販売した。"
 
-#: internal/games/fortune.go:959
+#: internal/games/fortune.go:966
 msgid "%s is bankrupt and out of the game."
 msgstr "%sは破産し、ゲームから外れた。"
 
-#: internal/games/fortune.go:994
+#: internal/games/fortune.go:1001
 msgid "%s sleeps through their turn."
 msgstr ""
 
-#: internal/games/fortune.go:1014
+#: internal/games/fortune.go:1021
 msgid "%s won with $%d in worth."
 msgstr "%[1]s は $%[2]d の価値で勝ちました。"
 
@@ -4510,7 +4527,7 @@ msgid "%s played %s and took %s from %s."
 msgstr ""
 
 #: internal/games/fortune_cards.go:276
-#: internal/games/fortunenet/texts.go:83
+#: internal/games/fortunenet/texts.go:82
 msgid "a card"
 msgstr ""
 
@@ -5815,15 +5832,59 @@ msgstr ""
 msgid "Lungotevere"
 msgstr ""
 
-#: internal/games/fortunenet/host.go:154
+#: internal/games/fortune_rivals.go:29
+msgid "Mika"
+msgstr "ミカ"
+
+#: internal/games/fortune_rivals.go:29
+msgid "the careful banker"
+msgstr "慎重な銀行家"
+
+#: internal/games/fortune_rivals.go:30
+msgid "Keeps cash in hand, passes on the dearest streets, buys few cards and pays bail early."
+msgstr "手元に現金を残し、いちばん高い通りは見送り、カードはあまり買わず、保釈金は早めに払う。"
+
+#: internal/games/fortune_rivals.go:36
+msgid "Ren"
+msgstr "レン"
+
+#: internal/games/fortune_rivals.go:36
+msgid "the bold developer"
+msgstr "大胆な開発者"
+
+#: internal/games/fortune_rivals.go:37
+msgid "Buys whatever the dice land on, with little cash to spare, and sits out jail rather than pay."
+msgstr "サイコロが止まった所は何でも買い、手元はいつもぎりぎり、保釈金を払うより牢で待つ。"
+
+#: internal/games/fortune_rivals.go:43
+msgid "Sol"
+msgstr "ソル"
+
+#: internal/games/fortune_rivals.go:43
+msgid "the trickster"
+msgstr "策士"
+
+#: internal/games/fortune_rivals.go:44
+msgid "Lives by the cards: sleeping pills, turtles and audits for whoever leads; builds anywhere."
+msgstr "カード頼み：先頭の人に眠り薬、亀、税務調査。どこにでも建てる。"
+
+#: internal/games/fortuneai/fortuneai.go:425
+msgid "The AI keeps not answering: the computer plays for %s from now on."
+msgstr "AI が応答しないため、これ以降はコンピューターが %s の代わりにプレイします。"
+
+#: internal/games/fortuneai/fortuneai.go:427
+msgid "No answer from the AI: the computer plays this turn for %s."
+msgstr "AI から応答がありません。このターンは %s の代わりにコンピューターがプレイします。"
+
+#: internal/games/fortunenet/host.go:233
 msgid "The host sent you away."
 msgstr "ホストに退出させられました。"
 
-#: internal/games/fortunenet/host.go:291
+#: internal/games/fortunenet/host.go:373
 msgid "That is not this game's code."
 msgstr "このゲームのコードではありません。"
 
-#: internal/games/fortunenet/host.go:298
+#: internal/games/fortunenet/host.go:380
 msgid "Your seat was taken up in another window."
 msgstr "あなたの席は別のウィンドウで開かれました。"
 
@@ -5866,7 +5927,7 @@ msgid "%s · %d rounds · $%s each"
 msgstr "%s · %d ラウンド · 各 $%s"
 
 #: internal/games/fortunenet/texts.go:26
-#: internal/gamesui/fortune_host.go:135
+#: internal/gamesui/fortune_host.go:142
 msgid "Room for %d more"
 msgstr "あと %d 人参加できます"
 
@@ -5875,286 +5936,370 @@ msgid "at the host's screen"
 msgstr "ホストの画面で"
 
 #: internal/games/fortunenet/texts.go:28
-#: internal/gamesui/fortune_host.go:123
+#: internal/gamesui/fortune_host.go:130
 msgid "in a browser"
 msgstr "ブラウザーで"
 
 #: internal/games/fortunenet/texts.go:30
-#: internal/gamesui/fortune.go:831
+#: internal/gamesui/fortune.go:1106
 msgid " · away, the computer plays"
 msgstr " · 不在、コンピューターが代わりにプレイ"
 
 #: internal/games/fortunenet/texts.go:31
-#: internal/gamesui/fortune.go:205
+#: internal/gamesui/fortune.go:1109
+msgid " · the AI plays"
+msgstr " · AI がプレイ"
+
+#: internal/games/fortunenet/texts.go:32
+#: internal/gamesui/fortune.go:252
+#: internal/gamesui/fortune.go:408
 msgid "PLAYERS"
 msgstr "プレイヤー"
 
-#: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/fortune.go:209
+#: internal/games/fortunenet/texts.go:33
+#: internal/gamesui/fortune.go:256
 msgid "SQUARE"
 msgstr "マス"
 
-#: internal/games/fortunenet/texts.go:33
-#: internal/gamesui/fortune.go:229
+#: internal/games/fortunenet/texts.go:34
+#: internal/gamesui/fortune.go:276
 msgid "WHAT HAPPENED"
 msgstr "何が起こったのか"
 
-#: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/fortune.go:163
+#: internal/games/fortunenet/texts.go:35
+#: internal/gamesui/fortune.go:208
 msgid "ROUND"
 msgstr "ラウンド"
 
-#: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/fortune.go:164
+#: internal/games/fortunenet/texts.go:36
+#: internal/gamesui/fortune.go:209
 msgid "FOUNTAIN"
 msgstr "ファウンテン"
 
-#: internal/games/fortunenet/texts.go:36
-#: internal/gamesui/fortune.go:216
-#: internal/gamesui/fortune.go:871
+#: internal/games/fortunenet/texts.go:37
+#: internal/gamesui/fortune.go:263
+#: internal/gamesui/fortune.go:1152
 msgid "Roll the dice"
 msgstr "サイコロを振る"
 
-#: internal/games/fortunenet/texts.go:37
-#: internal/gamesui/fortune.go:874
+#: internal/games/fortunenet/texts.go:38
+#: internal/gamesui/fortune.go:1155
 msgid "Roll for a double"
 msgstr "ゾロ目を狙う"
 
-#: internal/games/fortunenet/texts.go:38
-#: internal/gamesui/fortune.go:874
+#: internal/games/fortunenet/texts.go:39
+#: internal/gamesui/fortune.go:1155
 msgid "Roll for a six"
 msgstr "６の目を出す"
 
-#: internal/games/fortunenet/texts.go:39
+#: internal/games/fortunenet/texts.go:40
 msgid "Pay $%d bail"
 msgstr "保釈金 $%d を払う"
 
-#: internal/games/fortunenet/texts.go:40
-#: internal/gamesui/fortune.go:881
+#: internal/games/fortunenet/texts.go:41
+#: internal/gamesui/fortune.go:1162
 #: internal/gamesui/fortune_panel.go:464
 msgid "Buy it for $%d"
 msgstr "$%d で購入"
 
-#: internal/games/fortunenet/texts.go:41
-#: internal/gamesui/fortune.go:883
+#: internal/games/fortunenet/texts.go:42
+#: internal/gamesui/fortune.go:1164
 msgid "Don't buy"
 msgstr "買わない"
 
-#: internal/games/fortunenet/texts.go:42
-#: internal/gamesui/fortune.go:887
+#: internal/games/fortunenet/texts.go:43
+#: internal/gamesui/fortune.go:1168
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:43
-#: internal/gamesui/fortune.go:890
+#: internal/games/fortunenet/texts.go:44
+#: internal/gamesui/fortune.go:1171
 msgid "End turn"
 msgstr "ターン終了"
 
-#: internal/games/fortunenet/texts.go:44
-#: internal/gamesui/fortune.go:865
+#: internal/games/fortunenet/texts.go:45
+#: internal/gamesui/fortune.go:1143
 msgid "%s is playing…"
 msgstr "%s の手番です…"
 
-#: internal/games/fortunenet/texts.go:45
-#: internal/gamesui/fortune_board.go:1112
+#: internal/games/fortunenet/texts.go:46
+#: internal/gamesui/fortune_board.go:1115
 msgid "Your turn"
 msgstr "あなたの番です"
 
-#: internal/games/fortunenet/texts.go:46
-#: internal/gamesui/fortune_board.go:1110
+#: internal/games/fortunenet/texts.go:47
+#: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr "%s のターン"
 
-#: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/fortune_board.go:1136
+#: internal/games/fortunenet/texts.go:48
+#: internal/gamesui/fortune_board.go:1139
 msgid "round %d of %d"
 msgstr "%[2]dの%[1]dラウンド"
 
-#: internal/games/fortunenet/texts.go:48
-#: internal/gamesui/fortune.go:810
+#: internal/games/fortunenet/texts.go:49
+#: internal/gamesui/fortune.go:1085
 msgid "worth $%s"
 msgstr "$%s相当"
 
-#: internal/games/fortunenet/texts.go:49
-#: internal/gamesui/fortune.go:813
+#: internal/games/fortunenet/texts.go:50
+#: internal/gamesui/fortune.go:1088
 msgid "bankrupt"
 msgstr "破産"
 
-#: internal/games/fortunenet/texts.go:50
-#: internal/gamesui/fortune.go:815
+#: internal/games/fortunenet/texts.go:51
+#: internal/gamesui/fortune.go:1090
 msgid " · in jail"
 msgstr "· 刑務所にいる"
 
-#: internal/games/fortunenet/texts.go:51
-#: internal/gamesui/fortune.go:822
+#: internal/games/fortunenet/texts.go:52
+#: internal/gamesui/fortune.go:1097
 msgid " · free rent"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:52
-#: internal/gamesui/fortune.go:825
+#: internal/games/fortunenet/texts.go:53
+#: internal/gamesui/fortune.go:1100
 msgid " · turtle"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:53
-#: internal/gamesui/fortune.go:828
+#: internal/games/fortunenet/texts.go:54
+#: internal/gamesui/fortune.go:1103
 msgid " · asleep"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:54
+#: internal/games/fortunenet/texts.go:55
 #: internal/gamesui/fortune_panel.go:160
 msgid "For sale: $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:55
+#: internal/games/fortunenet/texts.go:56
 #: internal/gamesui/fortune_panel.go:162
 msgid "%s owns it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:56
+#: internal/games/fortunenet/texts.go:57
 #: internal/gamesui/fortune_panel.go:164
 msgid "You own it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:57
+#: internal/games/fortunenet/texts.go:58
 #: internal/gamesui/fortune_panel.go:168
 msgid "rent now"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:58
+#: internal/games/fortunenet/texts.go:59
 #: internal/gamesui/fortune_panel.go:138
 msgid "Street · price $%d · building $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:59
+#: internal/games/fortunenet/texts.go:60
 #: internal/gamesui/fortune_panel.go:140
 msgid "Station or pier · price $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:60
+#: internal/games/fortunenet/texts.go:61
 #: internal/gamesui/fortune_panel.go:142
 msgid "Utility · price $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:62
+#: internal/games/fortunenet/texts.go:63
+#: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:63
+#: internal/games/fortunenet/texts.go:64
 #: internal/gamesui/fortune_panel.go:148
 msgid "Tax · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:64
+#: internal/games/fortunenet/texts.go:65
 #: internal/gamesui/fortune_panel.go:150
 msgid "Corner"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:65
+#: internal/games/fortunenet/texts.go:66
 #: internal/gamesui/fortune_panel.go:125
 msgid "House · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:66
+#: internal/games/fortunenet/texts.go:67
 #: internal/gamesui/fortune_panel.go:122
 msgid "Hotel · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:67
+#: internal/games/fortunenet/texts.go:68
 #: internal/gamesui/fortune_panel.go:119
 msgid "Hotel built"
 msgstr "ホテル建設"
 
-#: internal/games/fortunenet/texts.go:68
+#: internal/games/fortunenet/texts.go:69
 #: internal/gamesui/fortune_panel.go:127
 msgid "Sell · $%d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:69
+#: internal/games/fortunenet/texts.go:70
 #: internal/gamesui/fortune_panel.go:480
 msgid "Your cards · %d of %d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:70
+#: internal/games/fortunenet/texts.go:71
 #: internal/gamesui/fortune_panel.go:478
 msgid "Your cards · %d of %d · click one to play it"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:71
+#: internal/games/fortunenet/texts.go:72
 #: internal/gamesui/fortune_panel.go:368
 msgid "Click a card to buy it: any of them, or none."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:72
+#: internal/games/fortunenet/texts.go:73
 #: internal/gamesui/fortune_panel.go:511
 msgid "On whom?"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:73
+#: internal/games/fortunenet/texts.go:74
 #: internal/gamesui/fortune_panel.go:513
 msgid "How many squares?"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:74
+#: internal/games/fortunenet/texts.go:75
 msgid "Pick a square on the board"
 msgstr "盤上のマスを選んでください"
 
-#: internal/games/fortunenet/texts.go:76
-#: internal/gamesui/fortune_board.go:1080
+#: internal/games/fortunenet/texts.go:77
+#: internal/gamesui/fortune_board.go:1083
 msgid "%s won."
 msgstr "%s が勝ちました。"
 
-#: internal/games/fortunenet/texts.go:77
-#: internal/gamesui/fortune_board.go:1082
+#: internal/games/fortunenet/texts.go:78
+#: internal/gamesui/fortune_board.go:1085
 msgid "You won!"
 msgstr "勝ちました！"
 
-#: internal/games/fortunenet/texts.go:78
-#: internal/gamesui/fortune_board.go:1097
+#: internal/games/fortunenet/texts.go:79
+#: internal/gamesui/fortune_board.go:1100
 msgid "%s (bankrupt)"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:79
+#: internal/games/fortunenet/texts.go:80
 #: internal/gamesui/fortune_panel.go:234
 msgid "Bare"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:80
+#: internal/games/fortunenet/texts.go:81
 #: internal/gamesui/fortune_panel.go:237
 msgid "Hotel"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:81
-msgid "%s got a card"
-msgstr "%s がカードを手に入れた"
-
-#: internal/games/fortunenet/texts.go:82
-msgid "%s played %s"
-msgstr "%s が%sを使った"
-
-#: internal/games/fortunenet/texts.go:84
+#: internal/games/fortunenet/texts.go:83
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
 msgstr ""
 
+#: internal/games/fortunenet/texts.go:84
+msgid "Sound on: M turns it off"
+msgstr "サウンド オン: M でオフ"
+
 #: internal/games/fortunenet/texts.go:85
+msgid "Sound off: M turns it on"
+msgstr "サウンド オフ: M でオン"
+
+#: internal/games/fortunenet/texts.go:86
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:88
-#: internal/gamesui/fortune.go:819
+#: internal/gamesui/fortune_menu.go:174
+#: internal/gamesui/fortune_panel.go:273
+msgid "Collect $%d every time you pass."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:89
+#: internal/games/fortunenet/texts.go:90
+#: internal/gamesui/fortune_menu.go:175
+#: internal/gamesui/fortune_panel.go:275
+msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
+msgstr "ここに送信されない限り、訪問のみ。刑務所では、%s を出して出ていくか、出てくる前に $50 を支払います。 3回試したら、お金を払って出発します。"
+
+#: internal/games/fortunenet/texts.go:91
+#: internal/gamesui/fortune_panel.go:278
+msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
+msgstr "税金と罰金は泉に注ぎ込まれます。ここに着地した次のプレイヤーがすべてを手に入れます: 今 $%d。"
+
+#: internal/games/fortunenet/texts.go:92
+#: internal/gamesui/fortune_menu.go:177
+#: internal/gamesui/fortune_panel.go:280
+msgid "Straight to jail, without passing Start."
+msgstr "スタートを通過せずに刑務所へ直行。"
+
+#: internal/games/fortunenet/texts.go:93
+#: internal/gamesui/fortune_menu.go:181
+#: internal/gamesui/fortune_panel.go:282
+msgid "Draw a card: money, a fine, a trip, or a card for your hand."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:94
+#: internal/gamesui/fortune_menu.go:182
+#: internal/gamesui/fortune_panel.go:284
+msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:95
+#: internal/gamesui/fortune_menu.go:183
+#: internal/gamesui/fortune_panel.go:286
+msgid "Pay $%d into the fountain."
+msgstr "噴水に$%dを支払います。"
+
+#: internal/games/fortunenet/texts.go:96
+#: internal/gamesui/fortune_panel.go:244
+msgid "The whole group: bare rent doubled, built rents half again."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:97
+#: internal/gamesui/fortune_menu.go:178
+#: internal/gamesui/fortune_panel.go:246
+msgid "With the whole group: bare rent doubled, built rents half again."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:98
+#: internal/gamesui/fortune_panel.go:259
+msgid "Group:"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:99
+#: internal/gamesui/fortune_panel.go:269
+msgid "× %d"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:101
+#: internal/gamesui/fortune_panel.go:263
+msgid "%d pier"
+msgid_plural "%d piers"
+msgstr[0] ""
+
+#: internal/games/fortunenet/texts.go:104
+#: internal/gamesui/fortune_panel.go:269
+msgid "%d utility"
+msgid_plural "%d utilities"
+msgstr[0] ""
+
+#: internal/games/fortunenet/texts.go:107
+#: internal/gamesui/fortune.go:1094
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] ""
 
-#: internal/games/fortunenet/texts.go:91
+#: internal/games/fortunenet/texts.go:110
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] "とコンピューター %d 人"
 
-#: internal/games/fortunenet/texts.go:94
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
@@ -6494,86 +6639,129 @@ msgstr ""
 msgid "Space the main action  ·  R roll  ·  B buy  ·  X pass  ·  E end turn  ·  J pay bail  ·  H build on the square in focus  ·  N new game  ·  M sound  ·  click a square to see it  ·  drag, scroll or arrows to look about  ·  Home your pawn"
 msgstr ""
 
-#: internal/gamesui/fortune.go:165
+#: internal/gamesui/fortune.go:210
 msgid "JOIN CODE"
 msgstr "参加コード"
 
-#: internal/gamesui/fortune.go:272
-msgid "Where do you play?"
-msgstr "どこで遊びますか？"
-
-#: internal/gamesui/fortune.go:337
-msgid "%s and %s"
-msgstr "%[1]sおよび%[2]s"
-
-#: internal/gamesui/fortune.go:372
-msgid "Rounds"
-msgstr "ラウンド"
-
-#: internal/gamesui/fortune.go:373
-msgid "Starting money"
-msgstr "開始資金"
-
-#: internal/gamesui/fortune.go:374
-msgid "People at this screen"
-msgstr "この画面で遊ぶ人数"
-
-#: internal/gamesui/fortune.go:375
-msgid "Rivals"
-msgstr "ライバル"
-
-#: internal/gamesui/fortune.go:375
-msgid "Mika, Ren"
-msgstr "ミカ、レン"
-
-#: internal/gamesui/fortune.go:375
-msgid "Mika, Ren, Sol"
-msgstr "ミカ、レン、ソル"
-
-#: internal/gamesui/fortune.go:377
-msgid "Dice"
-msgstr "サイコロ"
-
-#: internal/gamesui/fortune.go:377
-msgid "One die"
-msgstr "サイコロ1個"
-
-#: internal/gamesui/fortune.go:377
-msgid "Two dice"
-msgstr "２つのサイコロ"
-
-#: internal/gamesui/fortune.go:378
-msgid "Build the day you buy"
-msgstr "買ったその日に建てよう"
-
-#: internal/gamesui/fortune.go:392
-msgid "A street you buy may go up a level that same turn"
-msgstr "あなたが購入した通りは、同じターンでレベルを上げることができます"
-
-#: internal/gamesui/fortune.go:396
-msgid "On the network"
-msgstr "ネットワーク"
-
-#: internal/gamesui/fortune.go:411
-msgid "Others on this network join from a browser; you may play or only host"
-msgstr "同じネットワークの人がブラウザーから参加します。一緒に遊ぶことも、ホストだけすることもできます"
-
-#: internal/gamesui/fortune.go:461
-msgid "Open the game to the network"
-msgstr "ネットワークに公開する"
-
-#: internal/gamesui/fortune.go:463
-msgid "Start in %s"
-msgstr "%sで開始"
-
-#: internal/gamesui/fortune.go:862
+#: internal/gamesui/fortune.go:322
+#: internal/gamesui/fortune.go:1140
 #: ui/game.ui:76
 msgid "New game"
 msgstr "新しいゲーム"
 
-#: internal/gamesui/fortune.go:875
+#: internal/gamesui/fortune.go:412
+msgid "Hot seat"
+msgstr "ホットシート"
+
+#: internal/gamesui/fortune.go:416
+#: internal/gamesui/fortune_ai.go:199
+#: ui/settings.ui:2081
+msgid "AI"
+msgstr "AI"
+
+#: internal/gamesui/fortune.go:416
+#: internal/gamesui/fortune.go:653
+msgid "Open seat"
+msgstr "空き席"
+
+#: internal/gamesui/fortune.go:468
+msgid "On the network"
+msgstr "ネットワーク"
+
+#: internal/gamesui/fortune.go:473
+msgid "MAP"
+msgstr "マップ"
+
+#: internal/gamesui/fortune.go:529
+msgid "Rounds"
+msgstr "ラウンド"
+
+#: internal/gamesui/fortune.go:530
+msgid "Starting money"
+msgstr "開始資金"
+
+#: internal/gamesui/fortune.go:531
+msgid "Dice"
+msgstr "サイコロ"
+
+#: internal/gamesui/fortune.go:531
+msgid "One die"
+msgstr "サイコロ1個"
+
+#: internal/gamesui/fortune.go:531
+msgid "Two dice"
+msgstr "２つのサイコロ"
+
+#: internal/gamesui/fortune.go:536
+msgid "Build the day you buy"
+msgstr "買ったその日に建てよう"
+
+#: internal/gamesui/fortune.go:562
+msgid "%s and %s"
+msgstr "%[1]sおよび%[2]s"
+
+#: internal/gamesui/fortune.go:641
+#: internal/gamesui/fortune_host.go:130
+msgid "at this screen"
+msgstr "この画面で"
+
+#: internal/gamesui/fortune.go:654
+msgid "empty: no one plays here"
+msgstr "空席：誰もいない"
+
+#: internal/gamesui/fortune.go:656
+msgid "for a visitor in a browser"
+msgstr "ブラウザーからの参加者用"
+
+#: internal/gamesui/fortune.go:723
+msgid "Open the game to the network"
+msgstr "ネットワークに公開する"
+
+#: internal/gamesui/fortune.go:725
+msgid "Start in %s"
+msgstr "%sで開始"
+
+#: internal/gamesui/fortune.go:1145
+msgid "%s is thinking…"
+msgstr "%s が考えています…"
+
+#: internal/gamesui/fortune.go:1156
 msgid "Pay $50 bail"
 msgstr "保釈金50ドルを支払え"
+
+#: internal/gamesui/fortune_ai.go:80
+#: internal/ui/settings_bench.go:217
+msgid "inua-assistant is not installed"
+msgstr "inua-assistant がインストールされていません"
+
+#: internal/gamesui/fortune_ai.go:113
+msgid "the AI picked the wrong option"
+msgstr "AI が違う選択肢を選びました"
+
+#: internal/gamesui/fortune_ai.go:143
+msgid "the AI did not answer in time"
+msgstr "AI が時間内に答えませんでした"
+
+#: internal/gamesui/fortune_ai.go:156
+#: internal/gamesui/fortune_ai.go:162
+msgid "checking the AI…"
+msgstr "AI を確認しています…"
+
+#: internal/gamesui/fortune_ai.go:164
+msgid "this profile did not answer"
+msgstr "このプロファイルは応答しませんでした"
+
+#: internal/gamesui/fortune_ai.go:172
+msgid "the AI: %s"
+msgstr "AI：%s"
+
+#: internal/gamesui/fortune_ai.go:202
+msgid "AI %d"
+msgstr "AI %d"
+
+#: internal/gamesui/fortune_ai.go:216
+msgid "The profile of Settings → AI this player asks"
+msgstr "このプレイヤーが使う「設定」→「AI」のプロファイル"
 
 #: internal/gamesui/fortune_board.go:890
 msgid "START\ncollect $%d"
@@ -6591,11 +6779,11 @@ msgstr "噴水\n賞金を獲得"
 msgid "GO TO\nJAIL"
 msgstr "\n刑務所へ行きます"
 
-#: internal/gamesui/fortune_board.go:1102
+#: internal/gamesui/fortune_board.go:1105
 msgid "Press N or Space for a new game"
 msgstr "新しいゲームを行うには N または Space を押してください"
 
-#: internal/gamesui/fortune_board.go:1138
+#: internal/gamesui/fortune_board.go:1141
 msgid "%s · sound off"
 msgstr ""
 
@@ -6631,87 +6819,84 @@ msgstr "ヴィラ"
 msgid "palazzi"
 msgstr "パラッツィ"
 
-#: internal/gamesui/fortune_host.go:55
+#: internal/gamesui/fortune_host.go:62
 msgid "The game could not open to the network: %v"
 msgstr "ネットワークに公開できませんでした: %v"
 
-#: internal/gamesui/fortune_host.go:83
+#: internal/gamesui/fortune_host.go:90
 msgid "Host"
 msgstr "ホスト"
 
-#: internal/gamesui/fortune_host.go:123
-msgid "at this screen"
-msgstr "この画面で"
-
-#: internal/gamesui/fortune_host.go:127
+#: internal/gamesui/fortune_host.go:134
 msgid "Send away"
 msgstr "退出させる"
 
-#: internal/gamesui/fortune_host.go:133
+#: internal/gamesui/fortune_host.go:140
 msgid "Waiting for visitors: open the link on a phone or a computer on the same network."
 msgstr "参加者を待っています。同じネットワークのスマートフォンやコンピューターでリンクを開いてください。"
 
-#: internal/gamesui/fortune_host.go:173
+#: internal/gamesui/fortune_host.go:180
 msgid "Others join from a browser"
 msgstr "ブラウザーから参加"
 
-#: internal/gamesui/fortune_host.go:224
+#: internal/gamesui/fortune_host.go:231
 msgid "Start the game"
 msgstr "ゲームを始める"
 
-#: internal/gamesui/fortune_panel.go:244
-msgid "The whole group: bare rent doubled, built rents half again."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:25
+msgid "Game"
+msgstr "ゲーム"
 
-#: internal/gamesui/fortune_panel.go:246
-msgid "With the whole group: bare rent doubled, built rents half again."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:43
+msgid "Restart game"
+msgstr "最初からやり直す"
 
-#: internal/gamesui/fortune_panel.go:259
-msgid "Group:"
-msgstr ""
+#: internal/gamesui/fortune_menu.go:44
+#: internal/gamesui/fortune_menu.go:103
+msgid "Compendium"
+msgstr "図鑑"
 
-#: internal/gamesui/fortune_panel.go:263
-msgid "%d pier"
-msgid_plural "%d piers"
-msgstr[0] ""
+#: internal/gamesui/fortune_menu.go:45
+msgid "Quit to menu"
+msgstr "メニューに戻る"
 
-#: internal/gamesui/fortune_panel.go:269
-msgid "× %d"
-msgstr ""
+#: internal/gamesui/fortune_menu.go:109
+#: ui/gpg.ui:633
+#: ui/settings.ui:4265
+msgid "Back"
+msgstr "戻る"
 
-#: internal/gamesui/fortune_panel.go:269
-msgid "%d utility"
-msgid_plural "%d utilities"
-msgstr[0] ""
+#: internal/gamesui/fortune_menu.go:163
+msgid "CARDS"
+msgstr "カード"
 
-#: internal/gamesui/fortune_panel.go:273
-msgid "Collect $%d every time you pass."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:176
+msgid "Taxes and fines go into the fountain; the next player to land there takes them all."
+msgstr "税金と罰金は泉にたまり、次にそこに止まった人がすべて受け取ります。"
 
-#: internal/gamesui/fortune_panel.go:275
-msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
-msgstr "ここに送信されない限り、訪問のみ。刑務所では、%s を出して出ていくか、出てくる前に $50 を支払います。 3回試したら、お金を払って出発します。"
+#: internal/gamesui/fortune_menu.go:178
+msgid "Street"
+msgstr "通り"
 
-#: internal/gamesui/fortune_panel.go:278
-msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
-msgstr "税金と罰金は泉に注ぎ込まれます。ここに着地した次のプレイヤーがすべてを手に入れます: 今 $%d。"
+#: internal/gamesui/fortune_menu.go:179
+msgid "Station or pier"
+msgstr "駅または桟橋"
 
-#: internal/gamesui/fortune_panel.go:280
-msgid "Straight to jail, without passing Start."
-msgstr "スタートを通過せずに刑務所へ直行。"
+#: internal/gamesui/fortune_menu.go:180
+msgid "Utility"
+msgstr "公共事業"
 
-#: internal/gamesui/fortune_panel.go:282
-msgid "Draw a card: money, a fine, a trip, or a card for your hand."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:211
+msgid "SQUARES"
+msgstr "マス"
 
-#: internal/gamesui/fortune_panel.go:284
-msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
-msgstr ""
+#: internal/gamesui/fortune_menu.go:236
+msgid "RIVALS"
+msgstr "ライバル"
 
-#: internal/gamesui/fortune_panel.go:286
-msgid "Pay $%d into the fountain."
-msgstr "噴水に$%dを支払います。"
+#: internal/gamesui/fortune_menu.go:242
+msgid "RULES"
+msgstr "ルール"
 
 #: internal/gamesui/fortune_panel.go:474
 msgid "%s's cards · %d of %d · click one to play it"
@@ -7011,18 +7196,22 @@ msgid "Take a screenshot"
 msgstr "スクリーンショットを撮る"
 
 #: internal/hyprconf/keys.go:34
+msgid "Silent screenshot"
+msgstr "スクリーンショットを撮る(ドロワーなし)"
+
+#: internal/hyprconf/keys.go:35
 msgid "The whole screen, at once"
 msgstr "画面全体を一度に"
 
-#: internal/hyprconf/keys.go:35
+#: internal/hyprconf/keys.go:36
 msgid "The focused window, at once"
 msgstr "フォーカスされたウィンドウはすぐに"
 
-#: internal/hyprconf/keys.go:36
+#: internal/hyprconf/keys.go:37
 msgid "Record the screen (again: stop)"
 msgstr "画面を記録します（再度：停止）"
 
-#: internal/hyprconf/keys.go:37
+#: internal/hyprconf/keys.go:38
 #: ui/colorpicker.ui:59
 msgid "Pick a colour"
 msgstr "色を選ぶ"
@@ -7145,7 +7334,7 @@ msgid "Lock Screen"
 msgstr "画面をロック"
 
 #: internal/shell/commands.go:27
-#: ui/settings.ui:3766
+#: ui/settings.ui:3876
 msgid "Lock now"
 msgstr "今すぐロックしてください"
 
@@ -7158,8 +7347,8 @@ msgid "Suspend, locking first"
 msgstr "サスペンド、最初にロック"
 
 #: internal/shell/commands.go:29
-#: internal/ui/control.go:479
-#: ui/control.ui:148
+#: internal/ui/control.go:488
+#: ui/control.ui:172
 msgid "Restart"
 msgstr "再起動"
 
@@ -7217,7 +7406,7 @@ msgid "Screenshot Window"
 msgstr "スクリーンショットウィンドウ"
 
 #: internal/shell/commands.go:35
-#: internal/ui/screenshot.go:438
+#: internal/ui/screenshot.go:453
 #: ui/screenshot.ui:151
 msgid "Click a window"
 msgstr "ウィンドウをクリックする"
@@ -7227,7 +7416,7 @@ msgid "Screenshot Screen"
 msgstr "スクリーンショット画面"
 
 #: internal/shell/commands.go:36
-#: internal/ui/screenshot.go:439
+#: internal/ui/screenshot.go:454
 #: ui/screenshot.ui:176
 msgid "Click a screen"
 msgstr "画面をクリックします"
@@ -7259,7 +7448,7 @@ msgstr "それらすべて"
 #: internal/shell/commands.go:40
 #: internal/ui/notify.go:848
 #: ui/center.ui:71
-#: ui/control.ui:411
+#: ui/control.ui:435
 msgid "Focus"
 msgstr "集中モード"
 
@@ -7371,7 +7560,7 @@ msgid "Find apps, windows and answers"
 msgstr "アプリ、ウィンドウ、および回答を見つける"
 
 #: internal/shell/dock.go:287
-#: internal/ui/screenshot.go:783
+#: internal/ui/screenshot.go:802
 #: ui/settings.ui:1770
 msgid "Screenshot"
 msgstr "スクリーンショット"
@@ -7573,176 +7762,196 @@ msgstr "アラーム · %02d:%02d"
 msgid "Snooze"
 msgstr "スヌーズ"
 
-#: internal/ui/askpass.go:69
+#: internal/ui/askpass.go:72
 msgid "password: want one JSON request"
 msgstr "パスワード: 1 つの JSON リクエストが必要です"
 
-#: internal/ui/askpass.go:111
+#: internal/ui/askpass.go:114
 msgid "not ok"
 msgstr "ダメだ"
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Passphrase Required"
 msgstr "パスフレーズが必要です"
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Confirm"
 msgstr "確認"
 
-#: internal/ui/askpass.go:226
+#: internal/ui/askpass.go:229
 msgid "Message"
 msgstr "メッセージ"
 
-#: internal/ui/askpass.go:228
+#: internal/ui/askpass.go:231
 msgid "Unlock OpenPGP Key"
 msgstr "OpenPGP 鍵のロック解除"
 
-#: internal/ui/askpass.go:244
+#: internal/ui/askpass.go:247
 msgid "Passphrase"
 msgstr "パスフレーズ"
 
-#: internal/ui/askpass.go:327
 #: internal/ui/askpass.go:330
+#: internal/ui/askpass.go:333
 #: internal/workshop/session.go:406
 msgid "Let %s do this?"
 msgstr "%s にこれを許可しますか？"
 
-#: internal/ui/askpass.go:328
+#: internal/ui/askpass.go:331
 msgid "The assistant needs this to answer you. Deny, and it will say it could not."
 msgstr "アシスタントが回答するのに必要です。拒否すると、できなかったと伝えます。"
 
-#: internal/ui/askpass.go:331
+#: internal/ui/askpass.go:334
 msgid "An AI agent asks to use inua's tools on your desktop. Allow it once, or for the rest of its session."
 msgstr "AI エージェントが、デスクトップで inua のツールを使おうとしています。今回だけか、このセッションのあいだ許可できます。"
 
-#: internal/ui/askpass.go:333
+#: internal/ui/askpass.go:336
+msgid "Let programs at this path read every secret?"
+msgstr "このパスのプログラムにすべてのシークレットの読み取りを許可しますか？"
+
+#: internal/ui/askpass.go:337
+msgid "Any program at this path will read every secret without asking, even after it changes. Allow only if you just added it in Settings or with inua keyring allow, and only for a place you trust."
+msgstr "このパスのプログラムは、更新された後も含め、確認なしですべてのシークレットを読み取ります。「設定」または inua keyring allow で今追加したばかりで、信頼できる場所の場合のみ許可してください。"
+
+#: internal/ui/askpass.go:339
 msgid "Trust the list of apps again?"
 msgstr "アプリの一覧をもう一度信頼しますか？"
 
-#: internal/ui/askpass.go:334
+#: internal/ui/askpass.go:340
 msgid "The list of apps trusted with your secrets was changed outside inua-keyring. Trust it again only if you just asked for it in Settings: it lets %d app read secrets without asking."
 msgid_plural "The list of apps trusted with your secrets was changed outside inua-keyring. Trust it again only if you just asked for it in Settings: it lets %d apps read secrets without asking."
 msgstr[0] "秘密を信頼するアプリの一覧が inua-keyring の外で変更されました。設定でいま頼んだ場合だけ、もう一度信頼してください。%d 個のアプリが確認なしで秘密を読めるようになります。"
 
-#: internal/ui/askpass.go:337
+#: internal/ui/askpass.go:343
 msgid "%s has changed since you allowed it"
 msgstr "%s は許可した時から変わっています"
 
-#: internal/ui/askpass.go:338
+#: internal/ui/askpass.go:344
 msgid "Its program is not the one you allowed. If you did not update it, deny."
 msgstr "プログラムが許可したものと違います。更新していないなら拒否してください。"
 
-#: internal/ui/askpass.go:340
+#: internal/ui/askpass.go:346
 msgid "Allow %s to read a secret?"
 msgstr "%s に秘密の読み取りを許可しますか？"
 
-#: internal/ui/askpass.go:341
+#: internal/ui/askpass.go:347
 msgid "It is not trusted with this secret yet. Always allow lets it read the secret from now on without asking."
 msgstr "この秘密についてはまだ信頼されていません。「常に許可」にすると、今後は確認なしで読めます。"
 
-#: internal/ui/askpass.go:344
+#: internal/ui/askpass.go:350
 msgid "It can only be allowed once: %s."
 msgstr "一度だけ許可できます: %s。"
 
-#: internal/ui/askpass.go:365
+#: internal/ui/askpass.go:360
+msgid "<span alpha='55%'>[</span>PATH<span alpha='55%'>]</span>"
+msgstr "<span alpha='55%'>[</span>パス<span alpha='55%'>]</span>"
+
+#: internal/ui/askpass.go:361
+msgid "PATH"
+msgstr "パス"
+
+#: internal/ui/askpass.go:379
 msgid "Changed since you allowed it"
 msgstr "許可した時から変わっています"
 
-#: internal/ui/askpass.go:368
+#: internal/ui/askpass.go:382
 msgid "%s · as %s"
 msgstr "%s · %s として"
 
-#: internal/ui/askpass.go:384
+#: internal/ui/askpass.go:401
 msgid "Deny"
 msgstr "拒否"
 
-#: internal/ui/askpass.go:385
-#: internal/ui/askpass.go:399
+#: internal/ui/askpass.go:402
+#: internal/ui/askpass.go:420
 msgid "Allow once"
 msgstr "今回だけ許可"
 
-#: internal/ui/askpass.go:386
+#: internal/ui/askpass.go:403
 msgid "Always allow"
 msgstr "常に許可"
 
-#: internal/ui/askpass.go:393
+#: internal/ui/askpass.go:410
 msgid "Allow for this session"
 msgstr "このセッション中は許可"
 
-#: internal/ui/askpass.go:396
+#: internal/ui/askpass.go:413
 msgid "Trust"
 msgstr "信頼する"
 
-#: internal/ui/askpass.go:415
+#: internal/ui/askpass.go:417
+msgid "Allow every secret"
+msgstr "すべてを許可"
+
+#: internal/ui/askpass.go:436
 msgid "Enter the passphrase so inua-keyring can give %s its secret."
 msgstr "inua-keyring が %s にシークレットを渡せるよう、パスフレーズを入力してください。"
 
-#: internal/ui/askpass.go:417
+#: internal/ui/askpass.go:438
 msgid "Enter the passphrase so %s can use this key."
 msgstr "%s がこの鍵を使えるよう、パスフレーズを入力してください。"
 
-#: internal/ui/askpass.go:419
+#: internal/ui/askpass.go:440
 msgid "Enter the passphrase to use this key."
 msgstr "この鍵を使うには、パスフレーズを入力してください。"
 
-#: internal/ui/askpass.go:431
+#: internal/ui/askpass.go:452
 msgid "%s · expired %s"
 msgstr "%s · %s に期限切れ"
 
-#: internal/ui/askpass.go:433
+#: internal/ui/askpass.go:454
 msgid "%s · expires %s"
 msgstr "%s · %s に期限切れ予定"
 
-#: internal/ui/askpass.go:448
+#: internal/ui/askpass.go:469
 #: ui/polkit.ui:566
 msgid "FOR"
 msgstr "対象"
 
-#: internal/ui/askpass.go:450
+#: internal/ui/askpass.go:471
 msgid "SECRET"
 msgstr "シークレット"
 
-#: internal/ui/askpass.go:453
+#: internal/ui/askpass.go:474
 msgid "ACTION"
 msgstr "操作"
 
-#: internal/ui/askpass.go:535
+#: internal/ui/askpass.go:556
 msgid "Encryption subkey"
 msgstr "暗号化用サブ鍵"
 
-#: internal/ui/askpass.go:537
+#: internal/ui/askpass.go:558
 msgid "Signing subkey"
 msgstr "署名用サブ鍵"
 
-#: internal/ui/askpass.go:539
+#: internal/ui/askpass.go:560
 msgid "Authentication subkey"
 msgstr "認証用サブ鍵"
 
-#: internal/ui/askpass.go:541
+#: internal/ui/askpass.go:562
 msgid "Subkey"
 msgstr "サブ鍵"
 
-#: internal/ui/askpass.go:543
+#: internal/ui/askpass.go:564
 msgid "Primary key"
 msgstr "主鍵"
 
-#: internal/ui/askpass.go:590
+#: internal/ui/askpass.go:611
 msgid "Show the private details (Ctrl+H)"
 msgstr "個人情報を表示 (Ctrl+H)"
 
-#: internal/ui/askpass.go:593
+#: internal/ui/askpass.go:614
 msgid "Hide the private details: the key's owner, its fingerprint and the pass entry (Ctrl+H)"
 msgstr "個人情報を隠す: 鍵の所有者、フィンガープリント、pass のエントリ (Ctrl+H)"
 
-#: internal/ui/askpass.go:652
+#: internal/ui/askpass.go:673
 msgid "Hidden while the screen is being recorded or shared."
 msgstr "画面の録画中または共有中は隠しています。"
 
-#: internal/ui/askpass.go:655
+#: internal/ui/askpass.go:676
 msgid "Hidden for the screenshot."
 msgstr "スクリーンショットのため隠しています。"
 
-#: internal/ui/askpass.go:702
+#: internal/ui/askpass.go:723
 msgid "The passphrases do not match."
 msgstr "パスフレーズが一致しません。"
 
@@ -7776,7 +7985,7 @@ msgid "Search clipboard history"
 msgstr "クリップボード履歴を検索"
 
 #: internal/ui/clipboard.go:335
-#: ui/settings.ui:3218
+#: ui/settings.ui:3328
 msgid "Clipboard"
 msgstr "クリップボード"
 
@@ -7826,34 +8035,43 @@ msgstr "[%s に %s からコピー]"
 msgid "[COPIED %s]"
 msgstr "[%s にコピー]"
 
-#: internal/ui/control.go:277
+#: internal/ui/control.go:285
 msgid "inua control center"
 msgstr "イヌアコントロールセンター"
 
-#: internal/ui/control.go:478
+#: internal/ui/control.go:486
 #: ui/control.ui:124
 msgid "Suspend"
 msgstr "サスペンド"
 
-#: internal/ui/control.go:479
+#: internal/ui/control.go:487
+#: ui/control.ui:148
+msgid "Hibernate"
+msgstr "ハイバネート"
+
+#: internal/ui/control.go:487
+msgid "Hibernate?"
+msgstr "ハイバネートしますか?"
+
+#: internal/ui/control.go:488
 msgid "Restart?"
 msgstr "再起動しますか?"
 
-#: internal/ui/control.go:480
-#: ui/control.ui:172
+#: internal/ui/control.go:489
+#: ui/control.ui:196
 msgid "Shut down"
 msgstr "シャットダウン"
 
-#: internal/ui/control.go:480
+#: internal/ui/control.go:489
 msgid "Shut down?"
 msgstr "シャットダウンしますか？"
 
-#: internal/ui/control.go:481
-#: ui/control.ui:196
+#: internal/ui/control.go:490
+#: ui/control.ui:220
 msgid "Log out"
 msgstr "ログアウト"
 
-#: internal/ui/control.go:481
+#: internal/ui/control.go:490
 msgid "Log out?"
 msgstr "ログアウトしますか？"
 
@@ -7924,7 +8142,7 @@ msgstr "hyprland.lua は inua.lua を読み込んだ後にこれらを再設定�
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf は、inua.conf をロードした後にこれらを再度設定します。これは、inua: %s よりも優先されます。ソース行をそれらの下に移動します。"
 
-#: internal/ui/launcher.go:286
+#: internal/ui/launcher.go:302
 msgid "inua launcher"
 msgstr "イヌアランチャー"
 
@@ -7947,7 +8165,7 @@ msgstr "パスワードが間違っています"
 
 #: internal/ui/lock.go:269
 #: internal/ui/polkit.go:294
-#: internal/ui/settings_about.go:144
+#: internal/ui/settings_about.go:153
 msgid "Checking…"
 msgstr "チェック中…"
 
@@ -7957,7 +8175,7 @@ msgstr "パスワードが確認できませんでした"
 
 #: internal/ui/notify.go:316
 #: ui/bar.ui:122
-#: ui/settings.ui:2954
+#: ui/settings.ui:3064
 msgid "Notifications"
 msgstr "通知"
 
@@ -8125,360 +8343,464 @@ msgid "Screen recording"
 msgstr "画面記録"
 
 #: internal/ui/record.go:163
-#: internal/ui/screenshot.go:789
+#: internal/ui/screenshot.go:808
 msgid "Show in Folder"
 msgstr "フォルダ内で表示"
 
-#: internal/ui/screenshot.go:419
+#: internal/ui/screenshot.go:434
 msgid "inua screenshot"
 msgstr "イヌアのスクリーンショット"
 
-#: internal/ui/screenshot.go:437
+#: internal/ui/screenshot.go:452
 msgid "Drag to take an area"
 msgstr "ドラッグして領域を取得します"
 
-#: internal/ui/screenshot.go:440
+#: internal/ui/screenshot.go:455
 msgid "Click to copy a colour"
 msgstr "クリックして色をコピーします"
 
-#: internal/ui/screenshot.go:444
+#: internal/ui/screenshot.go:459
 msgid "Drag to record an area"
 msgstr "ドラッグして領域を記録する"
 
-#: internal/ui/screenshot.go:445
+#: internal/ui/screenshot.go:460
 msgid "Click a window to record"
 msgstr "ウィンドウをクリックして記録する"
 
-#: internal/ui/screenshot.go:446
+#: internal/ui/screenshot.go:461
 msgid "Click a screen to record"
 msgstr "画面をクリックして記録する"
 
-#: internal/ui/screenshot.go:777
+#: internal/ui/screenshot.go:796
 msgid "Screenshot saved and copied"
 msgstr "スクリーンショットの保存とコピー"
 
-#: internal/ui/screenshot.go:778
+#: internal/ui/screenshot.go:797
 msgid "Screenshot saved"
 msgstr "スクリーンショットが保存されました"
 
-#: internal/ui/screenshot.go:779
+#: internal/ui/screenshot.go:798
 msgid "Screenshot copied"
 msgstr "スクリーンショットがコピーされました"
 
-#: internal/ui/screenshot.go:780
+#: internal/ui/screenshot.go:799
 msgid "Screenshot taken"
 msgstr "撮影されたスクリーンショット"
 
-#: internal/ui/settings.go:254
+#: internal/ui/settings.go:255
 msgid "Not restarted: %s"
 msgstr "再起動できませんでした: %s"
 
-#: internal/ui/settings.go:272
-#: internal/ui/settings.go:280
-#: internal/ui/settings.go:283
-#: internal/ui/settings.go:621
-#: internal/ui/settings.go:623
-#: internal/ui/settings.go:672
-#: internal/ui/settings.go:689
+#: internal/ui/settings.go:273
+#: internal/ui/settings.go:281
+#: internal/ui/settings.go:284
+#: internal/ui/settings.go:625
+#: internal/ui/settings.go:627
+#: internal/ui/settings.go:676
+#: internal/ui/settings.go:693
 msgid "%d%%"
 msgstr "%d%%"
 
-#: internal/ui/settings.go:652
+#: internal/ui/settings.go:656
 #: ui/settings.ui:384
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:652
+#: internal/ui/settings.go:656
 #: ui/settings.ui:385
 msgid "System theme"
 msgstr "システムテーマ"
 
-#: internal/ui/settings.go:725
+#: internal/ui/settings.go:729
 msgid "%s (%s, %s) · %s"
 msgstr "%s(%s、%s)· %s"
 
-#: internal/ui/settings.go:727
+#: internal/ui/settings.go:731
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "テキスト %d 件"
 
-#: internal/ui/settings.go:728
+#: internal/ui/settings.go:732
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "画像 %d 件"
 
-#: internal/ui/settings.go:729
+#: internal/ui/settings.go:733
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:808
+#: internal/ui/settings.go:812
 #: internal/ui/settings_apps.go:168
 msgid "Not saved: %s"
 msgstr "保存されていません: %s"
 
-#: internal/ui/settings.go:834
+#: internal/ui/settings.go:838
 msgid "Choose a wallpaper"
 msgstr "壁紙を選択してください"
 
-#: internal/ui/settings.go:876
+#: internal/ui/settings.go:880
 msgid "Off: another notification daemon can show them"
 msgstr "オフ: 別の通知デーモンがそれらを表示できる"
 
-#: internal/ui/settings.go:878
+#: internal/ui/settings.go:882
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "バナー表示後に通知センターへ（バーのベル、または Super+N）"
 
-#: internal/ui/settings.go:880
+#: internal/ui/settings.go:884
 msgid "Waiting: another notification daemon is running"
 msgstr "待機中: 別の通知デーモンが実行中です"
 
-#: internal/ui/settings.go:898
+#: internal/ui/settings.go:902
 msgid "Nothing pinned"
 msgstr "固定したアプリはありません"
 
-#: internal/ui/settings.go:914
+#: internal/ui/settings.go:918
 msgid "%s (not installed)"
 msgstr "%s (未インストール)"
 
-#: internal/ui/settings.go:927
+#: internal/ui/settings.go:931
 msgid "Move earlier"
 msgstr "前に移動"
 
-#: internal/ui/settings.go:928
+#: internal/ui/settings.go:932
 msgid "Move later"
 msgstr "後ろに移動"
 
-#: internal/ui/settings.go:929
+#: internal/ui/settings.go:933
 msgid "Remove from the dock"
 msgstr "ドックから削除"
 
-#: internal/ui/settings_about.go:132
+#: internal/ui/settings_about.go:141
 msgid "inua %s, built from source"
 msgstr "inua %s、ソースから構築"
 
-#: internal/ui/settings_about.go:139
+#: internal/ui/settings_about.go:148
 msgid "Upgrade to %s"
 msgstr "%s へのアップグレード"
 
-#: internal/ui/settings_about.go:142
+#: internal/ui/settings_about.go:151
 msgid "Upgrading… the shell restarts on the new version"
 msgstr "アップグレード...シェルが新しいバージョンで再起動します"
 
-#: internal/ui/settings_about.go:148
+#: internal/ui/settings_about.go:157
 msgid "Could not reach GitHub: %s"
 msgstr "GitHub にアクセスできませんでした: %s"
 
-#: internal/ui/settings_about.go:150
+#: internal/ui/settings_about.go:159
 msgid "Not checked yet"
 msgstr "まだ確認されていません"
 
-#: internal/ui/settings_about.go:152
+#: internal/ui/settings_about.go:161
 msgid "The latest release is %s; this version cannot be compared with it"
 msgstr "最新のリリースは%sである。このバージョンはそれと比較できません"
 
-#: internal/ui/settings_about.go:154
+#: internal/ui/settings_about.go:163
 msgid "inua %s is out; upgrading replaces this build from source"
 msgstr "inua %s が公開されました。更新するとソースからのビルドを置き換えます"
 
-#: internal/ui/settings_about.go:156
+#: internal/ui/settings_about.go:165
 #: internal/ui/updates.go:90
 msgid "inua %s is out"
 msgstr "inua %s が公開されました"
 
-#: internal/ui/settings_about.go:158
+#: internal/ui/settings_about.go:167
 msgid "Up to date: %s is the latest release (checked %s)"
 msgstr "最新: %[1]s が最新リリースです (%[2]s を確認)"
 
-#: internal/ui/settings_about.go:160
+#: internal/ui/settings_about.go:169
 msgid "Newer than the latest release, %s"
 msgstr "最新リリース %s よりも新しい"
 
-#: internal/ui/settings_about.go:170
+#: internal/ui/settings_about.go:179
 msgid "Shown once the releases are read"
 msgstr "リリースが読み込まれると表示されます"
 
-#: internal/ui/settings_about.go:172
+#: internal/ui/settings_about.go:181
 msgid "Reading the releases…"
 msgstr "リリース情報を読み込み中…"
 
-#: internal/ui/settings_about.go:193
+#: internal/ui/settings_about.go:202
 msgid "installed"
 msgstr "インストールされました"
 
-#: internal/ui/settings_about.go:197
+#: internal/ui/settings_about.go:206
 msgid "On GitHub"
 msgstr "GitHub 上"
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Model default"
 msgstr "モデルの既定値"
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 msgid "Minimal"
 msgstr "最小限"
 
-#: internal/ui/settings_ai.go:65
+#: internal/ui/settings_ai.go:99
 #: ui/settings.ui:1568
 msgid "Medium"
 msgstr "中"
 
-#: internal/ui/settings_ai.go:111
+#: internal/ui/settings_ai.go:156
 msgid "Keys typed here are kept in %s"
 msgstr "ここで入力されたキーは %s に保存されます。"
 
-#: internal/ui/settings_ai.go:150
+#: internal/ui/settings_ai.go:195
 msgid "key not moved"
 msgstr "キーを移動できませんでした"
 
-#: internal/ui/settings_ai.go:181
+#: internal/ui/settings_ai.go:226
 msgid "Use this URL and the token in Console. From another computer, use this desktop's reachable address."
 msgstr "このＵＲＬとトークンをコンソールで使用する。別のコンピュータからは、このデスクトップの到達可能なアドレスを使用します。"
 
-#: internal/ui/settings_ai.go:184
+#: internal/ui/settings_ai.go:229
 msgid "Turn on Assistant to serve this endpoint."
 msgstr "このエンドポイントにサービスを提供するためにアシスタントをオンにする。"
 
-#: internal/ui/settings_ai.go:186
+#: internal/ui/settings_ai.go:231
 msgid "HTTP serving is off. The assistant still runs in the background."
 msgstr "ＨＴＴＰサービスはオフである。アシスタントは引き続きバックグラウンドで実行されます。"
 
-#: internal/ui/settings_ai.go:188
+#: internal/ui/settings_ai.go:233
 msgid "Create a token to allow Console connections."
 msgstr "コンソール接続を許可するトークンを作成する。"
 
-#: internal/ui/settings_ai.go:195
+#: internal/ui/settings_ai.go:240
 msgid "Reading keyring…"
 msgstr "キーリングを読み取り中…"
 
-#: internal/ui/settings_ai.go:197
+#: internal/ui/settings_ai.go:242
 msgid "Hide token"
 msgstr "トークンを隠す"
 
-#: internal/ui/settings_ai.go:199
-#: ui/settings.ui:2622
+#: internal/ui/settings_ai.go:244
+#: ui/settings.ui:2668
 msgid "Create token"
 msgstr "トークンの作成"
 
-#: internal/ui/settings_ai.go:201
+#: internal/ui/settings_ai.go:246
 msgid "Show token"
 msgstr "ショートークン"
 
-#: internal/ui/settings_ai.go:216
+#: internal/ui/settings_ai.go:257
+msgid "The one that answers"
+msgstr "回答に使う設定と同じ"
+
+#: internal/ui/settings_ai.go:265
 msgid "Then, when it fails: %s"
 msgstr "次に、失敗した場合: %s"
 
-#: internal/ui/settings_ai.go:218
+#: internal/ui/settings_ai.go:267
 msgid "The profile asked first; turn on Fallback on others to try them when it fails"
 msgstr "最初に使う設定。他の設定で代替を有効にすると、失敗時に順番に試します"
 
-#: internal/ui/settings_ai.go:274
-msgid "Move up (fallbacks are tried in this order)"
-msgstr "上に移動 (フォールバックはこの順序で試行されます)"
-
-#: internal/ui/settings_ai.go:275
-msgid "Move down"
-msgstr "下に移動"
-
-#: internal/ui/settings_ai.go:276
-msgid "Remove this profile"
-msgstr "このモデル設定を削除"
-
-#: internal/ui/settings_ai.go:299
+#: internal/ui/settings_ai.go:432
 msgid "a name: work, fast, local …"
 msgstr "名前: 仕事、高速、ローカル…"
 
-#: internal/ui/settings_ai.go:301
+#: internal/ui/settings_ai.go:434
 msgid "the model's ID"
 msgstr "モデルの ID"
 
-#: internal/ui/settings_ai.go:302
+#: internal/ui/settings_ai.go:435
 msgid "the provider's own"
 msgstr "プロバイダー自身の"
 
-#: internal/ui/settings_ai.go:308
-#: internal/ui/settings_ai.go:407
+#: internal/ui/settings_ai.go:441
+#: internal/ui/settings_ai.go:682
 msgid "Paste a key, then Save"
 msgstr "キーを貼り付けて保存する"
 
-#: internal/ui/settings_ai.go:322
+#: internal/ui/settings_ai.go:454
 msgid "Provider"
 msgstr "プロバイダー"
 
-#: internal/ui/settings_ai.go:324
+#: internal/ui/settings_ai.go:460
+#: internal/ui/settings_ai.go:628
+msgid "List the provider's models"
+msgstr "プロバイダーのモデルを一覧"
+
+#: internal/ui/settings_ai.go:466
 msgid "Reasoning"
 msgstr "推論の強度"
 
-#: internal/ui/settings_ai.go:325
+#: internal/ui/settings_ai.go:467
 msgid "Endpoint"
 msgstr "エンドポイント"
 
-#: internal/ui/settings_ai.go:329
+#: internal/ui/settings_ai.go:485
+msgid "Chat"
+msgstr "チャット"
+
+#: internal/ui/settings_ai.go:486
+#: internal/ui/settings_keyring.go:322
+msgid "Decision"
+msgstr "判断"
+
+#: internal/ui/settings_ai.go:493
+msgid "Abilities"
+msgstr "機能"
+
+#: internal/ui/settings_ai.go:497
 msgid "Forget"
 msgstr "キーを削除"
 
-#: internal/ui/settings_ai.go:337
+#: internal/ui/settings_ai.go:505
 msgid "API key"
 msgstr "API キー"
 
-#: internal/ui/settings_ai.go:342
+#: internal/ui/settings_ai.go:508
 msgid "Fallback: answers when the profiles above it fail"
 msgstr "前の設定が失敗したときに使用"
 
-#: internal/ui/settings_ai.go:384
+#: internal/ui/settings_ai.go:543
+#: internal/ui/settings_bench.go:115
+msgid "Benchmark"
+msgstr "ベンチマーク"
+
+#: internal/ui/settings_ai.go:543
+msgid "Try the profile as inua uses it"
+msgstr "inua での使い方でこの設定を試します"
+
+#: internal/ui/settings_ai.go:547
+msgid "Move up (fallbacks are tried in this order)"
+msgstr "上に移動 (フォールバックはこの順序で試行されます)"
+
+#: internal/ui/settings_ai.go:548
+msgid "Move down"
+msgstr "下に移動"
+
+#: internal/ui/settings_ai.go:549
+msgid "Remove this profile"
+msgstr "このモデル設定を削除"
+
+#: internal/ui/settings_ai.go:618
+msgid "This provider makes quick choices only"
+msgstr "このプロバイダーはすばやい選択のみ"
+
+#: internal/ui/settings_ai.go:620
+msgid "The profile that answers chats"
+msgstr "回答に使う設定はチャットできる必要があります"
+
+#: internal/ui/settings_ai.go:626
+#: internal/ui/settings_ai.go:1119
+msgid "This provider does not list its models"
+msgstr "このプロバイダーはモデル一覧を公開していません"
+
+#: internal/ui/settings_ai.go:640
 msgid "Answers first. "
 msgstr "まず答えてください。 "
 
-#: internal/ui/settings_ai.go:386
+#: internal/ui/settings_ai.go:642
 msgid "Fallback %d. "
 msgstr "フォールバック%d。 "
 
-#: internal/ui/settings_ai.go:391
+#: internal/ui/settings_ai.go:645
+msgid "Makes the quick choices. "
+msgstr "すばやい選択を担当。 "
+
+#: internal/ui/settings_ai.go:650
 msgid "The saved keys cannot be read: %s"
 msgstr "保存されたキーを読み取れません: %s"
 
-#: internal/ui/settings_ai.go:393
+#: internal/ui/settings_ai.go:652
 msgid "Key saved"
 msgstr "キーを保存しました"
 
-#: internal/ui/settings_ai.go:395
+#: internal/ui/settings_ai.go:654
 msgid "No key (a local server may want none)"
 msgstr "キーがありません (ローカル サーバーはキーを必要としない可能性があります)"
 
-#: internal/ui/settings_ai.go:397
+#: internal/ui/settings_ai.go:656
 msgid "No key yet: the assistant cannot answer"
 msgstr "キーが未設定のため回答できません"
 
-#: internal/ui/settings_ai.go:399
+#: internal/ui/settings_ai.go:658
 msgid "No key yet: this profile is skipped"
 msgstr "キーが未設定のためこの設定をスキップします"
 
-#: internal/ui/settings_ai.go:405
+#: internal/ui/settings_ai.go:666
+msgid "Answers"
+msgstr "回答"
+
+#: internal/ui/settings_ai.go:668
+msgid "Fallback %d"
+msgstr "代替 %d"
+
+#: internal/ui/settings_ai.go:671
+msgid "Quick choices"
+msgstr "すばやい選択"
+
+#: internal/ui/settings_ai.go:674
+msgid "No key"
+msgstr "キーなし"
+
+#: internal/ui/settings_ai.go:680
 msgid "Saved; paste another to replace it"
 msgstr "保存された。別のものを貼り付けて置き換えます"
 
-#: internal/ui/settings_ai.go:566
+#: internal/ui/settings_ai.go:886
 msgid "Command copied"
 msgstr "コマンドをコピーしました"
 
-#: internal/ui/settings_ai.go:573
+#: internal/ui/settings_ai.go:893
 msgid "Endpoint URL copied"
 msgstr "エンドポイントURLがコピーされました"
 
-#: internal/ui/settings_ai.go:604
+#: internal/ui/settings_ai.go:924
 msgid "No Console token. Create one first."
 msgstr "コンソールトークンがない。まず 1 つ作成します。"
 
-#: internal/ui/settings_ai.go:609
+#: internal/ui/settings_ai.go:929
 msgid "Token copied"
 msgstr "トークンがコピーされました"
 
-#: internal/ui/settings_ai.go:674
+#: internal/ui/settings_ai.go:1029
 msgid "key not removed"
 msgstr "キーを削除できませんでした"
 
-#: internal/ui/settings_ai.go:685
+#: internal/ui/settings_ai.go:1040
 msgid "key not saved"
 msgstr "キーを保存できませんでした"
+
+#: internal/ui/settings_ai.go:1051
+msgid "Chats and runs tasks with inua's tools. Also makes quick choices from a list, as the games' AI players do."
+msgstr "チャットし、inua のツールでタスクを実行します。ゲームの AI プレイヤーのように、一覧からすばやく選ぶこともできます。"
+
+#: internal/ui/settings_ai.go:1053
+msgid "Chats and runs tasks with inua's tools. The games' AI players do not use it."
+msgstr "チャットし、inua のツールでタスクを実行します。ゲームの AI プレイヤーは使いません。"
+
+#: internal/ui/settings_ai.go:1055
+msgid "Makes only quick choices from a list (yes or no, one of a few), as the games' AI players do. It cannot chat or run tasks."
+msgstr "ゲームの AI プレイヤーのように、一覧からすばやく選ぶだけです（はい・いいえ、いくつかから一つ）。チャットやタスクはできません。"
+
+#: internal/ui/settings_ai.go:1057
+msgid "Neither chats nor makes quick choices: inua does not use it."
+msgstr "チャットもすばやい選択もしません。inua は使いません。"
+
+#: internal/ui/settings_ai.go:1067
+msgid "Search models"
+msgstr "モデルを検索"
+
+#: internal/ui/settings_ai.go:1097
+msgid "Listing models…"
+msgstr "モデルを取得中…"
+
+#: internal/ui/settings_ai.go:1121
+msgid "Type the server's endpoint first."
+msgstr "先にサーバーのエンドポイントを入力してください。"
+
+#: internal/ui/settings_ai.go:1123
+msgid "Cannot list the models: %s"
+msgstr "モデルを取得できません：%s"
+
+#: internal/ui/settings_ai.go:1125
+msgid "The provider lists no models."
+msgstr "プロバイダーはモデルを公開していません。"
+
+#: internal/ui/settings_ai.go:1161
+msgid "No model matches."
+msgstr "一致するモデルはありません。"
 
 #: internal/ui/settings_apps.go:88
 msgid "None chosen"
@@ -8487,6 +8809,68 @@ msgstr "未選択"
 #: internal/ui/settings_apps.go:110
 msgid "%s (inua)"
 msgstr "%s（inua）"
+
+#: internal/ui/settings_bench.go:73
+msgid "Text reply"
+msgstr "テキストの返答"
+
+#: internal/ui/settings_bench.go:73
+msgid "The model answered"
+msgstr "モデルが回答しました"
+
+#: internal/ui/settings_bench.go:73
+msgid "The model did not answer"
+msgstr "モデルが回答しませんでした"
+
+#: internal/ui/settings_bench.go:75
+msgid "Tool calling"
+msgstr "ツール呼び出し"
+
+#: internal/ui/settings_bench.go:75
+msgid "The model can call tools"
+msgstr "モデルはツールを呼び出せます"
+
+#: internal/ui/settings_bench.go:75
+msgid "The model did not call the tool"
+msgstr "モデルがツールを呼び出しませんでした"
+
+#: internal/ui/settings_bench.go:77
+msgid "Quick choice (decision route)"
+msgstr "すばやい選択（判断ルート）"
+
+#: internal/ui/settings_bench.go:77
+msgid "The model picks from a list"
+msgstr "モデルは一覧から選べます"
+
+#: internal/ui/settings_bench.go:77
+msgid "The model did not pick the right option"
+msgstr "モデルが正しい選択肢を選びませんでした"
+
+#: internal/ui/settings_bench.go:137
+#: internal/ui/settings_bench.go:204
+msgid "Run again"
+msgstr "もう一度実行"
+
+#: internal/ui/settings_bench.go:187
+#: internal/ui/settings_bench.go:332
+msgid "Running…"
+msgstr "実行中…"
+
+#: internal/ui/settings_bench.go:296
+msgid "Show what the model answered"
+msgstr "モデルの回答を表示"
+
+#: internal/ui/settings_bench.go:347
+msgid "Passed"
+msgstr "合格"
+
+#: internal/ui/settings_bench.go:350
+msgid "Failed"
+msgstr "失敗"
+
+#: internal/ui/settings_bench.go:363
+msgid "No answer"
+msgstr "回答なし"
 
 #: internal/ui/settings_custom.go:74
 msgid "Not moved to the trash: %s"
@@ -8517,207 +8901,231 @@ msgid "Not added: the folder has no SVG files"
 msgstr ""
 
 #: internal/ui/settings_custom.go:165
+#: internal/ui/settings_keyring.go:181
 msgid "Not added: %s"
-msgstr ""
+msgstr "追加されませんでした：%s"
 
-#: internal/ui/settings_keyring.go:197
-#: ui/settings.ui:4290
+#: internal/ui/settings_keyring.go:176
+msgid "Cannot reach inua-keyring"
+msgstr "inua-keyring に接続できません"
+
+#: internal/ui/settings_keyring.go:183
+msgid "Not added: you said no."
+msgstr "追加されませんでした：拒否されました。"
+
+#: internal/ui/settings_keyring.go:185
+msgid "Added %s."
+msgstr "%s を追加しました。"
+
+#: internal/ui/settings_keyring.go:270
+#: ui/settings.ui:4553
 msgid "<span alpha='55%'>[</span>READ<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>読み取り<span alpha='55%'>]</span>"
 
-#: internal/ui/settings_keyring.go:199
+#: internal/ui/settings_keyring.go:272
 msgid "<span alpha='55%'>[</span>PASSPHRASE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>パスフレーズ<span alpha='55%'>]</span>"
 
-#: internal/ui/settings_keyring.go:219
+#: internal/ui/settings_keyring.go:293
 msgid "Not in pass: the session keyring is kept in memory"
 msgstr "pass にはありません：セッションのキーリングはメモリに保持されます"
 
-#: internal/ui/settings_keyring.go:221
+#: internal/ui/settings_keyring.go:295
 msgid "Not recorded"
 msgstr "記録されていません"
 
-#: internal/ui/settings_keyring.go:227
+#: internal/ui/settings_keyring.go:301
 msgid "%d reads, %s to %s"
 msgid_plural "%d reads, %s to %s"
 msgstr[0] "%d 回、%s〜%s"
 
-#: internal/ui/settings_keyring.go:229
+#: internal/ui/settings_keyring.go:303
 msgid "Not known"
 msgstr "不明"
 
-#: internal/ui/settings_keyring.go:232
-#: internal/ui/settings_keyring.go:392
-#: internal/ui/settings_keyring.go:399
+#: internal/ui/settings_keyring.go:306
+#: internal/ui/settings_keyring.go:467
+#: internal/ui/settings_keyring.go:474
 msgid "pid %d"
 msgstr "pid %d"
 
-#: internal/ui/settings_keyring.go:234
+#: internal/ui/settings_keyring.go:308
 msgid "pid %d, still running"
 msgstr "pid %d、実行中"
 
-#: internal/ui/settings_keyring.go:236
+#: internal/ui/settings_keyring.go:310
 msgid "pid %d, ended"
 msgstr "pid %d、終了済み"
 
-#: internal/ui/settings_keyring.go:238
+#: internal/ui/settings_keyring.go:312
 msgid "Secret"
 msgstr "シークレット"
 
-#: internal/ui/settings_keyring.go:240
+#: internal/ui/settings_keyring.go:314
 msgid "For"
 msgstr "対象"
 
-#: internal/ui/settings_keyring.go:247
+#: internal/ui/settings_keyring.go:321
 msgid "Answer"
 msgstr "応答"
 
-#: internal/ui/settings_keyring.go:248
-msgid "Decision"
-msgstr "判断"
-
-#: internal/ui/settings_keyring.go:249
+#: internal/ui/settings_keyring.go:323
 msgid "In pass"
 msgstr "pass での場所"
 
-#: internal/ui/settings_keyring.go:251
+#: internal/ui/settings_keyring.go:325
 msgid "App"
 msgstr "アプリ"
 
-#: internal/ui/settings_keyring.go:253
+#: internal/ui/settings_keyring.go:327
 msgid "Command line"
 msgstr "コマンドライン"
 
-#: internal/ui/settings_keyring.go:254
+#: internal/ui/settings_keyring.go:328
 msgid "Runs under"
 msgstr "親プロセス"
 
-#: internal/ui/settings_keyring.go:255
+#: internal/ui/settings_keyring.go:329
 msgid "Process"
 msgstr "プロセス"
 
-#: internal/ui/settings_keyring.go:256
+#: internal/ui/settings_keyring.go:330
 msgid "Bus name"
 msgstr "バス名"
 
-#: internal/ui/settings_keyring.go:257
+#: internal/ui/settings_keyring.go:331
 msgid "When"
 msgstr "日時"
 
-#: internal/ui/settings_keyring.go:272
+#: internal/ui/settings_keyring.go:346
 msgid "Entered"
 msgstr "入力済み"
 
-#: internal/ui/settings_keyring.go:274
+#: internal/ui/settings_keyring.go:348
 msgid "cancelled"
 msgstr "キャンセル"
 
-#: internal/ui/settings_keyring.go:276
+#: internal/ui/settings_keyring.go:350
 msgid "the dialog could not be shown"
 msgstr "ダイアログを表示できませんでした"
 
-#: internal/ui/settings_keyring.go:309
+#: internal/ui/settings_keyring.go:383
 msgid "Looking…"
 msgstr "確認中…"
 
-#: internal/ui/settings_keyring.go:312
+#: internal/ui/settings_keyring.go:386
 msgid "Cannot reach the session bus"
 msgstr "セッションバスに接続できません"
 
-#: internal/ui/settings_keyring.go:313
+#: internal/ui/settings_keyring.go:387
 msgid "inua-keyring is not running"
 msgstr "inua-keyring は動いていません"
 
-#: internal/ui/settings_keyring.go:317
+#: internal/ui/settings_keyring.go:391
 msgid "%s serves it, keeping the secrets in pass"
 msgstr "%s が提供中です。シークレットは pass に保存されます"
 
-#: internal/ui/settings_keyring.go:320
+#: internal/ui/settings_keyring.go:394
 msgid "Locked: the next read decrypts with gpg, which may ask for your passphrase"
 msgstr "ロック中: 次の読み取りは gpg で復号するため、パスフレーズを求められることがあります"
 
-#: internal/ui/settings_keyring.go:322
+#: internal/ui/settings_keyring.go:396
 msgid "Kept in protected memory since the first read, so reads ask for nothing"
 msgstr "最初の読み取りから保護されたメモリに保持しているため、読み取りで何も求めません"
 
-#: internal/ui/settings_keyring.go:326
+#: internal/ui/settings_keyring.go:400
 msgid "%s serves it, not inua-keyring; inua keyring replace switches"
 msgstr "inua-keyring ではなく %s が提供中です。inua keyring replace で切り替えます"
 
-#: internal/ui/settings_keyring.go:328
+#: internal/ui/settings_keyring.go:402
 msgid "No one serves it now; D-Bus starts it on the first request"
 msgstr "現在提供しているものはありません。最初の要求時に D-Bus が起動します"
 
-#: internal/ui/settings_keyring.go:347
+#: internal/ui/settings_keyring.go:422
 msgid "The record of reads cannot be read: %s"
 msgstr "読み取りの記録を読めません: %s"
 
-#: internal/ui/settings_keyring.go:349
-#: ui/settings.ui:4082
+#: internal/ui/settings_keyring.go:424
+#: ui/settings.ui:4192
 msgid "No app has read a secret yet."
 msgstr "シークレットを読み取ったアプリはまだありません。"
 
-#: internal/ui/settings_keyring.go:370
+#: internal/ui/settings_keyring.go:445
 msgid "%s read “%s”"
 msgstr "%s が「%s」を読み取り"
 
-#: internal/ui/settings_keyring.go:372
+#: internal/ui/settings_keyring.go:447
 msgid "%s was denied “%s”"
 msgstr "%s は「%s」を拒否されました"
 
-#: internal/ui/settings_keyring.go:375
+#: internal/ui/settings_keyring.go:450
 msgid "%s asked for the passphrase"
 msgstr "%s がパスフレーズを要求しました"
 
-#: internal/ui/settings_keyring.go:397
+#: internal/ui/settings_keyring.go:472
 msgid "session keyring, in memory"
 msgstr "セッションのキーリング（メモリ内）"
 
-#: internal/ui/settings_keyring.go:405
+#: internal/ui/settings_keyring.go:480
 msgid "%s · %d times in a row"
 msgid_plural "%s · %d times in a row"
 msgstr[0] "%s · 連続 %d 回"
 
-#: internal/ui/settings_keyring.go:423
+#: internal/ui/settings_keyring.go:498
 msgid "Show the details"
 msgstr "詳細を表示"
 
-#: internal/ui/settings_keyring.go:439
+#: internal/ui/settings_keyring.go:514
 msgid "It was changed outside inua-keyring, so every app is asked about until you trust it again. Look through it first."
 msgstr "inua-keyring の外で変更されたため、もう一度信頼するまですべてのアプリについて確認します。先に中身を確かめてください。"
 
-#: internal/ui/settings_keyring.go:441
+#: internal/ui/settings_keyring.go:516
 msgid "It cannot be read: %s. Every app is asked about."
 msgstr "読み取れません: %s。すべてのアプリについて確認します。"
 
-#: internal/ui/settings_keyring.go:477
+#: internal/ui/settings_keyring.go:553
 msgid "%s, trusted with %d secret"
 msgid_plural "%s, trusted with %d secrets"
 msgstr[0] "%s、%d 個の秘密を信頼"
 
-#: internal/ui/settings_keyring.go:483
+#: internal/ui/settings_keyring.go:559
 msgid "Not trusted: changed outside inua-keyring. Every app is asked about."
 msgstr "信頼されていません: inua-keyring の外で変更されました。すべてのアプリについて確認します。"
 
-#: internal/ui/settings_keyring.go:485
+#: internal/ui/settings_keyring.go:561
 msgid "None yet: each app is asked about the first time it reads a secret"
 msgstr "まだありません。各アプリは最初に秘密を読むときに確認します"
 
-#: internal/ui/settings_keyring.go:518
+#: internal/ui/settings_keyring.go:564
+msgid "%s · %d allowed path"
+msgid_plural "%s · %d allowed paths"
+msgstr[0] "%s · 許可されたパス %d 件"
+
+#: internal/ui/settings_keyring.go:570
+msgid "%d path"
+msgid_plural "%d paths"
+msgstr[0] "%d 件のパス"
+
+#: internal/ui/settings_keyring.go:603
 msgid "No app is trusted yet: each app is asked about the first time it reads a secret."
 msgstr "信頼するアプリはまだありません。各アプリは最初に秘密を読むときに確認します。"
 
-#: internal/ui/settings_keyring.go:520
+#: internal/ui/settings_keyring.go:605
 msgid "No trusted app matches “%s”."
 msgstr "「%s」に一致する信頼済みアプリはありません。"
 
-#: internal/ui/settings_keyring.go:531
+#: internal/ui/settings_keyring.go:616
 msgid "%s reads “%s”"
 msgstr "%s が「%s」を読む"
 
-#: internal/ui/settings_keyring.go:555
+#: internal/ui/settings_keyring.go:640
+#: internal/ui/settings_keyring.go:674
 msgid "since %s"
 msgstr "%s から"
+
+#: internal/ui/settings_keyring.go:683
+msgid "Stop allowing it: its programs are asked about again"
+msgstr "許可をやめる：プログラムに再び確認します"
 
 #: internal/ui/shortcuts.go:88
 msgid "Set in inua"
@@ -8781,7 +9189,7 @@ msgid "%s Upgrade with: inua upgrade"
 msgstr "%s アップグレード: inua upgrade"
 
 #: internal/ui/updates.go:99
-#: ui/settings.ui:5353
+#: ui/settings.ui:5616
 msgid "Upgrade"
 msgstr "アップグレード"
 
@@ -9189,34 +9597,34 @@ msgid "Screenshot an area"
 msgstr "エリアのスクリーンショット"
 
 #: ui/control.ui:91
-msgid "Suspend, restart, shut down, log out"
-msgstr "サスペンド、再起動、シャットダウン、ログアウト"
+msgid "Suspend, hibernate, restart, shut down, log out"
+msgstr "サスペンド、ハイバネート、再起動、シャットダウン、ログアウト"
 
-#: ui/control.ui:301
+#: ui/control.ui:325
 msgid "Bluetooth"
 msgstr "ブルートゥース"
 
-#: ui/control.ui:359
+#: ui/control.ui:383
 msgid "Low Power"
 msgstr "省電力モード"
 
-#: ui/control.ui:499
+#: ui/control.ui:523
 msgid "Open Tailscale"
 msgstr "Tailscale を開く"
 
-#: ui/control.ui:528
+#: ui/control.ui:552
 msgid "Display"
 msgstr "ディスプレイ"
 
-#: ui/control.ui:590
+#: ui/control.ui:614
 msgid "Sound"
 msgstr "音"
 
-#: ui/control.ui:618
+#: ui/control.ui:642
 msgid "Mute"
 msgstr "ミュート"
 
-#: ui/control.ui:658
+#: ui/control.ui:682
 msgid "Now playing"
 msgstr "再生中"
 
@@ -9356,11 +9764,6 @@ msgstr "暗号化"
 #: ui/gpg.ui:572
 msgid "<span alpha='55%'>[</span>ENCRYPTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>暗号文<span alpha='55%'>]</span>"
-
-#: ui/gpg.ui:633
-#: ui/settings.ui:4155
-msgid "Back"
-msgstr "戻る"
 
 #: ui/gpg.ui:652
 #: ui/gpg.ui:896
@@ -9751,7 +10154,7 @@ msgstr ""
 
 #: ui/settings.ui:173
 #: ui/settings.ui:431
-#: ui/settings.ui:4566
+#: ui/settings.ui:4829
 msgid "Add…"
 msgstr "追加…"
 
@@ -10116,572 +10519,596 @@ msgstr "リンク、フォルダー、ファイルを開くアプリ"
 msgid "Saved where other apps read them too: ~/.config/mimeapps.list, and for the terminal xdg-terminals.list and the launcher's terminal."
 msgstr "ほかのアプリも読む場所に保存します: ~/.config/mimeapps.list、ターミナルは xdg-terminals.list とランチャーのターミナル。"
 
-#: ui/settings.ui:2081
-msgid "AI"
-msgstr "AI"
-
-#: ui/settings.ui:2119
+#: ui/settings.ui:2122
 msgid "<span alpha='55%'>[</span>ASSISTANT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>アシスタント<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2127
+#: ui/settings.ui:2130
 msgid "An agent with inua's tools, run by Mister Morph"
 msgstr "Mister Morph で動く、inua のツールを使うエージェント"
 
-#: ui/settings.ui:2166
+#: ui/settings.ui:2169
 msgid "Ask it from the launcher (the last row, or ? first) or open Assistant"
 msgstr "ランチャー（最後の行、または？最初）から質問するか、アシスタントを開いてください"
 
-#: ui/settings.ui:2200
+#: ui/settings.ui:2203
 msgid "Answers with"
 msgstr "回答に使う設定"
 
-#: ui/settings.ui:2209
+#: ui/settings.ui:2212
 msgid "The profile asked first; the assistant's window can switch for a conversation"
 msgstr "最初に使う設定。会話ごとにアシスタント画面で切り替えられます"
 
-#: ui/settings.ui:2243
-#: ui/settings.ui:2784
+#: ui/settings.ui:2246
+msgid "Quick choices with"
+msgstr "すばやい選択に使う設定"
+
+#: ui/settings.ui:2255
+msgid "The profile that picks from a fixed list, as an AI player in the games does"
+msgstr "決まった選択肢から選ぶプロファイル（ゲームの AI プレイヤーなど）"
+
+#: ui/settings.ui:2289
+#: ui/settings.ui:2830
 msgid "Ask before changes"
 msgstr "変更前に質問する"
 
-#: ui/settings.ui:2252
+#: ui/settings.ui:2298
 msgid "Wi-Fi, volume, windows, the clipboard …; power, ending processes and closing windows always ask"
 msgstr "Wi-Fi、ボリューム、ウィンドウ、クリップボード…;電源を入れたり、プロセスを終了したり、ウィンドウを閉じたりするときに常に尋ねられます。"
 
-#: ui/settings.ui:2286
+#: ui/settings.ui:2332
 msgid "Search the web"
 msgstr "ウェブを検索する"
 
-#: ui/settings.ui:2295
+#: ui/settings.ui:2341
 msgid "Mister Morph's web search and page reading"
 msgstr "Mister Morph のウェブ検索とページ閲覧"
 
-#: ui/settings.ui:2329
+#: ui/settings.ui:2375
 msgid "Read files"
 msgstr "ファイルの読み取り"
 
-#: ui/settings.ui:2338
+#: ui/settings.ui:2384
 msgid "Any file you can read; asks each time"
 msgstr "読み取り可能な任意のファイル。毎回尋ねる"
 
-#: ui/settings.ui:2372
+#: ui/settings.ui:2418
 msgid "Run commands"
 msgstr "コマンドを実行します"
 
-#: ui/settings.ui:2381
+#: ui/settings.ui:2427
 msgid "A shell, as you; asks each time"
 msgstr "あなたの権限でシェルを実行。毎回確認します"
 
-#: ui/settings.ui:2426
+#: ui/settings.ui:2472
 msgid "<span alpha='55%'>[</span>CONSOLE ENDPOINT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>コンソール エンドポイント<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2434
+#: ui/settings.ui:2480
 msgid "Connect other Consoles to this desktop"
 msgstr "他のコンソールをこのデスクトップに接続します"
 
-#: ui/settings.ui:2464
-#: ui/settings.ui:2483
+#: ui/settings.ui:2510
+#: ui/settings.ui:2529
 msgid "Serve endpoint"
 msgstr "サービスエンドポイント"
 
-#: ui/settings.ui:2473
+#: ui/settings.ui:2519
 msgid "Allow Console connections; the assistant keeps running when this is off"
 msgstr "コンソール接続を許可する。これがオフの場合でもアシスタントは実行し続けます"
 
-#: ui/settings.ui:2508
+#: ui/settings.ui:2554
 msgid "Listen address"
 msgstr "リッスンアドレス"
 
-#: ui/settings.ui:2517
+#: ui/settings.ui:2563
 msgid "Host:port; kept when serving is off"
 msgstr "0010 ホスト:ポート。サービスがオフのときに保持される"
 
-#: ui/settings.ui:2528
+#: ui/settings.ui:2574
 msgid "Use host:port, with a port from 1 to 65535. For IPv6, use [address]:port."
 msgstr "host:port を、1 ～ 65535 のポートで使用します。IPv6 の場合、[address]:port を使用します。"
 
-#: ui/settings.ui:2550
+#: ui/settings.ui:2596
 msgid "Endpoint URL"
 msgstr "エンドポイントURL"
 
-#: ui/settings.ui:2561
+#: ui/settings.ui:2607
 msgid "Set a listen address first"
 msgstr "最初にリッスンアドレスを設定する"
 
-#: ui/settings.ui:2570
+#: ui/settings.ui:2616
 msgid "Copy URL"
 msgstr "URLをコピーする"
 
-#: ui/settings.ui:2601
+#: ui/settings.ui:2647
 msgid "Access token"
 msgstr "アクセストークン"
 
-#: ui/settings.ui:2613
+#: ui/settings.ui:2659
 msgid "Token hidden"
 msgstr "トークンの隠蔽"
 
-#: ui/settings.ui:2631
+#: ui/settings.ui:2677
 msgid "Copy token"
 msgstr "コピートークン"
 
-#: ui/settings.ui:2641
+#: ui/settings.ui:2687
 msgid "Kept in the keyring (pass with inua-keyring). Creating or reading it may ask for your passphrase."
 msgstr "キーリング内に保持される(inua-keyringで渡す)。作成または読み取りの際に、パスフレーズの入力を求められる場合があります。"
 
-#: ui/settings.ui:2678
+#: ui/settings.ui:2724
 msgid "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2686
+#: ui/settings.ui:2732
 msgid "Let AI agents on this computer use inua's tools"
 msgstr "このコンピューターの AI エージェントに inua のツールを使わせる"
 
-#: ui/settings.ui:2716
-#: ui/settings.ui:2735
+#: ui/settings.ui:2762
+#: ui/settings.ui:2781
 msgid "MCP server"
 msgstr "MCP サーバー"
 
-#: ui/settings.ui:2725
+#: ui/settings.ui:2771
 msgid "Agents such as Claude Code or Codex see the windows, open apps, change settings and more, through inua mcp. The assistant uses these tools either way."
 msgstr "Claude Code や Codex などのエージェントが、inua mcp を通してウィンドウを見たり、アプリを開いたり、設定を変えたりできます。アシスタントはどちらの場合もこれらのツールを使います。"
 
-#: ui/settings.ui:2760
+#: ui/settings.ui:2806
 msgid "What agents may do"
 msgstr "エージェントにできること"
 
-#: ui/settings.ui:2769
+#: ui/settings.ui:2815
 msgid "Closing windows, ending processes, power, the clipboard and notifications always ask"
 msgstr "ウィンドウを閉じる、プロセスを終了する、電源、クリップボード、通知は常に確認します"
 
-#: ui/settings.ui:2783
+#: ui/settings.ui:2829
 msgid "Look only"
 msgstr "見るだけ"
 
-#: ui/settings.ui:2785
+#: ui/settings.ui:2831
 msgid "Change without asking"
 msgstr "確認せずに変更"
 
-#: ui/settings.ui:2808
+#: ui/settings.ui:2854
 msgid "Connect an agent"
 msgstr "エージェントを接続"
 
-#: ui/settings.ui:2838
+#: ui/settings.ui:2884
 msgid "Other agents: a stdio server that runs inua mcp. Each call is recorded; asking happens in inua's dialog."
 msgstr "ほかのエージェント: inua mcp を実行する stdio サーバーとして設定します。呼び出しはすべて記録され、確認は inua のダイアログで行います。"
 
-#: ui/settings.ui:2875
+#: ui/settings.ui:2921
 msgid "<span alpha='55%'>[</span>PROFILES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>モデル設定<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2883
+#: ui/settings.ui:2929
 msgid "The models it can use; fallbacks answer when the first fails"
 msgstr "利用するモデル。最初のモデルが失敗したら代替を使います"
 
-#: ui/settings.ui:2913
+#: ui/settings.ui:2959
 msgid "Add Profile"
 msgstr "モデル設定を追加"
 
-#: ui/settings.ui:2992
+#: ui/settings.ui:3102
 msgid "<span alpha='55%'>[</span>NOTIFICATIONS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>通知<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3000
+#: ui/settings.ui:3110
 msgid "Banners, then the notification center"
 msgstr "バナー、次に通知センター"
 
-#: ui/settings.ui:3030
+#: ui/settings.ui:3140
 msgid "Show notifications"
 msgstr "通知を表示する"
 
-#: ui/settings.ui:3072
+#: ui/settings.ui:3182
 msgid "Banner duration"
 msgstr "バナー持続時間"
 
-#: ui/settings.ui:3081
+#: ui/settings.ui:3191
 msgid "How long a banner shows; critical ones stay"
 msgstr "バナーが表示される長さ。重要なものは残る"
 
-#: ui/settings.ui:3095
+#: ui/settings.ui:3205
 msgid "3 seconds"
 msgstr "3秒"
 
-#: ui/settings.ui:3096
+#: ui/settings.ui:3206
 msgid "5 seconds"
 msgstr "5秒"
 
-#: ui/settings.ui:3097
+#: ui/settings.ui:3207
 msgid "8 seconds"
 msgstr "8秒"
 
-#: ui/settings.ui:3098
+#: ui/settings.ui:3208
 msgid "12 seconds"
 msgstr "12秒"
 
-#: ui/settings.ui:3125
+#: ui/settings.ui:3235
 msgid "Critical during Focus"
 msgstr "集中モードでも緊急通知を表示"
 
-#: ui/settings.ui:3134
+#: ui/settings.ui:3244
 msgid "Critical notifications still show banners"
 msgstr "重要な通知には依然としてバナーが表示される"
 
-#: ui/settings.ui:3168
+#: ui/settings.ui:3278
 msgid "Keep a history"
 msgstr "履歴を残す"
 
-#: ui/settings.ui:3177
+#: ui/settings.ui:3287
 msgid "The last 500 notifications, dismissed ones too, for the assistant, agents and workshop apps allowed to read them. Off clears it."
 msgstr "最新 500 件の通知（閉じたものも含む）を、読み取りを許されたアシスタント、エージェント、ワークショップアプリのために残します。オフにすると消去します。"
 
-#: ui/settings.ui:3256
+#: ui/settings.ui:3366
 msgid "<span alpha='55%'>[</span>CLIPBOARD<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>クリップボード<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3264
+#: ui/settings.ui:3374
 msgid "History, panel appearance and pasting"
 msgstr "履歴、パネルの見た目と貼り付け"
 
-#: ui/settings.ui:3294
+#: ui/settings.ui:3404
 msgid "Keep a clipboard history"
 msgstr "クリップボード履歴を残す"
 
-#: ui/settings.ui:3303
+#: ui/settings.ui:3413
 msgid "Text and images you copy, kept on this computer; a password manager's copies are left out"
 msgstr "コピーしたテキストと画像をこのコンピューターに保存します。パスワードマネージャーからのコピーは除きます"
 
-#: ui/settings.ui:3333
+#: ui/settings.ui:3443
 msgid "Never record copies from"
 msgstr "記録しないコピー元"
 
-#: ui/settings.ui:3343
+#: ui/settings.ui:3453
 msgid "pass, keepassxc, …"
 msgstr "pass, keepassxc, …"
 
-#: ui/settings.ui:3351
+#: ui/settings.ui:3461
 msgid "Programs or window classes, separated by commas. The program that ran wl-copy and the focused window are checked; hover over an entry in the history to see where it came from"
 msgstr "プログラムまたはウィンドウクラスをカンマ区切りで。wl-copy を実行したプログラムとフォーカス中のウィンドウを調べます。履歴の項目にポインタを合わせるとコピー元が分かります"
 
-#: ui/settings.ui:3377
+#: ui/settings.ui:3487
 msgid "Show in top bar"
 msgstr "トップバーに表示"
 
-#: ui/settings.ui:3386
+#: ui/settings.ui:3496
 msgid "A button in the status area opens the clipboard history"
 msgstr "ステータス領域のボタンでクリップボード履歴を開きます"
 
-#: ui/settings.ui:3420
+#: ui/settings.ui:3530
 msgid "Paste on click"
 msgstr "クリックで貼り付け"
 
-#: ui/settings.ui:3429
+#: ui/settings.ui:3539
 msgid "Clicking an entry pastes it into the window you were in; off only copies it"
 msgstr "項目をクリックすると、元のウィンドウに貼り付けます。オフにするとコピーのみ"
 
-#: ui/settings.ui:3463
+#: ui/settings.ui:3573
 msgid "Panel opacity"
 msgstr "パネルの不透明度"
 
-#: ui/settings.ui:3514
+#: ui/settings.ui:3624
 msgid "History limit"
 msgstr "履歴の上限"
 
-#: ui/settings.ui:3523
+#: ui/settings.ui:3633
 msgid "How many entries it keeps; the oldest go first"
 msgstr "保持する件数。古いものから消えます"
 
-#: ui/settings.ui:3557
+#: ui/settings.ui:3667
 msgid "History storage"
 msgstr "履歴の容量"
 
-#: ui/settings.ui:3566
+#: ui/settings.ui:3676
 msgid "Loading history…"
 msgstr "履歴を読み込み中…"
 
-#: ui/settings.ui:3579
+#: ui/settings.ui:3689
 msgid "Reveal in File Manager"
 msgstr "ファイルマネージャで表示"
 
-#: ui/settings.ui:3590
+#: ui/settings.ui:3700
 msgid "Clear the history"
 msgstr "履歴を消去"
 
-#: ui/settings.ui:3671
+#: ui/settings.ui:3781
 msgid "<span alpha='55%'>[</span>KEYRING<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>キーリング<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3679
+#: ui/settings.ui:3789
 msgid "Apps' secrets: browsers' keys, Wi-Fi passwords, API keys"
 msgstr "アプリのシークレット: ブラウザーの鍵、Wi-Fi パスワード、API キー"
 
-#: ui/settings.ui:3709
+#: ui/settings.ui:3819
 msgid "Secret Service"
 msgstr "Secret Service"
 
-#: ui/settings.ui:3745
+#: ui/settings.ui:3855
 msgid "Unlocked secrets"
 msgstr "ロック解除された秘密"
 
-#: ui/settings.ui:3791
+#: ui/settings.ui:3901
 msgid "Lock when unused"
 msgstr "使わないときにロック"
 
-#: ui/settings.ui:3800
+#: ui/settings.ui:3910
 msgid "It locks with the screen and before suspend, and after this long without a read"
 msgstr "画面のロック時とサスペンド前、そしてこの時間読み取りがないとロックします"
 
-#: ui/settings.ui:3815
+#: ui/settings.ui:3925
 msgid "5 minutes"
 msgstr "5 分"
 
-#: ui/settings.ui:3816
+#: ui/settings.ui:3926
 msgid "15 minutes"
 msgstr "15 分"
 
-#: ui/settings.ui:3817
+#: ui/settings.ui:3927
 msgid "30 minutes"
 msgstr "30 分"
 
-#: ui/settings.ui:3818
+#: ui/settings.ui:3928
 msgid "1 hour"
 msgstr "1 時間"
 
-#: ui/settings.ui:3819
+#: ui/settings.ui:3929
 msgid "4 hours"
 msgstr "4 時間"
 
-#: ui/settings.ui:3846
+#: ui/settings.ui:3956
 msgid "With no one to ask"
 msgstr "確認できる相手がいないとき"
 
-#: ui/settings.ui:3855
+#: ui/settings.ui:3965
 msgid "A read by an app not trusted with the secret, while the inua shell is not running"
 msgstr "inua シェルが動いていないときの、秘密を信頼されていないアプリによる読み取り"
 
-#: ui/settings.ui:3870
+#: ui/settings.ui:3980
 msgid "Denied"
 msgstr "拒否"
 
-#: ui/settings.ui:3897
+#: ui/settings.ui:4007
 msgid "Tell when an app reads a secret"
 msgstr "アプリがシークレットを読み取ったら通知"
 
-#: ui/settings.ui:3906
+#: ui/settings.ui:4016
 msgid "A notification for each app's first read since inua-keyring started"
 msgstr "inua-keyring の起動後、各アプリの最初の読み取りを通知します"
 
-#: ui/settings.ui:3951
-#: ui/settings.ui:4165
+#: ui/settings.ui:4061
+#: ui/settings.ui:4275
 msgid "<span alpha='55%'>[</span>TRUSTED APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>信頼するアプリ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3959
+#: ui/settings.ui:4069
 msgid "Apps that read a secret without asking; any other app is asked about first"
 msgstr "確認なしで秘密を読めるアプリ。ほかのアプリは先に確認します"
 
-#: ui/settings.ui:3995
+#: ui/settings.ui:4105
 msgid "Trusted apps"
 msgstr "信頼するアプリ"
 
-#: ui/settings.ui:4050
+#: ui/settings.ui:4160
 msgid "<span alpha='55%'>[</span>READS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>読み取り<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4058
+#: ui/settings.ui:4168
 msgid "Every secret inua-keyring handed out and passphrase asked for, newest first"
 msgstr "inua-keyring が渡したすべてのシークレットと要求されたパスフレーズ（新しい順）"
 
-#: ui/settings.ui:4104
+#: ui/settings.ui:4214
 msgid "Refresh"
 msgstr "更新"
 
-#: ui/settings.ui:4180
-msgid "Filter by app, program or secret"
-msgstr "アプリ・プログラム・秘密で絞り込む"
-
-#: ui/settings.ui:4205
+#: ui/settings.ui:4308
 msgid "The list is not trusted"
 msgstr "一覧は信頼されていません"
 
-#: ui/settings.ui:4226
+#: ui/settings.ui:4329
 msgid "Trust this list again"
 msgstr "この一覧をもう一度信頼"
 
-#: ui/settings.ui:4334
+#: ui/settings.ui:4369
+msgid "<span alpha='55%'>[</span>ALLOWED PATHS<span alpha='55%'>]</span>"
+msgstr "<span alpha='55%'>[</span>許可されたパス<span alpha='55%'>]</span>"
+
+#: ui/settings.ui:4396
+msgid "Any program at one of these paths reads every secret without asking, even after it changes: for an app that updates every day. inua-keyring asks you before a path is added."
+msgstr "これらのパスのプログラムは、更新された後も含め、確認なしですべてのシークレットを読み取ります。毎日更新されるアプリ向けです。パスを追加する前に inua-keyring が確認します。"
+
+#: ui/settings.ui:4416
+msgid "A path; * within a folder: ~/.local/share/app/versions/*"
+msgstr "パス。* はフォルダー内：~/.local/share/app/versions/*"
+
+#: ui/settings.ui:4425
+msgid "Allow path"
+msgstr "パスを許可"
+
+#: ui/settings.ui:4470
+msgid "<span alpha='55%'>[</span>APPS<span alpha='55%'>]</span>"
+msgstr "<span alpha='55%'>[</span>アプリ<span alpha='55%'>]</span>"
+
+#: ui/settings.ui:4485
+msgid "Filter by app, program or secret"
+msgstr "アプリ・プログラム・秘密で絞り込む"
+
+#: ui/settings.ui:4597
 msgid "Shortcuts"
 msgstr "ショートカット"
 
-#: ui/settings.ui:4364
+#: ui/settings.ui:4627
 msgid "Press the new shortcut. Esc cancels; Backspace turns it off."
 msgstr "新しいショートカットを押します。 Esc でキャンセルします。バックスペースキーを押すとオフになります。"
 
-#: ui/settings.ui:4393
-#: ui/settings.ui:5252
+#: ui/settings.ui:4656
+#: ui/settings.ui:5515
 msgid "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4401
+#: ui/settings.ui:4664
 msgid "The shell's own actions"
 msgstr "シェル自身のアクション"
 
-#: ui/settings.ui:4450
+#: ui/settings.ui:4713
 msgid "<span alpha='55%'>[</span>SCREENSHOTS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>スクリーンショット<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4458
+#: ui/settings.ui:4721
 msgid "With grim and slurp"
 msgstr "grim と slurp を使用"
 
-#: ui/settings.ui:4507
+#: ui/settings.ui:4770
 msgid "<span alpha='55%'>[</span>CUSTOM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>カスタム<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4515
+#: ui/settings.ui:4778
 msgid "Your own commands"
 msgstr "独自のコマンド"
 
-#: ui/settings.ui:4557
+#: ui/settings.ui:4820
 msgid "Command, e.g. kitty"
 msgstr "コマンド（例：kitty）"
 
-#: ui/settings.ui:4567
+#: ui/settings.ui:4830
 msgid "Add, then press its shortcut"
 msgstr "追加して、そのショートカットを押します"
 
-#: ui/settings.ui:4602
+#: ui/settings.ui:4865
 msgid "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ハイパーランド<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4610
+#: ui/settings.ui:4873
 msgid "Other shortcuts, from hyprland.conf"
 msgstr "他のショートカット、hyprland.confから"
 
-#: ui/settings.ui:4655
+#: ui/settings.ui:4918
 msgid "Keyboard"
 msgstr "キーボード"
 
-#: ui/settings.ui:4703
+#: ui/settings.ui:4966
 msgid "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4711
+#: ui/settings.ui:4974
 msgid "Every keyboard"
 msgstr "あらゆるキーボード"
 
-#: ui/settings.ui:4741
+#: ui/settings.ui:5004
 msgid "Swap Ctrl and Alt"
 msgstr "Ctrl と Alt を入れ替える"
 
-#: ui/settings.ui:4750
+#: ui/settings.ui:5013
 msgid "Alt acts as Ctrl, and Ctrl as Alt"
 msgstr "Alt は Ctrl として機能し、Ctrl は Alt として機能します"
 
-#: ui/settings.ui:4765
+#: ui/settings.ui:5028
 msgid "Left side"
 msgstr "左側"
 
-#: ui/settings.ui:4766
+#: ui/settings.ui:5029
 msgid "Both sides"
 msgstr "左右両方"
 
-#: ui/settings.ui:4793
-#: ui/settings.ui:4816
+#: ui/settings.ui:5056
+#: ui/settings.ui:5079
 msgid "Caps Lock"
 msgstr "Caps Lock"
 
-#: ui/settings.ui:4802
+#: ui/settings.ui:5065
 msgid "What the Caps Lock key does"
 msgstr "Caps Lock キーの機能"
 
-#: ui/settings.ui:4817
+#: ui/settings.ui:5080
 msgid "Escape"
 msgstr "Esc"
 
-#: ui/settings.ui:4818
+#: ui/settings.ui:5081
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ui/settings.ui:4856
-#: ui/settings.ui:5138
+#: ui/settings.ui:5119
+#: ui/settings.ui:5401
 msgid "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ソース<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4864
-#: ui/settings.ui:5146
+#: ui/settings.ui:5127
+#: ui/settings.ui:5409
 msgid "inua writes these to Hyprland's inua.conf"
 msgstr "inua はこれらを Hyprland の inua.conf に書き込みます"
 
-#: ui/settings.ui:4915
-#: ui/settings.ui:5182
+#: ui/settings.ui:5178
+#: ui/settings.ui:5445
 msgid "Use hyprland.conf"
 msgstr "hyprland.confを使用する"
 
-#: ui/settings.ui:4916
+#: ui/settings.ui:5179
 msgid "Stop setting keyboard options in inua"
 msgstr "inua でのキーボード オプションの設定を停止する"
 
-#: ui/settings.ui:4947
+#: ui/settings.ui:5210
 msgid "Mouse & Touch"
 msgstr "マウスとタッチパッド"
 
-#: ui/settings.ui:4995
+#: ui/settings.ui:5258
 msgid "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5003
+#: ui/settings.ui:5266
 msgid "Every touchpad"
 msgstr "あらゆるタッチパッド"
 
-#: ui/settings.ui:5033
+#: ui/settings.ui:5296
 msgid "Pointer speed"
 msgstr "ポインタの速度"
 
-#: ui/settings.ui:5084
+#: ui/settings.ui:5347
 msgid "Acceleration"
 msgstr "加速度"
 
-#: ui/settings.ui:5093
+#: ui/settings.ui:5356
 msgid "Faster swipes move the pointer further"
 msgstr "スワイプが速いとポインタがさらに遠くに移動します"
 
-#: ui/settings.ui:5183
+#: ui/settings.ui:5446
 msgid "Stop setting the touchpad in inua"
 msgstr "inua でのタッチパッドの設定を停止する"
 
-#: ui/settings.ui:5214
+#: ui/settings.ui:5477
 msgid "About"
 msgstr "について"
 
-#: ui/settings.ui:5260
+#: ui/settings.ui:5523
 msgid "The version, and new releases"
 msgstr "バージョンと新しいリリース"
 
-#: ui/settings.ui:5290
+#: ui/settings.ui:5553
 msgid "Version"
 msgstr "バージョン"
 
-#: ui/settings.ui:5326
+#: ui/settings.ui:5589
 msgid "Updates"
 msgstr "アップデート"
 
-#: ui/settings.ui:5362
+#: ui/settings.ui:5625
 msgid "Check for updates"
 msgstr "アップデートをチェックする"
 
-#: ui/settings.ui:5388
+#: ui/settings.ui:5651
 msgid "Check every day"
 msgstr "毎日チェックする"
 
-#: ui/settings.ui:5397
+#: ui/settings.ui:5660
 msgid "A notification says when a new release is out, with a button to upgrade"
 msgstr "新しいリリースがリリースされると、アップグレードするボタンが表示される通知が表示されます。"
 
-#: ui/settings.ui:5442
+#: ui/settings.ui:5705
 msgid "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5450
+#: ui/settings.ui:5713
 msgid "What the latest release changed"
 msgstr "最新リリースの変更点"
 
