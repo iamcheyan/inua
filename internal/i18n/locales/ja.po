@@ -1199,8 +1199,8 @@ msgid "Top level"
 msgstr "最上位"
 
 #: internal/appui/pass.go:360
-#: internal/ui/settings.go:703
-#: internal/ui/settings.go:730
+#: internal/ui/settings.go:704
+#: internal/ui/settings.go:731
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d 件"
@@ -1477,7 +1477,7 @@ msgstr "QR コードの入った画像"
 
 #: internal/appui/pass_otp.go:340
 #: internal/desktop/defaults.go:48
-#: internal/ui/settings.go:840
+#: internal/ui/settings.go:841
 msgid "Images"
 msgstr "画像"
 
@@ -8387,86 +8387,86 @@ msgstr "スクリーンショットがコピーされました"
 msgid "Screenshot taken"
 msgstr "撮影されたスクリーンショット"
 
-#: internal/ui/settings.go:255
+#: internal/ui/settings.go:256
 msgid "Not restarted: %s"
 msgstr "再起動できませんでした: %s"
 
-#: internal/ui/settings.go:273
-#: internal/ui/settings.go:281
-#: internal/ui/settings.go:284
-#: internal/ui/settings.go:625
-#: internal/ui/settings.go:627
-#: internal/ui/settings.go:676
-#: internal/ui/settings.go:693
+#: internal/ui/settings.go:274
+#: internal/ui/settings.go:282
+#: internal/ui/settings.go:285
+#: internal/ui/settings.go:626
+#: internal/ui/settings.go:628
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:694
 msgid "%d%%"
 msgstr "%d%%"
 
-#: internal/ui/settings.go:656
+#: internal/ui/settings.go:657
 #: ui/settings.ui:384
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:656
+#: internal/ui/settings.go:657
 #: ui/settings.ui:385
 msgid "System theme"
 msgstr "システムテーマ"
 
-#: internal/ui/settings.go:729
+#: internal/ui/settings.go:730
 msgid "%s (%s, %s) · %s"
 msgstr "%s(%s、%s)· %s"
 
-#: internal/ui/settings.go:731
+#: internal/ui/settings.go:732
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "テキスト %d 件"
 
-#: internal/ui/settings.go:732
+#: internal/ui/settings.go:733
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "画像 %d 件"
 
-#: internal/ui/settings.go:733
+#: internal/ui/settings.go:734
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:812
+#: internal/ui/settings.go:813
 #: internal/ui/settings_apps.go:168
 msgid "Not saved: %s"
 msgstr "保存されていません: %s"
 
-#: internal/ui/settings.go:838
+#: internal/ui/settings.go:839
 msgid "Choose a wallpaper"
 msgstr "壁紙を選択してください"
 
-#: internal/ui/settings.go:880
+#: internal/ui/settings.go:881
 msgid "Off: another notification daemon can show them"
 msgstr "オフ: 別の通知デーモンがそれらを表示できる"
 
-#: internal/ui/settings.go:882
+#: internal/ui/settings.go:883
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "バナー表示後に通知センターへ（バーのベル、または Super+N）"
 
-#: internal/ui/settings.go:884
+#: internal/ui/settings.go:885
 msgid "Waiting: another notification daemon is running"
 msgstr "待機中: 別の通知デーモンが実行中です"
 
-#: internal/ui/settings.go:902
+#: internal/ui/settings.go:903
 msgid "Nothing pinned"
 msgstr "固定したアプリはありません"
 
-#: internal/ui/settings.go:918
+#: internal/ui/settings.go:919
 msgid "%s (not installed)"
 msgstr "%s (未インストール)"
 
-#: internal/ui/settings.go:931
+#: internal/ui/settings.go:932
 msgid "Move earlier"
 msgstr "前に移動"
 
-#: internal/ui/settings.go:932
+#: internal/ui/settings.go:933
 msgid "Move later"
 msgstr "後ろに移動"
 
-#: internal/ui/settings.go:933
+#: internal/ui/settings.go:934
 msgid "Remove from the dock"
 msgstr "ドックから削除"
 

@@ -102,6 +102,7 @@ var (
 	fitChoices   = config.Fits
 	wsChoices    = []string{"monitor", "all"}
 	barDensities = []string{"default", "compact"}
+	modeChoices  = []string{"apps", "windows"}
 	swapChoices  = []string{"", "left", "both"}
 	capsChoices  = []string{"", "escape", "ctrl"}
 )

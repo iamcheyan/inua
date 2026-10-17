@@ -1205,8 +1205,8 @@ msgid "Top level"
 msgstr "Nivel superior"
 
 #: internal/appui/pass.go:360
-#: internal/ui/settings.go:703
-#: internal/ui/settings.go:730
+#: internal/ui/settings.go:704
+#: internal/ui/settings.go:731
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d entrada"
@@ -1488,7 +1488,7 @@ msgstr "Una imagen con un código QR"
 
 #: internal/appui/pass_otp.go:340
 #: internal/desktop/defaults.go:48
-#: internal/ui/settings.go:840
+#: internal/ui/settings.go:841
 msgid "Images"
 msgstr "Imágenes"
 
@@ -8425,88 +8425,88 @@ msgstr "Captura de pantalla copiada"
 msgid "Screenshot taken"
 msgstr "Captura de pantalla tomada"
 
-#: internal/ui/settings.go:255
+#: internal/ui/settings.go:256
 msgid "Not restarted: %s"
 msgstr "No se reinició: %s"
 
-#: internal/ui/settings.go:273
-#: internal/ui/settings.go:281
-#: internal/ui/settings.go:284
-#: internal/ui/settings.go:625
-#: internal/ui/settings.go:627
-#: internal/ui/settings.go:676
-#: internal/ui/settings.go:693
+#: internal/ui/settings.go:274
+#: internal/ui/settings.go:282
+#: internal/ui/settings.go:285
+#: internal/ui/settings.go:626
+#: internal/ui/settings.go:628
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:694
 msgid "%d%%"
 msgstr "%d %%"
 
-#: internal/ui/settings.go:656
+#: internal/ui/settings.go:657
 #: ui/settings.ui:384
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:656
+#: internal/ui/settings.go:657
 #: ui/settings.ui:385
 msgid "System theme"
 msgstr "Tema del sistema"
 
-#: internal/ui/settings.go:729
+#: internal/ui/settings.go:730
 msgid "%s (%s, %s) · %s"
 msgstr "%s (%s, %s) · %s"
 
-#: internal/ui/settings.go:731
+#: internal/ui/settings.go:732
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "%d texto"
 msgstr[1] "%d textos"
 
-#: internal/ui/settings.go:732
+#: internal/ui/settings.go:733
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "%d imagen"
 msgstr[1] "%d imágenes"
 
-#: internal/ui/settings.go:733
+#: internal/ui/settings.go:734
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:812
+#: internal/ui/settings.go:813
 #: internal/ui/settings_apps.go:168
 msgid "Not saved: %s"
 msgstr "No guardado: %s"
 
-#: internal/ui/settings.go:838
+#: internal/ui/settings.go:839
 msgid "Choose a wallpaper"
 msgstr "Elige un fondo de pantalla"
 
-#: internal/ui/settings.go:880
+#: internal/ui/settings.go:881
 msgid "Off: another notification daemon can show them"
 msgstr "Desactivado: otro demonio de notificación puede mostrarlos"
 
-#: internal/ui/settings.go:882
+#: internal/ui/settings.go:883
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "Banners y después el centro de notificaciones (campana de la barra o Super+N)"
 
-#: internal/ui/settings.go:884
+#: internal/ui/settings.go:885
 msgid "Waiting: another notification daemon is running"
 msgstr "Esperando: se está ejecutando otro demonio de notificación"
 
-#: internal/ui/settings.go:902
+#: internal/ui/settings.go:903
 msgid "Nothing pinned"
 msgstr "No hay aplicaciones fijadas"
 
-#: internal/ui/settings.go:918
+#: internal/ui/settings.go:919
 msgid "%s (not installed)"
 msgstr "%s (no instalado)"
 
-#: internal/ui/settings.go:931
+#: internal/ui/settings.go:932
 msgid "Move earlier"
 msgstr "Mover antes"
 
-#: internal/ui/settings.go:932
+#: internal/ui/settings.go:933
 msgid "Move later"
 msgstr "Mover después"
 
-#: internal/ui/settings.go:933
+#: internal/ui/settings.go:934
 msgid "Remove from the dock"
 msgstr "Quitar del dock"
 
