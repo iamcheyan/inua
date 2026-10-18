@@ -45,6 +45,10 @@ History uses both `fix(dock): ...`, `feat: ...`, `docs: ...` and "Component: wha
 
 A PR explains the problem, the behaviour after the change and how it was verified; link the related issue if there is one. Attach screenshots for UI changes, and note any environment the change was not run in. When configuration or command behaviour changes, update the samples and documentation with it.
 
+## Pushing Branches
+
+`origin` is the user's repository; `upstream` is the source repository. Push explicitly to `origin` unless the user asks otherwise. The local `pre-push` privacy scanner checks commits not reachable from the destination branch. On a new remote branch, Git supplies an all-zero destination SHA, so the scanner checks the entire branch history and may flag older commits. Prefer fast-forwarding an existing, appropriate `origin` branch when the new commits belong there. Do not bypass the scanner; inspect findings and resolve them or report the blocker. Verify the remote branch tip after pushing.
+
 ## Configuration and Operational Boundaries
 
 Do not commit secrets, local user names or local absolute paths. Do not run binaries downloaded from the internet without explicit permission. Install and session-setup commands write to user or system directories; do not run them as ordinary build checks.
