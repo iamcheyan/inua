@@ -2,6 +2,7 @@ package vmui
 
 import (
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"slices"
@@ -156,6 +157,54 @@ func TestAFolderThatIsNotAMachineIsLeftOut(t *testing.T) {
 	}
 }
 
+func TestDeleteFaultRemovesCorruptFolder(t *testing.T) {
+	s, store, backend := testService(t)
+	broken := filepath.Join(store.Root, "broken")
+	if err := os.MkdirAll(broken, 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(broken, vm.MachineFileName), []byte("invalid = ["), 0600); err != nil {
+		t.Fatal(err)
+	}
+	s.seen["broken"] = observed{err: errors.New("stale")}
+	if faults := s.Faults(); len(faults) != 1 || faults[0].Name != "broken" {
+		t.Fatalf("faults = %v, want broken folder", faults)
+	}
+	if err := s.DeleteFault("broken"); err != nil {
+		t.Fatalf("delete fault: %v", err)
+	}
+	if _, err := os.Stat(broken); !os.IsNotExist(err) {
+		t.Errorf("corrupt folder remains: %v", err)
+	}
+	if faults := s.Faults(); len(faults) != 0 {
+		t.Errorf("faults after deletion = %v, want none", faults)
+	}
+	if _, ok := s.seen["broken"]; ok {
+		t.Errorf("stale observation remains after deletion")
+	}
+	if len(backend.calls) != 0 {
+		t.Errorf("backend calls = %v, want none", backend.calls)
+	}
+}
+
+func TestDeleteFaultRefusesBusyName(t *testing.T) {
+	s, store, backend := testService(t)
+	broken := filepath.Join(store.Root, "broken")
+	if err := os.MkdirAll(broken, 0700); err != nil {
+		t.Fatal(err)
+	}
+	s.busy["broken"] = true
+	if err := s.DeleteFault("broken"); err == nil {
+		t.Fatal("delete fault succeeded while name was busy")
+	}
+	if _, err := os.Stat(broken); err != nil {
+		t.Errorf("busy fault folder was removed: %v", err)
+	}
+	if len(backend.calls) != 0 {
+		t.Errorf("backend calls = %v, want none", backend.calls)
+	}
+}
+
 // What a machine's page shows follows from what is on disk: a machine whose
 // backend has made what it needs and whose guest is installed is stopped, one
 // that only has the guest's files is not installed yet, and a machine this
@@ -228,22 +277,69 @@ func TestCreateWritesTheMachineAndStartsNothing(t *testing.T) {
 	}
 }
 
+func TestQEMUInstallRequiresInstallMedia(t *testing.T) {
+	s, store, _ := testService(t)
+	s.backends[vm.BackendQEMU] = vm.NewQEMUBackend(store, nil)
+	m := fromTemplate(t, "ubuntu", "ubuntu", vm.Profile{MemoryMiB: 4096, CPUs: 2, DiskGiB: 40})
+	if err := store.Save(m); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Install(m); err == nil || !strings.Contains(err.Error(), "install image or kernel") {
+		t.Fatalf("Install without media = %v, want actionable media error", err)
+	}
+	if _, err := os.Stat(filepath.Join(store.Dir(m.Name), "disk.qcow2")); !os.IsNotExist(err) {
+		t.Fatalf("blank install created guest disk: %v", err)
+	}
+}
+
 // Deleting a machine takes its files away and asks its backend to let go of
 // the guest.
 func TestDeleteTakesTheMachineAway(t *testing.T) {
 	s, store, backend := testService(t)
 	write(t, store, vm.DockurTemplate("windows"), true)
+	backend.state = vm.StateStopped
 	if err := s.Delete("windows"); err != nil {
 		t.Fatalf("delete: %v", err)
 	}
 	if _, err := os.Stat(store.Dir("windows")); !os.IsNotExist(err) {
 		t.Errorf("the machine's folder is still there: %v", err)
 	}
-	if len(backend.calls) != 1 || backend.calls[0] != "remove-with-the-disk" {
-		t.Errorf("backend calls = %v, want the guest's files removed", backend.calls)
+	if !slices.Contains(backend.calls, "remove-with-the-disk") {
+		t.Errorf("backend calls = %v, want removal including guest files", backend.calls)
 	}
 	if names := s.Names(); len(names) != 0 {
 		t.Errorf("names = %v, want none", names)
+	}
+}
+
+func TestDeleteUnpreparedMachineWithoutBackend(t *testing.T) {
+	s, store, backend := testService(t)
+	write(t, store, vm.DockurTemplate("windows"), false)
+	s.backends = nil
+	if err := s.Delete("windows"); err != nil {
+		t.Fatalf("delete unprepared machine: %v", err)
+	}
+	if _, err := os.Stat(store.Dir("windows")); !os.IsNotExist(err) {
+		t.Errorf("machine folder remains: %v", err)
+	}
+	if len(backend.calls) != 0 {
+		t.Errorf("backend called for unprepared machine: %v", backend.calls)
+	}
+}
+
+func TestDeleteRefusesRunningMachine(t *testing.T) {
+	s, store, backend := testService(t)
+	write(t, store, vm.DockurTemplate("windows"), true)
+	backend.prepared = true
+	backend.state = vm.StateRunning
+	if err := s.Delete("windows"); err == nil {
+		t.Fatal("delete succeeded while guest was running")
+	}
+	if _, err := os.Stat(store.Dir("windows")); err != nil {
+		t.Errorf("running machine folder removed: %v", err)
+	}
+	if slices.Contains(backend.calls, "remove-with-the-disk") {
+		t.Errorf("backend removal called for running machine: %v", backend.calls)
 	}
 }
 

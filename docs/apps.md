@@ -423,11 +423,13 @@ previous version is adopted automatically, keeping its disk and its password.
 Each machine reserves its own loopback ports for RDP and the web console, so
 several machines' ports never collide.
 
-QEMU runs Linux, FreeBSD and custom systems - from an ISO, a disk or a kernel
-file, on this architecture or another, with BIOS or UEFI firmware, its serial
-console shown in the window and, if you ask for it, the guest held at its first
-instruction for gdb. Docker (Dockur) runs Windows. The Waydroid backend
-(Android) and seamless windows are the following steps
+QEMU runs Linux, FreeBSD and custom systems from an ISO, a disk or a kernel
+file, on this architecture or another, with BIOS or UEFI firmware. For Linux
+and FreeBSD, choose or download an install image before Install; Inua disables
+Install until media, a kernel or an existing guest disk is available. Its
+serial console streams guest output while the console page is open, and can
+hold the guest at its first instruction for gdb. Docker (Dockur) runs Windows.
+The Waydroid backend (Android) and seamless windows are the following steps
 ([inua-vm.md](inua-vm.md)): an Android machine is stored, listed and described,
 and its page says this build has no backend for it yet.
 
@@ -453,10 +455,11 @@ Windows needs a licence.
 Docker socket access is as good as root on this machine, so inua explains it
 and never offers to add you to the `docker` group: it shows the command, for
 whoever decides they want it, and points at rootless Docker or Podman
-instead. The `kvm` group fix, which grants one device, stays. Removing a
-guest deletes the container and the project but keeps its disk and its
-password, so a later install reuses that Windows; **Delete disk** and
-**Delete** (the machine and its folder) are separate, confirmed actions.
+instead. The `kvm` group fix, which grants one device, stays. **Remove** stops
+the backend while keeping the guest's disk; **Delete disk** removes guest
+files while keeping the machine, and confirmed **Delete** removes the machine
+and its files. A stopped incomplete installation can be deleted too. Unreadable
+machine folders appear under **Needs recovery** with a confirmed folder delete.
 
 ## Files
 

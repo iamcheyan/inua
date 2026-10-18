@@ -12,6 +12,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
@@ -432,6 +433,26 @@ func (s *vmService) Names() []string {
 	return out
 }
 
+// Faults lists store folders that cannot be loaded as machines.
+func (s *vmService) Faults() []vm.Fault {
+	return s.store.Faults()
+}
+
+// DeleteFault removes an unloadable machine folder without consulting a backend.
+func (s *vmService) DeleteFault(name string) error {
+	if err := s.begin(name); err != nil {
+		return err
+	}
+	err := s.store.DeleteFault(name)
+	s.end(name, err)
+	if err == nil {
+		s.mu.Lock()
+		delete(s.seen, name)
+		s.mu.Unlock()
+	}
+	return err
+}
+
 // Lookup reads one machine.
 func (s *vmService) Lookup(name string) (vm.Machine, error) {
 	return s.store.Load(name)
@@ -602,10 +623,21 @@ func (s *vmService) noBackend(m vm.Machine) error {
 // download and the unattended setup, which the window then follows on the
 // provisioning page.
 func (s *vmService) Install(m vm.Machine) error {
+	if stored, err := s.store.Load(m.Name); err == nil && stored.Backend == vm.BackendQEMU &&
+		strings.TrimSpace(m.Boot.ISO) == "" && strings.TrimSpace(m.Boot.Kernel) == "" {
+		disk := strings.TrimSpace(stored.Boot.Disk)
+		if disk == "" {
+			disk = "disk.qcow2"
+		}
+		if _, err := os.Stat(filepath.Join(stored.Dir(s.store), disk)); err != nil {
+			return errors.New("choose an install image or kernel before installing, or provide an existing guest disk")
+		}
+	}
 	if err := s.Save(m); err != nil {
 		return err
 	}
 	return s.Start(m.Name)
+
 }
 
 // Start brings a machine up and returns before the guest is ready: a first
@@ -702,6 +734,28 @@ func (s *vmService) Connect(name string, display *rdpDisplay) error {
 	return fmt.Errorf("this machine has no viewer (%s)", d.Kind)
 }
 
+// TeeSerial mirrors a QEMU guest's output while its serial console is open.
+func (s *vmService) TeeSerial(name string) error {
+	return s.TeeSerialContext(context.Background(), name)
+}
+
+// TeeSerialContext streams serial output until ctx is cancelled.
+func (s *vmService) TeeSerialContext(ctx context.Context, name string) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	be, ok := s.backendOf(m)
+	if !ok {
+		return s.noBackend(m)
+	}
+	qemu, ok := be.(*vm.QEMUBackend)
+	if !ok {
+		return fmt.Errorf("%s does not have a QEMU serial console", name)
+	}
+	return qemu.TeeSerial(ctx, m)
+}
+
 // Console opens the machine's web console in the browser: during a first
 // Windows installation it is the only usable view of the guest.
 func (s *vmService) Console(name string) error {
@@ -750,8 +804,49 @@ func (s *vmService) DeleteDisk(name string) error {
 
 // Delete takes the machine away entirely: its guest's files and its definition,
 // so it is gone from the list. Callers ask first.
+
 func (s *vmService) Delete(name string) error {
-	return s.remove(name, false, true)
+	if err := s.begin(name); err != nil {
+		return err
+	}
+	var opErr error
+	defer func() { s.end(name, opErr) }()
+
+	m, loadErr := s.store.Load(name)
+	if loadErr != nil {
+		opErr = s.store.DeleteFault(name)
+	} else if be, ok := s.backendOf(m); ok {
+		prepared, hasPrepared := be.(vm.Prepared)
+		if !hasPrepared || !prepared.Prepared(m) {
+			opErr = s.store.Delete(name)
+		} else {
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			state, stateErr := be.State(ctx, m)
+			cancel()
+			if stateErr != nil {
+				opErr = fmt.Errorf("cannot confirm %s is stopped: %w", name, stateErr)
+				return opErr
+			}
+			if state == vm.StateRunning || state == vm.StateStarting || state == vm.StateStopping {
+				opErr = fmt.Errorf("%s must be stopped before it can be deleted", name)
+				return opErr
+			}
+			ctx, cancel = context.WithTimeout(context.Background(), 3*time.Minute)
+			defer cancel()
+			if opErr = be.Remove(ctx, m, false); opErr != nil {
+				return opErr
+			}
+			opErr = s.store.Delete(name)
+		}
+	} else {
+		opErr = s.store.Delete(name)
+	}
+	if opErr == nil {
+		s.mu.Lock()
+		delete(s.seen, name)
+		s.mu.Unlock()
+	}
+	return opErr
 }
 
 func (s *vmService) remove(name string, keepDisk, forget bool) error {

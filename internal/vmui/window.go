@@ -1,22 +1,25 @@
 package vmui
 
 import (
-	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
-	"codeberg.org/puregotk/puregotk/v4/gtk"
-	"codeberg.org/puregotk/puregotk/v4/pango"
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lyricat/inua/internal/appui"
-	"github.com/lyricat/inua/internal/gtkx"
-	"github.com/lyricat/inua/internal/i18n"
-	"github.com/lyricat/inua/internal/vm"
+	"log"
 	"path"
 	"slices"
 	"strings"
 	"sync"
 	"time"
+
+	"codeberg.org/puregotk/puregotk/v4/gdk"
+	"codeberg.org/puregotk/puregotk/v4/gio"
+	"codeberg.org/puregotk/puregotk/v4/gtk"
+	"codeberg.org/puregotk/puregotk/v4/pango"
+
+	"github.com/lyricat/inua/internal/appui"
+	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/vm"
 )
 
 // VMManager is the UI-facing boundary for the machines: the list, one
@@ -26,6 +29,8 @@ import (
 type VMManager interface {
 	// Machines is the list, from what is on disk. It reads no backend.
 	Machines() []MachineView
+	Faults() []vm.Fault
+	DeleteFault(name string) error
 	// Snapshot is one machine as it was last observed.
 	Snapshot(name string) MachineView
 	// Refresh reads one machine's backend and returns its view.
@@ -34,32 +39,20 @@ type VMManager interface {
 	RefreshAll() []MachineView
 	// Templates are what a new machine can be made from.
 	Templates() []vm.Template
-	// Create writes a new machine from a template; nothing is installed.
 	Create(templateID, name string) (vm.Machine, error)
-	// Save writes a machine's definition and has its backend make what it
-	// needs; Install does that and starts the guest as well.
 	Save(vm.Machine) error
 	Install(vm.Machine) error
-	// FetchISO downloads an install medium for a machine and makes it the
-	// machine's install media, which the install flow then starts from.
 	FetchISO(name string, media vm.ISOMedia) error
-	// CancelISO stops the transfer a machine has going, if any.
 	CancelISO(name string)
-	// SetISOFilters is what the download list is showing: the window's own
-	// controls, applied where a machine's view is built.
 	SetISOFilters(vm.ISOFilters)
 	Start(name string) error
 	Stop(name string) error
 	Connect(name string, display *rdpDisplay) error
 	Console(name string) error
-	// Remove takes the machine's container apart and keeps the disk.
+	TeeSerialContext(ctx context.Context, name string) error
 	Remove(name string) error
-	// DeleteDisk deletes the guest's own files, keeping the machine.
 	DeleteDisk(name string) error
-	// Delete takes the machine away entirely.
 	Delete(name string) error
-	// Fix applies a failing check's remedy, asking for the password through
-	// the session's polkit agent when it needs one.
 	Fix(vm.Remedy) (done string, relogin bool, err error)
 }
 
@@ -89,11 +82,14 @@ type vmWindow struct {
 
 	stack gtk.Stack
 
-	// the list
-	machineList gtk.ListBox
-	newButton   gtk.Button
-	views       []MachineView
-	rows        []machineRow
+	machineList  gtk.ListBox
+	faultList    gtk.ListBox
+	faultHeading gtk.Label
+	faultScroll  gtk.ScrolledWindow
+	newButton    gtk.Button
+	views        []MachineView
+	rows         []machineRow
+	faults       []vm.Fault
 
 	// a new machine
 	templateList gtk.ListBox
@@ -118,9 +114,12 @@ type vmWindow struct {
 	provConsoleNote, bootConsoleNote       gtk.Label
 	readyConsoleNote                       gtk.Label
 	consoleCopy, consoleStart, consoleStop gtk.Button
+	faultError                             gtk.Label
+	faultDelete                            gtk.Button
 	serial                                 gtk.TextView
 	serialBuffer                           *gtk.TextBuffer
 	serialText                             string
+	serialCancel                           context.CancelFunc
 	consoleNotes                           []consoleNote
 	onGDB                                  func(gtk.Switch, bool) bool
 	onISOSearch                            func(gtk.Entry)
@@ -179,9 +178,9 @@ type vmWindow struct {
 	isoMark        map[string]gtk.Image
 
 	// provisioning
-	progress                                 gtk.ProgressBar
-	progressText                             gtk.Label
-	console, provStart, provStop, provRemove gtk.Button
+	progress                                             gtk.ProgressBar
+	progressText                                         gtk.Label
+	console, provStart, provStop, provRemove, provDelete gtk.Button
 
 	// stopped
 	readySummary              gtk.Label
@@ -218,6 +217,7 @@ type vmWindow struct {
 	watchCancel   context.CancelFunc
 	lastPage      vm.Page
 	lastChecks    []vm.DoctorItem
+	onClose       func(gtk.Window) bool
 	onClick       func(gtk.Button)
 	onRowSelect   func(gtk.ListBox, uintptr)
 	onTemplate    func(gtk.ListBox, uintptr)
@@ -234,7 +234,9 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_sub", &v.sub)
 	builder.Get("vm_stack", &v.stack)
 	builder.Get("vm_machines", &v.machineList)
-	builder.Get("vm_new", &v.newButton)
+	builder.Get("vm_fault_heading", &v.faultHeading)
+	builder.Get("vm_fault_scroll", &v.faultScroll)
+	builder.Get("vm_faults", &v.faultList)
 	builder.Get("vm_templates", &v.templateList)
 	builder.Get("vm_new_name", &v.nameEntry)
 	builder.Get("vm_create", &v.createButton)
@@ -247,6 +249,8 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_console_summary", &v.consoleSummary)
 	builder.Get("vm_console_hardware", &v.consoleHardware)
 	builder.Get("vm_console_gdb", &v.consoleGDB)
+	builder.Get("vm_fault_error", &v.faultError)
+	builder.Get("vm_fault_delete", &v.faultDelete)
 	builder.Get("vm_console_cmd", &v.consoleCmd)
 	builder.Get("vm_console_copy", &v.consoleCopy)
 	builder.Get("vm_console_start", &v.consoleStart)
@@ -291,7 +295,7 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_prov_start", &v.provStart)
 	builder.Get("vm_prov_stop", &v.provStop)
 	builder.Get("vm_prov_remove", &v.provRemove)
-	builder.Get("vm_ready_summary", &v.readySummary)
+	builder.Get("vm_prov_delete", &v.provDelete)
 	builder.Get("vm_ready_memory", &v.readyMemory)
 	builder.Get("vm_ready_cpus", &v.readyCPUs)
 	builder.Get("vm_disk_size", &v.diskSize)
@@ -317,11 +321,11 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	manager.SetISOFilters(v.isoFilter)
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
 	for _, b := range []*gtk.Button{&v.accept, &v.advancedToggle, &v.install,
-		&v.console, &v.provStart, &v.provStop, &v.provRemove, &v.readySave, &v.start,
+		&v.console, &v.provStart, &v.provStop, &v.provRemove, &v.provDelete, &v.readySave, &v.start,
 		&v.connect, &v.consoleReady, &v.stop, &v.remove, &v.removeData, &v.setupRemoveData,
 		&v.setupDelete, &v.bootConsole, &v.bootStop, &v.newButton, &v.createButton,
 		&v.consoleBack, &v.consoleCopy, &v.consoleStart, &v.consoleStop,
-		&v.assistantAsk, &v.assistantRecheck, &v.isoCancel} {
+		&v.assistantAsk, &v.assistantRecheck, &v.isoCancel, &v.faultDelete} {
 		b.ConnectClicked(&v.onClick)
 	}
 	v.onRowSelect = func(_ gtk.ListBox, ptr uintptr) {
@@ -335,6 +339,7 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 		v.choose(row.GetName())
 	}
 	v.machineList.ConnectRowSelected(&v.onRowSelect)
+	v.faultList.ConnectRowSelected(&v.onRowSelect)
 	v.onTemplate = func(_ gtk.ListBox, ptr uintptr) {
 		if ptr == 0 {
 			return
@@ -409,6 +414,12 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 		{label: &v.readyConsoleNote, byDefault: v.readyConsoleNote.GetText()},
 	}
 	v.serialBuffer = v.serial.GetBuffer()
+	v.onClose = func(gtk.Window) bool {
+		v.stopSerial()
+		v.watchCancel()
+		return false
+	}
+	v.win.ConnectCloseRequest(&v.onClose)
 
 	v.createHint = v.createNote.GetText()
 	v.assistantHint = v.assistantNote.GetText()
@@ -482,7 +493,7 @@ func (v *vmWindow) choose(name string) {
 	if v.selectedName() == name && !v.newOpen {
 		return
 	}
-	v.newOpen = false
+	v.stopSerial()
 	v.consoleOpen = false
 	v.setSelected(name)
 	v.note = ""
@@ -508,23 +519,35 @@ func (v *vmWindow) choose(name string) {
 	}()
 }
 
-// paintAll takes a fresh list: the panel and the rows both follow from it.
-// It runs on the GTK thread.
 func (v *vmWindow) paintAll(views []MachineView) {
 	if v.closed || v.win == nil {
 		return
 	}
 	v.views = views
+	v.faults = v.manager.Faults()
+	visible := len(v.faults) > 0
+	if v.faultList != (gtk.ListBox{}) {
+		v.faultList.SetVisible(visible)
+	}
+	if v.faultScroll != (gtk.ScrolledWindow{}) {
+		v.faultScroll.SetVisible(visible)
+	}
+	if v.faultHeading != (gtk.Label{}) {
+		v.faultHeading.SetVisible(visible)
+	}
 	selected := v.selectedName()
-	if !v.has(selected) {
+	if !v.has(selected) && !v.hasFault(selected) {
 		selected = ""
 		if len(views) > 0 && !v.newOpen {
 			selected = views[0].Name
+		} else if len(v.faults) > 0 && !v.newOpen {
+			selected = v.faults[0].Name
 		}
 		v.lastPage, v.setupFilled, v.readyFilled = "", false, false
 	}
 	v.setSelected(selected)
 	v.rebuildRows()
+	v.rebuildFaultRows()
 	v.paint()
 }
 
@@ -538,6 +561,34 @@ func (v *vmWindow) has(name string) bool {
 		}
 	}
 	return false
+}
+
+func (v *vmWindow) hasFault(name string) bool {
+	for _, fault := range v.faults {
+		if fault.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (v *vmWindow) rebuildFaultRows() {
+	for {
+		row := v.faultList.GetRowAtIndex(0)
+		if row == nil {
+			break
+		}
+		v.faultList.Remove(&row.Widget)
+	}
+	for _, fault := range v.faults {
+		row := gtk.NewListBoxRow()
+		row.SetName(fault.Name)
+		label := gtk.NewLabel(fault.Name + " · " + fault.Error)
+		label.SetXalign(0)
+		label.SetEllipsize(pango.EllipsizeEndValue)
+		row.SetChild(&label.Widget)
+		v.faultList.Append(&row.Widget)
+	}
 }
 
 func (v *vmWindow) viewOf(name string) MachineView {
@@ -657,8 +708,20 @@ func (v *vmWindow) paint() {
 		v.stack.SetVisibleChildName("empty")
 		return
 	}
+	if v.hasFault(name) {
+		v.title.SetText(name)
+		v.sub.SetText(i18n.T("Machine folder needs recovery"))
+		for _, fault := range v.faults {
+			if fault.Name == name {
+				v.faultError.SetText(fault.Error)
+				break
+			}
+		}
+		v.faultDelete.SetSensitive(!v.operationBusy)
+		v.stack.SetVisibleChildName("fault")
+		return
+	}
 	view := v.viewOf(name)
-	v.title.SetText(view.Name)
 	if !view.Ready {
 		v.sub.SetText(i18n.T("No backend for this machine"))
 		v.naNote.SetText(i18n.Tf("This machine needs the %s backend, which this build does not have.", vmBackendText(view.Machine.Backend)))
@@ -726,6 +789,7 @@ func (v *vmWindow) showConsolePage(s MachineView) {
 	v.consoleGDB.SetActive(s.Machine.Boot.GDB)
 	v.filling = false
 	line := s.DebuggerCmd
+	v.startSerial()
 	if line == "" {
 		line = i18n.T("Turn the debugger on to hold the guest for gdb.")
 	}
@@ -734,6 +798,33 @@ func (v *vmWindow) showConsolePage(s MachineView) {
 	v.consoleStart.SetSensitive(!s.Busy && s.State != vm.StateRunning && s.State != vm.StateStarting)
 	v.consoleStop.SetSensitive(!s.Busy && (s.State == vm.StateRunning || s.State == vm.StateStarting))
 	v.setSerial(s.SerialLog)
+}
+
+func (v *vmWindow) startSerial() {
+	name := v.selectedName()
+	view := v.viewOf(name)
+	if view.Machine.Backend != vm.BackendQEMU || view.Display.Kind != vm.DisplaySerial ||
+		view.State != vm.StateRunning && view.State != vm.StateStarting {
+		v.stopSerial()
+		return
+	}
+	if v.serialCancel != nil {
+		return
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	v.serialCancel = cancel
+	go func() {
+		if err := v.manager.TeeSerialContext(ctx, name); err != nil && ctx.Err() == nil {
+			log.Printf("vm serial %s: %v", name, err)
+		}
+	}()
+}
+
+func (v *vmWindow) stopSerial() {
+	if v.serialCancel != nil {
+		v.serialCancel()
+		v.serialCancel = nil
+	}
 }
 
 // setConsoleRow words the console rows for this machine: a machine whose
@@ -1157,15 +1248,19 @@ func (v *vmWindow) showSetup(s MachineView) {
 	}
 	v.setupSummary.SetText(vmProfileText(v.setupMachine()))
 	v.profileDesc.SetText(i18n.T("A balanced profile leaves memory and CPU for your system."))
-	if s.Leftovers {
+	if s.Machine.Backend == vm.BackendQEMU && strings.TrimSpace(s.Machine.Boot.ISO) == "" && strings.TrimSpace(s.Machine.Boot.Kernel) == "" {
+		v.setupNote.SetText(i18n.T("Choose or download an install image before installing this machine."))
+	} else if s.Leftovers {
 		v.setupNote.SetText(i18n.T("Files from a previous attempt are still here. Install reuses them; delete them to start over."))
 	} else {
 		v.setupNote.SetText(vmInstallNote(s))
 	}
 	v.setupDisk.SetVisible(s.Leftovers)
 	idle := !s.Busy && !v.operationBusy
+	canInstall := s.Machine.Backend != vm.BackendQEMU || strings.TrimSpace(s.Machine.Boot.ISO) != "" ||
+		strings.TrimSpace(s.Machine.Boot.Kernel) != ""
 	v.accept.SetSensitive(idle)
-	v.install.SetSensitive(idle)
+	v.install.SetSensitive(idle && canInstall)
 	v.advancedToggle.SetSensitive(idle)
 	v.setupRemoveData.SetSensitive(idle)
 	v.setupDelete.SetSensitive(idle)
@@ -1599,6 +1694,7 @@ func (v *vmWindow) showProvisioning(s MachineView) {
 	v.provStop.SetSensitive(!s.Busy)
 	v.console.SetSensitive(!s.Busy && up)
 	v.provRemove.SetSensitive(!s.Busy && !up)
+	v.provDelete.SetSensitive(!s.Busy && !up && !v.operationBusy)
 }
 
 // showStopped fills the page shown when the guest is installed and off: start
@@ -1690,6 +1786,7 @@ func (v *vmWindow) clicked(b gtk.Button) {
 		}
 		v.run(func() error { return v.manager.Console(name) })
 	case "console_back":
+		v.stopSerial()
 		v.consoleOpen = false
 		v.paint()
 	case "console_copy":
@@ -1739,6 +1836,25 @@ func (v *vmWindow) clicked(b gtk.Button) {
 		v.rememberArmed(0)
 		v.setupDelete.SetLabel(i18n.T("Delete"))
 		v.run(func() error { return v.manager.Delete(name) })
+	case "prov_delete":
+		if !v.deleteArmed {
+			v.rememberArmed(3)
+			v.setupDelete.SetLabel(i18n.T("Delete"))
+			v.provDelete.SetLabel(i18n.T("Confirm delete"))
+			return
+		}
+		v.rememberArmed(0)
+		v.provDelete.SetLabel(i18n.T("Delete"))
+		v.run(func() error { return v.manager.Delete(name) })
+	case "fault_delete":
+		if !v.deleteArmed {
+			v.rememberArmed(3)
+			v.faultDelete.SetLabel(i18n.T("Confirm delete"))
+			return
+		}
+		v.rememberArmed(0)
+		v.faultDelete.SetLabel(i18n.T("Delete folder"))
+		v.run(func() error { return v.manager.DeleteFault(name) })
 	case "assistant_ask":
 		v.askAboutTheHost()
 	case "assistant_recheck":
@@ -1767,6 +1883,8 @@ func (v *vmWindow) rememberArmed(which int) {
 	}
 	if v.deleteArmed {
 		v.setupDelete.SetLabel(i18n.T("Delete"))
+		v.provDelete.SetLabel(i18n.T("Delete"))
+		v.faultDelete.SetLabel(i18n.T("Delete folder"))
 	}
 	v.removeArmed = which == 1
 	v.dataArmed = which == 2
@@ -1785,11 +1903,12 @@ func (v *vmWindow) askAboutTheHost() {
 	}
 	prompt := assistantPrompt(v.viewOf(name))
 	if err := askAssistant(prompt); err != nil {
-		v.note = err.Error()
+		v.assistantNote.SetText(err.Error())
+		v.assistantNote.AddCssClass("error")
 	} else {
-		v.note = i18n.T("Asked. Its window has the details.")
+		v.assistantNote.RemoveCssClass("error")
+		v.assistantNote.SetText(i18n.T("Request sent to the assistant window."))
 	}
-	v.assistantNote.SetText(v.assistantHint)
 	v.paint()
 }
 

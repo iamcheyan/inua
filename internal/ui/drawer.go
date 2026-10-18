@@ -329,8 +329,9 @@ func (s *shellUI) openDrawer(b *bar, kind string) {
 	button := d.drawer
 	if kind == drawerWorkshop {
 		button = d.workshop
-		s.freshenApps() // an app just installed: its desktop entry
 	}
+	// Apps installed since the last scan must be visible in this drawer.
+	s.freshenApps()
 	if button == nil {
 		return
 	}

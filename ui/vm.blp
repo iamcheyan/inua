@@ -26,52 +26,66 @@ ApplicationWindow vm {
     orientation: horizontal;
 
     // ── the machines, one a row ───────────────────────────────────────────
-    Box {
-      styles ["vm-index"]
-      orientation: vertical;
-      width-request: 296;
+	Box {
+	  styles ["vm-index"]
+	  orientation: vertical;
+	  width-request: 296;
 
-      Box {
-        styles ["vm-index-head"]
-        spacing: 8;
+	  Box {
+	    styles ["vm-index-head"]
+	    spacing: 8;
 
-        Label {
-          styles ["vm-index-title"]
-          label:  _("Virtual machines");
-          hexpand: true;
-          xalign: 0;
-        }
+	    Label {
+	      styles ["vm-index-title"]
+	      label:  _("Virtual machines");
+	      hexpand: true;
+	      xalign: 0;
+	    }
 
-        // A label is not enough for a button with no text: give it one.
-        Button vm_new {
-          styles ["outlined"]
-          name: "new_machine";
-          label:  _("New");
-          tooltip-text: _("Add a machine from a template");
-        }
-      }
+	    Button vm_new {
+	      styles ["outlined"]
+	      name: "new_machine";
+	      label:  _("New");
+	      tooltip-text: _("Add a machine from a template");
+	    }
+	  }
 
-      ScrolledWindow {
-        vexpand: true;
-        hscrollbar-policy: never;
+	  ScrolledWindow {
+	    vexpand: true;
+	    hscrollbar-policy: never;
+	    ListBox vm_machines {
+	      styles ["vm-machines"]
+	      selection-mode: single;
+	      activate-on-single-click: true;
+	    }
+	  }
 
-        ListBox vm_machines {
-          styles ["vm-machines"]
-          selection-mode: single;
-          activate-on-single-click: true;
-        }
-      }
-    }
+	  Label vm_fault_heading {
+	    styles ["section-label"]
+	    label:  _("Needs recovery");
+	    xalign: 0;
+	    margin-start: 12;
+	    margin-top: 8;
+	    visible: false;
+	  }
 
-    Separator {
-      orientation: vertical;
-    }
+	  ScrolledWindow vm_fault_scroll {
+	    max-content-height: 140;
+	    hscrollbar-policy: never;
+	    visible: false;
+	    ListBox vm_faults {
+	      styles ["vm-machines"]
+	      selection-mode: single;
+	      activate-on-single-click: true;
+	    }
+	  }
+	}
 
-    // ── the machine chosen in the list ────────────────────────────────────
-    Box {
-      orientation: vertical;
-      hexpand: true;
+	Separator { orientation: vertical; }
 
+	Box {
+	  orientation: vertical;
+	  hexpand: true;
       // ── headline ─────────────────────────────────────────────────────────
       Box {
         styles ["vm-head"]
@@ -102,6 +116,34 @@ ApplicationWindow vm {
         vexpand: true;
         transition-type: crossfade;
         transition-duration: 140;
+
+        StackPage {
+	name: "fault";
+	child: Box {
+	  orientation: vertical;
+	  valign: center;
+	  margin-start: 24;
+	  margin-end: 24;
+	  spacing: 12;
+	  Label vm_fault_error {
+	    styles ["sub"]
+	    xalign: 0;
+	    wrap: true;
+	  }
+	  Label {
+	    styles ["sub"]
+	    label:  _("This machine folder cannot be loaded. Deleting it permanently removes all files inside.");
+	    xalign: 0;
+	    wrap: true;
+	  }
+	  Button vm_fault_delete {
+	    styles ["destructive-action"]
+	    name: "fault_delete";
+	    label:  _("Delete folder");
+	    halign: end;
+	  }
+	};
+        }
 
         // ── PAGE: empty ── nothing made yet ────────────────────────────────
         StackPage {
@@ -1305,6 +1347,37 @@ ApplicationWindow vm {
                     styles ["outlined"]
                     name: "prov_remove";
                     label:  _("Remove");
+                    valign: center;
+                  }
+                }
+
+                Box {
+                  styles ["row"]
+
+                  Box {
+                    orientation: vertical;
+                    hexpand: true;
+                    valign: center;
+                    spacing: 2;
+
+                    Label {
+                      styles ["label"]
+                      label:  _("Delete machine");
+                      xalign: 0;
+                    }
+
+                    Label {
+                      styles ["sub"]
+                      label:  _("Permanently deletes the machine and all its files.");
+                      xalign: 0;
+                      wrap: true;
+                    }
+                  }
+
+                  Button vm_prov_delete {
+                    styles ["destructive-action"]
+                    name: "prov_delete";
+                    label:  _("Delete");
                     valign: center;
                   }
                 }

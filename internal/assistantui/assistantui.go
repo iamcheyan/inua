@@ -63,18 +63,19 @@ type view struct {
 	question   gtk.Entry
 	send       gtk.Button
 
-	as        *assistant.Assistant
-	stamp     string   // config.toml's and the keys' times when as was made
-	names     []string // the profile drop-down's
-	running   bool
-	cancel    context.CancelFunc
-	answer    *gtk.Label // the answer being streamed
-	first     []string   // the question of the first start (--ask)
-	apiCancel context.CancelFunc
-	apiDone   chan struct{}
-	reloading bool
-	closed    bool
-	built     bool // Build has run; before, the window is not shown yet
+	as          *assistant.Assistant
+	stamp       string   // config.toml's and the keys' times when as was made
+	names       []string // the profile drop-down's
+	running     bool
+	cancel      context.CancelFunc
+	answer      *gtk.Label // the answer being streamed
+	pending     []string   // external prompts waiting for assistant setup or a current answer
+	pendingUser string     // text the user queued while an answer was running
+	apiCancel   context.CancelFunc
+	apiDone     chan struct{}
+	reloading   bool
+	closed      bool
+	built       bool // Build has run; before, the window is not shown yet
 
 	approvals map[string]chan bool // by card, while a tool waits
 	nextCard  int
@@ -247,10 +248,28 @@ func (v *view) ThemeChanged() { v.refresh() }
 func (v *view) Open(args []string) {
 	for i, a := range args {
 		if a == "--ask" && i+1 < len(args) {
-			v.ask(args[i+1])
+			v.pending = enqueuePrompt(v.pending, args[i+1])
+			v.deliverPending()
 			return
 		}
 	}
+}
+
+func enqueuePrompt(pending []string, q string) []string {
+	q = strings.TrimSpace(q)
+	if q == "" {
+		return pending
+	}
+	return append(pending, q)
+}
+
+func (v *view) deliverPending() {
+	if v.as == nil || v.reloading || v.running || len(v.pending) == 0 {
+		return
+	}
+	q := v.pending[0]
+	v.pending = v.pending[1:]
+	v.startAsk(q)
 }
 
 // setUp makes the assistant from config.toml and the saved keys, or says
@@ -337,6 +356,9 @@ func (v *view) setUp() {
 			})
 		}()
 	}
+	if v.as == nil && len(v.pending) > 0 {
+		v.question.SetText(v.pending[len(v.pending)-1])
+	}
 }
 
 // refresh makes the assistant again when its settings changed, between
@@ -359,12 +381,14 @@ func (v *view) refresh() {
 				}
 				v.setUp()
 				v.reloading = false
+				v.deliverPending()
 			})
 		}()
 		return
 	}
 	hadNone := v.as == nil
 	v.setUp()
+	v.deliverPending()
 	if hadNone && v.as != nil {
 		gtkx.Clear(&v.talk)
 		v.showSuggestions()
@@ -412,19 +436,21 @@ func (v *view) ask(q string) {
 		return
 	}
 	v.refresh()
-	if v.reloading {
+	if v.reloading || v.as == nil {
+		v.pending = enqueuePrompt(v.pending, q)
 		v.question.SetText(q)
 		return
 	}
-	if v.as == nil {
-		return
-	}
-	if v.running { // kept in the field for when this answer is done
+	if v.running {
+		v.pendingUser = q
 		v.question.SetText(q)
 		v.question.SetPosition(-1)
 		return
 	}
-	v.dropSuggestions()
+	v.startAsk(q)
+}
+
+func (v *view) startAsk(q string) {
 	v.line("as-you", q)
 	v.answer = v.line("as-answer", "…")
 	v.running = true
@@ -459,7 +485,14 @@ func (v *view) ask(q string) {
 				v.setAnswer(i18n.T("(no answer)"))
 			}
 			v.answer = nil
-			v.question.GrabFocus()
+			if v.pendingUser != "" {
+				q := v.pendingUser
+				v.pendingUser = ""
+				v.question.SetText("")
+				v.ask(q)
+				return
+			}
+			v.deliverPending()
 		})
 	}()
 }

@@ -212,19 +212,51 @@ func (s Store) Faults() []Fault {
 	}
 	var out []Fault
 	for _, e := range entries {
-		if !e.IsDir() {
-			continue
-		}
 		name := e.Name()
 		if err := checkName(name); err != nil {
-			continue // not something inua made, or not something it will touch
+			continue
+		}
+		path := s.Dir(name)
+		info, err := os.Lstat(path)
+		if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+			continue
 		}
 		if _, err := s.Load(name); err != nil {
-			out = append(out, Fault{Name: name, Path: s.Dir(name), Error: err.Error()})
+			out = append(out, Fault{Name: name, Path: path, Error: err.Error()})
 		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Name < out[j].Name })
 	return out
+}
+
+// DeleteFault removes an unloadable machine folder after explicit caller confirmation.
+// Unlike Delete, it does not require a valid machine.toml. The folder name must
+// still be an owned machine name and every path component must be free of symlinks.
+func (s Store) DeleteFault(name string) error {
+	if err := checkName(name); err != nil {
+		return err
+	}
+	dir := s.Dir(name)
+	if err := validateOwnedDataDir(dir); err != nil {
+		return vmError("delete recovery", ErrorInvalidConfig, err)
+	}
+	if err := rejectPathSymlinks(dir); err != nil {
+		return vmError("delete recovery", ErrorInvalidConfig, err)
+	}
+	info, err := os.Lstat(dir)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return vmError("delete recovery", ErrorBackend, err)
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return vmError("delete recovery", ErrorInvalidConfig, errors.New("machine path is not a plain directory"))
+	}
+	if err := os.RemoveAll(dir); err != nil {
+		return vmError("delete recovery", ErrorBackend, err)
+	}
+	return nil
 }
 
 // Delete removes a machine's own folder: its machine.toml and its guest's

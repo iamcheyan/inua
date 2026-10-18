@@ -303,6 +303,14 @@ machine's state shows #18's pages: prerequisites with their fixes,
 setup, provisioning (with the console), ready. All text through
 `internal/i18n`, in the six catalogs; Phosphor icons.
 
+Delete removes a machine definition and its files after an explicit confirmation.
+It is available while setup is incomplete and while provisioning is stopped; a
+running or busy guest must be stopped first. Folders with invalid or unreadable
+machine definitions appear under **Needs recovery**. Deleting one requires the
+same confirmation and removes the entire owned folder; the store refuses unsafe
+names and symlinked paths. Deleting an unprepared definition does not require its
+backend to be installed.
+
 ## Security
 
 - Every port binds 127.0.0.1; sockets live in `$XDG_RUNTIME_DIR`.

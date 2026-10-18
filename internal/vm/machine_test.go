@@ -254,6 +254,77 @@ func TestStoreRefusesNamesThatAreNotOneFolder(t *testing.T) {
 	}
 }
 
+func TestStoreDeleteFaultRemovesMalformedFolder(t *testing.T) {
+	root := t.TempDir()
+	store := Store{Root: filepath.Join(root, "vm"), Runtime: filepath.Join(root, "run")}
+	faultDir := store.Dir("broken")
+	if err := os.MkdirAll(filepath.Join(faultDir, "nested"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(store.File("broken"), []byte("not a machine config"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(faultDir, "nested", "data"), []byte("guest data"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.DeleteFault("broken"); err != nil {
+		t.Fatalf("delete fault: %v", err)
+	}
+	if _, err := os.Stat(faultDir); !os.IsNotExist(err) {
+		t.Errorf("fault folder remains: %v", err)
+	}
+}
+
+func TestStoreDeleteFaultRefusesUnsafeName(t *testing.T) {
+	root := t.TempDir()
+	store := Store{Root: filepath.Join(root, "vm"), Runtime: filepath.Join(root, "run")}
+	if err := os.MkdirAll(store.Root, 0700); err != nil {
+		t.Fatal(err)
+	}
+	outside := filepath.Join(root, "outside")
+	if err := os.MkdirAll(outside, 0700); err != nil {
+		t.Fatal(err)
+	}
+	marker := filepath.Join(outside, "keep")
+	if err := os.WriteFile(marker, []byte("preserve"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.DeleteFault("../outside"); err == nil {
+		t.Fatal("DeleteFault accepted a traversal name")
+	}
+	if data, err := os.ReadFile(marker); err != nil || string(data) != "preserve" {
+		t.Errorf("outside target changed: data %q, err %v", data, err)
+	}
+}
+
+func TestStoreDeleteFaultRefusesSymlinkFolder(t *testing.T) {
+	root := t.TempDir()
+	store := Store{Root: filepath.Join(root, "vm"), Runtime: filepath.Join(root, "run")}
+	if err := os.MkdirAll(store.Root, 0700); err != nil {
+		t.Fatal(err)
+	}
+	outside := filepath.Join(root, "outside")
+	if err := os.MkdirAll(outside, 0700); err != nil {
+		t.Fatal(err)
+	}
+	marker := filepath.Join(outside, "keep")
+	if err := os.WriteFile(marker, []byte("preserve"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, store.Dir("linked")); err != nil {
+		if os.IsNotExist(err) || strings.Contains(strings.ToLower(err.Error()), "not supported") || strings.Contains(strings.ToLower(err.Error()), "privilege") {
+			t.Skipf("symlink unavailable: %v", err)
+		}
+		t.Fatalf("create symlink: %v", err)
+	}
+	if err := store.DeleteFault("linked"); err == nil {
+		t.Fatal("DeleteFault accepted a symlink folder")
+	}
+	if data, err := os.ReadFile(marker); err != nil || string(data) != "preserve" {
+		t.Errorf("outside target changed: data %q, err %v", data, err)
+	}
+}
+
 func TestUniqueName(t *testing.T) {
 	root := t.TempDir()
 	store := Store{Root: filepath.Join(root, "vm"), Runtime: filepath.Join(root, "run")}

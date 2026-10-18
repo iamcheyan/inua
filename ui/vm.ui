@@ -67,6 +67,34 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 </child>
               </object>
             </child>
+            <child>
+              <object class="GtkLabel" id="vm_fault_heading">
+                <style>
+                  <class name="section-label"/>
+                </style>
+                <property name="label" translatable="yes">Needs recovery</property>
+                <property name="xalign">0</property>
+                <property name="margin-start">12</property>
+                <property name="margin-top">8</property>
+                <property name="visible">false</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="vm_fault_scroll">
+                <property name="max-content-height">140</property>
+                <property name="hscrollbar-policy">2</property>
+                <property name="visible">false</property>
+                <child>
+                  <object class="GtkListBox" id="vm_faults">
+                    <style>
+                      <class name="vm-machines"/>
+                    </style>
+                    <property name="selection-mode">1</property>
+                    <property name="activate-on-single-click">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
         <child>
@@ -117,6 +145,49 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 <property name="vexpand">true</property>
                 <property name="transition-type">1</property>
                 <property name="transition-duration">140</property>
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">fault</property>
+                    <property name="child">
+                      <object class="GtkBox">
+                        <property name="orientation">1</property>
+                        <property name="valign">3</property>
+                        <property name="margin-start">24</property>
+                        <property name="margin-end">24</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkLabel" id="vm_fault_error">
+                            <style>
+                              <class name="sub"/>
+                            </style>
+                            <property name="xalign">0</property>
+                            <property name="wrap">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <style>
+                              <class name="sub"/>
+                            </style>
+                            <property name="label" translatable="yes">This machine folder cannot be loaded. Deleting it permanently removes all files inside.</property>
+                            <property name="xalign">0</property>
+                            <property name="wrap">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="vm_fault_delete">
+                            <style>
+                              <class name="destructive-action"/>
+                            </style>
+                            <property name="name">fault_delete</property>
+                            <property name="label" translatable="yes">Delete folder</property>
+                            <property name="halign">2</property>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
                 <child>
                   <object class="GtkStackPage">
                     <property name="name">empty</property>
@@ -1807,6 +1878,50 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </style>
                                         <property name="name">prov_remove</property>
                                         <property name="label" translatable="yes">Remove</property>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="row"/>
+                                    </style>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">1</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="valign">3</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <style>
+                                              <class name="label"/>
+                                            </style>
+                                            <property name="label" translatable="yes">Delete machine</property>
+                                            <property name="xalign">0</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <style>
+                                              <class name="sub"/>
+                                            </style>
+                                            <property name="label" translatable="yes">Permanently deletes the machine and all its files.</property>
+                                            <property name="xalign">0</property>
+                                            <property name="wrap">true</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="vm_prov_delete">
+                                        <style>
+                                          <class name="destructive-action"/>
+                                        </style>
+                                        <property name="name">prov_delete</property>
+                                        <property name="label" translatable="yes">Delete</property>
                                         <property name="valign">3</property>
                                       </object>
                                     </child>

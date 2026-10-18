@@ -98,6 +98,10 @@ func vmPackageHintForAssistant(hint string) string {
 // askAssistant hands a prompt to the assistant's own window: inua-assistant
 // activates the one that is already running and starts it otherwise, which is
 // what its --ask argument does.
+
+// assistantAvailable reports whether the assistant has an enabled profile and
+// a saved credential/configuration, so callers do not mistake process startup
+// for question delivery.
 func askAssistant(prompt string) error {
 	if _, err := exec.LookPath("inua-assistant"); err != nil {
 		return errors.New(i18n.T("inua-assistant is not installed"))
