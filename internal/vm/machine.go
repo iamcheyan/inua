@@ -95,6 +95,11 @@ type Boot struct {
 	Arch     Arch     `toml:"arch"`     // x86_64 | aarch64 | riscv64 | i386
 	Machine  string   `toml:"machine"`  // the machine type, q35 for most
 	Accel    Accel    `toml:"accel"`    // auto | kvm | tcg
+	// GDB waits for a debugger on QEMU's gdb stub before the guest runs its
+	// first instruction: an operating system in the making is debugged from
+	// there. The guide's debugger switch, kept in the machine rather than in
+	// one window's memory, so it is still on when the window is opened again.
+	GDB bool `toml:"gdb"`
 }
 
 // DisplayConfig is how a machine wants to be seen. The backend reports what it
@@ -380,6 +385,7 @@ func (m Machine) TOML() []byte {
 	fmt.Fprintf(&b, "arch = %s       # %s\n", tomlString(string(m.Boot.Arch)), "x86_64 | aarch64 | riscv64 | i386: another than the host's runs without KVM")
 	fmt.Fprintf(&b, "machine = %s\n", tomlString(m.Boot.Machine))
 	fmt.Fprintf(&b, "accel = %s          # %s\n", tomlString(string(m.Boot.Accel)), "auto (KVM when it can, else emulation) | kvm (fail without it) | tcg (always emulate)")
+	fmt.Fprintf(&b, "gdb = %t             # %s\n", m.Boot.GDB, "wait for gdb on 127.0.0.1:1234 before the guest starts")
 	b.WriteString("\n[display]\n")
 	fmt.Fprintf(&b, "kind = %s          # %s\n", tomlString(string(m.Display.Kind)), "spice | gtk | rdp | web | serial | none")
 	fmt.Fprintf(&b, "gpu = %s           # %s\n", tomlString(string(m.Display.GPU)), "virgl (3D, OpenGL) | venus (3D, Vulkan; QEMU 9.2 and newer) | basic (2D)")

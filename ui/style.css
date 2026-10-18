@@ -575,11 +575,15 @@ button.link:hover { color: @t0; }
   transform: translateY(-2px) scale(1.04);
   transition-duration: 90ms;
 }
-/* A started app bounces until its first window shows. */
+/* A started app bounces until its first window shows.
+   GTK's CSS takes one keyframe selector per block: `0%, 100% { … }`, which a
+   browser accepts, fails to parse and takes the rules after it with it. from
+   and to are the same two ends, and translateY(0) the same rest state. */
 @keyframes dock-bounce {
-  0%, 100% { transform: none; }
+  from { transform: translateY(0); }
   40% { transform: translateY(-6px); }
   70% { transform: translateY(-1px); }
+  to { transform: translateY(0); }
 }
 .dock button.dock-item image.launching { animation: dock-bounce 700ms ease-in-out infinite; }
 
@@ -2722,3 +2726,50 @@ window.video.video-loaded .video-empty { opacity: 0; }
 /* A page that holds no machine yet: a mark, a title and a line. */
 .vmpage .vm-empty-mark { color: @t2; }
 .vmpage .vm-empty-title { font-size: 15px; color: @t0; }
+
+/* The serial console is a readout rather than an editor: the same dimmed
+   surface and monospace face the other readouts use (see .gpg-text and
+   .gpg-mono), so the guest's own output keeps its columns. */
+.vmpage .vm-console, .vmpage .vm-console text {
+  background: alpha(@surface, 0.6);
+  color: @t0;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 12px;
+}
+
+/* The attach line is the same kind of readout: a command to copy, not prose. */
+.vmpage .vm-console-cmd {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 12px;
+}
+
+/* The install images are a list to choose one from rather than a page of
+   settings rows: a row is as tall as its name and the line under it. */
+.vmpage .vm-media-rows .row { min-height: 0; padding: 8px 0; }
+
+/* A download that failed carries the downloader's own sentence - how much room
+   is missing, which answer the server gave - so it is shown as it is, only
+   coloured as the failure it is. */
+.vmpage .vm-media-error { font-size: 12px; color: @danger; }
+
+/* What the list is showing: what it is searched for, the platform and the
+   architecture it is limited to, and the two switches that offer the systems
+   the guide's rule leaves out. They stand above the list, where a filter is
+   looked for. */
+.vmpage .vm-media-filters { padding: 6px 0 0; }
+.vmpage .vm-iso-search { min-width: 190px; }
+.vmpage .vm-iso-filter { min-width: 148px; }
+.vmpage .vm-iso-switch { margin-left: 4px; }
+.vmpage .vm-media-count { padding: 4px 0 2px; opacity: 0.75; }
+
+/* The two groups of the list: what is offered first, and everything the
+   filters left. A small heading, not a section of its own. */
+.vmpage .vm-media-group { padding: 10px 0 2px; font-size: 12px; font-weight: bold; opacity: 0.8; }
+
+/* A system is one row: its mark, its name, what it holds, and a chevron that
+   opens its own images. The images are indented by the mark's own width, so
+   they read as inside the system rather than beside it. */
+.vmpage .vm-iso-system-head { padding: 6px 0; }
+.vmpage .vm-iso-system-head:hover { background: alpha(@text, 0.04); }
+.vmpage .vm-iso-chevron { opacity: 0.7; }
+.vmpage .vm-iso-media { margin-left: 30px; border-left: 1px solid alpha(@text, 0.12); padding-left: 10px; }

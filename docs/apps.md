@@ -423,11 +423,13 @@ previous version is adopted automatically, keeping its disk and its password.
 Each machine reserves its own loopback ports for RDP and the web console, so
 several machines' ports never collide.
 
-Docker (Dockur) is the only backend this build runs, for Windows; the QEMU
-backend (Linux, FreeBSD, a custom system) and the Waydroid backend (Android),
-and seamless windows, are the following steps ([inua-vm.md](inua-vm.md)): a
-machine of those kinds is stored, listed and described, and its page says
-this build has no backend for it yet.
+QEMU runs Linux, FreeBSD and custom systems - from an ISO, a disk or a kernel
+file, on this architecture or another, with BIOS or UEFI firmware, its serial
+console shown in the window and, if you ask for it, the guest held at its first
+instruction for gdb. Docker (Dockur) runs Windows. The Waydroid backend
+(Android) and seamless windows are the following steps
+([inua-vm.md](inua-vm.md)): an Android machine is stored, listed and described,
+and its page says this build has no backend for it yet.
 
 `inua-vm --list` names the machines, one per line; `inua-vm --doctor
 [--json]` and `inua-vm --status [--json]` print what this host provides and

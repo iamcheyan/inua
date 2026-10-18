@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -258,6 +259,76 @@ func TestRemoveKeepsTheDisk(t *testing.T) {
 	}
 	if _, err := os.Stat(store.Dir("windows")); err != nil {
 		t.Errorf("the machine's folder is gone: %v", err)
+	}
+}
+
+// The checks a machine is shown are its backend's: a QEMU machine is not told
+// that Docker is missing, and a Windows container is not told that this host
+// has no UEFI firmware.
+func TestChecksFollowTheBackend(t *testing.T) {
+	s, store, _ := testService(t)
+	s.platform.Doctor = []vm.DoctorItem{
+		{Name: "Operating system", OK: true},
+		{Name: "KVM", OK: true},
+		{Name: "QEMU", OK: true},
+		{Name: "Firmware (UEFI)", OK: false, Reason: vm.ReasonMissing},
+		{Name: "Systemd", OK: true},
+		{Name: "SPICE viewer", OK: false, Reason: vm.ReasonMissing},
+		{Name: "Docker", OK: false, Reason: vm.ReasonMissing},
+		{Name: "Docker Compose v2", OK: false, Reason: vm.ReasonMissing},
+		{Name: "FreeRDP", OK: false, Reason: vm.ReasonMissing},
+		{Name: "Browser opener", OK: true},
+		{Name: "Disk", OK: true},
+		{Name: "TUN", OK: true},
+	}
+	fedora := fromTemplate(t, "fedora", "fedora", vm.Profile{MemoryMiB: 4096, CPUs: 2, DiskGiB: 40})
+	bios := fromTemplate(t, "custom", "kernel", vm.Profile{MemoryMiB: 1024, CPUs: 1, DiskGiB: 4})
+	bios.Boot.Firmware, bios.Display.Kind = vm.FirmwareBIOS, vm.DisplaySerial
+	write(t, store, vm.DockurTemplate("windows"), false)
+
+	names := func(m vm.Machine) []string {
+		var out []string
+		for _, c := range s.relevantChecks(m) {
+			out = append(out, c.Name)
+		}
+		return out
+	}
+	has := func(names []string, name string) bool { return slices.Contains(names, name) }
+
+	docker := names(vm.DockurTemplate("windows"))
+	if !has(docker, "Docker") || !has(docker, "Docker Compose v2") {
+		t.Errorf("a Windows machine's checks = %v; they must be the container's", docker)
+	}
+	if has(docker, "QEMU") || has(docker, "Firmware (UEFI)") {
+		t.Errorf("a Windows machine's checks = %v; QEMU's do not belong to it", docker)
+	}
+	// Without the Secret Service there is one more check, and it is the
+	// container's machine that is shown it: a QEMU guest installs its own
+	// accounts, so inua keeps no password for it.
+	s.secrets = nil
+	if !has(names(vm.DockurTemplate("windows")), "Secret Service") {
+		t.Errorf("a Windows machine is not told the Secret Service is missing: %v", names(vm.DockurTemplate("windows")))
+	}
+	if has(names(fedora), "Secret Service") {
+		t.Errorf("a QEMU machine is told about a password it does not have: %v", names(fedora))
+	}
+	s.secrets = fakeSecrets{}
+
+	qemu := names(fedora)
+	if !has(qemu, "QEMU") || !has(qemu, "Systemd") || !has(qemu, "Firmware (UEFI)") || !has(qemu, "SPICE viewer") {
+		t.Errorf("a UEFI SPICE machine's checks = %v; they must be QEMU's", qemu)
+	}
+	if has(qemu, "Docker") || has(qemu, "KVM") {
+		t.Errorf("a QEMU machine's checks = %v; no Docker, and KVM does not block it", qemu)
+	}
+
+	// A device or a firmware the machine does not use is not its business.
+	plain := names(bios)
+	if has(plain, "Firmware (UEFI)") || has(plain, "SPICE viewer") {
+		t.Errorf("a BIOS machine with a serial console = %v; it asks for neither", plain)
+	}
+	if !has(plain, "QEMU") {
+		t.Errorf("a custom machine's checks = %v; it runs on QEMU", plain)
 	}
 }
 

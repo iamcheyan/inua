@@ -4,18 +4,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/godbus/dbus/v5"
+	"github.com/lyricat/inua/internal/keyring"
+	"github.com/lyricat/inua/internal/vm"
+	"io"
 	"log"
 	"net"
+	"os"
 	"os/exec"
+	"sort"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
-
-	"github.com/godbus/dbus/v5"
-
-	"github.com/lyricat/inua/internal/keyring"
-	"github.com/lyricat/inua/internal/vm"
 )
 
 // vmService owns the machines, the backends and the host checks. It touches no
@@ -34,6 +35,19 @@ type vmService struct {
 	seen     map[string]observed // what each machine was last seen doing
 	busy     map[string]bool     // a machine with an operation in flight
 
+	// The install images a QEMU machine can be given: the catalog osinfo-db
+	// publishes, the cache the images are downloaded into, and the transfer
+	// each machine has going. isoRoots and isoDir are what a test replaces; a
+	// test may set isoCatalog and isoCache outright.
+	isoRoots   vm.OSInfoRoots
+	isoDir     string
+	isoCatalog *vm.ISOCatalog
+	isoCache   *vm.ISODownloader
+	// isoFilters is what the download list is showing: the window's controls
+	// set it and isoView applies it, so both halves of the list agree.
+	isoFilters vm.ISOFilters
+	downloads  map[string]*isoDownload // a machine's transfer, by name
+
 	// The Secret Service session, once it is there, and whether this service
 	// has been closed. The connection is made in the background (see
 	// connectSecrets), so both are read under mu.
@@ -51,6 +65,11 @@ type observed struct {
 	prepared bool // the backend has made what it needs
 	guest    bool // the guest's own files are on disk
 	display  vm.Display
+
+	accelerated        bool
+	accelerationReason string
+	serial             string
+	debugger           string
 }
 
 // MachineView is one machine as the window shows it. Building one never touches
@@ -79,6 +98,25 @@ type MachineView struct {
 	Display      vm.Display
 	Recommended  vm.Profile
 	Distribution string
+	HostOS       string
+
+	// Accelerated: this machine's guest will run on the host's processor,
+	// rather than being emulated. AccelerationReason says why it will not, as
+	// one of the backend's stable identifiers, so the window can word it.
+	Accelerated        bool
+	AccelerationReason string
+	// SerialLog is what the guest has printed to its serial console, for the
+	// machines that have one.
+	SerialLog string
+	// DebuggerCmd is the line that attaches gdb to a machine started under the
+	// debugger: what the window shows and copies. Empty when there is nothing
+	// to attach to.
+	DebuggerCmd string
+	// ISO is the install images of a machine that installs from one: the
+	// catalog to choose from and the download in flight. It is nil for the
+	// machines whose backend fetches its own media, and for one that is
+	// already set up.
+	ISO *ISOView
 }
 
 // vmSecretStore keeps a guest's password in the Secret Service where the rest
@@ -135,6 +173,7 @@ func newService() *vmService {
 		busy:     map[string]bool{},
 	}
 	s.backends[vm.BackendDockur] = vm.NewDockerBackend(s.store, nil)
+	s.backends[vm.BackendQEMU] = vm.NewQEMUBackend(s.store, nil)
 	go s.connectSecrets()
 	return s
 }
@@ -208,6 +247,93 @@ func (s *vmService) checks() []vm.DoctorItem {
 	return out
 }
 
+// relevantChecks are the checks this machine's backend uses. Showing a QEMU
+// machine that Docker is missing would be noise: it needs no Docker at all.
+func (s *vmService) relevantChecks(m vm.Machine) []vm.DoctorItem {
+	names := map[vm.BackendKind][]string{
+		vm.BackendDockur: {
+			"Operating system", "KVM", "Docker", "Docker Compose v2",
+			"Network device (TUN)", "FreeRDP", "Browser opener", "Disk", "Secret Service",
+		},
+		vm.BackendQEMU: {
+			// KVM is not among them: a host without it runs the guest emulated,
+			// which the machine's own line says rather than blocking it.
+			"Operating system", "QEMU", "Systemd", "Disk",
+		},
+		vm.BackendWaydroid: {
+			"Operating system", "Waydroid", "Binder",
+		},
+	}[m.Backend]
+	wants := func(name string) bool {
+		for _, want := range names {
+			if want == name {
+				return true
+			}
+		}
+		return false
+	}
+	var out []vm.DoctorItem
+	for _, c := range s.checks() {
+		// The firmware and the SPICE viewer are a machine's own: only a UEFI
+		// machine wants OVMF, and only a SPICE machine wants a SPICE viewer.
+		switch c.Name {
+		case "Firmware (UEFI)":
+			if m.Backend != vm.BackendQEMU || m.Boot.Firmware != vm.FirmwareUEFI {
+				continue
+			}
+		case "QEMU":
+			// The check names the host's own architecture's binary; a machine
+			// that asks for another is reported by the one it needs.
+			if m.Backend != vm.BackendQEMU {
+				continue
+			}
+			if !qemuProgramAvailable(m) {
+				c.OK, c.Reason = false, vm.ReasonMissing
+			}
+		case "SPICE viewer":
+			if m.Backend != vm.BackendQEMU || m.Display.Kind != vm.DisplaySPICE {
+				continue
+			}
+		case "TUN":
+			// The platform names this check "TUN"; the window words it.
+			if !wants("Network device (TUN)") {
+				continue
+			}
+		default:
+			if !wants(c.Name) {
+				continue
+			}
+		}
+		out = append(out, c)
+	}
+	return out
+}
+
+// serialTail is the end of a console's log: what the window's terminal view
+// shows. A guest printing faster than a person reads keeps its last lines.
+func serialTail(path string) string {
+	const tail = 16 << 10
+	f, err := os.Open(path)
+	if err != nil {
+		return ""
+	}
+	defer f.Close()
+	fi, err := f.Stat()
+	if err != nil {
+		return ""
+	}
+	if fi.Size() > tail {
+		if _, err := f.Seek(fi.Size()-tail, io.SeekStart); err != nil {
+			return ""
+		}
+	}
+	data, err := io.ReadAll(f)
+	if err != nil {
+		return ""
+	}
+	return strings.ToValidUTF8(string(data), "")
+}
+
 // availability is whether the host gives this machine's backend what it needs.
 // Only the checks that backend uses count: a missing Docker does not keep a
 // QEMU machine from running.
@@ -221,10 +347,41 @@ func (s *vmService) availability(m vm.Machine) bool {
 			p.DockerSocket.Available && p.DockerSocket.Accessible &&
 			p.ComposeV2.Available && p.TUN.Available && p.TUN.Accessible &&
 			s.secretsReady()
+	case vm.BackendQEMU:
+		// QEMU needs no Docker and no /dev/kvm: without KVM the guest is
+		// emulated, and the machine's own line says so. It does need its QEMU
+		// binary (the one for the architecture it asks to run), systemd-run to
+		// outlive the window, room for its disk, and the firmware and viewer
+		// its settings call for.
+		if !p.Supported || !p.SystemdRun.Available || !p.Disk.Available {
+			return false
+		}
+		if !qemuProgramAvailable(m) {
+			return false
+		}
+		if m.Boot.Firmware == vm.FirmwareUEFI && !p.Firmware.Available {
+			return false
+		}
+		if m.Display.Kind == vm.DisplaySPICE && !p.SPICEViewer.Available {
+			return false
+		}
+		return true
 	default:
-		// The QEMU and Waydroid checks come with their backends.
+		// The Waydroid checks come with its own backend.
 		return false
 	}
+}
+
+// qemuProgramAvailable says whether this host has the QEMU binary this machine
+// asks for: a guest of another architecture is run by qemu-system-<its own>,
+// which the host may not have installed.
+func qemuProgramAvailable(m vm.Machine) bool {
+	program := vm.QEMUProgram(m.Boot.Arch)
+	if program == "" {
+		return false // an architecture this build has no QEMU for
+	}
+	_, err := exec.LookPath(program)
+	return err == nil
 }
 
 // backendOf is the backend that runs this machine, when this build has one.
@@ -302,7 +459,7 @@ func (s *vmService) view(m vm.Machine) MachineView {
 		o.state = vm.StateStopped
 	}
 	s.mu.Lock()
-	recommended, distribution := vm.RecommendProfile(s.host), s.platform.Distribution
+	recommended, distribution, hostOS := vm.RecommendProfile(s.host), s.platform.Distribution, s.platform.OS
 	s.mu.Unlock()
 	// Installed is the guest's own files *and* the backend's project: a removal
 	// that kept the disk leaves the files, and its Install makes the project
@@ -312,10 +469,18 @@ func (s *vmService) view(m vm.Machine) MachineView {
 		Name: m.Name, Machine: m, Problems: m.Problems(),
 		State: o.state, Prepared: o.prepared, Installed: installed, Leftovers: o.guest,
 		Busy: busy, Progress: vm.ParsePercent(o.progress), ProgressText: o.progress,
-		Err: o.err, Ready: ready, Available: available, Checks: s.checks(),
-		Display: o.display, Recommended: recommended, Distribution: distribution,
+		Err: o.err, Ready: ready, Available: available, Checks: s.relevantChecks(m),
+		Display: o.display, Recommended: recommended, Distribution: distribution, HostOS: hostOS,
+		Accelerated: o.accelerated, AccelerationReason: o.accelerationReason,
+		SerialLog: o.serial, DebuggerCmd: o.debugger,
 	}
 	v.Page = vm.PageFor(v.Available, v.Prepared, v.Installed, v.State, v.Busy)
+	// The install images are the page that has not installed anything yet:
+	// once the guest's files are there, the list has done its work. It is
+	// built here, where the machine is read, rather than on the GTK thread.
+	if m.Backend == vm.BackendQEMU && !o.prepared {
+		v.ISO = s.isoView(m)
+	}
 	return v
 }
 
@@ -345,6 +510,12 @@ func (s *vmService) Refresh(name string) MachineView {
 					o.display = d
 				}
 			}
+		}
+		if qemu, isQEMU := be.(*vm.QEMUBackend); isQEMU {
+			a := qemu.Acceleration(m)
+			o.accelerated, o.accelerationReason = a.Accelerated, a.Reason
+			o.serial = serialTail(qemu.SerialLogPath(m))
+			o.debugger = qemu.GDBCommand(m)
 		}
 		cancel()
 	}
@@ -524,6 +695,8 @@ func (s *vmService) Connect(name string, display *rdpDisplay) error {
 		// The guest's own window is already on screen.
 		return nil
 	case vm.DisplaySerial:
+		// The window shows its own terminal view of the console; from the
+		// command line there is nothing to open.
 		return errors.New("this machine is seen through its serial console")
 	}
 	return fmt.Errorf("this machine has no viewer (%s)", d.Kind)
@@ -859,4 +1032,303 @@ func startRDPClient(address string, port int, user, password string, d *rdpDispl
 		return nil
 	}
 	return errors.New("FreeRDP is not installed")
+}
+
+// ── install images ──────────────────────────────────────────────────────────
+//
+// A QEMU machine installs from an image, and the image a user does not have yet
+// is downloaded from the catalog osinfo-db publishes. The list and the transfer
+// are the service's, GTK-free: the window paints what is here, and the download
+// goes on off the GTK thread like every other slow thing. Nothing here knows
+// about the window's widgets.
+//
+// See docs/iso-download.md, sections 2, 4 and 7.
+
+// ISORow is one install medium as the window's download list shows it: the
+// medium the catalog offers, and how the file already stands on this host.
+type ISORow struct {
+	// Media is the medium: the system, its variant, the architecture, whether
+	// it is a live image or an installer, its size, and the URL it is at.
+	Media vm.ISOMedia
+	// Cached is an image that is already in the cache, at Path: the row's
+	// action uses it rather than downloading it again.
+	Cached bool
+	Path   string
+	// Partial is an unfinished download, which the row's action resumes
+	// instead of starting the file again.
+	Partial bool
+	// Checksum is how the published checksum of a finished download turned
+	// out, when this service downloaded it; empty when there is no answer.
+	Checksum vm.ISOChecksum
+	// Downloading is this medium the machine's transfer in flight.
+	Downloading bool
+	// Err is what the last attempt at this medium failed with.
+	Err error
+}
+
+// ISOSystemRow is one operating system of the download list: the system itself
+// and the rows of the media the filters left of it, in the order its own row
+// expands to.
+type ISOSystemRow struct {
+	System vm.ISOSystem
+	Rows   []ISORow
+}
+
+// ISOView is a machine's install images: the catalog to choose from and the
+// transfer in flight, when there is one. A machine whose backend fetches its
+// own media has none.
+type ISOView struct {
+	// Source is where the list came from: vm.ISOSourceOsinfo when this host
+	// has osinfo-db, vm.ISOSourceBuiltin when it fell back to inua's own list.
+	Source string
+	Rows   []ISORow
+
+	// Systems are the same media as the list shows them: one entry per
+	// operating system, each holding its own media rows. Filtered and counted
+	// the same way Rows is, so the two always describe one list.
+	Systems []ISOSystemRow
+	// Recommended is the same list's well-known distributions, in the order the
+	// catalog names them, at most one release each: the systems the section
+	// above the list offers first. It is drawn from Systems, so what the
+	// filters leave out is left out of it too.
+	Recommended []ISOSystemRow
+	// SystemsCount and MediaCount are what the filters left, for the section's
+	// own line: how many systems and how many images the user is looking at.
+	SystemsCount, MediaCount int
+	// ArchFamilies are the architecture families the catalog actually holds, the
+	// host's own first: the choices the list's architecture filter offers.
+	ArchFamilies []string
+
+	// The transfer in flight: which medium, how far it has got, and what the
+	// last attempt failed with. Downloading is false between two attempts, and
+	// Total is zero while the server has not said how large the file is.
+	Downloading bool
+	Media       vm.ISOMedia
+	Done, Total int64
+	Err         error
+}
+
+// isoDownload is one machine's transfer: what it is downloading, how far it
+// has got, and how to stop it. Its fields are written by the download's own
+// goroutine and read where a machine's view is built, so every one of them is
+// touched under the service's lock.
+type isoDownload struct {
+	media   vm.ISOMedia
+	running bool
+	done    int64
+	total   int64
+	err     error
+	cancel  context.CancelFunc
+}
+
+// isoDownloader is the image cache, made on the first use: the service passes
+// no directory, so images go to the usual cache (vm.DefaultISODir).
+func (s *vmService) isoDownloader() *vm.ISODownloader {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.isoCache == nil {
+		s.isoCache = vm.NewISODownloader(s.isoDir)
+	}
+	return s.isoCache
+}
+
+// catalog is the catalog osinfo-db publishes, read once and kept: the list does
+// not change while the window is open, and reading it is a walk of several
+// hundred files. The zero OSInfoRoots is this host's own two directories.
+func (s *vmService) catalog() vm.ISOCatalog {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.isoCatalog == nil {
+		roots := s.isoRoots
+		if roots.System == "" && roots.User == "" {
+			roots = vm.DefaultOSInfoRoots()
+		}
+		cat := vm.LoadISOCatalog(roots)
+		s.isoCatalog = &cat
+	}
+	return *s.isoCatalog
+}
+
+// isoRowsOf turns a catalog into the download list. It is separate from the
+// service so that what a row says can be read - and tested - without a window:
+// what is already in the cache, what is half downloaded, how a finished
+// download was verified, and which medium is the transfer in flight.
+func isoRowsOf(cat vm.ISOCatalog, cache *vm.ISODownloader, dl *isoDownload) []ISORow {
+	return isoRowsOfMedia(cat.Media, cache, dl)
+}
+
+// isoRowsOfMedia is isoRowsOf for the media the filters left: the flat list of
+// rows and the system rows are built from the same slice, so what the list
+// counts and what it shows cannot drift apart.
+func isoRowsOfMedia(media []vm.ISOMedia, cache *vm.ISODownloader, dl *isoDownload) []ISORow {
+	rows := make([]ISORow, 0, len(media))
+	for _, media := range media {
+		row := ISORow{Media: media}
+		if p, ok := cache.CachedPath(media); ok {
+			row.Cached, row.Path = true, p
+		}
+		if _, ok := cache.PartialPath(media); ok {
+			row.Partial = true
+		}
+		if c, ok := cache.Checksum(media.URL); ok {
+			row.Checksum = c
+		}
+		if dl != nil && dl.media.URL == media.URL {
+			row.Downloading = dl.running
+			row.Err = dl.err
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+// isoSystemsOf pairs each system with the rows of its media. The rows are the
+// filtered list's own, in its own order, so a system's rows are looked up by
+// the system's short id and never re-sorted here.
+func isoSystemsOf(systems []vm.ISOSystem, rows []ISORow) []ISOSystemRow {
+	byID := map[string][]ISORow{}
+	for _, r := range rows {
+		byID[r.Media.OSID] = append(byID[r.Media.OSID], r)
+	}
+	out := make([]ISOSystemRow, 0, len(systems))
+	for _, s := range systems {
+		out = append(out, ISOSystemRow{System: s, Rows: byID[s.OSID]})
+	}
+	return out
+}
+
+// isoArchFamilies is what the architecture filter can offer: the families the
+// catalog holds, the host's own first, so that the default is the first entry
+// and a family no medium has is never offered.
+func isoArchFamilies(media []vm.ISOMedia) []string {
+	seen := map[string]bool{}
+	var others []string
+	for _, m := range media {
+		f := vm.ISOArchFamily(m.Arch)
+		if f == "" || f == vm.HostArchFamily() || seen[f] {
+			continue
+		}
+		seen[f] = true
+		others = append(others, f)
+	}
+	sort.Strings(others)
+	return append([]string{vm.HostArchFamily()}, others...)
+}
+
+// SetISOFilters is what the download list is showing. The window owns the
+// choice - it is the thing with the controls - and the service applies it where
+// a machine's view is built, so that both halves of the list agree.
+func (s *vmService) SetISOFilters(f vm.ISOFilters) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.isoFilters = f
+}
+
+// isoFilters is the filters in use, read under the lock the downloads keep.
+func (s *vmService) isoFiltersNow() vm.ISOFilters {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.isoFilters
+}
+
+// isoView is a machine's install images as the window shows them. It is read
+// where a machine's view is built, off the GTK thread, and it only ever reads
+// the catalog and the download's own state.
+func (s *vmService) isoView(m vm.Machine) *ISOView {
+	if m.Backend != vm.BackendQEMU {
+		return nil
+	}
+	cache := s.isoDownloader()
+	s.mu.Lock()
+	var dl *isoDownload
+	if d := s.downloads[m.Name]; d != nil {
+		copied := *d
+		dl = &copied
+	}
+	s.mu.Unlock()
+
+	cat := s.catalog()
+	media := vm.FilterISOMedia(cat.Media, s.isoFiltersNow())
+	rows := isoRowsOfMedia(media, cache, dl)
+	systems := vm.GroupISOSystems(media)
+	v := &ISOView{
+		Source:       cat.Source,
+		Rows:         rows,
+		Systems:      isoSystemsOf(systems, rows),
+		Recommended:  isoSystemsOf(vm.RecommendedSystems(systems), rows),
+		SystemsCount: len(systems),
+		MediaCount:   len(rows),
+		ArchFamilies: isoArchFamilies(cat.Media),
+	}
+	if dl != nil {
+		v.Downloading, v.Media = dl.running, dl.media
+		v.Done, v.Total, v.Err = dl.done, dl.total, dl.err
+	}
+	return v
+}
+
+// FetchISO downloads an install medium for a machine and makes it that
+// machine's install media: the boot field the existing install flow starts
+// from. It runs until the transfer is over, so the window calls it off the GTK
+// thread; a cancelled one returns context.Canceled and leaves the part file, so
+// the next attempt resumes it rather than starting the file again.
+//
+// One transfer per machine at a time, as one progress bar can show: a second
+// request while one is running is refused, and the window's own operation bus
+// is what keeps the two from being asked for together.
+func (s *vmService) FetchISO(name string, media vm.ISOMedia) error {
+	m, err := s.store.Load(name)
+	if err != nil {
+		return err
+	}
+	if m.Backend != vm.BackendQEMU {
+		return fmt.Errorf("%s does not install from an image", name)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s.mu.Lock()
+	if s.downloads == nil {
+		s.downloads = map[string]*isoDownload{}
+	}
+	if dl := s.downloads[name]; dl != nil && dl.running {
+		s.mu.Unlock()
+		return fmt.Errorf("%s is already downloading an image", name)
+	}
+	dl := &isoDownload{media: media, running: true, cancel: cancel}
+	s.downloads[name] = dl
+	s.mu.Unlock()
+
+	path, err := s.isoDownloader().Download(ctx, media, func(done, total int64) {
+		s.mu.Lock()
+		if d := s.downloads[name]; d == dl {
+			d.done, d.total = done, total
+		}
+		s.mu.Unlock()
+	})
+
+	s.mu.Lock()
+	dl.running, dl.cancel, dl.err = false, nil, err
+	s.mu.Unlock()
+	if err != nil {
+		return err
+	}
+	// The image is this machine's install media now. Writing the definition
+	// leaves the disk and the start to the install flow the window already has.
+	m.Boot.ISO = path
+	return s.store.Save(m)
+}
+
+// CancelISO stops the transfer a machine has going, if any. The part file
+// stays, so the same medium offered again resumes from where it stopped.
+func (s *vmService) CancelISO(name string) {
+	s.mu.Lock()
+	var cancel context.CancelFunc
+	if dl := s.downloads[name]; dl != nil {
+		cancel = dl.cancel
+	}
+	s.mu.Unlock()
+	if cancel != nil {
+		cancel()
+	}
 }

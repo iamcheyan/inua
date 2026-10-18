@@ -354,6 +354,24 @@ Each its own PR, each usable on its own:
 5. **Seamless.** Linux and FreeBSD with waypipe, Android multi-window,
    Windows RemoteApp; the desktop entries and window rules.
 
+Where the work stands, step by step:
+
+1. **The app** - done: `inua-vm` is its own program, the shell carries no VM
+   manager, and the log-out fix went in as its own PR.
+2. **Machines** - done: `machine.toml`, the store, the templates, the list and
+   the panel, and the command line that goes with them.
+3. **QEMU** - **implemented and unit-tested, not yet accepted by hand**: the
+   command line per machine (firmware, architecture, a kernel booted directly,
+   the serial console, the gdb stub, KVM or emulation, virgl, venus or 2D), the
+   monitor on a socket the tests serve (state, power down, quit) and the
+   acceleration answers are covered by tests, and the checks reach the window's
+   own prerequisites page. What has **not** been run is a real guest: booting a
+   Linux or custom system, watching its serial console in the window, attaching
+   gdb, and a guest of another architecture. That happens on the machine that
+   has QEMU installed, and this line stays here until it has.
+4. **Android** - not started.
+5. **Seamless** - not started.
+
 ## Open questions
 
 - Snapshots (`qemu-img snapshot`, `savevm`): in step 3, or later?

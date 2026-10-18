@@ -1,21 +1,22 @@
 package vmui
 
 import (
-	"context"
-	"fmt"
-	"strings"
-	"sync"
-	"time"
-
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"codeberg.org/puregotk/puregotk/v4/pango"
-
+	"context"
+	"errors"
+	"fmt"
 	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/vm"
+	"path"
+	"slices"
+	"strings"
+	"sync"
+	"time"
 )
 
 // VMManager is the UI-facing boundary for the machines: the list, one
@@ -39,6 +40,14 @@ type VMManager interface {
 	// needs; Install does that and starts the guest as well.
 	Save(vm.Machine) error
 	Install(vm.Machine) error
+	// FetchISO downloads an install medium for a machine and makes it the
+	// machine's install media, which the install flow then starts from.
+	FetchISO(name string, media vm.ISOMedia) error
+	// CancelISO stops the transfer a machine has going, if any.
+	CancelISO(name string)
+	// SetISOFilters is what the download list is showing: the window's own
+	// controls, applied where a machine's view is built.
+	SetISOFilters(vm.ISOFilters)
 	Start(name string) error
 	Stop(name string) error
 	Connect(name string, display *rdpDisplay) error
@@ -100,8 +109,32 @@ type vmWindow struct {
 	// the page of a machine whose backend this build does not have
 	naNote gtk.Label
 
+	// the serial console of a machine that has one, and its debugger
+	consoleOpen                            bool
+	consoleBack                            gtk.Button
+	consoleSummary, consoleHardware        gtk.Label
+	consoleGDB                             gtk.Switch
+	consoleCmd                             gtk.Label
+	provConsoleNote, bootConsoleNote       gtk.Label
+	readyConsoleNote                       gtk.Label
+	consoleCopy, consoleStart, consoleStop gtk.Button
+	serial                                 gtk.TextView
+	serialBuffer                           *gtk.TextBuffer
+	serialText                             string
+	consoleNotes                           []consoleNote
+	onGDB                                  func(gtk.Switch, bool) bool
+	onISOSearch                            func(gtk.Entry)
+	onISOEntryChanged                      func(ptr, _ uintptr)
+	onISODropChanged                       func(ptr, _, _ uintptr)
+	onISOFilterSwitch                      func(gtk.Switch, bool) bool
+	onISOSystem                            func(gtk.Button)
+	filling                                bool // a repaint, not the user, is setting a switch
+
 	// prereq
-	checkRows gtk.Box
+	checkRows                      gtk.Box
+	assistantAsk, assistantRecheck gtk.Button
+	assistantNote                  gtk.Label
+	assistantHint                  string // what the row says by default
 
 	// setup
 	setupSummary                    gtk.Label
@@ -112,6 +145,38 @@ type vmWindow struct {
 	setupDisk                       gtk.Box
 	setupRemoveData, setupDelete    gtk.Button
 	setupNote                       gtk.Label
+
+	// the install images of the machine being set up: the list, the transfer
+	// in flight, and the buttons the rows are built with
+	setupMedia      gtk.Box
+	mediaSource     gtk.Label
+	mediaNote       gtk.Label
+	mediaRec        gtk.Box
+	mediaRows       gtk.Box
+	mediaProgress   gtk.Box
+	isoProgress     gtk.ProgressBar
+	isoProgressText gtk.Label
+	isoCancel       gtk.Button
+	isoButtons      []isoTarget
+	// The download list's own controls: what it is searched for, the platform
+	// and architecture it is limited to, and the two switches that offer what
+	// the guide's rule otherwise leaves out. The window owns the choice; the
+	// service applies it where a machine's view is built.
+	mediaFilters gtk.Box
+	isoSearch    gtk.Entry
+	isoPlatform  gtk.DropDown
+	isoArch      gtk.DropDown
+	isoPre       gtk.Switch
+	isoEOL       gtk.Switch
+	mediaCount   gtk.Label
+
+	isoFilter      vm.ISOFilters   // what the controls say
+	isoSystems     []ISOSystemRow  // the systems as they were built
+	isoRecommended []ISOSystemRow  // the recommended ones, as they were built
+	isoOpen        map[string]bool // the systems the user opened
+	isoArchs       []string        // the architecture families the catalog holds
+	isoRevealer    map[string]gtk.Revealer
+	isoMark        map[string]gtk.Image
 
 	// provisioning
 	progress                                 gtk.ProgressBar
@@ -175,6 +240,21 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_create", &v.createButton)
 	builder.Get("vm_create_note", &v.createNote)
 	builder.Get("vm_na_note", &v.naNote)
+	builder.Get("vm_assistant_ask", &v.assistantAsk)
+	builder.Get("vm_assistant_recheck", &v.assistantRecheck)
+	builder.Get("vm_assistant_note", &v.assistantNote)
+	builder.Get("vm_console_back", &v.consoleBack)
+	builder.Get("vm_console_summary", &v.consoleSummary)
+	builder.Get("vm_console_hardware", &v.consoleHardware)
+	builder.Get("vm_console_gdb", &v.consoleGDB)
+	builder.Get("vm_console_cmd", &v.consoleCmd)
+	builder.Get("vm_console_copy", &v.consoleCopy)
+	builder.Get("vm_console_start", &v.consoleStart)
+	builder.Get("vm_console_stop", &v.consoleStop)
+	builder.Get("vm_serial", &v.serial)
+	builder.Get("vm_prov_console_note", &v.provConsoleNote)
+	builder.Get("vm_boot_console_note", &v.bootConsoleNote)
+	builder.Get("vm_ready_console_note", &v.readyConsoleNote)
 	builder.Get("vm_check_rows", &v.checkRows)
 	builder.Get("vm_setup_summary", &v.setupSummary)
 	builder.Get("vm_profile_desc", &v.profileDesc)
@@ -189,6 +269,22 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_setup_remove_data", &v.setupRemoveData)
 	builder.Get("vm_setup_delete", &v.setupDelete)
 	builder.Get("vm_setup_note", &v.setupNote)
+	builder.Get("vm_setup_media", &v.setupMedia)
+	builder.Get("vm_media_source", &v.mediaSource)
+	builder.Get("vm_media_note", &v.mediaNote)
+	builder.Get("vm_media_rows", &v.mediaRows)
+	builder.Get("vm_media_recommended", &v.mediaRec)
+	builder.Get("vm_media_progress", &v.mediaProgress)
+	builder.Get("vm_iso_progress", &v.isoProgress)
+	builder.Get("vm_iso_progress_text", &v.isoProgressText)
+	builder.Get("vm_iso_cancel", &v.isoCancel)
+	builder.Get("vm_media_filters", &v.mediaFilters)
+	builder.Get("vm_iso_search", &v.isoSearch)
+	builder.Get("vm_iso_platform", &v.isoPlatform)
+	builder.Get("vm_iso_arch", &v.isoArch)
+	builder.Get("vm_iso_prerelease", &v.isoPre)
+	builder.Get("vm_iso_eol", &v.isoEOL)
+	builder.Get("vm_media_count", &v.mediaCount)
 	builder.Get("vm_progress", &v.progress)
 	builder.Get("vm_progress_text", &v.progressText)
 	builder.Get("vm_console", &v.console)
@@ -213,11 +309,19 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	builder.Get("vm_stop", &v.stop)
 	builder.Close()
 
+	v.isoOpen = map[string]bool{}
+	v.isoRevealer = map[string]gtk.Revealer{}
+	v.isoMark = map[string]gtk.Image{}
+	// The list opens on the guide's own list: the architecture this build runs.
+	v.isoFilter = vm.ISOFilters{ArchFamily: vm.HostArchFamily()}
+	manager.SetISOFilters(v.isoFilter)
 	v.onClick = func(b gtk.Button) { v.clicked(b) }
 	for _, b := range []*gtk.Button{&v.accept, &v.advancedToggle, &v.install,
 		&v.console, &v.provStart, &v.provStop, &v.provRemove, &v.readySave, &v.start,
 		&v.connect, &v.consoleReady, &v.stop, &v.remove, &v.removeData, &v.setupRemoveData,
-		&v.setupDelete, &v.bootConsole, &v.bootStop, &v.newButton, &v.createButton} {
+		&v.setupDelete, &v.bootConsole, &v.bootStop, &v.newButton, &v.createButton,
+		&v.consoleBack, &v.consoleCopy, &v.consoleStart, &v.consoleStop,
+		&v.assistantAsk, &v.assistantRecheck, &v.isoCancel} {
 		b.ConnectClicked(&v.onClick)
 	}
 	v.onRowSelect = func(_ gtk.ListBox, ptr uintptr) {
@@ -242,8 +346,72 @@ func openWindow(c *appui.Ctx, manager VMManager) *vmWindow {
 	v.templateList.ConnectRowSelected(&v.onTemplate)
 	v.onNameSubmit = func(_ gtk.Entry) { v.createMachine() }
 	v.nameEntry.ConnectActivate(&v.onNameSubmit)
+	// The download list's controls: every one of them hands the window's own
+	// filter to the service and paints again.
+	v.onISOSearch = func(_ gtk.Entry) { v.applyISOFilters() }
+	v.onISOEntryChanged = func(_, _ uintptr) { v.applyISOFilters() }
+	v.onISODropChanged = func(_, _, _ uintptr) { v.applyISOFilters() }
+	// A switch hands the state it is moving to: GtkSwitch's own handler has not
+	// run yet, so reading the widget here would read the old one.
+	v.onISOFilterSwitch = func(sw gtk.Switch, on bool) bool {
+		if v.filling {
+			return false
+		}
+		if sw.GoPointer() == v.isoPre.GoPointer() {
+			v.isoFilter.IncludePrerelease = on
+		} else {
+			v.isoFilter.IncludeEnded = on
+		}
+		v.manager.SetISOFilters(v.isoFilter)
+		v.paintAll(v.manager.Machines())
+		return false
+	}
+	v.isoSearch.ConnectActivate(&v.onISOSearch)
+	gtkx.ConnectChanged(&v.isoSearch, &v.onISOEntryChanged)
+	gtkx.ConnectNotify(&v.isoPlatform, "selected", &v.onISODropChanged)
+	gtkx.ConnectNotify(&v.isoArch, "selected", &v.onISODropChanged)
+	v.isoPre.ConnectStateSet(&v.onISOFilterSwitch)
+	v.isoEOL.ConnectStateSet(&v.onISOFilterSwitch)
+	v.onISOSystem = func(b gtk.Button) {
+		id := strings.TrimPrefix(b.GetName(), "iso_system:")
+		if id == "" {
+			return
+		}
+		v.openISOSystem(id, !v.isoOpen[id])
+	}
+	{
+		names := make([]string, 0, len(isoPlatformChoices))
+		for _, p := range isoPlatformChoices {
+			names = append(names, isoPlatformText(p))
+		}
+		v.isoPlatform.SetModel(gtk.NewStringList(names))
+	}
+	v.onGDB = func(_ gtk.Switch, on bool) bool {
+		// A repaint sets the switch to what the machine says; only the user's
+		// own click writes it back.
+		if v.filling {
+			return false
+		}
+		m := v.viewOf(v.selectedName()).Machine
+		if m.Boot.GDB == on {
+			return false
+		}
+		m.Boot.GDB = on
+		v.run(func() error { return v.manager.Save(m) })
+		return false
+	}
+	v.consoleGDB.ConnectStateSet(&v.onGDB)
+	// What the console rows say by default, so a machine whose console is its
+	// serial one can be worded differently and the others put back.
+	v.consoleNotes = []consoleNote{
+		{label: &v.provConsoleNote, byDefault: v.provConsoleNote.GetText()},
+		{label: &v.bootConsoleNote, byDefault: v.bootConsoleNote.GetText()},
+		{label: &v.readyConsoleNote, byDefault: v.readyConsoleNote.GetText()},
+	}
+	v.serialBuffer = v.serial.GetBuffer()
 
 	v.createHint = v.createNote.GetText()
+	v.assistantHint = v.assistantNote.GetText()
 	v.fillTemplates()
 	v.paintAll(manager.Machines())
 	v.startWatch()
@@ -315,6 +483,7 @@ func (v *vmWindow) choose(name string) {
 		return
 	}
 	v.newOpen = false
+	v.consoleOpen = false
 	v.setSelected(name)
 	v.note = ""
 	v.rememberArmed(0)
@@ -501,6 +670,11 @@ func (v *vmWindow) paint() {
 	} else {
 		v.sub.SetText(vmStateText(view))
 	}
+	v.setConsoleRow(view)
+	if v.consoleOpen {
+		v.showConsolePage(view)
+		return
+	}
 	if view.Page != v.lastPage {
 		if view.Page == vm.PageSetup {
 			v.setupFilled = false
@@ -525,6 +699,149 @@ func (v *vmWindow) paint() {
 	case vm.PageRunning:
 		v.showRunning(view)
 	}
+}
+
+// consoleNote is a sentence under a console button: what it says by default,
+// and the label it is written into.
+type consoleNote struct {
+	label     *gtk.Label
+	byDefault string
+}
+
+// showConsole opens the console page of the machine that is chosen.
+func (v *vmWindow) showConsole() {
+	if v.selectedName() == "" {
+		return
+	}
+	v.consoleOpen = true
+	v.paint()
+}
+
+// showConsolePage fills the console page: what the machine will get, its
+// debugger, and what it has printed.
+func (v *vmWindow) showConsolePage(s MachineView) {
+	v.consoleSummary.SetText(vmProfileText(s.Machine))
+	v.consoleHardware.SetText(vmHardwareText(s))
+	v.filling = true
+	v.consoleGDB.SetActive(s.Machine.Boot.GDB)
+	v.filling = false
+	line := s.DebuggerCmd
+	if line == "" {
+		line = i18n.T("Turn the debugger on to hold the guest for gdb.")
+	}
+	v.consoleCmd.SetText(line)
+	v.consoleCopy.SetSensitive(s.DebuggerCmd != "")
+	v.consoleStart.SetSensitive(!s.Busy && s.State != vm.StateRunning && s.State != vm.StateStarting)
+	v.consoleStop.SetSensitive(!s.Busy && (s.State == vm.StateRunning || s.State == vm.StateStarting))
+	v.setSerial(s.SerialLog)
+}
+
+// setConsoleRow words the console rows for this machine: a machine whose
+// display is its serial console has no browser console to offer.
+func (v *vmWindow) setConsoleRow(s MachineView) {
+	serial := s.Display.Kind == vm.DisplaySerial
+	label := i18n.T("Open web console")
+	note := ""
+	if serial {
+		label = i18n.T("Serial console")
+		note = i18n.T("What this system prints, on its own serial console.")
+	}
+	for _, b := range []*gtk.Button{&v.console, &v.consoleReady, &v.bootConsole} {
+		b.SetLabel(label)
+		b.SetTooltipText(label)
+	}
+	for _, n := range v.consoleNotes {
+		if note == "" {
+			n.label.SetText(n.byDefault)
+			continue
+		}
+		n.label.SetText(note)
+	}
+}
+
+// setSerial shows what the guest has printed, and keeps the view at the end of
+// it: a console is read from the bottom.
+func (v *vmWindow) setSerial(text string) {
+	if v.serialBuffer == nil || text == v.serialText {
+		return
+	}
+	v.serialText = text
+	v.serialBuffer.SetText(text, int32(len(text)))
+	var end gtk.TextIter
+	v.serialBuffer.GetEndIter(&end)
+	v.serial.ScrollToIter(&end, 0, false, 0, 0)
+}
+
+// copyDebuggerLine puts the attach line on the clipboard, so it can be pasted
+// into a terminal: the guide's "shown and copied".
+func (v *vmWindow) copyDebuggerLine() {
+	line := v.consoleCmd.GetText()
+	if line == "" || v.manager == nil {
+		return
+	}
+	display := gdk.DisplayGetDefault()
+	if display == nil {
+		return
+	}
+	clipboard := display.GetClipboard()
+	if clipboard == nil {
+		return
+	}
+	clipboard.SetText(line)
+	v.note = i18n.T("The command is on your clipboard.")
+	v.paint()
+}
+
+// vmHardwareText is what the guest will get on this host: whether it runs on
+// the processor or is emulated, and what its graphics are.
+func vmHardwareText(s MachineView) string {
+	parts := []string{}
+	if text := vmAccelerationText(s); text != "" {
+		parts = append(parts, text)
+	}
+	parts = append(parts, vmGraphicsText(s.Machine))
+	return strings.Join(parts, " · ")
+}
+
+// vmAccelerationText says Accelerated or Emulated, and why. The reasons are the
+// backend's stable identifiers; the sentences are the window's.
+func vmAccelerationText(s MachineView) string {
+	if s.Machine.Backend != vm.BackendQEMU {
+		return ""
+	}
+	if s.Accelerated {
+		return i18n.T("Accelerated")
+	}
+	switch s.AccelerationReason {
+	case vm.ReasonRequestedEmulation:
+		return i18n.T("Emulated (slow): this machine asks for emulation")
+	case vm.ReasonOtherArchitecture:
+		return i18n.T("Emulated (slow): the guest is built for another architecture")
+	case vm.ReasonNoKVM:
+		return i18n.T("Emulated (slow): this host has no /dev/kvm")
+	case vm.ReasonKVMDenied:
+		return i18n.T("Emulated (slow): your user may not open /dev/kvm")
+	}
+	return i18n.T("Emulated (slow)")
+}
+
+// vmGraphicsText is the display the guest gets: the guide's table, in the
+// window's words. A Windows guest has no accelerated driver, and a custom
+// system has one only once it has written one.
+func vmGraphicsText(m vm.Machine) string {
+	if m.Backend != vm.BackendQEMU {
+		return ""
+	}
+	if m.OS == vm.OSWindows {
+		return i18n.T("2D: Windows has no accelerated driver here")
+	}
+	switch m.Display.GPU {
+	case vm.GPUVirgl:
+		return i18n.T("3D (OpenGL, through the host's GPU)")
+	case vm.GPUVenus:
+		return i18n.T("3D (Vulkan, through the host's GPU)")
+	}
+	return i18n.T("2D")
 }
 
 // fillTemplates fills the new-machine page, once: the templates do not change
@@ -846,11 +1163,414 @@ func (v *vmWindow) showSetup(s MachineView) {
 		v.setupNote.SetText(vmInstallNote(s))
 	}
 	v.setupDisk.SetVisible(s.Leftovers)
-	v.accept.SetSensitive(!s.Busy)
-	v.install.SetSensitive(!s.Busy)
-	v.advancedToggle.SetSensitive(!s.Busy)
-	v.setupRemoveData.SetSensitive(!s.Busy)
-	v.setupDelete.SetSensitive(!s.Busy)
+	idle := !s.Busy && !v.operationBusy
+	v.accept.SetSensitive(idle)
+	v.install.SetSensitive(idle)
+	v.advancedToggle.SetSensitive(idle)
+	v.setupRemoveData.SetSensitive(idle)
+	v.setupDelete.SetSensitive(idle)
+	v.showSetupMedia(s)
+}
+
+// isoTarget ties a row's button to the medium it downloads, as a remedy's
+// button is tied to its remedy: one handler serves every button in the window.
+type isoTarget struct {
+	btn   gtk.Button
+	media vm.ISOMedia
+}
+
+// showSetupMedia fills the install-image section of the setup page: what the
+// machine installs from, the list to choose from, and the download in flight.
+// A machine whose backend fetches its own media has no such section.
+func (v *vmWindow) showSetupMedia(s MachineView) {
+	if s.ISO == nil {
+		v.setupMedia.SetVisible(false)
+		return
+	}
+	v.setupMedia.SetVisible(true)
+	v.mediaSource.SetText(isoSourceText(s.ISO.Source))
+	v.mediaNote.SetText(vmMediaNote(s))
+
+	if s.ISO.Downloading {
+		v.mediaProgress.SetVisible(true)
+		if s.ISO.Total > 0 {
+			v.isoProgress.SetFraction(float64(s.ISO.Done) / float64(s.ISO.Total))
+			v.isoProgressText.SetText(i18n.Tf("%s of %s downloaded", isoBytesText(s.ISO.Done), isoBytesText(s.ISO.Total)))
+		} else {
+			// The server has not said how large the file is, as Boxes'
+			// indeterminate bar does in the same case.
+			v.isoProgress.Pulse()
+			v.isoProgressText.SetText(i18n.Tf("%s downloaded", isoBytesText(s.ISO.Done)))
+		}
+		v.isoCancel.SetSensitive(true)
+	} else {
+		v.mediaProgress.SetVisible(false)
+	}
+	v.showISOFilters(s.ISO)
+	v.mediaCount.SetText(isoCountText(s.ISO.SystemsCount, s.ISO.MediaCount))
+	v.fillISOSystems(s.ISO.Recommended, s.ISO.Systems)
+}
+
+// ── the download list ───────────────────────────────────────────────────────
+
+// showISOFilters puts the filter controls in the state the window's own filter
+// says: what the user last chose. It runs while filling, so that setting a
+// control does not read as the user changing it.
+func (v *vmWindow) showISOFilters(iso *ISOView) {
+	v.filling = true
+	defer func() { v.filling = false }()
+
+	if !slices.Equal(v.isoArchs, iso.ArchFamilies) {
+		v.isoArchs = append(v.isoArchs[:0], iso.ArchFamilies...)
+		names := make([]string, 0, len(v.isoArchs)+1)
+		names = append(names, i18n.T("Every architecture"))
+		for _, a := range v.isoArchs {
+			names = append(names, isoArchText(a))
+		}
+		v.isoArch.SetModel(gtk.NewStringList(names))
+	}
+	if v.isoSearch.GetText() != v.isoFilter.Search {
+		v.isoSearch.SetText(v.isoFilter.Search)
+	}
+	v.isoPlatform.SetSelected(uint32(isoPlatformChoice(v.isoFilter.Platform)))
+	v.isoArch.SetSelected(uint32(isoArchChoice(v.isoArchs, v.isoFilter.ArchFamily)))
+	v.isoPre.SetActive(v.isoFilter.IncludePrerelease)
+	v.isoEOL.SetActive(v.isoFilter.IncludeEnded)
+}
+
+// isoPlatformChoice is the family drop-down's index for a platform: 0 is every
+// platform, and the rest follow the list the control is built with.
+func isoPlatformChoice(platform string) int {
+	for i, p := range isoPlatformChoices {
+		if p == platform {
+			return i
+		}
+	}
+	return 0
+}
+
+// isoArchChoice is the architecture drop-down's index for a family: 0 is every
+// architecture and the families the catalog holds follow, so a family the
+// catalog does not hold is never offered and never selected.
+func isoArchChoice(families []string, family string) int {
+	for i, f := range families {
+		if f == family {
+			return i + 1
+		}
+	}
+	return 0
+}
+
+// isoPlatformChoices are the platform filter's values: every platform first,
+// then the four the catalog places systems in.
+var isoPlatformChoices = []string{
+	"", vm.ISOPlatformLinux, vm.ISOPlatformBSD, vm.ISOPlatformWindows,
+	vm.ISOPlatformOther,
+}
+
+// isoPlatformText names a platform for the filter.
+func isoPlatformText(platform string) string {
+	switch platform {
+	case "":
+		return i18n.T("Every platform")
+	case vm.ISOPlatformLinux:
+		return i18n.T("Linux")
+	case vm.ISOPlatformBSD:
+		return i18n.T("BSD")
+	case vm.ISOPlatformWindows:
+		return i18n.T("Windows")
+	}
+	return i18n.T("Other")
+}
+
+// isoArchText names an architecture family for the filter. The families are the
+// database's own words - x86, arm64, riscv64 - and need no translation.
+func isoArchText(family string) string {
+	switch family {
+	case vm.ISOArchFamilyX86:
+		return "x86"
+	case vm.ISOArchFamilyARM:
+		return "arm64"
+	}
+	return family
+}
+
+// isoPlatformIcon is a system's mark in the list, from the platform it belongs
+// to: the shell installs a mark for each of the machines' systems and they fit
+// these four exactly.
+func isoPlatformIcon(platform string) string {
+	switch platform {
+	case vm.ISOPlatformLinux:
+		return "vm-os-linux-symbolic"
+	case vm.ISOPlatformBSD:
+		return "vm-os-freebsd-symbolic"
+	case vm.ISOPlatformWindows:
+		return "vm-os-windows-symbolic"
+	}
+	return "vm-os-custom-symbolic"
+}
+
+// isoMonthText is the month a system was released in - "2026-04" - which is
+// what a row says beside its name instead of a date nobody reads.
+func isoMonthText(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format("2006-01")
+}
+
+// isoMediaRowTitle is a medium's own line inside its system: the variant the
+// database names, or the file's own name when it names none. The system's name
+// is the row above, and three installers of one system are told apart by their
+// files - the minimal, the dvd, the boot one - rather than by repeating it.
+func isoMediaRowTitle(m vm.ISOMedia) string {
+	if m.Variant != "" {
+		return m.Variant
+	}
+	if base := path.Base(strings.TrimSpace(m.URL)); base != "" && base != "." && base != "/" {
+		return base
+	}
+	if m.Live {
+		return i18n.T("Live image")
+	}
+	return i18n.T("Installer")
+}
+
+// isoSystemSummary is what a system's row says under its name: what the filters
+// left of it - how many images install it, how many are live images, and when
+// it was released.
+func isoSystemSummary(s vm.ISOSystem) string {
+	var parts []string
+	if n := s.Installers(); n > 0 {
+		parts = append(parts, i18n.Nf("%d installer", "%d installers", n, n))
+	}
+	if n := s.Live(); n > 0 {
+		parts = append(parts, i18n.Nf("%d live image", "%d live images", n, n))
+	}
+	if !s.Newest.IsZero() {
+		parts = append(parts, i18n.Tf("newest %s", isoMonthText(s.Newest)))
+	}
+	if len(parts) == 0 {
+		return i18n.Nf("%d install image", "%d install images", len(s.Media), len(s.Media))
+	}
+	return strings.Join(parts, " · ")
+}
+
+// isoCountText is the section's own line: what the filters left, counted the
+// way the list is arranged - systems first, then the images inside them.
+func isoCountText(systems, media int) string {
+	return i18n.Tf("%s · %s", i18n.Nf("%d system", "%d systems", systems, systems),
+		i18n.Nf("%d install image", "%d install images", media, media))
+}
+
+// fillISOSystems builds the download list: one row per system, which opens to
+// its own media. The rows are the window's slowest thing to make and the list
+// only changes with the filters and the files on disk, so they are rebuilt when
+// that is what changed and left alone otherwise.
+func (v *vmWindow) fillISOSystems(recommended, systems []ISOSystemRow) {
+	if isoSystemsSame(v.isoRecommended, recommended) && isoSystemsSame(v.isoSystems, systems) {
+		return
+	}
+	v.isoRecommended = append(v.isoRecommended[:0], recommended...)
+	v.isoSystems = append(v.isoSystems[:0], systems...)
+	v.isoButtons = nil
+	fill := func(box *gtk.Box, list []ISOSystemRow) {
+		gtkx.Clear(box)
+		for _, s := range list {
+			gtkx.Append(box, &v.buildISOSystem(s).Widget)
+		}
+	}
+	fill(&v.mediaRec, v.isoRecommended)
+	fill(&v.mediaRows, v.isoSystems)
+}
+
+// isoSystemsSame says whether two lists of systems would build the same
+// widgets: the same systems in the same order, with the same media rows.
+func isoSystemsSame(a, b []ISOSystemRow) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i].System.OSID != b[i].System.OSID {
+			return false
+		}
+		if !isoRowsSame(a[i].Rows, b[i].Rows) {
+			return false
+		}
+	}
+	return true
+}
+
+// buildISOSystem is one system's row: its mark, its name, what it holds, and a
+// button that opens and closes the media inside it. The open state lives in the
+// window, so a repaint does not close what the user opened.
+func (v *vmWindow) buildISOSystem(s ISOSystemRow) *gtk.Box {
+	box := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+	box.AddCssClass("vm-iso-system")
+	open := v.isoOpen[s.System.OSID]
+
+	head := gtk.NewButton()
+	head.AddCssClass("plain")
+	head.AddCssClass("vm-iso-system-head")
+	head.SetName("iso_system:" + s.System.OSID)
+	head.ConnectClicked(&v.onISOSystem)
+
+	headBox := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
+	mark := gtk.NewImageFromIconName(isoPlatformIcon(s.System.Platform))
+	mark.AddCssClass("vm-os-mark")
+	mark.SetValign(gtk.AlignCenterValue)
+	gtkx.Append(headBox, &mark.Widget)
+
+	text := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+	text.SetHexpand(true)
+	text.SetValign(gtk.AlignCenterValue)
+	title := gtk.NewLabel(s.System.OSName)
+	title.AddCssClass("label")
+	title.SetXalign(0)
+	sub := gtk.NewLabel(isoSystemSummary(s.System))
+	sub.AddCssClass("sub")
+	sub.SetXalign(0)
+	sub.SetEllipsize(pango.EllipsizeEndValue)
+	gtkx.Append(text, &title.Widget)
+	gtkx.Append(text, &sub.Widget)
+	gtkx.Append(headBox, &text.Widget)
+
+	chevron := gtk.NewImageFromIconName("pan-end-symbolic")
+	chevron.AddCssClass("vm-iso-chevron")
+	chevron.SetValign(gtk.AlignCenterValue)
+	if open {
+		chevron.SetFromIconName("pan-down-symbolic")
+	}
+	gtkx.Append(headBox, &chevron.Widget)
+	head.SetChild(&headBox.Widget)
+	v.isoMark[s.System.OSID] = *chevron
+	gtkx.Append(box, &head.Widget)
+
+	revealer := gtk.NewRevealer()
+	revealer.SetTransitionType(gtk.RevealerTransitionTypeSlideDownValue)
+	revealer.SetRevealChild(open)
+	body := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+	body.AddCssClass("vm-iso-media")
+	for _, r := range s.Rows {
+		gtkx.Append(body, &v.isoMediaRow(r).Widget)
+	}
+	revealer.SetChild(&body.Widget)
+	v.isoRevealer[s.System.OSID] = *revealer
+	gtkx.Append(box, &revealer.Widget)
+	return box
+}
+
+// isoMediaRow is one medium inside an opened system: the variant's own name,
+// what the medium is - architecture, live image or installer, its size when the
+// database knows it, how the file already stands here - and the one action it
+// allows.
+func (v *vmWindow) isoMediaRow(r ISORow) *gtk.Box {
+	row := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
+	row.AddCssClass("row")
+	row.AddCssClass("vm-iso-media-row")
+
+	text := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+	text.SetHexpand(true)
+	text.SetValign(gtk.AlignCenterValue)
+	title := gtk.NewLabel(isoMediaRowTitle(r.Media))
+	title.AddCssClass("label")
+	title.SetXalign(0)
+	sub := gtk.NewLabel(isoMediaSub(r))
+	sub.AddCssClass("sub")
+	sub.SetXalign(0)
+	sub.SetWrap(true)
+	gtkx.Append(text, &title.Widget)
+	gtkx.Append(text, &sub.Widget)
+	// A download that failed says so in the downloader's own words: it is
+	// where the explanation is - how much room is missing, which answer
+	// the server gave - and a bare "failed" would throw it away.
+	if r.Err != nil {
+		reason := gtk.NewLabel(r.Err.Error())
+		reason.AddCssClass("vm-media-error")
+		reason.SetXalign(0)
+		reason.SetWrap(true)
+		gtkx.Append(text, &reason.Widget)
+	}
+	gtkx.Append(row, &text.Widget)
+
+	btn := gtk.NewButtonWithLabel(isoActionText(r))
+	btn.AddCssClass("outlined")
+	btn.SetValign(gtk.AlignCenterValue)
+	btn.SetName("iso_fetch")
+	btn.SetSensitive(!r.Downloading)
+	v.isoButtons = append(v.isoButtons, isoTarget{btn: *btn, media: r.Media})
+	btn.ConnectClicked(&v.onClick)
+	gtkx.Append(row, &btn.Widget)
+	return row
+}
+
+// openISOSystem opens or closes one system's media. The media rows are built
+// with the system, so this is only the revealer and the chevron.
+func (v *vmWindow) openISOSystem(id string, open bool) {
+	v.isoOpen[id] = open
+	if r, ok := v.isoRevealer[id]; ok {
+		r.SetRevealChild(open)
+	}
+	if m, ok := v.isoMark[id]; ok {
+		name := "pan-end-symbolic"
+		if open {
+			name = "pan-down-symbolic"
+		}
+		m.SetFromIconName(name)
+	}
+	if !open {
+		delete(v.isoOpen, id)
+	}
+}
+
+// isoFiltersFromControls is what the filter controls currently say.
+func (v *vmWindow) isoFiltersFromControls() vm.ISOFilters {
+	f := v.isoFilter
+	f.Search = v.isoSearch.GetText()
+	if i := int(v.isoPlatform.GetSelected()); i >= 0 && i < len(isoPlatformChoices) {
+		f.Platform = isoPlatformChoices[i]
+	}
+	// A fresh GtkStringList has no selection until GTK has chosen one, and its
+	// invalid position must leave the filter as it is rather than reading as
+	// "every architecture"; index 0 is the "every" entry and the rest are the
+	// families the catalog holds.
+	switch i := int(v.isoArch.GetSelected()); {
+	case i > 0 && i <= len(v.isoArchs):
+		f.ArchFamily = v.isoArchs[i-1]
+	case i == 0:
+		f.ArchFamily = ""
+	}
+	f.IncludePrerelease = v.isoPre.GetActive()
+	f.IncludeEnded = v.isoEOL.GetActive()
+	return f
+}
+
+// applyISOFilters hands the window's own filter to the service and paints
+// again: the list is built where a machine's view is built, so the choice
+// travels through the service rather than being applied to the widgets.
+func (v *vmWindow) applyISOFilters() {
+	if v.filling {
+		return
+	}
+	v.isoFilter = v.isoFiltersFromControls()
+	v.manager.SetISOFilters(v.isoFilter)
+	v.paintAll(v.manager.Machines())
+}
+
+// isoRowsSame says whether two lists of rows would build the same widgets: the
+// same media in the same order, and the same state of their files.
+func isoRowsSame(a, b []ISORow) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		x, y := a[i], b[i]
+		if x.Media.URL != y.Media.URL || x.Cached != y.Cached || x.Partial != y.Partial ||
+			x.Checksum != y.Checksum || x.Downloading != y.Downloading || (x.Err == nil) != (y.Err == nil) {
+			return false
+		}
+	}
+	return true
 }
 
 // showProvisioning fills the page shown while a machine's guest is being
@@ -942,13 +1662,42 @@ func (v *vmWindow) clicked(b gtk.Button) {
 	case "install":
 		m := v.setupMachine()
 		v.run(func() error { return v.manager.Install(m) })
+	case "iso_fetch":
+		media, ok := v.isoMediaOf(b)
+		if ok {
+			v.fetchISO(media)
+		}
+	case "iso_cancel":
+		// Stopping is a cancellation, not an operation: it only reaches the
+		// goroutine that is downloading, so the window is free to keep
+		// painting while it happens.
+		v.manager.CancelISO(name)
 	case "start", "prov_start":
 		v.run(func() error { return v.manager.Start(name) })
 	case "connect":
+		// A machine whose only screen is its serial console has no viewer to
+		// open: the window's own console page is where it is seen.
+		if view := v.viewOf(name); view.Display.Kind == vm.DisplaySerial {
+			v.showConsole()
+			return
+		}
 		display := v.display()
 		v.run(func() error { return v.manager.Connect(name, display) })
 	case "console", "console_ready", "boot_console":
+		if view := v.viewOf(name); view.Display.Kind == vm.DisplaySerial {
+			v.showConsole()
+			return
+		}
 		v.run(func() error { return v.manager.Console(name) })
+	case "console_back":
+		v.consoleOpen = false
+		v.paint()
+	case "console_copy":
+		v.copyDebuggerLine()
+	case "console_start":
+		v.run(func() error { return v.manager.Start(name) })
+	case "console_stop":
+		v.run(func() error { return v.manager.Stop(name) })
 	case "prov_stop", "stop", "boot_stop":
 		v.run(func() error { return v.manager.Stop(name) })
 	case "remove", "prov_remove":
@@ -990,6 +1739,10 @@ func (v *vmWindow) clicked(b gtk.Button) {
 		v.rememberArmed(0)
 		v.setupDelete.SetLabel(i18n.T("Delete"))
 		v.run(func() error { return v.manager.Delete(name) })
+	case "assistant_ask":
+		v.askAboutTheHost()
+	case "assistant_recheck":
+		v.recheck()
 	case "fix":
 		for _, t := range v.fixButtons {
 			if t.btn.GoPointer() == b.GoPointer() {
@@ -1018,6 +1771,44 @@ func (v *vmWindow) rememberArmed(which int) {
 	v.removeArmed = which == 1
 	v.dataArmed = which == 2
 	v.deleteArmed = which == 3
+}
+
+// askAboutTheHost hands the host's missing pieces to inua's own assistant: the
+// window runs no package manager and no privileged install, and what the
+// assistant changes is its own, approved, decision. The prompt is built here,
+// where the machine and the checks are, and the assistant's window - running
+// or started by this - is where it goes.
+func (v *vmWindow) askAboutTheHost() {
+	name := v.selectedName()
+	if name == "" {
+		return
+	}
+	prompt := assistantPrompt(v.viewOf(name))
+	if err := askAssistant(prompt); err != nil {
+		v.note = err.Error()
+	} else {
+		v.note = i18n.T("Asked. Its window has the details.")
+	}
+	v.assistantNote.SetText(v.assistantHint)
+	v.paint()
+}
+
+// recheck reads the host again, so a fix the assistant made shows up here: the
+// page moves on by itself once every check this machine needs passes.
+func (v *vmWindow) recheck() {
+	if v.closed || v.operationBusy {
+		return
+	}
+	v.operationBusy = true
+	v.paint()
+	go func() {
+		views := v.manager.RefreshAll()
+		gtkx.Post(func() {
+			v.operationBusy = false
+			v.note = ""
+			v.paintAll(views)
+		})
+	}()
 }
 
 // applyFix runs a remedy. The polkit dialog it may open lives on the main
@@ -1072,6 +1863,49 @@ func (v *vmWindow) run(f func() error) {
 			v.paintAll(views)
 		})
 	}()
+}
+
+// fetchISO downloads an install medium and hands the machine over to the
+// install flow: the service does the transfer off the GTK thread, and the same
+// watch that follows a machine's state follows its download, so a repaint
+// every two seconds shows how far it has got. The transfer is not an action in
+// the window's own sense - it is stopped by its own button, not cancelled by a
+// click elsewhere - so the two are kept apart.
+func (v *vmWindow) fetchISO(media vm.ISOMedia) {
+	name := v.selectedName()
+	if v.closed || v.operationBusy || name == "" {
+		return
+	}
+	v.operationBusy = true
+	v.paint()
+	go func() {
+		err := v.manager.FetchISO(name, media)
+		views := v.manager.RefreshAll()
+		gtkx.Post(func() {
+			v.operationBusy = false
+			switch {
+			case err == nil:
+				v.note = ""
+			case errors.Is(err, context.Canceled):
+				// The user's own stop is not a failure: the part file is
+				// still there, and the row offers to resume it.
+				v.note = i18n.T("Stopped.")
+			default:
+				v.note = i18n.Tf("That did not work: %v", err)
+			}
+			v.paintAll(views)
+		})
+	}()
+}
+
+// isoMediaOf is the medium a download button stands for.
+func (v *vmWindow) isoMediaOf(b gtk.Button) (vm.ISOMedia, bool) {
+	for _, t := range v.isoButtons {
+		if t.btn.GoPointer() == b.GoPointer() {
+			return t.media, true
+		}
+	}
+	return vm.ISOMedia{}, false
 }
 
 // display is the monitor the manager window is on: the screen on which its
@@ -1260,6 +2094,108 @@ func vmInstallNote(s MachineView) string {
 	default:
 		return i18n.T("The guest installs from its own media, as it would on a real machine.")
 	}
+}
+
+// isoSourceText names where the download list came from. osinfo-db is a data
+// package's own name and stays as it is; a list inua wrote itself is said so,
+// because it is short and ages.
+func isoSourceText(source string) string {
+	if source == vm.ISOSourceBuiltin {
+		return i18n.T("inua's own list")
+	}
+	return "osinfo-db"
+}
+
+// vmMediaNote is the sentence above the download list: what the machine
+// installs from, or what to do while there is nothing yet.
+func vmMediaNote(s MachineView) string {
+	if iso := strings.TrimSpace(s.Machine.Boot.ISO); iso != "" {
+		return i18n.Tf("Installs from %s.", iso)
+	}
+	if s.ISO != nil && s.ISO.Source == vm.ISOSourceBuiltin {
+		return i18n.T("osinfo-db is not installed, so this is inua's short built-in list.")
+	}
+	return i18n.T("Choose an install image to download; the machine boots it as a disc.")
+}
+
+// isoMediaTitle is a medium's own line: the system, and the variant when the
+// database names one that adds something to the system's name.
+func isoMediaTitle(m vm.ISOMedia) string {
+	if m.Variant == "" || m.Variant == m.OSName {
+		return m.OSName
+	}
+	return m.OSName + " · " + m.Variant
+}
+
+// isoMediaSub is what a row says under the medium: the architecture, whether
+// it is a live image or an installer, its size when the database knows it, and
+// how the file already stands here.
+func isoMediaSub(r ISORow) string {
+	parts := []string{r.Media.Arch}
+	switch {
+	case r.Media.Live:
+		parts = append(parts, i18n.T("Live image"))
+	case r.Media.Installer:
+		parts = append(parts, i18n.T("Installer"))
+	}
+	if r.Media.VolumeSize > 0 {
+		parts = append(parts, isoBytesText(r.Media.VolumeSize))
+	}
+	switch {
+	case r.Cached:
+		// An image that is here says how it got here: verified against a
+		// published sum, with none published, or already in the cache from
+		// before, which nothing was downloaded for and nothing verified.
+		text := isoChecksumText(r.Checksum)
+		if text == "" {
+			text = i18n.T("Already in the cache")
+		}
+		parts = append(parts, text)
+	case r.Partial:
+		parts = append(parts, i18n.T("Unfinished download"))
+	}
+	return strings.Join(parts, " · ")
+}
+
+// isoActionText is what a row's button does next: download the image, resume
+// an unfinished one, use the one already here, or try again after a failure.
+func isoActionText(r ISORow) string {
+	switch {
+	case r.Err != nil:
+		return i18n.T("Retry")
+	case r.Cached:
+		return i18n.T("Use this image")
+	case r.Partial:
+		return i18n.T("Resume")
+	}
+	return i18n.T("Download")
+}
+
+// isoChecksumText words how the published checksum of a finished download
+// turned out. Most media publish none, which is not a failure: the file is
+// trusted because it came from the distribution's own URL over HTTPS. An image
+// that was already in the cache was not downloaded here and so was not checked.
+func isoChecksumText(c vm.ISOChecksum) string {
+	switch c {
+	case vm.ISOChecksumVerified:
+		return i18n.T("Checksum verified")
+	case vm.ISOChecksumNotPublished:
+		return i18n.T("No published checksum")
+	case vm.ISOChecksumNotChecked:
+		return i18n.T("Already in the cache")
+	}
+	return ""
+}
+
+// isoBytesText is a byte count the way a size reads on this page.
+func isoBytesText(n int64) string {
+	switch {
+	case n >= 1<<30:
+		return fmt.Sprintf("%.1f GiB", float64(n)/(1<<30))
+	case n >= 1<<20:
+		return fmt.Sprintf("%.0f MiB", float64(n)/(1<<20))
+	}
+	return fmt.Sprintf("%.0f KiB", float64(n)/(1<<10))
 }
 
 // vmTemplateName is a template's title: the system it installs. The two

@@ -13,12 +13,21 @@ import (
 	"time"
 )
 
-// Platform describes host facilities needed to run and connect to a Windows VM.
+// Platform describes host facilities needed to run and connect to a Windows
+// VM: what the Docker backend needs - a socket, Compose, FreeRDP, TUN - and
+// what the one that runs QEMU needs instead: the QEMU program for this host's
+// own architecture, UEFI firmware, systemd-run for a guest that outlives the
+// window, and a SPICE viewer to see it with.
 type Platform struct {
 	OS            string
 	Distribution  string
 	Supported     bool
 	KVM           DeviceCapability
+	QEMU          Capability
+	Firmware      Capability
+	SystemdRun    Capability
+	SPICEViewer   Capability
+	OSInfoDB      Capability
 	DockerSocket  DeviceCapability
 	ComposeV2     Capability
 	FreeRDP       Capability
@@ -90,6 +99,14 @@ type PlatformProbes struct {
 	Filesystem    func(string) string
 	Exists        func(string) bool
 	CommandOutput func(string, ...string) (string, error)
+	// ExecutablePath is Executable's fuller answer: the path a program is at,
+	// or "" when it is not on PATH. The checks that name what they found -
+	// the QEMU program, systemd-run, the SPICE viewer - show that path.
+	ExecutablePath func(string) string
+	// Architecture is the host's own architecture, in place of runtime.GOARCH,
+	// so a test on one machine can ask which QEMU program another is looked
+	// for under.
+	Architecture func() string
 }
 
 // DetectPlatform inspects host support without modifying system state. Root maps absolute
@@ -125,8 +142,20 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 			return true
 		}
 	}
+	if probes.ExecutablePath == nil {
+		probes.ExecutablePath = func(name string) string {
+			path, err := exec.LookPath(name)
+			if err != nil {
+				return ""
+			}
+			return path
+		}
+	}
 	if probes.Executable == nil {
-		probes.Executable = func(name string) bool { _, err := exec.LookPath(name); return err == nil }
+		probes.Executable = func(name string) bool { return probes.ExecutablePath(name) != "" }
+	}
+	if probes.Architecture == nil {
+		probes.Architecture = func() string { return runtime.GOARCH }
 	}
 	if probes.CommandOutput == nil {
 		probes.CommandOutput = func(name string, args ...string) (string, error) {
@@ -163,6 +192,38 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 		// The device is there; this user is not in the group it belongs to.
 		kvmCheck.Reason = ReasonDenied
 		kvmCheck.Remedy = groupRemedy("kvm")
+	}
+
+	// What the QEMU backend needs. A guest of another architecture is emulated
+	// rather than run, and the backend names its own program, so the check
+	// asks after this host's architecture alone.
+	p.QEMU = Capability{Detail: "no QEMU program for this architecture"}
+	if program := QEMUProgram(archFor(probes.Architecture())); program != "" {
+		p.QEMU = pathCapability(probes, program, program+" unavailable")
+	}
+	// The UEFI firmware is a search, not a path: which OVMF image a host has is
+	// a distribution question. The list is the backend's own, looked for under
+	// root so a test can be a host that has one.
+	p.Firmware = Capability{Detail: "no UEFI firmware (OVMF) found"}
+	for _, candidate := range platformOVMFCodeFiles() {
+		if path := mapPath(candidate); probes.Exists(path) {
+			p.Firmware = Capability{Available: true, Detail: path}
+			break
+		}
+	}
+	// A machine runs under systemd-run, so that the guest outlives the window
+	// that started it and dies with the session.
+	p.SystemdRun = pathCapability(probes, "systemd-run", "systemd-run unavailable")
+	// remote-viewer, from virt-viewer, is how a SPICE machine is seen.
+	p.SPICEViewer = pathCapability(probes, "remote-viewer", "remote-viewer unavailable")
+	// osinfo-db is the install images' catalog: the download page asks it what
+	// the distributions publish rather than naming URLs itself. Without it the
+	// page still works, but on inua's own three images instead of the
+	// distributions' current list, and the check says so rather than only
+	// naming what is missing.
+	p.OSInfoDB = Capability{Detail: "osinfo-db is not installed: install images are offered from inua's own three-image list instead of the distributions' catalog"}
+	if dir := mapPath("/usr/share/osinfo/os"); probes.Exists(dir) {
+		p.OSInfoDB = Capability{Available: true, Detail: dir}
 	}
 
 	socket := mapPath("/var/run/docker.sock")
@@ -216,6 +277,11 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	p.Doctor = []DoctorItem{
 		osCheck,
 		kvmCheck,
+		check("QEMU", p.QEMU.Available, ReasonMissing),
+		check("Firmware (UEFI)", p.Firmware.Available, ReasonMissing),
+		check("Systemd", p.SystemdRun.Available, ReasonMissing),
+		check("SPICE viewer", p.SPICEViewer.Available, ReasonMissing),
+		check("osinfo-db", p.OSInfoDB.Available, ReasonMissing),
 		socketCheck,
 		check("Docker Compose v2", p.ComposeV2.Available, ReasonMissing),
 		check("FreeRDP", p.FreeRDP.Available, ReasonMissing),
@@ -301,6 +367,119 @@ func executableCapability(p PlatformProbes, names []string, missing string) Capa
 	}
 	return Capability{false, missing}
 }
+
+// pathCapability is a capability that holds when the program is on PATH, and
+// names the path it was found at: that is what the doctor line shows, and the
+// only thing worth reading when a machine will not start.
+func pathCapability(p PlatformProbes, name, missing string) Capability {
+	if path := p.ExecutablePath(name); path != "" {
+		return Capability{true, path}
+	}
+	return Capability{false, missing}
+}
+
+// QEMUProgram is the QEMU binary that runs a guest of one architecture, or ""
+// for one this code has no name for: no binary, and nothing of that kind can be
+// started here. The host's own architecture is the one the checks ask about; a
+// machine of another architecture needs its own, and the window asks this for
+// the machine's.
+func QEMUProgram(arch Arch) string {
+	switch arch {
+	case ArchX8664:
+		return "qemu-system-x86_64"
+	case ArchAarch64:
+		return "qemu-system-aarch64"
+	case ArchRiscv64:
+		return "qemu-system-riscv64"
+	case ArchI386:
+		return "qemu-system-i386"
+	}
+	return ""
+}
+
+// hostQEMUProgram is QEMUProgram for the host's own architecture, which is what
+// the host check names.
+func hostQEMUProgram() string {
+	switch runtime.GOARCH {
+	case "amd64":
+		return QEMUProgram(ArchX8664)
+	case "arm64":
+		return QEMUProgram(ArchAarch64)
+	case "riscv64":
+		return QEMUProgram(ArchRiscv64)
+	case "386":
+		return QEMUProgram(ArchI386)
+	}
+	return ""
+}
+
+// qemuSystemPackage is Debian's package holding that program. Debian builds
+// one binary package per guest architecture; the guests it does not build for
+// itself - 386 among them - are in qemu-system-misc.
+func qemuSystemPackage(arch string) string {
+	switch arch {
+	case "amd64":
+		return "qemu-system-x86"
+	case "arm64":
+		return "qemu-system-arm"
+	case "riscv64":
+		return "qemu-system-riscv64"
+	case "386":
+		return "qemu-system-misc"
+	}
+	return ""
+}
+
+// platformOVMFCodeFiles are the UEFI firmware images the distributions
+// install, in the order they are looked for. It is the same search the QEMU
+// backend makes: Debian and Ubuntu's /usr/share/OVMF, Fedora and openSUSE's
+// edk2, Arch's edk2-ovmf, a NixOS libvirt's /run/libvirt/nix-ovmf, and the
+// aarch64 and riscv64 builds. Which one a host has is a distribution question,
+// so it is a search and not a path.
+// UEFIFirmwarePath is the OVMF code image this host has, or "" when it has
+// none. The QEMU backend boots a UEFI machine with it, and the check says
+// whether there is one at all.
+func UEFIFirmwarePath() string {
+	for _, path := range platformOVMFCodeFiles() {
+		if fi, err := os.Stat(path); err == nil && fi.Mode().IsRegular() {
+			return path
+		}
+	}
+	return ""
+}
+
+// archFor is Go's name for an architecture as the Arch this package uses.
+func archFor(goarch string) Arch {
+	switch goarch {
+	case "amd64":
+		return ArchX8664
+	case "arm64":
+		return ArchAarch64
+	case "riscv64":
+		return ArchRiscv64
+	case "386":
+		return ArchI386
+	}
+	return ""
+}
+
+func platformOVMFCodeFiles() []string {
+	return []string{
+		"/usr/share/edk2/x64/OVMF_CODE.4m.fd",
+		"/usr/share/edk2/x64/OVMF_CODE.fd",
+		"/usr/share/OVMF/OVMF_CODE_4M.fd",
+		"/usr/share/OVMF/OVMF_CODE.fd",
+		"/usr/share/edk2-ovmf/x64/OVMF_CODE.fd",
+		"/usr/share/edk2-ovmf/OVMF_CODE.fd",
+		"/usr/share/qemu/OVMF_CODE.fd",
+		"/run/libvirt/nix-ovmf/OVMF_CODE.fd",
+		"/usr/share/edk2/aarch64/QEMU_EFI.fd",
+		"/usr/share/qemu-efi-aarch64/QEMU_EFI.fd",
+		"/usr/share/AAVMF/AAVMF_CODE.fd",
+		"/usr/share/edk2/riscv64/RISCV_VIRT_CODE.fd",
+	}
+}
+
 func hostOS(root string) (string, string) {
 	if runtime.GOOS != "linux" {
 		return runtime.GOOS, ""
@@ -350,11 +529,24 @@ func PlanPackages(distribution string) PackagePlan {
 	p := PackagePlan{Distribution: d, RequiresUserConfirmation: true, Confirmation: "Review and confirm before installing packages or changing system configuration."}
 	switch d {
 	case "nixos":
+		// NixOS is configured, not installed into: these names go into the
+		// machine's own configuration and are built from there.
 		p.PackageManager = "nix"
-		p.Packages = []string{"docker", "freerdp", "xdg-utils", "qemu_kvm"}
+		p.Packages = []string{"docker", "freerdp", "xdg-utils", "qemu_kvm", "OVMF", "virt-viewer", "osinfo-db"}
+		p.Confirmation = "Add these to the system configuration - environment.systemPackages - or turn on virtualisation.libvirtd, which is what the firmware and the SPICE viewer come from. Then rebuild."
 	case "ubuntu", "debian":
 		p.PackageManager = "apt"
-		p.Packages = []string{"docker.io", "docker-compose-v2", "freerdp3-x11", "xdg-utils", "qemu-system-x86", "qemu-utils"}
+		p.Packages = []string{"docker.io", "docker-compose-v2", "freerdp3-x11", "xdg-utils"}
+		// One QEMU per guest architecture, so the package is this host's own;
+		// ovmf is the firmware and virt-viewer the SPICE viewer. An
+		// architecture this code has no name for gets the rest rather than an
+		// empty package name.
+		if qemu := qemuSystemPackage(runtime.GOARCH); qemu != "" {
+			p.Packages = append(p.Packages, qemu)
+		}
+		// osinfo-db is the install images' catalog, not a QEMU dependency: it
+		// is what the download page reads instead of naming URLs.
+		p.Packages = append(p.Packages, "qemu-utils", "ovmf", "virt-viewer", "osinfo-db")
 	}
 	return p
 }

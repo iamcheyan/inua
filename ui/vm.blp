@@ -5,6 +5,7 @@
 //   empty        — no machine yet; New makes one from a template
 //   new          — naming a machine and picking its template
 //   unavailable  — this build has no backend for the machine's kind
+//   console      — only a serial console: its debugger and its output
 //   prereq       — some host requirement is missing; shows what and why
 //   setup        — environment is ready; nothing installed yet
 //   provisioning — first-time install (download / setup)
@@ -115,7 +116,7 @@ ApplicationWindow vm {
 
             Image {
               styles ["vm-empty-mark"]
-              icon-name: "computer-symbolic";
+              icon-name: "vm-machine-symbolic";
               pixel-size: 48;
             }
 
@@ -316,6 +317,180 @@ ApplicationWindow vm {
           };
         }
 
+        // ── PAGE: console ── a machine's serial console and its debugger ──────
+        StackPage {
+          name: "console";
+          child: Box {
+            orientation: vertical;
+
+            Box {
+              styles ["section"]
+              orientation: vertical;
+
+              Box {
+                styles ["section-head"]
+                spacing: 10;
+
+                Label {
+                  styles ["mark"]
+                  valign: center;
+                }
+
+                Label {
+                  styles ["section-label"]
+                  label:  _("[CONSOLE]");
+                  hexpand: true;
+                  xalign: 0;
+                }
+
+                Button vm_console_back {
+                  styles ["outlined"]
+                  name: "console_back";
+                  label:  _("Back");
+                  valign: center;
+                }
+              }
+
+              Box {
+                styles ["section-body"]
+                orientation: vertical;
+
+                Label vm_console_summary {
+                  styles ["label"]
+                  xalign: 0;
+                }
+
+                Label vm_console_hardware {
+                  styles ["sub"]
+                  xalign: 0;
+                  wrap: true;
+                }
+
+                Box {
+                  styles ["row"]
+
+                  Box {
+                    orientation: vertical;
+                    hexpand: true;
+                    valign: center;
+                    spacing: 2;
+
+                    Label {
+                      styles ["label"]
+                      label:  _("Wait for a debugger");
+                      xalign: 0;
+                    }
+
+                    Label {
+                      styles ["sub"]
+                      label:  _("Holds the guest at its first instruction, for gdb on 127.0.0.1:1234.");
+                      xalign: 0;
+                      wrap: true;
+                    }
+                  }
+
+                  Switch vm_console_gdb {
+                    name: "console_gdb";
+                    valign: center;
+                  }
+                }
+
+                Box {
+                  styles ["row"]
+
+                  Box {
+                    orientation: vertical;
+                    hexpand: true;
+                    valign: center;
+                    spacing: 2;
+
+                    Label {
+                      styles ["label"]
+                      label:  _("Debugger");
+                      xalign: 0;
+                    }
+
+                    Label vm_console_cmd {
+                      styles ["sub", "vm-console-cmd"]
+                      xalign: 0;
+                      wrap: true;
+                      selectable: true;
+                    }
+                  }
+
+                  Button vm_console_copy {
+                    styles ["outlined"]
+                    name: "console_copy";
+                    label:  _("Copy");
+                    valign: center;
+                  }
+                }
+              }
+            }
+
+            // — serial section: the guest's own output, one line at a time —
+            Box {
+              styles ["section"]
+              orientation: vertical;
+
+              Box {
+                styles ["section-head"]
+                spacing: 10;
+
+                Label {
+                  styles ["mark"]
+                  valign: center;
+                }
+
+                Label {
+                  styles ["section-label"]
+                  label:  _("[SERIAL]");
+                  hexpand: true;
+                  xalign: 0;
+                }
+
+                Button vm_console_start {
+                  styles ["suggested-action"]
+                  name: "console_start";
+                  label:  _("Start");
+                  valign: center;
+                }
+
+                Button vm_console_stop {
+                  styles ["outlined"]
+                  name: "console_stop";
+                  label:  _("Stop");
+                  valign: center;
+                }
+              }
+
+              Box {
+                styles ["section-body"]
+                orientation: vertical;
+
+                // The output is the one thing that grows with the window; it
+                // scrolls, and Go appends each line as the guest writes it.
+                ScrolledWindow {
+                  vexpand: true;
+                  height-request: 320;
+                  hscrollbar-policy: never;
+
+                  TextView vm_serial {
+                    styles ["vm-console"]
+                    editable: false;
+                    cursor-visible: false;
+                    wrap-mode: word_char;
+                    top-margin: 10;
+                    bottom-margin: 10;
+                    left-margin: 12;
+                    right-margin: 12;
+                  }
+                }
+              }
+            }
+          };
+        }
+
         // ── PAGE: prereq ── one or more host requirements are missing ─────
         StackPage {
           name: "prereq";
@@ -355,6 +530,97 @@ ApplicationWindow vm {
                   Box vm_check_rows {
                     styles ["rows", "vm-check-rows"]
                     orientation: vertical;
+                  }
+                }
+              }
+
+              // Asking for help is the assistant's job, not the window's: inua
+              // itself runs no package manager and no privileged install.
+              Box {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Label {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    label:  _("[ASSISTANT]");
+                    hexpand: true;
+                    xalign: 0;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box {
+                    styles ["row"]
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+                      spacing: 2;
+
+                      Label {
+                        styles ["label"]
+                        label:  _("Ask the assistant to fix this");
+                        xalign: 0;
+                      }
+
+                      Label vm_assistant_note {
+                        styles ["sub"]
+                        xalign: 0;
+                        wrap: true;
+                        label:  _("It checks what is missing, says what it would change, and runs it with its own approval.");
+                      }
+                    }
+
+                    Button vm_assistant_ask {
+                      styles ["suggested-action"]
+                      name: "assistant_ask";
+                      label:  _("Ask the assistant");
+                      valign: center;
+                    }
+                  }
+
+                  Box {
+                    styles ["row"]
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+                      spacing: 2;
+
+                      Label {
+                        styles ["label"]
+                        label:  _("Check again");
+                        xalign: 0;
+                      }
+
+                      Label {
+                        styles ["sub"]
+                        label:  _("Reads the host again, after the assistant has changed something.");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Button vm_assistant_recheck {
+                      styles ["outlined"]
+                      name: "assistant_recheck";
+                      label:  _("Check again");
+                      valign: center;
+                    }
                   }
                 }
               }
@@ -589,20 +855,15 @@ ApplicationWindow vm {
 
                       Label {
                         styles ["label"]
-                        label:  _("Install Windows");
+                        label:  _("Install the system");
                         xalign: 0;
                       }
 
+                      // The sentence itself is Go's, because it is not the
+                      // same for a system installed from its own media and one
+                      // a container installs for you.
                       Label vm_setup_note {
                         styles ["sub"]
-                        label:  _("Downloads about 8 GB and installs Windows; takes 30+ minutes.");
-                        xalign: 0;
-                        wrap: true;
-                      }
-
-                      Label {
-                        styles ["sub"]
-                        label:  _("Windows needs a licence of its own.");
                         xalign: 0;
                         wrap: true;
                       }
@@ -611,9 +872,175 @@ ApplicationWindow vm {
                     Button vm_install {
                       styles ["suggested-action"]
                       name: "install";
-                      label:  _("Install Windows");
+                      label:  _("Install");
                       valign: center;
                     }
+                  }
+                }
+              }
+
+              // — install image — the media a QEMU machine installs from —
+              // The list is osinfo-db's catalog; Go appends a row per medium.
+              Box vm_setup_media {
+                styles ["section"]
+                orientation: vertical;
+                visible: false;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Label {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    label:  _("[IMAGE]");
+                    hexpand: true;
+                    xalign: 0;
+                  }
+
+                  Label vm_media_source {
+                    styles ["section-meta"]
+                    xalign: 1;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Label vm_media_note {
+                    styles ["sub"]
+                    xalign: 0;
+                    wrap: true;
+                  }
+
+                  // The download in flight: how far it has got and the one
+                  // button that stops it. It stands above the list, so that
+                  // starting a download does not move its own progress to the
+                  // far end of two hundred rows.
+                  Box vm_media_progress {
+                    styles ["row"]
+                    visible: false;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+                      spacing: 4;
+
+                      ProgressBar vm_iso_progress {
+                        show-text: false;
+                        hexpand: true;
+                      }
+
+                      Label vm_iso_progress_text {
+                        styles ["sub"]
+                        xalign: 0;
+                      }
+                    }
+
+                    Button vm_iso_cancel {
+                      styles ["outlined"]
+                      name: "iso_cancel";
+                      label:  _("Cancel");
+                      valign: center;
+                    }
+                  }
+
+                  // What the list is showing: the systems and images it is
+                  // searched for, the platform and the architecture it is
+                  // limited to, and the two switches that offer what the
+                  // guide's rule otherwise leaves out.
+                  Box vm_media_filters {
+                    styles ["row", "vm-media-filters"]
+
+                    Entry vm_iso_search {
+                      styles ["vm-iso-search"]
+                      hexpand: true;
+                      valign: center;
+                      placeholder-text:  _("Search systems and images");
+                    }
+
+                    DropDown vm_iso_platform {
+                      styles ["vm-iso-filter"]
+                      valign: center;
+                      tooltip-text:  _("Which platform to show");
+                    }
+
+                    DropDown vm_iso_arch {
+                      styles ["vm-iso-filter"]
+                      valign: center;
+                      tooltip-text:  _("Which architecture to show");
+                    }
+
+                    Box {
+                      styles ["vm-iso-switch"]
+
+                      Label {
+                        styles ["sub"]
+                        valign: center;
+                        label:  _("Prerelease");
+                      }
+
+                      Switch vm_iso_prerelease {
+                        valign: center;
+                        tooltip-text:  _("Also show prerelease and development systems");
+                      }
+                    }
+
+                    Box {
+                      styles ["vm-iso-switch"]
+
+                      Label {
+                        styles ["sub"]
+                        valign: center;
+                        label:  _("Ended");
+                      }
+
+                      Switch vm_iso_eol {
+                        valign: center;
+                        tooltip-text:  _("Also show systems past their support date");
+                      }
+                    }
+                  }
+
+                  // What the filters left, in the systems-and-media the list
+                  // counts in: "12 systems · 31 images".
+                  Label vm_media_count {
+                    styles ["sub", "vm-media-count"]
+                    xalign: 0;
+                  }
+
+                  // The systems worth offering first, by the database's own
+                  // distribution ids: Go appends one row each, at most eight.
+                  Label {
+                    styles ["vm-media-group"]
+                    xalign: 0;
+                    label:  _("Recommended");
+                  }
+
+                  Box vm_media_recommended {
+                    styles ["vm-media-rows"]
+                    orientation: vertical;
+                    spacing: 2;
+                  }
+
+                  // Everything the filters left, one row per system, each
+                  // holding its own media.
+                  Label {
+                    styles ["vm-media-group"]
+                    xalign: 0;
+                    label:  _("All systems");
+                  }
+
+                  Box vm_media_rows {
+                    styles ["vm-media-rows"]
+                    orientation: vertical;
+                    spacing: 2;
                   }
                 }
               }
@@ -773,7 +1200,7 @@ ApplicationWindow vm {
                       xalign: 0;
                     }
 
-                    Label {
+                    Label vm_prov_console_note {
                       styles ["sub"]
                       label:  _("The installer screen is in your browser. The web console on 127.0.0.1:8006 has no login of its own.");
                       xalign: 0;
@@ -948,7 +1375,7 @@ ApplicationWindow vm {
                       xalign: 0;
                     }
 
-                    Label {
+                    Label vm_boot_console_note {
                       styles ["sub"]
                       label:  _("The guest screen is in your browser until RDP is ready.");
                       xalign: 0;
@@ -1383,7 +1810,7 @@ ApplicationWindow vm {
                       xalign: 0;
                     }
 
-                    Label {
+                    Label vm_ready_console_note {
                       styles ["sub"]
                       label:  _("The guest screen in the browser.");
                       xalign: 0;

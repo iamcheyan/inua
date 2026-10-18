@@ -19,11 +19,11 @@ whose file does not hold is left out of the list and reported by the
 diagnostics, which also name the folders that are not machines.
 `templates.go` is the eight templates **New** offers, from Windows in Docker
 (Dockur) to Linux, FreeBSD, Android and a custom system. The host checks and
-the backends live beside them: this build wires the Dockur backend, the only
-one that can run a guest today, while the QEMU and Waydroid ones are the
-following steps. `report.go`'s report carries the machines now, not the
-single saved configuration (`Config` and `Persisted` survive only to adopt a
-machine from the previous version). The Linux platform detection, the
+the backends live beside them: this build wires the QEMU and Dockur backends -
+QEMU for Linux, FreeBSD and custom systems, Dockur for Windows - while the
+Waydroid one is the following step. `report.go`'s report carries the machines
+now, not the single saved configuration (`Config` and `Persisted` survive only
+to adopt a machine from the previous version). The Linux platform detection, the
 resource recommendation and the backend contract are unchanged: KVM, the
 Docker socket, Compose v2, FreeRDP, a browser opener, TUN and disk space,
 each with the reason it failed and, when Inua can apply one itself, a remedy
@@ -124,7 +124,7 @@ the view uses the tricky parts of puregotk only through `gtkx`.
 | `internal/config` | `~/.config/inua/config.toml` (TOML): defaults, validation (bad values fall back with a warning), strftime clocks, the commented writer | Done, tested |
 | `internal/bootstrap` | `inua init`: writes the embedded samples without overwriting (`-force` keeps a `.bak`); checks that Hyprland starts the shell and loads `inua.conf` (or requires `inua.lua`) | Done, tested |
 | `internal/ui` | GTK4 views: bar and dock (per monitor), wallpaper, launcher, control center, notification banners and center, tray, settings window (with shortcut recording), screenshot tool, lock screen (on the session lock protocol; the screen stays locked if the shell stops, and a restarted shell takes the lock back), the Clock app's alarms, snapshots | Done |
-| `internal/vm`, `internal/vmui`, `cmd/inua-vm`, `ui/vm.blp` | Virtual machines (docs/inua-vm.md): the toolkit-free machines and their `machine.toml`, the store (one folder per machine), the templates, the Linux platform checks with their remedies, the resource profile and the backends (Docker/Dockur today; QEMU and Waydroid following); the manager window as an app of its own — the list and the chosen machine's page — and its thin command line (`--list`, `--doctor [--json]`, `--status [--json]`, `--start NAME`, `--stop NAME`) | Done, tested (an injected runner and secret store; a fake platform root) |
+| `internal/vm`, `internal/vmui`, `cmd/inua-vm`, `ui/vm.blp` | Virtual machines (docs/inua-vm.md): the toolkit-free machines and their `machine.toml`, the store (one folder per machine), the templates, the Linux platform checks with their remedies, the resource profile and the backends (QEMU and Docker/Dockur today; Waydroid following); the manager window as an app of its own — the list and the chosen machine's page — and its thin command line (`--list`, `--doctor [--json]`, `--status [--json]`, `--start NAME`, `--stop NAME`) | Done, tested (an injected runner and secret store; a fake platform root) |
 | `ui/` | Blueprint layouts, generated `.ui`, `style.css`, colour themes, Phosphor icons; embedded as `ui.FS` | Done |
 | `internal/upgrade` | `inua upgrade`: the newest release's tag (from where `releases/latest` redirects), its archive checked against `checksums.txt`, the programs, launchers and icons staged next to their targets and then renamed into place | Done, tested |
 | `cmd/inua-shell` | The shell | Done |
