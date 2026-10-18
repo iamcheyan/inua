@@ -2,14 +2,15 @@ package ipc
 
 import (
 	"context"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/lyricat/inua/internal/socktest"
 )
 
 func TestRoundTrip(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "s.sock")
+	path := socktest.Socket(t, "s.sock")
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan error, 1)
 	go func() {

@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"sync"
 	"testing"
+
+	"github.com/lyricat/inua/internal/socktest"
 )
 
 // fakeHyprland serves the two Hyprland sockets from a temp dir.
@@ -26,7 +28,9 @@ type fakeHyprland struct {
 
 func newFakeHyprland(t *testing.T) *fakeHyprland {
 	t.Helper()
-	dir := t.TempDir()
+	// Its sockets are bound below, so the directory has to be short enough for
+	// their paths (socktest).
+	dir := socktest.Dir(t)
 	f := &fakeHyprland{
 		t: t,
 		paths: Paths{

@@ -13,22 +13,24 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/lyricat/inua/internal/socktest"
 )
 
 const statusJSON = `{
   "BackendState": "Running",
   "Self": {"ID": "nSELF", "HostName": "laptop", "DNSName": "laptop.example.ts.net.", "OS": "linux",
-           "TailscaleIPs": ["100.64.0.1", "fd7a:115c:a1e0::1"], "Online": true},
+           "TailscaleIPs": ["198.51.100.1", "2001:db8::1"], "Online": true},
   "CurrentTailnet": {"Name": "example", "MagicDNSSuffix": "example.ts.net", "MagicDNSEnabled": true},
   "Peer": {
     "k1": {"ID": "nPHONE", "HostName": "localhost", "DNSName": "phone.example.ts.net.", "OS": "iOS",
-           "TailscaleIPs": ["100.64.0.2"], "Online": false, "LastSeen": "2026-10-04T10:00:00Z"},
+           "TailscaleIPs": ["198.51.100.2"], "Online": false, "LastSeen": "2026-10-04T10:00:00Z"},
     "k2": {"ID": "nPI", "HostName": "pi", "DNSName": "pi.example.ts.net.", "OS": "linux",
-           "TailscaleIPs": ["fd7a:115c:a1e0::3", "100.64.0.3"], "Online": true, "CurAddr": "192.168.1.9:41641",
+           "TailscaleIPs": ["2001:db8::3", "198.51.100.3"], "Online": true, "CurAddr": "203.0.113.9:41641",
            "ExitNodeOption": true, "Tags": ["tag:home"], "LastSeen": "0001-01-01T00:00:00Z",
            "KeyExpiry": "2026-10-20T00:00:00Z"},
     "k3": {"ID": "nBOX", "HostName": "box", "DNSName": "", "OS": "linux",
-           "TailscaleIPs": ["100.64.0.4"], "Online": true, "Relay": "tok", "ExitNodeOption": true, "ExitNode": true}
+           "TailscaleIPs": ["198.51.100.4"], "Online": true, "Relay": "tok", "ExitNodeOption": true, "ExitNode": true}
   }
 }`
 
@@ -48,13 +50,13 @@ func TestStatus(t *testing.T) {
 	if want := []string{"box", "pi", "phone"}; !slices.Equal(names, want) {
 		t.Errorf("peers %v, want %v", names, want)
 	}
-	for q, want := range map[string]int{"PI": 1, "100.64.0.2": 1, "ios": 1, "tag:home": 1, "linux": 2, "nothing": 0} {
+	for q, want := range map[string]int{"PI": 1, "198.51.100.2": 1, "ios": 1, "tag:home": 1, "linux": 2, "nothing": 0} {
 		if n := len(st.Peers(q)); n != want {
 			t.Errorf("Peers(%q) = %d, want %d", q, n, want)
 		}
 	}
 	pi := st.PeerByID("nPI")
-	if pi.IPv4() != "100.64.0.3" || pi.MagicDNS() != "pi.example.ts.net" || pi.Connection() != "direct, 192.168.1.9:41641" {
+	if pi.IPv4() != "198.51.100.3" || pi.MagicDNS() != "pi.example.ts.net" || pi.Connection() != "direct, 203.0.113.9:41641" {
 		t.Errorf("pi %q %q %q", pi.IPv4(), pi.MagicDNS(), pi.Connection())
 	}
 	if c := st.PeerByID("nBOX").Connection(); c != "relayed through tok" {
@@ -86,19 +88,19 @@ func TestStatus(t *testing.T) {
 }
 
 func TestOfferExit(t *testing.T) {
-	p := Prefs{AdvertiseRoutes: []string{"192.168.1.0/24"}}
+	p := Prefs{AdvertiseRoutes: []string{"203.0.113.0/24"}}
 	if p.OffersExit() {
 		t.Error("offers")
 	}
 	on := p.OfferExit(true)
-	if !on.AdvertiseRoutesSet || !slices.Equal(on.AdvertiseRoutes, []string{"192.168.1.0/24", "0.0.0.0/0", "::/0"}) {
+	if !on.AdvertiseRoutesSet || !slices.Equal(on.AdvertiseRoutes, []string{"203.0.113.0/24", "0.0.0.0/0", "::/0"}) {
 		t.Errorf("on %+v", on)
 	}
 	p.AdvertiseRoutes = on.AdvertiseRoutes
 	if !p.OffersExit() {
 		t.Error("does not offer")
 	}
-	if off := p.OfferExit(false); !slices.Equal(off.AdvertiseRoutes, []string{"192.168.1.0/24"}) {
+	if off := p.OfferExit(false); !slices.Equal(off.AdvertiseRoutes, []string{"203.0.113.0/24"}) {
 		t.Errorf("off %+v", off)
 	}
 	// Offering nothing still sends an empty list, which the daemon sets.
@@ -111,15 +113,15 @@ func TestOfferExit(t *testing.T) {
 // fakeDaemon serves a local API on a socket in a temporary directory.
 func fakeDaemon(t *testing.T, h http.HandlerFunc) *Client {
 	t.Helper()
-	sock := filepath.Join(t.TempDir(), "tailscaled.sock")
-	l, err := net.Listen("unix", sock)
+	path := socktest.Socket(t, "tailscaled.sock")
+	l, err := net.Listen("unix", path)
 	if err != nil {
 		t.Fatal(err)
 	}
 	srv := &http.Server{Handler: h}
 	go srv.Serve(l)
 	t.Cleanup(func() { srv.Close() })
-	return NewClient(sock)
+	return NewClient(path)
 }
 
 func TestClient(t *testing.T) {
@@ -139,7 +141,7 @@ func TestClient(t *testing.T) {
 			json.NewDecoder(r.Body).Decode(&patched)
 			json.NewEncoder(w).Encode(Prefs{WantRunning: patched.WantRunning, ShieldsUp: true})
 		case r.URL.Path == "/localapi/v0/ping":
-			json.NewEncoder(w).Encode(PingResult{NodeName: "pi", LatencySeconds: 0.012, Endpoint: "192.168.1.9:41641"})
+			json.NewEncoder(w).Encode(PingResult{NodeName: "pi", LatencySeconds: 0.012, Endpoint: "203.0.113.9:41641"})
 		case strings.HasPrefix(r.URL.Path, "/localapi/v0/file-put/"):
 			io.Copy(&sent, r.Body)
 		case r.URL.Path == "/localapi/v0/logout":
@@ -157,7 +159,7 @@ func TestClient(t *testing.T) {
 	if err != nil || !p.WantRunning || !patched.WantRunningSet || patched.ShieldsUpSet {
 		t.Errorf("edit %v %+v %+v", err, p, patched)
 	}
-	r, err := c.Ping(ctx, "100.64.0.3")
+	r, err := c.Ping(ctx, "198.51.100.3")
 	if err != nil || r.Endpoint == "" {
 		t.Errorf("ping %v %+v", err, r)
 	}
@@ -170,7 +172,7 @@ func TestClient(t *testing.T) {
 	want := []string{
 		"GET /localapi/v0/status",
 		"PATCH /localapi/v0/prefs",
-		"POST /localapi/v0/ping?ip=100.64.0.3&type=disco",
+		"POST /localapi/v0/ping?ip=198.51.100.3&type=disco",
 		"PUT /localapi/v0/file-put/nPI/a%20b.png",
 		"POST /localapi/v0/logout",
 	}
