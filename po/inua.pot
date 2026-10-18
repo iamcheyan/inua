@@ -45,7 +45,7 @@ msgstr ""
 #: internal/apps/calendar/calendar.go:69
 #: internal/appui/clock.go:218
 #: internal/ui/control.go:308
-#: internal/ui/lock.go:238
+#: internal/ui/lock.go:241
 msgid "Monday, January 2"
 msgstr ""
 
@@ -161,6 +161,148 @@ msgstr ""
 #: internal/apps/clock/clock.go:140
 msgid "UTC"
 msgstr ""
+
+#: internal/apps/connect/battery.go:34
+msgid "%s's battery is low"
+msgstr ""
+
+#: internal/apps/connect/battery.go:35
+msgid "%d%% left"
+msgstr ""
+
+#: internal/apps/connect/battery.go:89
+msgid "%s is looking for this computer"
+msgstr ""
+
+#: internal/apps/connect/battery.go:90
+msgid "Found it"
+msgstr ""
+
+#: internal/apps/connect/notifications.go:94
+#: internal/connectui/app.go:38
+#: ui/connectreply.ui:14
+msgid "Reply"
+msgstr ""
+
+#: internal/apps/connect/service.go:246
+#: internal/apps/connect/share.go:213
+#: internal/apps/connect/share.go:219
+#: internal/connectui/app.go:20
+#: ui/connect.ui:14
+#: ui/connect.ui:32
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:3
+msgid "Mobile Link"
+msgstr ""
+
+#: internal/apps/connect/service.go:248
+msgid "%s wants to pair"
+msgstr ""
+
+#: internal/apps/connect/service.go:249
+msgid "Pair only if %s shows the key %s."
+msgstr ""
+
+#: internal/apps/connect/service.go:250
+#: internal/connectui/window.go:425
+#: internal/connectui/window.go:434
+#: internal/remoteui/window.go:527
+#: internal/remoteui/window.go:696
+#: ui/remote.ui:564
+msgid "Pair"
+msgstr ""
+
+#: internal/apps/connect/service.go:250
+#: internal/connectui/window.go:426
+msgid "Refuse"
+msgstr ""
+
+#: internal/apps/connect/service.go:292
+msgid "Ping!"
+msgstr ""
+
+#: internal/apps/connect/service.go:505
+msgid "Wants to pair"
+msgstr ""
+
+#: internal/apps/connect/service.go:507
+msgid "Pairing…"
+msgstr ""
+
+#: internal/apps/connect/service.go:509
+#: internal/apps/tailscale/status.go:265
+#: internal/remoteui/window.go:266
+msgid "Connected"
+msgstr ""
+
+#: internal/apps/connect/service.go:511
+msgid "Away"
+msgstr ""
+
+#: internal/apps/connect/service.go:513
+#: internal/remoteui/window.go:261
+msgid "Not paired"
+msgstr ""
+
+#: internal/apps/connect/service.go:517
+msgid "%d%%, charging"
+msgstr ""
+
+#: internal/apps/connect/service.go:519
+#: internal/ui/settings.go:274
+#: internal/ui/settings.go:282
+#: internal/ui/settings.go:285
+#: internal/ui/settings.go:626
+#: internal/ui/settings.go:628
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:694
+msgid "%d%%"
+msgstr ""
+
+#: internal/apps/connect/share.go:65
+msgid "Text from %s"
+msgstr ""
+
+#: internal/apps/connect/share.go:66
+msgid "It is on the clipboard."
+msgstr ""
+
+#: internal/apps/connect/share.go:115
+msgid "A file from %s did not arrive"
+msgstr ""
+
+#: internal/apps/connect/share.go:127
+msgid "A file from %s"
+msgstr ""
+
+#: internal/apps/connect/share.go:129
+#: internal/appui/workshop_blocks.go:427
+#: internal/appui/workshop_manager.go:63
+#: internal/filesui/cards.go:673
+#: internal/filesui/window.go:700
+#: internal/ui/record.go:163
+#: internal/ui/system_ipc.go:241
+msgid "Open"
+msgstr ""
+
+#: internal/apps/connect/share.go:129
+#: internal/ui/record.go:163
+#: internal/ui/screenshot.go:808
+msgid "Show in Folder"
+msgstr ""
+
+#: internal/apps/connect/share.go:160
+msgid "Shared file"
+msgstr ""
+
+#: internal/apps/connect/share.go:214
+msgid "%s did not get %s"
+msgstr ""
+
+#: internal/apps/connect/share.go:220
+msgid "Sent %d file to %s"
+msgid_plural "Sent %d files to %s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: internal/apps/music/music.go:393
 msgid "Flat"
@@ -286,13 +428,13 @@ msgid "%d d %d h"
 msgstr ""
 
 #: internal/apps/sysmon/sysmon.go:402
-#: internal/filesui/jobs.go:163
+#: internal/filesui/jobs.go:170
 msgid "%d h %d min"
 msgstr ""
 
 #: internal/apps/sysmon/sysmon.go:404
 #: internal/appui/clock.go:156
-#: internal/filesui/jobs.go:161
+#: internal/filesui/jobs.go:168
 msgid "%d min"
 msgstr ""
 
@@ -348,10 +490,6 @@ msgstr ""
 msgid "in %d d"
 msgstr ""
 
-#: internal/apps/tailscale/status.go:265
-msgid "Connected"
-msgstr ""
-
 #: internal/apps/tailscale/status.go:267
 msgid "Disconnected"
 msgstr ""
@@ -367,6 +505,8 @@ msgstr ""
 
 #: internal/apps/tailscale/status.go:273
 #: internal/appui/tailscale.go:152
+#: internal/filesui/remote.go:170
+#: internal/filesui/remotesetup.go:418
 #: internal/shell/status.go:128
 msgid "Connecting…"
 msgstr ""
@@ -507,7 +647,7 @@ msgstr ""
 #: internal/appui/calculator.go:49
 #: internal/appui/gpg.go:1529
 #: internal/appui/pass.go:801
-#: internal/filesui/cards.go:373
+#: internal/filesui/cards.go:430
 #: internal/ui/clipboard.go:459
 #: internal/vmui/window.go:1740
 #: internal/vmui/window.go:1769
@@ -1093,8 +1233,8 @@ msgid "The decrypted copy goes to the trash, where it can be restored from; the 
 msgstr ""
 
 #: internal/appui/gpg.go:1537
-#: internal/filesui/cards.go:712
-#: internal/filesui/window.go:729
+#: internal/filesui/cards.go:687
+#: internal/filesui/window.go:741
 #: ui/settings.ui:184
 #: ui/settings.ui:442
 msgid "Move to Trash"
@@ -1272,7 +1412,7 @@ msgstr ""
 
 #: internal/appui/pass.go:601
 #: internal/appui/pass.go:626
-#: internal/filesui/window.go:712
+#: internal/filesui/window.go:716
 #: internal/ui/askpass.go:203
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
@@ -1404,6 +1544,7 @@ msgstr ""
 
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
+#: internal/connectui/window.go:560
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
@@ -1432,7 +1573,7 @@ msgstr ""
 
 #: internal/appui/pass.go:1066
 #: internal/appui/sysmon.go:965
-#: internal/filesui/pane.go:1358
+#: internal/filesui/pane.go:1373
 #: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
@@ -1478,13 +1619,15 @@ msgid "It is not an image this app reads (PNG or JPEG)."
 msgstr ""
 
 #: internal/appui/pass_otp.go:189
-#: internal/filesui/cards.go:435
+#: internal/filesui/cards.go:492
 msgid "Replace"
 msgstr ""
 
 #: internal/appui/pass_otp.go:192
 #: internal/appui/workshop_manager.go:88
+#: ui/connect.ui:966
 #: ui/pass.ui:818
+#: ui/remote.ui:956
 msgid "Add"
 msgstr ""
 
@@ -1639,7 +1782,6 @@ msgstr ""
 
 #: internal/appui/sysmon.go:148
 #: internal/appui/sysmon.go:1031
-#: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
 #: internal/shell/dock.go:296
 msgid "NETWORK"
@@ -1738,6 +1880,11 @@ msgid "Parent"
 msgstr ""
 
 #: internal/appui/sysmon.go:778
+#: internal/filesui/remote.go:178
+#: internal/filesui/remotesetup.go:45
+#: internal/filesui/remotesetup.go:54
+#: internal/filesui/remotesetup.go:60
+#: internal/filesui/remotesetup.go:66
 msgid "User"
 msgstr ""
 
@@ -1770,6 +1917,7 @@ msgid "Private"
 msgstr ""
 
 #: internal/appui/sysmon.go:782
+#: internal/remoteui/window.go:462
 msgid "Shared"
 msgstr ""
 
@@ -1798,6 +1946,11 @@ msgstr ""
 
 #: internal/appui/sysmon.go:786
 #: internal/filesui/kinds.go:34
+#: internal/filesui/remotesetup.go:47
+#: internal/filesui/remotesetup.go:53
+#: internal/filesui/remotesetup.go:68
+#: internal/filesui/remotesetup.go:75
+#: internal/filesui/remotesetup.go:83
 #: internal/viewerui/app.go:792
 msgid "Folder"
 msgstr ""
@@ -1901,8 +2054,13 @@ msgstr ""
 
 #: internal/appui/sysmon.go:960
 #: internal/appui/tailscale.go:630
+#: internal/connectui/window.go:547
+#: internal/filesui/archive.go:76
+#: internal/filesui/remotesetup.go:226
+#: internal/filesui/renamemany.go:168
 #: internal/ui/settings_ai.go:453
 #: internal/viewerui/app.go:791
+#: ui/connect.ui:290
 #: ui/gpg.ui:1342
 #: ui/settings.ui:4810
 #: ui/sysmon.ui:96
@@ -2227,6 +2385,7 @@ msgid "Copy Name"
 msgstr ""
 
 #: internal/appui/tailscale.go:507
+#: ui/connect.ui:621
 msgid "Ping"
 msgstr ""
 
@@ -2441,11 +2600,14 @@ msgid "Cannot play it: %s"
 msgstr ""
 
 #: internal/appui/video.go:529
+#: internal/connectui/window.go:387
+#: internal/remoteui/window.go:468
 #: internal/shell/notify.go:44
 #: internal/shell/status.go:73
 #: internal/shell/status.go:88
 #: internal/shell/status.go:107
 #: internal/shell/status.go:122
+#: ui/remote.ui:318
 #: ui/settings.ui:5027
 msgid "Off"
 msgstr ""
@@ -2559,19 +2721,28 @@ msgid "Unknown building block %q"
 msgstr ""
 
 #: internal/appui/workshop.go:990
-#: internal/filesui/cards.go:285
-#: internal/filesui/cards.go:334
-#: internal/filesui/cards.go:372
-#: internal/filesui/cards.go:389
-#: internal/filesui/cards.go:427
-#: internal/filesui/cards.go:610
+#: internal/connectui/window.go:429
+#: internal/filesui/archive.go:49
+#: internal/filesui/archive.go:309
+#: internal/filesui/cards.go:342
+#: internal/filesui/cards.go:391
+#: internal/filesui/cards.go:429
+#: internal/filesui/cards.go:446
+#: internal/filesui/cards.go:484
+#: internal/filesui/cards.go:583
+#: internal/filesui/remote.go:159
+#: internal/filesui/remote.go:219
+#: internal/filesui/remotesetup.go:152
+#: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
 #: internal/gamesui/fortune_host.go:236
+#: internal/remoteui/window.go:694
 #: internal/ui/askpass.go:270
 #: internal/ui/askpass.go:412
 #: internal/ui/askpass.go:416
 #: ui/clock.ui:244
 #: ui/clock.ui:454
+#: ui/connectreply.ui:49
 #: ui/files.ui:155
 #: ui/gpg.ui:1252
 #: ui/gpg.ui:1469
@@ -2589,18 +2760,10 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: internal/appui/workshop_blocks.go:427
-#: internal/appui/workshop_manager.go:63
-#: internal/filesui/cards.go:698
-#: internal/filesui/window.go:696
-#: internal/ui/record.go:163
-#: internal/ui/system_ipc.go:241
-msgid "Open"
-msgstr ""
-
 #: internal/appui/workshop_blocks.go:438
 #: internal/ui/settings_ai.go:496
 #: ui/clock.ui:252
+#: ui/connect.ui:420
 #: ui/pass.ui:490
 #: ui/settings.ui:5588
 msgid "Save"
@@ -2718,7 +2881,7 @@ msgstr ""
 msgid "No API key for %s (%s): type one in Settings → AI."
 msgstr ""
 
-#: internal/assistant/assistant.go:585
+#: internal/assistant/assistant.go:589
 msgid "Remote Console: %s"
 msgstr ""
 
@@ -2833,6 +2996,84 @@ msgstr ""
 #: internal/config/strftime.go:82
 #: internal/i18n/time.go:24
 msgid "PM"
+msgstr ""
+
+#: internal/connectui/reply.go:39
+msgid "Answer %s"
+msgstr ""
+
+#: internal/connectui/reply.go:68
+msgid "Not sent: %v"
+msgstr ""
+
+#: internal/connectui/window.go:235
+msgid "None found yet: open KDE Connect on your phone."
+msgstr ""
+
+#: internal/connectui/window.go:355
+msgid "Mobile Link did not start: %v"
+msgstr ""
+
+#: internal/connectui/window.go:381
+msgid "Visible to your devices"
+msgstr ""
+
+#: internal/connectui/window.go:382
+msgid "Devices running KDE Connect, GSConnect or Valent find this computer on this network and the tailnet, and pair with it."
+msgstr ""
+
+#: internal/connectui/window.go:384
+#: internal/remoteui/window.go:465
+msgid "Starting…"
+msgstr ""
+
+#: internal/connectui/window.go:385
+msgid "The service is starting."
+msgstr ""
+
+#: internal/connectui/window.go:388
+msgid "Share the clipboard and files with your phone, see its notifications and battery here, and use it as a touchpad or a remote."
+msgstr ""
+
+#: internal/connectui/window.go:395
+msgid "A device lists them and runs one with a tap, here, as you."
+msgstr ""
+
+#: internal/connectui/window.go:403
+msgid "The device is gone."
+msgstr ""
+
+#: internal/connectui/window.go:427
+msgid "%s asks to pair. Pair only if it shows this key:"
+msgstr ""
+
+#: internal/connectui/window.go:430
+msgid "Accept on %s if it shows this key:"
+msgstr ""
+
+#: internal/connectui/window.go:432
+#: internal/remoteui/window.go:559
+msgid "Unpair"
+msgstr ""
+
+#: internal/connectui/window.go:435
+msgid "Not paired: pair to share with it."
+msgstr ""
+
+#: internal/connectui/window.go:439
+msgid "it connects again when it is on this network or the tailnet"
+msgstr ""
+
+#: internal/connectui/window.go:475
+msgid "Send files"
+msgstr ""
+
+#: internal/connectui/window.go:517
+msgid "Asked %s to connect."
+msgstr ""
+
+#: internal/connectui/window.go:552
+msgid "What it runs: systemctl suspend"
 msgstr ""
 
 #: internal/convert/convert.go:97
@@ -3410,170 +3651,300 @@ msgstr ""
 msgid "Opens plain text"
 msgstr ""
 
-#: internal/filesui/app.go:69
-#: internal/filesui/cards.go:708
+#: internal/filesui/app.go:75
+#: internal/filesui/cards.go:683
+#: internal/filesui/remote.go:371
 #: internal/filesui/sidebar.go:31
-#: internal/filesui/window.go:90
-#: internal/filesui/window.go:268
+#: internal/filesui/window.go:93
+#: internal/filesui/window.go:271
 #: ui/gpg.ui:445
 #: ui/gpg.ui:810
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
 msgid "Files"
 msgstr ""
 
-#: internal/filesui/app.go:227
+#: internal/filesui/app.go:233
 msgid "%s is plugged in."
 msgstr ""
 
-#: internal/filesui/app.go:306
+#: internal/filesui/app.go:311
 msgid "There are no files on the clipboard."
 msgstr ""
 
-#: internal/filesui/app.go:360
+#: internal/filesui/app.go:365
 msgid "Nothing to undo."
+msgstr ""
+
+#: internal/filesui/archive.go:50
+msgid "Compress"
+msgstr ""
+
+#: internal/filesui/archive.go:54
+msgid "Compress %d item"
+msgid_plural "Compress %d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/filesui/archive.go:56
+msgid "Compress “%s”"
+msgstr ""
+
+#: internal/filesui/archive.go:58
+msgid "The archive is made in “%s”."
+msgstr ""
+
+#: internal/filesui/archive.go:79
+msgid "Archive"
+msgstr ""
+
+#: internal/filesui/archive.go:86
+msgid "Format"
+msgstr ""
+
+#: internal/filesui/archive.go:104
+msgid "Needs the 7z program (7zip)"
+msgstr ""
+
+#: internal/filesui/archive.go:123
+msgid "Compression"
+msgstr ""
+
+#: internal/filesui/archive.go:131
+msgid "Fast"
+msgstr ""
+
+#: internal/filesui/archive.go:131
+msgid "Normal"
+msgstr ""
+
+#: internal/filesui/archive.go:131
+msgid "Smallest"
+msgstr ""
+
+#: internal/filesui/archive.go:163
+#: internal/filesui/archive.go:320
+#: internal/filesui/remote.go:178
+#: internal/filesui/remotesetup.go:46
+#: internal/filesui/remotesetup.go:55
+#: internal/filesui/remotesetup.go:61
+#: internal/filesui/remotesetup.go:67
+#: ui/lock.ui:76
+#: ui/polkit.ui:690
+msgid "Password"
+msgstr ""
+
+#: internal/filesui/archive.go:164
+msgid "none"
+msgstr ""
+
+#: internal/filesui/archive.go:165
+msgid "Repeat it"
+msgstr ""
+
+#: internal/filesui/archive.go:166
+msgid "Lock the file names too"
+msgstr ""
+
+#: internal/filesui/archive.go:168
+msgid "Without the password, not even the list of files shows (7z)"
+msgstr ""
+
+#: internal/filesui/archive.go:180
+msgid "Leave out hidden files"
+msgstr ""
+
+#: internal/filesui/archive.go:182
+msgid "Names starting with a dot, inside the folders: .git, .cache …"
+msgstr ""
+
+#: internal/filesui/archive.go:187
+msgid "Advanced"
+msgstr ""
+
+#: internal/filesui/archive.go:214
+msgid "%s archives cannot have a password: choose Zip or 7z for one."
+msgstr ""
+
+#: internal/filesui/archive.go:216
+#: internal/filesui/archive.go:254
+msgid "A password needs the 7z program (7zip)."
+msgstr ""
+
+#: internal/filesui/archive.go:218
+msgid "Locked with AES-256: older unzip programs cannot open it; 7-Zip and the file managers of today can."
+msgstr ""
+
+#: internal/filesui/archive.go:248
+msgid "7z archives need the 7z program (7zip)."
+msgstr ""
+
+#: internal/filesui/archive.go:251
+msgid "%s archives cannot have a password."
+msgstr ""
+
+#: internal/filesui/archive.go:257
+msgid "The two passwords differ."
+msgstr ""
+
+#: internal/filesui/archive.go:263
+#: internal/filesui/cards.go:355
+#: internal/filesui/cards.go:400
+msgid "“%s” is taken here."
+msgstr ""
+
+#: internal/filesui/archive.go:303
+msgid "Type its password to extract it."
+msgstr ""
+
+#: internal/filesui/archive.go:305
+msgid "That is not its password. Try again."
+msgstr ""
+
+#: internal/filesui/archive.go:310
+msgid "Extract"
+msgstr ""
+
+#: internal/filesui/archive.go:319
+msgid "“%s” is locked"
 msgstr ""
 
 #: internal/filesui/caches.go:140
 #: internal/filesui/details.go:49
 #: internal/filesui/details.go:282
-#: internal/filesui/jobs.go:141
-#: internal/filesui/jobs.go:143
-#: internal/filesui/jobs.go:145
-#: internal/filesui/jobs.go:147
-#: internal/filesui/jobs.go:149
-#: internal/filesui/jobs.go:151
-#: internal/filesui/pane.go:970
+#: internal/filesui/jobs.go:144
+#: internal/filesui/jobs.go:146
+#: internal/filesui/jobs.go:148
+#: internal/filesui/jobs.go:150
+#: internal/filesui/jobs.go:152
+#: internal/filesui/jobs.go:154
+#: internal/filesui/pane.go:985
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/cards.go:286
-#: internal/filesui/cards.go:306
-#: internal/filesui/cards.go:711
+#: internal/filesui/cards.go:343
+#: internal/filesui/cards.go:363
+#: internal/filesui/cards.go:686
+#: internal/filesui/renamemany.go:38
 msgid "Rename"
 msgstr ""
 
-#: internal/filesui/cards.go:298
-#: internal/filesui/cards.go:343
-msgid "“%s” is taken here."
-msgstr ""
-
-#: internal/filesui/cards.go:313
+#: internal/filesui/cards.go:370
 msgid "A name cannot be empty."
 msgstr ""
 
-#: internal/filesui/cards.go:315
+#: internal/filesui/cards.go:372
 msgid "“%s” is not a name."
 msgstr ""
 
-#: internal/filesui/cards.go:317
+#: internal/filesui/cards.go:374
 msgid "A name cannot hold “/”."
 msgstr ""
 
-#: internal/filesui/cards.go:319
+#: internal/filesui/cards.go:376
 msgid "The name is too long."
 msgstr ""
 
-#: internal/filesui/cards.go:327
+#: internal/filesui/cards.go:384
 msgid "New file"
 msgstr ""
 
-#: internal/filesui/cards.go:327
+#: internal/filesui/cards.go:384
 msgid "Untitled"
 msgstr ""
 
-#: internal/filesui/cards.go:329
+#: internal/filesui/cards.go:386
 msgid "New folder"
 msgstr ""
 
-#: internal/filesui/cards.go:329
+#: internal/filesui/cards.go:386
 msgid "New Folder"
 msgstr ""
 
-#: internal/filesui/cards.go:335
+#: internal/filesui/cards.go:392
 msgid "Make"
 msgstr ""
 
-#: internal/filesui/cards.go:367
+#: internal/filesui/cards.go:424
 msgid "Delete %d item for good?"
 msgid_plural "Delete %d items for good?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/cards.go:369
+#: internal/filesui/cards.go:426
 msgid "Delete “%s” for good?"
 msgstr ""
 
-#: internal/filesui/cards.go:384
+#: internal/filesui/cards.go:441
 msgid "They do not go to the trash, and this cannot be undone."
 msgstr ""
 
-#: internal/filesui/cards.go:390
+#: internal/filesui/cards.go:447
 #: internal/filesui/sidebar.go:55
-#: internal/filesui/window.go:670
-#: internal/filesui/window.go:676
+#: internal/filesui/window.go:673
+#: internal/filesui/window.go:679
 #: internal/shell/commands.go:32
 #: ui/filespane.ui:250
 msgid "Empty Trash"
 msgstr ""
 
-#: internal/filesui/cards.go:407
+#: internal/filesui/cards.go:464
 msgid "Empty the trash?"
 msgstr ""
 
-#: internal/filesui/cards.go:407
+#: internal/filesui/cards.go:464
 msgid "Everything in it is deleted for good, on every drive."
 msgstr ""
 
-#: internal/filesui/cards.go:424
+#: internal/filesui/cards.go:481
 msgid "There: %s, %s. This one: %s, %s."
 msgstr ""
 
-#: internal/filesui/cards.go:428
+#: internal/filesui/cards.go:485
 msgid "Skip"
 msgstr ""
 
-#: internal/filesui/cards.go:429
+#: internal/filesui/cards.go:486
 msgid "Keep both"
 msgstr ""
 
-#: internal/filesui/cards.go:433
+#: internal/filesui/cards.go:490
 msgid "Merge"
 msgstr ""
 
-#: internal/filesui/cards.go:438
+#: internal/filesui/cards.go:495
 msgid "“%s” is already in %s"
 msgstr ""
 
-#: internal/filesui/cards.go:440
+#: internal/filesui/cards.go:497
 msgid "A folder “%s” is already in %s"
 msgstr ""
 
-#: internal/filesui/cards.go:443
-#: ui/files.ui:253
+#: internal/filesui/cards.go:500
+#: ui/files.ui:261
 msgid "Do the same for the rest"
 msgstr ""
 
-#: internal/filesui/cards.go:452
+#: internal/filesui/cards.go:509
 msgid "… and %d more"
 msgid_plural "… and %d more"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/cards.go:454
-#: internal/filesui/cards.go:735
+#: internal/filesui/cards.go:511
+#: internal/filesui/cards.go:710
 #: internal/ui/settings_bench.go:139
 #: ui/settings.ui:3033
 #: ui/settings.ui:4565
 msgid "Close"
 msgstr ""
 
-#: internal/filesui/cards.go:455
+#: internal/filesui/cards.go:512
 msgid "Some items could not be done"
 msgstr ""
 
-#: internal/filesui/cards.go:464
+#: internal/filesui/cards.go:521
 msgid "Jump to a folder"
 msgstr ""
 
@@ -3619,192 +3990,193 @@ msgstr ""
 msgid "Mounting %s…"
 msgstr ""
 
-#: internal/filesui/cards.go:611
+#: internal/filesui/cards.go:584
 msgid "Unlock"
 msgstr ""
 
-#: internal/filesui/cards.go:613
+#: internal/filesui/cards.go:587
 msgid "Unlocking…"
 msgstr ""
 
-#: internal/filesui/cards.go:634
+#: internal/filesui/cards.go:609
 msgid "That passphrase does not open it."
 msgstr ""
 
-#: internal/filesui/cards.go:648
+#: internal/filesui/cards.go:623
 msgid "Unlock %s"
 msgstr ""
 
-#: internal/filesui/cards.go:649
+#: internal/filesui/cards.go:624
 msgid "The drive is encrypted. Its passphrase is not kept."
 msgstr ""
 
-#: internal/filesui/cards.go:659
+#: internal/filesui/cards.go:634
 msgid "Ejecting %s…"
 msgstr ""
 
-#: internal/filesui/cards.go:670
+#: internal/filesui/cards.go:645
 msgid "%s can be removed now."
 msgstr ""
 
-#: internal/filesui/cards.go:672
+#: internal/filesui/cards.go:647
 msgid "%s is unmounted."
 msgstr ""
 
-#: internal/filesui/cards.go:682
+#: internal/filesui/cards.go:657
 msgid "%s is in use: close the files open on it first."
 msgstr ""
 
-#: internal/filesui/cards.go:684
+#: internal/filesui/cards.go:659
 msgid "Not allowed."
 msgstr ""
 
-#: internal/filesui/cards.go:686
+#: internal/filesui/cards.go:661
+#: internal/remoteui/stream.go:472
 msgid "%s: %v"
 msgstr ""
 
-#: internal/filesui/cards.go:697
+#: internal/filesui/cards.go:672
 msgid "Moving"
 msgstr ""
 
-#: internal/filesui/cards.go:699
+#: internal/filesui/cards.go:674
 msgid "Parent folder"
 msgstr ""
 
-#: internal/filesui/cards.go:700
+#: internal/filesui/cards.go:675
 msgid "Back / forward"
 msgstr ""
 
-#: internal/filesui/cards.go:701
+#: internal/filesui/cards.go:676
 #: internal/filesui/sidebar.go:41
 #: internal/filesui/tabs.go:96
-#: internal/filesui/window.go:275
+#: internal/filesui/window.go:278
 msgid "Home"
 msgstr ""
 
-#: internal/filesui/cards.go:702
+#: internal/filesui/cards.go:677
 msgid "The sidebar's places"
 msgstr ""
 
-#: internal/filesui/cards.go:703
+#: internal/filesui/cards.go:678
 msgid "Type a path or a server"
 msgstr ""
 
-#: internal/filesui/cards.go:704
+#: internal/filesui/cards.go:679
 msgid "Jump to a folder used before"
 msgstr ""
 
-#: internal/filesui/cards.go:705
+#: internal/filesui/cards.go:680
 #: ui/filespane.ui:115
 msgid "Search below this folder"
 msgstr ""
 
-#: internal/filesui/cards.go:706
+#: internal/filesui/cards.go:681
 msgid "Letters"
 msgstr ""
 
-#: internal/filesui/cards.go:706
+#: internal/filesui/cards.go:681
 msgid "Filter this folder; Esc clears"
 msgstr ""
 
-#: internal/filesui/cards.go:709
+#: internal/filesui/cards.go:684
 msgid "Copy / cut / paste"
 msgstr ""
 
-#: internal/filesui/cards.go:710
+#: internal/filesui/cards.go:685
 msgid "Copy the paths (none selected: the folder's)"
 msgstr ""
 
-#: internal/filesui/cards.go:713
+#: internal/filesui/cards.go:688
 msgid "Delete for good"
 msgstr ""
 
-#: internal/filesui/cards.go:714
+#: internal/filesui/cards.go:689
 msgid "New folder / new file"
 msgstr ""
 
-#: internal/filesui/cards.go:715
+#: internal/filesui/cards.go:690
 msgid "Undo"
 msgstr ""
 
-#: internal/filesui/cards.go:716
+#: internal/filesui/cards.go:691
 msgid "Copy / move to the other pane"
 msgstr ""
 
-#: internal/filesui/cards.go:717
-#: internal/filesui/window.go:698
+#: internal/filesui/cards.go:692
+#: internal/filesui/window.go:702
 msgid "Open with…"
 msgstr ""
 
-#: internal/filesui/cards.go:718
-#: internal/filesui/window.go:743
+#: internal/filesui/cards.go:693
+#: internal/filesui/window.go:755
 msgid "Bookmark"
 msgstr ""
 
-#: internal/filesui/cards.go:719
-#: internal/filesui/window.go:685
+#: internal/filesui/cards.go:694
+#: internal/filesui/window.go:688
 msgid "Terminal here"
 msgstr ""
 
-#: internal/filesui/cards.go:721
+#: internal/filesui/cards.go:696
 #: ui/screenshot.ui:162
 #: ui/shotdrawer.ui:122
 msgid "Window"
 msgstr ""
 
-#: internal/filesui/cards.go:722
+#: internal/filesui/cards.go:697
 msgid "New tab / close tab"
 msgstr ""
 
-#: internal/filesui/cards.go:723
+#: internal/filesui/cards.go:698
 msgid "Next / previous tab"
 msgstr ""
 
-#: internal/filesui/cards.go:724
-#: internal/filesui/window.go:701
+#: internal/filesui/cards.go:699
+#: internal/filesui/window.go:705
 msgid "Middle click"
 msgstr ""
 
-#: internal/filesui/cards.go:724
+#: internal/filesui/cards.go:699
 msgid "A folder in a new tab"
 msgstr ""
 
-#: internal/filesui/cards.go:725
+#: internal/filesui/cards.go:700
 msgid "List / grid"
 msgstr ""
 
-#: internal/filesui/cards.go:726
-#: internal/filesui/window.go:689
+#: internal/filesui/cards.go:701
+#: internal/filesui/window.go:693
 msgid "Hidden files"
 msgstr ""
 
-#: internal/filesui/cards.go:727
+#: internal/filesui/cards.go:702
 msgid "Two panes, the other pane"
 msgstr ""
 
-#: internal/filesui/cards.go:728
+#: internal/filesui/cards.go:703
 msgid "Sidebar"
 msgstr ""
 
-#: internal/filesui/cards.go:729
-#: internal/filesui/window.go:735
+#: internal/filesui/cards.go:704
+#: internal/filesui/window.go:747
 msgid "Details"
 msgstr ""
 
-#: internal/filesui/cards.go:730
+#: internal/filesui/cards.go:705
 msgid "Bigger / smaller / normal"
 msgstr ""
 
-#: internal/filesui/cards.go:731
+#: internal/filesui/cards.go:706
 msgid "New window, close it"
 msgstr ""
 
-#: internal/filesui/cards.go:732
-#: internal/filesui/window.go:690
+#: internal/filesui/cards.go:707
+#: internal/filesui/window.go:694
 msgid "Reload"
 msgstr ""
 
-#: internal/filesui/cards.go:736
+#: internal/filesui/cards.go:711
 msgid "Keys"
 msgstr ""
 
@@ -3875,10 +4247,10 @@ msgid "SIZE OF THE FILES"
 msgstr ""
 
 #: internal/filesui/details.go:55
-#: internal/filesui/pane.go:892
+#: internal/filesui/pane.go:907
 #: internal/filesui/sidebar.go:54
 #: internal/filesui/tabs.go:94
-#: internal/filesui/window.go:271
+#: internal/filesui/window.go:274
 msgid "Trash"
 msgstr ""
 
@@ -3916,39 +4288,53 @@ msgstr ""
 msgid "more than %s"
 msgstr ""
 
-#: internal/filesui/jobs.go:121
+#: internal/filesui/jobs.go:124
 msgid "%s left"
 msgstr ""
 
-#: internal/filesui/jobs.go:141
+#: internal/filesui/jobs.go:144
 msgid "Copying %s to %s"
 msgstr ""
 
-#: internal/filesui/jobs.go:143
+#: internal/filesui/jobs.go:146
 msgid "Moving %s to %s"
 msgstr ""
 
-#: internal/filesui/jobs.go:145
+#: internal/filesui/jobs.go:148
 msgid "Moving %s to the trash"
 msgstr ""
 
-#: internal/filesui/jobs.go:147
+#: internal/filesui/jobs.go:150
 msgid "Deleting %s"
 msgstr ""
 
-#: internal/filesui/jobs.go:149
+#: internal/filesui/jobs.go:152
 msgid "Restoring %s"
 msgstr ""
 
-#: internal/filesui/jobs.go:151
+#: internal/filesui/jobs.go:154
 msgid "Linking %s"
 msgstr ""
 
-#: internal/filesui/jobs.go:159
+#: internal/filesui/jobs.go:156
+msgid "Compressing into %s"
+msgstr ""
+
+#: internal/filesui/jobs.go:158
+msgid "Extracting %s"
+msgstr ""
+
+#: internal/filesui/jobs.go:158
+msgid "%d archive"
+msgid_plural "%d archives"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/filesui/jobs.go:166
 msgid "%d s"
 msgstr ""
 
-#: internal/filesui/jobs.go:195
+#: internal/filesui/jobs.go:205
 msgid "Moved %d item to the trash (Ctrl+Z puts it back)."
 msgid_plural "Moved %d items to the trash (Ctrl+Z puts them back)."
 msgstr[0] ""
@@ -3982,89 +4368,535 @@ msgstr ""
 msgid "Find an app"
 msgstr ""
 
-#: internal/filesui/pane.go:338
+#: internal/filesui/pane.go:348
 msgid "%s → %s"
 msgstr ""
 
-#: internal/filesui/pane.go:456
+#: internal/filesui/pane.go:466
 msgid "%s free"
 msgstr ""
 
-#: internal/filesui/pane.go:654
+#: internal/filesui/pane.go:664
 msgid "You may not read this folder."
 msgstr ""
 
-#: internal/filesui/pane.go:656
+#: internal/filesui/pane.go:666
 msgid "This folder does not exist."
 msgstr ""
 
-#: internal/filesui/pane.go:658
+#: internal/filesui/pane.go:668
 msgid "This folder cannot be read: %v"
 msgstr ""
 
-#: internal/filesui/pane.go:660
+#: internal/filesui/pane.go:670
 msgid "Nothing here matches “%s”."
 msgstr ""
 
-#: internal/filesui/pane.go:662
+#: internal/filesui/pane.go:672
 msgid "Type to search below this folder."
 msgstr ""
 
-#: internal/filesui/pane.go:664
+#: internal/filesui/pane.go:674
 msgid "Nothing below this folder matches “%s”."
 msgstr ""
 
-#: internal/filesui/pane.go:666
+#: internal/filesui/pane.go:676
 msgid "The trash is empty."
 msgstr ""
 
-#: internal/filesui/pane.go:668
+#: internal/filesui/pane.go:678
 msgid "Only hidden files: %d of them (Ctrl+H shows them)."
 msgid_plural "Only hidden files: %d of them (Ctrl+H shows them)."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/pane.go:670
+#: internal/filesui/pane.go:680
 msgid "This folder is empty."
 msgstr ""
 
-#: internal/filesui/pane.go:830
+#: internal/filesui/pane.go:840
 msgid "%s does not exist."
 msgstr ""
 
-#: internal/filesui/pane.go:926
+#: internal/filesui/pane.go:941
 msgid "SEARCH"
 msgstr ""
 
-#: internal/filesui/pane.go:968
+#: internal/filesui/pane.go:983
 msgid "%d found"
 msgid_plural "%d found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/pane.go:973
+#: internal/filesui/pane.go:988
 msgid "%d hidden"
 msgid_plural "%d hidden"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/pane.go:986
+#: internal/filesui/pane.go:1001
 msgid "%d selected"
 msgid_plural "%d selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/pane.go:1108
+#: internal/filesui/pane.go:1123
 msgid "done"
 msgstr ""
 
-#: internal/filesui/pane.go:1356
+#: internal/filesui/pane.go:1371
 msgid "15:04"
 msgstr ""
 
-#: internal/filesui/pane.go:1360
+#: internal/filesui/pane.go:1375
 #: internal/ui/shotdrawer.go:329
 msgid "Jan 2 2006"
+msgstr ""
+
+#: internal/filesui/remote.go:59
+#: internal/remoteui/stream.go:134
+msgid "Connecting to %s…"
+msgstr ""
+
+#: internal/filesui/remote.go:160
+#: internal/filesui/remotesetup.go:132
+#: ui/remote.ui:574
+#: ui/vm.ui:1548
+#: ui/vm.ui:1569
+msgid "Connect"
+msgstr ""
+
+#: internal/filesui/remote.go:164
+#: internal/filesui/remotesetup.go:340
+msgid "Both the key's ID and its secret are needed."
+msgstr ""
+
+#: internal/filesui/remote.go:176
+msgid "Sign in to %s"
+msgstr ""
+
+#: internal/filesui/remote.go:181
+msgid "Keys for %s"
+msgstr ""
+
+#: internal/filesui/remote.go:182
+#: internal/filesui/remotesetup.go:76
+#: internal/filesui/remotesetup.go:84
+msgid "Access key ID"
+msgstr ""
+
+#: internal/filesui/remote.go:182
+#: internal/filesui/remotesetup.go:77
+#: internal/filesui/remotesetup.go:85
+msgid "Secret access key"
+msgstr ""
+
+#: internal/filesui/remote.go:185
+#: internal/filesui/remotesetup.go:158
+msgid "Remember in the keyring"
+msgstr ""
+
+#: internal/filesui/remote.go:199
+msgid "Disconnecting %s…"
+msgstr ""
+
+#: internal/filesui/remote.go:208
+msgid "%s is disconnected."
+msgstr ""
+
+#: internal/filesui/remote.go:220
+#: internal/filesui/remote.go:273
+#: internal/ui/settings_ai.go:497
+#: ui/remote.ui:543
+msgid "Forget"
+msgstr ""
+
+#: internal/filesui/remote.go:247
+msgid "Forget %s?"
+msgstr ""
+
+#: internal/filesui/remote.go:248
+msgid "Its address and its password go from here. Nothing on the server changes."
+msgstr ""
+
+#: internal/filesui/remote.go:255
+msgid "REMOTE DISKS"
+msgstr ""
+
+#: internal/filesui/remote.go:266
+#: internal/filesui/sidebar.go:68
+msgid "%s free of %s"
+msgstr ""
+
+#: internal/filesui/remote.go:269
+msgid "Disconnect"
+msgstr ""
+
+#: internal/filesui/remote.go:272
+msgid "Edit…"
+msgstr ""
+
+#: internal/filesui/remote.go:276
+msgid "Remote disk…"
+msgstr ""
+
+#: internal/filesui/remote.go:308
+msgid "A remote disk cannot be at %s://."
+msgstr ""
+
+#: internal/filesui/remote.go:310
+msgid "Leave the password out of the address: it is asked for, and kept in the keyring."
+msgstr ""
+
+#: internal/filesui/remote.go:312
+msgid "A server is needed."
+msgstr ""
+
+#: internal/filesui/remote.go:314
+msgid "An SMB disk needs a share: smb://server/share."
+msgstr ""
+
+#: internal/filesui/remote.go:316
+msgid "The address has a line break in it."
+msgstr ""
+
+#: internal/filesui/remote.go:318
+msgid "A bucket is needed."
+msgstr ""
+
+#: internal/filesui/remote.go:320
+msgid "A WebDAV URL starts with https:// or http://."
+msgstr ""
+
+#: internal/filesui/remote.go:322
+msgid "A port is a number from 1 to 65535."
+msgstr ""
+
+#: internal/filesui/remote.go:324
+msgid "An address starts with sftp://, smb://, s3:// …"
+msgstr ""
+
+#: internal/filesui/remote.go:333
+msgid "%s did not answer in time."
+msgstr ""
+
+#: internal/filesui/remote.go:336
+#: internal/filesui/remotesetup.go:404
+msgid "“%s” cannot be a folder's name in ~/Remote."
+msgstr ""
+
+#: internal/filesui/remote.go:338
+#: internal/filesui/remote.go:361
+msgid "%s could not be connected: %s"
+msgstr ""
+
+#: internal/filesui/remote.go:342
+msgid "Remote disks need the %s package."
+msgstr ""
+
+#: internal/filesui/remote.go:345
+msgid "Those keys were refused."
+msgstr ""
+
+#: internal/filesui/remote.go:347
+msgid "The server refused that user or password."
+msgstr ""
+
+#: internal/filesui/remote.go:349
+msgid "%s's SSH host key is unknown or changed: check it with ssh first."
+msgstr ""
+
+#: internal/filesui/remote.go:351
+msgid "%s does not answer."
+msgstr ""
+
+#: internal/filesui/remote.go:353
+msgid "%s is not there."
+msgstr ""
+
+#: internal/filesui/remote.go:355
+msgid "%s has files in it: a disk is mounted only on an empty folder."
+msgstr ""
+
+#: internal/filesui/remote.go:357
+msgid "%s is in use: close what has a file open on it."
+msgstr ""
+
+#: internal/filesui/remote.go:359
+msgid "This rclone is too old for %s://; 1.60 or later has it."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:40
+msgid "optional"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:44
+#: internal/filesui/remotesetup.go:51
+#: internal/filesui/remotesetup.go:65
+msgid "Server"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:44
+#: internal/filesui/remotesetup.go:65
+msgid "host, or host:port"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:46
+msgid "empty: your SSH keys"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:47
+msgid "empty: the home folder"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:52
+msgid "Share"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:54
+msgid "empty: as a guest"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:59
+msgid "URL"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:61
+msgid "or an app password"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:66
+msgid "empty: anonymous"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:69
+msgid "Encrypted (FTPS)"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:73
+#: internal/ui/settings_ai.go:467
+msgid "Endpoint"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:73
+msgid "s3.amazonaws.com, or your server's host"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:74
+#: internal/filesui/remotesetup.go:82
+msgid "Bucket"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:81
+msgid "Account ID"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:81
+msgid "on the R2 page of Cloudflare's dashboard"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:84
+msgid "an R2 API token's"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:114
+msgid "A server you reach with ssh."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:116
+msgid "A Windows or Samba share, a NAS."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:118
+msgid "Nextcloud, ownCloud or another WebDAV server: the URL its settings show."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:120
+msgid "An FTP server."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:122
+msgid "Amazon S3, or another S3 server (MinIO, Backblaze B2, Wasabi) by its endpoint."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:124
+msgid "A Cloudflare R2 bucket, with an R2 API token's keys."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:132
+msgid "Remote disk"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:134
+msgid "Change %s"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:134
+msgid "Save and connect"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:151
+msgid "Test connection"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:227
+msgid "from the server, the share or the bucket"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:243
+msgid "empty: the one kept"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:367
+msgid "Testing…"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:378
+msgid "%s does not connect"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:381
+msgid "%s connects"
+msgstr ""
+
+#: internal/filesui/remotesetup.go:381
+msgid "Its folder can be read."
+msgstr ""
+
+#: internal/filesui/remotesetup.go:409
+msgid "Another remote disk is called “%s”."
+msgstr ""
+
+#: internal/filesui/renamemany.go:41
+msgid "Rename %d item"
+msgid_plural "Rename %d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/filesui/renamemany.go:60
+msgid "Replace text"
+msgstr ""
+
+#: internal/filesui/renamemany.go:61
+msgid "Add text"
+msgstr ""
+
+#: internal/filesui/renamemany.go:62
+msgid "Number"
+msgstr ""
+
+#: internal/filesui/renamemany.go:63
+msgid "Change case"
+msgstr ""
+
+#: internal/filesui/renamemany.go:148
+msgid "Find"
+msgstr ""
+
+#: internal/filesui/renamemany.go:151
+msgid "Replace with"
+msgstr ""
+
+#: internal/filesui/renamemany.go:152
+msgid "empty: removed"
+msgstr ""
+
+#: internal/filesui/renamemany.go:154
+msgid "Match case"
+msgstr ""
+
+#: internal/filesui/renamemany.go:156
+msgid "A regular expression ($1 in the replacement)"
+msgstr ""
+
+#: internal/filesui/renamemany.go:158
+#: ui/gpg.ui:419
+#: ui/gpg.ui:783
+msgid "Text"
+msgstr ""
+
+#: internal/filesui/renamemany.go:161
+msgid "Where"
+msgstr ""
+
+#: internal/filesui/renamemany.go:166
+msgid "Before the name"
+msgstr ""
+
+#: internal/filesui/renamemany.go:166
+msgid "After the name"
+msgstr ""
+
+#: internal/filesui/renamemany.go:169
+msgid "empty: the number alone"
+msgstr ""
+
+#: internal/filesui/renamemany.go:171
+msgid "Start at"
+msgstr ""
+
+#: internal/filesui/renamemany.go:187
+msgid "Case"
+msgstr ""
+
+#: internal/filesui/renamemany.go:188
+msgid "lowercase"
+msgstr ""
+
+#: internal/filesui/renamemany.go:188
+msgid "UPPERCASE"
+msgstr ""
+
+#: internal/filesui/renamemany.go:188
+msgid "Title Case"
+msgstr ""
+
+#: internal/filesui/renamemany.go:220
+msgid "The regular expression is not one."
+msgstr ""
+
+#: internal/filesui/renamemany.go:261
+msgid "%d name changes."
+msgid_plural "%d names change."
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/filesui/renamemany.go:263
+msgid "%d name cannot be given."
+msgid_plural "%d names cannot be given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/filesui/renamemany.go:266
+msgid "The first %d are shown."
+msgstr ""
+
+#: internal/filesui/renamemany.go:277
+msgid "taken by another file"
+msgstr ""
+
+#: internal/filesui/renamemany.go:279
+msgid "given to two items"
+msgstr ""
+
+#: internal/filesui/renamemany.go:281
+msgid "empty"
+msgstr ""
+
+#: internal/filesui/renamemany.go:283
+msgid "holds “/”"
+msgstr ""
+
+#: internal/filesui/renamemany.go:285
+msgid "not a name"
+msgstr ""
+
+#: internal/filesui/renamemany.go:287
+msgid "too long"
+msgstr ""
+
+#: internal/filesui/renamemany.go:306
+msgid "Some names cannot be given: they are marked."
 msgstr ""
 
 #: internal/filesui/sidebar.go:36
@@ -4076,6 +4908,7 @@ msgid "Remove from the bookmarks"
 msgstr ""
 
 #: internal/filesui/sidebar.go:57
+#: ui/connect.ui:112
 #: ui/tailscale.ui:112
 msgid "DEVICES"
 msgstr ""
@@ -4084,34 +4917,22 @@ msgstr ""
 msgid "Computer"
 msgstr ""
 
-#: internal/filesui/sidebar.go:68
-msgid "%s free of %s"
-msgstr ""
-
 #: internal/filesui/sidebar.go:71
 msgid "%s, locked"
 msgstr ""
 
 #: internal/filesui/sidebar.go:82
-#: internal/filesui/sidebar.go:186
+#: internal/filesui/sidebar.go:175
 msgid "Eject"
 msgstr ""
 
-#: internal/filesui/sidebar.go:106
-msgid "Disconnect"
-msgstr ""
-
-#: internal/filesui/sidebar.go:108
-msgid "Connect to a server…"
-msgstr ""
-
-#: internal/filesui/sidebar.go:157
-#: internal/filesui/window.go:701
+#: internal/filesui/sidebar.go:146
+#: internal/filesui/window.go:705
 msgid "Open in a new tab"
 msgstr ""
 
-#: internal/filesui/sidebar.go:158
-#: internal/filesui/window.go:702
+#: internal/filesui/sidebar.go:147
+#: internal/filesui/window.go:706
 msgid "Open in a new window"
 msgstr ""
 
@@ -4119,98 +4940,137 @@ msgstr ""
 msgid "Close the tab (Ctrl+W)"
 msgstr ""
 
-#: internal/filesui/window.go:673
+#: internal/filesui/tidy.go:20
+msgid "Tidy the folder %[1]s.\n\nFirst look at what is in it: the names, kinds, sizes and dates, and the first lines of a text file whose name says too little. Then make a plan with plan_create and show it to me: the folders to make, which file goes where, and why.\n\nRules:\n- Stay inside %[1]s: make folders in it and move its own files into them. Touch nothing outside it, and leave its subfolders' contents as they are.\n- Never delete and never overwrite: use mkdir -p and mv -n, and leave a file alone when its new name is taken.\n- Use the folders that are already there when they fit.\n- Leave hidden files (names starting with a dot) where they are.\n- Do all the moves in one bash command, so I approve them once.\n- Write the moves back, in the same order reversed, to %[1]s/.tidy-undo.sh, so \"sh .tidy-undo.sh\" in the folder undoes it.\n\nWhen it is done, tell me what went where."
+msgstr ""
+
+#: internal/filesui/tidy.go:42
+msgid "Tidying needs the assistant (inua-assistant), which is not installed."
+msgstr ""
+
+#: internal/filesui/tidy.go:45
+msgid "Turn on the assistant in Settings → AI to tidy folders."
+msgstr ""
+
+#: internal/filesui/tidy.go:48
+msgid "Turn on Run commands in Settings → AI to let the assistant tidy folders."
+msgstr ""
+
+#: internal/filesui/tidy.go:55
+msgid "Asked the assistant to tidy %s."
+msgstr ""
+
+#: internal/filesui/window.go:676
 msgid "Restore"
 msgstr ""
 
-#: internal/filesui/window.go:674
-#: internal/filesui/window.go:730
+#: internal/filesui/window.go:677
+#: internal/filesui/window.go:742
 msgid "Delete for good…"
 msgstr ""
 
-#: internal/filesui/window.go:681
+#: internal/filesui/window.go:684
 msgid "New folder…"
 msgstr ""
 
-#: internal/filesui/window.go:682
+#: internal/filesui/window.go:685
 msgid "New file…"
 msgstr ""
 
-#: internal/filesui/window.go:683
+#: internal/filesui/window.go:686
 msgid "Paste"
 msgstr ""
 
-#: internal/filesui/window.go:686
+#: internal/filesui/window.go:689
+#: internal/filesui/window.go:721
+msgid "Tidy with AI…"
+msgstr ""
+
+#: internal/filesui/window.go:690
 msgid "Copy the folder's path"
 msgstr ""
 
-#: internal/filesui/window.go:704
+#: internal/filesui/window.go:708
 msgid "Open in the other pane"
 msgstr ""
 
-#: internal/filesui/window.go:708
+#: internal/filesui/window.go:712
 msgid "Show in its folder"
 msgstr ""
 
-#: internal/filesui/window.go:711
+#: internal/filesui/window.go:715
 msgid "Cut"
 msgstr ""
 
-#: internal/filesui/window.go:713
+#: internal/filesui/window.go:717
 msgid "Copy the path"
 msgstr ""
 
-#: internal/filesui/window.go:716
+#: internal/filesui/window.go:720
 msgid "Paste into the folder"
 msgstr ""
 
-#: internal/filesui/window.go:720
+#: internal/filesui/window.go:725
+msgid "Extract here"
+msgstr ""
+
+#: internal/filesui/window.go:727
+msgid "Compress…"
+msgstr ""
+
+#: internal/filesui/window.go:730
 msgid "Copy to the other pane"
 msgstr ""
 
-#: internal/filesui/window.go:721
+#: internal/filesui/window.go:731
 msgid "Move to the other pane"
 msgstr ""
 
-#: internal/filesui/window.go:726
+#: internal/filesui/window.go:736
 msgid "Rename…"
 msgstr ""
 
-#: internal/filesui/window.go:741
+#: internal/filesui/window.go:738
+msgid "Rename %d item…"
+msgid_plural "Rename %d items…"
+msgstr[0] ""
+msgstr[1] ""
+
+#: internal/filesui/window.go:753
 msgid "Remove the bookmark"
 msgstr ""
 
-#: internal/filesui/window.go:796
+#: internal/filesui/window.go:808
 msgid "Cut %d item: paste to move it."
 msgid_plural "Cut %d items: paste to move them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/window.go:798
+#: internal/filesui/window.go:810
 msgid "Copied %d item."
 msgid_plural "Copied %d items."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/window.go:806
+#: internal/filesui/window.go:818
 msgid "Copied %d path."
 msgid_plural "Copied %d paths."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/filesui/window.go:866
+#: internal/filesui/window.go:900
 msgid "Bookmarked %s."
 msgstr ""
 
-#: internal/filesui/window.go:868
+#: internal/filesui/window.go:902
 msgid "Removed the bookmark of %s."
 msgstr ""
 
-#: internal/filesui/window.go:893
+#: internal/filesui/window.go:927
 msgid "Copied %s."
 msgstr ""
 
-#: internal/filesui/window.go:922
+#: internal/filesui/window.go:956
 msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr ""
 
@@ -7396,6 +8256,165 @@ msgstr ""
 msgid "AM"
 msgstr ""
 
+#: internal/remoteui/app.go:20
+#: ui/remote.ui:14
+#: ui/remote.ui:32
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:3
+msgid "Remote Desktop"
+msgstr ""
+
+#: internal/remoteui/stream.go:126
+msgid "%s — Remote Desktop"
+msgstr ""
+
+#: internal/remoteui/stream.go:229
+msgid "Ctrl+Alt+Shift+Q disconnects · F: full screen · Z: this desktop's shortcuts"
+msgstr ""
+
+#: internal/remoteui/stream.go:467
+msgid "%s ended the session."
+msgstr ""
+
+#: internal/remoteui/stream.go:470
+msgid "%s cannot show its screen: no monitor is connected, or its desktop session is not running. A computer without a monitor can share a virtual screen (Remote Desktop, Sharing)."
+msgstr ""
+
+#: internal/remoteui/window.go:122
+msgid "This computer has no identity to pair with: %v"
+msgstr ""
+
+#: internal/remoteui/window.go:263
+msgid "Paired"
+msgstr ""
+
+#: internal/remoteui/window.go:274
+msgid "Found on this network"
+msgstr ""
+
+#: internal/remoteui/window.go:276
+msgid "Found on the tailnet"
+msgstr ""
+
+#: internal/remoteui/window.go:391
+msgid "Sharing did not start: %v"
+msgstr ""
+
+#: internal/remoteui/window.go:426
+msgid "The virtual screen did not change: %v"
+msgstr ""
+
+#: internal/remoteui/window.go:463
+msgid "Other devices see this computer as %s, on this network and the tailnet. A device pairs once, with a PIN typed here."
+msgstr ""
+
+#: internal/remoteui/window.go:466
+msgid "Sunshine is starting."
+msgstr ""
+
+#: internal/remoteui/window.go:469
+msgid "Lets your other devices see and control this desktop, with Moonlight or Remote Desktop."
+msgstr ""
+
+#: internal/remoteui/window.go:480
+msgid "Sharing needs Sunshine, which is not installed."
+msgstr ""
+
+#: internal/remoteui/window.go:481
+msgid "Install the package for your system from github.com/LizardByte/Sunshine/releases (Ubuntu: sudo apt install ./sunshine_…_amd64.deb)."
+msgstr ""
+
+#: internal/remoteui/window.go:483
+msgid "The other device's keyboard and mouse cannot reach this desktop: /dev/uinput is not yours."
+msgstr ""
+
+#: internal/remoteui/window.go:486
+msgid "Sharing needs a graphical session to show."
+msgstr ""
+
+#: internal/remoteui/window.go:511
+msgid "A device"
+msgstr ""
+
+#: internal/remoteui/window.go:515
+msgid "at %s: type the PIN it shows"
+msgstr ""
+
+#: internal/remoteui/window.go:542
+msgid "No device is paired yet."
+msgstr ""
+
+#: internal/remoteui/window.go:547
+msgid "The paired devices show while sharing is on."
+msgstr ""
+
+#: internal/remoteui/window.go:580
+msgid "A PIN is four digits."
+msgstr ""
+
+#: internal/remoteui/window.go:590
+msgid "That is not the PIN %s shows."
+msgstr ""
+
+#: internal/remoteui/window.go:669
+msgid "Asking…"
+msgstr ""
+
+#: internal/remoteui/window.go:672
+msgid "Connected: its desktop is in a window of its own."
+msgstr ""
+
+#: internal/remoteui/window.go:675
+msgid "It does not answer: it is off, or not sharing its desktop."
+msgstr ""
+
+#: internal/remoteui/window.go:677
+msgid "It shares with Nvidia's GameStream, which Remote Desktop does not speak."
+msgstr ""
+
+#: internal/remoteui/window.go:679
+msgid "It has forgotten this computer: pair again."
+msgstr ""
+
+#: internal/remoteui/window.go:681
+msgid "Not paired: pair once, with a PIN typed on it."
+msgstr ""
+
+#: internal/remoteui/window.go:683
+msgid "Paired. Its desktop is being streamed; connecting joins in."
+msgstr ""
+
+#: internal/remoteui/window.go:685
+msgid "Paired, and ready."
+msgstr ""
+
+#: internal/remoteui/window.go:718
+msgid "On %s, open Remote Desktop → Sharing (or Sunshine's PIN page) and type:"
+msgstr ""
+
+#: internal/remoteui/window.go:742
+msgid "The PIN typed there was not this one. Pair again."
+msgstr ""
+
+#: internal/remoteui/window.go:745
+msgid "Pairing failed: %v"
+msgstr ""
+
+#: internal/remoteui/window.go:801
+msgid "Nothing shares a desktop at %s: %v"
+msgstr ""
+
+#: internal/remoteui/window.go:868
+msgid "This computer cannot decode it: choose another."
+msgstr ""
+
+#: internal/remoteui/window.go:870
+msgid "Decoded by the processor here: slower than the graphics card."
+msgstr ""
+
+#: internal/remoteui/window.go:872
+msgid "Decoded by the graphics card here. HEVC and AV1 look better than H.264 at the same bitrate."
+msgstr ""
+
 #: internal/shell/commands.go:27
 msgid "Lock Screen"
 msgstr ""
@@ -7612,7 +8631,7 @@ msgstr ""
 msgid "TOOLS"
 msgstr ""
 
-#: internal/shell/dock.go:268
+#: internal/shell/dock.go:270
 msgid "PLAY"
 msgstr ""
 
@@ -8054,6 +9073,7 @@ msgid "Search clipboard history"
 msgstr ""
 
 #: internal/ui/clipboard.go:335
+#: ui/connect.ui:727
 #: ui/settings.ui:3328
 msgid "Clipboard"
 msgstr ""
@@ -8225,23 +9245,23 @@ msgstr ""
 msgid "could not take the session lock"
 msgstr ""
 
-#: internal/ui/lock.go:243
+#: internal/ui/lock.go:246
 msgid "Wrong password. Try again in %d s"
 msgstr ""
 
-#: internal/ui/lock.go:246
-#: internal/ui/lock.go:296
+#: internal/ui/lock.go:249
+#: internal/ui/lock.go:299
 msgid "Wrong password"
 msgstr ""
 
-#: internal/ui/lock.go:269
+#: internal/ui/lock.go:272
 #: internal/ui/polkit.go:294
 #: internal/ui/settings_about.go:153
 #: internal/ui/settings_backup.go:215
 msgid "Checking…"
 msgstr ""
 
-#: internal/ui/lock.go:300
+#: internal/ui/lock.go:303
 msgid "The password could not be checked"
 msgstr ""
 
@@ -8413,11 +9433,6 @@ msgstr ""
 
 #: internal/ui/record.go:159
 msgid "Screen recording"
-msgstr ""
-
-#: internal/ui/record.go:163
-#: internal/ui/screenshot.go:808
-msgid "Show in Folder"
 msgstr ""
 
 #: internal/ui/screenshot.go:434
@@ -8696,10 +9711,6 @@ msgstr ""
 
 #: internal/ui/settings_ai.go:466
 msgid "Reasoning"
-msgstr ""
-
-#: internal/ui/settings_ai.go:467
-msgid "Endpoint"
 msgstr ""
 
 #: internal/ui/settings_ai.go:485
@@ -10296,6 +11307,116 @@ msgstr ""
 msgid "Colours you pick show here."
 msgstr ""
 
+#: ui/connect.ui:54
+#: ui/remote.ui:54
+msgid "THIS COMPUTER"
+msgstr ""
+
+#: ui/connect.ui:125
+msgid "Look for devices again"
+msgstr ""
+
+#: ui/connect.ui:159
+msgid "Add a device by address…"
+msgstr ""
+
+#: ui/connect.ui:226
+msgid "[THIS COMPUTER]"
+msgstr ""
+
+#: ui/connect.ui:256
+msgid "Connect with your devices"
+msgstr ""
+
+#: ui/connect.ui:317
+msgid "To pair a phone"
+msgstr ""
+
+#: ui/connect.ui:326
+msgid "Install KDE Connect on it (from F-Droid, Google Play or the App Store), open it on the same network or the tailnet, and choose this computer. Pair once the key shown there matches the one here."
+msgstr ""
+
+#: ui/connect.ui:362
+msgid "[COMMANDS]"
+msgstr ""
+
+#: ui/connect.ui:372
+msgid "devices run these here"
+msgstr ""
+
+#: ui/connect.ui:410
+msgid "Add a command"
+msgstr ""
+
+#: ui/connect.ui:596
+msgid "[SEND]"
+msgstr ""
+
+#: ui/connect.ui:630
+msgid "Ring"
+msgstr ""
+
+#: ui/connect.ui:631
+msgid "Rings the device, to find it"
+msgstr ""
+
+#: ui/connect.ui:640
+msgid "Send files…"
+msgstr ""
+
+#: ui/connect.ui:654
+msgid "Text, or a link it opens"
+msgstr ""
+
+#: ui/connect.ui:663
+#: ui/connectreply.ui:58
+msgid "Send"
+msgstr ""
+
+#: ui/connect.ui:697
+msgid "[SHARED WITH IT]"
+msgstr ""
+
+#: ui/connect.ui:736
+msgid "Text copied on one is there to paste on the other. Passwords stay here."
+msgstr ""
+
+#: ui/connect.ui:768
+msgid "This computer's notifications"
+msgstr ""
+
+#: ui/connect.ui:777
+msgid "They show on the device too. Its own show here when it sends them."
+msgstr ""
+
+#: ui/connect.ui:809
+msgid "Pointer and keyboard"
+msgstr ""
+
+#: ui/connect.ui:818
+msgid "The device works as a touchpad and keyboard here."
+msgstr ""
+
+#: ui/connect.ui:850
+msgid "Commands"
+msgstr ""
+
+#: ui/connect.ui:859
+msgid "It runs the commands set up on This computer."
+msgstr ""
+
+#: ui/connect.ui:921
+msgid "[ADD A DEVICE]"
+msgstr ""
+
+#: ui/connect.ui:946
+msgid "A device the network's broadcast does not reach: its name or IP address. It is asked to connect here; it shows in the list once it has."
+msgstr ""
+
+#: ui/connectreply.ui:36
+msgid "Your answer"
+msgstr ""
+
 #: ui/control.ui:72
 msgid "Screenshot an area"
 msgstr ""
@@ -10361,7 +11482,7 @@ msgid "Parent folder (Alt+↑)"
 msgstr ""
 
 #: ui/filespane.ui:102
-msgid "A path, or a server: sftp://host/dir, smb://server/share"
+msgid "A path, or a remote disk: sftp://host/dir, smb://server/share"
 msgstr ""
 
 #: ui/filespane.ui:129
@@ -10444,11 +11565,6 @@ msgstr ""
 #: ui/gpg.ui:395
 #: ui/gpg.ui:750
 msgid "<span alpha='55%'>[</span>MESSAGE<span alpha='55%'>]</span>"
-msgstr ""
-
-#: ui/gpg.ui:419
-#: ui/gpg.ui:783
-msgid "Text"
 msgstr ""
 
 #: ui/gpg.ui:469
@@ -10578,11 +11694,6 @@ msgstr ""
 
 #: ui/launcher.ui:134
 msgid "Esc  close"
-msgstr ""
-
-#: ui/lock.ui:76
-#: ui/polkit.ui:690
-msgid "Password"
 msgstr ""
 
 #: ui/music.ui:55
@@ -10800,6 +11911,103 @@ msgstr ""
 
 #: ui/polkit.ui:741
 msgid "Authenticate"
+msgstr ""
+
+#: ui/remote.ui:84
+msgid "Sharing"
+msgstr ""
+
+#: ui/remote.ui:112
+msgid "MACHINES"
+msgstr ""
+
+#: ui/remote.ui:125
+msgid "Look for machines sharing their desktop"
+msgstr ""
+
+#: ui/remote.ui:159
+msgid "Add a machine…"
+msgstr ""
+
+#: ui/remote.ui:226
+msgid "[SHARING]"
+msgstr ""
+
+#: ui/remote.ui:256
+msgid "Share this desktop"
+msgstr ""
+
+#: ui/remote.ui:296
+msgid "Virtual screen"
+msgstr ""
+
+#: ui/remote.ui:305
+msgid "While no monitor is connected, this computer shows a screen of this size, to share."
+msgstr ""
+
+#: ui/remote.ui:390
+msgid "[WAITING TO PAIR]"
+msgstr ""
+
+#: ui/remote.ui:432
+msgid "[PAIRED DEVICES]"
+msgstr ""
+
+#: ui/remote.ui:553
+msgid "End its session"
+msgstr ""
+
+#: ui/remote.ui:554
+msgid "Ends what is streaming there, for every device"
+msgstr ""
+
+#: ui/remote.ui:638
+msgid "[STREAM]"
+msgstr ""
+
+#: ui/remote.ui:648
+msgid "for every machine"
+msgstr ""
+
+#: ui/remote.ui:676
+msgid "Resolution"
+msgstr ""
+
+#: ui/remote.ui:685
+msgid "The machine shows its desktop at this size."
+msgstr ""
+
+#: ui/remote.ui:698
+#: ui/settings.ui:1211
+msgid "This monitor's"
+msgstr ""
+
+#: ui/remote.ui:721
+msgid "Frames a second"
+msgstr ""
+
+#: ui/remote.ui:760
+msgid "Bitrate"
+msgstr ""
+
+#: ui/remote.ui:769
+msgid "Megabits a second: more is sharper, and needs a faster network."
+msgstr ""
+
+#: ui/remote.ui:809
+msgid "Codec"
+msgstr ""
+
+#: ui/remote.ui:851
+msgid "Play the sound on the machine too"
+msgstr ""
+
+#: ui/remote.ui:911
+msgid "[ADD A MACHINE]"
+msgstr ""
+
+#: ui/remote.ui:936
+msgid "Its address on the network: a name, an IP address, or either with :port."
 msgstr ""
 
 #: ui/screenshot.ui:126
@@ -11059,10 +12267,6 @@ msgstr ""
 
 #: ui/settings.ui:1197
 msgid "Which workspaces each bar shows"
-msgstr ""
-
-#: ui/settings.ui:1211
-msgid "This monitor's"
 msgstr ""
 
 #: ui/settings.ui:1212
@@ -12444,6 +13648,14 @@ msgstr ""
 msgid "games;arcade;puzzle;"
 msgstr ""
 
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:10
+msgid "Your phone and this computer together: clipboard, files, notifications, media and remote input"
+msgstr ""
+
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:20
+msgid "kde connect;gsconnect;valent;phone;android;iphone;clipboard;share;notifications;"
+msgstr ""
+
 #: config/apps/io.github.lyricat.Inua.Music.desktop:10
 msgid "Play music, with a playlist and an equalizer"
 msgstr ""
@@ -12458,6 +13670,14 @@ msgstr ""
 
 #: config/apps/io.github.lyricat.Inua.Pass.desktop:20
 msgid "password;pass;gpg;otp;totp;2fa;secret;"
+msgstr ""
+
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:10
+msgid "Share this desktop, or see and control another one"
+msgstr ""
+
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:20
+msgid "remote;desktop;moonlight;sunshine;stream;share;vnc;rdp;"
 msgstr ""
 
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:10

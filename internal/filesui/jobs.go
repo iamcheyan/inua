@@ -24,6 +24,9 @@ type jobs struct {
 type queued struct {
 	job   files.Job
 	quiet bool // an undo: not recorded to be undone again
+	// done, when there is one, sees the job's error first: true when it
+	// took care of it (an archive's password asked for).
+	done func(err error) bool
 }
 
 // run queues an operation in w.
@@ -149,6 +152,10 @@ func describe(j files.Job, pr files.Progress) string {
 		return i18n.Tf("Restoring %s", cmp.Or(what, i18n.Nf("%d item", "%d items", n, n))) + count
 	case files.Link:
 		return i18n.Tf("Linking %s", cmp.Or(what, i18n.Nf("%d item", "%d items", n, n)))
+	case files.Compress:
+		return i18n.Tf("Compressing into %s", dest)
+	case files.Extract:
+		return i18n.Tf("Extracting %s", cmp.Or(what, i18n.Nf("%d archive", "%d archives", n, n))) + count
 	}
 	return what
 }
@@ -178,6 +185,9 @@ func (w *window) jobDone(q queued, undo files.Undo, err error) {
 	for _, m := range undo.Moves {
 		made = append(made, m[1])
 	}
+	for _, m := range undo.Renames {
+		made = append(made, m[1])
+	}
 	if len(made) > 0 {
 		for _, p := range w.panes() {
 			var names []string
@@ -195,6 +205,9 @@ func (w *window) jobDone(q queued, undo files.Undo, err error) {
 		w.flash(i18n.Nf("Moved %d item to the trash (Ctrl+Z puts it back).", "Moved %d items to the trash (Ctrl+Z puts them back).", len(undo.Trashed), len(undo.Trashed)))
 	}
 	if err == nil || errors.Is(err, files.ErrCancelled) && !strings.Contains(err.Error(), "\n") {
+		return
+	}
+	if q.done != nil && q.done(err) {
 		return
 	}
 	w.showErrors(j, err)

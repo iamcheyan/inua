@@ -47,7 +47,7 @@ msgstr "「%s」 · %s"
 #: internal/apps/calendar/calendar.go:69
 #: internal/appui/clock.go:218
 #: internal/ui/control.go:308
-#: internal/ui/lock.go:238
+#: internal/ui/lock.go:241
 msgid "Monday, January 2"
 msgstr "1月2日 Monday"
 
@@ -163,6 +163,147 @@ msgstr "%s、%s%d 時間 %d 分"
 #: internal/apps/clock/clock.go:140
 msgid "UTC"
 msgstr "UTC"
+
+#: internal/apps/connect/battery.go:34
+msgid "%s's battery is low"
+msgstr "%s のバッテリー残量が少なくなっています"
+
+#: internal/apps/connect/battery.go:35
+msgid "%d%% left"
+msgstr "残り %d%%"
+
+#: internal/apps/connect/battery.go:89
+msgid "%s is looking for this computer"
+msgstr "%s がこのコンピューターを探しています"
+
+#: internal/apps/connect/battery.go:90
+msgid "Found it"
+msgstr "見つけました"
+
+#: internal/apps/connect/notifications.go:94
+#: internal/connectui/app.go:38
+#: ui/connectreply.ui:14
+msgid "Reply"
+msgstr "返信"
+
+#: internal/apps/connect/service.go:246
+#: internal/apps/connect/share.go:213
+#: internal/apps/connect/share.go:219
+#: internal/connectui/app.go:20
+#: ui/connect.ui:14
+#: ui/connect.ui:32
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:3
+msgid "Mobile Link"
+msgstr "モバイルリンク"
+
+#: internal/apps/connect/service.go:248
+msgid "%s wants to pair"
+msgstr "%s がペアリングを求めています"
+
+#: internal/apps/connect/service.go:249
+msgid "Pair only if %s shows the key %s."
+msgstr "%s にキー %s が表示されている場合のみペアリングしてください。"
+
+#: internal/apps/connect/service.go:250
+#: internal/connectui/window.go:425
+#: internal/connectui/window.go:434
+#: internal/remoteui/window.go:527
+#: internal/remoteui/window.go:696
+#: ui/remote.ui:564
+msgid "Pair"
+msgstr "ペアリング"
+
+#: internal/apps/connect/service.go:250
+#: internal/connectui/window.go:426
+msgid "Refuse"
+msgstr "拒否"
+
+#: internal/apps/connect/service.go:292
+msgid "Ping!"
+msgstr "Ping!"
+
+#: internal/apps/connect/service.go:505
+msgid "Wants to pair"
+msgstr "ペアリングを求めています"
+
+#: internal/apps/connect/service.go:507
+msgid "Pairing…"
+msgstr "ペアリング中…"
+
+#: internal/apps/connect/service.go:509
+#: internal/apps/tailscale/status.go:265
+#: internal/remoteui/window.go:266
+msgid "Connected"
+msgstr "接続された"
+
+#: internal/apps/connect/service.go:511
+msgid "Away"
+msgstr "接続されていません"
+
+#: internal/apps/connect/service.go:513
+#: internal/remoteui/window.go:261
+msgid "Not paired"
+msgstr "未ペアリング"
+
+#: internal/apps/connect/service.go:517
+msgid "%d%%, charging"
+msgstr "%d%%、充電中"
+
+#: internal/apps/connect/service.go:519
+#: internal/ui/settings.go:274
+#: internal/ui/settings.go:282
+#: internal/ui/settings.go:285
+#: internal/ui/settings.go:626
+#: internal/ui/settings.go:628
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:694
+msgid "%d%%"
+msgstr "%d%%"
+
+#: internal/apps/connect/share.go:65
+msgid "Text from %s"
+msgstr "%s からのテキスト"
+
+#: internal/apps/connect/share.go:66
+msgid "It is on the clipboard."
+msgstr "クリップボードにあります。"
+
+#: internal/apps/connect/share.go:115
+msgid "A file from %s did not arrive"
+msgstr "%s からのファイルが届きませんでした"
+
+#: internal/apps/connect/share.go:127
+msgid "A file from %s"
+msgstr "%s からのファイル"
+
+#: internal/apps/connect/share.go:129
+#: internal/appui/workshop_blocks.go:427
+#: internal/appui/workshop_manager.go:63
+#: internal/filesui/cards.go:673
+#: internal/filesui/window.go:700
+#: internal/ui/record.go:163
+#: internal/ui/system_ipc.go:241
+msgid "Open"
+msgstr "開く"
+
+#: internal/apps/connect/share.go:129
+#: internal/ui/record.go:163
+#: internal/ui/screenshot.go:808
+msgid "Show in Folder"
+msgstr "フォルダ内で表示"
+
+#: internal/apps/connect/share.go:160
+msgid "Shared file"
+msgstr "共有されたファイル"
+
+#: internal/apps/connect/share.go:214
+msgid "%s did not get %s"
+msgstr "%s は %s を受け取れませんでした"
+
+#: internal/apps/connect/share.go:220
+msgid "Sent %d file to %s"
+msgid_plural "Sent %d files to %s"
+msgstr[0] "%d 個のファイルを %s に送信しました"
 
 #: internal/apps/music/music.go:393
 msgid "Flat"
@@ -288,13 +429,13 @@ msgid "%d d %d h"
 msgstr "%[1]d d %[2]d h"
 
 #: internal/apps/sysmon/sysmon.go:402
-#: internal/filesui/jobs.go:163
+#: internal/filesui/jobs.go:170
 msgid "%d h %d min"
 msgstr "%[1]d h %[2]d 分"
 
 #: internal/apps/sysmon/sysmon.go:404
 #: internal/appui/clock.go:156
-#: internal/filesui/jobs.go:161
+#: internal/filesui/jobs.go:168
 msgid "%d min"
 msgstr "%d分"
 
@@ -350,10 +491,6 @@ msgstr "%d 時間後"
 msgid "in %d d"
 msgstr "%d 日後"
 
-#: internal/apps/tailscale/status.go:265
-msgid "Connected"
-msgstr "接続された"
-
 #: internal/apps/tailscale/status.go:267
 msgid "Disconnected"
 msgstr "切断された"
@@ -369,6 +506,8 @@ msgstr "承認待ち"
 
 #: internal/apps/tailscale/status.go:273
 #: internal/appui/tailscale.go:152
+#: internal/filesui/remote.go:170
+#: internal/filesui/remotesetup.go:418
 #: internal/shell/status.go:128
 msgid "Connecting…"
 msgstr "接続中…"
@@ -509,7 +648,7 @@ msgstr "ビデオ"
 #: internal/appui/calculator.go:49
 #: internal/appui/gpg.go:1529
 #: internal/appui/pass.go:801
-#: internal/filesui/cards.go:373
+#: internal/filesui/cards.go:430
 #: internal/ui/clipboard.go:459
 #: internal/vmui/window.go:1740
 #: internal/vmui/window.go:1769
@@ -1090,8 +1229,8 @@ msgid "The decrypted copy goes to the trash, where it can be restored from; the 
 msgstr "復号したコピーはゴミ箱に移り、そこから戻せます。暗号化されたファイルは残ります。"
 
 #: internal/appui/gpg.go:1537
-#: internal/filesui/cards.go:712
-#: internal/filesui/window.go:729
+#: internal/filesui/cards.go:687
+#: internal/filesui/window.go:741
 #: ui/settings.ui:184
 #: ui/settings.ui:442
 msgid "Move to Trash"
@@ -1267,7 +1406,7 @@ msgstr "ヒデ"
 
 #: internal/appui/pass.go:601
 #: internal/appui/pass.go:626
-#: internal/filesui/window.go:712
+#: internal/filesui/window.go:716
 #: internal/ui/askpass.go:203
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
@@ -1396,6 +1535,7 @@ msgstr "%s · %s"
 
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
+#: internal/connectui/window.go:560
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
@@ -1424,7 +1564,7 @@ msgstr "まだどのアプリも読んでいません。"
 
 #: internal/appui/pass.go:1066
 #: internal/appui/sysmon.go:965
-#: internal/filesui/pane.go:1358
+#: internal/filesui/pane.go:1373
 #: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
@@ -1469,13 +1609,15 @@ msgid "It is not an image this app reads (PNG or JPEG)."
 msgstr "このアプリが読める画像（PNG または JPEG）ではありません。"
 
 #: internal/appui/pass_otp.go:189
-#: internal/filesui/cards.go:435
+#: internal/filesui/cards.go:492
 msgid "Replace"
 msgstr "置き換え"
 
 #: internal/appui/pass_otp.go:192
 #: internal/appui/workshop_manager.go:88
+#: ui/connect.ui:966
 #: ui/pass.ui:818
+#: ui/remote.ui:956
 msgid "Add"
 msgstr "追加"
 
@@ -1630,7 +1772,6 @@ msgstr "GPU"
 
 #: internal/appui/sysmon.go:148
 #: internal/appui/sysmon.go:1031
-#: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
 #: internal/shell/dock.go:296
 msgid "NETWORK"
@@ -1729,6 +1870,11 @@ msgid "Parent"
 msgstr "親"
 
 #: internal/appui/sysmon.go:778
+#: internal/filesui/remote.go:178
+#: internal/filesui/remotesetup.go:45
+#: internal/filesui/remotesetup.go:54
+#: internal/filesui/remotesetup.go:60
+#: internal/filesui/remotesetup.go:66
 msgid "User"
 msgstr "ユーザー"
 
@@ -1761,6 +1907,7 @@ msgid "Private"
 msgstr "プライベート"
 
 #: internal/appui/sysmon.go:782
+#: internal/remoteui/window.go:462
 msgid "Shared"
 msgstr "共有"
 
@@ -1789,6 +1936,11 @@ msgstr "プログラム"
 
 #: internal/appui/sysmon.go:786
 #: internal/filesui/kinds.go:34
+#: internal/filesui/remotesetup.go:47
+#: internal/filesui/remotesetup.go:53
+#: internal/filesui/remotesetup.go:68
+#: internal/filesui/remotesetup.go:75
+#: internal/filesui/remotesetup.go:83
 #: internal/viewerui/app.go:792
 msgid "Folder"
 msgstr "フォルダー"
@@ -1890,8 +2042,13 @@ msgstr "モデル"
 
 #: internal/appui/sysmon.go:960
 #: internal/appui/tailscale.go:630
+#: internal/connectui/window.go:547
+#: internal/filesui/archive.go:76
+#: internal/filesui/remotesetup.go:226
+#: internal/filesui/renamemany.go:168
 #: internal/ui/settings_ai.go:453
 #: internal/viewerui/app.go:791
+#: ui/connect.ui:290
 #: ui/gpg.ui:1342
 #: ui/settings.ui:4810
 #: ui/sysmon.ui:96
@@ -2214,6 +2371,7 @@ msgid "Copy Name"
 msgstr "名前のコピー"
 
 #: internal/appui/tailscale.go:507
+#: ui/connect.ui:621
 msgid "Ping"
 msgstr "Ping"
 
@@ -2428,11 +2586,14 @@ msgid "Cannot play it: %s"
 msgstr "再生できません: %s"
 
 #: internal/appui/video.go:529
+#: internal/connectui/window.go:387
+#: internal/remoteui/window.go:468
 #: internal/shell/notify.go:44
 #: internal/shell/status.go:73
 #: internal/shell/status.go:88
 #: internal/shell/status.go:107
 #: internal/shell/status.go:122
+#: ui/remote.ui:318
 #: ui/settings.ui:5027
 msgid "Off"
 msgstr "オフ"
@@ -2546,19 +2707,28 @@ msgid "Unknown building block %q"
 msgstr "不明な部品 %q"
 
 #: internal/appui/workshop.go:990
-#: internal/filesui/cards.go:285
-#: internal/filesui/cards.go:334
-#: internal/filesui/cards.go:372
-#: internal/filesui/cards.go:389
-#: internal/filesui/cards.go:427
-#: internal/filesui/cards.go:610
+#: internal/connectui/window.go:429
+#: internal/filesui/archive.go:49
+#: internal/filesui/archive.go:309
+#: internal/filesui/cards.go:342
+#: internal/filesui/cards.go:391
+#: internal/filesui/cards.go:429
+#: internal/filesui/cards.go:446
+#: internal/filesui/cards.go:484
+#: internal/filesui/cards.go:583
+#: internal/filesui/remote.go:159
+#: internal/filesui/remote.go:219
+#: internal/filesui/remotesetup.go:152
+#: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
 #: internal/gamesui/fortune_host.go:236
+#: internal/remoteui/window.go:694
 #: internal/ui/askpass.go:270
 #: internal/ui/askpass.go:412
 #: internal/ui/askpass.go:416
 #: ui/clock.ui:244
 #: ui/clock.ui:454
+#: ui/connectreply.ui:49
 #: ui/files.ui:155
 #: ui/gpg.ui:1252
 #: ui/gpg.ui:1469
@@ -2576,18 +2746,10 @@ msgstr "キャンセル"
 msgid "OK"
 msgstr "わかりました"
 
-#: internal/appui/workshop_blocks.go:427
-#: internal/appui/workshop_manager.go:63
-#: internal/filesui/cards.go:698
-#: internal/filesui/window.go:696
-#: internal/ui/record.go:163
-#: internal/ui/system_ipc.go:241
-msgid "Open"
-msgstr "開く"
-
 #: internal/appui/workshop_blocks.go:438
 #: internal/ui/settings_ai.go:496
 #: ui/clock.ui:252
+#: ui/connect.ui:420
 #: ui/pass.ui:490
 #: ui/settings.ui:5588
 msgid "Save"
@@ -2705,7 +2867,7 @@ msgstr "コンソールトークンを読み取れません: %s"
 msgid "No API key for %s (%s): type one in Settings → AI."
 msgstr "%s (%s) には API キーがありません。[設定] → [AI] に API キーを入力します。"
 
-#: internal/assistant/assistant.go:585
+#: internal/assistant/assistant.go:589
 msgid "Remote Console: %s"
 msgstr "リモートコンソール: %s"
 
@@ -2821,6 +2983,84 @@ msgstr "1月"
 #: internal/i18n/time.go:24
 msgid "PM"
 msgstr "午後"
+
+#: internal/connectui/reply.go:39
+msgid "Answer %s"
+msgstr "%s に返信"
+
+#: internal/connectui/reply.go:68
+msgid "Not sent: %v"
+msgstr "送信されませんでした: %v"
+
+#: internal/connectui/window.go:235
+msgid "None found yet: open KDE Connect on your phone."
+msgstr "まだ見つかりません。スマートフォンで KDE Connect を開いてください。"
+
+#: internal/connectui/window.go:355
+msgid "Mobile Link did not start: %v"
+msgstr "モバイルリンクを起動できませんでした: %v"
+
+#: internal/connectui/window.go:381
+msgid "Visible to your devices"
+msgstr "デバイスから見えます"
+
+#: internal/connectui/window.go:382
+msgid "Devices running KDE Connect, GSConnect or Valent find this computer on this network and the tailnet, and pair with it."
+msgstr "KDE Connect、GSConnect、Valent を使うデバイスは、このネットワークと tailnet でこのコンピューターを見つけてペアリングできます。"
+
+#: internal/connectui/window.go:384
+#: internal/remoteui/window.go:465
+msgid "Starting…"
+msgstr "起動中…"
+
+#: internal/connectui/window.go:385
+msgid "The service is starting."
+msgstr "サービスを起動しています。"
+
+#: internal/connectui/window.go:388
+msgid "Share the clipboard and files with your phone, see its notifications and battery here, and use it as a touchpad or a remote."
+msgstr "スマートフォンとクリップボードやファイルを共有し、通知やバッテリーをここで確認し、タッチパッドやリモコンとして使えます。"
+
+#: internal/connectui/window.go:395
+msgid "A device lists them and runs one with a tap, here, as you."
+msgstr "デバイスに一覧が表示され、タップするとこのコンピューターであなたとして実行されます。"
+
+#: internal/connectui/window.go:403
+msgid "The device is gone."
+msgstr "デバイスが見つからなくなりました。"
+
+#: internal/connectui/window.go:427
+msgid "%s asks to pair. Pair only if it shows this key:"
+msgstr "%s がペアリングを求めています。このキーが表示されている場合のみペアリングしてください:"
+
+#: internal/connectui/window.go:430
+msgid "Accept on %s if it shows this key:"
+msgstr "%s にこのキーが表示されていれば、そちらで承認してください:"
+
+#: internal/connectui/window.go:432
+#: internal/remoteui/window.go:559
+msgid "Unpair"
+msgstr "ペアリング解除"
+
+#: internal/connectui/window.go:435
+msgid "Not paired: pair to share with it."
+msgstr "未ペアリング: 共有するにはペアリングしてください。"
+
+#: internal/connectui/window.go:439
+msgid "it connects again when it is on this network or the tailnet"
+msgstr "このネットワークか tailnet に入ると再接続します"
+
+#: internal/connectui/window.go:475
+msgid "Send files"
+msgstr "ファイルを送信"
+
+#: internal/connectui/window.go:517
+msgid "Asked %s to connect."
+msgstr "%s に接続を依頼しました。"
+
+#: internal/connectui/window.go:552
+msgid "What it runs: systemctl suspend"
+msgstr "実行するもの: systemctl suspend"
 
 #: internal/convert/convert.go:97
 msgid "millimetres"
@@ -3397,167 +3637,296 @@ msgstr "テキストエディター"
 msgid "Opens plain text"
 msgstr "プレーンテキストを開く"
 
-#: internal/filesui/app.go:69
-#: internal/filesui/cards.go:708
+#: internal/filesui/app.go:75
+#: internal/filesui/cards.go:683
+#: internal/filesui/remote.go:371
 #: internal/filesui/sidebar.go:31
-#: internal/filesui/window.go:90
-#: internal/filesui/window.go:268
+#: internal/filesui/window.go:93
+#: internal/filesui/window.go:271
 #: ui/gpg.ui:445
 #: ui/gpg.ui:810
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
 msgid "Files"
 msgstr "ファイル"
 
-#: internal/filesui/app.go:227
+#: internal/filesui/app.go:233
 msgid "%s is plugged in."
 msgstr "%s が接続されました。"
 
-#: internal/filesui/app.go:306
+#: internal/filesui/app.go:311
 msgid "There are no files on the clipboard."
 msgstr "クリップボードにファイルがありません。"
 
-#: internal/filesui/app.go:360
+#: internal/filesui/app.go:365
 msgid "Nothing to undo."
 msgstr "元に戻す操作はありません。"
+
+#: internal/filesui/archive.go:50
+msgid "Compress"
+msgstr "圧縮"
+
+#: internal/filesui/archive.go:54
+msgid "Compress %d item"
+msgid_plural "Compress %d items"
+msgstr[0] "%d 項目を圧縮"
+
+#: internal/filesui/archive.go:56
+msgid "Compress “%s”"
+msgstr "「%s」を圧縮"
+
+#: internal/filesui/archive.go:58
+msgid "The archive is made in “%s”."
+msgstr "アーカイブは「%s」に作られます。"
+
+#: internal/filesui/archive.go:79
+msgid "Archive"
+msgstr "アーカイブ"
+
+#: internal/filesui/archive.go:86
+msgid "Format"
+msgstr "形式"
+
+#: internal/filesui/archive.go:104
+msgid "Needs the 7z program (7zip)"
+msgstr "7z プログラム (7zip) が必要"
+
+#: internal/filesui/archive.go:123
+msgid "Compression"
+msgstr "圧縮率"
+
+#: internal/filesui/archive.go:131
+msgid "Fast"
+msgstr "速い"
+
+#: internal/filesui/archive.go:131
+msgid "Normal"
+msgstr "標準"
+
+#: internal/filesui/archive.go:131
+msgid "Smallest"
+msgstr "最小"
+
+#: internal/filesui/archive.go:163
+#: internal/filesui/archive.go:320
+#: internal/filesui/remote.go:178
+#: internal/filesui/remotesetup.go:46
+#: internal/filesui/remotesetup.go:55
+#: internal/filesui/remotesetup.go:61
+#: internal/filesui/remotesetup.go:67
+#: ui/lock.ui:76
+#: ui/polkit.ui:690
+msgid "Password"
+msgstr "パスワード"
+
+#: internal/filesui/archive.go:164
+msgid "none"
+msgstr "なし"
+
+#: internal/filesui/archive.go:165
+msgid "Repeat it"
+msgstr "もう一度"
+
+#: internal/filesui/archive.go:166
+msgid "Lock the file names too"
+msgstr "ファイル名も保護する"
+
+#: internal/filesui/archive.go:168
+msgid "Without the password, not even the list of files shows (7z)"
+msgstr "パスワードがないとファイル一覧も表示されません (7z)"
+
+#: internal/filesui/archive.go:180
+msgid "Leave out hidden files"
+msgstr "隠しファイルを除く"
+
+#: internal/filesui/archive.go:182
+msgid "Names starting with a dot, inside the folders: .git, .cache …"
+msgstr "フォルダー内のドットで始まる名前: .git、.cache など"
+
+#: internal/filesui/archive.go:187
+msgid "Advanced"
+msgstr "詳細設定"
+
+#: internal/filesui/archive.go:214
+msgid "%s archives cannot have a password: choose Zip or 7z for one."
+msgstr "%s アーカイブにはパスワードを付けられません。パスワードを付けるには Zip か 7z を選んでください。"
+
+#: internal/filesui/archive.go:216
+#: internal/filesui/archive.go:254
+msgid "A password needs the 7z program (7zip)."
+msgstr "パスワードには 7z プログラム (7zip) が必要です。"
+
+#: internal/filesui/archive.go:218
+msgid "Locked with AES-256: older unzip programs cannot open it; 7-Zip and the file managers of today can."
+msgstr "AES-256 で保護: 古い unzip では開けませんが、7-Zip や最近のファイルマネージャーなら開けます。"
+
+#: internal/filesui/archive.go:248
+msgid "7z archives need the 7z program (7zip)."
+msgstr "7z アーカイブには 7z プログラム (7zip) が必要です。"
+
+#: internal/filesui/archive.go:251
+msgid "%s archives cannot have a password."
+msgstr "%s アーカイブにはパスワードを付けられません。"
+
+#: internal/filesui/archive.go:257
+msgid "The two passwords differ."
+msgstr "2 つのパスワードが一致しません。"
+
+#: internal/filesui/archive.go:263
+#: internal/filesui/cards.go:355
+#: internal/filesui/cards.go:400
+msgid "“%s” is taken here."
+msgstr "「%s」はここにすでにあります。"
+
+#: internal/filesui/archive.go:303
+msgid "Type its password to extract it."
+msgstr "展開するにはパスワードを入力してください。"
+
+#: internal/filesui/archive.go:305
+msgid "That is not its password. Try again."
+msgstr "パスワードが違います。もう一度入力してください。"
+
+#: internal/filesui/archive.go:310
+msgid "Extract"
+msgstr "展開"
+
+#: internal/filesui/archive.go:319
+msgid "“%s” is locked"
+msgstr "「%s」は保護されています"
 
 #: internal/filesui/caches.go:140
 #: internal/filesui/details.go:49
 #: internal/filesui/details.go:282
-#: internal/filesui/jobs.go:141
-#: internal/filesui/jobs.go:143
-#: internal/filesui/jobs.go:145
-#: internal/filesui/jobs.go:147
-#: internal/filesui/jobs.go:149
-#: internal/filesui/jobs.go:151
-#: internal/filesui/pane.go:970
+#: internal/filesui/jobs.go:144
+#: internal/filesui/jobs.go:146
+#: internal/filesui/jobs.go:148
+#: internal/filesui/jobs.go:150
+#: internal/filesui/jobs.go:152
+#: internal/filesui/jobs.go:154
+#: internal/filesui/pane.go:985
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 項目"
 
-#: internal/filesui/cards.go:286
-#: internal/filesui/cards.go:306
-#: internal/filesui/cards.go:711
+#: internal/filesui/cards.go:343
+#: internal/filesui/cards.go:363
+#: internal/filesui/cards.go:686
+#: internal/filesui/renamemany.go:38
 msgid "Rename"
 msgstr "名前を変更"
 
-#: internal/filesui/cards.go:298
-#: internal/filesui/cards.go:343
-msgid "“%s” is taken here."
-msgstr "「%s」はここにすでにあります。"
-
-#: internal/filesui/cards.go:313
+#: internal/filesui/cards.go:370
 msgid "A name cannot be empty."
 msgstr "名前を空にはできません。"
 
-#: internal/filesui/cards.go:315
+#: internal/filesui/cards.go:372
 msgid "“%s” is not a name."
 msgstr "「%s」は名前にできません。"
 
-#: internal/filesui/cards.go:317
+#: internal/filesui/cards.go:374
 msgid "A name cannot hold “/”."
 msgstr "名前に「/」は使えません。"
 
-#: internal/filesui/cards.go:319
+#: internal/filesui/cards.go:376
 msgid "The name is too long."
 msgstr "名前が長すぎます。"
 
-#: internal/filesui/cards.go:327
+#: internal/filesui/cards.go:384
 msgid "New file"
 msgstr "新規ファイル"
 
-#: internal/filesui/cards.go:327
+#: internal/filesui/cards.go:384
 msgid "Untitled"
 msgstr "無題"
 
-#: internal/filesui/cards.go:329
+#: internal/filesui/cards.go:386
 msgid "New folder"
 msgstr "新規フォルダー"
 
-#: internal/filesui/cards.go:329
+#: internal/filesui/cards.go:386
 msgid "New Folder"
 msgstr "新規フォルダー"
 
-#: internal/filesui/cards.go:335
+#: internal/filesui/cards.go:392
 msgid "Make"
 msgstr "作成"
 
-#: internal/filesui/cards.go:367
+#: internal/filesui/cards.go:424
 msgid "Delete %d item for good?"
 msgid_plural "Delete %d items for good?"
 msgstr[0] "%d 項目を完全に削除しますか？"
 
-#: internal/filesui/cards.go:369
+#: internal/filesui/cards.go:426
 msgid "Delete “%s” for good?"
 msgstr "「%s」を完全に削除しますか？"
 
-#: internal/filesui/cards.go:384
+#: internal/filesui/cards.go:441
 msgid "They do not go to the trash, and this cannot be undone."
 msgstr "ゴミ箱には移動せず、元に戻せません。"
 
-#: internal/filesui/cards.go:390
+#: internal/filesui/cards.go:447
 #: internal/filesui/sidebar.go:55
-#: internal/filesui/window.go:670
-#: internal/filesui/window.go:676
+#: internal/filesui/window.go:673
+#: internal/filesui/window.go:679
 #: internal/shell/commands.go:32
 #: ui/filespane.ui:250
 msgid "Empty Trash"
 msgstr "ゴミ箱を空にする"
 
-#: internal/filesui/cards.go:407
+#: internal/filesui/cards.go:464
 msgid "Empty the trash?"
 msgstr "ゴミ箱を空にしますか？"
 
-#: internal/filesui/cards.go:407
+#: internal/filesui/cards.go:464
 msgid "Everything in it is deleted for good, on every drive."
 msgstr "すべてのドライブ上の中身が完全に削除されます。"
 
-#: internal/filesui/cards.go:424
+#: internal/filesui/cards.go:481
 msgid "There: %s, %s. This one: %s, %s."
 msgstr "既存：%s、%s。こちら：%s、%s。"
 
-#: internal/filesui/cards.go:428
+#: internal/filesui/cards.go:485
 msgid "Skip"
 msgstr "スキップ"
 
-#: internal/filesui/cards.go:429
+#: internal/filesui/cards.go:486
 msgid "Keep both"
 msgstr "両方残す"
 
-#: internal/filesui/cards.go:433
+#: internal/filesui/cards.go:490
 msgid "Merge"
 msgstr "統合"
 
-#: internal/filesui/cards.go:438
+#: internal/filesui/cards.go:495
 msgid "“%s” is already in %s"
 msgstr "「%s」は %s にすでにあります"
 
-#: internal/filesui/cards.go:440
+#: internal/filesui/cards.go:497
 msgid "A folder “%s” is already in %s"
 msgstr "フォルダー「%s」は %s にすでにあります"
 
-#: internal/filesui/cards.go:443
-#: ui/files.ui:253
+#: internal/filesui/cards.go:500
+#: ui/files.ui:261
 msgid "Do the same for the rest"
 msgstr "残りも同じようにする"
 
-#: internal/filesui/cards.go:452
+#: internal/filesui/cards.go:509
 msgid "… and %d more"
 msgid_plural "… and %d more"
 msgstr[0] "…ほか %d 件"
 
-#: internal/filesui/cards.go:454
-#: internal/filesui/cards.go:735
+#: internal/filesui/cards.go:511
+#: internal/filesui/cards.go:710
 #: internal/ui/settings_bench.go:139
 #: ui/settings.ui:3033
 #: ui/settings.ui:4565
 msgid "Close"
 msgstr "閉じる"
 
-#: internal/filesui/cards.go:455
+#: internal/filesui/cards.go:512
 msgid "Some items could not be done"
 msgstr "一部の項目を処理できませんでした"
 
-#: internal/filesui/cards.go:464
+#: internal/filesui/cards.go:521
 msgid "Jump to a folder"
 msgstr "フォルダーへジャンプ"
 
@@ -3603,192 +3972,193 @@ msgstr "%s を切断できません：%v"
 msgid "Mounting %s…"
 msgstr "%s をマウントしています…"
 
-#: internal/filesui/cards.go:611
+#: internal/filesui/cards.go:584
 msgid "Unlock"
 msgstr "ロック解除"
 
-#: internal/filesui/cards.go:613
+#: internal/filesui/cards.go:587
 msgid "Unlocking…"
 msgstr "ロックを解除しています…"
 
-#: internal/filesui/cards.go:634
+#: internal/filesui/cards.go:609
 msgid "That passphrase does not open it."
 msgstr "このパスフレーズでは開けません。"
 
-#: internal/filesui/cards.go:648
+#: internal/filesui/cards.go:623
 msgid "Unlock %s"
 msgstr "%s のロックを解除"
 
-#: internal/filesui/cards.go:649
+#: internal/filesui/cards.go:624
 msgid "The drive is encrypted. Its passphrase is not kept."
 msgstr "このドライブは暗号化されています。パスフレーズは保存されません。"
 
-#: internal/filesui/cards.go:659
+#: internal/filesui/cards.go:634
 msgid "Ejecting %s…"
 msgstr "%s を取り出しています…"
 
-#: internal/filesui/cards.go:670
+#: internal/filesui/cards.go:645
 msgid "%s can be removed now."
 msgstr "%s を取り外せます。"
 
-#: internal/filesui/cards.go:672
+#: internal/filesui/cards.go:647
 msgid "%s is unmounted."
 msgstr "%s をアンマウントしました。"
 
-#: internal/filesui/cards.go:682
+#: internal/filesui/cards.go:657
 msgid "%s is in use: close the files open on it first."
 msgstr "%s は使用中です。先に開いているファイルを閉じてください。"
 
-#: internal/filesui/cards.go:684
+#: internal/filesui/cards.go:659
 msgid "Not allowed."
 msgstr "許可されていません。"
 
-#: internal/filesui/cards.go:686
+#: internal/filesui/cards.go:661
+#: internal/remoteui/stream.go:472
 msgid "%s: %v"
 msgstr "%s：%v"
 
-#: internal/filesui/cards.go:697
+#: internal/filesui/cards.go:672
 msgid "Moving"
 msgstr "移動"
 
-#: internal/filesui/cards.go:699
+#: internal/filesui/cards.go:674
 msgid "Parent folder"
 msgstr "親フォルダー"
 
-#: internal/filesui/cards.go:700
+#: internal/filesui/cards.go:675
 msgid "Back / forward"
 msgstr "戻る / 進む"
 
-#: internal/filesui/cards.go:701
+#: internal/filesui/cards.go:676
 #: internal/filesui/sidebar.go:41
 #: internal/filesui/tabs.go:96
-#: internal/filesui/window.go:275
+#: internal/filesui/window.go:278
 msgid "Home"
 msgstr "ホーム"
 
-#: internal/filesui/cards.go:702
+#: internal/filesui/cards.go:677
 msgid "The sidebar's places"
 msgstr "サイドバーの場所"
 
-#: internal/filesui/cards.go:703
+#: internal/filesui/cards.go:678
 msgid "Type a path or a server"
 msgstr "パスまたはサーバーを入力"
 
-#: internal/filesui/cards.go:704
+#: internal/filesui/cards.go:679
 msgid "Jump to a folder used before"
 msgstr "以前使ったフォルダーへジャンプ"
 
-#: internal/filesui/cards.go:705
+#: internal/filesui/cards.go:680
 #: ui/filespane.ui:115
 msgid "Search below this folder"
 msgstr "このフォルダー以下を検索"
 
-#: internal/filesui/cards.go:706
+#: internal/filesui/cards.go:681
 msgid "Letters"
 msgstr "文字"
 
-#: internal/filesui/cards.go:706
+#: internal/filesui/cards.go:681
 msgid "Filter this folder; Esc clears"
 msgstr "このフォルダーを絞り込む（Esc で解除）"
 
-#: internal/filesui/cards.go:709
+#: internal/filesui/cards.go:684
 msgid "Copy / cut / paste"
 msgstr "コピー / 切り取り / 貼り付け"
 
-#: internal/filesui/cards.go:710
+#: internal/filesui/cards.go:685
 msgid "Copy the paths (none selected: the folder's)"
 msgstr "パスをコピー（未選択ならフォルダーのパス）"
 
-#: internal/filesui/cards.go:713
+#: internal/filesui/cards.go:688
 msgid "Delete for good"
 msgstr "完全に削除"
 
-#: internal/filesui/cards.go:714
+#: internal/filesui/cards.go:689
 msgid "New folder / new file"
 msgstr "新規フォルダー / 新規ファイル"
 
-#: internal/filesui/cards.go:715
+#: internal/filesui/cards.go:690
 msgid "Undo"
 msgstr "元に戻す"
 
-#: internal/filesui/cards.go:716
+#: internal/filesui/cards.go:691
 msgid "Copy / move to the other pane"
 msgstr "もう一方のペインへコピー / 移動"
 
-#: internal/filesui/cards.go:717
-#: internal/filesui/window.go:698
+#: internal/filesui/cards.go:692
+#: internal/filesui/window.go:702
 msgid "Open with…"
 msgstr "アプリケーションで開く…"
 
-#: internal/filesui/cards.go:718
-#: internal/filesui/window.go:743
+#: internal/filesui/cards.go:693
+#: internal/filesui/window.go:755
 msgid "Bookmark"
 msgstr "ブックマーク"
 
-#: internal/filesui/cards.go:719
-#: internal/filesui/window.go:685
+#: internal/filesui/cards.go:694
+#: internal/filesui/window.go:688
 msgid "Terminal here"
 msgstr "ここで端末を開く"
 
-#: internal/filesui/cards.go:721
+#: internal/filesui/cards.go:696
 #: ui/screenshot.ui:162
 #: ui/shotdrawer.ui:122
 msgid "Window"
 msgstr "窓"
 
-#: internal/filesui/cards.go:722
+#: internal/filesui/cards.go:697
 msgid "New tab / close tab"
 msgstr "新しいタブ / タブを閉じる"
 
-#: internal/filesui/cards.go:723
+#: internal/filesui/cards.go:698
 msgid "Next / previous tab"
 msgstr "次 / 前のタブ"
 
-#: internal/filesui/cards.go:724
-#: internal/filesui/window.go:701
+#: internal/filesui/cards.go:699
+#: internal/filesui/window.go:705
 msgid "Middle click"
 msgstr "中クリック"
 
-#: internal/filesui/cards.go:724
+#: internal/filesui/cards.go:699
 msgid "A folder in a new tab"
 msgstr "フォルダーを新しいタブで"
 
-#: internal/filesui/cards.go:725
+#: internal/filesui/cards.go:700
 msgid "List / grid"
 msgstr "リスト / グリッド"
 
-#: internal/filesui/cards.go:726
-#: internal/filesui/window.go:689
+#: internal/filesui/cards.go:701
+#: internal/filesui/window.go:693
 msgid "Hidden files"
 msgstr "隠しファイル"
 
-#: internal/filesui/cards.go:727
+#: internal/filesui/cards.go:702
 msgid "Two panes, the other pane"
 msgstr "2 ペイン、もう一方のペイン"
 
-#: internal/filesui/cards.go:728
+#: internal/filesui/cards.go:703
 msgid "Sidebar"
 msgstr "サイドバー"
 
-#: internal/filesui/cards.go:729
-#: internal/filesui/window.go:735
+#: internal/filesui/cards.go:704
+#: internal/filesui/window.go:747
 msgid "Details"
 msgstr "詳細"
 
-#: internal/filesui/cards.go:730
+#: internal/filesui/cards.go:705
 msgid "Bigger / smaller / normal"
 msgstr "大きく / 小さく / 標準"
 
-#: internal/filesui/cards.go:731
+#: internal/filesui/cards.go:706
 msgid "New window, close it"
 msgstr "新しいウィンドウ、ウィンドウを閉じる"
 
-#: internal/filesui/cards.go:732
-#: internal/filesui/window.go:690
+#: internal/filesui/cards.go:707
+#: internal/filesui/window.go:694
 msgid "Reload"
 msgstr "再読み込み"
 
-#: internal/filesui/cards.go:736
+#: internal/filesui/cards.go:711
 msgid "Keys"
 msgstr "キー"
 
@@ -3859,10 +4229,10 @@ msgid "SIZE OF THE FILES"
 msgstr "ファイルのサイズ"
 
 #: internal/filesui/details.go:55
-#: internal/filesui/pane.go:892
+#: internal/filesui/pane.go:907
 #: internal/filesui/sidebar.go:54
 #: internal/filesui/tabs.go:94
-#: internal/filesui/window.go:271
+#: internal/filesui/window.go:274
 msgid "Trash"
 msgstr "ゴミ箱"
 
@@ -3899,39 +4269,52 @@ msgstr "2006年1月2日 15:04"
 msgid "more than %s"
 msgstr "%s 以上"
 
-#: internal/filesui/jobs.go:121
+#: internal/filesui/jobs.go:124
 msgid "%s left"
 msgstr "残り %s"
 
-#: internal/filesui/jobs.go:141
+#: internal/filesui/jobs.go:144
 msgid "Copying %s to %s"
 msgstr "%s を %s にコピーしています"
 
-#: internal/filesui/jobs.go:143
+#: internal/filesui/jobs.go:146
 msgid "Moving %s to %s"
 msgstr "%s を %s に移動しています"
 
-#: internal/filesui/jobs.go:145
+#: internal/filesui/jobs.go:148
 msgid "Moving %s to the trash"
 msgstr "%s をゴミ箱に移動しています"
 
-#: internal/filesui/jobs.go:147
+#: internal/filesui/jobs.go:150
 msgid "Deleting %s"
 msgstr "%s を削除しています"
 
-#: internal/filesui/jobs.go:149
+#: internal/filesui/jobs.go:152
 msgid "Restoring %s"
 msgstr "%s を復元しています"
 
-#: internal/filesui/jobs.go:151
+#: internal/filesui/jobs.go:154
 msgid "Linking %s"
 msgstr "%s のリンクを作成しています"
 
-#: internal/filesui/jobs.go:159
+#: internal/filesui/jobs.go:156
+msgid "Compressing into %s"
+msgstr "%s に圧縮中"
+
+#: internal/filesui/jobs.go:158
+msgid "Extracting %s"
+msgstr "%s を展開中"
+
+#: internal/filesui/jobs.go:158
+msgid "%d archive"
+msgid_plural "%d archives"
+msgstr[0] "%d 個のアーカイブ"
+
+#: internal/filesui/jobs.go:166
 msgid "%d s"
 msgstr "%d秒"
 
-#: internal/filesui/jobs.go:195
+#: internal/filesui/jobs.go:205
 msgid "Moved %d item to the trash (Ctrl+Z puts it back)."
 msgid_plural "Moved %d items to the trash (Ctrl+Z puts them back)."
 msgstr[0] "%d 項目をゴミ箱に移動しました（Ctrl+Z で元に戻せます）。"
@@ -3963,86 +4346,529 @@ msgstr "%s をいつもこれで開く"
 msgid "Find an app"
 msgstr "アプリケーションを検索"
 
-#: internal/filesui/pane.go:338
+#: internal/filesui/pane.go:348
 msgid "%s → %s"
 msgstr "%s → %s"
 
-#: internal/filesui/pane.go:456
+#: internal/filesui/pane.go:466
 msgid "%s free"
 msgstr "空き %s"
 
-#: internal/filesui/pane.go:654
+#: internal/filesui/pane.go:664
 msgid "You may not read this folder."
 msgstr "このフォルダーを読む権限がありません。"
 
-#: internal/filesui/pane.go:656
+#: internal/filesui/pane.go:666
 msgid "This folder does not exist."
 msgstr "このフォルダーは存在しません。"
 
-#: internal/filesui/pane.go:658
+#: internal/filesui/pane.go:668
 msgid "This folder cannot be read: %v"
 msgstr "このフォルダーを読めません：%v"
 
-#: internal/filesui/pane.go:660
+#: internal/filesui/pane.go:670
 msgid "Nothing here matches “%s”."
 msgstr "「%s」に一致するものはありません。"
 
-#: internal/filesui/pane.go:662
+#: internal/filesui/pane.go:672
 msgid "Type to search below this folder."
 msgstr "入力してこのフォルダー以下を検索します。"
 
-#: internal/filesui/pane.go:664
+#: internal/filesui/pane.go:674
 msgid "Nothing below this folder matches “%s”."
 msgstr "このフォルダー以下に「%s」に一致するものはありません。"
 
-#: internal/filesui/pane.go:666
+#: internal/filesui/pane.go:676
 msgid "The trash is empty."
 msgstr "ゴミ箱は空です。"
 
-#: internal/filesui/pane.go:668
+#: internal/filesui/pane.go:678
 msgid "Only hidden files: %d of them (Ctrl+H shows them)."
 msgid_plural "Only hidden files: %d of them (Ctrl+H shows them)."
 msgstr[0] "隠しファイルのみ：%d 個（Ctrl+H で表示）。"
 
-#: internal/filesui/pane.go:670
+#: internal/filesui/pane.go:680
 msgid "This folder is empty."
 msgstr "このフォルダーは空です。"
 
-#: internal/filesui/pane.go:830
+#: internal/filesui/pane.go:840
 msgid "%s does not exist."
 msgstr "%s は存在しません。"
 
-#: internal/filesui/pane.go:926
+#: internal/filesui/pane.go:941
 msgid "SEARCH"
 msgstr "検索"
 
-#: internal/filesui/pane.go:968
+#: internal/filesui/pane.go:983
 msgid "%d found"
 msgid_plural "%d found"
 msgstr[0] "%d 件見つかりました"
 
-#: internal/filesui/pane.go:973
+#: internal/filesui/pane.go:988
 msgid "%d hidden"
 msgid_plural "%d hidden"
 msgstr[0] "%d 個非表示"
 
-#: internal/filesui/pane.go:986
+#: internal/filesui/pane.go:1001
 msgid "%d selected"
 msgid_plural "%d selected"
 msgstr[0] "%d 個選択"
 
-#: internal/filesui/pane.go:1108
+#: internal/filesui/pane.go:1123
 msgid "done"
 msgstr "完了"
 
-#: internal/filesui/pane.go:1356
+#: internal/filesui/pane.go:1371
 msgid "15:04"
 msgstr "15:04"
 
-#: internal/filesui/pane.go:1360
+#: internal/filesui/pane.go:1375
 #: internal/ui/shotdrawer.go:329
 msgid "Jan 2 2006"
 msgstr "2006年1月2日"
+
+#: internal/filesui/remote.go:59
+#: internal/remoteui/stream.go:134
+msgid "Connecting to %s…"
+msgstr "%s に接続しています…"
+
+#: internal/filesui/remote.go:160
+#: internal/filesui/remotesetup.go:132
+#: ui/remote.ui:574
+#: ui/vm.ui:1548
+#: ui/vm.ui:1569
+msgid "Connect"
+msgstr "接続"
+
+#: internal/filesui/remote.go:164
+#: internal/filesui/remotesetup.go:340
+msgid "Both the key's ID and its secret are needed."
+msgstr "キーの ID とシークレットの両方が必要です。"
+
+#: internal/filesui/remote.go:176
+msgid "Sign in to %s"
+msgstr "%s にサインイン"
+
+#: internal/filesui/remote.go:181
+msgid "Keys for %s"
+msgstr "%s のキー"
+
+#: internal/filesui/remote.go:182
+#: internal/filesui/remotesetup.go:76
+#: internal/filesui/remotesetup.go:84
+msgid "Access key ID"
+msgstr "アクセスキー ID"
+
+#: internal/filesui/remote.go:182
+#: internal/filesui/remotesetup.go:77
+#: internal/filesui/remotesetup.go:85
+msgid "Secret access key"
+msgstr "シークレットアクセスキー"
+
+#: internal/filesui/remote.go:185
+#: internal/filesui/remotesetup.go:158
+msgid "Remember in the keyring"
+msgstr "キーリングに保存する"
+
+#: internal/filesui/remote.go:199
+msgid "Disconnecting %s…"
+msgstr "%s を切断しています…"
+
+#: internal/filesui/remote.go:208
+msgid "%s is disconnected."
+msgstr "%s を切断しました。"
+
+#: internal/filesui/remote.go:220
+#: internal/filesui/remote.go:273
+#: internal/ui/settings_ai.go:497
+#: ui/remote.ui:543
+msgid "Forget"
+msgstr "キーを削除"
+
+#: internal/filesui/remote.go:247
+msgid "Forget %s?"
+msgstr "%s を削除しますか？"
+
+#: internal/filesui/remote.go:248
+msgid "Its address and its password go from here. Nothing on the server changes."
+msgstr "アドレスとパスワードをここから削除します。サーバー上のものは何も変わりません。"
+
+#: internal/filesui/remote.go:255
+msgid "REMOTE DISKS"
+msgstr "リモートディスク"
+
+#: internal/filesui/remote.go:266
+#: internal/filesui/sidebar.go:68
+msgid "%s free of %s"
+msgstr "%s 空き（全 %s）"
+
+#: internal/filesui/remote.go:269
+msgid "Disconnect"
+msgstr "切断"
+
+#: internal/filesui/remote.go:272
+msgid "Edit…"
+msgstr "編集…"
+
+#: internal/filesui/remote.go:276
+msgid "Remote disk…"
+msgstr "リモートディスク…"
+
+#: internal/filesui/remote.go:308
+msgid "A remote disk cannot be at %s://."
+msgstr "リモートディスクは %s:// には置けません。"
+
+#: internal/filesui/remote.go:310
+msgid "Leave the password out of the address: it is asked for, and kept in the keyring."
+msgstr "パスワードはアドレスに含めないでください。別に尋ね、キーリングに保管します。"
+
+#: internal/filesui/remote.go:312
+msgid "A server is needed."
+msgstr "サーバーが必要です。"
+
+#: internal/filesui/remote.go:314
+msgid "An SMB disk needs a share: smb://server/share."
+msgstr "SMB ディスクには共有名が必要です：smb://server/share"
+
+#: internal/filesui/remote.go:316
+msgid "The address has a line break in it."
+msgstr "アドレスに改行が含まれています。"
+
+#: internal/filesui/remote.go:318
+msgid "A bucket is needed."
+msgstr "バケットが必要です。"
+
+#: internal/filesui/remote.go:320
+msgid "A WebDAV URL starts with https:// or http://."
+msgstr "WebDAV の URL は https:// か http:// で始まります。"
+
+#: internal/filesui/remote.go:322
+msgid "A port is a number from 1 to 65535."
+msgstr "ポートは 1 から 65535 の数です。"
+
+#: internal/filesui/remote.go:324
+msgid "An address starts with sftp://, smb://, s3:// …"
+msgstr "アドレスは sftp://、smb://、s3:// などで始まります。"
+
+#: internal/filesui/remote.go:333
+msgid "%s did not answer in time."
+msgstr "%s が時間内に応答しませんでした。"
+
+#: internal/filesui/remote.go:336
+#: internal/filesui/remotesetup.go:404
+msgid "“%s” cannot be a folder's name in ~/Remote."
+msgstr "「%s」は ~/Remote のフォルダー名にできません。"
+
+#: internal/filesui/remote.go:338
+#: internal/filesui/remote.go:361
+msgid "%s could not be connected: %s"
+msgstr "%s に接続できません：%s"
+
+#: internal/filesui/remote.go:342
+msgid "Remote disks need the %s package."
+msgstr "リモートディスクには %s パッケージが必要です。"
+
+#: internal/filesui/remote.go:345
+msgid "Those keys were refused."
+msgstr "そのキーは拒否されました。"
+
+#: internal/filesui/remote.go:347
+msgid "The server refused that user or password."
+msgstr "サーバーがそのユーザーまたはパスワードを拒否しました。"
+
+#: internal/filesui/remote.go:349
+msgid "%s's SSH host key is unknown or changed: check it with ssh first."
+msgstr "%s の SSH ホスト鍵が未登録か変更されています。先に ssh で確認してください。"
+
+#: internal/filesui/remote.go:351
+msgid "%s does not answer."
+msgstr "%s が応答しません。"
+
+#: internal/filesui/remote.go:353
+msgid "%s is not there."
+msgstr "%s は見つかりません。"
+
+#: internal/filesui/remote.go:355
+msgid "%s has files in it: a disk is mounted only on an empty folder."
+msgstr "%s にファイルがあります。ディスクは空のフォルダーにしかマウントされません。"
+
+#: internal/filesui/remote.go:357
+msgid "%s is in use: close what has a file open on it."
+msgstr "%s は使用中です。そこでファイルを開いているものを閉じてください。"
+
+#: internal/filesui/remote.go:359
+msgid "This rclone is too old for %s://; 1.60 or later has it."
+msgstr "この rclone は %s:// には古すぎます。1.60 以降が対応しています。"
+
+#: internal/filesui/remotesetup.go:40
+msgid "optional"
+msgstr "任意"
+
+#: internal/filesui/remotesetup.go:44
+#: internal/filesui/remotesetup.go:51
+#: internal/filesui/remotesetup.go:65
+msgid "Server"
+msgstr "サーバー"
+
+#: internal/filesui/remotesetup.go:44
+#: internal/filesui/remotesetup.go:65
+msgid "host, or host:port"
+msgstr "ホスト、または ホスト:ポート"
+
+#: internal/filesui/remotesetup.go:46
+msgid "empty: your SSH keys"
+msgstr "空欄：SSH 鍵を使う"
+
+#: internal/filesui/remotesetup.go:47
+msgid "empty: the home folder"
+msgstr "空欄：ホームフォルダー"
+
+#: internal/filesui/remotesetup.go:52
+msgid "Share"
+msgstr "共有"
+
+#: internal/filesui/remotesetup.go:54
+msgid "empty: as a guest"
+msgstr "空欄：ゲスト"
+
+#: internal/filesui/remotesetup.go:59
+msgid "URL"
+msgstr "URL"
+
+#: internal/filesui/remotesetup.go:61
+msgid "or an app password"
+msgstr "またはアプリパスワード"
+
+#: internal/filesui/remotesetup.go:66
+msgid "empty: anonymous"
+msgstr "空欄：匿名"
+
+#: internal/filesui/remotesetup.go:69
+msgid "Encrypted (FTPS)"
+msgstr "暗号化（FTPS）"
+
+#: internal/filesui/remotesetup.go:73
+#: internal/ui/settings_ai.go:467
+msgid "Endpoint"
+msgstr "エンドポイント"
+
+#: internal/filesui/remotesetup.go:73
+msgid "s3.amazonaws.com, or your server's host"
+msgstr "s3.amazonaws.com、またはサーバーのホスト"
+
+#: internal/filesui/remotesetup.go:74
+#: internal/filesui/remotesetup.go:82
+msgid "Bucket"
+msgstr "バケット"
+
+#: internal/filesui/remotesetup.go:81
+msgid "Account ID"
+msgstr "アカウント ID"
+
+#: internal/filesui/remotesetup.go:81
+msgid "on the R2 page of Cloudflare's dashboard"
+msgstr "Cloudflare ダッシュボードの R2 ページにあります"
+
+#: internal/filesui/remotesetup.go:84
+msgid "an R2 API token's"
+msgstr "R2 API トークンのもの"
+
+#: internal/filesui/remotesetup.go:114
+msgid "A server you reach with ssh."
+msgstr "ssh で接続できるサーバー。"
+
+#: internal/filesui/remotesetup.go:116
+msgid "A Windows or Samba share, a NAS."
+msgstr "Windows や Samba の共有、NAS。"
+
+#: internal/filesui/remotesetup.go:118
+msgid "Nextcloud, ownCloud or another WebDAV server: the URL its settings show."
+msgstr "Nextcloud、ownCloud などの WebDAV サーバー。設定に表示される URL を入れます。"
+
+#: internal/filesui/remotesetup.go:120
+msgid "An FTP server."
+msgstr "FTP サーバー。"
+
+#: internal/filesui/remotesetup.go:122
+msgid "Amazon S3, or another S3 server (MinIO, Backblaze B2, Wasabi) by its endpoint."
+msgstr "Amazon S3、またはほかの S3 サーバー（MinIO、Backblaze B2、Wasabi）をエンドポイントで指定。"
+
+#: internal/filesui/remotesetup.go:124
+msgid "A Cloudflare R2 bucket, with an R2 API token's keys."
+msgstr "Cloudflare R2 のバケット。R2 API トークンのキーで接続します。"
+
+#: internal/filesui/remotesetup.go:132
+msgid "Remote disk"
+msgstr "リモートディスク"
+
+#: internal/filesui/remotesetup.go:134
+msgid "Change %s"
+msgstr "%s を変更"
+
+#: internal/filesui/remotesetup.go:134
+msgid "Save and connect"
+msgstr "保存して接続"
+
+#: internal/filesui/remotesetup.go:151
+msgid "Test connection"
+msgstr "接続をテスト"
+
+#: internal/filesui/remotesetup.go:227
+msgid "from the server, the share or the bucket"
+msgstr "サーバー、共有、バケットから"
+
+#: internal/filesui/remotesetup.go:243
+msgid "empty: the one kept"
+msgstr "空欄：保存済みのもの"
+
+#: internal/filesui/remotesetup.go:367
+msgid "Testing…"
+msgstr "テスト中…"
+
+#: internal/filesui/remotesetup.go:378
+msgid "%s does not connect"
+msgstr "%s に接続できません"
+
+#: internal/filesui/remotesetup.go:381
+msgid "%s connects"
+msgstr "%s に接続できます"
+
+#: internal/filesui/remotesetup.go:381
+msgid "Its folder can be read."
+msgstr "フォルダーを読めます。"
+
+#: internal/filesui/remotesetup.go:409
+msgid "Another remote disk is called “%s”."
+msgstr "「%s」という名前のリモートディスクがすでにあります。"
+
+#: internal/filesui/renamemany.go:41
+msgid "Rename %d item"
+msgid_plural "Rename %d items"
+msgstr[0] "%d 項目の名前を変更"
+
+#: internal/filesui/renamemany.go:60
+msgid "Replace text"
+msgstr "テキストを置換"
+
+#: internal/filesui/renamemany.go:61
+msgid "Add text"
+msgstr "テキストを追加"
+
+#: internal/filesui/renamemany.go:62
+msgid "Number"
+msgstr "番号"
+
+#: internal/filesui/renamemany.go:63
+msgid "Change case"
+msgstr "大文字・小文字"
+
+#: internal/filesui/renamemany.go:148
+msgid "Find"
+msgstr "検索"
+
+#: internal/filesui/renamemany.go:151
+msgid "Replace with"
+msgstr "置換後"
+
+#: internal/filesui/renamemany.go:152
+msgid "empty: removed"
+msgstr "空欄: 削除"
+
+#: internal/filesui/renamemany.go:154
+msgid "Match case"
+msgstr "大文字と小文字を区別"
+
+#: internal/filesui/renamemany.go:156
+msgid "A regular expression ($1 in the replacement)"
+msgstr "正規表現 (置換後に $1 を使える)"
+
+#: internal/filesui/renamemany.go:158
+#: ui/gpg.ui:419
+#: ui/gpg.ui:783
+msgid "Text"
+msgstr "テキスト"
+
+#: internal/filesui/renamemany.go:161
+msgid "Where"
+msgstr "位置"
+
+#: internal/filesui/renamemany.go:166
+msgid "Before the name"
+msgstr "名前の前"
+
+#: internal/filesui/renamemany.go:166
+msgid "After the name"
+msgstr "名前の後"
+
+#: internal/filesui/renamemany.go:169
+msgid "empty: the number alone"
+msgstr "空欄: 番号のみ"
+
+#: internal/filesui/renamemany.go:171
+msgid "Start at"
+msgstr "開始番号"
+
+#: internal/filesui/renamemany.go:187
+msgid "Case"
+msgstr "大文字・小文字"
+
+#: internal/filesui/renamemany.go:188
+msgid "lowercase"
+msgstr "小文字"
+
+#: internal/filesui/renamemany.go:188
+msgid "UPPERCASE"
+msgstr "大文字"
+
+#: internal/filesui/renamemany.go:188
+msgid "Title Case"
+msgstr "先頭を大文字"
+
+#: internal/filesui/renamemany.go:220
+msgid "The regular expression is not one."
+msgstr "正規表現が正しくありません。"
+
+#: internal/filesui/renamemany.go:261
+msgid "%d name changes."
+msgid_plural "%d names change."
+msgstr[0] "%d 個の名前が変わります。"
+
+#: internal/filesui/renamemany.go:263
+msgid "%d name cannot be given."
+msgid_plural "%d names cannot be given."
+msgstr[0] "%d 個の名前は付けられません。"
+
+#: internal/filesui/renamemany.go:266
+msgid "The first %d are shown."
+msgstr "最初の %d 件を表示しています。"
+
+#: internal/filesui/renamemany.go:277
+msgid "taken by another file"
+msgstr "別のファイルが使用中"
+
+#: internal/filesui/renamemany.go:279
+msgid "given to two items"
+msgstr "2 つの項目に重複"
+
+#: internal/filesui/renamemany.go:281
+msgid "empty"
+msgstr "空"
+
+#: internal/filesui/renamemany.go:283
+msgid "holds “/”"
+msgstr "「/」を含む"
+
+#: internal/filesui/renamemany.go:285
+msgid "not a name"
+msgstr "名前ではない"
+
+#: internal/filesui/renamemany.go:287
+msgid "too long"
+msgstr "長すぎる"
+
+#: internal/filesui/renamemany.go:306
+msgid "Some names cannot be given: they are marked."
+msgstr "付けられない名前があります。印が付いています。"
 
 #: internal/filesui/sidebar.go:36
 msgid "PLACES"
@@ -4053,6 +4879,7 @@ msgid "Remove from the bookmarks"
 msgstr "ブックマークから削除"
 
 #: internal/filesui/sidebar.go:57
+#: ui/connect.ui:112
 #: ui/tailscale.ui:112
 msgid "DEVICES"
 msgstr "デバイス"
@@ -4061,34 +4888,22 @@ msgstr "デバイス"
 msgid "Computer"
 msgstr "コンピューター"
 
-#: internal/filesui/sidebar.go:68
-msgid "%s free of %s"
-msgstr "%s 空き（全 %s）"
-
 #: internal/filesui/sidebar.go:71
 msgid "%s, locked"
 msgstr "%s、ロック中"
 
 #: internal/filesui/sidebar.go:82
-#: internal/filesui/sidebar.go:186
+#: internal/filesui/sidebar.go:175
 msgid "Eject"
 msgstr "取り出す"
 
-#: internal/filesui/sidebar.go:106
-msgid "Disconnect"
-msgstr "切断"
-
-#: internal/filesui/sidebar.go:108
-msgid "Connect to a server…"
-msgstr "サーバーに接続…"
-
-#: internal/filesui/sidebar.go:157
-#: internal/filesui/window.go:701
+#: internal/filesui/sidebar.go:146
+#: internal/filesui/window.go:705
 msgid "Open in a new tab"
 msgstr "新しいタブで開く"
 
-#: internal/filesui/sidebar.go:158
-#: internal/filesui/window.go:702
+#: internal/filesui/sidebar.go:147
+#: internal/filesui/window.go:706
 msgid "Open in a new window"
 msgstr "新しいウィンドウで開く"
 
@@ -4096,95 +4911,133 @@ msgstr "新しいウィンドウで開く"
 msgid "Close the tab (Ctrl+W)"
 msgstr "タブを閉じる（Ctrl+W）"
 
-#: internal/filesui/window.go:673
+#: internal/filesui/tidy.go:20
+msgid "Tidy the folder %[1]s.\n\nFirst look at what is in it: the names, kinds, sizes and dates, and the first lines of a text file whose name says too little. Then make a plan with plan_create and show it to me: the folders to make, which file goes where, and why.\n\nRules:\n- Stay inside %[1]s: make folders in it and move its own files into them. Touch nothing outside it, and leave its subfolders' contents as they are.\n- Never delete and never overwrite: use mkdir -p and mv -n, and leave a file alone when its new name is taken.\n- Use the folders that are already there when they fit.\n- Leave hidden files (names starting with a dot) where they are.\n- Do all the moves in one bash command, so I approve them once.\n- Write the moves back, in the same order reversed, to %[1]s/.tidy-undo.sh, so \"sh .tidy-undo.sh\" in the folder undoes it.\n\nWhen it is done, tell me what went where."
+msgstr "フォルダー %[1]s を整理してください。\n\nまず中身を見てください：名前、種類、サイズ、日付。名前から中身がわからないテキストファイルは、最初の数行も。それから plan_create で計画を作って見せてください：作るフォルダー、どのファイルをどこへ、その理由。\n\nルール：\n- %[1]s の中だけで作業すること：その中にフォルダーを作り、そこにあるファイルを移します。外のものには一切触れず、サブフォルダーの中身はそのままにします。\n- 削除も上書きもしないこと：mkdir -p と mv -n を使い、移動先の名前がすでにあるファイルはそのままにします。\n- 合うものがあれば、すでにあるフォルダーを使うこと。\n- 隠しファイル（名前がドットで始まるもの）はそのままにすること。\n- 移動はすべて一つの bash コマンドにまとめ、一度の承認で済むようにすること。\n- 移動を逆の順序で %[1]s/.tidy-undo.sh に書き出し、フォルダーで \"sh .tidy-undo.sh\" を実行すれば元に戻せるようにすること。\n\n終わったら、何をどこへ移したか教えてください。"
+
+#: internal/filesui/tidy.go:42
+msgid "Tidying needs the assistant (inua-assistant), which is not installed."
+msgstr "整理にはアシスタント（inua-assistant）が必要ですが、インストールされていません。"
+
+#: internal/filesui/tidy.go:45
+msgid "Turn on the assistant in Settings → AI to tidy folders."
+msgstr "フォルダーを整理するには「設定」→「AI」でアシスタントをオンにしてください。"
+
+#: internal/filesui/tidy.go:48
+msgid "Turn on Run commands in Settings → AI to let the assistant tidy folders."
+msgstr "アシスタントがフォルダーを整理できるよう、「設定」→「AI」で「コマンドの実行」をオンにしてください。"
+
+#: internal/filesui/tidy.go:55
+msgid "Asked the assistant to tidy %s."
+msgstr "%s の整理をアシスタントに頼みました。"
+
+#: internal/filesui/window.go:676
 msgid "Restore"
 msgstr "復元"
 
-#: internal/filesui/window.go:674
-#: internal/filesui/window.go:730
+#: internal/filesui/window.go:677
+#: internal/filesui/window.go:742
 msgid "Delete for good…"
 msgstr "完全に削除…"
 
-#: internal/filesui/window.go:681
+#: internal/filesui/window.go:684
 msgid "New folder…"
 msgstr "新規フォルダー…"
 
-#: internal/filesui/window.go:682
+#: internal/filesui/window.go:685
 msgid "New file…"
 msgstr "新規ファイル…"
 
-#: internal/filesui/window.go:683
+#: internal/filesui/window.go:686
 msgid "Paste"
 msgstr "貼り付け"
 
-#: internal/filesui/window.go:686
+#: internal/filesui/window.go:689
+#: internal/filesui/window.go:721
+msgid "Tidy with AI…"
+msgstr "AI で整理…"
+
+#: internal/filesui/window.go:690
 msgid "Copy the folder's path"
 msgstr "フォルダーのパスをコピー"
 
-#: internal/filesui/window.go:704
+#: internal/filesui/window.go:708
 msgid "Open in the other pane"
 msgstr "もう一方のペインで開く"
 
-#: internal/filesui/window.go:708
+#: internal/filesui/window.go:712
 msgid "Show in its folder"
 msgstr "フォルダー内で表示"
 
-#: internal/filesui/window.go:711
+#: internal/filesui/window.go:715
 msgid "Cut"
 msgstr "切り取り"
 
-#: internal/filesui/window.go:713
+#: internal/filesui/window.go:717
 msgid "Copy the path"
 msgstr "パスをコピー"
 
-#: internal/filesui/window.go:716
+#: internal/filesui/window.go:720
 msgid "Paste into the folder"
 msgstr "フォルダーに貼り付け"
 
-#: internal/filesui/window.go:720
+#: internal/filesui/window.go:725
+msgid "Extract here"
+msgstr "ここに展開"
+
+#: internal/filesui/window.go:727
+msgid "Compress…"
+msgstr "圧縮…"
+
+#: internal/filesui/window.go:730
 msgid "Copy to the other pane"
 msgstr "もう一方のペインへコピー"
 
-#: internal/filesui/window.go:721
+#: internal/filesui/window.go:731
 msgid "Move to the other pane"
 msgstr "もう一方のペインへ移動"
 
-#: internal/filesui/window.go:726
+#: internal/filesui/window.go:736
 msgid "Rename…"
 msgstr "名前を変更…"
 
-#: internal/filesui/window.go:741
+#: internal/filesui/window.go:738
+msgid "Rename %d item…"
+msgid_plural "Rename %d items…"
+msgstr[0] "%d 項目の名前を変更…"
+
+#: internal/filesui/window.go:753
 msgid "Remove the bookmark"
 msgstr "ブックマークを削除"
 
-#: internal/filesui/window.go:796
+#: internal/filesui/window.go:808
 msgid "Cut %d item: paste to move it."
 msgid_plural "Cut %d items: paste to move them."
 msgstr[0] "%d 項目を切り取りました。貼り付けると移動します。"
 
-#: internal/filesui/window.go:798
+#: internal/filesui/window.go:810
 msgid "Copied %d item."
 msgid_plural "Copied %d items."
 msgstr[0] "%d 項目をコピーしました。"
 
-#: internal/filesui/window.go:806
+#: internal/filesui/window.go:818
 msgid "Copied %d path."
 msgid_plural "Copied %d paths."
 msgstr[0] "%d 個のパスをコピーしました。"
 
-#: internal/filesui/window.go:866
+#: internal/filesui/window.go:900
 msgid "Bookmarked %s."
 msgstr "%s をブックマークしました。"
 
-#: internal/filesui/window.go:868
+#: internal/filesui/window.go:902
 msgid "Removed the bookmark of %s."
 msgstr "%s のブックマークを削除しました。"
 
-#: internal/filesui/window.go:893
+#: internal/filesui/window.go:927
 msgid "Copied %s."
 msgstr "%s をコピーしました。"
 
-#: internal/filesui/window.go:922
+#: internal/filesui/window.go:956
 msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr "端末が見つかりません。xdg-terminal-exec をインストールするか $TERMINAL を設定してください。"
 
@@ -4200,7 +5053,7 @@ msgstr "チャンス"
 #: internal/gamesui/fortune_board.go:887
 #: internal/gamesui/fortune_panel.go:365
 msgid "Card Shop"
-msgstr ""
+msgstr "カードショップ"
 
 #: internal/games/fortune.go:66
 #: internal/gamesui/fortune_menu.go:183
@@ -4289,7 +5142,7 @@ msgstr "%[1]s は、3 回の試みの後、$%[2]d の保釈金を支払いまし
 
 #: internal/games/fortune.go:625
 msgid "%s is a turtle: one square."
-msgstr ""
+msgstr "%s はカメです: 1 マスだけ。"
 
 #: internal/games/fortune.go:630
 msgid "Three doubles in a row: %s goes to jail."
@@ -4309,7 +5162,7 @@ msgstr "%[1]s には %[2]s を支払う余裕はありません。"
 
 #: internal/games/fortune.go:741
 msgid "%s owed %s rent for %s and paid nothing: Free Rent."
-msgstr ""
+msgstr "%[1]s は %[3]s の家賃を %[2]s に払うはずでしたが、何も払いませんでした: 家賃免除。"
 
 #: internal/games/fortune.go:747
 msgid "%s paid %s $%d rent for %s."
@@ -4397,15 +5250,15 @@ msgstr "歩道橋を歩いているところを捕まり、刑務所に行きま
 
 #: internal/games/fortune.go:817
 msgid "A card left on a bench: take it."
-msgstr ""
+msgstr "ベンチに置き忘れのカード: もらいましょう。"
 
 #: internal/games/fortune.go:818
 msgid "The shopkeeper owes you a favour: take a card."
-msgstr ""
+msgstr "店主があなたに借りがあります: カードを 1 枚どうぞ。"
 
 #: internal/games/fortune.go:819
 msgid "You won a raffle: take a card."
-msgstr ""
+msgstr "くじに当たりました: カードを 1 枚どうぞ。"
 
 #: internal/games/fortune.go:848
 msgid "Chance for %s: %s"
@@ -4413,7 +5266,7 @@ msgstr "%[1]s のチャンス: %[2]s"
 
 #: internal/games/fortune.go:851
 msgid "%s takes a card: %s."
-msgstr ""
+msgstr "%s はカードを引きました: %s。"
 
 #: internal/games/fortune.go:948
 msgid "%s sold a house on %s for $%d."
@@ -4429,7 +5282,7 @@ msgstr "%sは破産し、ゲームから外れた。"
 
 #: internal/games/fortune.go:1001
 msgid "%s sleeps through their turn."
-msgstr ""
+msgstr "%s は眠っていて番を休みます。"
 
 #: internal/games/fortune.go:1021
 msgid "%s won with $%d in worth."
@@ -4437,164 +5290,164 @@ msgstr "%[1]s は $%[2]d の価値で勝ちました。"
 
 #: internal/games/fortune_cards.go:53
 msgid "Loaded Dice"
-msgstr ""
+msgstr "イカサマサイコロ"
 
 #: internal/games/fortune_cards.go:53
 msgid "Before you roll: walk the number of squares you choose instead. At a fork, chance still picks the road."
-msgstr ""
+msgstr "サイコロを振る前に: 代わりに好きなマス数だけ進みます。分かれ道では、やはり運が道を選びます。"
 
 #: internal/games/fortune_cards.go:54
 msgid "Free Rent"
-msgstr ""
+msgstr "家賃免除"
 
 #: internal/games/fortune_cards.go:54
 msgid "The next rent you owe is not paid."
-msgstr ""
+msgstr "次に払う家賃は払わずに済みます。"
 
 #: internal/games/fortune_cards.go:55
 msgid "Requisition"
-msgstr ""
+msgstr "強制買収"
 
 #: internal/games/fortune_cards.go:55
 msgid "Buy the rival's property you stand on, buildings and all, paying its owner what it cost."
-msgstr ""
+msgstr "今いるライバルの物件を建物ごと買い取ります。持ち主にはかかった額を払います。"
 
 #: internal/games/fortune_cards.go:56
 msgid "Pickpocket"
-msgstr ""
+msgstr "スリ"
 
 #: internal/games/fortune_cards.go:56
 msgid "Take a card, at random, from a rival's hand."
-msgstr ""
+msgstr "ライバルの手札からカードを 1 枚、無作為に取ります。"
 
 #: internal/games/fortune_cards.go:57
 msgid "Demolition"
-msgstr ""
+msgstr "取り壊し"
 
 #: internal/games/fortune_cards.go:57
 msgid "Pull down a building on a rival's street: pick the street on the board first."
-msgstr ""
+msgstr "ライバルの通りの建物を 1 つ取り壊します: 先に盤上で通りを選んでください。"
 
 #: internal/games/fortune_cards.go:58
 msgid "Building Permit"
-msgstr ""
+msgstr "建築許可"
 
 #: internal/games/fortune_cards.go:58
 msgid "Put up a building on a street of yours, free: pick the street on the board first."
-msgstr ""
+msgstr "自分の通りに無料で建物を 1 つ建てます: 先に盤上で通りを選んでください。"
 
 #: internal/games/fortune_cards.go:59
 msgid "Turtle"
-msgstr ""
+msgstr "カメ"
 
 #: internal/games/fortune_cards.go:59
 msgid "A player of your choice walks one square a roll for their next three rolls."
-msgstr ""
+msgstr "選んだプレイヤーは、次の 3 回、1 回に 1 マスしか進めません。"
 
 #: internal/games/fortune_cards.go:60
 msgid "Swap Places"
-msgstr ""
+msgstr "位置交換"
 
 #: internal/games/fortune_cards.go:60
 msgid "Change places with a rival; neither of you lands anywhere."
-msgstr ""
+msgstr "ライバルと位置を入れ替えます。どちらもマスに止まったことにはなりません。"
 
 #: internal/games/fortune_cards.go:61
 msgid "Jail Pass"
-msgstr ""
+msgstr "出所券"
 
 #: internal/games/fortune_cards.go:61
 msgid "Walk out of jail before you roll, without paying bail."
-msgstr ""
+msgstr "サイコロを振る前に、保釈金を払わずに刑務所を出ます。"
 
 #: internal/games/fortune_cards.go:62
 msgid "Tax Audit"
-msgstr ""
+msgstr "税務調査"
 
 #: internal/games/fortune_cards.go:62
 msgid "A rival pays a tenth of their cash into the fountain."
-msgstr ""
+msgstr "ライバル 1 人が所持金の 10 分の 1 を噴水に払います。"
 
 #: internal/games/fortune_cards.go:63
 msgid "Fair Shares"
-msgstr ""
+msgstr "山分け"
 
 #: internal/games/fortune_cards.go:63
 msgid "Everyone's cash is pooled and shared out equally."
-msgstr ""
+msgstr "全員の所持金を合わせて、均等に分けます。"
 
 #: internal/games/fortune_cards.go:64
 msgid "Sleeping Pill"
-msgstr ""
+msgstr "睡眠薬"
 
 #: internal/games/fortune_cards.go:64
 msgid "A rival misses their next turn."
-msgstr ""
+msgstr "ライバル 1 人が次の番を休みます。"
 
 #: internal/games/fortune_cards.go:89
 msgid "%s's hand is full: no card."
-msgstr ""
+msgstr "%s の手札がいっぱいです: カードはもらえません。"
 
 #: internal/games/fortune_cards.go:95
 msgid "%s takes a card."
-msgstr ""
+msgstr "%s はカードを 1 枚もらいました。"
 
 #: internal/games/fortune_cards.go:104
 msgid "%s's hand is full: nothing to buy."
-msgstr ""
+msgstr "%s の手札がいっぱいです: 何も買えません。"
 
 #: internal/games/fortune_cards.go:253
 msgid "%s played %s: %d squares."
-msgstr ""
+msgstr "%s が %s を使いました: %d マス。"
 
 #: internal/games/fortune_cards.go:258
 msgid "%s played %s: no rent next time."
-msgstr ""
+msgstr "%s が %s を使いました: 次の家賃は免除。"
 
 #: internal/games/fortune_cards.go:265
 msgid "%s played %s and took %s from %s for $%d."
-msgstr ""
+msgstr "%[1]s が %[2]s を使い、%[4]s から %[3]s を $%[5]d で手に入れました。"
 
 #: internal/games/fortune_cards.go:274
 msgid "%s played %s and took %s from %s."
-msgstr ""
+msgstr "%[1]s が %[2]s を使い、%[4]s から %[3]s を取りました。"
 
 #: internal/games/fortune_cards.go:276
 #: internal/games/fortunenet/texts.go:82
 msgid "a card"
-msgstr ""
+msgstr "カード"
 
 #: internal/games/fortune_cards.go:281
 msgid "%s played %s: a building on %s, %s's, is pulled down."
-msgstr ""
+msgstr "%[1]s が %[2]s を使いました: %[4]s の %[3]s の建物が取り壊されました。"
 
 #: internal/games/fortune_cards.go:284
 msgid "%s played %s: a building goes up on %s."
-msgstr ""
+msgstr "%s が %s を使いました: %s に建物が建ちました。"
 
 #: internal/games/fortune_cards.go:287
 msgid "%s played %s: %s walks one square a roll for three rolls."
-msgstr ""
+msgstr "%s が %s を使いました: %s は 3 回のあいだ 1 回に 1 マスしか進めません。"
 
 #: internal/games/fortune_cards.go:290
 msgid "%s played %s and changed places with %s."
-msgstr ""
+msgstr "%s が %s を使い、%s と位置を入れ替えました。"
 
 #: internal/games/fortune_cards.go:295
 msgid "%s played %s and walked out of jail."
-msgstr ""
+msgstr "%s が %s を使い、刑務所を出ました。"
 
 #: internal/games/fortune_cards.go:299
 msgid "%s played %s: %s pays $%d into the fountain."
-msgstr ""
+msgstr "%s が %s を使いました: %s が噴水に $%d を払います。"
 
 #: internal/games/fortune_cards.go:314
 msgid "%s played %s: everyone now has $%d."
-msgstr ""
+msgstr "%s が %s を使いました: 全員の所持金が $%d になりました。"
 
 #: internal/games/fortune_cards.go:317
 msgid "%s played %s: %s sits out the next turn."
-msgstr ""
+msgstr "%s が %s を使いました: %s は次の番を休みます。"
 
 #: internal/games/fortune_cities.go:19
 msgid "Tokyo"
@@ -4610,19 +5463,19 @@ msgstr "北千住"
 
 #: internal/games/fortune_cities.go:21
 msgid "Otsuka"
-msgstr ""
+msgstr "大塚"
 
 #: internal/games/fortune_cities.go:21
 msgid "Komagome"
-msgstr ""
+msgstr "駒込"
 
 #: internal/games/fortune_cities.go:21
 msgid "Tabata"
-msgstr ""
+msgstr "田端"
 
 #: internal/games/fortune_cities.go:21
 msgid "Oji"
-msgstr ""
+msgstr "王子"
 
 #: internal/games/fortune_cities.go:21
 msgid "Ueno Station"
@@ -4642,15 +5495,15 @@ msgstr "日暮里"
 
 #: internal/games/fortune_cities.go:21
 msgid "Ryogoku"
-msgstr ""
+msgstr "両国"
 
 #: internal/games/fortune_cities.go:21
 msgid "Kuramae"
-msgstr ""
+msgstr "蔵前"
 
 #: internal/games/fortune_cities.go:21
 msgid "Kiyosumi"
-msgstr ""
+msgstr "清澄"
 
 #: internal/games/fortune_cities.go:23
 msgid "Kanda"
@@ -4670,15 +5523,15 @@ msgstr "東京電力"
 
 #: internal/games/fortune_cities.go:23
 msgid "Ningyocho"
-msgstr ""
+msgstr "人形町"
 
 #: internal/games/fortune_cities.go:23
 msgid "Monzen-Nakacho"
-msgstr ""
+msgstr "門前仲町"
 
 #: internal/games/fortune_cities.go:23
 msgid "Tsukishima"
-msgstr ""
+msgstr "月島"
 
 #: internal/games/fortune_cities.go:23
 msgid "Tokyo Station"
@@ -4698,15 +5551,15 @@ msgstr "渋谷"
 
 #: internal/games/fortune_cities.go:23
 msgid "Sangenjaya"
-msgstr ""
+msgstr "三軒茶屋"
 
 #: internal/games/fortune_cities.go:23
 msgid "Shimokitazawa"
-msgstr ""
+msgstr "下北沢"
 
 #: internal/games/fortune_cities.go:23
 msgid "Jiyugaoka"
-msgstr ""
+msgstr "自由が丘"
 
 #: internal/games/fortune_cities.go:25
 msgid "Nakameguro"
@@ -4722,15 +5575,15 @@ msgstr "エビス"
 
 #: internal/games/fortune_cities.go:25
 msgid "Meguro"
-msgstr ""
+msgstr "目黒"
 
 #: internal/games/fortune_cities.go:25
 msgid "Gotanda"
-msgstr ""
+msgstr "五反田"
 
 #: internal/games/fortune_cities.go:25
 msgid "Osaki"
-msgstr ""
+msgstr "大崎"
 
 #: internal/games/fortune_cities.go:25
 msgid "Shinagawa Station"
@@ -4754,15 +5607,15 @@ msgstr "東京水道"
 
 #: internal/games/fortune_cities.go:25
 msgid "Ikebukuro"
-msgstr ""
+msgstr "池袋"
 
 #: internal/games/fortune_cities.go:25
 msgid "Takadanobaba"
-msgstr ""
+msgstr "高田馬場"
 
 #: internal/games/fortune_cities.go:25
 msgid "Waseda"
-msgstr ""
+msgstr "早稲田"
 
 #: internal/games/fortune_cities.go:27
 msgid "Toranomon"
@@ -4778,15 +5631,15 @@ msgstr "六本木"
 
 #: internal/games/fortune_cities.go:27
 msgid "Kudanshita"
-msgstr ""
+msgstr "九段下"
 
 #: internal/games/fortune_cities.go:27
 msgid "Nagatacho"
-msgstr ""
+msgstr "永田町"
 
 #: internal/games/fortune_cities.go:27
 msgid "Kasumigaseki"
-msgstr ""
+msgstr "霞が関"
 
 #: internal/games/fortune_cities.go:27
 msgid "Shimbashi Station"
@@ -4794,19 +5647,19 @@ msgstr "新橋駅"
 
 #: internal/games/fortune_cities.go:27
 msgid "Hibiya"
-msgstr ""
+msgstr "日比谷"
 
 #: internal/games/fortune_cities.go:27
 msgid "Yurakucho"
-msgstr ""
+msgstr "有楽町"
 
 #: internal/games/fortune_cities.go:27
 msgid "Nihonbashi"
-msgstr ""
+msgstr "日本橋"
 
 #: internal/games/fortune_cities.go:27
 msgid "Otemachi"
-msgstr ""
+msgstr "大手町"
 
 #: internal/games/fortune_cities.go:27
 msgid "Marunouchi"
@@ -4826,7 +5679,7 @@ msgstr "湯島"
 
 #: internal/games/fortune_cities.go:29
 msgid "Nezu"
-msgstr ""
+msgstr "根津"
 
 #: internal/games/fortune_cities.go:29
 msgid "Hongo"
@@ -4834,7 +5687,7 @@ msgstr "本郷"
 
 #: internal/games/fortune_cities.go:29
 msgid "Sendagi"
-msgstr ""
+msgstr "千駄木"
 
 #: internal/games/fortune_cities.go:29
 msgid "Ochanomizu"
@@ -4842,7 +5695,7 @@ msgstr "御茶ノ水"
 
 #: internal/games/fortune_cities.go:29
 msgid "Korakuen"
-msgstr ""
+msgstr "後楽園"
 
 #: internal/games/fortune_cities.go:29
 msgid "Suidobashi"
@@ -4850,15 +5703,15 @@ msgstr "水道橋"
 
 #: internal/games/fortune_cities.go:29
 msgid "Hakusan"
-msgstr ""
+msgstr "白山"
 
 #: internal/games/fortune_cities.go:29
 msgid "Myogadani"
-msgstr ""
+msgstr "茗荷谷"
 
 #: internal/games/fortune_cities.go:29
 msgid "Edogawabashi"
-msgstr ""
+msgstr "江戸川橋"
 
 #: internal/games/fortune_cities.go:29
 msgid "Iidabashi"
@@ -4874,7 +5727,7 @@ msgstr "広尾"
 
 #: internal/games/fortune_cities.go:31
 msgid "Nishi-Azabu"
-msgstr ""
+msgstr "西麻布"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shirokane"
@@ -4886,7 +5739,7 @@ msgstr "高輪"
 
 #: internal/games/fortune_cities.go:31
 msgid "Sengakuji"
-msgstr ""
+msgstr "泉岳寺"
 
 #: internal/games/fortune_cities.go:31
 msgid "Mita"
@@ -4894,11 +5747,11 @@ msgstr "三田"
 
 #: internal/games/fortune_cities.go:31
 msgid "Tamachi"
-msgstr ""
+msgstr "田町"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shibaura"
-msgstr ""
+msgstr "芝浦"
 
 #: internal/games/fortune_cities.go:31
 msgid "Hamamatsucho"
@@ -4906,11 +5759,11 @@ msgstr "浜松町"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shiodome"
-msgstr ""
+msgstr "汐留"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shiba Park"
-msgstr ""
+msgstr "芝公園"
 
 #: internal/games/fortune_cities.go:33
 #: internal/games/fortune_cities.go:33
@@ -4927,19 +5780,19 @@ msgstr "ワシントンハイツ"
 
 #: internal/games/fortune_cities.go:35
 msgid "Inwood"
-msgstr ""
+msgstr "インウッド"
 
 #: internal/games/fortune_cities.go:35
 msgid "Hamilton Heights"
-msgstr ""
+msgstr "ハミルトン・ハイツ"
 
 #: internal/games/fortune_cities.go:35
 msgid "Morningside Heights"
-msgstr ""
+msgstr "モーニングサイド・ハイツ"
 
 #: internal/games/fortune_cities.go:35
 msgid "East Harlem"
-msgstr ""
+msgstr "イースト・ハーレム"
 
 #: internal/games/fortune_cities.go:35
 msgid "Penn Station"
@@ -4959,15 +5812,15 @@ msgstr "ローワーイーストサイド"
 
 #: internal/games/fortune_cities.go:35
 msgid "East Village"
-msgstr ""
+msgstr "イースト・ヴィレッジ"
 
 #: internal/games/fortune_cities.go:35
 msgid "Alphabet City"
-msgstr ""
+msgstr "アルファベット・シティ"
 
 #: internal/games/fortune_cities.go:35
 msgid "Stuyvesant Town"
-msgstr ""
+msgstr "スタイヴェサント・タウン"
 
 #: internal/games/fortune_cities.go:37
 msgid "Williamsburg"
@@ -4987,15 +5840,15 @@ msgstr "コン・エジソン"
 
 #: internal/games/fortune_cities.go:37
 msgid "Park Slope"
-msgstr ""
+msgstr "パーク・スロープ"
 
 #: internal/games/fortune_cities.go:37
 msgid "Cobble Hill"
-msgstr ""
+msgstr "コブル・ヒル"
 
 #: internal/games/fortune_cities.go:37
 msgid "Red Hook"
-msgstr ""
+msgstr "レッドフック"
 
 #: internal/games/fortune_cities.go:37
 msgid "Grand Central"
@@ -5015,15 +5868,15 @@ msgstr "トライベッカ"
 
 #: internal/games/fortune_cities.go:37
 msgid "West Village"
-msgstr ""
+msgstr "ウエスト・ヴィレッジ"
 
 #: internal/games/fortune_cities.go:37
 msgid "Meatpacking District"
-msgstr ""
+msgstr "ミートパッキング・ディストリクト"
 
 #: internal/games/fortune_cities.go:37
 msgid "Hudson Square"
-msgstr ""
+msgstr "ハドソン・スクエア"
 
 #: internal/games/fortune_cities.go:39
 msgid "Chelsea"
@@ -5039,15 +5892,15 @@ msgstr "フラットアイアン"
 
 #: internal/games/fortune_cities.go:39
 msgid "Union Square"
-msgstr ""
+msgstr "ユニオンスクエア"
 
 #: internal/games/fortune_cities.go:39
 msgid "Madison Square"
-msgstr ""
+msgstr "マディソン・スクエア"
 
 #: internal/games/fortune_cities.go:39
 msgid "Herald Square"
-msgstr ""
+msgstr "ヘラルド・スクエア"
 
 #: internal/games/fortune_cities.go:39
 msgid "Staten Island Ferry"
@@ -5071,15 +5924,15 @@ msgstr "市水道トンネル"
 
 #: internal/games/fortune_cities.go:39
 msgid "Bryant Park"
-msgstr ""
+msgstr "ブライアント・パーク"
 
 #: internal/games/fortune_cities.go:39
 msgid "Turtle Bay"
-msgstr ""
+msgstr "タートル・ベイ"
 
 #: internal/games/fortune_cities.go:39
 msgid "Sutton Place"
-msgstr ""
+msgstr "サットン・プレイス"
 
 #: internal/games/fortune_cities.go:41
 msgid "Upper West Side"
@@ -5095,15 +5948,15 @@ msgstr "セントラルパークサウス"
 
 #: internal/games/fortune_cities.go:41
 msgid "Lincoln Center"
-msgstr ""
+msgstr "リンカーン・センター"
 
 #: internal/games/fortune_cities.go:41
 msgid "Carnegie Hill"
-msgstr ""
+msgstr "カーネギー・ヒル"
 
 #: internal/games/fortune_cities.go:41
 msgid "Lenox Hill"
-msgstr ""
+msgstr "レノックス・ヒル"
 
 #: internal/games/fortune_cities.go:41
 msgid "Hudson Pier"
@@ -5111,19 +5964,19 @@ msgstr "ハドソン桟橋"
 
 #: internal/games/fortune_cities.go:41
 msgid "Park Avenue"
-msgstr ""
+msgstr "パーク・アベニュー"
 
 #: internal/games/fortune_cities.go:41
 msgid "Madison Avenue"
-msgstr ""
+msgstr "マディソン・アベニュー"
 
 #: internal/games/fortune_cities.go:41
 msgid "Billionaires' Row"
-msgstr ""
+msgstr "ビリオネアズ・ロウ"
 
 #: internal/games/fortune_cities.go:41
 msgid "Hudson Yards"
-msgstr ""
+msgstr "ハドソン・ヤード"
 
 #: internal/games/fortune_cities.go:41
 msgid "Wall Street"
@@ -5143,7 +5996,7 @@ msgstr "衣料品地区"
 
 #: internal/games/fortune_cities.go:43
 msgid "Penn South"
-msgstr ""
+msgstr "ペン・サウス"
 
 #: internal/games/fortune_cities.go:43
 msgid "Koreatown"
@@ -5155,7 +6008,7 @@ msgstr "ノーマッド"
 
 #: internal/games/fortune_cities.go:43
 msgid "Rose Hill"
-msgstr ""
+msgstr "ローズ・ヒル"
 
 #: internal/games/fortune_cities.go:43
 msgid "Murray Hill"
@@ -5167,19 +6020,19 @@ msgstr "キップス湾"
 
 #: internal/games/fortune_cities.go:43
 msgid "Tudor City"
-msgstr ""
+msgstr "チューダー・シティ"
 
 #: internal/games/fortune_cities.go:43
 msgid "Midtown East"
-msgstr ""
+msgstr "ミッドタウン・イースト"
 
 #: internal/games/fortune_cities.go:43
 msgid "Beekman"
-msgstr ""
+msgstr "ビークマン"
 
 #: internal/games/fortune_cities.go:43
 msgid "Roosevelt Island"
-msgstr ""
+msgstr "ルーズベルト島"
 
 #: internal/games/fortune_cities.go:45
 msgid "Battery Park City"
@@ -5191,7 +6044,7 @@ msgstr "金融街"
 
 #: internal/games/fortune_cities.go:45
 msgid "Bowling Green"
-msgstr ""
+msgstr "ボウリング・グリーン"
 
 #: internal/games/fortune_cities.go:45
 msgid "Seaport"
@@ -5203,7 +6056,7 @@ msgstr "二つの橋"
 
 #: internal/games/fortune_cities.go:45
 msgid "Civic Center"
-msgstr ""
+msgstr "シビック・センター"
 
 #: internal/games/fortune_cities.go:45
 msgid "Bowery"
@@ -5215,19 +6068,19 @@ msgstr "ノリタ"
 
 #: internal/games/fortune_cities.go:45
 msgid "NoHo"
-msgstr ""
+msgstr "ノーホー"
 
 #: internal/games/fortune_cities.go:45
 msgid "Astor Place"
-msgstr ""
+msgstr "アスター・プレイス"
 
 #: internal/games/fortune_cities.go:45
 msgid "Cooper Square"
-msgstr ""
+msgstr "クーパー・スクエア"
 
 #: internal/games/fortune_cities.go:45
 msgid "Washington Square"
-msgstr ""
+msgstr "ワシントン・スクエア"
 
 #: internal/games/fortune_cities.go:47
 msgid "Shanghai"
@@ -5243,19 +6096,19 @@ msgstr "虹口"
 
 #: internal/games/fortune_cities.go:49
 msgid "Baoshan Road"
-msgstr ""
+msgstr "宝山路"
 
 #: internal/games/fortune_cities.go:49
 msgid "Tilanqiao"
-msgstr ""
+msgstr "提籃橋"
 
 #: internal/games/fortune_cities.go:49
 msgid "Dalian Road"
-msgstr ""
+msgstr "大連路"
 
 #: internal/games/fortune_cities.go:49
 msgid "Quyang"
-msgstr ""
+msgstr "曲陽"
 
 #: internal/games/fortune_cities.go:49
 msgid "Railway Station"
@@ -5275,15 +6128,15 @@ msgstr "城隍廟"
 
 #: internal/games/fortune_cities.go:49
 msgid "Penglai Road"
-msgstr ""
+msgstr "蓬莱路"
 
 #: internal/games/fortune_cities.go:49
 msgid "Dapuqiao"
-msgstr ""
+msgstr "打浦橋"
 
 #: internal/games/fortune_cities.go:49
 msgid "Ruijin Road"
-msgstr ""
+msgstr "瑞金路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Changle Road"
@@ -5303,15 +6156,15 @@ msgstr "ナンシパワー"
 
 #: internal/games/fortune_cities.go:51
 msgid "Yuyuan Road"
-msgstr ""
+msgstr "愚園路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Yan'an Road"
-msgstr ""
+msgstr "延安路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Julu Road"
-msgstr ""
+msgstr "巨鹿路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Hongqiao Station"
@@ -5331,15 +6184,15 @@ msgstr "新天地"
 
 #: internal/games/fortune_cities.go:51
 msgid "Taikang Road"
-msgstr ""
+msgstr "泰康路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Shaanxi South Road"
-msgstr ""
+msgstr "陝西南路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Maoming Road"
-msgstr ""
+msgstr "茂名路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Fuxing Park"
@@ -5355,15 +6208,15 @@ msgstr "衡山路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Xujiahui"
-msgstr ""
+msgstr "徐家匯"
 
 #: internal/games/fortune_cities.go:53
 msgid "Tianping Road"
-msgstr ""
+msgstr "天平路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Anfu Road"
-msgstr ""
+msgstr "安福路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Shiliupu Ferry"
@@ -5387,15 +6240,15 @@ msgstr "陽樹浦水道"
 
 #: internal/games/fortune_cities.go:53
 msgid "Wujiang Road"
-msgstr ""
+msgstr "呉江路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Fuzhou Road"
-msgstr ""
+msgstr "福州路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Weihai Road"
-msgstr ""
+msgstr "威海路"
 
 #: internal/games/fortune_cities.go:55
 msgid "Jinqiao"
@@ -5411,15 +6264,15 @@ msgstr "陸家嘴"
 
 #: internal/games/fortune_cities.go:55
 msgid "Zhangjiang"
-msgstr ""
+msgstr "張江"
 
 #: internal/games/fortune_cities.go:55
 msgid "Huamu"
-msgstr ""
+msgstr "花木"
 
 #: internal/games/fortune_cities.go:55
 msgid "Binjiang Avenue"
-msgstr ""
+msgstr "浜江大道"
 
 #: internal/games/fortune_cities.go:55
 msgid "Bund Ferry"
@@ -5427,19 +6280,19 @@ msgstr "外灘フェリー"
 
 #: internal/games/fortune_cities.go:55
 msgid "Sichuan Road"
-msgstr ""
+msgstr "四川路"
 
 #: internal/games/fortune_cities.go:55
 msgid "Yuanmingyuan Road"
-msgstr ""
+msgstr "円明園路"
 
 #: internal/games/fortune_cities.go:55
 msgid "Rockbund"
-msgstr ""
+msgstr "ロックバンド"
 
 #: internal/games/fortune_cities.go:55
 msgid "Customs House"
-msgstr ""
+msgstr "江海関"
 
 #: internal/games/fortune_cities.go:55
 msgid "Peace Hotel"
@@ -5459,7 +6312,7 @@ msgstr "莫干山路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Changhua Road"
-msgstr ""
+msgstr "昌化路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Changshou Road"
@@ -5471,7 +6324,7 @@ msgstr "曹陽"
 
 #: internal/games/fortune_cities.go:57
 msgid "Jiaozhou Road"
-msgstr ""
+msgstr "膠州路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Zhongshan Park"
@@ -5479,19 +6332,19 @@ msgstr "中山公園"
 
 #: internal/games/fortune_cities.go:57
 msgid "Changning Road"
-msgstr ""
+msgstr "長寧路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Jiangsu Road"
-msgstr ""
+msgstr "江蘇路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Hongqiao Road"
-msgstr ""
+msgstr "虹橋路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Hongmei Road"
-msgstr ""
+msgstr "虹梅路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Gubei"
@@ -5507,7 +6360,7 @@ msgstr "老西門"
 
 #: internal/games/fortune_cities.go:59
 msgid "Xiaonanmen"
-msgstr ""
+msgstr "小南門"
 
 #: internal/games/fortune_cities.go:59
 msgid "Dajing Road"
@@ -5519,7 +6372,7 @@ msgstr "方邦路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Zhonghua Road"
-msgstr ""
+msgstr "中華路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Henan Road"
@@ -5527,11 +6380,11 @@ msgstr "河南路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Cool Docks"
-msgstr ""
+msgstr "クールドックス"
 
 #: internal/games/fortune_cities.go:59
 msgid "Fuyou Road"
-msgstr ""
+msgstr "福佑路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Yu Garden"
@@ -5539,11 +6392,11 @@ msgstr "豫園"
 
 #: internal/games/fortune_cities.go:59
 msgid "Renmin Road"
-msgstr ""
+msgstr "人民路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Jinling Road"
-msgstr ""
+msgstr "金陵路"
 
 #: internal/games/fortune_cities.go:61
 msgid "Rome"
@@ -5563,19 +6416,19 @@ msgstr "テスタッチョ"
 
 #: internal/games/fortune_cities.go:63
 msgid "Marconi"
-msgstr ""
+msgstr "マルコーニ"
 
 #: internal/games/fortune_cities.go:63
 msgid "Portuense"
-msgstr ""
+msgstr "ポルトゥエンセ"
 
 #: internal/games/fortune_cities.go:63
 msgid "Monteverde"
-msgstr ""
+msgstr "モンテヴェルデ"
 
 #: internal/games/fortune_cities.go:63
 msgid "San Paolo"
-msgstr ""
+msgstr "サン・パオロ"
 
 #: internal/games/fortune_cities.go:63
 msgid "Roma Termini"
@@ -5595,15 +6448,15 @@ msgstr "トラステヴェレ"
 
 #: internal/games/fortune_cities.go:63
 msgid "Celio"
-msgstr ""
+msgstr "チェリオ"
 
 #: internal/games/fortune_cities.go:63
 msgid "San Giovanni"
-msgstr ""
+msgstr "サン・ジョヴァンニ"
 
 #: internal/games/fortune_cities.go:63
 msgid "Laterano"
-msgstr ""
+msgstr "ラテラノ"
 
 #: internal/games/fortune_cities.go:65
 msgid "Borgo Pio"
@@ -5623,15 +6476,15 @@ msgstr "セントラーレ・エレトリカ"
 
 #: internal/games/fortune_cities.go:65
 msgid "Flaminio"
-msgstr ""
+msgstr "フラミニオ"
 
 #: internal/games/fortune_cities.go:65
 msgid "Delle Vittorie"
-msgstr ""
+msgstr "デッレ・ヴィットーリエ"
 
 #: internal/games/fortune_cities.go:65
 msgid "Mazzini"
-msgstr ""
+msgstr "マッツィーニ"
 
 #: internal/games/fortune_cities.go:65
 msgid "Stazione Tiburtina"
@@ -5651,15 +6504,15 @@ msgstr "ナヴォーナ広場"
 
 #: internal/games/fortune_cities.go:65
 msgid "Via Giulia"
-msgstr ""
+msgstr "ジュリア通り"
 
 #: internal/games/fortune_cities.go:65
 msgid "Piazza Farnese"
-msgstr ""
+msgstr "ファルネーゼ広場"
 
 #: internal/games/fortune_cities.go:65
 msgid "Sant'Eustachio"
-msgstr ""
+msgstr "サンテウスタキオ"
 
 #: internal/games/fortune_cities.go:67
 msgid "Via del Corso"
@@ -5675,15 +6528,15 @@ msgstr "スペイン広場"
 
 #: internal/games/fortune_cities.go:67
 msgid "Piazza del Popolo"
-msgstr ""
+msgstr "ポポロ広場"
 
 #: internal/games/fortune_cities.go:67
 msgid "Via del Babuino"
-msgstr ""
+msgstr "バブイーノ通り"
 
 #: internal/games/fortune_cities.go:67
 msgid "Via Margutta"
-msgstr ""
+msgstr "マルグッタ通り"
 
 #: internal/games/fortune_cities.go:67
 msgid "Porto di Ostia"
@@ -5707,15 +6560,15 @@ msgstr "アクエドット"
 
 #: internal/games/fortune_cities.go:67
 msgid "Campidoglio"
-msgstr ""
+msgstr "カンピドリオ"
 
 #: internal/games/fortune_cities.go:67
 msgid "Fori Imperiali"
-msgstr ""
+msgstr "フォーリ・インペリアーリ"
 
 #: internal/games/fortune_cities.go:67
 msgid "Piazza Venezia"
-msgstr ""
+msgstr "ヴェネツィア広場"
 
 #: internal/games/fortune_cities.go:69
 msgid "Parioli"
@@ -5731,15 +6584,15 @@ msgstr "ボルゲーゼ公園"
 
 #: internal/games/fortune_cities.go:69
 msgid "Pinciano"
-msgstr ""
+msgstr "ピンチャーノ"
 
 #: internal/games/fortune_cities.go:69
 msgid "Ludovisi"
-msgstr ""
+msgstr "ルドヴィージ"
 
 #: internal/games/fortune_cities.go:69
 msgid "Quirinale"
-msgstr ""
+msgstr "クイリナーレ"
 
 #: internal/games/fortune_cities.go:69
 msgid "Stazione Trastevere"
@@ -5747,19 +6600,19 @@ msgstr "トラステヴェレ駅"
 
 #: internal/games/fortune_cities.go:69
 msgid "Via Sistina"
-msgstr ""
+msgstr "システィーナ通り"
 
 #: internal/games/fortune_cities.go:69
 msgid "Trinità dei Monti"
-msgstr ""
+msgstr "トリニタ・デイ・モンティ"
 
 #: internal/games/fortune_cities.go:69
 msgid "Piazza Barberini"
-msgstr ""
+msgstr "バルベリーニ広場"
 
 #: internal/games/fortune_cities.go:69
 msgid "Via Frattina"
-msgstr ""
+msgstr "フラッティーナ通り"
 
 #: internal/games/fortune_cities.go:69
 msgid "Via Condotti"
@@ -5779,7 +6632,7 @@ msgstr "ヴィットリオ広場"
 
 #: internal/games/fortune_cities.go:71
 msgid "Santa Croce"
-msgstr ""
+msgstr "サンタ・クローチェ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Pigneto"
@@ -5791,7 +6644,7 @@ msgstr "ポルタ・マッジョーレ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Torpignattara"
-msgstr ""
+msgstr "トルピニャッターラ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Nomentano"
@@ -5803,19 +6656,19 @@ msgstr "サラリオ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Trieste"
-msgstr ""
+msgstr "トリエステ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Coppedè"
-msgstr ""
+msgstr "コッペデ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Villa Ada"
-msgstr ""
+msgstr "ヴィラ・アーダ"
 
 #: internal/games/fortune_cities.go:71
 msgid "Villa Torlonia"
-msgstr ""
+msgstr "ヴィラ・トルローニア"
 
 #: internal/games/fortune_cities.go:73
 msgid "Garbatella"
@@ -5827,7 +6680,7 @@ msgstr "ピラミド"
 
 #: internal/games/fortune_cities.go:73
 msgid "San Saba"
-msgstr ""
+msgstr "サン・サーバ"
 
 #: internal/games/fortune_cities.go:73
 msgid "Roseto"
@@ -5839,7 +6692,7 @@ msgstr "ボッカ・デッラ・ヴェリタ"
 
 #: internal/games/fortune_cities.go:73
 msgid "Foro Boario"
-msgstr ""
+msgstr "フォロ・ボアーリオ"
 
 #: internal/games/fortune_cities.go:73
 msgid "Ghetto"
@@ -5851,19 +6704,19 @@ msgstr "ティベリーナ島"
 
 #: internal/games/fortune_cities.go:73
 msgid "Portico d'Ottavia"
-msgstr ""
+msgstr "オッタヴィアの柱廊"
 
 #: internal/games/fortune_cities.go:73
 msgid "Largo Argentina"
-msgstr ""
+msgstr "アルジェンティーナ広場"
 
 #: internal/games/fortune_cities.go:73
 msgid "Teatro di Marcello"
-msgstr ""
+msgstr "マルケッルス劇場"
 
 #: internal/games/fortune_cities.go:73
 msgid "Lungotevere"
-msgstr ""
+msgstr "ルンゴテヴェレ"
 
 #: internal/games/fortune_rivals.go:29
 msgid "Mika"
@@ -6044,7 +6897,7 @@ msgstr "買わない"
 #: internal/gamesui/fortune.go:1168
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
-msgstr ""
+msgstr "店を出る"
 
 #: internal/games/fortunenet/texts.go:44
 #: internal/gamesui/fortune.go:1171
@@ -6089,78 +6942,78 @@ msgstr "· 刑務所にいる"
 #: internal/games/fortunenet/texts.go:52
 #: internal/gamesui/fortune.go:1097
 msgid " · free rent"
-msgstr ""
+msgstr " · 家賃免除"
 
 #: internal/games/fortunenet/texts.go:53
 #: internal/gamesui/fortune.go:1100
 msgid " · turtle"
-msgstr ""
+msgstr " · カメ"
 
 #: internal/games/fortunenet/texts.go:54
 #: internal/gamesui/fortune.go:1103
 msgid " · asleep"
-msgstr ""
+msgstr " · 睡眠中"
 
 #: internal/games/fortunenet/texts.go:55
 #: internal/gamesui/fortune_panel.go:160
 msgid "For sale: $%d"
-msgstr ""
+msgstr "売り出し中: $%d"
 
 #: internal/games/fortunenet/texts.go:56
 #: internal/gamesui/fortune_panel.go:162
 msgid "%s owns it"
-msgstr ""
+msgstr "%s の所有"
 
 #: internal/games/fortunenet/texts.go:57
 #: internal/gamesui/fortune_panel.go:164
 msgid "You own it"
-msgstr ""
+msgstr "あなたの所有"
 
 #: internal/games/fortunenet/texts.go:58
 #: internal/gamesui/fortune_panel.go:168
 msgid "rent now"
-msgstr ""
+msgstr "現在の家賃"
 
 #: internal/games/fortunenet/texts.go:59
 #: internal/gamesui/fortune_panel.go:138
 msgid "Street · price $%d · building $%d"
-msgstr ""
+msgstr "通り · 価格 $%d · 建物 $%d"
 
 #: internal/games/fortunenet/texts.go:60
 #: internal/gamesui/fortune_panel.go:140
 msgid "Station or pier · price $%d"
-msgstr ""
+msgstr "駅または桟橋 · 価格 $%d"
 
 #: internal/games/fortunenet/texts.go:61
 #: internal/gamesui/fortune_panel.go:142
 msgid "Utility · price $%d"
-msgstr ""
+msgstr "公共事業 · 価格 $%d"
 
 #: internal/games/fortunenet/texts.go:63
 #: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
-msgstr ""
+msgstr "カードショップ"
 
 #: internal/games/fortunenet/texts.go:64
 #: internal/gamesui/fortune_panel.go:148
 msgid "Tax · $%d"
-msgstr ""
+msgstr "税金 · $%d"
 
 #: internal/games/fortunenet/texts.go:65
 #: internal/gamesui/fortune_panel.go:150
 msgid "Corner"
-msgstr ""
+msgstr "角"
 
 #: internal/games/fortunenet/texts.go:66
 #: internal/gamesui/fortune_panel.go:125
 msgid "House · $%d"
-msgstr ""
+msgstr "家 · $%d"
 
 #: internal/games/fortunenet/texts.go:67
 #: internal/gamesui/fortune_panel.go:122
 msgid "Hotel · $%d"
-msgstr ""
+msgstr "ホテル · $%d"
 
 #: internal/games/fortunenet/texts.go:68
 #: internal/gamesui/fortune_panel.go:119
@@ -6170,32 +7023,32 @@ msgstr "ホテル建設"
 #: internal/games/fortunenet/texts.go:69
 #: internal/gamesui/fortune_panel.go:127
 msgid "Sell · $%d"
-msgstr ""
+msgstr "売る · $%d"
 
 #: internal/games/fortunenet/texts.go:70
 #: internal/gamesui/fortune_panel.go:480
 msgid "Your cards · %d of %d"
-msgstr ""
+msgstr "手札 · %d / %d"
 
 #: internal/games/fortunenet/texts.go:71
 #: internal/gamesui/fortune_panel.go:478
 msgid "Your cards · %d of %d · click one to play it"
-msgstr ""
+msgstr "手札 · %d / %d · クリックして使う"
 
 #: internal/games/fortunenet/texts.go:72
 #: internal/gamesui/fortune_panel.go:368
 msgid "Click a card to buy it: any of them, or none."
-msgstr ""
+msgstr "カードをクリックして買います: どれでも、買わなくても構いません。"
 
 #: internal/games/fortunenet/texts.go:73
 #: internal/gamesui/fortune_panel.go:511
 msgid "On whom?"
-msgstr ""
+msgstr "誰に?"
 
 #: internal/games/fortunenet/texts.go:74
 #: internal/gamesui/fortune_panel.go:513
 msgid "How many squares?"
-msgstr ""
+msgstr "何マス?"
 
 #: internal/games/fortunenet/texts.go:75
 msgid "Pick a square on the board"
@@ -6214,23 +7067,23 @@ msgstr "勝ちました！"
 #: internal/games/fortunenet/texts.go:79
 #: internal/gamesui/fortune_board.go:1100
 msgid "%s (bankrupt)"
-msgstr ""
+msgstr "%s (破産)"
 
 #: internal/games/fortunenet/texts.go:80
 #: internal/gamesui/fortune_panel.go:234
 msgid "Bare"
-msgstr ""
+msgstr "更地"
 
 #: internal/games/fortunenet/texts.go:81
 #: internal/gamesui/fortune_panel.go:237
 msgid "Hotel"
-msgstr ""
+msgstr "ホテル"
 
 #: internal/games/fortunenet/texts.go:83
 #: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
-msgstr ""
+msgstr "家賃はサイコロの目にこれを掛けた額です。"
 
 #: internal/games/fortunenet/texts.go:84
 msgid "Sound on: M turns it off"
@@ -6244,13 +7097,13 @@ msgstr "サウンド オフ: M でオン"
 #: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
-msgstr ""
+msgstr "家賃は持ち主の桟橋の数で決まります。"
 
 #: internal/games/fortunenet/texts.go:88
 #: internal/gamesui/fortune_menu.go:174
 #: internal/gamesui/fortune_panel.go:273
 msgid "Collect $%d every time you pass."
-msgstr ""
+msgstr "通るたびに $%d を受け取ります。"
 
 #: internal/games/fortunenet/texts.go:89
 #: internal/games/fortunenet/texts.go:90
@@ -6274,13 +7127,13 @@ msgstr "スタートを通過せずに刑務所へ直行。"
 #: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:282
 msgid "Draw a card: money, a fine, a trip, or a card for your hand."
-msgstr ""
+msgstr "カードを引きます: お金、罰金、移動、または手札のカード。"
 
 #: internal/games/fortunenet/texts.go:94
 #: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:284
 msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
-msgstr ""
+msgstr "3 枚のカードが売られています: どれを買っても、買わなくても構いません。手札は最大 %d 枚です。"
 
 #: internal/games/fortunenet/texts.go:95
 #: internal/gamesui/fortune_menu.go:183
@@ -6291,41 +7144,41 @@ msgstr "噴水に$%dを支払います。"
 #: internal/games/fortunenet/texts.go:96
 #: internal/gamesui/fortune_panel.go:244
 msgid "The whole group: bare rent doubled, built rents half again."
-msgstr ""
+msgstr "グループ全部: 更地の家賃は 2 倍、建物のある家賃は 1.5 倍。"
 
 #: internal/games/fortunenet/texts.go:97
 #: internal/gamesui/fortune_menu.go:178
 #: internal/gamesui/fortune_panel.go:246
 msgid "With the whole group: bare rent doubled, built rents half again."
-msgstr ""
+msgstr "グループ全部を持つと: 更地の家賃は 2 倍、建物のある家賃は 1.5 倍。"
 
 #: internal/games/fortunenet/texts.go:98
 #: internal/gamesui/fortune_panel.go:259
 msgid "Group:"
-msgstr ""
+msgstr "グループ:"
 
 #: internal/games/fortunenet/texts.go:99
 #: internal/gamesui/fortune_panel.go:269
 msgid "× %d"
-msgstr ""
+msgstr "× %d"
 
 #: internal/games/fortunenet/texts.go:101
 #: internal/gamesui/fortune_panel.go:263
 msgid "%d pier"
 msgid_plural "%d piers"
-msgstr[0] ""
+msgstr[0] "桟橋 %d 個"
 
 #: internal/games/fortunenet/texts.go:104
 #: internal/gamesui/fortune_panel.go:269
 msgid "%d utility"
 msgid_plural "%d utilities"
-msgstr[0] ""
+msgstr[0] "公共事業 %d 個"
 
 #: internal/games/fortunenet/texts.go:107
 #: internal/gamesui/fortune.go:1094
 msgid " · %d card"
 msgid_plural " · %d cards"
-msgstr[0] ""
+msgstr[0] " · カード %d 枚"
 
 #: internal/games/fortunenet/texts.go:110
 msgid "and %d computer player"
@@ -6336,7 +7189,7 @@ msgstr[0] "とコンピューター %d 人"
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
-msgstr[0] ""
+msgstr[0] "家 %d 軒"
 
 #: internal/games/pinball_rules.go:63
 msgid "Cadet"
@@ -6666,11 +7519,11 @@ msgstr "Aまたは←左フリッパー・Dまたは→右フリッパー・ホ�
 
 #: internal/gamesui/catalog.go:27
 msgid "A property game for two to four players, people at the screen taking turns, people in a browser on the same network (set On the network: the lobby shows the link and its QR code) and computer players, on a ring of 80 squares with two branch roads (at a fork, chance picks the road), in Tokyo, New York, Shanghai or Rome: choose the city, the rounds, the starting money, your rivals and the rules (one die or two; building on a street the turn you buy it) before you start. The board is larger than the window: drag it, scroll, or use the arrow keys to look about; Home brings you back to your pawn. Roll the dice and walk the board; with two, a double rolls again and three in a row go to jail. Buy the streets, ferry piers and utilities you land on; rivals landing there pay you rent. Every street of yours your pawn passes or lands on may go up one level that turn (outlined on the board): house by house to four, then a hotel; owning a whole colour group doubles its bare rent and adds half to its built rents. Piers pay more the more of them you own; utilities charge by the dice. Passing Start pays $400. Taxes and fines fill the fountain, and whoever lands there takes it. Cards come from Chance and the card shops, where you may buy any of the three on offer; hold up to ten, and play any number in your turn, before you roll or after you move: Loaded Dice, Free Rent, Requisition, Pickpocket, Demolition, Building Permit, Turtle, Swap Places, Jail Pass, Tax Audit, Fair Shares and Sleeping Pill. A card played on a street takes the square in focus: click it on the board first. Who cannot pay sells buildings and property at half price, or is out. After the last round, or when one player is left, the most worth wins: cash, property and buildings. Keys: Space the main action, R roll, B buy, X pass, E end turn, J pay bail, H build on the square in focus, M the sound on or off, N a new game. The sound plays through pw-cat; without it the game is silent."
-msgstr ""
+msgstr "2〜4 人で遊ぶ不動産ゲームです。画面の前で交代で遊ぶ人、同じネットワークのブラウザーから参加する人(「ネットワークで」をオンにすると、ロビーにリンクと QR コードが表示されます)、コンピューターのプレイヤーが、分かれ道が 2 本ある 80 マスの環状の盤(分かれ道では運が道を選びます)で、東京、ニューヨーク、上海、ローマのいずれかを舞台に遊びます。始める前に、都市、ラウンド数、初期資金、ライバル、ルール(サイコロ 1 個か 2 個か、買ったその番に通りに建てられるか)を選びます。盤はウィンドウより大きいので、ドラッグ、スクロール、矢印キーで見回せます。Home で自分の駒に戻ります。サイコロを振って盤を進みます。2 個のときはゾロ目でもう一度振れ、3 回続くと刑務所行きです。止まった通り、フェリーの桟橋、公共事業を買えます。そこに止まったライバルはあなたに家賃を払います。自分の駒が通過した、または止まった自分の通りは、その番に 1 段階建て増しできます(盤上で囲みが付きます)。家を 1 軒ずつ 4 軒まで、その次はホテルです。同じ色のグループを全部持つと、更地の家賃が 2 倍、建物のある家賃が 1.5 倍になります。桟橋は多く持つほど高い家賃を取り、公共事業はサイコロの目で家賃が決まります。スタートを通過すると $400 をもらえます。税金と罰金は噴水にたまり、そこに止まった人がもらえます。カードはチャンスとカードショップから手に入ります。ショップでは並んだ 3 枚のどれでも買えます。手札は 10 枚まで持て、自分の番には振る前でも動いた後でも何枚でも使えます: イカサマサイコロ、家賃免除、強制買収、スリ、取り壊し、建築許可、カメ、位置交換、出所券、税務調査、山分け、睡眠薬。通りに使うカードは選択中のマスに効くので、先に盤上でそのマスをクリックしてください。払えない人は建物と物件を半額で売るか、脱落します。最後のラウンドの後、または残りが 1 人になったとき、資産(現金、物件、建物)が最も多い人の勝ちです。キー: Space メインの操作、R 振る、B 買う、X パス、E 番を終える、J 保釈金を払う、H 選択中のマスに建てる、M 音のオン/オフ、N 新しいゲーム。音は pw-cat で鳴ります。pw-cat がなければ無音です。"
 
 #: internal/gamesui/catalog.go:28
 msgid "Space the main action  ·  R roll  ·  B buy  ·  X pass  ·  E end turn  ·  J pay bail  ·  H build on the square in focus  ·  N new game  ·  M sound  ·  click a square to see it  ·  drag, scroll or arrows to look about  ·  Home your pawn"
-msgstr ""
+msgstr "Space メインの操作  ·  R 振る  ·  B 買う  ·  X パス  ·  E 番を終える  ·  J 保釈金を払う  ·  H 選択中のマスに建てる  ·  N 新しいゲーム  ·  M 音  ·  マスをクリックで表示  ·  ドラッグ、スクロール、矢印キーで見回す  ·  Home 自分の駒へ"
 
 #: internal/gamesui/fortune.go:210
 msgid "JOIN CODE"
@@ -6799,7 +7652,7 @@ msgstr "このプレイヤーが使う「設定」→「AI」のプロファイ�
 
 #: internal/gamesui/fortune_board.go:890
 msgid "START\ncollect $%d"
-msgstr ""
+msgstr "スタート\n$%d 受け取り"
 
 #: internal/gamesui/fortune_board.go:890
 msgid "JAIL\njust visiting"
@@ -6819,7 +7672,7 @@ msgstr "新しいゲームを行うには N または Space を押してくだ�
 
 #: internal/gamesui/fortune_board.go:1141
 msgid "%s · sound off"
-msgstr ""
+msgstr "%s · 消音"
 
 #: internal/gamesui/fortune_city.go:38
 msgid "machiya"
@@ -6943,7 +7796,7 @@ msgstr "%s のカード · %d / %d"
 
 #: internal/gamesui/fortune_panel.go:489
 msgid "Plays on the square in focus: %s."
-msgstr ""
+msgstr "選択中のマスに使います: %s。"
 
 #: internal/gamesui/mines.go:37
 msgid "Small · 9 × 9"
@@ -7364,6 +8217,165 @@ msgstr "土曜日"
 msgid "AM"
 msgstr "午前"
 
+#: internal/remoteui/app.go:20
+#: ui/remote.ui:14
+#: ui/remote.ui:32
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:3
+msgid "Remote Desktop"
+msgstr "リモートデスクトップ"
+
+#: internal/remoteui/stream.go:126
+msgid "%s — Remote Desktop"
+msgstr "%s — リモートデスクトップ"
+
+#: internal/remoteui/stream.go:229
+msgid "Ctrl+Alt+Shift+Q disconnects · F: full screen · Z: this desktop's shortcuts"
+msgstr "Ctrl+Alt+Shift+Q で切断 · F：全画面 · Z：このデスクトップのショートカット"
+
+#: internal/remoteui/stream.go:467
+msgid "%s ended the session."
+msgstr "%s がセッションを終了しました。"
+
+#: internal/remoteui/stream.go:470
+msgid "%s cannot show its screen: no monitor is connected, or its desktop session is not running. A computer without a monitor can share a virtual screen (Remote Desktop, Sharing)."
+msgstr "%s は画面を表示できません: モニターが接続されていないか、デスクトップセッションが動いていません。モニターのないコンピューターは仮想画面を共有できます（リモートデスクトップ、共有）。"
+
+#: internal/remoteui/window.go:122
+msgid "This computer has no identity to pair with: %v"
+msgstr "このコンピューターにはペアリング用の ID がありません：%v"
+
+#: internal/remoteui/window.go:263
+msgid "Paired"
+msgstr "ペアリング済み"
+
+#: internal/remoteui/window.go:274
+msgid "Found on this network"
+msgstr "このネットワークで見つかりました"
+
+#: internal/remoteui/window.go:276
+msgid "Found on the tailnet"
+msgstr "tailnet で見つかりました"
+
+#: internal/remoteui/window.go:391
+msgid "Sharing did not start: %v"
+msgstr "共有を開始できませんでした：%v"
+
+#: internal/remoteui/window.go:426
+msgid "The virtual screen did not change: %v"
+msgstr "仮想画面を変更できませんでした: %v"
+
+#: internal/remoteui/window.go:463
+msgid "Other devices see this computer as %s, on this network and the tailnet. A device pairs once, with a PIN typed here."
+msgstr "ほかのデバイスからは、このネットワークと tailnet でこのコンピューターが %s として見えます。デバイスは一度だけ、ここで PIN を入力してペアリングします。"
+
+#: internal/remoteui/window.go:466
+msgid "Sunshine is starting."
+msgstr "Sunshine を起動しています。"
+
+#: internal/remoteui/window.go:469
+msgid "Lets your other devices see and control this desktop, with Moonlight or Remote Desktop."
+msgstr "ほかのデバイスから、Moonlight やリモートデスクトップでこのデスクトップを表示・操作できます。"
+
+#: internal/remoteui/window.go:480
+msgid "Sharing needs Sunshine, which is not installed."
+msgstr "共有には Sunshine が必要ですが、インストールされていません。"
+
+#: internal/remoteui/window.go:481
+msgid "Install the package for your system from github.com/LizardByte/Sunshine/releases (Ubuntu: sudo apt install ./sunshine_…_amd64.deb)."
+msgstr "github.com/LizardByte/Sunshine/releases からお使いのシステム向けのパッケージをインストールしてください（Ubuntu：sudo apt install ./sunshine_…_amd64.deb）。"
+
+#: internal/remoteui/window.go:483
+msgid "The other device's keyboard and mouse cannot reach this desktop: /dev/uinput is not yours."
+msgstr "相手のデバイスのキーボードとマウスがこのデスクトップに届きません：/dev/uinput にアクセスできません。"
+
+#: internal/remoteui/window.go:486
+msgid "Sharing needs a graphical session to show."
+msgstr "共有するにはグラフィカルセッションが必要です。"
+
+#: internal/remoteui/window.go:511
+msgid "A device"
+msgstr "デバイス"
+
+#: internal/remoteui/window.go:515
+msgid "at %s: type the PIN it shows"
+msgstr "%s から：表示されている PIN を入力"
+
+#: internal/remoteui/window.go:542
+msgid "No device is paired yet."
+msgstr "ペアリング済みのデバイスはまだありません。"
+
+#: internal/remoteui/window.go:547
+msgid "The paired devices show while sharing is on."
+msgstr "ペアリング済みのデバイスは共有中に表示されます。"
+
+#: internal/remoteui/window.go:580
+msgid "A PIN is four digits."
+msgstr "PIN は4桁の数字です。"
+
+#: internal/remoteui/window.go:590
+msgid "That is not the PIN %s shows."
+msgstr "それは %s に表示されている PIN ではありません。"
+
+#: internal/remoteui/window.go:669
+msgid "Asking…"
+msgstr "問い合わせ中…"
+
+#: internal/remoteui/window.go:672
+msgid "Connected: its desktop is in a window of its own."
+msgstr "接続中：デスクトップは別のウィンドウにあります。"
+
+#: internal/remoteui/window.go:675
+msgid "It does not answer: it is off, or not sharing its desktop."
+msgstr "応答がありません：電源が切れているか、デスクトップを共有していません。"
+
+#: internal/remoteui/window.go:677
+msgid "It shares with Nvidia's GameStream, which Remote Desktop does not speak."
+msgstr "Nvidia の GameStream で共有しています。リモートデスクトップは対応していません。"
+
+#: internal/remoteui/window.go:679
+msgid "It has forgotten this computer: pair again."
+msgstr "このコンピューターを忘れています：もう一度ペアリングしてください。"
+
+#: internal/remoteui/window.go:681
+msgid "Not paired: pair once, with a PIN typed on it."
+msgstr "未ペアリング：一度、相手側で PIN を入力してペアリングします。"
+
+#: internal/remoteui/window.go:683
+msgid "Paired. Its desktop is being streamed; connecting joins in."
+msgstr "ペアリング済み。デスクトップは配信中で、接続すると参加します。"
+
+#: internal/remoteui/window.go:685
+msgid "Paired, and ready."
+msgstr "ペアリング済みで、準備完了です。"
+
+#: internal/remoteui/window.go:718
+msgid "On %s, open Remote Desktop → Sharing (or Sunshine's PIN page) and type:"
+msgstr "%s でリモートデスクトップ → 共有（または Sunshine の PIN ページ）を開き、次を入力してください："
+
+#: internal/remoteui/window.go:742
+msgid "The PIN typed there was not this one. Pair again."
+msgstr "相手側で入力された PIN はこれではありませんでした。もう一度ペアリングしてください。"
+
+#: internal/remoteui/window.go:745
+msgid "Pairing failed: %v"
+msgstr "ペアリングに失敗しました：%v"
+
+#: internal/remoteui/window.go:801
+msgid "Nothing shares a desktop at %s: %v"
+msgstr "%s でデスクトップを共有しているものはありません：%v"
+
+#: internal/remoteui/window.go:868
+msgid "This computer cannot decode it: choose another."
+msgstr "このコンピューターではデコードできません：別のものを選んでください。"
+
+#: internal/remoteui/window.go:870
+msgid "Decoded by the processor here: slower than the graphics card."
+msgstr "ここでは CPU でデコードします：グラフィックカードより遅くなります。"
+
+#: internal/remoteui/window.go:872
+msgid "Decoded by the graphics card here. HEVC and AV1 look better than H.264 at the same bitrate."
+msgstr "ここではグラフィックカードでデコードします。同じビットレートなら HEVC と AV1 は H.264 よりきれいです。"
+
 #: internal/shell/commands.go:27
 msgid "Lock Screen"
 msgstr "画面をロック"
@@ -7580,7 +8592,7 @@ msgstr "毎日"
 msgid "TOOLS"
 msgstr "ツール"
 
-#: internal/shell/dock.go:268
+#: internal/shell/dock.go:270
 msgid "PLAY"
 msgstr "遊び"
 
@@ -8021,6 +9033,7 @@ msgid "Search clipboard history"
 msgstr "クリップボード履歴を検索"
 
 #: internal/ui/clipboard.go:335
+#: ui/connect.ui:727
 #: ui/settings.ui:3328
 msgid "Clipboard"
 msgstr "クリップボード"
@@ -8190,23 +9203,23 @@ msgstr "コンポジタはセッションロックをサポートしていませ
 msgid "could not take the session lock"
 msgstr "セッションロックを取得できませんでした"
 
-#: internal/ui/lock.go:243
+#: internal/ui/lock.go:246
 msgid "Wrong password. Try again in %d s"
 msgstr "パスワードが間違っています。 %d 秒以内に再試行してください"
 
-#: internal/ui/lock.go:246
-#: internal/ui/lock.go:296
+#: internal/ui/lock.go:249
+#: internal/ui/lock.go:299
 msgid "Wrong password"
 msgstr "パスワードが間違っています"
 
-#: internal/ui/lock.go:269
+#: internal/ui/lock.go:272
 #: internal/ui/polkit.go:294
 #: internal/ui/settings_about.go:153
 #: internal/ui/settings_backup.go:215
 msgid "Checking…"
 msgstr "チェック中…"
 
-#: internal/ui/lock.go:300
+#: internal/ui/lock.go:303
 msgid "The password could not be checked"
 msgstr "パスワードが確認できませんでした"
 
@@ -8378,11 +9391,6 @@ msgstr "録音が保存されました"
 #: internal/ui/record.go:159
 msgid "Screen recording"
 msgstr "画面記録"
-
-#: internal/ui/record.go:163
-#: internal/ui/screenshot.go:808
-msgid "Show in Folder"
-msgstr "フォルダ内で表示"
 
 #: internal/ui/screenshot.go:434
 msgid "inua screenshot"
@@ -8659,10 +9667,6 @@ msgstr "プロバイダーのモデルを一覧"
 #: internal/ui/settings_ai.go:466
 msgid "Reasoning"
 msgstr "推論の強度"
-
-#: internal/ui/settings_ai.go:467
-msgid "Endpoint"
-msgstr "エンドポイント"
 
 #: internal/ui/settings_ai.go:485
 msgid "Chat"
@@ -8995,31 +9999,31 @@ msgstr "回答なし"
 
 #: internal/ui/settings_custom.go:74
 msgid "Not moved to the trash: %s"
-msgstr ""
+msgstr "ゴミ箱に移動できませんでした: %s"
 
 #: internal/ui/settings_custom.go:98
 msgid "Choose a folder of SVG icons"
-msgstr ""
+msgstr "SVG アイコンのフォルダーを選択"
 
 #: internal/ui/settings_custom.go:102
 msgid "Choose a theme"
-msgstr ""
+msgstr "テーマを選択"
 
 #: internal/ui/settings_custom.go:104
 msgid "Themes (CSS)"
-msgstr ""
+msgstr "テーマ (CSS)"
 
 #: internal/ui/settings_custom.go:159
 msgid "Not added: the name %s is taken; rename the file or folder"
-msgstr ""
+msgstr "追加されませんでした: %s という名前は使われています。ファイルかフォルダーの名前を変えてください"
 
 #: internal/ui/settings_custom.go:161
 msgid "Not added: a theme has @define-color lines with #rrggbb colours"
-msgstr ""
+msgstr "追加されませんでした: テーマには #rrggbb 色の @define-color 行が必要です"
 
 #: internal/ui/settings_custom.go:163
 msgid "Not added: the folder has no SVG files"
-msgstr ""
+msgstr "追加されませんでした: フォルダーに SVG ファイルがありません"
 
 #: internal/ui/settings_custom.go:165
 #: internal/ui/settings_keyring.go:181
@@ -10248,6 +11252,116 @@ msgstr "前に摘みました"
 msgid "Colours you pick show here."
 msgstr "選択した色がここに表示されます。"
 
+#: ui/connect.ui:54
+#: ui/remote.ui:54
+msgid "THIS COMPUTER"
+msgstr "このコンピューター"
+
+#: ui/connect.ui:125
+msgid "Look for devices again"
+msgstr "デバイスを再検索"
+
+#: ui/connect.ui:159
+msgid "Add a device by address…"
+msgstr "アドレスでデバイスを追加…"
+
+#: ui/connect.ui:226
+msgid "[THIS COMPUTER]"
+msgstr "[このコンピューター]"
+
+#: ui/connect.ui:256
+msgid "Connect with your devices"
+msgstr "デバイスと連携"
+
+#: ui/connect.ui:317
+msgid "To pair a phone"
+msgstr "スマートフォンをペアリングするには"
+
+#: ui/connect.ui:326
+msgid "Install KDE Connect on it (from F-Droid, Google Play or the App Store), open it on the same network or the tailnet, and choose this computer. Pair once the key shown there matches the one here."
+msgstr "スマートフォンに KDE Connect をインストールし(F-Droid、Google Play、App Store から)、同じネットワークか tailnet で開いて、このコンピューターを選びます。表示されたキーがここのキーと一致したらペアリングしてください。"
+
+#: ui/connect.ui:362
+msgid "[COMMANDS]"
+msgstr "[コマンド]"
+
+#: ui/connect.ui:372
+msgid "devices run these here"
+msgstr "デバイスがここで実行します"
+
+#: ui/connect.ui:410
+msgid "Add a command"
+msgstr "コマンドを追加"
+
+#: ui/connect.ui:596
+msgid "[SEND]"
+msgstr "[送信]"
+
+#: ui/connect.ui:630
+msgid "Ring"
+msgstr "鳴らす"
+
+#: ui/connect.ui:631
+msgid "Rings the device, to find it"
+msgstr "デバイスを鳴らして見つけます"
+
+#: ui/connect.ui:640
+msgid "Send files…"
+msgstr "ファイルを送信…"
+
+#: ui/connect.ui:654
+msgid "Text, or a link it opens"
+msgstr "テキスト、または開くリンク"
+
+#: ui/connect.ui:663
+#: ui/connectreply.ui:58
+msgid "Send"
+msgstr "送信"
+
+#: ui/connect.ui:697
+msgid "[SHARED WITH IT]"
+msgstr "[共有するもの]"
+
+#: ui/connect.ui:736
+msgid "Text copied on one is there to paste on the other. Passwords stay here."
+msgstr "片方でコピーしたテキストをもう片方で貼り付けられます。パスワードはここに残ります。"
+
+#: ui/connect.ui:768
+msgid "This computer's notifications"
+msgstr "このコンピューターの通知"
+
+#: ui/connect.ui:777
+msgid "They show on the device too. Its own show here when it sends them."
+msgstr "デバイスにも表示されます。デバイスの通知は、送られてくるとここに表示されます。"
+
+#: ui/connect.ui:809
+msgid "Pointer and keyboard"
+msgstr "ポインターとキーボード"
+
+#: ui/connect.ui:818
+msgid "The device works as a touchpad and keyboard here."
+msgstr "デバイスをここのタッチパッドとキーボードとして使えます。"
+
+#: ui/connect.ui:850
+msgid "Commands"
+msgstr "コマンド"
+
+#: ui/connect.ui:859
+msgid "It runs the commands set up on This computer."
+msgstr "「このコンピューター」で設定したコマンドを実行します。"
+
+#: ui/connect.ui:921
+msgid "[ADD A DEVICE]"
+msgstr "[デバイスを追加]"
+
+#: ui/connect.ui:946
+msgid "A device the network's broadcast does not reach: its name or IP address. It is asked to connect here; it shows in the list once it has."
+msgstr "ネットワークのブロードキャストが届かないデバイスの名前または IP アドレス。ここへの接続を依頼し、接続されると一覧に表示されます。"
+
+#: ui/connectreply.ui:36
+msgid "Your answer"
+msgstr "返信内容"
+
 #: ui/control.ui:72
 msgid "Screenshot an area"
 msgstr "エリアのスクリーンショット"
@@ -10313,8 +11427,8 @@ msgid "Parent folder (Alt+↑)"
 msgstr "親フォルダー（Alt+↑）"
 
 #: ui/filespane.ui:102
-msgid "A path, or a server: sftp://host/dir, smb://server/share"
-msgstr "パスまたはサーバー：sftp://ホスト/ディレクトリ, smb://サーバー/共有"
+msgid "A path, or a remote disk: sftp://host/dir, smb://server/share"
+msgstr "パス、またはリモートディスク：sftp://host/dir、smb://server/share"
 
 #: ui/filespane.ui:129
 msgid "Edit the path (Ctrl+L)"
@@ -10397,11 +11511,6 @@ msgstr "鍵を作成"
 #: ui/gpg.ui:750
 msgid "<span alpha='55%'>[</span>MESSAGE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>メッセージ<span alpha='55%'>]</span>"
-
-#: ui/gpg.ui:419
-#: ui/gpg.ui:783
-msgid "Text"
-msgstr "テキスト"
 
 #: ui/gpg.ui:469
 #: ui/gpg.ui:834
@@ -10531,11 +11640,6 @@ msgstr "↵ 開く"
 #: ui/launcher.ui:134
 msgid "Esc  close"
 msgstr "Esc 閉じる"
-
-#: ui/lock.ui:76
-#: ui/polkit.ui:690
-msgid "Password"
-msgstr "パスワード"
 
 #: ui/music.ui:55
 #: ui/video.ui:153
@@ -10754,6 +11858,103 @@ msgstr "別のユーザー"
 msgid "Authenticate"
 msgstr "認証する"
 
+#: ui/remote.ui:84
+msgid "Sharing"
+msgstr "共有"
+
+#: ui/remote.ui:112
+msgid "MACHINES"
+msgstr "マシン"
+
+#: ui/remote.ui:125
+msgid "Look for machines sharing their desktop"
+msgstr "デスクトップを共有しているマシンを探す"
+
+#: ui/remote.ui:159
+msgid "Add a machine…"
+msgstr "マシンを追加…"
+
+#: ui/remote.ui:226
+msgid "[SHARING]"
+msgstr "[共有]"
+
+#: ui/remote.ui:256
+msgid "Share this desktop"
+msgstr "このデスクトップを共有"
+
+#: ui/remote.ui:296
+msgid "Virtual screen"
+msgstr "仮想画面"
+
+#: ui/remote.ui:305
+msgid "While no monitor is connected, this computer shows a screen of this size, to share."
+msgstr "モニターが接続されていない間、このコンピューターは共有用にこのサイズの画面を表示します。"
+
+#: ui/remote.ui:390
+msgid "[WAITING TO PAIR]"
+msgstr "[ペアリング待ち]"
+
+#: ui/remote.ui:432
+msgid "[PAIRED DEVICES]"
+msgstr "[ペアリング済みデバイス]"
+
+#: ui/remote.ui:553
+msgid "End its session"
+msgstr "セッションを終了"
+
+#: ui/remote.ui:554
+msgid "Ends what is streaming there, for every device"
+msgstr "そこで配信中のものを、すべてのデバイスに対して終了します"
+
+#: ui/remote.ui:638
+msgid "[STREAM]"
+msgstr "[配信]"
+
+#: ui/remote.ui:648
+msgid "for every machine"
+msgstr "すべてのマシン共通"
+
+#: ui/remote.ui:676
+msgid "Resolution"
+msgstr "解像度"
+
+#: ui/remote.ui:685
+msgid "The machine shows its desktop at this size."
+msgstr "マシンはデスクトップをこのサイズで表示します。"
+
+#: ui/remote.ui:698
+#: ui/settings.ui:1211
+msgid "This monitor's"
+msgstr "このモニターの"
+
+#: ui/remote.ui:721
+msgid "Frames a second"
+msgstr "フレームレート"
+
+#: ui/remote.ui:760
+msgid "Bitrate"
+msgstr "ビットレート"
+
+#: ui/remote.ui:769
+msgid "Megabits a second: more is sharper, and needs a faster network."
+msgstr "メガビット毎秒：大きいほど鮮明で、速いネットワークが必要です。"
+
+#: ui/remote.ui:809
+msgid "Codec"
+msgstr "コーデック"
+
+#: ui/remote.ui:851
+msgid "Play the sound on the machine too"
+msgstr "マシン側でも音を鳴らす"
+
+#: ui/remote.ui:911
+msgid "[ADD A MACHINE]"
+msgstr "[マシンを追加]"
+
+#: ui/remote.ui:936
+msgid "Its address on the network: a name, an IP address, or either with :port."
+msgstr "ネットワーク上のアドレス：名前、IP アドレス、またはそれに :ポート を付けたもの。"
+
 #: ui/screenshot.ui:126
 msgid "Drag to take an area (Space switches to windows)"
 msgstr "ドラッグして領域を取得します（スペースはウィンドウに切り替わります）"
@@ -10804,11 +12005,11 @@ msgstr "バー、ランチャー、コントロールセンター、およびこ
 
 #: ui/settings.ui:151
 msgid "Your themes"
-msgstr ""
+msgstr "自分のテーマ"
 
 #: ui/settings.ui:160
 msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
-msgstr ""
+msgstr "@define-color 行の CSS ファイル。config.toml の隣の themes に置かれます"
 
 #: ui/settings.ui:173
 #: ui/settings.ui:431
@@ -10818,12 +12019,12 @@ msgstr "追加…"
 
 #: ui/settings.ui:185
 msgid "The theme in use, if it is one of yours"
-msgstr ""
+msgstr "使用中のテーマ (自分のテーマの場合)"
 
 #: ui/settings.ui:195
 #: ui/settings.ui:453
 msgid "Open Folder"
-msgstr ""
+msgstr "フォルダーを開く"
 
 #: ui/settings.ui:231
 msgid "<span alpha='55%'>[</span>TEXT<span alpha='55%'>]</span>"
@@ -10859,15 +12060,15 @@ msgstr "アプリアイコンは常にシステムから取得される"
 
 #: ui/settings.ui:409
 msgid "Your icon sets"
-msgstr ""
+msgstr "自分のアイコンセット"
 
 #: ui/settings.ui:418
 msgid "A folder of SVG icons named like inua's, kept in icons beside config.toml"
-msgstr ""
+msgstr "inua と同じ名前の SVG アイコンのフォルダー。config.toml の隣の icons に置かれます"
 
 #: ui/settings.ui:443
 msgid "The icon set in use, if it is one of yours"
-msgstr ""
+msgstr "使用中のアイコンセット (自分のものの場合)"
 
 #: ui/settings.ui:489
 msgid "<span alpha='55%'>[</span>LANGUAGE<span alpha='55%'>]</span>"
@@ -11012,10 +12213,6 @@ msgstr "ワークスペース"
 #: ui/settings.ui:1197
 msgid "Which workspaces each bar shows"
 msgstr "各バーがどのワークスペースを示すか"
-
-#: ui/settings.ui:1211
-msgid "This monitor's"
-msgstr "このモニターの"
 
 #: ui/settings.ui:1212
 msgid "All monitors'"
@@ -12396,6 +13593,14 @@ msgstr "安全なマスを明らかにし、隠された地雷にフラグを立
 msgid "games;arcade;puzzle;"
 msgstr "ゲーム;アーケード;パズル;"
 
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:10
+msgid "Your phone and this computer together: clipboard, files, notifications, media and remote input"
+msgstr "スマートフォンとこのコンピューターを連携：クリップボード、ファイル、通知、メディア、リモート入力"
+
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:20
+msgid "kde connect;gsconnect;valent;phone;android;iphone;clipboard;share;notifications;"
+msgstr "kde connect;gsconnect;valent;スマホ;電話;android;iphone;クリップボード;共有;通知;"
+
 #: config/apps/io.github.lyricat.Inua.Music.desktop:10
 msgid "Play music, with a playlist and an equalizer"
 msgstr "プレイリストとイコライザー付きで音楽を再生"
@@ -12411,6 +13616,14 @@ msgstr "パスワードストア：パスワード、ワンタイムコード、
 #: config/apps/io.github.lyricat.Inua.Pass.desktop:20
 msgid "password;pass;gpg;otp;totp;2fa;secret;"
 msgstr "パスワード;pass;gpg;otp;totp;2段階認証;シークレット;"
+
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:10
+msgid "Share this desktop, or see and control another one"
+msgstr "このデスクトップを共有し、または別のデスクトップを表示・操作"
+
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:20
+msgid "remote;desktop;moonlight;sunshine;stream;share;vnc;rdp;"
+msgstr "リモート;デスクトップ;moonlight;sunshine;共有;"
 
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:10
 msgid "Buy streets, build houses and outlast up to three computer players"

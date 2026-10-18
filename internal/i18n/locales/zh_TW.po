@@ -47,7 +47,7 @@ msgstr "「%s」 · %s"
 #: internal/apps/calendar/calendar.go:69
 #: internal/appui/clock.go:218
 #: internal/ui/control.go:308
-#: internal/ui/lock.go:238
+#: internal/ui/lock.go:241
 msgid "Monday, January 2"
 msgstr "1月2日 Monday"
 
@@ -163,6 +163,147 @@ msgstr "%s，%s%d 小時 %d 分鐘"
 #: internal/apps/clock/clock.go:140
 msgid "UTC"
 msgstr "UTC"
+
+#: internal/apps/connect/battery.go:34
+msgid "%s's battery is low"
+msgstr "%s 電量不足"
+
+#: internal/apps/connect/battery.go:35
+msgid "%d%% left"
+msgstr "剩餘 %d%%"
+
+#: internal/apps/connect/battery.go:89
+msgid "%s is looking for this computer"
+msgstr "%s 正在尋找這台電腦"
+
+#: internal/apps/connect/battery.go:90
+msgid "Found it"
+msgstr "找到了"
+
+#: internal/apps/connect/notifications.go:94
+#: internal/connectui/app.go:38
+#: ui/connectreply.ui:14
+msgid "Reply"
+msgstr "回覆"
+
+#: internal/apps/connect/service.go:246
+#: internal/apps/connect/share.go:213
+#: internal/apps/connect/share.go:219
+#: internal/connectui/app.go:20
+#: ui/connect.ui:14
+#: ui/connect.ui:32
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:3
+msgid "Mobile Link"
+msgstr "行動連結"
+
+#: internal/apps/connect/service.go:248
+msgid "%s wants to pair"
+msgstr "%s 請求配對"
+
+#: internal/apps/connect/service.go:249
+msgid "Pair only if %s shows the key %s."
+msgstr "僅在 %s 顯示金鑰 %s 時才配對。"
+
+#: internal/apps/connect/service.go:250
+#: internal/connectui/window.go:425
+#: internal/connectui/window.go:434
+#: internal/remoteui/window.go:527
+#: internal/remoteui/window.go:696
+#: ui/remote.ui:564
+msgid "Pair"
+msgstr "配對"
+
+#: internal/apps/connect/service.go:250
+#: internal/connectui/window.go:426
+msgid "Refuse"
+msgstr "拒絕"
+
+#: internal/apps/connect/service.go:292
+msgid "Ping!"
+msgstr "Ping！"
+
+#: internal/apps/connect/service.go:505
+msgid "Wants to pair"
+msgstr "請求配對"
+
+#: internal/apps/connect/service.go:507
+msgid "Pairing…"
+msgstr "正在配對……"
+
+#: internal/apps/connect/service.go:509
+#: internal/apps/tailscale/status.go:265
+#: internal/remoteui/window.go:266
+msgid "Connected"
+msgstr "已連接"
+
+#: internal/apps/connect/service.go:511
+msgid "Away"
+msgstr "不在線"
+
+#: internal/apps/connect/service.go:513
+#: internal/remoteui/window.go:261
+msgid "Not paired"
+msgstr "未配對"
+
+#: internal/apps/connect/service.go:517
+msgid "%d%%, charging"
+msgstr "%d%%，正在充電"
+
+#: internal/apps/connect/service.go:519
+#: internal/ui/settings.go:274
+#: internal/ui/settings.go:282
+#: internal/ui/settings.go:285
+#: internal/ui/settings.go:626
+#: internal/ui/settings.go:628
+#: internal/ui/settings.go:677
+#: internal/ui/settings.go:694
+msgid "%d%%"
+msgstr "%d%%"
+
+#: internal/apps/connect/share.go:65
+msgid "Text from %s"
+msgstr "來自 %s 的文字"
+
+#: internal/apps/connect/share.go:66
+msgid "It is on the clipboard."
+msgstr "已在剪貼簿中。"
+
+#: internal/apps/connect/share.go:115
+msgid "A file from %s did not arrive"
+msgstr "來自 %s 的檔案未能送達"
+
+#: internal/apps/connect/share.go:127
+msgid "A file from %s"
+msgstr "來自 %s 的檔案"
+
+#: internal/apps/connect/share.go:129
+#: internal/appui/workshop_blocks.go:427
+#: internal/appui/workshop_manager.go:63
+#: internal/filesui/cards.go:673
+#: internal/filesui/window.go:700
+#: internal/ui/record.go:163
+#: internal/ui/system_ipc.go:241
+msgid "Open"
+msgstr "開啟"
+
+#: internal/apps/connect/share.go:129
+#: internal/ui/record.go:163
+#: internal/ui/screenshot.go:808
+msgid "Show in Folder"
+msgstr "在資料夾中顯示"
+
+#: internal/apps/connect/share.go:160
+msgid "Shared file"
+msgstr "分享的檔案"
+
+#: internal/apps/connect/share.go:214
+msgid "%s did not get %s"
+msgstr "%s 未收到 %s"
+
+#: internal/apps/connect/share.go:220
+msgid "Sent %d file to %s"
+msgid_plural "Sent %d files to %s"
+msgstr[0] "已將 %d 個檔案傳送到 %s"
 
 #: internal/apps/music/music.go:393
 msgid "Flat"
@@ -288,13 +429,13 @@ msgid "%d d %d h"
 msgstr "%[1]dd %[2]dh"
 
 #: internal/apps/sysmon/sysmon.go:402
-#: internal/filesui/jobs.go:163
+#: internal/filesui/jobs.go:170
 msgid "%d h %d min"
 msgstr "%[1]d h %[2]d 最小值"
 
 #: internal/apps/sysmon/sysmon.go:404
 #: internal/appui/clock.go:156
-#: internal/filesui/jobs.go:161
+#: internal/filesui/jobs.go:168
 msgid "%d min"
 msgstr "%d分鐘"
 
@@ -350,10 +491,6 @@ msgstr "%d 小時後"
 msgid "in %d d"
 msgstr "%d 天後"
 
-#: internal/apps/tailscale/status.go:265
-msgid "Connected"
-msgstr "已連接"
-
 #: internal/apps/tailscale/status.go:267
 msgid "Disconnected"
 msgstr "已斷開連接"
@@ -369,6 +506,8 @@ msgstr "等待批准"
 
 #: internal/apps/tailscale/status.go:273
 #: internal/appui/tailscale.go:152
+#: internal/filesui/remote.go:170
+#: internal/filesui/remotesetup.go:418
 #: internal/shell/status.go:128
 msgid "Connecting…"
 msgstr "正在連線…"
@@ -509,7 +648,7 @@ msgstr "影片"
 #: internal/appui/calculator.go:49
 #: internal/appui/gpg.go:1529
 #: internal/appui/pass.go:801
-#: internal/filesui/cards.go:373
+#: internal/filesui/cards.go:430
 #: internal/ui/clipboard.go:459
 #: internal/vmui/window.go:1740
 #: internal/vmui/window.go:1769
@@ -1090,8 +1229,8 @@ msgid "The decrypted copy goes to the trash, where it can be restored from; the 
 msgstr "解密出的副本會移到垃圾桶，可從那裡復原；加密檔案保留。"
 
 #: internal/appui/gpg.go:1537
-#: internal/filesui/cards.go:712
-#: internal/filesui/window.go:729
+#: internal/filesui/cards.go:687
+#: internal/filesui/window.go:741
 #: ui/settings.ui:184
 #: ui/settings.ui:442
 msgid "Move to Trash"
@@ -1267,7 +1406,7 @@ msgstr "隱藏"
 
 #: internal/appui/pass.go:601
 #: internal/appui/pass.go:626
-#: internal/filesui/window.go:712
+#: internal/filesui/window.go:716
 #: internal/ui/askpass.go:203
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
@@ -1396,6 +1535,7 @@ msgstr "%s · %s"
 
 #: internal/appui/pass.go:1051
 #: internal/appui/workshop_manager.go:115
+#: internal/connectui/window.go:560
 #: internal/ui/settings_ai.go:549
 #: internal/ui/settings_keyring.go:645
 #: internal/ui/settings_keyring.go:679
@@ -1424,7 +1564,7 @@ msgstr "尚無應用程式讀取過它。"
 
 #: internal/appui/pass.go:1066
 #: internal/appui/sysmon.go:965
-#: internal/filesui/pane.go:1358
+#: internal/filesui/pane.go:1373
 #: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
@@ -1469,13 +1609,15 @@ msgid "It is not an image this app reads (PNG or JPEG)."
 msgstr "這不是本應用程式能讀取的圖片（PNG 或 JPEG）。"
 
 #: internal/appui/pass_otp.go:189
-#: internal/filesui/cards.go:435
+#: internal/filesui/cards.go:492
 msgid "Replace"
 msgstr "替換"
 
 #: internal/appui/pass_otp.go:192
 #: internal/appui/workshop_manager.go:88
+#: ui/connect.ui:966
 #: ui/pass.ui:818
+#: ui/remote.ui:956
 msgid "Add"
 msgstr "新增"
 
@@ -1630,7 +1772,6 @@ msgstr "GPU"
 
 #: internal/appui/sysmon.go:148
 #: internal/appui/sysmon.go:1031
-#: internal/filesui/sidebar.go:98
 #: internal/shell/dock.go:265
 #: internal/shell/dock.go:296
 msgid "NETWORK"
@@ -1729,6 +1870,11 @@ msgid "Parent"
 msgstr "家長"
 
 #: internal/appui/sysmon.go:778
+#: internal/filesui/remote.go:178
+#: internal/filesui/remotesetup.go:45
+#: internal/filesui/remotesetup.go:54
+#: internal/filesui/remotesetup.go:60
+#: internal/filesui/remotesetup.go:66
 msgid "User"
 msgstr "用戶"
 
@@ -1761,6 +1907,7 @@ msgid "Private"
 msgstr "私人"
 
 #: internal/appui/sysmon.go:782
+#: internal/remoteui/window.go:462
 msgid "Shared"
 msgstr "分享"
 
@@ -1789,6 +1936,11 @@ msgstr "程序"
 
 #: internal/appui/sysmon.go:786
 #: internal/filesui/kinds.go:34
+#: internal/filesui/remotesetup.go:47
+#: internal/filesui/remotesetup.go:53
+#: internal/filesui/remotesetup.go:68
+#: internal/filesui/remotesetup.go:75
+#: internal/filesui/remotesetup.go:83
 #: internal/viewerui/app.go:792
 msgid "Folder"
 msgstr "Folder"
@@ -1890,8 +2042,13 @@ msgstr "模型"
 
 #: internal/appui/sysmon.go:960
 #: internal/appui/tailscale.go:630
+#: internal/connectui/window.go:547
+#: internal/filesui/archive.go:76
+#: internal/filesui/remotesetup.go:226
+#: internal/filesui/renamemany.go:168
 #: internal/ui/settings_ai.go:453
 #: internal/viewerui/app.go:791
+#: ui/connect.ui:290
 #: ui/gpg.ui:1342
 #: ui/settings.ui:4810
 #: ui/sysmon.ui:96
@@ -2214,6 +2371,7 @@ msgid "Copy Name"
 msgstr "複製名稱"
 
 #: internal/appui/tailscale.go:507
+#: ui/connect.ui:621
 msgid "Ping"
 msgstr "Ping"
 
@@ -2428,11 +2586,14 @@ msgid "Cannot play it: %s"
 msgstr "無法播放：%s"
 
 #: internal/appui/video.go:529
+#: internal/connectui/window.go:387
+#: internal/remoteui/window.go:468
 #: internal/shell/notify.go:44
 #: internal/shell/status.go:73
 #: internal/shell/status.go:88
 #: internal/shell/status.go:107
 #: internal/shell/status.go:122
+#: ui/remote.ui:318
 #: ui/settings.ui:5027
 msgid "Off"
 msgstr "關閉"
@@ -2546,19 +2707,28 @@ msgid "Unknown building block %q"
 msgstr "未知的元件 %q"
 
 #: internal/appui/workshop.go:990
-#: internal/filesui/cards.go:285
-#: internal/filesui/cards.go:334
-#: internal/filesui/cards.go:372
-#: internal/filesui/cards.go:389
-#: internal/filesui/cards.go:427
-#: internal/filesui/cards.go:610
+#: internal/connectui/window.go:429
+#: internal/filesui/archive.go:49
+#: internal/filesui/archive.go:309
+#: internal/filesui/cards.go:342
+#: internal/filesui/cards.go:391
+#: internal/filesui/cards.go:429
+#: internal/filesui/cards.go:446
+#: internal/filesui/cards.go:484
+#: internal/filesui/cards.go:583
+#: internal/filesui/remote.go:159
+#: internal/filesui/remote.go:219
+#: internal/filesui/remotesetup.go:152
+#: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
 #: internal/gamesui/fortune_host.go:236
+#: internal/remoteui/window.go:694
 #: internal/ui/askpass.go:270
 #: internal/ui/askpass.go:412
 #: internal/ui/askpass.go:416
 #: ui/clock.ui:244
 #: ui/clock.ui:454
+#: ui/connectreply.ui:49
 #: ui/files.ui:155
 #: ui/gpg.ui:1252
 #: ui/gpg.ui:1469
@@ -2576,18 +2746,10 @@ msgstr "取消"
 msgid "OK"
 msgstr "好的"
 
-#: internal/appui/workshop_blocks.go:427
-#: internal/appui/workshop_manager.go:63
-#: internal/filesui/cards.go:698
-#: internal/filesui/window.go:696
-#: internal/ui/record.go:163
-#: internal/ui/system_ipc.go:241
-msgid "Open"
-msgstr "開啟"
-
 #: internal/appui/workshop_blocks.go:438
 #: internal/ui/settings_ai.go:496
 #: ui/clock.ui:252
+#: ui/connect.ui:420
 #: ui/pass.ui:490
 #: ui/settings.ui:5588
 msgid "Save"
@@ -2705,7 +2867,7 @@ msgstr "無法讀取控制台令牌：%s"
 msgid "No API key for %s (%s): type one in Settings → AI."
 msgstr "%[1]s (%[2]s) 沒有 API 金鑰:在「設定」→「AI」中鍵入一個。"
 
-#: internal/assistant/assistant.go:585
+#: internal/assistant/assistant.go:589
 msgid "Remote Console: %s"
 msgstr "遠端控制台:%s"
 
@@ -2821,6 +2983,84 @@ msgstr "一月"
 #: internal/i18n/time.go:24
 msgid "PM"
 msgstr "下午"
+
+#: internal/connectui/reply.go:39
+msgid "Answer %s"
+msgstr "回覆 %s"
+
+#: internal/connectui/reply.go:68
+msgid "Not sent: %v"
+msgstr "未傳送：%v"
+
+#: internal/connectui/window.go:235
+msgid "None found yet: open KDE Connect on your phone."
+msgstr "尚未找到：請在手機上開啟 KDE Connect。"
+
+#: internal/connectui/window.go:355
+msgid "Mobile Link did not start: %v"
+msgstr "行動連結未能啟動：%v"
+
+#: internal/connectui/window.go:381
+msgid "Visible to your devices"
+msgstr "你的裝置可見"
+
+#: internal/connectui/window.go:382
+msgid "Devices running KDE Connect, GSConnect or Valent find this computer on this network and the tailnet, and pair with it."
+msgstr "執行 KDE Connect、GSConnect 或 Valent 的裝置可在此網路和 tailnet 上找到這台電腦並與之配對。"
+
+#: internal/connectui/window.go:384
+#: internal/remoteui/window.go:465
+msgid "Starting…"
+msgstr "正在啟動……"
+
+#: internal/connectui/window.go:385
+msgid "The service is starting."
+msgstr "服務正在啟動。"
+
+#: internal/connectui/window.go:388
+msgid "Share the clipboard and files with your phone, see its notifications and battery here, and use it as a touchpad or a remote."
+msgstr "與手機分享剪貼簿和檔案，在這裡查看它的通知和電量，並把它當作觸控板或遙控器使用。"
+
+#: internal/connectui/window.go:395
+msgid "A device lists them and runs one with a tap, here, as you."
+msgstr "裝置會列出它們，輕點即可在這裡以你的身分執行。"
+
+#: internal/connectui/window.go:403
+msgid "The device is gone."
+msgstr "裝置已不在。"
+
+#: internal/connectui/window.go:427
+msgid "%s asks to pair. Pair only if it shows this key:"
+msgstr "%s 請求配對。僅在它顯示此金鑰時才配對："
+
+#: internal/connectui/window.go:430
+msgid "Accept on %s if it shows this key:"
+msgstr "如果 %s 顯示此金鑰，請在其上接受："
+
+#: internal/connectui/window.go:432
+#: internal/remoteui/window.go:559
+msgid "Unpair"
+msgstr "取消配對"
+
+#: internal/connectui/window.go:435
+msgid "Not paired: pair to share with it."
+msgstr "未配對：配對後即可與它分享。"
+
+#: internal/connectui/window.go:439
+msgid "it connects again when it is on this network or the tailnet"
+msgstr "它回到此網路或 tailnet 時會重新連接"
+
+#: internal/connectui/window.go:475
+msgid "Send files"
+msgstr "傳送檔案"
+
+#: internal/connectui/window.go:517
+msgid "Asked %s to connect."
+msgstr "已請求 %s 連接。"
+
+#: internal/connectui/window.go:552
+msgid "What it runs: systemctl suspend"
+msgstr "執行的內容：systemctl suspend"
 
 #: internal/convert/convert.go:97
 msgid "millimetres"
@@ -3397,167 +3637,296 @@ msgstr "文字編輯器"
 msgid "Opens plain text"
 msgstr "開啟純文字"
 
-#: internal/filesui/app.go:69
-#: internal/filesui/cards.go:708
+#: internal/filesui/app.go:75
+#: internal/filesui/cards.go:683
+#: internal/filesui/remote.go:371
 #: internal/filesui/sidebar.go:31
-#: internal/filesui/window.go:90
-#: internal/filesui/window.go:268
+#: internal/filesui/window.go:93
+#: internal/filesui/window.go:271
 #: ui/gpg.ui:445
 #: ui/gpg.ui:810
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
 msgid "Files"
 msgstr "檔案"
 
-#: internal/filesui/app.go:227
+#: internal/filesui/app.go:233
 msgid "%s is plugged in."
 msgstr "%s 已插入。"
 
-#: internal/filesui/app.go:306
+#: internal/filesui/app.go:311
 msgid "There are no files on the clipboard."
 msgstr "剪貼簿上沒有檔案。"
 
-#: internal/filesui/app.go:360
+#: internal/filesui/app.go:365
 msgid "Nothing to undo."
 msgstr "沒有可復原的操作。"
+
+#: internal/filesui/archive.go:50
+msgid "Compress"
+msgstr "壓縮"
+
+#: internal/filesui/archive.go:54
+msgid "Compress %d item"
+msgid_plural "Compress %d items"
+msgstr[0] "壓縮 %d 個項目"
+
+#: internal/filesui/archive.go:56
+msgid "Compress “%s”"
+msgstr "壓縮「%s」"
+
+#: internal/filesui/archive.go:58
+msgid "The archive is made in “%s”."
+msgstr "壓縮檔將建立在「%s」中。"
+
+#: internal/filesui/archive.go:79
+msgid "Archive"
+msgstr "壓縮檔"
+
+#: internal/filesui/archive.go:86
+msgid "Format"
+msgstr "格式"
+
+#: internal/filesui/archive.go:104
+msgid "Needs the 7z program (7zip)"
+msgstr "需要 7z 程式（7zip）"
+
+#: internal/filesui/archive.go:123
+msgid "Compression"
+msgstr "壓縮率"
+
+#: internal/filesui/archive.go:131
+msgid "Fast"
+msgstr "快速"
+
+#: internal/filesui/archive.go:131
+msgid "Normal"
+msgstr "標準"
+
+#: internal/filesui/archive.go:131
+msgid "Smallest"
+msgstr "最小"
+
+#: internal/filesui/archive.go:163
+#: internal/filesui/archive.go:320
+#: internal/filesui/remote.go:178
+#: internal/filesui/remotesetup.go:46
+#: internal/filesui/remotesetup.go:55
+#: internal/filesui/remotesetup.go:61
+#: internal/filesui/remotesetup.go:67
+#: ui/lock.ui:76
+#: ui/polkit.ui:690
+msgid "Password"
+msgstr "密碼"
+
+#: internal/filesui/archive.go:164
+msgid "none"
+msgstr "無"
+
+#: internal/filesui/archive.go:165
+msgid "Repeat it"
+msgstr "再輸入一次"
+
+#: internal/filesui/archive.go:166
+msgid "Lock the file names too"
+msgstr "同時加密檔名"
+
+#: internal/filesui/archive.go:168
+msgid "Without the password, not even the list of files shows (7z)"
+msgstr "沒有密碼時連檔案清單也看不到（7z）"
+
+#: internal/filesui/archive.go:180
+msgid "Leave out hidden files"
+msgstr "排除隱藏檔案"
+
+#: internal/filesui/archive.go:182
+msgid "Names starting with a dot, inside the folders: .git, .cache …"
+msgstr "資料夾中以點開頭的名稱：.git、.cache……"
+
+#: internal/filesui/archive.go:187
+msgid "Advanced"
+msgstr "進階"
+
+#: internal/filesui/archive.go:214
+msgid "%s archives cannot have a password: choose Zip or 7z for one."
+msgstr "%s 壓縮檔無法設定密碼：如需密碼，請選擇 Zip 或 7z。"
+
+#: internal/filesui/archive.go:216
+#: internal/filesui/archive.go:254
+msgid "A password needs the 7z program (7zip)."
+msgstr "設定密碼需要 7z 程式（7zip）。"
+
+#: internal/filesui/archive.go:218
+msgid "Locked with AES-256: older unzip programs cannot open it; 7-Zip and the file managers of today can."
+msgstr "使用 AES-256 加密：舊版 unzip 程式無法開啟，7-Zip 和現今的檔案管理器可以。"
+
+#: internal/filesui/archive.go:248
+msgid "7z archives need the 7z program (7zip)."
+msgstr "7z 壓縮檔需要 7z 程式（7zip）。"
+
+#: internal/filesui/archive.go:251
+msgid "%s archives cannot have a password."
+msgstr "%s 壓縮檔無法設定密碼。"
+
+#: internal/filesui/archive.go:257
+msgid "The two passwords differ."
+msgstr "兩次輸入的密碼不一致。"
+
+#: internal/filesui/archive.go:263
+#: internal/filesui/cards.go:355
+#: internal/filesui/cards.go:400
+msgid "“%s” is taken here."
+msgstr "這裡已有「%s」。"
+
+#: internal/filesui/archive.go:303
+msgid "Type its password to extract it."
+msgstr "輸入密碼以解壓縮。"
+
+#: internal/filesui/archive.go:305
+msgid "That is not its password. Try again."
+msgstr "密碼不對，請重試。"
+
+#: internal/filesui/archive.go:310
+msgid "Extract"
+msgstr "解壓縮"
+
+#: internal/filesui/archive.go:319
+msgid "“%s” is locked"
+msgstr "「%s」已加密"
 
 #: internal/filesui/caches.go:140
 #: internal/filesui/details.go:49
 #: internal/filesui/details.go:282
-#: internal/filesui/jobs.go:141
-#: internal/filesui/jobs.go:143
-#: internal/filesui/jobs.go:145
-#: internal/filesui/jobs.go:147
-#: internal/filesui/jobs.go:149
-#: internal/filesui/jobs.go:151
-#: internal/filesui/pane.go:970
+#: internal/filesui/jobs.go:144
+#: internal/filesui/jobs.go:146
+#: internal/filesui/jobs.go:148
+#: internal/filesui/jobs.go:150
+#: internal/filesui/jobs.go:152
+#: internal/filesui/jobs.go:154
+#: internal/filesui/pane.go:985
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 項"
 
-#: internal/filesui/cards.go:286
-#: internal/filesui/cards.go:306
-#: internal/filesui/cards.go:711
+#: internal/filesui/cards.go:343
+#: internal/filesui/cards.go:363
+#: internal/filesui/cards.go:686
+#: internal/filesui/renamemany.go:38
 msgid "Rename"
 msgstr "重新命名"
 
-#: internal/filesui/cards.go:298
-#: internal/filesui/cards.go:343
-msgid "“%s” is taken here."
-msgstr "這裡已有「%s」。"
-
-#: internal/filesui/cards.go:313
+#: internal/filesui/cards.go:370
 msgid "A name cannot be empty."
 msgstr "名稱不能為空。"
 
-#: internal/filesui/cards.go:315
+#: internal/filesui/cards.go:372
 msgid "“%s” is not a name."
 msgstr "「%s」不能用作名稱。"
 
-#: internal/filesui/cards.go:317
+#: internal/filesui/cards.go:374
 msgid "A name cannot hold “/”."
 msgstr "名稱不能包含「/」。"
 
-#: internal/filesui/cards.go:319
+#: internal/filesui/cards.go:376
 msgid "The name is too long."
 msgstr "名稱太長。"
 
-#: internal/filesui/cards.go:327
+#: internal/filesui/cards.go:384
 msgid "New file"
 msgstr "新增檔案"
 
-#: internal/filesui/cards.go:327
+#: internal/filesui/cards.go:384
 msgid "Untitled"
 msgstr "未命名"
 
-#: internal/filesui/cards.go:329
+#: internal/filesui/cards.go:386
 msgid "New folder"
 msgstr "新增資料夾"
 
-#: internal/filesui/cards.go:329
+#: internal/filesui/cards.go:386
 msgid "New Folder"
 msgstr "新資料夾"
 
-#: internal/filesui/cards.go:335
+#: internal/filesui/cards.go:392
 msgid "Make"
 msgstr "建立"
 
-#: internal/filesui/cards.go:367
+#: internal/filesui/cards.go:424
 msgid "Delete %d item for good?"
 msgid_plural "Delete %d items for good?"
 msgstr[0] "永久刪除 %d 項？"
 
-#: internal/filesui/cards.go:369
+#: internal/filesui/cards.go:426
 msgid "Delete “%s” for good?"
 msgstr "永久刪除「%s」？"
 
-#: internal/filesui/cards.go:384
+#: internal/filesui/cards.go:441
 msgid "They do not go to the trash, and this cannot be undone."
 msgstr "它們不會進入垃圾箱，且無法復原。"
 
-#: internal/filesui/cards.go:390
+#: internal/filesui/cards.go:447
 #: internal/filesui/sidebar.go:55
-#: internal/filesui/window.go:670
-#: internal/filesui/window.go:676
+#: internal/filesui/window.go:673
+#: internal/filesui/window.go:679
 #: internal/shell/commands.go:32
 #: ui/filespane.ui:250
 msgid "Empty Trash"
 msgstr "清空垃圾箱"
 
-#: internal/filesui/cards.go:407
+#: internal/filesui/cards.go:464
 msgid "Empty the trash?"
 msgstr "清空垃圾箱？"
 
-#: internal/filesui/cards.go:407
+#: internal/filesui/cards.go:464
 msgid "Everything in it is deleted for good, on every drive."
 msgstr "其中所有內容都會被永久刪除，包括所有磁碟上的。"
 
-#: internal/filesui/cards.go:424
+#: internal/filesui/cards.go:481
 msgid "There: %s, %s. This one: %s, %s."
 msgstr "已有的：%s，%s。這個：%s，%s。"
 
-#: internal/filesui/cards.go:428
+#: internal/filesui/cards.go:485
 msgid "Skip"
 msgstr "略過"
 
-#: internal/filesui/cards.go:429
+#: internal/filesui/cards.go:486
 msgid "Keep both"
 msgstr "保留兩者"
 
-#: internal/filesui/cards.go:433
+#: internal/filesui/cards.go:490
 msgid "Merge"
 msgstr "合併"
 
-#: internal/filesui/cards.go:438
+#: internal/filesui/cards.go:495
 msgid "“%s” is already in %s"
 msgstr "「%s」已在 %s 中"
 
-#: internal/filesui/cards.go:440
+#: internal/filesui/cards.go:497
 msgid "A folder “%s” is already in %s"
 msgstr "資料夾「%s」已在 %s 中"
 
-#: internal/filesui/cards.go:443
-#: ui/files.ui:253
+#: internal/filesui/cards.go:500
+#: ui/files.ui:261
 msgid "Do the same for the rest"
 msgstr "其餘的也這樣處理"
 
-#: internal/filesui/cards.go:452
+#: internal/filesui/cards.go:509
 msgid "… and %d more"
 msgid_plural "… and %d more"
 msgstr[0] "……還有 %d 項"
 
-#: internal/filesui/cards.go:454
-#: internal/filesui/cards.go:735
+#: internal/filesui/cards.go:511
+#: internal/filesui/cards.go:710
 #: internal/ui/settings_bench.go:139
 #: ui/settings.ui:3033
 #: ui/settings.ui:4565
 msgid "Close"
 msgstr "關閉"
 
-#: internal/filesui/cards.go:455
+#: internal/filesui/cards.go:512
 msgid "Some items could not be done"
 msgstr "部分項目未能完成"
 
-#: internal/filesui/cards.go:464
+#: internal/filesui/cards.go:521
 msgid "Jump to a folder"
 msgstr "跳至資料夾"
 
@@ -3603,192 +3972,193 @@ msgstr "無法中斷 %s：%v"
 msgid "Mounting %s…"
 msgstr "正在掛載 %s……"
 
-#: internal/filesui/cards.go:611
+#: internal/filesui/cards.go:584
 msgid "Unlock"
 msgstr "解鎖"
 
-#: internal/filesui/cards.go:613
+#: internal/filesui/cards.go:587
 msgid "Unlocking…"
 msgstr "正在解鎖……"
 
-#: internal/filesui/cards.go:634
+#: internal/filesui/cards.go:609
 msgid "That passphrase does not open it."
 msgstr "這個密語無法開啟它。"
 
-#: internal/filesui/cards.go:648
+#: internal/filesui/cards.go:623
 msgid "Unlock %s"
 msgstr "解鎖 %s"
 
-#: internal/filesui/cards.go:649
+#: internal/filesui/cards.go:624
 msgid "The drive is encrypted. Its passphrase is not kept."
 msgstr "該磁碟已加密。密語不會被保存。"
 
-#: internal/filesui/cards.go:659
+#: internal/filesui/cards.go:634
 msgid "Ejecting %s…"
 msgstr "正在退出 %s……"
 
-#: internal/filesui/cards.go:670
+#: internal/filesui/cards.go:645
 msgid "%s can be removed now."
 msgstr "現在可以移除 %s 了。"
 
-#: internal/filesui/cards.go:672
+#: internal/filesui/cards.go:647
 msgid "%s is unmounted."
 msgstr "%s 已卸載。"
 
-#: internal/filesui/cards.go:682
+#: internal/filesui/cards.go:657
 msgid "%s is in use: close the files open on it first."
 msgstr "%s 正在使用：請先關閉其上開啟的檔案。"
 
-#: internal/filesui/cards.go:684
+#: internal/filesui/cards.go:659
 msgid "Not allowed."
 msgstr "不允許。"
 
-#: internal/filesui/cards.go:686
+#: internal/filesui/cards.go:661
+#: internal/remoteui/stream.go:472
 msgid "%s: %v"
 msgstr "%s：%v"
 
-#: internal/filesui/cards.go:697
+#: internal/filesui/cards.go:672
 msgid "Moving"
 msgstr "移動"
 
-#: internal/filesui/cards.go:699
+#: internal/filesui/cards.go:674
 msgid "Parent folder"
 msgstr "上層資料夾"
 
-#: internal/filesui/cards.go:700
+#: internal/filesui/cards.go:675
 msgid "Back / forward"
 msgstr "上一步 / 下一步"
 
-#: internal/filesui/cards.go:701
+#: internal/filesui/cards.go:676
 #: internal/filesui/sidebar.go:41
 #: internal/filesui/tabs.go:96
-#: internal/filesui/window.go:275
+#: internal/filesui/window.go:278
 msgid "Home"
 msgstr "家目錄"
 
-#: internal/filesui/cards.go:702
+#: internal/filesui/cards.go:677
 msgid "The sidebar's places"
 msgstr "側邊欄中的位置"
 
-#: internal/filesui/cards.go:703
+#: internal/filesui/cards.go:678
 msgid "Type a path or a server"
 msgstr "輸入路徑或伺服器"
 
-#: internal/filesui/cards.go:704
+#: internal/filesui/cards.go:679
 msgid "Jump to a folder used before"
 msgstr "跳至用過的資料夾"
 
-#: internal/filesui/cards.go:705
+#: internal/filesui/cards.go:680
 #: ui/filespane.ui:115
 msgid "Search below this folder"
 msgstr "在此資料夾下搜尋"
 
-#: internal/filesui/cards.go:706
+#: internal/filesui/cards.go:681
 msgid "Letters"
 msgstr "字母"
 
-#: internal/filesui/cards.go:706
+#: internal/filesui/cards.go:681
 msgid "Filter this folder; Esc clears"
 msgstr "篩選此資料夾；Esc 清除"
 
-#: internal/filesui/cards.go:709
+#: internal/filesui/cards.go:684
 msgid "Copy / cut / paste"
 msgstr "複製 / 剪下 / 貼上"
 
-#: internal/filesui/cards.go:710
+#: internal/filesui/cards.go:685
 msgid "Copy the paths (none selected: the folder's)"
 msgstr "複製路徑（未選取時複製資料夾路徑）"
 
-#: internal/filesui/cards.go:713
+#: internal/filesui/cards.go:688
 msgid "Delete for good"
 msgstr "永久刪除"
 
-#: internal/filesui/cards.go:714
+#: internal/filesui/cards.go:689
 msgid "New folder / new file"
 msgstr "新增資料夾 / 新增檔案"
 
-#: internal/filesui/cards.go:715
+#: internal/filesui/cards.go:690
 msgid "Undo"
 msgstr "復原"
 
-#: internal/filesui/cards.go:716
+#: internal/filesui/cards.go:691
 msgid "Copy / move to the other pane"
 msgstr "複製 / 移動到另一窗格"
 
-#: internal/filesui/cards.go:717
-#: internal/filesui/window.go:698
+#: internal/filesui/cards.go:692
+#: internal/filesui/window.go:702
 msgid "Open with…"
 msgstr "開啟方式……"
 
-#: internal/filesui/cards.go:718
-#: internal/filesui/window.go:743
+#: internal/filesui/cards.go:693
+#: internal/filesui/window.go:755
 msgid "Bookmark"
 msgstr "加入書籤"
 
-#: internal/filesui/cards.go:719
-#: internal/filesui/window.go:685
+#: internal/filesui/cards.go:694
+#: internal/filesui/window.go:688
 msgid "Terminal here"
 msgstr "在此開啟終端機"
 
-#: internal/filesui/cards.go:721
+#: internal/filesui/cards.go:696
 #: ui/screenshot.ui:162
 #: ui/shotdrawer.ui:122
 msgid "Window"
 msgstr "窗口"
 
-#: internal/filesui/cards.go:722
+#: internal/filesui/cards.go:697
 msgid "New tab / close tab"
 msgstr "新增分頁 / 關閉分頁"
 
-#: internal/filesui/cards.go:723
+#: internal/filesui/cards.go:698
 msgid "Next / previous tab"
 msgstr "下一個 / 上一個分頁"
 
-#: internal/filesui/cards.go:724
-#: internal/filesui/window.go:701
+#: internal/filesui/cards.go:699
+#: internal/filesui/window.go:705
 msgid "Middle click"
 msgstr "中鍵點擊"
 
-#: internal/filesui/cards.go:724
+#: internal/filesui/cards.go:699
 msgid "A folder in a new tab"
 msgstr "在新分頁中開啟資料夾"
 
-#: internal/filesui/cards.go:725
+#: internal/filesui/cards.go:700
 msgid "List / grid"
 msgstr "清單 / 格狀"
 
-#: internal/filesui/cards.go:726
-#: internal/filesui/window.go:689
+#: internal/filesui/cards.go:701
+#: internal/filesui/window.go:693
 msgid "Hidden files"
 msgstr "隱藏檔案"
 
-#: internal/filesui/cards.go:727
+#: internal/filesui/cards.go:702
 msgid "Two panes, the other pane"
 msgstr "雙窗格，切換窗格"
 
-#: internal/filesui/cards.go:728
+#: internal/filesui/cards.go:703
 msgid "Sidebar"
 msgstr "側邊欄"
 
-#: internal/filesui/cards.go:729
-#: internal/filesui/window.go:735
+#: internal/filesui/cards.go:704
+#: internal/filesui/window.go:747
 msgid "Details"
 msgstr "詳細資訊"
 
-#: internal/filesui/cards.go:730
+#: internal/filesui/cards.go:705
 msgid "Bigger / smaller / normal"
 msgstr "放大 / 縮小 / 正常"
 
-#: internal/filesui/cards.go:731
+#: internal/filesui/cards.go:706
 msgid "New window, close it"
 msgstr "新視窗，關閉視窗"
 
-#: internal/filesui/cards.go:732
-#: internal/filesui/window.go:690
+#: internal/filesui/cards.go:707
+#: internal/filesui/window.go:694
 msgid "Reload"
 msgstr "重新載入"
 
-#: internal/filesui/cards.go:736
+#: internal/filesui/cards.go:711
 msgid "Keys"
 msgstr "快速鍵"
 
@@ -3859,10 +4229,10 @@ msgid "SIZE OF THE FILES"
 msgstr "檔案大小"
 
 #: internal/filesui/details.go:55
-#: internal/filesui/pane.go:892
+#: internal/filesui/pane.go:907
 #: internal/filesui/sidebar.go:54
 #: internal/filesui/tabs.go:94
-#: internal/filesui/window.go:271
+#: internal/filesui/window.go:274
 msgid "Trash"
 msgstr "垃圾箱"
 
@@ -3899,39 +4269,52 @@ msgstr "2006年1月2日 15:04"
 msgid "more than %s"
 msgstr "超過 %s"
 
-#: internal/filesui/jobs.go:121
+#: internal/filesui/jobs.go:124
 msgid "%s left"
 msgstr "剩餘 %s"
 
-#: internal/filesui/jobs.go:141
+#: internal/filesui/jobs.go:144
 msgid "Copying %s to %s"
 msgstr "正在將 %s 複製到 %s"
 
-#: internal/filesui/jobs.go:143
+#: internal/filesui/jobs.go:146
 msgid "Moving %s to %s"
 msgstr "正在將 %s 移動到 %s"
 
-#: internal/filesui/jobs.go:145
+#: internal/filesui/jobs.go:148
 msgid "Moving %s to the trash"
 msgstr "正在將 %s 移至垃圾箱"
 
-#: internal/filesui/jobs.go:147
+#: internal/filesui/jobs.go:150
 msgid "Deleting %s"
 msgstr "正在刪除 %s"
 
-#: internal/filesui/jobs.go:149
+#: internal/filesui/jobs.go:152
 msgid "Restoring %s"
 msgstr "正在還原 %s"
 
-#: internal/filesui/jobs.go:151
+#: internal/filesui/jobs.go:154
 msgid "Linking %s"
 msgstr "正在連結 %s"
 
-#: internal/filesui/jobs.go:159
+#: internal/filesui/jobs.go:156
+msgid "Compressing into %s"
+msgstr "正在壓縮為 %s"
+
+#: internal/filesui/jobs.go:158
+msgid "Extracting %s"
+msgstr "正在解壓縮 %s"
+
+#: internal/filesui/jobs.go:158
+msgid "%d archive"
+msgid_plural "%d archives"
+msgstr[0] "%d 個壓縮檔"
+
+#: internal/filesui/jobs.go:166
 msgid "%d s"
 msgstr "%d秒"
 
-#: internal/filesui/jobs.go:195
+#: internal/filesui/jobs.go:205
 msgid "Moved %d item to the trash (Ctrl+Z puts it back)."
 msgid_plural "Moved %d items to the trash (Ctrl+Z puts them back)."
 msgstr[0] "已將 %d 項移至垃圾箱（Ctrl+Z 可還原）。"
@@ -3963,86 +4346,529 @@ msgstr "總是用它開啟%s"
 msgid "Find an app"
 msgstr "尋找應用程式"
 
-#: internal/filesui/pane.go:338
+#: internal/filesui/pane.go:348
 msgid "%s → %s"
 msgstr "%s → %s"
 
-#: internal/filesui/pane.go:456
+#: internal/filesui/pane.go:466
 msgid "%s free"
 msgstr "剩餘 %s"
 
-#: internal/filesui/pane.go:654
+#: internal/filesui/pane.go:664
 msgid "You may not read this folder."
 msgstr "你無權讀取此資料夾。"
 
-#: internal/filesui/pane.go:656
+#: internal/filesui/pane.go:666
 msgid "This folder does not exist."
 msgstr "此資料夾不存在。"
 
-#: internal/filesui/pane.go:658
+#: internal/filesui/pane.go:668
 msgid "This folder cannot be read: %v"
 msgstr "無法讀取此資料夾：%v"
 
-#: internal/filesui/pane.go:660
+#: internal/filesui/pane.go:670
 msgid "Nothing here matches “%s”."
 msgstr "這裡沒有與「%s」相符的項目。"
 
-#: internal/filesui/pane.go:662
+#: internal/filesui/pane.go:672
 msgid "Type to search below this folder."
 msgstr "輸入以在此資料夾下搜尋。"
 
-#: internal/filesui/pane.go:664
+#: internal/filesui/pane.go:674
 msgid "Nothing below this folder matches “%s”."
 msgstr "此資料夾下沒有與「%s」相符的項目。"
 
-#: internal/filesui/pane.go:666
+#: internal/filesui/pane.go:676
 msgid "The trash is empty."
 msgstr "垃圾箱是空的。"
 
-#: internal/filesui/pane.go:668
+#: internal/filesui/pane.go:678
 msgid "Only hidden files: %d of them (Ctrl+H shows them)."
 msgid_plural "Only hidden files: %d of them (Ctrl+H shows them)."
 msgstr[0] "只有隱藏檔案：共 %d 個（Ctrl+H 顯示）。"
 
-#: internal/filesui/pane.go:670
+#: internal/filesui/pane.go:680
 msgid "This folder is empty."
 msgstr "此資料夾是空的。"
 
-#: internal/filesui/pane.go:830
+#: internal/filesui/pane.go:840
 msgid "%s does not exist."
 msgstr "%s 不存在。"
 
-#: internal/filesui/pane.go:926
+#: internal/filesui/pane.go:941
 msgid "SEARCH"
 msgstr "搜尋"
 
-#: internal/filesui/pane.go:968
+#: internal/filesui/pane.go:983
 msgid "%d found"
 msgid_plural "%d found"
 msgstr[0] "找到 %d 項"
 
-#: internal/filesui/pane.go:973
+#: internal/filesui/pane.go:988
 msgid "%d hidden"
 msgid_plural "%d hidden"
 msgstr[0] "%d 項隱藏"
 
-#: internal/filesui/pane.go:986
+#: internal/filesui/pane.go:1001
 msgid "%d selected"
 msgid_plural "%d selected"
 msgstr[0] "已選 %d 項"
 
-#: internal/filesui/pane.go:1108
+#: internal/filesui/pane.go:1123
 msgid "done"
 msgstr "完成"
 
-#: internal/filesui/pane.go:1356
+#: internal/filesui/pane.go:1371
 msgid "15:04"
 msgstr "15:04"
 
-#: internal/filesui/pane.go:1360
+#: internal/filesui/pane.go:1375
 #: internal/ui/shotdrawer.go:329
 msgid "Jan 2 2006"
 msgstr "2006年1月2日"
+
+#: internal/filesui/remote.go:59
+#: internal/remoteui/stream.go:134
+msgid "Connecting to %s…"
+msgstr "正在連線 %s……"
+
+#: internal/filesui/remote.go:160
+#: internal/filesui/remotesetup.go:132
+#: ui/remote.ui:574
+#: ui/vm.ui:1548
+#: ui/vm.ui:1569
+msgid "Connect"
+msgstr "連線"
+
+#: internal/filesui/remote.go:164
+#: internal/filesui/remotesetup.go:340
+msgid "Both the key's ID and its secret are needed."
+msgstr "需要金鑰 ID 和金鑰本身。"
+
+#: internal/filesui/remote.go:176
+msgid "Sign in to %s"
+msgstr "登入 %s"
+
+#: internal/filesui/remote.go:181
+msgid "Keys for %s"
+msgstr "%s 的金鑰"
+
+#: internal/filesui/remote.go:182
+#: internal/filesui/remotesetup.go:76
+#: internal/filesui/remotesetup.go:84
+msgid "Access key ID"
+msgstr "存取金鑰 ID"
+
+#: internal/filesui/remote.go:182
+#: internal/filesui/remotesetup.go:77
+#: internal/filesui/remotesetup.go:85
+msgid "Secret access key"
+msgstr "秘密存取金鑰"
+
+#: internal/filesui/remote.go:185
+#: internal/filesui/remotesetup.go:158
+msgid "Remember in the keyring"
+msgstr "記在鑰匙圈中"
+
+#: internal/filesui/remote.go:199
+msgid "Disconnecting %s…"
+msgstr "正在中斷 %s……"
+
+#: internal/filesui/remote.go:208
+msgid "%s is disconnected."
+msgstr "%s 已中斷連線。"
+
+#: internal/filesui/remote.go:220
+#: internal/filesui/remote.go:273
+#: internal/ui/settings_ai.go:497
+#: ui/remote.ui:543
+msgid "Forget"
+msgstr "刪除金鑰"
+
+#: internal/filesui/remote.go:247
+msgid "Forget %s?"
+msgstr "忘記 %s？"
+
+#: internal/filesui/remote.go:248
+msgid "Its address and its password go from here. Nothing on the server changes."
+msgstr "它的位址和密碼會從這裡移除。伺服器上什麼都不會變。"
+
+#: internal/filesui/remote.go:255
+msgid "REMOTE DISKS"
+msgstr "遠端磁碟"
+
+#: internal/filesui/remote.go:266
+#: internal/filesui/sidebar.go:68
+msgid "%s free of %s"
+msgstr "%s 可用，共 %s"
+
+#: internal/filesui/remote.go:269
+msgid "Disconnect"
+msgstr "中斷連線"
+
+#: internal/filesui/remote.go:272
+msgid "Edit…"
+msgstr "編輯……"
+
+#: internal/filesui/remote.go:276
+msgid "Remote disk…"
+msgstr "遠端磁碟……"
+
+#: internal/filesui/remote.go:308
+msgid "A remote disk cannot be at %s://."
+msgstr "遠端磁碟不能位於 %s://。"
+
+#: internal/filesui/remote.go:310
+msgid "Leave the password out of the address: it is asked for, and kept in the keyring."
+msgstr "請不要把密碼寫進位址：會另行詢問，並保存在鑰匙圈中。"
+
+#: internal/filesui/remote.go:312
+msgid "A server is needed."
+msgstr "需要一個伺服器。"
+
+#: internal/filesui/remote.go:314
+msgid "An SMB disk needs a share: smb://server/share."
+msgstr "SMB 磁碟需要指明共享：smb://server/share。"
+
+#: internal/filesui/remote.go:316
+msgid "The address has a line break in it."
+msgstr "位址中有換行。"
+
+#: internal/filesui/remote.go:318
+msgid "A bucket is needed."
+msgstr "需要一個儲存桶。"
+
+#: internal/filesui/remote.go:320
+msgid "A WebDAV URL starts with https:// or http://."
+msgstr "WebDAV URL 以 https:// 或 http:// 開頭。"
+
+#: internal/filesui/remote.go:322
+msgid "A port is a number from 1 to 65535."
+msgstr "連接埠是 1 到 65535 之間的數字。"
+
+#: internal/filesui/remote.go:324
+msgid "An address starts with sftp://, smb://, s3:// …"
+msgstr "位址以 sftp://、smb://、s3:// 等開頭。"
+
+#: internal/filesui/remote.go:333
+msgid "%s did not answer in time."
+msgstr "%s 沒有及時回應。"
+
+#: internal/filesui/remote.go:336
+#: internal/filesui/remotesetup.go:404
+msgid "“%s” cannot be a folder's name in ~/Remote."
+msgstr "「%s」不能作為 ~/Remote 中的資料夾名稱。"
+
+#: internal/filesui/remote.go:338
+#: internal/filesui/remote.go:361
+msgid "%s could not be connected: %s"
+msgstr "無法連線 %s：%s"
+
+#: internal/filesui/remote.go:342
+msgid "Remote disks need the %s package."
+msgstr "遠端磁碟需要 %s 套件。"
+
+#: internal/filesui/remote.go:345
+msgid "Those keys were refused."
+msgstr "這些金鑰被拒絕了。"
+
+#: internal/filesui/remote.go:347
+msgid "The server refused that user or password."
+msgstr "伺服器拒絕了該使用者或密碼。"
+
+#: internal/filesui/remote.go:349
+msgid "%s's SSH host key is unknown or changed: check it with ssh first."
+msgstr "%s 的 SSH 主機金鑰未知或已變更：請先用 ssh 核對。"
+
+#: internal/filesui/remote.go:351
+msgid "%s does not answer."
+msgstr "%s 沒有回應。"
+
+#: internal/filesui/remote.go:353
+msgid "%s is not there."
+msgstr "%s 不存在。"
+
+#: internal/filesui/remote.go:355
+msgid "%s has files in it: a disk is mounted only on an empty folder."
+msgstr "%s 中有檔案：磁碟只能掛載到空資料夾上。"
+
+#: internal/filesui/remote.go:357
+msgid "%s is in use: close what has a file open on it."
+msgstr "%s 正在使用中：請關閉在其中開啟了檔案的程式。"
+
+#: internal/filesui/remote.go:359
+msgid "This rclone is too old for %s://; 1.60 or later has it."
+msgstr "此 rclone 太舊，不支援 %s://；1.60 及以上版本支援。"
+
+#: internal/filesui/remotesetup.go:40
+msgid "optional"
+msgstr "選填"
+
+#: internal/filesui/remotesetup.go:44
+#: internal/filesui/remotesetup.go:51
+#: internal/filesui/remotesetup.go:65
+msgid "Server"
+msgstr "伺服器"
+
+#: internal/filesui/remotesetup.go:44
+#: internal/filesui/remotesetup.go:65
+msgid "host, or host:port"
+msgstr "主機，或 主機:連接埠"
+
+#: internal/filesui/remotesetup.go:46
+msgid "empty: your SSH keys"
+msgstr "留空：使用你的 SSH 金鑰"
+
+#: internal/filesui/remotesetup.go:47
+msgid "empty: the home folder"
+msgstr "留空：家目錄"
+
+#: internal/filesui/remotesetup.go:52
+msgid "Share"
+msgstr "共享"
+
+#: internal/filesui/remotesetup.go:54
+msgid "empty: as a guest"
+msgstr "留空：以訪客身分"
+
+#: internal/filesui/remotesetup.go:59
+msgid "URL"
+msgstr "URL"
+
+#: internal/filesui/remotesetup.go:61
+msgid "or an app password"
+msgstr "或應用程式密碼"
+
+#: internal/filesui/remotesetup.go:66
+msgid "empty: anonymous"
+msgstr "留空：匿名"
+
+#: internal/filesui/remotesetup.go:69
+msgid "Encrypted (FTPS)"
+msgstr "加密（FTPS）"
+
+#: internal/filesui/remotesetup.go:73
+#: internal/ui/settings_ai.go:467
+msgid "Endpoint"
+msgstr "端點"
+
+#: internal/filesui/remotesetup.go:73
+msgid "s3.amazonaws.com, or your server's host"
+msgstr "s3.amazonaws.com，或你的伺服器主機"
+
+#: internal/filesui/remotesetup.go:74
+#: internal/filesui/remotesetup.go:82
+msgid "Bucket"
+msgstr "儲存桶"
+
+#: internal/filesui/remotesetup.go:81
+msgid "Account ID"
+msgstr "帳戶 ID"
+
+#: internal/filesui/remotesetup.go:81
+msgid "on the R2 page of Cloudflare's dashboard"
+msgstr "在 Cloudflare 主控台的 R2 頁面上"
+
+#: internal/filesui/remotesetup.go:84
+msgid "an R2 API token's"
+msgstr "R2 API 權杖的"
+
+#: internal/filesui/remotesetup.go:114
+msgid "A server you reach with ssh."
+msgstr "可用 ssh 連線的伺服器。"
+
+#: internal/filesui/remotesetup.go:116
+msgid "A Windows or Samba share, a NAS."
+msgstr "Windows 或 Samba 共享、NAS。"
+
+#: internal/filesui/remotesetup.go:118
+msgid "Nextcloud, ownCloud or another WebDAV server: the URL its settings show."
+msgstr "Nextcloud、ownCloud 或其他 WebDAV 伺服器：填其設定中顯示的 URL。"
+
+#: internal/filesui/remotesetup.go:120
+msgid "An FTP server."
+msgstr "FTP 伺服器。"
+
+#: internal/filesui/remotesetup.go:122
+msgid "Amazon S3, or another S3 server (MinIO, Backblaze B2, Wasabi) by its endpoint."
+msgstr "Amazon S3，或以端點指定的其他 S3 伺服器（MinIO、Backblaze B2、Wasabi）。"
+
+#: internal/filesui/remotesetup.go:124
+msgid "A Cloudflare R2 bucket, with an R2 API token's keys."
+msgstr "Cloudflare R2 儲存桶，使用 R2 API 權杖的金鑰。"
+
+#: internal/filesui/remotesetup.go:132
+msgid "Remote disk"
+msgstr "遠端磁碟"
+
+#: internal/filesui/remotesetup.go:134
+msgid "Change %s"
+msgstr "變更 %s"
+
+#: internal/filesui/remotesetup.go:134
+msgid "Save and connect"
+msgstr "儲存並連線"
+
+#: internal/filesui/remotesetup.go:151
+msgid "Test connection"
+msgstr "測試連線"
+
+#: internal/filesui/remotesetup.go:227
+msgid "from the server, the share or the bucket"
+msgstr "取自伺服器、共享或儲存桶"
+
+#: internal/filesui/remotesetup.go:243
+msgid "empty: the one kept"
+msgstr "留空：使用已儲存的"
+
+#: internal/filesui/remotesetup.go:367
+msgid "Testing…"
+msgstr "正在測試……"
+
+#: internal/filesui/remotesetup.go:378
+msgid "%s does not connect"
+msgstr "%s 無法連線"
+
+#: internal/filesui/remotesetup.go:381
+msgid "%s connects"
+msgstr "%s 可以連線"
+
+#: internal/filesui/remotesetup.go:381
+msgid "Its folder can be read."
+msgstr "其資料夾可以讀取。"
+
+#: internal/filesui/remotesetup.go:409
+msgid "Another remote disk is called “%s”."
+msgstr "已有另一個遠端磁碟叫「%s」。"
+
+#: internal/filesui/renamemany.go:41
+msgid "Rename %d item"
+msgid_plural "Rename %d items"
+msgstr[0] "重新命名 %d 個項目"
+
+#: internal/filesui/renamemany.go:60
+msgid "Replace text"
+msgstr "取代文字"
+
+#: internal/filesui/renamemany.go:61
+msgid "Add text"
+msgstr "加入文字"
+
+#: internal/filesui/renamemany.go:62
+msgid "Number"
+msgstr "編號"
+
+#: internal/filesui/renamemany.go:63
+msgid "Change case"
+msgstr "變更大小寫"
+
+#: internal/filesui/renamemany.go:148
+msgid "Find"
+msgstr "尋找"
+
+#: internal/filesui/renamemany.go:151
+msgid "Replace with"
+msgstr "取代為"
+
+#: internal/filesui/renamemany.go:152
+msgid "empty: removed"
+msgstr "留空：刪除"
+
+#: internal/filesui/renamemany.go:154
+msgid "Match case"
+msgstr "區分大小寫"
+
+#: internal/filesui/renamemany.go:156
+msgid "A regular expression ($1 in the replacement)"
+msgstr "正規表示式（取代中可用 $1）"
+
+#: internal/filesui/renamemany.go:158
+#: ui/gpg.ui:419
+#: ui/gpg.ui:783
+msgid "Text"
+msgstr "文字"
+
+#: internal/filesui/renamemany.go:161
+msgid "Where"
+msgstr "位置"
+
+#: internal/filesui/renamemany.go:166
+msgid "Before the name"
+msgstr "名稱之前"
+
+#: internal/filesui/renamemany.go:166
+msgid "After the name"
+msgstr "名稱之後"
+
+#: internal/filesui/renamemany.go:169
+msgid "empty: the number alone"
+msgstr "留空：僅編號"
+
+#: internal/filesui/renamemany.go:171
+msgid "Start at"
+msgstr "起始編號"
+
+#: internal/filesui/renamemany.go:187
+msgid "Case"
+msgstr "大小寫"
+
+#: internal/filesui/renamemany.go:188
+msgid "lowercase"
+msgstr "小寫"
+
+#: internal/filesui/renamemany.go:188
+msgid "UPPERCASE"
+msgstr "大寫"
+
+#: internal/filesui/renamemany.go:188
+msgid "Title Case"
+msgstr "首字母大寫"
+
+#: internal/filesui/renamemany.go:220
+msgid "The regular expression is not one."
+msgstr "正規表示式無效。"
+
+#: internal/filesui/renamemany.go:261
+msgid "%d name changes."
+msgid_plural "%d names change."
+msgstr[0] "%d 個名稱將變更。"
+
+#: internal/filesui/renamemany.go:263
+msgid "%d name cannot be given."
+msgid_plural "%d names cannot be given."
+msgstr[0] "有 %d 個名稱無法使用。"
+
+#: internal/filesui/renamemany.go:266
+msgid "The first %d are shown."
+msgstr "僅顯示前 %d 個。"
+
+#: internal/filesui/renamemany.go:277
+msgid "taken by another file"
+msgstr "已被其他檔案使用"
+
+#: internal/filesui/renamemany.go:279
+msgid "given to two items"
+msgstr "與另一項目重複"
+
+#: internal/filesui/renamemany.go:281
+msgid "empty"
+msgstr "為空"
+
+#: internal/filesui/renamemany.go:283
+msgid "holds “/”"
+msgstr "包含「/」"
+
+#: internal/filesui/renamemany.go:285
+msgid "not a name"
+msgstr "不是名稱"
+
+#: internal/filesui/renamemany.go:287
+msgid "too long"
+msgstr "太長"
+
+#: internal/filesui/renamemany.go:306
+msgid "Some names cannot be given: they are marked."
+msgstr "有些名稱無法使用：已標出。"
 
 #: internal/filesui/sidebar.go:36
 msgid "PLACES"
@@ -4053,6 +4879,7 @@ msgid "Remove from the bookmarks"
 msgstr "從書籤中移除"
 
 #: internal/filesui/sidebar.go:57
+#: ui/connect.ui:112
 #: ui/tailscale.ui:112
 msgid "DEVICES"
 msgstr "裝置"
@@ -4061,34 +4888,22 @@ msgstr "裝置"
 msgid "Computer"
 msgstr "電腦"
 
-#: internal/filesui/sidebar.go:68
-msgid "%s free of %s"
-msgstr "%s 可用，共 %s"
-
 #: internal/filesui/sidebar.go:71
 msgid "%s, locked"
 msgstr "%s，已鎖定"
 
 #: internal/filesui/sidebar.go:82
-#: internal/filesui/sidebar.go:186
+#: internal/filesui/sidebar.go:175
 msgid "Eject"
 msgstr "退出"
 
-#: internal/filesui/sidebar.go:106
-msgid "Disconnect"
-msgstr "中斷連線"
-
-#: internal/filesui/sidebar.go:108
-msgid "Connect to a server…"
-msgstr "連線到伺服器……"
-
-#: internal/filesui/sidebar.go:157
-#: internal/filesui/window.go:701
+#: internal/filesui/sidebar.go:146
+#: internal/filesui/window.go:705
 msgid "Open in a new tab"
 msgstr "在新分頁中開啟"
 
-#: internal/filesui/sidebar.go:158
-#: internal/filesui/window.go:702
+#: internal/filesui/sidebar.go:147
+#: internal/filesui/window.go:706
 msgid "Open in a new window"
 msgstr "在新視窗中開啟"
 
@@ -4096,95 +4911,133 @@ msgstr "在新視窗中開啟"
 msgid "Close the tab (Ctrl+W)"
 msgstr "關閉分頁（Ctrl+W）"
 
-#: internal/filesui/window.go:673
+#: internal/filesui/tidy.go:20
+msgid "Tidy the folder %[1]s.\n\nFirst look at what is in it: the names, kinds, sizes and dates, and the first lines of a text file whose name says too little. Then make a plan with plan_create and show it to me: the folders to make, which file goes where, and why.\n\nRules:\n- Stay inside %[1]s: make folders in it and move its own files into them. Touch nothing outside it, and leave its subfolders' contents as they are.\n- Never delete and never overwrite: use mkdir -p and mv -n, and leave a file alone when its new name is taken.\n- Use the folders that are already there when they fit.\n- Leave hidden files (names starting with a dot) where they are.\n- Do all the moves in one bash command, so I approve them once.\n- Write the moves back, in the same order reversed, to %[1]s/.tidy-undo.sh, so \"sh .tidy-undo.sh\" in the folder undoes it.\n\nWhen it is done, tell me what went where."
+msgstr "整理資料夾 %[1]s。\n\n先看看裡面有什麼：檔名、類型、大小和日期；檔名說明不了內容的文字檔，看一下開頭幾行。然後用 plan_create 做一個計畫並給我看：要建哪些資料夾、每個檔案放到哪裡、為什麼。\n\n規則：\n- 只在 %[1]s 裡操作：在裡面建資料夾，把它自己的檔案移進去。不要碰它外面的任何東西，子資料夾裡的內容保持原樣。\n- 不刪除，也不覆寫：用 mkdir -p 和 mv -n；新名字已被佔用的檔案就留在原處。\n- 已有的資料夾合適就用。\n- 隱藏檔案（名字以點開頭的）留在原處。\n- 所有移動放在一條 bash 指令裡，讓我一次核准。\n- 把移動按相反的順序寫到 %[1]s/.tidy-undo.sh，在資料夾裡執行 \"sh .tidy-undo.sh\" 就能復原。\n\n完成後告訴我什麼東西去了哪裡。"
+
+#: internal/filesui/tidy.go:42
+msgid "Tidying needs the assistant (inua-assistant), which is not installed."
+msgstr "整理需要助手（inua-assistant），但它沒有安裝。"
+
+#: internal/filesui/tidy.go:45
+msgid "Turn on the assistant in Settings → AI to tidy folders."
+msgstr "在“設定”→“AI”中開啟助手才能整理資料夾。"
+
+#: internal/filesui/tidy.go:48
+msgid "Turn on Run commands in Settings → AI to let the assistant tidy folders."
+msgstr "在“設定”→“AI”中開啟“執行指令”，助手才能整理資料夾。"
+
+#: internal/filesui/tidy.go:55
+msgid "Asked the assistant to tidy %s."
+msgstr "已讓助手整理 %s。"
+
+#: internal/filesui/window.go:676
 msgid "Restore"
 msgstr "還原"
 
-#: internal/filesui/window.go:674
-#: internal/filesui/window.go:730
+#: internal/filesui/window.go:677
+#: internal/filesui/window.go:742
 msgid "Delete for good…"
 msgstr "永久刪除……"
 
-#: internal/filesui/window.go:681
+#: internal/filesui/window.go:684
 msgid "New folder…"
 msgstr "新增資料夾……"
 
-#: internal/filesui/window.go:682
+#: internal/filesui/window.go:685
 msgid "New file…"
 msgstr "新增檔案……"
 
-#: internal/filesui/window.go:683
+#: internal/filesui/window.go:686
 msgid "Paste"
 msgstr "貼上"
 
-#: internal/filesui/window.go:686
+#: internal/filesui/window.go:689
+#: internal/filesui/window.go:721
+msgid "Tidy with AI…"
+msgstr "用 AI 整理…"
+
+#: internal/filesui/window.go:690
 msgid "Copy the folder's path"
 msgstr "複製資料夾路徑"
 
-#: internal/filesui/window.go:704
+#: internal/filesui/window.go:708
 msgid "Open in the other pane"
 msgstr "在另一窗格中開啟"
 
-#: internal/filesui/window.go:708
+#: internal/filesui/window.go:712
 msgid "Show in its folder"
 msgstr "在所在資料夾中顯示"
 
-#: internal/filesui/window.go:711
+#: internal/filesui/window.go:715
 msgid "Cut"
 msgstr "剪下"
 
-#: internal/filesui/window.go:713
+#: internal/filesui/window.go:717
 msgid "Copy the path"
 msgstr "複製路徑"
 
-#: internal/filesui/window.go:716
+#: internal/filesui/window.go:720
 msgid "Paste into the folder"
 msgstr "貼上到該資料夾"
 
-#: internal/filesui/window.go:720
+#: internal/filesui/window.go:725
+msgid "Extract here"
+msgstr "解壓縮到此處"
+
+#: internal/filesui/window.go:727
+msgid "Compress…"
+msgstr "壓縮……"
+
+#: internal/filesui/window.go:730
 msgid "Copy to the other pane"
 msgstr "複製到另一窗格"
 
-#: internal/filesui/window.go:721
+#: internal/filesui/window.go:731
 msgid "Move to the other pane"
 msgstr "移動到另一窗格"
 
-#: internal/filesui/window.go:726
+#: internal/filesui/window.go:736
 msgid "Rename…"
 msgstr "重新命名……"
 
-#: internal/filesui/window.go:741
+#: internal/filesui/window.go:738
+msgid "Rename %d item…"
+msgid_plural "Rename %d items…"
+msgstr[0] "重新命名 %d 個項目……"
+
+#: internal/filesui/window.go:753
 msgid "Remove the bookmark"
 msgstr "移除書籤"
 
-#: internal/filesui/window.go:796
+#: internal/filesui/window.go:808
 msgid "Cut %d item: paste to move it."
 msgid_plural "Cut %d items: paste to move them."
 msgstr[0] "已剪下 %d 項：貼上即可移動。"
 
-#: internal/filesui/window.go:798
+#: internal/filesui/window.go:810
 msgid "Copied %d item."
 msgid_plural "Copied %d items."
 msgstr[0] "已複製 %d 項。"
 
-#: internal/filesui/window.go:806
+#: internal/filesui/window.go:818
 msgid "Copied %d path."
 msgid_plural "Copied %d paths."
 msgstr[0] "已複製 %d 個路徑。"
 
-#: internal/filesui/window.go:866
+#: internal/filesui/window.go:900
 msgid "Bookmarked %s."
 msgstr "已為 %s 加入書籤。"
 
-#: internal/filesui/window.go:868
+#: internal/filesui/window.go:902
 msgid "Removed the bookmark of %s."
 msgstr "已移除 %s 的書籤。"
 
-#: internal/filesui/window.go:893
+#: internal/filesui/window.go:927
 msgid "Copied %s."
 msgstr "已複製 %s。"
 
-#: internal/filesui/window.go:922
+#: internal/filesui/window.go:956
 msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr "找不到終端機：請安裝 xdg-terminal-exec 或設定 $TERMINAL。"
 
@@ -4200,7 +5053,7 @@ msgstr "機會"
 #: internal/gamesui/fortune_board.go:887
 #: internal/gamesui/fortune_panel.go:365
 msgid "Card Shop"
-msgstr ""
+msgstr "卡牌商店"
 
 #: internal/games/fortune.go:66
 #: internal/gamesui/fortune_menu.go:183
@@ -4289,7 +5142,7 @@ msgstr "%[1]s 經過三次嘗試後支付了 $%[2]d 保釋金。"
 
 #: internal/games/fortune.go:625
 msgid "%s is a turtle: one square."
-msgstr ""
+msgstr "%s 是烏龜：只走一格。"
 
 #: internal/games/fortune.go:630
 msgid "Three doubles in a row: %s goes to jail."
@@ -4309,7 +5162,7 @@ msgstr "%[1]s買不起%[2]s。"
 
 #: internal/games/fortune.go:741
 msgid "%s owed %s rent for %s and paid nothing: Free Rent."
-msgstr ""
+msgstr "%[1]s 本應為 %[3]s 向 %[2]s 支付租金，但一分未付：免租。"
 
 #: internal/games/fortune.go:747
 msgid "%s paid %s $%d rent for %s."
@@ -4397,15 +5250,15 @@ msgstr "亂穿馬路被抓：入獄。"
 
 #: internal/games/fortune.go:817
 msgid "A card left on a bench: take it."
-msgstr ""
+msgstr "長椅上落下一張卡牌：拿走它。"
 
 #: internal/games/fortune.go:818
 msgid "The shopkeeper owes you a favour: take a card."
-msgstr ""
+msgstr "店主欠你一個人情：拿一張卡牌。"
 
 #: internal/games/fortune.go:819
 msgid "You won a raffle: take a card."
-msgstr ""
+msgstr "你抽獎中獎了：拿一張卡牌。"
 
 #: internal/games/fortune.go:848
 msgid "Chance for %s: %s"
@@ -4413,7 +5266,7 @@ msgstr "%[1]s 的機會:%[2]s"
 
 #: internal/games/fortune.go:851
 msgid "%s takes a card: %s."
-msgstr ""
+msgstr "%s 拿到一張卡牌：%s。"
 
 #: internal/games/fortune.go:948
 msgid "%s sold a house on %s for $%d."
@@ -4429,7 +5282,7 @@ msgstr "%s破產並退出遊戲。"
 
 #: internal/games/fortune.go:1001
 msgid "%s sleeps through their turn."
-msgstr ""
+msgstr "%s 睡過了這一回合。"
 
 #: internal/games/fortune.go:1021
 msgid "%s won with $%d in worth."
@@ -4437,164 +5290,164 @@ msgstr "%[1]s 獲勝,價值 $%[2]d。"
 
 #: internal/games/fortune_cards.go:53
 msgid "Loaded Dice"
-msgstr ""
+msgstr "灌鉛骰子"
 
 #: internal/games/fortune_cards.go:53
 msgid "Before you roll: walk the number of squares you choose instead. At a fork, chance still picks the road."
-msgstr ""
+msgstr "擲骰前：改為走你選擇的格數。在岔路口，仍由運氣選路。"
 
 #: internal/games/fortune_cards.go:54
 msgid "Free Rent"
-msgstr ""
+msgstr "免租"
 
 #: internal/games/fortune_cards.go:54
 msgid "The next rent you owe is not paid."
-msgstr ""
+msgstr "下一次應付的租金免付。"
 
 #: internal/games/fortune_cards.go:55
 msgid "Requisition"
-msgstr ""
+msgstr "強制徵購"
 
 #: internal/games/fortune_cards.go:55
 msgid "Buy the rival's property you stand on, buildings and all, paying its owner what it cost."
-msgstr ""
+msgstr "買下你所在的對手地產（連同建築），向其主人支付它的成本。"
 
 #: internal/games/fortune_cards.go:56
 msgid "Pickpocket"
-msgstr ""
+msgstr "扒手"
 
 #: internal/games/fortune_cards.go:56
 msgid "Take a card, at random, from a rival's hand."
-msgstr ""
+msgstr "從對手手中隨機拿走一張卡牌。"
 
 #: internal/games/fortune_cards.go:57
 msgid "Demolition"
-msgstr ""
+msgstr "拆除"
 
 #: internal/games/fortune_cards.go:57
 msgid "Pull down a building on a rival's street: pick the street on the board first."
-msgstr ""
+msgstr "拆掉對手街道上的一棟建築：先在棋盤上選好街道。"
 
 #: internal/games/fortune_cards.go:58
 msgid "Building Permit"
-msgstr ""
+msgstr "建築許可"
 
 #: internal/games/fortune_cards.go:58
 msgid "Put up a building on a street of yours, free: pick the street on the board first."
-msgstr ""
+msgstr "在你的街道上免費建一棟建築：先在棋盤上選好街道。"
 
 #: internal/games/fortune_cards.go:59
 msgid "Turtle"
-msgstr ""
+msgstr "烏龜"
 
 #: internal/games/fortune_cards.go:59
 msgid "A player of your choice walks one square a roll for their next three rolls."
-msgstr ""
+msgstr "你選擇的玩家在接下來三次擲骰中每次只走一格。"
 
 #: internal/games/fortune_cards.go:60
 msgid "Swap Places"
-msgstr ""
+msgstr "交換位置"
 
 #: internal/games/fortune_cards.go:60
 msgid "Change places with a rival; neither of you lands anywhere."
-msgstr ""
+msgstr "與一名對手交換位置；雙方都不算停在任何格子上。"
 
 #: internal/games/fortune_cards.go:61
 msgid "Jail Pass"
-msgstr ""
+msgstr "出獄卡"
 
 #: internal/games/fortune_cards.go:61
 msgid "Walk out of jail before you roll, without paying bail."
-msgstr ""
+msgstr "擲骰前出獄，無需支付保釋金。"
 
 #: internal/games/fortune_cards.go:62
 msgid "Tax Audit"
-msgstr ""
+msgstr "稅務稽查"
 
 #: internal/games/fortune_cards.go:62
 msgid "A rival pays a tenth of their cash into the fountain."
-msgstr ""
+msgstr "一名對手把十分之一的現金交進噴泉。"
 
 #: internal/games/fortune_cards.go:63
 msgid "Fair Shares"
-msgstr ""
+msgstr "平分財富"
 
 #: internal/games/fortune_cards.go:63
 msgid "Everyone's cash is pooled and shared out equally."
-msgstr ""
+msgstr "所有人的現金匯總後平均分配。"
 
 #: internal/games/fortune_cards.go:64
 msgid "Sleeping Pill"
-msgstr ""
+msgstr "安眠藥"
 
 #: internal/games/fortune_cards.go:64
 msgid "A rival misses their next turn."
-msgstr ""
+msgstr "一名對手跳過下一回合。"
 
 #: internal/games/fortune_cards.go:89
 msgid "%s's hand is full: no card."
-msgstr ""
+msgstr "%s 的手牌已滿：沒有卡牌。"
 
 #: internal/games/fortune_cards.go:95
 msgid "%s takes a card."
-msgstr ""
+msgstr "%s 拿到一張卡牌。"
 
 #: internal/games/fortune_cards.go:104
 msgid "%s's hand is full: nothing to buy."
-msgstr ""
+msgstr "%s 的手牌已滿：無法購買。"
 
 #: internal/games/fortune_cards.go:253
 msgid "%s played %s: %d squares."
-msgstr ""
+msgstr "%s 打出了 %s：%d 格。"
 
 #: internal/games/fortune_cards.go:258
 msgid "%s played %s: no rent next time."
-msgstr ""
+msgstr "%s 打出了 %s：下次免付租金。"
 
 #: internal/games/fortune_cards.go:265
 msgid "%s played %s and took %s from %s for $%d."
-msgstr ""
+msgstr "%[1]s 打出了 %[2]s，以 $%[5]d 從 %[4]s 手中買下 %[3]s。"
 
 #: internal/games/fortune_cards.go:274
 msgid "%s played %s and took %s from %s."
-msgstr ""
+msgstr "%[1]s 打出了 %[2]s，從 %[4]s 手中拿走了 %[3]s。"
 
 #: internal/games/fortune_cards.go:276
 #: internal/games/fortunenet/texts.go:82
 msgid "a card"
-msgstr ""
+msgstr "一張卡牌"
 
 #: internal/games/fortune_cards.go:281
 msgid "%s played %s: a building on %s, %s's, is pulled down."
-msgstr ""
+msgstr "%[1]s 打出了 %[2]s：%[4]s 在 %[3]s 的一棟建築被拆除。"
 
 #: internal/games/fortune_cards.go:284
 msgid "%s played %s: a building goes up on %s."
-msgstr ""
+msgstr "%s 打出了 %s：在 %s 建起一棟建築。"
 
 #: internal/games/fortune_cards.go:287
 msgid "%s played %s: %s walks one square a roll for three rolls."
-msgstr ""
+msgstr "%s 打出了 %s：%s 接下來三次擲骰每次只走一格。"
 
 #: internal/games/fortune_cards.go:290
 msgid "%s played %s and changed places with %s."
-msgstr ""
+msgstr "%s 打出了 %s，與 %s 交換了位置。"
 
 #: internal/games/fortune_cards.go:295
 msgid "%s played %s and walked out of jail."
-msgstr ""
+msgstr "%s 打出了 %s，走出了監獄。"
 
 #: internal/games/fortune_cards.go:299
 msgid "%s played %s: %s pays $%d into the fountain."
-msgstr ""
+msgstr "%s 打出了 %s：%s 向噴泉交 $%d。"
 
 #: internal/games/fortune_cards.go:314
 msgid "%s played %s: everyone now has $%d."
-msgstr ""
+msgstr "%s 打出了 %s：現在每人都有 $%d。"
 
 #: internal/games/fortune_cards.go:317
 msgid "%s played %s: %s sits out the next turn."
-msgstr ""
+msgstr "%s 打出了 %s：%s 跳過下一回合。"
 
 #: internal/games/fortune_cities.go:19
 msgid "Tokyo"
@@ -4610,19 +5463,19 @@ msgstr "北千住"
 
 #: internal/games/fortune_cities.go:21
 msgid "Otsuka"
-msgstr ""
+msgstr "大塚"
 
 #: internal/games/fortune_cities.go:21
 msgid "Komagome"
-msgstr ""
+msgstr "駒込"
 
 #: internal/games/fortune_cities.go:21
 msgid "Tabata"
-msgstr ""
+msgstr "田端"
 
 #: internal/games/fortune_cities.go:21
 msgid "Oji"
-msgstr ""
+msgstr "王子"
 
 #: internal/games/fortune_cities.go:21
 msgid "Ueno Station"
@@ -4642,15 +5495,15 @@ msgstr "日暮裡"
 
 #: internal/games/fortune_cities.go:21
 msgid "Ryogoku"
-msgstr ""
+msgstr "兩國"
 
 #: internal/games/fortune_cities.go:21
 msgid "Kuramae"
-msgstr ""
+msgstr "藏前"
 
 #: internal/games/fortune_cities.go:21
 msgid "Kiyosumi"
-msgstr ""
+msgstr "清澄"
 
 #: internal/games/fortune_cities.go:23
 msgid "Kanda"
@@ -4670,15 +5523,15 @@ msgstr "東京電力"
 
 #: internal/games/fortune_cities.go:23
 msgid "Ningyocho"
-msgstr ""
+msgstr "人形町"
 
 #: internal/games/fortune_cities.go:23
 msgid "Monzen-Nakacho"
-msgstr ""
+msgstr "門前仲町"
 
 #: internal/games/fortune_cities.go:23
 msgid "Tsukishima"
-msgstr ""
+msgstr "月島"
 
 #: internal/games/fortune_cities.go:23
 msgid "Tokyo Station"
@@ -4698,15 +5551,15 @@ msgstr "澀谷"
 
 #: internal/games/fortune_cities.go:23
 msgid "Sangenjaya"
-msgstr ""
+msgstr "三軒茶屋"
 
 #: internal/games/fortune_cities.go:23
 msgid "Shimokitazawa"
-msgstr ""
+msgstr "下北澤"
 
 #: internal/games/fortune_cities.go:23
 msgid "Jiyugaoka"
-msgstr ""
+msgstr "自由之丘"
 
 #: internal/games/fortune_cities.go:25
 msgid "Nakameguro"
@@ -4722,15 +5575,15 @@ msgstr "惠比壽"
 
 #: internal/games/fortune_cities.go:25
 msgid "Meguro"
-msgstr ""
+msgstr "目黑"
 
 #: internal/games/fortune_cities.go:25
 msgid "Gotanda"
-msgstr ""
+msgstr "五反田"
 
 #: internal/games/fortune_cities.go:25
 msgid "Osaki"
-msgstr ""
+msgstr "大崎"
 
 #: internal/games/fortune_cities.go:25
 msgid "Shinagawa Station"
@@ -4754,15 +5607,15 @@ msgstr "東京自來水廠"
 
 #: internal/games/fortune_cities.go:25
 msgid "Ikebukuro"
-msgstr ""
+msgstr "池袋"
 
 #: internal/games/fortune_cities.go:25
 msgid "Takadanobaba"
-msgstr ""
+msgstr "高田馬場"
 
 #: internal/games/fortune_cities.go:25
 msgid "Waseda"
-msgstr ""
+msgstr "早稻田"
 
 #: internal/games/fortune_cities.go:27
 msgid "Toranomon"
@@ -4778,15 +5631,15 @@ msgstr "六本木"
 
 #: internal/games/fortune_cities.go:27
 msgid "Kudanshita"
-msgstr ""
+msgstr "九段下"
 
 #: internal/games/fortune_cities.go:27
 msgid "Nagatacho"
-msgstr ""
+msgstr "永田町"
 
 #: internal/games/fortune_cities.go:27
 msgid "Kasumigaseki"
-msgstr ""
+msgstr "霞關"
 
 #: internal/games/fortune_cities.go:27
 msgid "Shimbashi Station"
@@ -4794,19 +5647,19 @@ msgstr "新橋站"
 
 #: internal/games/fortune_cities.go:27
 msgid "Hibiya"
-msgstr ""
+msgstr "日比谷"
 
 #: internal/games/fortune_cities.go:27
 msgid "Yurakucho"
-msgstr ""
+msgstr "有樂町"
 
 #: internal/games/fortune_cities.go:27
 msgid "Nihonbashi"
-msgstr ""
+msgstr "日本橋"
 
 #: internal/games/fortune_cities.go:27
 msgid "Otemachi"
-msgstr ""
+msgstr "大手町"
 
 #: internal/games/fortune_cities.go:27
 msgid "Marunouchi"
@@ -4826,7 +5679,7 @@ msgstr "湯島"
 
 #: internal/games/fortune_cities.go:29
 msgid "Nezu"
-msgstr ""
+msgstr "根津"
 
 #: internal/games/fortune_cities.go:29
 msgid "Hongo"
@@ -4834,7 +5687,7 @@ msgstr "本鄉"
 
 #: internal/games/fortune_cities.go:29
 msgid "Sendagi"
-msgstr ""
+msgstr "千駄木"
 
 #: internal/games/fortune_cities.go:29
 msgid "Ochanomizu"
@@ -4842,7 +5695,7 @@ msgstr "御茶水"
 
 #: internal/games/fortune_cities.go:29
 msgid "Korakuen"
-msgstr ""
+msgstr "後樂園"
 
 #: internal/games/fortune_cities.go:29
 msgid "Suidobashi"
@@ -4850,15 +5703,15 @@ msgstr "水道橋"
 
 #: internal/games/fortune_cities.go:29
 msgid "Hakusan"
-msgstr ""
+msgstr "白山"
 
 #: internal/games/fortune_cities.go:29
 msgid "Myogadani"
-msgstr ""
+msgstr "茗荷谷"
 
 #: internal/games/fortune_cities.go:29
 msgid "Edogawabashi"
-msgstr ""
+msgstr "江戶川橋"
 
 #: internal/games/fortune_cities.go:29
 msgid "Iidabashi"
@@ -4874,7 +5727,7 @@ msgstr "廣尾"
 
 #: internal/games/fortune_cities.go:31
 msgid "Nishi-Azabu"
-msgstr ""
+msgstr "西麻布"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shirokane"
@@ -4886,7 +5739,7 @@ msgstr "高輪"
 
 #: internal/games/fortune_cities.go:31
 msgid "Sengakuji"
-msgstr ""
+msgstr "泉岳寺"
 
 #: internal/games/fortune_cities.go:31
 msgid "Mita"
@@ -4894,11 +5747,11 @@ msgstr "米塔"
 
 #: internal/games/fortune_cities.go:31
 msgid "Tamachi"
-msgstr ""
+msgstr "田町"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shibaura"
-msgstr ""
+msgstr "芝浦"
 
 #: internal/games/fortune_cities.go:31
 msgid "Hamamatsucho"
@@ -4906,11 +5759,11 @@ msgstr "濱松町"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shiodome"
-msgstr ""
+msgstr "汐留"
 
 #: internal/games/fortune_cities.go:31
 msgid "Shiba Park"
-msgstr ""
+msgstr "芝公園"
 
 #: internal/games/fortune_cities.go:33
 #: internal/games/fortune_cities.go:33
@@ -4927,19 +5780,19 @@ msgstr "華盛頓高地"
 
 #: internal/games/fortune_cities.go:35
 msgid "Inwood"
-msgstr ""
+msgstr "因伍德"
 
 #: internal/games/fortune_cities.go:35
 msgid "Hamilton Heights"
-msgstr ""
+msgstr "漢密爾頓高地"
 
 #: internal/games/fortune_cities.go:35
 msgid "Morningside Heights"
-msgstr ""
+msgstr "晨邊高地"
 
 #: internal/games/fortune_cities.go:35
 msgid "East Harlem"
-msgstr ""
+msgstr "東哈林"
 
 #: internal/games/fortune_cities.go:35
 msgid "Penn Station"
@@ -4959,15 +5812,15 @@ msgstr "下東區"
 
 #: internal/games/fortune_cities.go:35
 msgid "East Village"
-msgstr ""
+msgstr "東村"
 
 #: internal/games/fortune_cities.go:35
 msgid "Alphabet City"
-msgstr ""
+msgstr "字母城"
 
 #: internal/games/fortune_cities.go:35
 msgid "Stuyvesant Town"
-msgstr ""
+msgstr "史岱文森鎮"
 
 #: internal/games/fortune_cities.go:37
 msgid "Williamsburg"
@@ -4987,15 +5840,15 @@ msgstr "聯合愛迪生公司"
 
 #: internal/games/fortune_cities.go:37
 msgid "Park Slope"
-msgstr ""
+msgstr "公園坡"
 
 #: internal/games/fortune_cities.go:37
 msgid "Cobble Hill"
-msgstr ""
+msgstr "鵝卵石山"
 
 #: internal/games/fortune_cities.go:37
 msgid "Red Hook"
-msgstr ""
+msgstr "紅鉤"
 
 #: internal/games/fortune_cities.go:37
 msgid "Grand Central"
@@ -5015,15 +5868,15 @@ msgstr "翠貝卡"
 
 #: internal/games/fortune_cities.go:37
 msgid "West Village"
-msgstr ""
+msgstr "西村"
 
 #: internal/games/fortune_cities.go:37
 msgid "Meatpacking District"
-msgstr ""
+msgstr "肉庫區"
 
 #: internal/games/fortune_cities.go:37
 msgid "Hudson Square"
-msgstr ""
+msgstr "哈德遜廣場"
 
 #: internal/games/fortune_cities.go:39
 msgid "Chelsea"
@@ -5039,15 +5892,15 @@ msgstr "熨斗"
 
 #: internal/games/fortune_cities.go:39
 msgid "Union Square"
-msgstr ""
+msgstr "聯合廣場"
 
 #: internal/games/fortune_cities.go:39
 msgid "Madison Square"
-msgstr ""
+msgstr "麥迪遜廣場"
 
 #: internal/games/fortune_cities.go:39
 msgid "Herald Square"
-msgstr ""
+msgstr "先驅廣場"
 
 #: internal/games/fortune_cities.go:39
 msgid "Staten Island Ferry"
@@ -5071,15 +5924,15 @@ msgstr "都市輸水隧道"
 
 #: internal/games/fortune_cities.go:39
 msgid "Bryant Park"
-msgstr ""
+msgstr "布萊恩特公園"
 
 #: internal/games/fortune_cities.go:39
 msgid "Turtle Bay"
-msgstr ""
+msgstr "龜灣"
 
 #: internal/games/fortune_cities.go:39
 msgid "Sutton Place"
-msgstr ""
+msgstr "薩頓廣場"
 
 #: internal/games/fortune_cities.go:41
 msgid "Upper West Side"
@@ -5095,15 +5948,15 @@ msgstr "中央公園南"
 
 #: internal/games/fortune_cities.go:41
 msgid "Lincoln Center"
-msgstr ""
+msgstr "林肯中心"
 
 #: internal/games/fortune_cities.go:41
 msgid "Carnegie Hill"
-msgstr ""
+msgstr "卡內基山"
 
 #: internal/games/fortune_cities.go:41
 msgid "Lenox Hill"
-msgstr ""
+msgstr "雷諾克斯山"
 
 #: internal/games/fortune_cities.go:41
 msgid "Hudson Pier"
@@ -5111,19 +5964,19 @@ msgstr "哈德遜碼頭"
 
 #: internal/games/fortune_cities.go:41
 msgid "Park Avenue"
-msgstr ""
+msgstr "公園大道"
 
 #: internal/games/fortune_cities.go:41
 msgid "Madison Avenue"
-msgstr ""
+msgstr "麥迪遜大道"
 
 #: internal/games/fortune_cities.go:41
 msgid "Billionaires' Row"
-msgstr ""
+msgstr "億萬富翁街"
 
 #: internal/games/fortune_cities.go:41
 msgid "Hudson Yards"
-msgstr ""
+msgstr "哈德遜城市廣場"
 
 #: internal/games/fortune_cities.go:41
 msgid "Wall Street"
@@ -5143,7 +5996,7 @@ msgstr "服裝區"
 
 #: internal/games/fortune_cities.go:43
 msgid "Penn South"
-msgstr ""
+msgstr "賓州南區"
 
 #: internal/games/fortune_cities.go:43
 msgid "Koreatown"
@@ -5155,7 +6008,7 @@ msgstr "游牧者"
 
 #: internal/games/fortune_cities.go:43
 msgid "Rose Hill"
-msgstr ""
+msgstr "玫瑰山"
 
 #: internal/games/fortune_cities.go:43
 msgid "Murray Hill"
@@ -5167,19 +6020,19 @@ msgstr "基普斯灣"
 
 #: internal/games/fortune_cities.go:43
 msgid "Tudor City"
-msgstr ""
+msgstr "都鐸城"
 
 #: internal/games/fortune_cities.go:43
 msgid "Midtown East"
-msgstr ""
+msgstr "中城東"
 
 #: internal/games/fortune_cities.go:43
 msgid "Beekman"
-msgstr ""
+msgstr "比克曼"
 
 #: internal/games/fortune_cities.go:43
 msgid "Roosevelt Island"
-msgstr ""
+msgstr "羅斯福島"
 
 #: internal/games/fortune_cities.go:45
 msgid "Battery Park City"
@@ -5191,7 +6044,7 @@ msgstr "金融區"
 
 #: internal/games/fortune_cities.go:45
 msgid "Bowling Green"
-msgstr ""
+msgstr "滾球綠地"
 
 #: internal/games/fortune_cities.go:45
 msgid "Seaport"
@@ -5203,7 +6056,7 @@ msgstr "兩座橋"
 
 #: internal/games/fortune_cities.go:45
 msgid "Civic Center"
-msgstr ""
+msgstr "市政中心"
 
 #: internal/games/fortune_cities.go:45
 msgid "Bowery"
@@ -5215,19 +6068,19 @@ msgstr "諾麗塔"
 
 #: internal/games/fortune_cities.go:45
 msgid "NoHo"
-msgstr ""
+msgstr "諾霍"
 
 #: internal/games/fortune_cities.go:45
 msgid "Astor Place"
-msgstr ""
+msgstr "阿斯特廣場"
 
 #: internal/games/fortune_cities.go:45
 msgid "Cooper Square"
-msgstr ""
+msgstr "庫珀廣場"
 
 #: internal/games/fortune_cities.go:45
 msgid "Washington Square"
-msgstr ""
+msgstr "華盛頓廣場"
 
 #: internal/games/fortune_cities.go:47
 msgid "Shanghai"
@@ -5243,19 +6096,19 @@ msgstr "虹口"
 
 #: internal/games/fortune_cities.go:49
 msgid "Baoshan Road"
-msgstr ""
+msgstr "寶山路"
 
 #: internal/games/fortune_cities.go:49
 msgid "Tilanqiao"
-msgstr ""
+msgstr "提籃橋"
 
 #: internal/games/fortune_cities.go:49
 msgid "Dalian Road"
-msgstr ""
+msgstr "大連路"
 
 #: internal/games/fortune_cities.go:49
 msgid "Quyang"
-msgstr ""
+msgstr "曲陽"
 
 #: internal/games/fortune_cities.go:49
 msgid "Railway Station"
@@ -5275,15 +6128,15 @@ msgstr "城隍廟"
 
 #: internal/games/fortune_cities.go:49
 msgid "Penglai Road"
-msgstr ""
+msgstr "蓬萊路"
 
 #: internal/games/fortune_cities.go:49
 msgid "Dapuqiao"
-msgstr ""
+msgstr "打浦橋"
 
 #: internal/games/fortune_cities.go:49
 msgid "Ruijin Road"
-msgstr ""
+msgstr "瑞金路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Changle Road"
@@ -5303,15 +6156,15 @@ msgstr "南獅動力"
 
 #: internal/games/fortune_cities.go:51
 msgid "Yuyuan Road"
-msgstr ""
+msgstr "愚園路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Yan'an Road"
-msgstr ""
+msgstr "延安路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Julu Road"
-msgstr ""
+msgstr "巨鹿路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Hongqiao Station"
@@ -5331,15 +6184,15 @@ msgstr "新天地"
 
 #: internal/games/fortune_cities.go:51
 msgid "Taikang Road"
-msgstr ""
+msgstr "泰康路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Shaanxi South Road"
-msgstr ""
+msgstr "陝西南路"
 
 #: internal/games/fortune_cities.go:51
 msgid "Maoming Road"
-msgstr ""
+msgstr "茂名路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Fuxing Park"
@@ -5355,15 +6208,15 @@ msgstr "衡山路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Xujiahui"
-msgstr ""
+msgstr "徐家匯"
 
 #: internal/games/fortune_cities.go:53
 msgid "Tianping Road"
-msgstr ""
+msgstr "天平路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Anfu Road"
-msgstr ""
+msgstr "安福路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Shiliupu Ferry"
@@ -5387,15 +6240,15 @@ msgstr "楊樹浦自來水廠"
 
 #: internal/games/fortune_cities.go:53
 msgid "Wujiang Road"
-msgstr ""
+msgstr "吳江路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Fuzhou Road"
-msgstr ""
+msgstr "福州路"
 
 #: internal/games/fortune_cities.go:53
 msgid "Weihai Road"
-msgstr ""
+msgstr "威海路"
 
 #: internal/games/fortune_cities.go:55
 msgid "Jinqiao"
@@ -5411,15 +6264,15 @@ msgstr "陸家嘴"
 
 #: internal/games/fortune_cities.go:55
 msgid "Zhangjiang"
-msgstr ""
+msgstr "張江"
 
 #: internal/games/fortune_cities.go:55
 msgid "Huamu"
-msgstr ""
+msgstr "花木"
 
 #: internal/games/fortune_cities.go:55
 msgid "Binjiang Avenue"
-msgstr ""
+msgstr "濱江大道"
 
 #: internal/games/fortune_cities.go:55
 msgid "Bund Ferry"
@@ -5427,19 +6280,19 @@ msgstr "外灘渡輪"
 
 #: internal/games/fortune_cities.go:55
 msgid "Sichuan Road"
-msgstr ""
+msgstr "四川路"
 
 #: internal/games/fortune_cities.go:55
 msgid "Yuanmingyuan Road"
-msgstr ""
+msgstr "圓明園路"
 
 #: internal/games/fortune_cities.go:55
 msgid "Rockbund"
-msgstr ""
+msgstr "洛克·外灘源"
 
 #: internal/games/fortune_cities.go:55
 msgid "Customs House"
-msgstr ""
+msgstr "海關大樓"
 
 #: internal/games/fortune_cities.go:55
 msgid "Peace Hotel"
@@ -5459,7 +6312,7 @@ msgstr "莫干山路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Changhua Road"
-msgstr ""
+msgstr "昌化路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Changshou Road"
@@ -5471,7 +6324,7 @@ msgstr "曹陽"
 
 #: internal/games/fortune_cities.go:57
 msgid "Jiaozhou Road"
-msgstr ""
+msgstr "膠州路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Zhongshan Park"
@@ -5479,19 +6332,19 @@ msgstr "中山公園"
 
 #: internal/games/fortune_cities.go:57
 msgid "Changning Road"
-msgstr ""
+msgstr "長寧路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Jiangsu Road"
-msgstr ""
+msgstr "江蘇路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Hongqiao Road"
-msgstr ""
+msgstr "虹橋路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Hongmei Road"
-msgstr ""
+msgstr "虹梅路"
 
 #: internal/games/fortune_cities.go:57
 msgid "Gubei"
@@ -5507,7 +6360,7 @@ msgstr "老西門"
 
 #: internal/games/fortune_cities.go:59
 msgid "Xiaonanmen"
-msgstr ""
+msgstr "小南門"
 
 #: internal/games/fortune_cities.go:59
 msgid "Dajing Road"
@@ -5519,7 +6372,7 @@ msgstr "方浜路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Zhonghua Road"
-msgstr ""
+msgstr "中華路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Henan Road"
@@ -5527,11 +6380,11 @@ msgstr "河南路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Cool Docks"
-msgstr ""
+msgstr "老碼頭"
 
 #: internal/games/fortune_cities.go:59
 msgid "Fuyou Road"
-msgstr ""
+msgstr "福佑路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Yu Garden"
@@ -5539,11 +6392,11 @@ msgstr "豫園"
 
 #: internal/games/fortune_cities.go:59
 msgid "Renmin Road"
-msgstr ""
+msgstr "人民路"
 
 #: internal/games/fortune_cities.go:59
 msgid "Jinling Road"
-msgstr ""
+msgstr "金陵路"
 
 #: internal/games/fortune_cities.go:61
 msgid "Rome"
@@ -5563,19 +6416,19 @@ msgstr "泰斯塔西奧"
 
 #: internal/games/fortune_cities.go:63
 msgid "Marconi"
-msgstr ""
+msgstr "馬可尼"
 
 #: internal/games/fortune_cities.go:63
 msgid "Portuense"
-msgstr ""
+msgstr "波圖恩塞"
 
 #: internal/games/fortune_cities.go:63
 msgid "Monteverde"
-msgstr ""
+msgstr "蒙特韋爾德"
 
 #: internal/games/fortune_cities.go:63
 msgid "San Paolo"
-msgstr ""
+msgstr "聖保祿"
 
 #: internal/games/fortune_cities.go:63
 msgid "Roma Termini"
@@ -5595,15 +6448,15 @@ msgstr "特拉斯提弗列"
 
 #: internal/games/fortune_cities.go:63
 msgid "Celio"
-msgstr ""
+msgstr "西里歐"
 
 #: internal/games/fortune_cities.go:63
 msgid "San Giovanni"
-msgstr ""
+msgstr "聖若望"
 
 #: internal/games/fortune_cities.go:63
 msgid "Laterano"
-msgstr ""
+msgstr "拉特朗"
 
 #: internal/games/fortune_cities.go:65
 msgid "Borgo Pio"
@@ -5623,15 +6476,15 @@ msgstr "中央電力公司"
 
 #: internal/games/fortune_cities.go:65
 msgid "Flaminio"
-msgstr ""
+msgstr "弗拉米尼奧"
 
 #: internal/games/fortune_cities.go:65
 msgid "Delle Vittorie"
-msgstr ""
+msgstr "勝利區"
 
 #: internal/games/fortune_cities.go:65
 msgid "Mazzini"
-msgstr ""
+msgstr "馬志尼"
 
 #: internal/games/fortune_cities.go:65
 msgid "Stazione Tiburtina"
@@ -5651,15 +6504,15 @@ msgstr "納沃納廣場"
 
 #: internal/games/fortune_cities.go:65
 msgid "Via Giulia"
-msgstr ""
+msgstr "朱利亞大街"
 
 #: internal/games/fortune_cities.go:65
 msgid "Piazza Farnese"
-msgstr ""
+msgstr "法爾內塞廣場"
 
 #: internal/games/fortune_cities.go:65
 msgid "Sant'Eustachio"
-msgstr ""
+msgstr "聖歐斯塔基奧"
 
 #: internal/games/fortune_cities.go:67
 msgid "Via del Corso"
@@ -5675,15 +6528,15 @@ msgstr "西班牙廣場"
 
 #: internal/games/fortune_cities.go:67
 msgid "Piazza del Popolo"
-msgstr ""
+msgstr "人民廣場"
 
 #: internal/games/fortune_cities.go:67
 msgid "Via del Babuino"
-msgstr ""
+msgstr "巴布伊諾大街"
 
 #: internal/games/fortune_cities.go:67
 msgid "Via Margutta"
-msgstr ""
+msgstr "馬爾古塔大街"
 
 #: internal/games/fortune_cities.go:67
 msgid "Porto di Ostia"
@@ -5707,15 +6560,15 @@ msgstr "阿克多托"
 
 #: internal/games/fortune_cities.go:67
 msgid "Campidoglio"
-msgstr ""
+msgstr "卡比托利歐"
 
 #: internal/games/fortune_cities.go:67
 msgid "Fori Imperiali"
-msgstr ""
+msgstr "帝國議事廣場"
 
 #: internal/games/fortune_cities.go:67
 msgid "Piazza Venezia"
-msgstr ""
+msgstr "威尼斯廣場"
 
 #: internal/games/fortune_cities.go:69
 msgid "Parioli"
@@ -5731,15 +6584,15 @@ msgstr "博爾蓋塞別墅"
 
 #: internal/games/fortune_cities.go:69
 msgid "Pinciano"
-msgstr ""
+msgstr "平恰諾"
 
 #: internal/games/fortune_cities.go:69
 msgid "Ludovisi"
-msgstr ""
+msgstr "盧多維西"
 
 #: internal/games/fortune_cities.go:69
 msgid "Quirinale"
-msgstr ""
+msgstr "奎里納萊"
 
 #: internal/games/fortune_cities.go:69
 msgid "Stazione Trastevere"
@@ -5747,19 +6600,19 @@ msgstr "特拉斯提弗列車站"
 
 #: internal/games/fortune_cities.go:69
 msgid "Via Sistina"
-msgstr ""
+msgstr "西斯蒂納大街"
 
 #: internal/games/fortune_cities.go:69
 msgid "Trinità dei Monti"
-msgstr ""
+msgstr "山上天主聖三"
 
 #: internal/games/fortune_cities.go:69
 msgid "Piazza Barberini"
-msgstr ""
+msgstr "巴貝里尼廣場"
 
 #: internal/games/fortune_cities.go:69
 msgid "Via Frattina"
-msgstr ""
+msgstr "弗拉蒂納大街"
 
 #: internal/games/fortune_cities.go:69
 msgid "Via Condotti"
@@ -5779,7 +6632,7 @@ msgstr "維托里奧廣場"
 
 #: internal/games/fortune_cities.go:71
 msgid "Santa Croce"
-msgstr ""
+msgstr "聖十字"
 
 #: internal/games/fortune_cities.go:71
 msgid "Pigneto"
@@ -5791,7 +6644,7 @@ msgstr "馬焦雷門"
 
 #: internal/games/fortune_cities.go:71
 msgid "Torpignattara"
-msgstr ""
+msgstr "托爾皮尼亞塔拉"
 
 #: internal/games/fortune_cities.go:71
 msgid "Nomentano"
@@ -5803,19 +6656,19 @@ msgstr "薩拉里奧"
 
 #: internal/games/fortune_cities.go:71
 msgid "Trieste"
-msgstr ""
+msgstr "的里雅斯特"
 
 #: internal/games/fortune_cities.go:71
 msgid "Coppedè"
-msgstr ""
+msgstr "科佩德"
 
 #: internal/games/fortune_cities.go:71
 msgid "Villa Ada"
-msgstr ""
+msgstr "阿達別墅"
 
 #: internal/games/fortune_cities.go:71
 msgid "Villa Torlonia"
-msgstr ""
+msgstr "托洛尼亞別墅"
 
 #: internal/games/fortune_cities.go:73
 msgid "Garbatella"
@@ -5827,7 +6680,7 @@ msgstr "金字塔"
 
 #: internal/games/fortune_cities.go:73
 msgid "San Saba"
-msgstr ""
+msgstr "聖撒巴"
 
 #: internal/games/fortune_cities.go:73
 msgid "Roseto"
@@ -5839,7 +6692,7 @@ msgstr "真理之門"
 
 #: internal/games/fortune_cities.go:73
 msgid "Foro Boario"
-msgstr ""
+msgstr "屠牛廣場"
 
 #: internal/games/fortune_cities.go:73
 msgid "Ghetto"
@@ -5851,19 +6704,19 @@ msgstr "台貝裡納島"
 
 #: internal/games/fortune_cities.go:73
 msgid "Portico d'Ottavia"
-msgstr ""
+msgstr "屋大薇門廊"
 
 #: internal/games/fortune_cities.go:73
 msgid "Largo Argentina"
-msgstr ""
+msgstr "銀塔廣場"
 
 #: internal/games/fortune_cities.go:73
 msgid "Teatro di Marcello"
-msgstr ""
+msgstr "馬塞勒斯劇場"
 
 #: internal/games/fortune_cities.go:73
 msgid "Lungotevere"
-msgstr ""
+msgstr "台伯河沿岸路"
 
 #: internal/games/fortune_rivals.go:29
 msgid "Mika"
@@ -6044,7 +6897,7 @@ msgstr "不買"
 #: internal/gamesui/fortune.go:1168
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
-msgstr ""
+msgstr "離開商店"
 
 #: internal/games/fortunenet/texts.go:44
 #: internal/gamesui/fortune.go:1171
@@ -6089,78 +6942,78 @@ msgstr "·入獄"
 #: internal/games/fortunenet/texts.go:52
 #: internal/gamesui/fortune.go:1097
 msgid " · free rent"
-msgstr ""
+msgstr " · 免租"
 
 #: internal/games/fortunenet/texts.go:53
 #: internal/gamesui/fortune.go:1100
 msgid " · turtle"
-msgstr ""
+msgstr " · 烏龜"
 
 #: internal/games/fortunenet/texts.go:54
 #: internal/gamesui/fortune.go:1103
 msgid " · asleep"
-msgstr ""
+msgstr " · 睡著"
 
 #: internal/games/fortunenet/texts.go:55
 #: internal/gamesui/fortune_panel.go:160
 msgid "For sale: $%d"
-msgstr ""
+msgstr "待售：$%d"
 
 #: internal/games/fortunenet/texts.go:56
 #: internal/gamesui/fortune_panel.go:162
 msgid "%s owns it"
-msgstr ""
+msgstr "歸 %s 所有"
 
 #: internal/games/fortunenet/texts.go:57
 #: internal/gamesui/fortune_panel.go:164
 msgid "You own it"
-msgstr ""
+msgstr "歸你所有"
 
 #: internal/games/fortunenet/texts.go:58
 #: internal/gamesui/fortune_panel.go:168
 msgid "rent now"
-msgstr ""
+msgstr "目前租金"
 
 #: internal/games/fortunenet/texts.go:59
 #: internal/gamesui/fortune_panel.go:138
 msgid "Street · price $%d · building $%d"
-msgstr ""
+msgstr "街道 · 價格 $%d · 建築 $%d"
 
 #: internal/games/fortunenet/texts.go:60
 #: internal/gamesui/fortune_panel.go:140
 msgid "Station or pier · price $%d"
-msgstr ""
+msgstr "車站或碼頭 · 價格 $%d"
 
 #: internal/games/fortunenet/texts.go:61
 #: internal/gamesui/fortune_panel.go:142
 msgid "Utility · price $%d"
-msgstr ""
+msgstr "公用事業 · 價格 $%d"
 
 #: internal/games/fortunenet/texts.go:63
 #: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
-msgstr ""
+msgstr "卡牌商店"
 
 #: internal/games/fortunenet/texts.go:64
 #: internal/gamesui/fortune_panel.go:148
 msgid "Tax · $%d"
-msgstr ""
+msgstr "稅 · $%d"
 
 #: internal/games/fortunenet/texts.go:65
 #: internal/gamesui/fortune_panel.go:150
 msgid "Corner"
-msgstr ""
+msgstr "角落"
 
 #: internal/games/fortunenet/texts.go:66
 #: internal/gamesui/fortune_panel.go:125
 msgid "House · $%d"
-msgstr ""
+msgstr "房屋 · $%d"
 
 #: internal/games/fortunenet/texts.go:67
 #: internal/gamesui/fortune_panel.go:122
 msgid "Hotel · $%d"
-msgstr ""
+msgstr "飯店 · $%d"
 
 #: internal/games/fortunenet/texts.go:68
 #: internal/gamesui/fortune_panel.go:119
@@ -6170,32 +7023,32 @@ msgstr "飯店建成"
 #: internal/games/fortunenet/texts.go:69
 #: internal/gamesui/fortune_panel.go:127
 msgid "Sell · $%d"
-msgstr ""
+msgstr "出售 · $%d"
 
 #: internal/games/fortunenet/texts.go:70
 #: internal/gamesui/fortune_panel.go:480
 msgid "Your cards · %d of %d"
-msgstr ""
+msgstr "你的卡牌 · %d / %d"
 
 #: internal/games/fortunenet/texts.go:71
 #: internal/gamesui/fortune_panel.go:478
 msgid "Your cards · %d of %d · click one to play it"
-msgstr ""
+msgstr "你的卡牌 · %d / %d · 點擊一張即可打出"
 
 #: internal/games/fortunenet/texts.go:72
 #: internal/gamesui/fortune_panel.go:368
 msgid "Click a card to buy it: any of them, or none."
-msgstr ""
+msgstr "點擊一張卡牌購買：哪張都行，也可以不買。"
 
 #: internal/games/fortunenet/texts.go:73
 #: internal/gamesui/fortune_panel.go:511
 msgid "On whom?"
-msgstr ""
+msgstr "對誰？"
 
 #: internal/games/fortunenet/texts.go:74
 #: internal/gamesui/fortune_panel.go:513
 msgid "How many squares?"
-msgstr ""
+msgstr "走幾格？"
 
 #: internal/games/fortunenet/texts.go:75
 msgid "Pick a square on the board"
@@ -6214,23 +7067,23 @@ msgstr "你贏了！"
 #: internal/games/fortunenet/texts.go:79
 #: internal/gamesui/fortune_board.go:1100
 msgid "%s (bankrupt)"
-msgstr ""
+msgstr "%s（破產）"
 
 #: internal/games/fortunenet/texts.go:80
 #: internal/gamesui/fortune_panel.go:234
 msgid "Bare"
-msgstr ""
+msgstr "空地"
 
 #: internal/games/fortunenet/texts.go:81
 #: internal/gamesui/fortune_panel.go:237
 msgid "Hotel"
-msgstr ""
+msgstr "飯店"
 
 #: internal/games/fortunenet/texts.go:83
 #: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
-msgstr ""
+msgstr "租金是骰子點數乘以此數。"
 
 #: internal/games/fortunenet/texts.go:84
 msgid "Sound on: M turns it off"
@@ -6244,13 +7097,13 @@ msgstr "聲音關閉：按 M 開啟"
 #: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
-msgstr ""
+msgstr "租金取決於主人擁有幾個碼頭。"
 
 #: internal/games/fortunenet/texts.go:88
 #: internal/gamesui/fortune_menu.go:174
 #: internal/gamesui/fortune_panel.go:273
 msgid "Collect $%d every time you pass."
-msgstr ""
+msgstr "每次經過領取 $%d。"
 
 #: internal/games/fortunenet/texts.go:89
 #: internal/games/fortunenet/texts.go:90
@@ -6274,13 +7127,13 @@ msgstr "沒有透過Start就直接入獄。"
 #: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:282
 msgid "Draw a card: money, a fine, a trip, or a card for your hand."
-msgstr ""
+msgstr "抽一張卡：金錢、罰款、一次移動，或一張手牌。"
 
 #: internal/games/fortunenet/texts.go:94
 #: internal/gamesui/fortune_menu.go:182
 #: internal/gamesui/fortune_panel.go:284
 msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
-msgstr ""
+msgstr "三張卡牌待售：可以任意購買，也可以不買。手牌最多 %d 張。"
 
 #: internal/games/fortunenet/texts.go:95
 #: internal/gamesui/fortune_menu.go:183
@@ -6291,41 +7144,41 @@ msgstr "向噴泉支付$%d。"
 #: internal/games/fortunenet/texts.go:96
 #: internal/gamesui/fortune_panel.go:244
 msgid "The whole group: bare rent doubled, built rents half again."
-msgstr ""
+msgstr "整組：空地租金翻倍，有建築的租金增加一半。"
 
 #: internal/games/fortunenet/texts.go:97
 #: internal/gamesui/fortune_menu.go:178
 #: internal/gamesui/fortune_panel.go:246
 msgid "With the whole group: bare rent doubled, built rents half again."
-msgstr ""
+msgstr "擁有整組時：空地租金翻倍，有建築的租金增加一半。"
 
 #: internal/games/fortunenet/texts.go:98
 #: internal/gamesui/fortune_panel.go:259
 msgid "Group:"
-msgstr ""
+msgstr "組："
 
 #: internal/games/fortunenet/texts.go:99
 #: internal/gamesui/fortune_panel.go:269
 msgid "× %d"
-msgstr ""
+msgstr "× %d"
 
 #: internal/games/fortunenet/texts.go:101
 #: internal/gamesui/fortune_panel.go:263
 msgid "%d pier"
 msgid_plural "%d piers"
-msgstr[0] ""
+msgstr[0] "%d 個碼頭"
 
 #: internal/games/fortunenet/texts.go:104
 #: internal/gamesui/fortune_panel.go:269
 msgid "%d utility"
 msgid_plural "%d utilities"
-msgstr[0] ""
+msgstr[0] "%d 個公用事業"
 
 #: internal/games/fortunenet/texts.go:107
 #: internal/gamesui/fortune.go:1094
 msgid " · %d card"
 msgid_plural " · %d cards"
-msgstr[0] ""
+msgstr[0] " · %d 張卡牌"
 
 #: internal/games/fortunenet/texts.go:110
 msgid "and %d computer player"
@@ -6336,7 +7189,7 @@ msgstr[0] "和 %d 個電腦玩家"
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
-msgstr[0] ""
+msgstr[0] "%d 棟房屋"
 
 #: internal/games/pinball_rules.go:63
 msgid "Cadet"
@@ -6666,11 +7519,11 @@ msgstr "A或←左鰭狀件·D或→右鰭狀件·保持空間以拉動柱塞·X
 
 #: internal/gamesui/catalog.go:27
 msgid "A property game for two to four players, people at the screen taking turns, people in a browser on the same network (set On the network: the lobby shows the link and its QR code) and computer players, on a ring of 80 squares with two branch roads (at a fork, chance picks the road), in Tokyo, New York, Shanghai or Rome: choose the city, the rounds, the starting money, your rivals and the rules (one die or two; building on a street the turn you buy it) before you start. The board is larger than the window: drag it, scroll, or use the arrow keys to look about; Home brings you back to your pawn. Roll the dice and walk the board; with two, a double rolls again and three in a row go to jail. Buy the streets, ferry piers and utilities you land on; rivals landing there pay you rent. Every street of yours your pawn passes or lands on may go up one level that turn (outlined on the board): house by house to four, then a hotel; owning a whole colour group doubles its bare rent and adds half to its built rents. Piers pay more the more of them you own; utilities charge by the dice. Passing Start pays $400. Taxes and fines fill the fountain, and whoever lands there takes it. Cards come from Chance and the card shops, where you may buy any of the three on offer; hold up to ten, and play any number in your turn, before you roll or after you move: Loaded Dice, Free Rent, Requisition, Pickpocket, Demolition, Building Permit, Turtle, Swap Places, Jail Pass, Tax Audit, Fair Shares and Sleeping Pill. A card played on a street takes the square in focus: click it on the board first. Who cannot pay sells buildings and property at half price, or is out. After the last round, or when one player is left, the most worth wins: cash, property and buildings. Keys: Space the main action, R roll, B buy, X pass, E end turn, J pay bail, H build on the square in focus, M the sound on or off, N a new game. The sound plays through pw-cat; without it the game is silent."
-msgstr ""
+msgstr "一款二至四人的地產遊戲：螢幕前輪流操作的玩家、在同一網路中用瀏覽器加入的玩家（開啟「在網路上」：大廳會顯示連結及其 QR 碼）和電腦玩家，在一個有兩條岔路的 80 格環形棋盤上（遇到岔路時由運氣選路），以東京、紐約、上海或羅馬為舞台：開始前選擇城市、回合數、初始資金、對手和規則（一顆骰子或兩顆；買下街道的當回合能否建造）。棋盤比視窗大：拖曳、捲動或用方向鍵四處查看；按 Home 回到你的棋子。擲骰子在棋盤上前進；用兩顆骰子時，擲出對子再擲一次，連續三次則進監獄。買下你停留的街道、渡輪碼頭和公用事業；對手停在那裡要向你付租金。你的棋子經過或停留的每條你的街道，當回合都可以升一級（在棋盤上框出）：一棟一棟蓋房子到四棟，然後是飯店；擁有整個顏色組時，空地租金翻倍，有建築的租金增加一半。碼頭擁有得越多收得越多；公用事業按骰子點數收費。經過起點領取 $400。稅金和罰款匯入噴泉，誰停在那裡誰拿走。卡牌來自「機會」和卡牌商店，商店裡待售的三張可以任意購買；最多持有十張，在自己的回合裡擲骰前或移動後可以打出任意張：灌鉛骰子、免租、強制徵購、扒手、拆除、建築許可、烏龜、交換位置、出獄卡、稅務稽查、平分財富和安眠藥。作用於街道的卡牌針對選中的格子：先在棋盤上點擊它。付不起的人以半價出售建築和地產，否則出局。最後一回合結束後，或只剩一名玩家時，身價最高者獲勝：現金、地產和建築。按鍵：空白鍵 主要操作，R 擲骰，B 購買，X 放棄，E 結束回合，J 交保釋金，H 在選中的格子上建造，M 開關聲音，N 新遊戲。聲音透過 pw-cat 播放；沒有它遊戲就是靜音的。"
 
 #: internal/gamesui/catalog.go:28
 msgid "Space the main action  ·  R roll  ·  B buy  ·  X pass  ·  E end turn  ·  J pay bail  ·  H build on the square in focus  ·  N new game  ·  M sound  ·  click a square to see it  ·  drag, scroll or arrows to look about  ·  Home your pawn"
-msgstr ""
+msgstr "空白鍵 主要操作  ·  R 擲骰  ·  B 購買  ·  X 放棄  ·  E 結束回合  ·  J 交保釋金  ·  H 在選中的格子上建造  ·  N 新遊戲  ·  M 聲音  ·  點擊格子查看  ·  拖曳、捲動或方向鍵四處查看  ·  Home 回到你的棋子"
 
 #: internal/gamesui/fortune.go:210
 msgid "JOIN CODE"
@@ -6799,7 +7652,7 @@ msgstr "此玩家使用的“設定”→“AI”中的設定檔"
 
 #: internal/gamesui/fortune_board.go:890
 msgid "START\ncollect $%d"
-msgstr ""
+msgstr "起點\n領取 $%d"
 
 #: internal/gamesui/fortune_board.go:890
 msgid "JAIL\njust visiting"
@@ -6819,7 +7672,7 @@ msgstr "按 N 或 Space 開始新遊戲"
 
 #: internal/gamesui/fortune_board.go:1141
 msgid "%s · sound off"
-msgstr ""
+msgstr "%s · 靜音"
 
 #: internal/gamesui/fortune_city.go:38
 msgid "machiya"
@@ -6943,7 +7796,7 @@ msgstr "%s 的卡牌 · %d / %d"
 
 #: internal/gamesui/fortune_panel.go:489
 msgid "Plays on the square in focus: %s."
-msgstr ""
+msgstr "作用於選中的格子：%s。"
 
 #: internal/gamesui/mines.go:37
 msgid "Small · 9 × 9"
@@ -7364,6 +8217,165 @@ msgstr "星期六"
 msgid "AM"
 msgstr "上午"
 
+#: internal/remoteui/app.go:20
+#: ui/remote.ui:14
+#: ui/remote.ui:32
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:3
+msgid "Remote Desktop"
+msgstr "遠端桌面"
+
+#: internal/remoteui/stream.go:126
+msgid "%s — Remote Desktop"
+msgstr "%s — 遠端桌面"
+
+#: internal/remoteui/stream.go:229
+msgid "Ctrl+Alt+Shift+Q disconnects · F: full screen · Z: this desktop's shortcuts"
+msgstr "Ctrl+Alt+Shift+Q 中斷連線 · F：全螢幕 · Z：本機桌面的快捷鍵"
+
+#: internal/remoteui/stream.go:467
+msgid "%s ended the session."
+msgstr "%s 結束了工作階段。"
+
+#: internal/remoteui/stream.go:470
+msgid "%s cannot show its screen: no monitor is connected, or its desktop session is not running. A computer without a monitor can share a virtual screen (Remote Desktop, Sharing)."
+msgstr "%s 無法顯示其螢幕：沒有連接顯示器，或其桌面工作階段未在執行。沒有顯示器的電腦可以分享虛擬螢幕（遠端桌面，分享）。"
+
+#: internal/remoteui/window.go:122
+msgid "This computer has no identity to pair with: %v"
+msgstr "這台電腦沒有用於配對的身分：%v"
+
+#: internal/remoteui/window.go:263
+msgid "Paired"
+msgstr "已配對"
+
+#: internal/remoteui/window.go:274
+msgid "Found on this network"
+msgstr "在此網路上找到"
+
+#: internal/remoteui/window.go:276
+msgid "Found on the tailnet"
+msgstr "在 tailnet 上找到"
+
+#: internal/remoteui/window.go:391
+msgid "Sharing did not start: %v"
+msgstr "分享沒有啟動：%v"
+
+#: internal/remoteui/window.go:426
+msgid "The virtual screen did not change: %v"
+msgstr "虛擬螢幕未變更：%v"
+
+#: internal/remoteui/window.go:463
+msgid "Other devices see this computer as %s, on this network and the tailnet. A device pairs once, with a PIN typed here."
+msgstr "其他裝置在此網路和 tailnet 上會看到這台電腦名為 %s。裝置只需配對一次，在這裡輸入 PIN。"
+
+#: internal/remoteui/window.go:466
+msgid "Sunshine is starting."
+msgstr "Sunshine 正在啟動。"
+
+#: internal/remoteui/window.go:469
+msgid "Lets your other devices see and control this desktop, with Moonlight or Remote Desktop."
+msgstr "讓你的其他裝置用 Moonlight 或遠端桌面檢視並控制此桌面。"
+
+#: internal/remoteui/window.go:480
+msgid "Sharing needs Sunshine, which is not installed."
+msgstr "分享需要 Sunshine，但它沒有安裝。"
+
+#: internal/remoteui/window.go:481
+msgid "Install the package for your system from github.com/LizardByte/Sunshine/releases (Ubuntu: sudo apt install ./sunshine_…_amd64.deb)."
+msgstr "從 github.com/LizardByte/Sunshine/releases 安裝適合你系統的套件（Ubuntu：sudo apt install ./sunshine_…_amd64.deb）。"
+
+#: internal/remoteui/window.go:483
+msgid "The other device's keyboard and mouse cannot reach this desktop: /dev/uinput is not yours."
+msgstr "另一台裝置的鍵盤和滑鼠無法操作此桌面：你沒有 /dev/uinput 的權限。"
+
+#: internal/remoteui/window.go:486
+msgid "Sharing needs a graphical session to show."
+msgstr "分享需要一個圖形工作階段。"
+
+#: internal/remoteui/window.go:511
+msgid "A device"
+msgstr "一台裝置"
+
+#: internal/remoteui/window.go:515
+msgid "at %s: type the PIN it shows"
+msgstr "來自 %s：輸入它顯示的 PIN"
+
+#: internal/remoteui/window.go:542
+msgid "No device is paired yet."
+msgstr "還沒有已配對的裝置。"
+
+#: internal/remoteui/window.go:547
+msgid "The paired devices show while sharing is on."
+msgstr "分享開啟時會顯示已配對的裝置。"
+
+#: internal/remoteui/window.go:580
+msgid "A PIN is four digits."
+msgstr "PIN 是四位數字。"
+
+#: internal/remoteui/window.go:590
+msgid "That is not the PIN %s shows."
+msgstr "這不是 %s 顯示的 PIN。"
+
+#: internal/remoteui/window.go:669
+msgid "Asking…"
+msgstr "正在詢問……"
+
+#: internal/remoteui/window.go:672
+msgid "Connected: its desktop is in a window of its own."
+msgstr "已連線：它的桌面在獨立的視窗中。"
+
+#: internal/remoteui/window.go:675
+msgid "It does not answer: it is off, or not sharing its desktop."
+msgstr "沒有回應：它已關機，或沒有分享桌面。"
+
+#: internal/remoteui/window.go:677
+msgid "It shares with Nvidia's GameStream, which Remote Desktop does not speak."
+msgstr "它透過 Nvidia 的 GameStream 分享，遠端桌面不支援。"
+
+#: internal/remoteui/window.go:679
+msgid "It has forgotten this computer: pair again."
+msgstr "它已忘記這台電腦：請重新配對。"
+
+#: internal/remoteui/window.go:681
+msgid "Not paired: pair once, with a PIN typed on it."
+msgstr "未配對：在它上面輸入 PIN，配對一次即可。"
+
+#: internal/remoteui/window.go:683
+msgid "Paired. Its desktop is being streamed; connecting joins in."
+msgstr "已配對。它的桌面正在串流，連線即可加入。"
+
+#: internal/remoteui/window.go:685
+msgid "Paired, and ready."
+msgstr "已配對，可以連線。"
+
+#: internal/remoteui/window.go:718
+msgid "On %s, open Remote Desktop → Sharing (or Sunshine's PIN page) and type:"
+msgstr "在 %s 上開啟遠端桌面 → 分享（或 Sunshine 的 PIN 頁面），然後輸入："
+
+#: internal/remoteui/window.go:742
+msgid "The PIN typed there was not this one. Pair again."
+msgstr "那邊輸入的 PIN 不是這個。請重新配對。"
+
+#: internal/remoteui/window.go:745
+msgid "Pairing failed: %v"
+msgstr "配對失敗：%v"
+
+#: internal/remoteui/window.go:801
+msgid "Nothing shares a desktop at %s: %v"
+msgstr "%s 上沒有分享的桌面：%v"
+
+#: internal/remoteui/window.go:868
+msgid "This computer cannot decode it: choose another."
+msgstr "這台電腦無法解碼：請選擇其他的。"
+
+#: internal/remoteui/window.go:870
+msgid "Decoded by the processor here: slower than the graphics card."
+msgstr "這裡由處理器解碼：比顯示卡慢。"
+
+#: internal/remoteui/window.go:872
+msgid "Decoded by the graphics card here. HEVC and AV1 look better than H.264 at the same bitrate."
+msgstr "這裡由顯示卡解碼。相同位元率下，HEVC 和 AV1 比 H.264 更清晰。"
+
 #: internal/shell/commands.go:27
 msgid "Lock Screen"
 msgstr "鎖定螢幕"
@@ -7580,7 +8592,7 @@ msgstr "日常"
 msgid "TOOLS"
 msgstr "工具"
 
-#: internal/shell/dock.go:268
+#: internal/shell/dock.go:270
 msgid "PLAY"
 msgstr "玩"
 
@@ -8021,6 +9033,7 @@ msgid "Search clipboard history"
 msgstr "搜尋剪貼簿歷史"
 
 #: internal/ui/clipboard.go:335
+#: ui/connect.ui:727
 #: ui/settings.ui:3328
 msgid "Clipboard"
 msgstr "剪貼簿"
@@ -8190,23 +9203,23 @@ msgstr "合成器不支援會話鎖"
 msgid "could not take the session lock"
 msgstr "無法取得會話鎖定"
 
-#: internal/ui/lock.go:243
+#: internal/ui/lock.go:246
 msgid "Wrong password. Try again in %d s"
 msgstr "密碼錯誤。在 %d 中重試"
 
-#: internal/ui/lock.go:246
-#: internal/ui/lock.go:296
+#: internal/ui/lock.go:249
+#: internal/ui/lock.go:299
 msgid "Wrong password"
 msgstr "密碼錯誤"
 
-#: internal/ui/lock.go:269
+#: internal/ui/lock.go:272
 #: internal/ui/polkit.go:294
 #: internal/ui/settings_about.go:153
 #: internal/ui/settings_backup.go:215
 msgid "Checking…"
 msgstr "正在檢查中…"
 
-#: internal/ui/lock.go:300
+#: internal/ui/lock.go:303
 msgid "The password could not be checked"
 msgstr "無法檢查密碼"
 
@@ -8378,11 +9391,6 @@ msgstr "錄影已儲存"
 #: internal/ui/record.go:159
 msgid "Screen recording"
 msgstr "螢幕錄製"
-
-#: internal/ui/record.go:163
-#: internal/ui/screenshot.go:808
-msgid "Show in Folder"
-msgstr "在資料夾中顯示"
 
 #: internal/ui/screenshot.go:434
 msgid "inua screenshot"
@@ -8659,10 +9667,6 @@ msgstr "列出服務商的模型"
 #: internal/ui/settings_ai.go:466
 msgid "Reasoning"
 msgstr "推理強度"
-
-#: internal/ui/settings_ai.go:467
-msgid "Endpoint"
-msgstr "端點"
 
 #: internal/ui/settings_ai.go:485
 msgid "Chat"
@@ -8995,31 +9999,31 @@ msgstr "沒有回答"
 
 #: internal/ui/settings_custom.go:74
 msgid "Not moved to the trash: %s"
-msgstr ""
+msgstr "未移到垃圾桶：%s"
 
 #: internal/ui/settings_custom.go:98
 msgid "Choose a folder of SVG icons"
-msgstr ""
+msgstr "選擇一個 SVG 圖示資料夾"
 
 #: internal/ui/settings_custom.go:102
 msgid "Choose a theme"
-msgstr ""
+msgstr "選擇主題"
 
 #: internal/ui/settings_custom.go:104
 msgid "Themes (CSS)"
-msgstr ""
+msgstr "主題（CSS）"
 
 #: internal/ui/settings_custom.go:159
 msgid "Not added: the name %s is taken; rename the file or folder"
-msgstr ""
+msgstr "未新增：名稱 %s 已被使用；請重新命名檔案或資料夾"
 
 #: internal/ui/settings_custom.go:161
 msgid "Not added: a theme has @define-color lines with #rrggbb colours"
-msgstr ""
+msgstr "未新增：主題須包含使用 #rrggbb 色彩的 @define-color 行"
 
 #: internal/ui/settings_custom.go:163
 msgid "Not added: the folder has no SVG files"
-msgstr ""
+msgstr "未新增：該資料夾中沒有 SVG 檔案"
 
 #: internal/ui/settings_custom.go:165
 #: internal/ui/settings_keyring.go:181
@@ -10248,6 +11252,116 @@ msgstr "之前挑選的"
 msgid "Colours you pick show here."
 msgstr "您選擇的顏色顯示在這裡。"
 
+#: ui/connect.ui:54
+#: ui/remote.ui:54
+msgid "THIS COMPUTER"
+msgstr "這台電腦"
+
+#: ui/connect.ui:125
+msgid "Look for devices again"
+msgstr "重新尋找裝置"
+
+#: ui/connect.ui:159
+msgid "Add a device by address…"
+msgstr "依位址新增裝置……"
+
+#: ui/connect.ui:226
+msgid "[THIS COMPUTER]"
+msgstr "[這台電腦]"
+
+#: ui/connect.ui:256
+msgid "Connect with your devices"
+msgstr "與你的裝置連接"
+
+#: ui/connect.ui:317
+msgid "To pair a phone"
+msgstr "配對手機"
+
+#: ui/connect.ui:326
+msgid "Install KDE Connect on it (from F-Droid, Google Play or the App Store), open it on the same network or the tailnet, and choose this computer. Pair once the key shown there matches the one here."
+msgstr "在手機上安裝 KDE Connect（從 F-Droid、Google Play 或 App Store），在同一網路或 tailnet 上開啟它並選擇這台電腦。當那邊顯示的金鑰與這裡的一致時再配對。"
+
+#: ui/connect.ui:362
+msgid "[COMMANDS]"
+msgstr "[指令]"
+
+#: ui/connect.ui:372
+msgid "devices run these here"
+msgstr "裝置在這裡執行它們"
+
+#: ui/connect.ui:410
+msgid "Add a command"
+msgstr "新增指令"
+
+#: ui/connect.ui:596
+msgid "[SEND]"
+msgstr "[傳送]"
+
+#: ui/connect.ui:630
+msgid "Ring"
+msgstr "響鈴"
+
+#: ui/connect.ui:631
+msgid "Rings the device, to find it"
+msgstr "讓裝置響鈴以便找到它"
+
+#: ui/connect.ui:640
+msgid "Send files…"
+msgstr "傳送檔案……"
+
+#: ui/connect.ui:654
+msgid "Text, or a link it opens"
+msgstr "文字，或它會開啟的連結"
+
+#: ui/connect.ui:663
+#: ui/connectreply.ui:58
+msgid "Send"
+msgstr "傳送"
+
+#: ui/connect.ui:697
+msgid "[SHARED WITH IT]"
+msgstr "[與它分享]"
+
+#: ui/connect.ui:736
+msgid "Text copied on one is there to paste on the other. Passwords stay here."
+msgstr "在一邊複製的文字可在另一邊貼上。密碼留在這裡。"
+
+#: ui/connect.ui:768
+msgid "This computer's notifications"
+msgstr "這台電腦的通知"
+
+#: ui/connect.ui:777
+msgid "They show on the device too. Its own show here when it sends them."
+msgstr "它們也會顯示在裝置上。裝置傳來的通知會顯示在這裡。"
+
+#: ui/connect.ui:809
+msgid "Pointer and keyboard"
+msgstr "指標和鍵盤"
+
+#: ui/connect.ui:818
+msgid "The device works as a touchpad and keyboard here."
+msgstr "裝置可在這裡用作觸控板和鍵盤。"
+
+#: ui/connect.ui:850
+msgid "Commands"
+msgstr "指令"
+
+#: ui/connect.ui:859
+msgid "It runs the commands set up on This computer."
+msgstr "它會執行在「這台電腦」中設定的指令。"
+
+#: ui/connect.ui:921
+msgid "[ADD A DEVICE]"
+msgstr "[新增裝置]"
+
+#: ui/connect.ui:946
+msgid "A device the network's broadcast does not reach: its name or IP address. It is asked to connect here; it shows in the list once it has."
+msgstr "網路廣播到不了的裝置：它的名稱或 IP 位址。會請求它連接到這裡，連接後會出現在清單中。"
+
+#: ui/connectreply.ui:36
+msgid "Your answer"
+msgstr "你的回覆"
+
 #: ui/control.ui:72
 msgid "Screenshot an area"
 msgstr "截取區域"
@@ -10313,8 +11427,8 @@ msgid "Parent folder (Alt+↑)"
 msgstr "上層資料夾（Alt+↑）"
 
 #: ui/filespane.ui:102
-msgid "A path, or a server: sftp://host/dir, smb://server/share"
-msgstr "路徑或伺服器：sftp://主機/目錄, smb://伺服器/分享"
+msgid "A path, or a remote disk: sftp://host/dir, smb://server/share"
+msgstr "路徑，或遠端磁碟：sftp://host/dir、smb://server/share"
 
 #: ui/filespane.ui:129
 msgid "Edit the path (Ctrl+L)"
@@ -10397,11 +11511,6 @@ msgstr "建立你的金鑰"
 #: ui/gpg.ui:750
 msgid "<span alpha='55%'>[</span>MESSAGE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>訊息<span alpha='55%'>]</span>"
-
-#: ui/gpg.ui:419
-#: ui/gpg.ui:783
-msgid "Text"
-msgstr "文字"
 
 #: ui/gpg.ui:469
 #: ui/gpg.ui:834
@@ -10531,11 +11640,6 @@ msgstr "↵打開"
 #: ui/launcher.ui:134
 msgid "Esc  close"
 msgstr "Esc關閉"
-
-#: ui/lock.ui:76
-#: ui/polkit.ui:690
-msgid "Password"
-msgstr "密碼"
 
 #: ui/music.ui:55
 #: ui/video.ui:153
@@ -10754,6 +11858,103 @@ msgstr "另一用戶"
 msgid "Authenticate"
 msgstr "驗證"
 
+#: ui/remote.ui:84
+msgid "Sharing"
+msgstr "分享"
+
+#: ui/remote.ui:112
+msgid "MACHINES"
+msgstr "機器"
+
+#: ui/remote.ui:125
+msgid "Look for machines sharing their desktop"
+msgstr "尋找正在分享桌面的機器"
+
+#: ui/remote.ui:159
+msgid "Add a machine…"
+msgstr "新增一台機器……"
+
+#: ui/remote.ui:226
+msgid "[SHARING]"
+msgstr "[分享]"
+
+#: ui/remote.ui:256
+msgid "Share this desktop"
+msgstr "分享此桌面"
+
+#: ui/remote.ui:296
+msgid "Virtual screen"
+msgstr "虛擬螢幕"
+
+#: ui/remote.ui:305
+msgid "While no monitor is connected, this computer shows a screen of this size, to share."
+msgstr "未連接顯示器時，這台電腦會顯示此尺寸的螢幕以供分享。"
+
+#: ui/remote.ui:390
+msgid "[WAITING TO PAIR]"
+msgstr "[等待配對]"
+
+#: ui/remote.ui:432
+msgid "[PAIRED DEVICES]"
+msgstr "[已配對裝置]"
+
+#: ui/remote.ui:553
+msgid "End its session"
+msgstr "結束它的工作階段"
+
+#: ui/remote.ui:554
+msgid "Ends what is streaming there, for every device"
+msgstr "結束那裡正在串流的內容，對所有裝置都生效"
+
+#: ui/remote.ui:638
+msgid "[STREAM]"
+msgstr "[串流]"
+
+#: ui/remote.ui:648
+msgid "for every machine"
+msgstr "對所有機器生效"
+
+#: ui/remote.ui:676
+msgid "Resolution"
+msgstr "解析度"
+
+#: ui/remote.ui:685
+msgid "The machine shows its desktop at this size."
+msgstr "那台機器以此尺寸顯示桌面。"
+
+#: ui/remote.ui:698
+#: ui/settings.ui:1211
+msgid "This monitor's"
+msgstr "該顯示器的"
+
+#: ui/remote.ui:721
+msgid "Frames a second"
+msgstr "每秒影格數"
+
+#: ui/remote.ui:760
+msgid "Bitrate"
+msgstr "位元率"
+
+#: ui/remote.ui:769
+msgid "Megabits a second: more is sharper, and needs a faster network."
+msgstr "每秒百萬位元：越高越清晰，也需要更快的網路。"
+
+#: ui/remote.ui:809
+msgid "Codec"
+msgstr "編解碼器"
+
+#: ui/remote.ui:851
+msgid "Play the sound on the machine too"
+msgstr "在那台機器上也播放聲音"
+
+#: ui/remote.ui:911
+msgid "[ADD A MACHINE]"
+msgstr "[新增機器]"
+
+#: ui/remote.ui:936
+msgid "Its address on the network: a name, an IP address, or either with :port."
+msgstr "它在網路上的位址：名稱、IP 位址，或加上 :連接埠。"
+
 #: ui/screenshot.ui:126
 msgid "Drag to take an area (Space switches to windows)"
 msgstr "拖曳取一個區域（空格切換到視窗）"
@@ -10804,11 +12005,11 @@ msgstr "欄、啟動器、控制中心和此窗口"
 
 #: ui/settings.ui:151
 msgid "Your themes"
-msgstr ""
+msgstr "你的主題"
 
 #: ui/settings.ui:160
 msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
-msgstr ""
+msgstr "由 @define-color 行組成的 CSS 檔案，放在 config.toml 旁的 themes 中"
 
 #: ui/settings.ui:173
 #: ui/settings.ui:431
@@ -10818,12 +12019,12 @@ msgstr "新增…"
 
 #: ui/settings.ui:185
 msgid "The theme in use, if it is one of yours"
-msgstr ""
+msgstr "正在使用的主題（如果是你的）"
 
 #: ui/settings.ui:195
 #: ui/settings.ui:453
 msgid "Open Folder"
-msgstr ""
+msgstr "開啟資料夾"
 
 #: ui/settings.ui:231
 msgid "<span alpha='55%'>[</span>TEXT<span alpha='55%'>]</span>"
@@ -10859,15 +12060,15 @@ msgstr "應用程式圖示始終來自系統"
 
 #: ui/settings.ui:409
 msgid "Your icon sets"
-msgstr ""
+msgstr "你的圖示集"
 
 #: ui/settings.ui:418
 msgid "A folder of SVG icons named like inua's, kept in icons beside config.toml"
-msgstr ""
+msgstr "一個與 inua 圖示同名的 SVG 圖示資料夾，放在 config.toml 旁的 icons 中"
 
 #: ui/settings.ui:443
 msgid "The icon set in use, if it is one of yours"
-msgstr ""
+msgstr "正在使用的圖示集（如果是你的）"
 
 #: ui/settings.ui:489
 msgid "<span alpha='55%'>[</span>LANGUAGE<span alpha='55%'>]</span>"
@@ -11012,10 +12213,6 @@ msgstr "工作區"
 #: ui/settings.ui:1197
 msgid "Which workspaces each bar shows"
 msgstr "每個條顯示哪些工作區"
-
-#: ui/settings.ui:1211
-msgid "This monitor's"
-msgstr "該顯示器的"
 
 #: ui/settings.ui:1212
 msgid "All monitors'"
@@ -12396,6 +13593,14 @@ msgstr "揭示安全方塊並標記隱藏的地雷"
 msgid "games;arcade;puzzle;"
 msgstr "遊戲;街機;益智;"
 
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:10
+msgid "Your phone and this computer together: clipboard, files, notifications, media and remote input"
+msgstr "讓手機與這台電腦協同：剪貼簿、檔案、通知、媒體與遠端輸入"
+
+#: config/apps/io.github.lyricat.Inua.MobileLink.desktop:20
+msgid "kde connect;gsconnect;valent;phone;android;iphone;clipboard;share;notifications;"
+msgstr "kde connect;gsconnect;valent;手機;android;iphone;剪貼簿;分享;通知;"
+
 #: config/apps/io.github.lyricat.Inua.Music.desktop:10
 msgid "Play music, with a playlist and an equalizer"
 msgstr "播放音樂，附播放清單和等化器"
@@ -12411,6 +13616,14 @@ msgstr "你的密碼庫：按類別列出密碼、一次性驗證碼和備註"
 #: config/apps/io.github.lyricat.Inua.Pass.desktop:20
 msgid "password;pass;gpg;otp;totp;2fa;secret;"
 msgstr "密碼;pass;gpg;otp;totp;兩步驗證;密鑰;"
+
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:10
+msgid "Share this desktop, or see and control another one"
+msgstr "分享此桌面，或檢視並控制另一台"
+
+#: config/apps/io.github.lyricat.Inua.Remote.desktop:20
+msgid "remote;desktop;moonlight;sunshine;stream;share;vnc;rdp;"
+msgstr "遠端;桌面;moonlight;sunshine;分享;"
 
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:10
 msgid "Buy streets, build houses and outlast up to three computer players"

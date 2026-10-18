@@ -29,8 +29,10 @@ inua-files -default                       make inua-files the desktop's file man
 inua-files -default=false                 give the job back (removes what -default wrote)
 ```
 
-`inua-files trash:` opens the trash; `inua-files sftp://host/dir` mounts
-the share first.
+`inua-files trash:` opens the trash; `inua-files sftp://host/dir` connects
+the remote disk first. A path may be relative to where it is typed, and
+once inua-files is the file manager (`-default`), `open PATH` (xdg-open)
+opens a folder in it: `open .`, `open ~/Downloads`.
 
 ## Window
 
@@ -44,7 +46,7 @@ the share first.
 │ Trash    │   go.mod          3.1 kB   Oct 3     │ SIZE       │
 │ DEVICES  │   README.md      14.2 kB   Oct 14    │ MODIFIED   │
 │ USB    ⏏ │                                      │ …          │
-│ NETWORK  │ /flt · 23 items · 2 sel. · 9 GB free │            │
+│ REMOTE   │ /flt · 23 items · 2 sel. · 9 GB free │            │
 │          │ Copying photo.jpg ━━━━━━  38 MB/s  ✕ │            │
 │ ◉ ▥ ⓘ  ⌘ │                                      │            │
 └──────────┴──────────────────────────────────────┴────────────┘
@@ -52,11 +54,11 @@ the share first.
 
 | Part | What | Key |
 | --- | --- | --- |
-| Sidebar (left) | Places, the trash, devices and network shares; at its foot, framed toggles (as Calculator's) for hidden files, two panes and details, and the keys. A right click on an entry: open it in a new tab or window, and remove a bookmark, empty the trash, eject a drive or disconnect a share. | F9 shows or hides it |
+| Sidebar (left) | Places, the trash, devices and remote disks; at its foot, framed toggles (as Calculator's) for hidden files, two panes and details, and the keys. A right click on an entry: open it in a new tab or window, and remove a bookmark, empty the trash, eject a drive, or disconnect or forget a remote disk. | F9 shows or hides it |
 | Panes (centre) | One pane, or two side by side (commander style). Each has its own tabs, and each tab its own folder and history; a pane's view, order and selection are its folder's. With two panes, a status square starts each path: filled for the one the keys go to, hollow for the other, whose selection loses the accent. | F3 two panes; Tab the other pane |
 | Tabs | A pane's tabs show above it once it has two: the folder's name, a button that closes it (a middle click too). | Ctrl+T, Ctrl+W, Ctrl+Tab |
 | Details (right) | The selection: a thumbnail or the first lines of a text, its kind (MIME type), size, modified, opened and changed times, permissions, owner, where it is and where a link points; a folder's size and count, added up on a goroutine. Several selected: how many, and their size. | Space, Ctrl+I, Alt+Enter |
-| Path bar | The folder as buttons, one a segment (home as a house); a click beside them, or the pencil, edits it, the next button copies it, and the last opens a terminal there. Ctrl+L turns it into an entry (`~` is home, Tab completes folder names); a file typed opens its folder with it selected; a URI (`sftp://host/dir`, `smb://server/share`) mounts it; `trash:` is the trash. | Ctrl+L, Esc back |
+| Path bar | The folder as buttons, one a segment (home as a house), each going to its folder; a click beside them, or the pencil, edits it, the next button copies it, and the last opens a terminal there. Ctrl+L turns it into an entry (`~` is home, Tab completes folder names); a file typed opens its folder with it selected; a remote disk's address (`sftp://host/dir`, `smb://server/share`, `s3://KEY@host/bucket`) connects it; `trash:` is the trash. | Ctrl+L, Esc back |
 | Status | The count, the hidden count, the selection and its size, the filter typed, free space, and the zoom (− 100% +); a message for a moment after an action. The operation running shows under the panes, with its speed, time left and a cancel button. | |
 
 ### Views
@@ -101,7 +103,7 @@ Moving and opening
 | Alt+← / Alt+→ | Back / forward |
 | Alt+Home | Home |
 | Alt+1 … Alt+9 | The sidebar's first nine entries |
-| Ctrl+L | Type a path or a server |
+| Ctrl+L | Type a path or a remote disk's address |
 | Ctrl+P | Jump: the folders you used, by frecency (as zoxide), fuzzy matched |
 | Ctrl+F | Search below this folder: names, fuzzy, results as they are found, the best first when done; Esc leaves |
 | Letters | Filter this folder as you type (fuzzy; the folder keeps its order and the best match is selected); Backspace takes a letter off, Esc clears |
@@ -135,7 +137,7 @@ Window
 | Ctrl+H | Hidden files |
 | F3 / Tab | Two panes / the other pane |
 | F9 / Space, Ctrl+I | Sidebar / details |
-| Ctrl+R | Reload (folders follow their changes by themselves; this is for network folders) |
+| Ctrl+R | Reload (folders follow their changes by themselves; this is for remote disks, whose changes on the server are not told) |
 | Ctrl++ / Ctrl+− / Ctrl+0, Ctrl+wheel | Bigger / smaller / normal |
 | Ctrl+? | The keys |
 
@@ -171,14 +173,61 @@ The sidebar is the shell's index column, as Pass and Tailscale have:
   are left out. Other mounted filesystems (sshfs, NFS, rclone, a disk
   mounted by fstab), from `/proc/self/mountinfo`, follow; the mount table
   is followed through its `POLLPRI` mark.
-- **Network**: shares mounted through GVfs (`smb://`, `sftp://`, `ftp://`,
-  `dav(s)://`, `nfs://`, `afp://`, phones over MTP), with a disconnect
-  button, and *Connect to a server…*: a URI, with the ones used before
-  offered. GIO mounts it (`g_file_mount_enclosing_volume`), and GTK's
-  mount dialog asks for a password when the server wants one (with
-  whether to remember it). A share is browsed through GVfs's FUSE folder
-  (`/run/user/UID/gvfs`), so everything in the app works on it as on a
-  local folder. GVfs's volume monitor says when shares come and go.
+- **Remote disks**: a server's folder or a bucket, mounted by
+  [rclone](https://rclone.org) at `~/Remote/NAME`, so that every program
+  reads and writes it as a local folder. *Remote disk…* sets one up: its
+  kind (SFTP, SMB, WebDAV, FTP, S3, R2), then the fields that kind asks
+  for, each labelled and saying what an empty one means (an SFTP password
+  left empty signs in with the SSH keys, an SMB user left empty is a
+  guest), the name offered from the server, the share or the bucket.
+  *Test connection* (at the bottom left) tries the address and the
+  secret, mounting and keeping nothing, and says in a notification
+  whether it connects and, if not, why; Connect connects it and keeps it.
+  While either works, its button says so and the form waits; a refused
+  password, an unknown host key or a missing bucket is said on the form,
+  to be put right there. *Edit…* in a disk's menu (a right click on its
+  row) opens its setup again: a password left empty
+  keeps the one in the keyring, and a disk changed while connected is
+  disconnected first. The path bar and `inua-files` take
+  the same disks as addresses:
+
+  | Address | On |
+  |---|---|
+  | `sftp://user@host[:port]/folder` | SSH. Signs in with the SSH agent's keys, else asks for a password; the host's key must be in `~/.ssh/known_hosts` (connect once with `ssh` to check it) |
+  | `smb://[user@]server/share/folder` | Windows shares, Samba; a guest without a user |
+  | `ftp://`, `ftps://[user@]host/folder` | FTP; anonymous without a user |
+  | `dav://`, `davs://[user@]host/folder` | WebDAV (Nextcloud, ownCloud …), over HTTP or HTTPS |
+  | `s3://KEY@host/bucket/folder` | S3: `s3.amazonaws.com` or `s3.REGION.amazonaws.com`, or any S3 server (MinIO, Backblaze B2, Wasabi …) by its host |
+  | `r2://KEY@ACCOUNT/bucket/folder` | Cloudflare R2, by the account's ID |
+
+  KEY is the access key's ID; the password, or the secret key, is asked
+  for and kept in the keyring (the Secret Service, by the address), never
+  in the address or the settings. A disk is named after its share, bucket
+  or server, and is listed under *Remote disks* with its free space while
+  it is mounted; its eject button disconnects it, its menu also forgets it
+  (its address and secret; nothing on the server changes).
+
+  Connecting first lists the folder with the address, so that a refused
+  password, an unknown host key or a missing bucket is said at once; then
+  rclone mounts it as a systemd user unit of its own
+  (`inua-remote-NAME.service`), which keeps it mounted when the window
+  closes and stops it when the session ends; its log is
+  `$XDG_RUNTIME_DIR/inua/remote/`. The config rclone is started with,
+  which holds the secret (obscured, for the protocols whose passwords
+  rclone takes so), is in the runtime folder (in memory, the user's alone)
+  only while rclone starts; the secret is never on a command line.
+  Files written are kept in rclone's cache
+  (`~/.cache/inua/remote/`, by the address) until they are sent, so that
+  an editor saves as on a local disk, even to a bucket; what was not sent
+  when rclone stopped is sent the next time the same address is mounted.
+  It needs `rclone` (1.60 or later), `fusermount3` (fuse3) and systemd's
+  `systemd-run`. A remote disk's folder is followed only for the changes
+  made through it: the server's own are seen when the folder is read
+  again (Ctrl+R), once rclone's listing of it is a minute old. Buckets have no real folders: renaming a
+  folder in one copies every object in it.
+
+  Disks connected from a terminal or fstab (sshfs, NFS, CIFS, rclone) are
+  listed with the devices, from the mount table.
 
 ## The trash
 
@@ -229,6 +278,74 @@ until then.
   clipboard is spent, as in other file managers. Files another app put on
   the clipboard are read with `wl-paste`.
 
+## Archives
+
+**Compress…**, in the selection's menu, makes one archive of the items
+selected, beside them, on a card: its name (the item's own for one,
+*Archive* for more, numbered when taken) and its format, Zip, 7z,
+tar.gz, tar.xz or tar.zst. Folders go in whole, with their modes, times
+and links. Under **Advanced**:
+
+- **Compression**: *Fast*, *Normal* or *Smallest* (deflate 1, 6 or 9 for
+  Zip and gzip; xz's dictionary of 1, 8 or 64 MB; zstd's fastest,
+  default or best; 7z's `-mx` 1, 5 or 9).
+- **Password**, typed twice: a Zip or 7z locked with AES-256. A locked Zip
+  opens in 7-Zip and today's file managers, not in old unzip programs.
+  tar archives have no password.
+- **Lock the file names too** (7z): without the password not even the list
+  of files shows.
+- **Leave out hidden files**: the names starting with a dot inside the
+  folders (`.git`, `.cache`); an item chosen itself goes in.
+
+The format and the options chosen last are offered first; a password
+never is, and is never kept.
+
+**Extract here**, in the menu of archives selected, takes each apart beside
+itself. An archive whose items all sit in one folder, or that is one file,
+gives that folder or file; any other gives a folder named as the archive.
+A name taken is numbered (`photos (2)`), never merged into or replaced. A
+locked archive asks for its password on a card, and asks again when it is
+not the one.
+
+Files makes and reads Zip and tar (with gzip, bzip2, xz or zstd:
+`.tar.gz`, `.tgz` and the like) itself, and one file compressed alone
+(`.gz`, `.bz2`, `.xz`, `.zst`). The `7z` program (7zip) makes 7z and
+locked Zip archives, and reads 7z, rar and locked Zip; without it those
+say so. A password goes to 7z on its input, never on its command line,
+where any program on the computer could read it.
+
+Both run as operations: progress, cancelling, and undo, which trashes
+the archive made or what was extracted. Extracting works in a hidden
+folder beside the result and moves it into place at the end, so a
+cancelled or failed one (a wrong password too) leaves nothing. An item
+named to land outside the folder (an absolute name, `..`), or written
+through a link the archive made, stops the extraction; links are made
+last, after every file, so none is written through. Set-user-ID bits are
+dropped, and folders stay the user's to open.
+
+## Renaming many
+
+F2 (or **Rename N items…** in the menu) with more than one item selected
+renames them together, on a card that shows every new name before it is
+given. Four ways, the one used last offered first:
+
+- **Replace text**: what is found in each name becomes the replacement
+  (empty removes it); in any case unless *Match case*, and as a regular
+  expression when asked, `$1` in the replacement being its first group.
+- **Add text**: before or after each name.
+- **Number**: a name and a number, in the order the pane shows them,
+  from the number chosen: `Beach 1` … `Beach 5`, with as many digits as
+  the last needs (`Beach 01` … `Beach 12`); alone, just the number.
+- **Change case**: lowercase, UPPERCASE or Title Case.
+
+A file keeps its extension (`.tar.gz` counts as one); a folder's whole
+name is renamed. A new name that another file outside the selection has,
+that two items would get, or that is no name (empty, with `/`) is marked
+in the preview, and nothing is renamed until none is. Names the items
+trade among themselves (`a` to `b`, `b` to `a`) are fine: all move to
+hidden names first, then each to its own. It is one operation, undone in
+one step.
+
 ## Opening files
 
 A file opens with the app chosen for its type: its MIME type, guessed
@@ -254,6 +371,21 @@ launcher's terminal) started there, else `xdg-terminal-exec
 started there, else kitty with `--directory`. The folder is passed rather than only started in, as a
 terminal that serves its windows from one process (GNOME Terminal) would
 open in its own.
+
+## Tidy with AI
+
+**Tidy with AI…**, in the folder's menu (or a selected folder's), hands the
+folder to inua's assistant (`inua-assistant --ask`): it looks at the files
+(names, kinds, sizes, dates, the first lines of a text file whose name
+says little), makes a plan with Mister Morph's `plan_create` and shows it,
+then moves the files with `bash`. The question it is given sets the rules:
+only inside the folder, its own files into new or existing folders there,
+nothing deleted or overwritten (`mkdir -p`, `mv -n`), hidden files and the
+subfolders' contents left alone, the moves in one command, and their
+reverse written to `.tidy-undo.sh` in the folder, so `sh .tidy-undo.sh`
+there undoes it. It needs the assistant on and its Run commands
+(`bash`) in Settings → AI; Files says which is missing. The assistant has
+`plan_create` whenever it has any of Mister Morph's tools.
 
 ## Window
 
@@ -298,10 +430,11 @@ As the other light apps: the logic without GTK, tested; the view thin.
 
 | Package | What |
 | --- | --- |
-| `internal/apps/files` | Entries (`ReadDir`: names, then `statx`, which gives the creation time too, on up to eight goroutines for big folders; links' targets; `.hidden`), natural order without allocating, fuzzy matching and the filter, history, the jump list (frecency), settings, places (XDG user folders, GTK bookmarks read and written), mounts (`mountinfo`, `statfs`, GVfs's folder names, the table followed), the trash, operations (copy, move, link, trash, restore, delete, rename, make; conflicts, progress, cancelling, undo), the clipboard's formats, searching below a folder on several goroutines, watching a folder (inotify, a burst of changes merged into one within 80 ms, at most 600 ms late), thumbnails |
+| `internal/apps/files` | Entries (`ReadDir`: names, then `statx`, which gives the creation time too, on up to eight goroutines for big folders; links' targets; `.hidden`), natural order without allocating, fuzzy matching and the filter, history, the jump list (frecency), settings, places (XDG user folders, GTK bookmarks read and written), mounts (`mountinfo`, `statfs`, the table followed), the trash, operations (copy, move, link, trash, restore, delete, rename, make; conflicts, progress, cancelling, undo), the clipboard's formats, searching below a folder on several goroutines, watching a folder (inotify, a burst of changes merged into one within 80 ms, at most 600 ms late), thumbnails |
 | `internal/apps/files/disks` | UDisks2: volumes and their drives, mounting, unmounting, unlocking, locking, ejecting and powering off, followed by its signals |
+| `internal/apps/files/remote` | Remote disks: addresses, rclone's config for each kind, connecting (a listing first, then `rclone mount` as a systemd user unit) and disconnecting, why rclone failed, the secrets in the Secret Service |
 | `internal/apps/files/fm1` | `org.freedesktop.FileManager1`: serving it, and handing paths to a running instance |
-| `internal/filesui` | The windows: sidebar, panes and their tabs, list (its columns) and grid, details, path bar, cards (Open With among them), menus, drag and drop, the clipboard, operations' progress, zoom, GIO for apps by type and mounting shares |
+| `internal/filesui` | The windows: sidebar, panes and their tabs, list (its columns) and grid, details, path bar, cards (Open With among them), menus, drag and drop, the clipboard, operations' progress, zoom, GIO for apps by type, remote disks' cards |
 | `cmd/inua-files` | Arguments, handing over to a running instance, `-default` |
 | `ui/files.blp`, `ui/filespane.blp`, `ui/style.css` | The window, a pane, and their look (`window.files`) |
 
@@ -336,11 +469,21 @@ three letters as one types, 7 ms.
 `internal/apps/files` is tested in temporary folders: natural order,
 sorting, scoring and filtering, reading folders (links, broken links,
 `.hidden`, the parallel path), history and the jump list, places and
-bookmarks, `mountinfo` and GVfs's names, the trash (trashing, the info
+bookmarks, `mountinfo`, the trash (trashing, the info
 file, restoring, emptying), every operation with its conflicts, undo,
-cancelling, the clipboard's formats, watching, searching, thumbnails.
+cancelling, the clipboard's formats, watching, searching, thumbnails, archives
+(each format made and taken apart again, many items into a folder, one
+file compressed, names that would go outside or through a link, a
+cancelled extraction, 7z when it is installed, a password none, wrong and
+right for Zip and 7z, the password never on 7z's command line, each
+level, hidden files left out), and renaming many (each
+way's names, the plan's problems, names traded among the items, a name
+taken meanwhile, undo in one step).
 `disks` runs against a fake UDisks2 and `fm1` against a second process
-on a private bus (`internal/dbustest`). The window was checked by hand in
+on a private bus (`internal/dbustest`). `remote` runs against stand-ins
+for rclone, systemd and FUSE that record what they were given (the
+secret never on a command line, the config gone once rclone started),
+and keeps secrets in inua-keyring's Secret Service on a private bus. The window was checked by hand in
 a nested Hyprland: moving and opening by keys, the filter, two panes,
 the grid's thumbnails, details, rename, a new folder, the menu, copy and
 paste, a conflict, search, the location entry, the trash, undo and the
@@ -348,11 +491,10 @@ keys.
 
 ## Not yet
 
-In order: renaming many files with a pattern; thumbnails of videos
+In order: thumbnails of videos
 and PDFs through the system's thumbnailers; reordering, renaming and
 dropping on the sidebar's bookmarks (removing them is in their menu); asking a share's password in the
-app's own card rather than GTK's dialog; redo; archives (compress,
-extract); finding servers on the network (`network:///`, mDNS) rather than
+app's own card rather than GTK's dialog; redo; finding servers on the network (`network:///`, mDNS) rather than
 typing an address; a Miller-columns view. Recent and starred files are
 left out on purpose: the jump list covers folders, and the launcher finds
 files.

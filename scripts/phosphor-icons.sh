@@ -268,5 +268,19 @@ fortune-water                         drop
 fortune-dice                          dice-five
 # Files
 view-more                             dots-three
+# Remote Desktop
+remote-sharing                        screencast
+remote-machine                        desktop
+view-refresh                          arrow-clockwise
+# Mobile Link
+connect-this                          devices
+connect-phone                         device-mobile
+connect-tablet                        device-tablet
+connect-laptop                        laptop
+connect-desktop                       desktop
+connect-tv                            television
+battery-low                           battery-low
+folder-download                       download-simple
+dialog-error                          warning-circle
 LIST
 echo "$(ls "$dest"/*.svg | wc -l) icons in $dest"

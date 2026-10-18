@@ -2471,6 +2471,22 @@ window.files .files-card-title {
 }
 window.files .files-card .sub { color: @t1; font-size: 13.5px; }
 window.files .files-card-error { color: @danger; font-size: 13px; }
+/* A remote disk's setup: its kinds as a segmented control (as the pane's
+   list | grid), then a label beside each field. */
+window.files box.files-kinds { padding: 2px; border: 1px solid alpha(@line, 0.7); background: @app; }
+window.files box.files-kinds > button { min-height: 26px; padding: 0 12px; border: none; border-radius: 0; box-shadow: none; background: transparent; color: @t2; font-size: 12.5px; font-weight: 500; }
+window.files box.files-kinds > button:hover { background: alpha(@t0, 0.06); color: @t0; }
+window.files box.files-kinds > button:checked { background: alpha(@accent, 0.16); color: @accent; }
+/* A remote disk's edit button: there while the pointer is on its row, or
+   the keys are on the button. */
+window.files .files-rename-preview { border: 1px solid alpha(@line, 0.7); background: @app; }
+window.files .files-rename-row { padding: 4px 10px; font-size: 12.5px; }
+window.files .files-rename-row:nth-child(even) { background: alpha(@t0, 0.03); }
+window.files label.files-rename-problem, window.files label.sub.files-rename-problem { color: @danger; }
+window.files expander.files-expander > title { padding: 4px 0; color: @t1; font-size: 13px; }
+window.files expander.files-expander > title:hover { color: @t0; }
+window.files .files-advanced { margin-top: 10px; }
+window.files .files-form-label { min-width: 116px; color: @t1; font-size: 13px; } /* a column as wide for every kind */
 window.files .files-card-list { padding: 2px 0; }
 window.files button.files-card-item {
   min-height: 36px;
@@ -2486,6 +2502,12 @@ window.files button.files-card-item:hover { background: alpha(@accent, 0.06); }
 window.files button.files-card-item.selected { border-color: alpha(@accent, 0.3); background: alpha(@accent, 0.12); }
 window.files button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
 window.files button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
+/* Filled, they stay filled when hovered (not the outlined buttons' tint,
+   which left the dark label on a dark ground) and while at work. */
+window.files button.suggested-action:hover { border-color: @accent; background: mix(@accent, @t0, 0.14); }
+window.files button.destructive-action:hover { border-color: @danger; background: mix(@danger, @t0, 0.14); }
+window.files button.suggested-action:disabled { border-color: @accent; background: @accent; color: @app; opacity: 0.6; }
+window.files button.destructive-action:disabled { border-color: @danger; background: @danger; color: @app; opacity: 0.6; }
 window.files .files-keys-head { margin: 14px 0 6px; }
 window.files .files-keys-row { min-height: 24px; }
 window.files .files-key { min-width: 190px; color: @accent; }

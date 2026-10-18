@@ -149,12 +149,22 @@ func newPane(w *window, n int) *pane {
 			p.setView(v)
 		}
 	})
-	// A click beside the path's buttons edits it.
-	w.press(&p.crumbScroll.Widget, false, func(button uint32, _ int32, _, _ float64) {
-		if button == 1 {
-			w.setActive(p)
-			p.editLocation()
+	// A click beside the path's buttons edits it; one on a button goes
+	// there (the button's own click), so it is left alone here.
+	w.press(&p.crumbScroll.Widget, false, func(button uint32, _ int32, x, y float64) {
+		if button != 1 {
+			return
 		}
+		for at := p.crumbScroll.Pick(x, y, gtk.PickDefaultValue); at != nil; at = at.GetParent() {
+			if at.HasCssClass("files-crumb") {
+				return
+			}
+			if at.GoPointer() == p.crumbScroll.GoPointer() {
+				break
+			}
+		}
+		w.setActive(p)
+		p.editLocation()
 	})
 	w.enter(&p.location, func() { p.typedLocation() })
 	w.edit(&p.search, func() { p.searchChanged() })
@@ -796,7 +806,7 @@ func (p *pane) activate(pos uint32) {
 }
 
 // typedLocation goes where the path entry says: a folder, a file's
-// folder with the file selected, or a server to mount.
+// folder with the file selected, or a remote disk to connect.
 func (p *pane) typedLocation() {
 	t := strings.TrimSpace(p.location.GetText())
 	p.pathStack.SetVisibleChildName("crumbs")
@@ -809,7 +819,7 @@ func (p *pane) typedLocation() {
 		return
 	}
 	if !files.IsLocalURI(t) {
-		p.w.connect(p, t)
+		p.w.connectRemote(p, t)
 		return
 	}
 	if local, ok := files.PathOfURI(t); ok {
@@ -884,6 +894,11 @@ func (p *pane) completeLocation() {
 // --- the path bar ---
 
 func (p *pane) showCrumbs() {
+	if p == p.w.cur() {
+		// Where the pane with the keys is, wherever it went from.
+		p.w.syncTitle()
+		p.w.markSidebar()
+	}
 	p.buildTabs()
 	p.w.app.h.forget(p.crumbPtr)
 	p.crumbPtr = p.crumbPtr[:0]
