@@ -153,8 +153,14 @@ func DefaultOSInfoRoots() OSInfoRoots {
 	if err != nil {
 		home = ""
 	}
+	system := "/usr/share/osinfo"
+	if _, distro := hostOS("/"); distro == "nixos" {
+		if resolved, err := filepath.EvalSymlinks("/run/current-system/sw/share/osinfo"); err == nil {
+			system = resolved
+		}
+	}
 	return OSInfoRoots{
-		System: "/usr/share/osinfo",
+		System: system,
 		User:   filepath.Join(home, ".local", "share", "osinfo"),
 	}
 }

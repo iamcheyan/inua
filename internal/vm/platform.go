@@ -211,6 +211,14 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 			break
 		}
 	}
+	if !p.Firmware.Available && distro == "nixos" {
+		for _, candidate := range nixOSOVMFCodeFiles() {
+			if path := mapPath(candidate); probes.Exists(path) {
+				p.Firmware = Capability{Available: true, Detail: path}
+				break
+			}
+		}
+	}
 	// A machine runs under systemd-run, so that the guest outlives the window
 	// that started it and dies with the session.
 	p.SystemdRun = pathCapability(probes, "systemd-run", "systemd-run unavailable")
@@ -222,8 +230,12 @@ func DetectPlatform(root string, probes PlatformProbes) Platform {
 	// distributions' current list, and the check says so rather than only
 	// naming what is missing.
 	p.OSInfoDB = Capability{Detail: "osinfo-db is not installed: install images are offered from inua's own three-image list instead of the distributions' catalog"}
-	if dir := mapPath("/usr/share/osinfo/os"); probes.Exists(dir) {
-		p.OSInfoDB = Capability{Available: true, Detail: dir}
+	for _, candidate := range osInfoDirectories(root, distro) {
+		dir := mapPath(candidate)
+		if probes.Exists(filepath.Join(dir, "os")) {
+			p.OSInfoDB = Capability{Available: true, Detail: filepath.Join(dir, "os")}
+			break
+		}
 	}
 
 	socket := mapPath("/var/run/docker.sock")
@@ -463,8 +475,28 @@ func archFor(goarch string) Arch {
 	return ""
 }
 
+func nixOSOVMFCodeFiles() []string {
+	return []string{
+		"/run/current-system/sw/share/qemu/edk2-x86_64-code.fd",
+		"/run/current-system/sw/share/qemu/edk2-aarch64-code.fd",
+		"/run/current-system/sw/share/qemu/edk2-riscv-code.fd",
+		"/run/current-system/sw/share/qemu/edk2-i386-code.fd",
+	}
+}
+
+func osInfoDirectories(_ string, distro string) []string {
+	if distro == "nixos" {
+		return []string{"/run/current-system/sw/share/osinfo"}
+	}
+	return []string{"/usr/share/osinfo"}
+}
+
 func platformOVMFCodeFiles() []string {
 	return []string{
+		"/run/current-system/sw/share/qemu/edk2-x86_64-code.fd",
+		"/run/current-system/sw/share/qemu/edk2-aarch64-code.fd",
+		"/run/current-system/sw/share/qemu/edk2-riscv-code.fd",
+		"/run/current-system/sw/share/qemu/edk2-i386-code.fd",
 		"/usr/share/edk2/x64/OVMF_CODE.4m.fd",
 		"/usr/share/edk2/x64/OVMF_CODE.fd",
 		"/usr/share/OVMF/OVMF_CODE_4M.fd",

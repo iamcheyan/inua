@@ -170,14 +170,21 @@ func TestQEMUCheckFollowsTheHostArchitecture(t *testing.T) {
 // NixOS each put their OVMF image somewhere else, so a host with any one of
 // them passes. The test is a fake root holding exactly one of them.
 func TestFirmwareCheckFindsAnInstalledOVMF(t *testing.T) {
-	for _, tc := range []struct{ name, candidate string }{
-		{"debian and ubuntu", "/usr/share/OVMF/OVMF_CODE_4M.fd"},
-		{"fedora", "/usr/share/edk2/x64/OVMF_CODE.4m.fd"},
-		{"arch", "/usr/share/edk2-ovmf/x64/OVMF_CODE.fd"},
-		{"nixos", "/run/libvirt/nix-ovmf/OVMF_CODE.fd"},
+	for _, tc := range []struct{ name, candidate, distro string }{
+		{"debian and ubuntu", "/usr/share/OVMF/OVMF_CODE_4M.fd", "ubuntu"},
+		{"fedora", "/usr/share/edk2/x64/OVMF_CODE.4m.fd", "fedora"},
+		{"arch", "/usr/share/edk2-ovmf/x64/OVMF_CODE.fd", "arch"},
+		{"nixos libvirt", "/run/libvirt/nix-ovmf/OVMF_CODE.fd", "nixos"},
+		{"nixos system profile", "/run/current-system/sw/share/qemu/edk2-x86_64-code.fd", "nixos"},
 	} {
 		root := socktest.Dir(t)
 		path := filepath.Join(root, strings.TrimPrefix(tc.candidate, "/"))
+		if err := os.MkdirAll(filepath.Join(root, "etc"), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(root, "etc", "os-release"), []byte("ID="+tc.distro+"\n"), 0600); err != nil {
+			t.Fatal(err)
+		}
 		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 			t.Fatal(err)
 		}
@@ -422,6 +429,29 @@ func TestOSInfoDBCheckSaysWhatItsAbsenceCosts(t *testing.T) {
 	}
 	if item, ok := byName(installed)["osinfo-db"]; !ok || !item.OK {
 		t.Errorf("the doctor does not pass osinfo-db: %+v", installed.Doctor)
+	}
+
+	// NixOS exposes the immutable database through its active system profile,
+	// not /usr/share. Verify both the doctor and the default catalog root.
+	nixRoot := socktest.Dir(t)
+	if err := os.MkdirAll(filepath.Join(nixRoot, "etc"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(nixRoot, "etc", "os-release"), []byte("ID=nixos\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	profileDB := filepath.Join(nixRoot, "run/current-system/sw/share/osinfo")
+	if err := os.MkdirAll(filepath.Join(profileDB, "os"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	nix := DetectPlatform(nixRoot, PlatformProbes{
+		Accessible:    func(string) bool { return false },
+		CommandOutput: func(string, ...string) (string, error) { return "", errors.New("no docker here") },
+		Architecture:  func() string { return "amd64" },
+		Filesystem:    func(string) string { return "ext4" },
+	})
+	if !nix.OSInfoDB.Available || !strings.HasSuffix(nix.OSInfoDB.Detail, "/run/current-system/sw/share/osinfo/os") {
+		t.Errorf("NixOS osinfo-db = %+v", nix.OSInfoDB)
 	}
 }
 
