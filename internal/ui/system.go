@@ -57,6 +57,7 @@ func (s *shellUI) update(f func(*shell.System)) {
 		for _, b := range s.bars {
 			b.setStatus(&s.sys)
 		}
+		s.checkOsd(&s.sys) // the display answers what this changed
 		if s.control.open {
 			s.applyControl()
 		}

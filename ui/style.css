@@ -4266,3 +4266,21 @@ window.mail .mail-assist-actions { padding-bottom: 4px; }
 window.mail button.mail-assist-action { min-height: 34px; padding: 0 8px; font-size: 13px; }
 window.mail button.mail-assist-action image { color: @accent; }
 window.mail button.mail-assist-action:disabled image { color: @t2; }
+
+/* --- on-screen display ----------------------------------------------- */
+
+/* The card that answers a change to the volume, the brightness, Wi-Fi or
+   Bluetooth: an icon and a word, as the banners' cards are. It fades out;
+   the window hides once it is out. */
+window.osd { background: transparent; }
+.osd-card {
+  padding: 12px 16px;
+  border: 1px solid @line;
+  border-radius: 6px;
+  background: alpha(@app, 0.88);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+  transition: opacity 200ms ease-in;
+}
+window.osd.fading .osd-card { opacity: 0; }
+.osd-card image { color: @t0; min-width: 24px; min-height: 24px; }
+.osd-word { color: @t1; }

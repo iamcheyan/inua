@@ -1,0 +1,30 @@
+// The on-screen display: one icon and a word answering a change to the
+// volume, the brightness, Wi-Fi or Bluetooth, in a layer surface that is
+// only as big as the card. Go picks the icon and the word and times it
+// away. The margins are the room for the card's shadow, which the window
+// would cut at its edges.
+using Gtk 4.0;
+
+ApplicationWindow osd {
+  styles ["osd"]
+
+  Box card {
+    styles ["osd-card"]
+    orientation: horizontal;
+    spacing: 10;
+    margin-top: 12;
+    margin-bottom: 12;
+    margin-start: 16;
+    margin-end: 16;
+
+    Image osd_icon {
+      icon-name: "speaker-high-symbolic";
+    }
+
+    Label osd_text {
+      styles ["osd-word"]
+      label: "";
+      valign: center;
+    }
+  }
+}

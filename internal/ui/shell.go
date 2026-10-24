@@ -106,6 +106,8 @@ type shellUI struct {
 	volScroll float64   // scroll steps on the status button not yet applied to the volume
 	volHeld   float64   // the volume the last scroll notch asked for
 	volUntil  time.Time // while set, the next notch builds on volHeld, not the service's state
+	osd       osd       // the on-screen display of system changes
+	osdSeen   osdState  // what the display last showed, to spot changes
 
 	// Long-lived signal handlers, shared by all widgets (see package gtkx).
 	onMonitorsChanged      func(uintptr, uint32, uint32, uint32, uintptr)
@@ -114,6 +116,8 @@ type shellUI struct {
 	onWorkspaceSettle      glib.SourceFunc
 	onClock                glib.SourceFunc
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onOsdHide              glib.SourceFunc
+	onOsdGone              glib.SourceFunc
 	onLauncherScroll       func(gtk.EventControllerScroll, float64, float64) bool
 	onOverviewKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onOverviewButton       func(gtk.Button)
@@ -437,6 +441,7 @@ func (s *shellUI) start() {
 	s.startUpdates()
 	s.startSharing()
 	s.startConnect()
+	s.bindOsdHandlers()
 	s.startWebTerm()
 	s.startSystem()
 	s.startAssistant()
@@ -526,7 +531,6 @@ func (s *shellUI) bindHandlers() {
 		}
 		return true
 	}
-
 	// GDK lists a new monitor before it knows its name; the bar can only
 	// pick its workspaces once the name is there.
 	s.onConnector = func(mon, _, _ uintptr) {

@@ -49,6 +49,16 @@ tray = true
 # when there is a store. `inua call pass toggle` opens it too.
 pass = true
 
+[osd]
+# The on-screen display that answers a change to the volume, the
+# brightness, Wi-Fi or Bluetooth with an icon and a word: the volume keys,
+# the scroll on the bar's status button, the control center, the settings.
+enable = true
+
+# Where it sits: "top-center", "top-right", "top-left", "bottom-center",
+# "bottom-right" or "bottom-left". A top one sits under the bar.
+position = "top-center"
+
 [launcher]
 # What `inua call launcher toggle` opens: "apps" or "windows".
 # (`launcher apps` and `launcher windows` open a mode directly; Tab switches.)
@@ -165,6 +175,10 @@ text_scale = 100
 # panels, dock, menus, notifications), 0 to 80 percent. The bar's islands
 # and the clipboard have their own settings.
 transparency = 16
+
+# Corner radius of the shell's floating surfaces, in pixels. 0 makes them
+# square.
+radius = 4
 
 # Extra stylesheet loaded after the built-in one, relative to this file's
 # directory. Ignored if the file does not exist. See style.css next to this

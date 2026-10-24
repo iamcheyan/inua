@@ -16,10 +16,11 @@ func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
 		c.Bar.Enable, q(c.Bar.Density), optInt("empty_transparency", c.Bar.EmptyTransparency), optInt("window_transparency", c.Bar.WindowTransparency), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass,
+		c.Osd.Enable, q(c.Osd.Position),
 		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor,
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
-		q(c.Style.Theme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, q(c.Style.CSS),
+		q(c.Style.Theme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS),
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
 		c.Displays.LidOff, monitors(c.Displays.Monitors),
@@ -229,6 +230,16 @@ tray = %t
 # when there is a store. `+"`inua call pass toggle`"+` opens it too.
 pass = %t
 
+[osd]
+# The on-screen display that answers a change to the volume, the
+# brightness, Wi-Fi or Bluetooth with an icon and a word: the volume keys,
+# the scroll on the bar's status button, the control center, the settings.
+enable = %t
+
+# Where it sits: "top-center", "top-right", "top-left", "bottom-center",
+# "bottom-right" or "bottom-left". A top one sits under the bar.
+position = %s
+
 [launcher]
 # What `+"`inua call launcher toggle`"+` opens: "apps" or "windows".
 # (`+"`launcher apps`"+` and `+"`launcher windows`"+` open a mode directly; Tab switches.)
@@ -310,6 +321,10 @@ text_scale = %d
 # panels, dock, menus, notifications), 0 to 80 percent. The bar's islands
 # and the clipboard have their own settings.
 transparency = %d
+
+# Corner radius of the shell's floating surfaces, in pixels. 0 makes them
+# square.
+radius = %d
 
 # Extra stylesheet loaded after the built-in one, relative to this file's
 # directory. Ignored if the file does not exist. See style.css next to this

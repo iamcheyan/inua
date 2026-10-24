@@ -25,6 +25,7 @@ type Config struct {
 	// follows the environment (LANGUAGE, LC_ALL, LC_MESSAGES, LANG).
 	Language   string     `toml:"language"`
 	Bar        Bar        `toml:"bar"`
+	Osd        Osd        `toml:"osd"`
 	Launcher   Launcher   `toml:"launcher"`
 	Overview   Overview   `toml:"overview"`
 	Control    Control    `toml:"control"`
@@ -69,6 +70,20 @@ type Bar struct {
 	// app's) and copies from it, when there is a store.
 	Pass bool `toml:"pass"`
 }
+
+// Osd is the on-screen display that answers volume, brightness, Wi-Fi and
+// Bluetooth changes with an icon and a word.
+type Osd struct {
+	// Enable shows the display.
+	Enable bool `toml:"enable"`
+	// Position is where it sits on the screen: "top-right", "top-center",
+	// "top-left", "bottom-right", "bottom-center" or "bottom-left".
+	Position string `toml:"position"`
+}
+
+// OsdPositions are the places the on-screen display may sit, as the
+// settings window offers them.
+var OsdPositions = []string{"top-right", "top-center", "top-left", "bottom-right", "bottom-center", "bottom-left"}
 
 type Launcher struct {
 	// Mode is what `launcher toggle` opens: "apps" or "windows".
@@ -152,6 +167,9 @@ type Style struct {
 	// surfaces (launcher, panels, dock, menus), 0 (opaque) to 80 percent.
 	// The bar's islands and the clipboard have their own settings.
 	Transparency int `toml:"transparency"`
+	// Radius is the corner radius of the shell's floating surfaces
+	// (launcher, panels, dock, menus), in pixels. 0 makes them square.
+	Radius int `toml:"radius"`
 }
 
 type Background struct {
@@ -710,13 +728,14 @@ func Default() Config {
 			Tray:       true,
 			Pass:       true,
 		},
+		Osd:      Osd{Enable: true, Position: "top-center"},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
 		Overview: Overview{MRU: false, PerMonitor: true},
 		Control: Control{
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100, Transparency: 16},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4},
 		Background: Background{Enable: true, Fit: "cover"},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
@@ -857,6 +876,10 @@ func (c *Config) validate() []string {
 	if c.Style.Transparency < 0 || c.Style.Transparency > 80 {
 		w = append(w, fmt.Sprintf("style.transparency = %d: want 0 to 80; using %d", c.Style.Transparency, d.Style.Transparency))
 		c.Style.Transparency = d.Style.Transparency
+	}
+	if c.Style.Radius < 0 || c.Style.Radius > 20 {
+		w = append(w, fmt.Sprintf("style.radius = %d: want 0 to 20; using %d", c.Style.Radius, d.Style.Radius))
+		c.Style.Radius = d.Style.Radius
 	}
 	oneOf("background.fit", &c.Background.Fit, d.Background.Fit, Fits...)
 	if !ValidColor(c.Background.Color) {
