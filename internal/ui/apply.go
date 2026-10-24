@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -14,7 +13,6 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
-	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/notify"
@@ -28,10 +26,7 @@ type styles struct {
 	base      *gtk.CssProvider // theme tokens + style.css
 	user      *gtk.CssProvider // style.css from the config directory
 	wallpaper *gtk.CssProvider // window.wallpaper
-	clipboard *gtk.CssProvider // clipboard card opacity
 	swatches  *gtk.CssProvider // the settings window's theme swatches
-	bar       *gtk.CssProvider // per-workspace bar background transparency
-	shell     *gtk.CssProvider // style.transparency, over every floating surface
 	drawing   string           // the picture inua is drawing, by its key (picturePath)
 	shown     string           // the file of the picture inua drew last shown
 	midnight  *time.Timer      // draws the next day's picture (nextPicture)
@@ -42,14 +37,6 @@ func (s *shellUI) theme() string { return cmp.Or(s.cfg.Style.Theme, "yoru") }
 // loadStyles (re)loads the theme, the built-in style and the user's
 // stylesheet.
 func (s *shellUI) loadStyles() {
-	defer func() {
-		// Style is compared as a whole in applyConfig, so the settings
-		// window's slider must follow it here too.
-		if s.settings.win != nil {
-			s.settings.transparency.SetValue(float64(s.cfg.Style.Transparency))
-			s.settings.transparencyVal.SetText(i18n.Tf("%d%%", s.cfg.Style.Transparency))
-		}
-	}()
 	st := &s.styles
 	display := gdk.DisplayGetDefault()
 	if st.base == nil {
@@ -58,8 +45,7 @@ func (s *shellUI) loadStyles() {
 		gtk.StyleContextAddProviderForDisplay(display, st.wallpaper, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION))
 		gtk.StyleContextAddProviderForDisplay(display, st.user, uint32(gtk.STYLE_PROVIDER_PRIORITY_USER))
 	}
-	// The theme defines the colour tokens style.css uses.
-	st.base.LoadFromString(s.cfg.ThemeCSS(s.theme(), s.readUI) + shell.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale))
+	s.loadBase()
 	user := ""
 	if path := s.cfg.CSSPath(); path != "" {
 		if css, err := os.ReadFile(path); err == nil {
@@ -71,81 +57,16 @@ func (s *shellUI) loadStyles() {
 	}
 	st.user.LoadFromString(user)
 	s.loadIcons()
-	s.loadClipboardStyle()
-	s.loadBarStyle()
-	s.loadShellStyle()
+	s.loadSwatchStyle()
 }
 
-func (s *shellUI) loadBarStyle() {
-	st := &s.styles
-	if st.bar == nil {
-		st.bar = gtk.NewCssProvider()
-		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.bar, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
-	}
-	empty := s.cfg.Style.Transparency
-	if s.cfg.Bar.EmptyTransparency != nil {
-		empty = *s.cfg.Bar.EmptyTransparency
-	}
-	occupied := s.cfg.Style.Transparency
-	if s.cfg.Bar.WindowTransparency != nil {
-		occupied = *s.cfg.Bar.WindowTransparency
-	}
-	st.bar.LoadFromString(fmt.Sprintf(
-		".bar.empty .island { background: alpha(@app, %s); border-radius: %spx; }\n.bar.occupied .island { background: alpha(@app, %s); border-radius: %spx; }\n",
-		alpha(1-float64(empty)/100), strconv.Itoa(s.cfg.Style.Radius),
-		alpha(1-float64(occupied)/100), strconv.Itoa(s.cfg.Style.Radius)))
+// loadBase loads the theme and the built-in style, with the surfaces'
+// transparency and corners, alone; a new transparency or radius needs no
+// more.
+func (s *shellUI) loadBase() {
+	// The theme defines the colour tokens style.css uses.
+	s.styles.base.LoadFromString(s.cfg.ThemeCSS(s.theme(), s.readUI) + shell.Glass(s.cfg.Style.Transparency) + shell.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale) + shell.Corners(s.cfg.Style.Radius))
 }
-
-// shellSurfaces are the floating surfaces the two [style] looks apply to:
-// the transparency's background and the radius's corners. The launcher,
-// each panel's card, the dock, the shot drawer and the menus; the bar's
-// islands are in loadBarStyle, with their own transparency. The settings,
-// lock and polkit windows keep their own looks.
-const shellSurfaces = `.launcher,
-.agenda .card,
-.control .card,
-.center .card,
-.note,
-.dock,
-.shot-drawer,
-popover.menu > contents,
-popover.menu > arrow { background: alpha(@app, %s); border-radius: %spx; }
-`
-
-// loadClipboardStyle applies the clipboard panel's own opacity, or the
-// shell's transparency when it sets none.
-func (s *shellUI) loadClipboardStyle() {
-	st := &s.styles
-	if st.clipboard == nil {
-		st.clipboard = gtk.NewCssProvider()
-		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.clipboard, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
-	}
-	opacity := s.cfg.Style.Transparency
-	if s.cfg.Clipboard.Opacity != nil {
-		opacity = *s.cfg.Clipboard.Opacity
-	}
-	// The settings file checks the range (config.validate).
-	css := fmt.Sprintf(".clipboard-panel .clipboard-card { background: alpha(@app, %.2f); }\n", 1-float64(opacity)/100)
-	st.clipboard.LoadFromString(css)
-}
-
-// loadShellStyle applies style.transparency and style.radius over every
-// floating surface, so they share one opacity and corner radius the user
-// sets once.
-func (s *shellUI) loadShellStyle() {
-	st := &s.styles
-	if st.shell == nil {
-		st.shell = gtk.NewCssProvider()
-		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.shell, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
-	}
-	// The settings file checks both ranges (config.validate).
-	st.shell.LoadFromString(fmt.Sprintf(shellSurfaces,
-		alpha(1-float64(s.cfg.Style.Transparency)/100),
-		strconv.Itoa(s.cfg.Style.Radius)))
-}
-
-// alpha renders an opacity as the CSS alpha() argument, two decimals.
-func alpha(v float64) string { return fmt.Sprintf("%.2f", v) }
 
 // loadWallpaper styles the wallpaper windows from the settings: the picture
 // inua draws, once it is drawn (covering the screen, as it is drawn for
@@ -237,10 +158,13 @@ func (s *shellUI) applyConfig(c config.Config) {
 	if old.Overview != c.Overview {
 		s.installOverviewKeys()
 	}
-	if old.Style != c.Style {
-		s.loadStyles()
-	} else if old.Style.Transparency != c.Style.Transparency {
-		s.loadShellStyle()
+	if was, now := old.Style, c.Style; was != now {
+		was.Transparency, was.Radius = now.Transparency, now.Radius
+		if was == now {
+			s.loadBase()
+		} else {
+			s.loadStyles()
+		}
 	}
 	if old.Style.AppIcons != c.Style.AppIcons {
 		for _, b := range s.bars {
@@ -249,9 +173,6 @@ func (s *shellUI) applyConfig(c config.Config) {
 			}
 		}
 		s.renderDocks()
-	}
-	if old.Bar.EmptyTransparency != c.Bar.EmptyTransparency || old.Bar.WindowTransparency != c.Bar.WindowTransparency {
-		s.loadBarStyle()
 	}
 	if old.Osd.Position != c.Osd.Position && s.osd.win != nil && s.layer {
 		s.placeOsd(s.osd.win.GoPointer(), s.osd.mon)
@@ -279,9 +200,6 @@ func (s *shellUI) applyConfig(c config.Config) {
 	}
 	if c.Bar.Pass && !old.Bar.Pass {
 		s.checkPasswordsStore() // one may have been made since
-	}
-	if old.Clipboard.Opacity != c.Clipboard.Opacity {
-		s.loadClipboardStyle()
 	}
 	if old.Clipboard.Enable != c.Clipboard.Enable {
 		if c.Clipboard.Enable {

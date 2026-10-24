@@ -22,12 +22,6 @@ enable = true
 # Bar density: "default" or "compact". Compact saves vertical screen space.
 density = "default"
 
-# The bar islands' background transparency, from 0% (opaque) to 80%
-# (more transparent), for empty workspaces and for workspaces with
-# windows. Unset, both follow style.transparency.
-
-
-
 # Clock, in strftime format: %a %A weekday, %b %B month, %d %e day, %m month,
 # %Y year, %H %I hour (24h/12h), %M minute, %S second, %p AM/PM.
 # A '-' drops zero padding (%-d, %-H). With seconds, the clock ticks every
@@ -75,7 +69,6 @@ search = "https://www.google.com/search?q=%s"
 
 # Quicklinks: a query starting with a keyword searches that site
 # ("gh inua"). Add your own; quicklinks = [] turns them off.
-
 
 [[launcher.quicklinks]]
 keyword = "g"
@@ -171,13 +164,13 @@ edge_gaps = true
 # spacing and the stylesheet below keep their sizes.
 text_scale = 100
 
-# Background transparency of the shell's floating surfaces (launcher,
-# panels, dock, menus, notifications), 0 to 80 percent. The bar's islands
-# and the clipboard have their own settings.
+# Background transparency of the bar, the launcher, the panels, the dock
+# and notifications, from 0% (opaque) to 80%. An empty workspace's bar
+# is lighter. Menus, the settings window and the lock screen keep theirs.
 transparency = 16
 
-# Corner radius of the shell's floating surfaces, in pixels. 0 makes them
-# square.
+# Corner radius of the same surfaces and the menus, 0 (square) to 20
+# pixels; the dock's is half as much again.
 radius = 4
 
 # Extra stylesheet loaded after the built-in one, relative to this file's
@@ -286,10 +279,6 @@ enable = true
 # Shortcuts (Clipboard history) opens the panel too.
 bar = true
 
-# The panel's opacity, 50 to 100 percent. Unset, it follows
-# style.transparency.
-
-
 # How many entries the history keeps, 20 to 1000; the oldest go first.
 limit = 300
 
@@ -373,7 +362,6 @@ serve_listen = "127.0.0.1:8794"
 # Service; inua-keyring keeps it in pass), or without one in
 # ~/.local/share/inua/keys.json, readable only by you; keys are never
 # written here.
-
 
 [[assistant.profiles]]
 name = "openai"

@@ -15,7 +15,7 @@ import (
 func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
-		c.Bar.Enable, q(c.Bar.Density), optInt("empty_transparency", c.Bar.EmptyTransparency), optInt("window_transparency", c.Bar.WindowTransparency), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass,
+		c.Bar.Enable, q(c.Bar.Density), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass,
 		c.Osd.Enable, q(c.Osd.Position),
 		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor,
 		q(c.Control.Lock), q(c.Control.Screenshot),
@@ -26,7 +26,7 @@ func Format(c Config) string {
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
 		c.Displays.LidOff, monitors(c.Displays.Monitors),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
-		c.Clipboard.Enable, c.Clipboard.Bar, optInt("opacity", c.Clipboard.Opacity), c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
+		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges,
@@ -36,15 +36,8 @@ func Format(c Config) string {
 		shortcuts(c.Shortcuts))
 }
 
-// optInt renders an optional int setting as its whole "key = value"
-// line; an empty string omits it, so the file does not set it. The
-// template's comment above each placeholder says what unset means.
-func optInt(key string, v *int) string {
-	if v == nil {
-		return ""
-	}
-	return key + " = " + strconv.Itoa(*v) + "\n"
-}
+// The optional settings are written commented out while unset, so the file
+// still shows them.
 func kbOptionsLine(o *string) string {
 	if o == nil {
 		return `# kb_options = ""`
@@ -204,12 +197,6 @@ enable = %t
 # Bar density: "default" or "compact". Compact saves vertical screen space.
 density = %s
 
-# The bar islands' background transparency, from 0%% (opaque) to 80%%
-# (more transparent), for empty workspaces and for workspaces with
-# windows. Unset, both follow style.transparency.
-%s
-%s
-
 # Clock, in strftime format: %%a %%A weekday, %%b %%B month, %%d %%e day, %%m month,
 # %%Y year, %%H %%I hour (24h/12h), %%M minute, %%S second, %%p AM/PM.
 # A '-' drops zero padding (%%-d, %%-H). With seconds, the clock ticks every
@@ -256,8 +243,7 @@ terminal = %s
 search = %s
 
 # Quicklinks: a query starting with a keyword searches that site
-# ("gh inua"). Add your own; quicklinks = [] turns them off.
-%s
+# ("gh inua"). Add your own; quicklinks = [] turns them off.%s
 
 [overview]
 # Sort workspaces by recent window focus instead of their numeric order.
@@ -318,13 +304,13 @@ edge_gaps = %t
 # spacing and the stylesheet below keep their sizes.
 text_scale = %d
 
-# Background transparency of the shell's floating surfaces (launcher,
-# panels, dock, menus, notifications), 0 to 80 percent. The bar's islands
-# and the clipboard have their own settings.
+# Background transparency of the bar, the launcher, the panels, the dock
+# and notifications, from 0%% (opaque) to 80%%. An empty workspace's bar
+# is lighter. Menus, the settings window and the lock screen keep theirs.
 transparency = %d
 
-# Corner radius of the shell's floating surfaces, in pixels. 0 makes them
-# square.
+# Corner radius of the same surfaces and the menus, 0 (square) to 20
+# pixels; the dock's is half as much again.
 radius = %d
 
 # Extra stylesheet loaded after the built-in one, relative to this file's
@@ -433,10 +419,6 @@ enable = %t
 # Shortcuts (Clipboard history) opens the panel too.
 bar = %t
 
-# The panel's opacity, 50 to 100 percent. Unset, it follows
-# style.transparency.
-%s
-
 # How many entries the history keeps, 20 to 1000; the oldest go first.
 limit = %d
 
@@ -519,8 +501,7 @@ serve_listen = %s
 # typed in the settings window (AI) and kept in the keyring (the Secret
 # Service; inua-keyring keeps it in pass), or without one in
 # ~/.local/share/inua/keys.json, readable only by you; keys are never
-# written here.
-%s
+# written here.%s
 
 [keyring]
 # inua-keyring keeps apps' secrets (the Secret Service: browsers' keys,

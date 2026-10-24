@@ -53,12 +53,6 @@ type Bar struct {
 	Enable bool `toml:"enable"`
 	// Density is "default" or "compact"; compact reduces the bar's height and spacing.
 	Density string `toml:"density"`
-	// EmptyTransparency and WindowTransparency are the bar islands'
-	// background transparency percentages (0-80). Nil follows
-	// style.transparency; the settings window sets them when the user
-	// customizes the bar's transparency.
-	EmptyTransparency  *int `toml:"empty_transparency"`
-	WindowTransparency *int `toml:"window_transparency"`
 	// Clock is a strftime format (see Strftime).
 	Clock string `toml:"clock"`
 	// Workspaces is "monitor" (each bar shows its monitor's workspaces)
@@ -163,12 +157,12 @@ type Style struct {
 	// TextScale sizes the built-in style's text, 80 to 150 percent. Icons,
 	// spacing and the user's stylesheet keep their sizes.
 	TextScale int `toml:"text_scale"`
-	// Transparency is the background transparency of the shell's floating
-	// surfaces (launcher, panels, dock, menus), 0 (opaque) to 80 percent.
-	// The bar's islands and the clipboard have their own settings.
+	// Transparency is the floating surfaces' background transparency
+	// (the bar, launcher, panels, dock and notifications), 0 (opaque) to
+	// 80 percent.
 	Transparency int `toml:"transparency"`
-	// Radius is the corner radius of the shell's floating surfaces
-	// (launcher, panels, dock, menus), in pixels. 0 makes them square.
+	// Radius is the corner radius of the same surfaces and the menus, 0
+	// (square) to 20 pixels; the dock's is half as much again.
 	Radius int `toml:"radius"`
 }
 
@@ -557,10 +551,6 @@ type Clipboard struct {
 	Enable bool `toml:"enable"`
 	// Bar shows a clipboard history button in the top bar.
 	Bar bool `toml:"bar"`
-	// Opacity is the panel's, 50 to 100 percent. Nil follows
-	// style.transparency; the settings window sets it when the user
-	// customizes the clipboard panel's opacity.
-	Opacity *int `toml:"opacity"`
 	// Limit is how many entries the history keeps, 20 to 1000.
 	Limit int `toml:"limit"`
 	// PasteOnClick pastes a clicked entry into the window that was
@@ -765,6 +755,10 @@ func DefaultPath() string {
 	return filepath.Join(dir, "inua", "config.toml")
 }
 
+// oldTransparency are the settings style.transparency replaced; a file
+// that still has them loads without a warning.
+var oldTransparency = []string{"bar.empty_transparency", "bar.window_transparency", "clipboard.opacity"}
+
 // Load reads the file at path over the defaults. A missing file gives the
 // defaults. The error is for a file that exists but cannot be read or
 // parsed; the returned Config is then the defaults. Warnings name unknown
@@ -790,6 +784,9 @@ func Load(path string) (Config, []string, error) {
 		if k.String() == "assistant.profiles.api_key_env" {
 			continue // keys were once read from a variable; now only the keyring holds them
 		}
+		if slices.Contains(oldTransparency, k.String()) {
+			continue // style.transparency took their place
+		}
 		warnings = append(warnings, fmt.Sprintf("unknown setting %s", k))
 	}
 	warnings = append(warnings, c.validate()...)
@@ -809,18 +806,6 @@ func (c *Config) validate() []string {
 	}
 	oneOf("bar.workspaces", &c.Bar.Workspaces, d.Bar.Workspaces, "monitor", "all")
 	oneOf("bar.density", &c.Bar.Density, d.Bar.Density, "default", "compact")
-	for _, setting := range []struct {
-		name  string
-		value **int
-	}{{"bar.empty_transparency", &c.Bar.EmptyTransparency}, {"bar.window_transparency", &c.Bar.WindowTransparency}} {
-		if *setting.value == nil {
-			continue // the style's transparency stands in
-		}
-		if **setting.value < 0 || **setting.value > 80 {
-			w = append(w, fmt.Sprintf("%s = %d: want 0..80; cleared", setting.name, **setting.value))
-			*setting.value = nil
-		}
-	}
 	oneOf("launcher.mode", &c.Launcher.Mode, d.Launcher.Mode, "apps", "windows")
 	if !ValidSearchURL(c.Launcher.Search) {
 		w = append(w, fmt.Sprintf("launcher.search = %q: want a web address with %%s for the words; using %q", c.Launcher.Search, d.Launcher.Search))
@@ -924,10 +909,6 @@ func (c *Config) validate() []string {
 	}
 	if c.Control.Lock == OldLockCommand {
 		c.Control.Lock = d.Control.Lock
-	}
-	if c.Clipboard.Opacity != nil && (*c.Clipboard.Opacity < 50 || *c.Clipboard.Opacity > 100) {
-		w = append(w, fmt.Sprintf("clipboard.opacity = %d: want 50 to 100; cleared", *c.Clipboard.Opacity))
-		c.Clipboard.Opacity = nil
 	}
 	if c.Clipboard.Limit < 20 || c.Clipboard.Limit > 1000 {
 		w = append(w, fmt.Sprintf("clipboard.limit = %d: want 20 to 1000; using %d", c.Clipboard.Limit, d.Clipboard.Limit))
