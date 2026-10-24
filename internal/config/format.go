@@ -15,16 +15,16 @@ import (
 func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
-		c.Bar.Enable, q(c.Bar.Density), c.Bar.EmptyTransparency, c.Bar.WindowTransparency, q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass,
+		c.Bar.Enable, q(c.Bar.Density), optInt("empty_transparency", c.Bar.EmptyTransparency), optInt("window_transparency", c.Bar.WindowTransparency), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass,
 		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor,
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
-		q(c.Style.Theme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, q(c.Style.CSS),
+		q(c.Style.Theme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, q(c.Style.CSS),
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
 		c.Displays.LidOff, monitors(c.Displays.Monitors),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
-		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Opacity, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
+		c.Clipboard.Enable, c.Clipboard.Bar, optInt("opacity", c.Clipboard.Opacity), c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges,
@@ -34,8 +34,15 @@ func Format(c Config) string {
 		shortcuts(c.Shortcuts))
 }
 
-// The optional settings are written commented out while unset, so the file
-// still shows them.
+// optInt renders an optional int setting as its whole "key = value"
+// line; an empty string omits it, so the file does not set it. The
+// template's comment above each placeholder says what unset means.
+func optInt(key string, v *int) string {
+	if v == nil {
+		return ""
+	}
+	return key + " = " + strconv.Itoa(*v) + "\n"
+}
 func kbOptionsLine(o *string) string {
 	if o == nil {
 		return `# kb_options = ""`
@@ -195,10 +202,11 @@ enable = %t
 # Bar density: "default" or "compact". Compact saves vertical screen space.
 density = %s
 
-# Background transparency, from 0%% (opaque) to 80%% (more transparent).
-# Empty workspaces and workspaces with windows can be tuned separately.
-empty_transparency = %d
-window_transparency = %d
+# The bar islands' background transparency, from 0%% (opaque) to 80%%
+# (more transparent), for empty workspaces and for workspaces with
+# windows. Unset, both follow style.transparency.
+%s
+%s
 
 # Clock, in strftime format: %%a %%A weekday, %%b %%B month, %%d %%e day, %%m month,
 # %%Y year, %%H %%I hour (24h/12h), %%M minute, %%S second, %%p AM/PM.
@@ -236,7 +244,8 @@ terminal = %s
 search = %s
 
 # Quicklinks: a query starting with a keyword searches that site
-# ("gh inua"). Add your own; quicklinks = [] turns them off.%s
+# ("gh inua"). Add your own; quicklinks = [] turns them off.
+%s
 
 [overview]
 # Sort workspaces by recent window focus instead of their numeric order.
@@ -296,6 +305,11 @@ edge_gaps = %t
 # Size of the text in the shell and inua's apps, 80 to 150 percent. Icons,
 # spacing and the stylesheet below keep their sizes.
 text_scale = %d
+
+# Background transparency of the shell's floating surfaces (launcher,
+# panels, dock, menus, notifications), 0 to 80 percent. The bar's islands
+# and the clipboard have their own settings.
+transparency = %d
 
 # Extra stylesheet loaded after the built-in one, relative to this file's
 # directory. Ignored if the file does not exist. See style.css next to this
@@ -399,8 +413,9 @@ enable = %t
 # Shortcuts (Clipboard history) opens the panel too.
 bar = %t
 
-# The panel's opacity, 50 to 100 percent.
-opacity = %d
+# The panel's opacity, 50 to 100 percent. Unset, it follows
+# style.transparency.
+%s
 
 # How many entries the history keeps, 20 to 1000; the oldest go first.
 limit = %d
@@ -484,7 +499,8 @@ serve_listen = %s
 # typed in the settings window (AI) and kept in the keyring (the Secret
 # Service; inua-keyring keeps it in pass), or without one in
 # ~/.local/share/inua/keys.json, readable only by you; keys are never
-# written here.%s
+# written here.
+%s
 
 [keyring]
 # inua-keyring keeps apps' secrets (the Secret Service: browsers' keys,

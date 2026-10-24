@@ -12,6 +12,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
+	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/notify"
@@ -28,6 +29,7 @@ type styles struct {
 	clipboard *gtk.CssProvider // clipboard card opacity
 	swatches  *gtk.CssProvider // the settings window's theme swatches
 	bar       *gtk.CssProvider // per-workspace bar background transparency
+	shell     *gtk.CssProvider // style.transparency, over every floating surface
 }
 
 func (s *shellUI) theme() string { return cmp.Or(s.cfg.Style.Theme, "yoru") }
@@ -35,6 +37,14 @@ func (s *shellUI) theme() string { return cmp.Or(s.cfg.Style.Theme, "yoru") }
 // loadStyles (re)loads the theme, the built-in style and the user's
 // stylesheet.
 func (s *shellUI) loadStyles() {
+	defer func() {
+		// Style is compared as a whole in applyConfig, so the settings
+		// window's slider must follow it here too.
+		if s.settings.win != nil {
+			s.settings.transparency.SetValue(float64(s.cfg.Style.Transparency))
+			s.settings.transparencyVal.SetText(i18n.Tf("%d%%", s.cfg.Style.Transparency))
+		}
+	}()
 	st := &s.styles
 	display := gdk.DisplayGetDefault()
 	if st.base == nil {
@@ -57,8 +67,8 @@ func (s *shellUI) loadStyles() {
 	st.user.LoadFromString(user)
 	s.loadIcons()
 	s.loadClipboardStyle()
-	s.loadSwatchStyle()
 	s.loadBarStyle()
+	s.loadShellStyle()
 }
 
 func (s *shellUI) loadBarStyle() {
@@ -67,22 +77,61 @@ func (s *shellUI) loadBarStyle() {
 		st.bar = gtk.NewCssProvider()
 		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.bar, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
 	}
-	empty := 1 - float64(s.cfg.Bar.EmptyTransparency)/100
-	occupied := 1 - float64(s.cfg.Bar.WindowTransparency)/100
+	empty := s.cfg.Style.Transparency
+	if s.cfg.Bar.EmptyTransparency != nil {
+		empty = *s.cfg.Bar.EmptyTransparency
+	}
+	occupied := s.cfg.Style.Transparency
+	if s.cfg.Bar.WindowTransparency != nil {
+		occupied = *s.cfg.Bar.WindowTransparency
+	}
 	st.bar.LoadFromString(fmt.Sprintf(
 		".bar.empty .island { background: alpha(@app, %.2f); }\n.bar.occupied .island { background: alpha(@app, %.2f); }\n",
-		empty, occupied))
+		1-float64(empty)/100, 1-float64(occupied)/100))
 }
 
+// shellSurfaces are the floating surfaces style.transparency tints: the
+// launcher, each panel's card, the dock and the shot drawer, and the menus.
+// The bar's islands and the clipboard keep their own settings; the settings,
+// lock and polkit windows stay opaque.
+const shellSurfaces = `.launcher,
+.agenda .card,
+.control .card,
+.center .card,
+.note,
+.dock,
+.shot-drawer,
+popover.menu > contents,
+popover.menu > arrow { background: alpha(@app, %.2f); }
+`
+
+// loadClipboardStyle applies the clipboard panel's own opacity, or the
+// shell's transparency when it sets none.
 func (s *shellUI) loadClipboardStyle() {
 	st := &s.styles
 	if st.clipboard == nil {
 		st.clipboard = gtk.NewCssProvider()
 		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.clipboard, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
 	}
+	opacity := s.cfg.Style.Transparency
+	if s.cfg.Clipboard.Opacity != nil {
+		opacity = *s.cfg.Clipboard.Opacity
+	}
 	// The settings file checks the range (config.validate).
-	css := fmt.Sprintf(".clipboard-panel .clipboard-card { background: alpha(@app, %.2f); }\n", float64(s.cfg.Clipboard.Opacity)/100)
+	css := fmt.Sprintf(".clipboard-panel .clipboard-card { background: alpha(@app, %.2f); }\n", 1-float64(opacity)/100)
 	st.clipboard.LoadFromString(css)
+}
+
+// loadShellStyle applies style.transparency over every floating surface,
+// so they share one opacity the user sets once.
+func (s *shellUI) loadShellStyle() {
+	st := &s.styles
+	if st.shell == nil {
+		st.shell = gtk.NewCssProvider()
+		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.shell, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
+	}
+	// The settings file checks the range (config.validate).
+	st.shell.LoadFromString(fmt.Sprintf(shellSurfaces, 1-float64(s.cfg.Style.Transparency)/100))
 }
 
 // loadWallpaper styles the wallpaper windows from the settings. Without an
@@ -173,6 +222,8 @@ func (s *shellUI) applyConfig(c config.Config) {
 	}
 	if old.Style != c.Style {
 		s.loadStyles()
+	} else if old.Style.Transparency != c.Style.Transparency {
+		s.loadShellStyle()
 	}
 	if old.Style.AppIcons != c.Style.AppIcons {
 		for _, b := range s.bars {

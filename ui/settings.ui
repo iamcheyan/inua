@@ -350,6 +350,108 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                           <class name="section-label"/>
                                         </style>
                                         <property name="use-markup">true</property>
+                                        <property name="label" translatable="yes">&lt;span alpha='55%'&gt;[&lt;/span&gt;TRANSPARENCY&lt;span alpha='55%'&gt;]&lt;/span&gt;</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-meta"/>
+                                        </style>
+                                        <property name="label" translatable="yes">The floating surfaces: launcher, panels, dock and menus</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="xalign">0</property>
+                                        <property name="ellipsize">3</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-body"/>
+                                    </style>
+                                    <property name="orientation">1</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="width-request">260</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
+                                                <property name="label" translatable="yes">Shell transparency</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="transparency_val">
+                                                <style>
+                                                  <class name="readout"/>
+                                                </style>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScale" id="transparency">
+                                            <property name="name">transparency</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <property name="draw-value">false</property>
+                                            <property name="accessible-role">59</property>
+                                            <property name="tooltip-text" translatable="yes">The bar and the clipboard follow this unless you customize them</property>
+                                            <property name="adjustment">
+                                              <object class="GtkAdjustment">
+                                                <property name="lower">0</property>
+                                                <property name="upper">80</property>
+                                                <property name="step-increment">1</property>
+                                                <property name="page-increment">5</property>
+                                              </object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <style>
+                                  <class name="section"/>
+                                </style>
+                                <property name="orientation">1</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <style>
+                                      <class name="section-head"/>
+                                    </style>
+                                    <property name="spacing">10</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="mark"/>
+                                        </style>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="section-label"/>
+                                        </style>
+                                        <property name="use-markup">true</property>
                                         <property name="label" translatable="yes">&lt;span alpha='55%'&gt;[&lt;/span&gt;ICONS&lt;span alpha='55%'&gt;]&lt;/span&gt;</property>
                                       </object>
                                     </child>
@@ -1110,13 +1212,21 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                               </object>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="bar_empty_transparency_val">
+                                              <object class="GtkLabel">
                                                 <style>
-                                                  <class name="readout"/>
+                                                  <class name="sub"/>
                                                 </style>
+                                                <property name="label" translatable="yes">Off: the shell's transparency (Appearance)</property>
                                                 <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
                                               </object>
                                             </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="bar_empty_custom">
+                                            <property name="name">bar_empty_custom</property>
+                                            <property name="valign">3</property>
                                           </object>
                                         </child>
                                         <child>
@@ -1125,6 +1235,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="hexpand">true</property>
                                             <property name="valign">3</property>
                                             <property name="draw-value">false</property>
+                                            <property name="sensitive">false</property>
                                             <property name="adjustment">
                                               <object class="GtkAdjustment">
                                                 <property name="lower">0</property>
@@ -1133,6 +1244,14 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <property name="page-increment">5</property>
                                               </object>
                                             </property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="bar_empty_transparency_val">
+                                            <style>
+                                              <class name="readout"/>
+                                            </style>
+                                            <property name="xalign">0</property>
                                           </object>
                                         </child>
                                       </object>
@@ -1161,13 +1280,21 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                               </object>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="bar_window_transparency_val">
+                                              <object class="GtkLabel">
                                                 <style>
-                                                  <class name="readout"/>
+                                                  <class name="sub"/>
                                                 </style>
+                                                <property name="label" translatable="yes">Off: the shell's transparency (Appearance)</property>
                                                 <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
                                               </object>
                                             </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="bar_window_custom">
+                                            <property name="name">bar_window_custom</property>
+                                            <property name="valign">3</property>
                                           </object>
                                         </child>
                                         <child>
@@ -1176,6 +1303,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="hexpand">true</property>
                                             <property name="valign">3</property>
                                             <property name="draw-value">false</property>
+                                            <property name="sensitive">false</property>
                                             <property name="adjustment">
                                               <object class="GtkAdjustment">
                                                 <property name="lower">0</property>
@@ -1184,6 +1312,14 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <property name="page-increment">5</property>
                                               </object>
                                             </property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="bar_window_transparency_val">
+                                            <style>
+                                              <class name="readout"/>
+                                            </style>
+                                            <property name="xalign">0</property>
                                           </object>
                                         </child>
                                       </object>
@@ -3685,13 +3821,21 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                               </object>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="clip_opacity_val">
+                                              <object class="GtkLabel">
                                                 <style>
-                                                  <class name="readout"/>
+                                                  <class name="sub"/>
                                                 </style>
+                                                <property name="label" translatable="yes">Off: the shell's transparency (Appearance)</property>
                                                 <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
                                               </object>
                                             </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="clip_custom">
+                                            <property name="name">clip_custom</property>
+                                            <property name="valign">3</property>
                                           </object>
                                         </child>
                                         <child>
@@ -3700,6 +3844,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="hexpand">true</property>
                                             <property name="valign">3</property>
                                             <property name="draw-value">false</property>
+                                            <property name="sensitive">false</property>
                                             <property name="adjustment">
                                               <object class="GtkAdjustment">
                                                 <property name="lower">50</property>
@@ -3708,6 +3853,14 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <property name="page-increment">5</property>
                                               </object>
                                             </property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="clip_opacity_val">
+                                            <style>
+                                              <class name="readout"/>
+                                            </style>
+                                            <property name="xalign">0</property>
                                           </object>
                                         </child>
                                       </object>

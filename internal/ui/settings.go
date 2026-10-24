@@ -44,23 +44,25 @@ type settings struct {
 	swatchNames           []string               // the themes the swatches show
 	themeTrash, iconTrash gtk.Button             // for the user's theme or icon set in use
 
-	bgEnable, title, tray, barPass, tpAccel, notifyOn, critFocus, noteHistory    gtk.Switch
-	barOn, dockOn, dockHide, dockDrawer, dockFlushBar                            gtk.Switch
-	clipEnable, clipBar, clipPaste                                               gtk.Switch
-	dockSize, dockPosition, barDensity                                           gtk.DropDown
-	dockPinned                                                                   gtk.Box
-	bgImage, bgColor, clock, terminal, lock, screenshot                          gtk.Entry
-	clipSensitive                                                                gtk.Entry
-	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner                   gtk.DropDown
-	clipLimit                                                                    gtk.DropDown
-	clipLimits                                                                   []int // clipLimit's choices
-	textScale                                                                    gtk.DropDown
-	textScales                                                                   []int    // textScale's choices
-	iconSets                                                                     []string // icons' choices
-	appIconSets                                                                  []string // appIcons' choices
-	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency            gtk.Scale
-	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal gtk.Label
-	clipClear, clipReveal                                                        gtk.Button
+	bgEnable, title, tray, barPass, tpAccel, notifyOn, critFocus, noteHistory       gtk.Switch
+	barOn, dockOn, dockHide, dockDrawer, dockFlushBar                               gtk.Switch
+	clipEnable, clipBar, clipPaste, clipCustom                                      gtk.Switch
+	barEmptyCustom, barWindowCustom                                                 gtk.Switch
+	dockSize, dockPosition, barDensity                                              gtk.DropDown
+	dockPinned                                                                      gtk.Box
+	bgImage, bgColor, clock, terminal, lock, screenshot                             gtk.Entry
+	clipSensitive                                                                   gtk.Entry
+	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner                      gtk.DropDown
+	clipLimit                                                                       gtk.DropDown
+	clipLimits                                                                      []int // clipLimit's choices
+	textScale                                                                       gtk.DropDown
+	textScales                                                                      []int    // textScale's choices
+	iconSets                                                                        []string // icons' choices
+	appIconSets                                                                     []string // appIcons' choices
+	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency, transparency gtk.Scale
+	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal    gtk.Label
+	transparencyVal                                                                 gtk.Label
+	clipClear, clipReveal                                                           gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
 	// would do nothing.
@@ -161,8 +163,28 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Clipboard.Bar = on
 		case "clip_paste":
 			c.Clipboard.PasteOnClick = on
+		case "bar_empty_custom":
+			if on {
+				c.Bar.EmptyTransparency = new(c.Style.Transparency)
+			} else {
+				c.Bar.EmptyTransparency = nil
+			}
+			s.settings.barEmptyTransparency.SetSensitive(on)
+		case "bar_window_custom":
+			if on {
+				c.Bar.WindowTransparency = new(c.Style.Transparency)
+			} else {
+				c.Bar.WindowTransparency = nil
+			}
+			s.settings.barWindowTransparency.SetSensitive(on)
+		case "clip_custom":
+			if on {
+				c.Clipboard.Opacity = new(c.Style.Transparency)
+			} else {
+				c.Clipboard.Opacity = nil
+			}
+			s.settings.clipOpacity.SetSensitive(on)
 		case "lid_off":
-			c.Displays.LidOff = on
 		case "tp_accel":
 			c.Input.TouchpadAccel = "flat"
 			if on {
@@ -282,7 +304,7 @@ func (s *shellUI) bindSettingsHandlers() {
 		c := s.cfg
 		if r.GetName() == "clip_opacity" {
 			val := int(math.Round(v))
-			c.Clipboard.Opacity = val
+			c.Clipboard.Opacity = new(val)
 			s.settings.clipOpacityVal.SetText(i18n.Tf("%d%%", val))
 			s.changeSettings(c)
 			return false
@@ -290,12 +312,19 @@ func (s *shellUI) bindSettingsHandlers() {
 		if r.GetName() == "bar_empty_transparency" || r.GetName() == "bar_window_transparency" {
 			val := int(math.Round(v))
 			if r.GetName() == "bar_empty_transparency" {
-				c.Bar.EmptyTransparency = val
+				c.Bar.EmptyTransparency = new(val)
 				s.settings.barEmptyTransparencyVal.SetText(i18n.Tf("%d%%", val))
 			} else {
-				c.Bar.WindowTransparency = val
+				c.Bar.WindowTransparency = new(val)
 				s.settings.barWindowTransparencyVal.SetText(i18n.Tf("%d%%", val))
 			}
+			s.changeSettings(c)
+			return false
+		}
+		if r.GetName() == "transparency" {
+			val := int(math.Round(v))
+			c.Style.Transparency = val
+			s.settings.transparencyVal.SetText(i18n.Tf("%d%%", val))
 			s.changeSettings(c)
 			return false
 		}
@@ -401,12 +430,16 @@ func (s *shellUI) openSettings() {
 	ui.Get("app_icons", &st.appIcons)
 	ui.Get("language", &st.language)
 	ui.Get("text_scale", &st.textScale)
+	ui.Get("transparency", &st.transparency)
+	ui.Get("transparency_val", &st.transparencyVal)
 	st.textScales = nil // a new dropdown, without its choices
 	st.iconSets, st.appIconSets = nil, nil
 	ui.Get("lang_restart_row", &st.langRestartRow)
 	ui.Get("lang_restart", &st.langRestart)
 	ui.Get("banner", &st.banner)
 	ui.Get("bar_enable", &st.barOn)
+	ui.Get("bar_empty_custom", &st.barEmptyCustom)
+	ui.Get("bar_window_custom", &st.barWindowCustom)
 	ui.Get("dock_enable", &st.dockOn)
 	ui.Get("dock_autohide", &st.dockHide)
 	ui.Get("dock_flush_bar", &st.dockFlushBar)
@@ -432,6 +465,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("clip_enable", &st.clipEnable)
 	ui.Get("clip_bar", &st.clipBar)
 	ui.Get("clip_paste", &st.clipPaste)
+	ui.Get("clip_custom", &st.clipCustom)
 	ui.Get("clip_limit", &st.clipLimit)
 	ui.Get("clip_sensitive", &st.clipSensitive)
 	st.clipLimits = nil // a new dropdown, without its choices
@@ -485,7 +519,7 @@ func (s *shellUI) openSettings() {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
+	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.barEmptyCustom, &st.barWindowCustom, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.clipCustom, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
 	for _, b := range []*gtk.Button{&choose, &clearImage, &themeAdd, &st.themeTrash, &themeFolder, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
@@ -495,6 +529,7 @@ func (s *shellUI) openSettings() {
 	st.clipOpacity.ConnectChangeValue(&s.onSettingsScale)
 	st.barEmptyTransparency.ConnectChangeValue(&s.onSettingsScale)
 	st.barWindowTransparency.ConnectChangeValue(&s.onSettingsScale)
+	st.transparency.ConnectChangeValue(&s.onSettingsScale)
 	s.buildSwatches()
 	st.hyprKb = s.hyprKbOptions()
 	st.sc.binds = s.hyprBinds()
@@ -680,10 +715,19 @@ func (s *shellUI) showSettings() {
 	st.ws.SetSelected(uint32(max(0, slices.Index(wsChoices, c.Bar.Workspaces))))
 	st.launchMode.SetSelected(uint32(max(0, slices.Index(modeChoices, c.Launcher.Mode))))
 	st.barDensity.SetSelected(uint32(max(0, slices.Index(barDensities, c.Bar.Density))))
-	st.barEmptyTransparency.SetValue(float64(c.Bar.EmptyTransparency))
-	st.barEmptyTransparencyVal.SetText(i18n.Tf("%d%%", c.Bar.EmptyTransparency))
-	st.barWindowTransparency.SetValue(float64(c.Bar.WindowTransparency))
-	st.barWindowTransparencyVal.SetText(i18n.Tf("%d%%", c.Bar.WindowTransparency))
+	empty, window := c.Style.Transparency, c.Style.Transparency
+	if c.Bar.EmptyTransparency != nil {
+		empty = *c.Bar.EmptyTransparency
+	}
+	if c.Bar.WindowTransparency != nil {
+		window = *c.Bar.WindowTransparency
+	}
+	st.barEmptyTransparency.SetValue(float64(empty))
+	st.barEmptyTransparencyVal.SetText(i18n.Tf("%d%%", empty))
+	st.barWindowTransparency.SetValue(float64(window))
+	st.barWindowTransparencyVal.SetText(i18n.Tf("%d%%", window))
+	st.transparency.SetValue(float64(c.Style.Transparency))
+	st.transparencyVal.SetText(i18n.Tf("%d%%", c.Style.Transparency))
 	s.showIconSets()
 	s.showTextScale()
 	st.language.SetSelected(uint32(max(0, slices.Index(config.Languages, c.Language))))
@@ -768,8 +812,14 @@ func (s *shellUI) showClipboardSettings() {
 	st.clipEnable.SetActive(c.Enable)
 	st.clipBar.SetActive(c.Bar)
 	st.clipPaste.SetActive(c.PasteOnClick)
-	st.clipOpacity.SetValue(float64(c.Opacity))
-	st.clipOpacityVal.SetText(i18n.Tf("%d%%", c.Opacity))
+	st.clipCustom.SetActive(c.Opacity != nil)
+	st.clipOpacity.SetSensitive(c.Opacity != nil)
+	clipOpacity := s.cfg.Style.Transparency
+	if c.Opacity != nil {
+		clipOpacity = *c.Opacity
+	}
+	st.clipOpacity.SetValue(float64(clipOpacity))
+	st.clipOpacityVal.SetText(i18n.Tf("%d%%", clipOpacity))
 	// The usual limits, and the one in the file if it is another.
 	limits := slices.Clone(config.ClipboardLimitChoices)
 	if !slices.Contains(limits, c.Limit) {
@@ -970,6 +1020,10 @@ func (s *shellUI) showDockSettings() {
 	st := &s.settings
 	c := s.cfg
 	st.barOn.SetActive(c.Bar.Enable)
+	st.barEmptyCustom.SetActive(c.Bar.EmptyTransparency != nil)
+	st.barWindowCustom.SetActive(c.Bar.WindowTransparency != nil)
+	st.barEmptyTransparency.SetSensitive(c.Bar.EmptyTransparency != nil)
+	st.barWindowTransparency.SetSensitive(c.Bar.WindowTransparency != nil)
 	st.dockOn.SetActive(c.Dock.Enable)
 	st.dockHide.SetActive(c.Dock.Autohide)
 	st.dockFlushBar.SetActive(!c.Style.EdgeGaps)

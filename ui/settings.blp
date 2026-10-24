@@ -241,6 +241,78 @@ ApplicationWindow settings {
                 }
               }
 
+              // [TRANSPARENCY]
+              Box {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    use-markup: true;
+                    label:  _("<span alpha='55%'>[</span>TRANSPARENCY<span alpha='55%'>]</span>");
+                  }
+
+                  Label {
+                    styles ["section-meta"]
+                    label:  _("The floating surfaces: launcher, panels, dock and menus");
+                    hexpand: true;
+                    xalign: 0;
+                    ellipsize: end;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      width-request: 260;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Shell transparency");
+                        xalign: 0;
+                      }
+                      Label transparency_val {
+                        styles ["readout"]
+                        xalign: 0;
+                      }
+                    }
+
+                    Scale transparency {
+                      name: "transparency";
+                      hexpand: true;
+                      valign: center;
+                      draw-value: false;
+                      accessible-role: slider;
+                      tooltip-text:  _("The bar and the clipboard follow this unless you customize them");
+
+                      adjustment: Adjustment {
+                        lower: 0;
+                        upper: 80;
+                        step-increment: 1;
+                        page-increment: 5;
+                      };
+                    }
+                  }
+                }
+              }
+
               // [ICONS]
               Box {
                 styles ["section"]
@@ -799,10 +871,17 @@ ApplicationWindow settings {
                         label:  _("Empty workspace transparency");
                         xalign: 0;
                       }
-                      Label bar_empty_transparency_val {
-                        styles ["readout"]
+                      Label {
+                        styles ["sub"]
+                        label:  _("Off: the shell's transparency (Appearance)");
                         xalign: 0;
+                        wrap: true;
                       }
+                    }
+
+                    Switch bar_empty_custom {
+                      name: "bar_empty_custom";
+                      valign: center;
                     }
 
                     Scale bar_empty_transparency {
@@ -810,6 +889,7 @@ ApplicationWindow settings {
                       hexpand: true;
                       valign: center;
                       draw-value: false;
+                      sensitive: false;
 
                       adjustment: Adjustment {
                         lower: 0;
@@ -818,6 +898,12 @@ ApplicationWindow settings {
                         page-increment: 5;
                       };
                     }
+
+                    Label bar_empty_transparency_val {
+                      styles ["readout"]
+                      xalign: 0;
+                    }
+
                   }
 
                   Separator {}
@@ -836,10 +922,17 @@ ApplicationWindow settings {
                         label:  _("Window workspace transparency");
                         xalign: 0;
                       }
-                      Label bar_window_transparency_val {
-                        styles ["readout"]
+                      Label {
+                        styles ["sub"]
+                        label:  _("Off: the shell's transparency (Appearance)");
                         xalign: 0;
+                        wrap: true;
                       }
+                    }
+
+                    Switch bar_window_custom {
+                      name: "bar_window_custom";
+                      valign: center;
                     }
 
                     Scale bar_window_transparency {
@@ -847,6 +940,7 @@ ApplicationWindow settings {
                       hexpand: true;
                       valign: center;
                       draw-value: false;
+                      sensitive: false;
 
                       adjustment: Adjustment {
                         lower: 0;
@@ -855,6 +949,12 @@ ApplicationWindow settings {
                         page-increment: 5;
                       };
                     }
+
+                    Label bar_window_transparency_val {
+                      styles ["readout"]
+                      xalign: 0;
+                    }
+
                   }
 
                   Separator {}
@@ -2628,10 +2728,17 @@ ApplicationWindow settings {
                         label:  _("Panel opacity");
                         xalign: 0;
                       }
-                      Label clip_opacity_val {
-                        styles ["readout"]
+                      Label {
+                        styles ["sub"]
+                        label:  _("Off: the shell's transparency (Appearance)");
                         xalign: 0;
+                        wrap: true;
                       }
+                    }
+
+                    Switch clip_custom {
+                      name: "clip_custom";
+                      valign: center;
                     }
 
                     Scale clip_opacity {
@@ -2639,6 +2746,7 @@ ApplicationWindow settings {
                       hexpand: true;
                       valign: center;
                       draw-value: false;
+                      sensitive: false;
 
                       adjustment: Adjustment {
                         lower: 50;
@@ -2647,6 +2755,12 @@ ApplicationWindow settings {
                         page-increment: 5;
                       };
                     }
+
+                    Label clip_opacity_val {
+                      styles ["readout"]
+                      xalign: 0;
+                    }
+
                   }
 
                   Separator {}

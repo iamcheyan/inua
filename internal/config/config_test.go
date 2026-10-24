@@ -625,29 +625,38 @@ func TestTextScale(t *testing.T) {
 	}
 }
 
-// The clipboard history is kept by default; opacity and limit outside
-// their ranges are reported and fall back to the defaults.
+// The clipboard history is kept by default; opacity unset follows
+// style.transparency, and one outside its range is reported and cleared.
 func TestClipboard(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")
 	for _, c := range []struct {
-		file          string
-		enable        bool
-		opacity, keep int
-		warned        bool
+		file    string
+		enable  bool
+		opacity *int
+		keep    int
+		warned  bool
 	}{
-		{"", true, 84, 300, false},
-		{"[clipboard]\nenable = false\nopacity = 50\nlimit = 1000\n", false, 50, 1000, false},
-		{"[clipboard]\nopacity = 30\nlimit = 10\n", true, 84, 300, true},
+		{"", true, nil, 300, false},
+		{"[clipboard]\nenable = false\nopacity = 50\nlimit = 1000\n", false, new(50), 1000, false},
+		{"[clipboard]\nopacity = 30\nlimit = 10\n", true, nil, 300, true},
 	} {
 		if err := os.WriteFile(path, []byte(c.file), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		cfg, warnings, err := Load(path)
 		got := cfg.Clipboard
-		if err != nil || got.Enable != c.enable || got.Opacity != c.opacity || got.Limit != c.keep || (len(warnings) > 0) != c.warned {
+		if err != nil || got.Enable != c.enable || !optEq(got.Opacity, c.opacity) || got.Limit != c.keep || (len(warnings) > 0) != c.warned {
 			t.Errorf("%q: %+v %v %v", c.file, got, warnings, err)
 		}
 	}
+}
+
+// optEq compares optional int settings: both unset, or the same value.
+func optEq(a, b *int) bool {
+	if a == nil || b == nil {
+		return a == nil && b == nil
+	}
+	return *a == *b
 }
 
 // TypeSafe only makes quick choices, whatever its abilities say; it

@@ -22,10 +22,11 @@ enable = true
 # Bar density: "default" or "compact". Compact saves vertical screen space.
 density = "default"
 
-# Background transparency, from 0% (opaque) to 80% (more transparent).
-# Empty workspaces and workspaces with windows can be tuned separately.
-empty_transparency = 30
-window_transparency = 15
+# The bar islands' background transparency, from 0% (opaque) to 80%
+# (more transparent), for empty workspaces and for workspaces with
+# windows. Unset, both follow style.transparency.
+
+
 
 # Clock, in strftime format: %a %A weekday, %b %B month, %d %e day, %m month,
 # %Y year, %H %I hour (24h/12h), %M minute, %S second, %p AM/PM.
@@ -64,6 +65,7 @@ search = "https://www.google.com/search?q=%s"
 
 # Quicklinks: a query starting with a keyword searches that site
 # ("gh inua"). Add your own; quicklinks = [] turns them off.
+
 
 [[launcher.quicklinks]]
 keyword = "g"
@@ -158,6 +160,11 @@ edge_gaps = true
 # Size of the text in the shell and inua's apps, 80 to 150 percent. Icons,
 # spacing and the stylesheet below keep their sizes.
 text_scale = 100
+
+# Background transparency of the shell's floating surfaces (launcher,
+# panels, dock, menus, notifications), 0 to 80 percent. The bar's islands
+# and the clipboard have their own settings.
+transparency = 16
 
 # Extra stylesheet loaded after the built-in one, relative to this file's
 # directory. Ignored if the file does not exist. See style.css next to this
@@ -261,8 +268,9 @@ enable = true
 # Shortcuts (Clipboard history) opens the panel too.
 bar = true
 
-# The panel's opacity, 50 to 100 percent.
-opacity = 84
+# The panel's opacity, 50 to 100 percent. Unset, it follows
+# style.transparency.
+
 
 # How many entries the history keeps, 20 to 1000; the oldest go first.
 limit = 300
@@ -347,6 +355,7 @@ serve_listen = "127.0.0.1:8794"
 # Service; inua-keyring keeps it in pass), or without one in
 # ~/.local/share/inua/keys.json, readable only by you; keys are never
 # written here.
+
 
 [[assistant.profiles]]
 name = "openai"

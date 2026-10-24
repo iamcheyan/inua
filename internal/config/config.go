@@ -52,9 +52,12 @@ type Bar struct {
 	Enable bool `toml:"enable"`
 	// Density is "default" or "compact"; compact reduces the bar's height and spacing.
 	Density string `toml:"density"`
-	// EmptyTransparency and WindowTransparency are background transparency percentages (0-80).
-	EmptyTransparency  int `toml:"empty_transparency"`
-	WindowTransparency int `toml:"window_transparency"`
+	// EmptyTransparency and WindowTransparency are the bar islands'
+	// background transparency percentages (0-80). Nil follows
+	// style.transparency; the settings window sets them when the user
+	// customizes the bar's transparency.
+	EmptyTransparency  *int `toml:"empty_transparency"`
+	WindowTransparency *int `toml:"window_transparency"`
 	// Clock is a strftime format (see Strftime).
 	Clock string `toml:"clock"`
 	// Workspaces is "monitor" (each bar shows its monitor's workspaces)
@@ -145,6 +148,10 @@ type Style struct {
 	// TextScale sizes the built-in style's text, 80 to 150 percent. Icons,
 	// spacing and the user's stylesheet keep their sizes.
 	TextScale int `toml:"text_scale"`
+	// Transparency is the background transparency of the shell's floating
+	// surfaces (launcher, panels, dock, menus), 0 (opaque) to 80 percent.
+	// The bar's islands and the clipboard have their own settings.
+	Transparency int `toml:"transparency"`
 }
 
 type Background struct {
@@ -529,8 +536,10 @@ type Clipboard struct {
 	Enable bool `toml:"enable"`
 	// Bar shows a clipboard history button in the top bar.
 	Bar bool `toml:"bar"`
-	// Opacity is the panel's, 50 to 100 percent.
-	Opacity int `toml:"opacity"`
+	// Opacity is the panel's, 50 to 100 percent. Nil follows
+	// style.transparency; the settings window sets it when the user
+	// customizes the clipboard panel's opacity.
+	Opacity *int `toml:"opacity"`
 	// Limit is how many entries the history keeps, 20 to 1000.
 	Limit int `toml:"limit"`
 	// PasteOnClick pastes a clicked entry into the window that was
@@ -693,15 +702,13 @@ func Default() Config {
 	return Config{
 		Language: "auto",
 		Bar: Bar{
-			Enable:             true,
-			Density:            "default",
-			EmptyTransparency:  30,
-			WindowTransparency: 15,
-			Clock:              "%a %b %-d  %H:%M",
-			Workspaces:         "monitor",
-			Title:              true,
-			Tray:               true,
-			Pass:               true,
+			Enable:     true,
+			Density:    "default",
+			Clock:      "%a %b %-d  %H:%M",
+			Workspaces: "monitor",
+			Title:      true,
+			Tray:       true,
+			Pass:       true,
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
 		Overview: Overview{MRU: false, PerMonitor: true},
@@ -709,12 +716,12 @@ func Default() Config {
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100, Transparency: 16},
 		Background: Background{Enable: true, Fit: "cover"},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
 		Screenshot: Screenshot{Folder: "~/Pictures/Screenshots", Copy: true, Recordings: "~/Videos/Screencasts"},
-		Clipboard:  Clipboard{Enable: true, Bar: true, Opacity: 84, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
+		Clipboard:  Clipboard{Enable: true, Bar: true, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
 		Shortcuts: []Shortcut{
 			{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
@@ -782,12 +789,14 @@ func (c *Config) validate() []string {
 	oneOf("bar.density", &c.Bar.Density, d.Bar.Density, "default", "compact")
 	for _, setting := range []struct {
 		name  string
-		value *int
-		def   int
-	}{{"bar.empty_transparency", &c.Bar.EmptyTransparency, d.Bar.EmptyTransparency}, {"bar.window_transparency", &c.Bar.WindowTransparency, d.Bar.WindowTransparency}} {
-		if *setting.value < 0 || *setting.value > 80 {
-			w = append(w, fmt.Sprintf("%s = %d: want 0..80; using %d", setting.name, *setting.value, setting.def))
-			*setting.value = setting.def
+		value **int
+	}{{"bar.empty_transparency", &c.Bar.EmptyTransparency}, {"bar.window_transparency", &c.Bar.WindowTransparency}} {
+		if *setting.value == nil {
+			continue // the style's transparency stands in
+		}
+		if **setting.value < 0 || **setting.value > 80 {
+			w = append(w, fmt.Sprintf("%s = %d: want 0..80; cleared", setting.name, **setting.value))
+			*setting.value = nil
 		}
 	}
 	oneOf("launcher.mode", &c.Launcher.Mode, d.Launcher.Mode, "apps", "windows")
@@ -845,6 +854,10 @@ func (c *Config) validate() []string {
 		w = append(w, fmt.Sprintf("style.text_scale = %d: want 80 to 150; using %d", c.Style.TextScale, d.Style.TextScale))
 		c.Style.TextScale = d.Style.TextScale
 	}
+	if c.Style.Transparency < 0 || c.Style.Transparency > 80 {
+		w = append(w, fmt.Sprintf("style.transparency = %d: want 0 to 80; using %d", c.Style.Transparency, d.Style.Transparency))
+		c.Style.Transparency = d.Style.Transparency
+	}
 	oneOf("background.fit", &c.Background.Fit, d.Background.Fit, Fits...)
 	if !ValidColor(c.Background.Color) {
 		w = append(w, fmt.Sprintf("background.color = %q: want #rrggbb; using the theme's ground", c.Background.Color))
@@ -886,9 +899,9 @@ func (c *Config) validate() []string {
 	if c.Control.Lock == OldLockCommand {
 		c.Control.Lock = d.Control.Lock
 	}
-	if c.Clipboard.Opacity < 50 || c.Clipboard.Opacity > 100 {
-		w = append(w, fmt.Sprintf("clipboard.opacity = %d: want 50 to 100; using %d", c.Clipboard.Opacity, d.Clipboard.Opacity))
-		c.Clipboard.Opacity = d.Clipboard.Opacity
+	if c.Clipboard.Opacity != nil && (*c.Clipboard.Opacity < 50 || *c.Clipboard.Opacity > 100) {
+		w = append(w, fmt.Sprintf("clipboard.opacity = %d: want 50 to 100; cleared", *c.Clipboard.Opacity))
+		c.Clipboard.Opacity = nil
 	}
 	if c.Clipboard.Limit < 20 || c.Clipboard.Limit > 1000 {
 		w = append(w, fmt.Sprintf("clipboard.limit = %d: want 20 to 1000; using %d", c.Clipboard.Limit, d.Clipboard.Limit))
