@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
@@ -86,14 +87,16 @@ func (s *shellUI) loadBarStyle() {
 		occupied = *s.cfg.Bar.WindowTransparency
 	}
 	st.bar.LoadFromString(fmt.Sprintf(
-		".bar.empty .island { background: alpha(@app, %.2f); }\n.bar.occupied .island { background: alpha(@app, %.2f); }\n",
-		1-float64(empty)/100, 1-float64(occupied)/100))
+		".bar.empty .island { background: alpha(@app, %s); border-radius: %spx; }\n.bar.occupied .island { background: alpha(@app, %s); border-radius: %spx; }\n",
+		alpha(1-float64(empty)/100), strconv.Itoa(s.cfg.Style.Radius),
+		alpha(1-float64(occupied)/100), strconv.Itoa(s.cfg.Style.Radius)))
 }
 
-// shellSurfaces are the floating surfaces style.transparency tints: the
-// launcher, each panel's card, the dock and the shot drawer, and the menus.
-// The bar's islands and the clipboard keep their own settings; the settings,
-// lock and polkit windows stay opaque.
+// shellSurfaces are the floating surfaces the two [style] looks apply to:
+// the transparency's background and the radius's corners. The launcher,
+// each panel's card, the dock, the shot drawer and the menus; the bar's
+// islands are in loadBarStyle, with their own transparency. The settings,
+// lock and polkit windows keep their own looks.
 const shellSurfaces = `.launcher,
 .agenda .card,
 .control .card,
@@ -102,7 +105,7 @@ const shellSurfaces = `.launcher,
 .dock,
 .shot-drawer,
 popover.menu > contents,
-popover.menu > arrow { background: alpha(@app, %.2f); }
+popover.menu > arrow { background: alpha(@app, %s); border-radius: %spx; }
 `
 
 // loadClipboardStyle applies the clipboard panel's own opacity, or the
@@ -122,17 +125,23 @@ func (s *shellUI) loadClipboardStyle() {
 	st.clipboard.LoadFromString(css)
 }
 
-// loadShellStyle applies style.transparency over every floating surface,
-// so they share one opacity the user sets once.
+// loadShellStyle applies style.transparency and style.radius over every
+// floating surface, so they share one opacity and corner radius the user
+// sets once.
 func (s *shellUI) loadShellStyle() {
 	st := &s.styles
 	if st.shell == nil {
 		st.shell = gtk.NewCssProvider()
 		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.shell, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1))
 	}
-	// The settings file checks the range (config.validate).
-	st.shell.LoadFromString(fmt.Sprintf(shellSurfaces, 1-float64(s.cfg.Style.Transparency)/100))
+	// The settings file checks both ranges (config.validate).
+	st.shell.LoadFromString(fmt.Sprintf(shellSurfaces,
+		alpha(1-float64(s.cfg.Style.Transparency)/100),
+		strconv.Itoa(s.cfg.Style.Radius)))
 }
+
+// alpha renders an opacity as the CSS alpha() argument, two decimals.
+func alpha(v float64) string { return fmt.Sprintf("%.2f", v) }
 
 // loadWallpaper styles the wallpaper windows from the settings. Without an
 // image they show the theme's ground with the texture, whose tile is
@@ -235,6 +244,9 @@ func (s *shellUI) applyConfig(c config.Config) {
 	}
 	if old.Bar.EmptyTransparency != c.Bar.EmptyTransparency || old.Bar.WindowTransparency != c.Bar.WindowTransparency {
 		s.loadBarStyle()
+	}
+	if old.Osd.Position != c.Osd.Position && s.osd.win != nil && s.layer {
+		s.placeOsd(s.osd.win.GoPointer(), s.osd.mon)
 	}
 	if old.Style.Theme != c.Style.Theme || old.Background != c.Background || old.Dir != c.Dir {
 		s.loadWallpaper()

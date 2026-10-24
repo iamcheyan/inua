@@ -310,6 +310,45 @@ ApplicationWindow settings {
                       };
                     }
                   }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      width-request: 260;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Corner radius");
+                        xalign: 0;
+                      }
+                      Label radius_val {
+                        styles ["readout"]
+                        xalign: 0;
+                      }
+                    }
+
+                    Scale radius {
+                      name: "radius";
+                      hexpand: true;
+                      valign: center;
+                      draw-value: false;
+                      accessible-role: slider;
+                      tooltip-text:  _("0 makes the surfaces square");
+
+                      adjustment: Adjustment {
+                        lower: 0;
+                        upper: 20;
+                        step-increment: 1;
+                        page-increment: 4;
+                      };
+                    }
+                  }
                 }
               }
 
@@ -854,6 +893,78 @@ ApplicationWindow settings {
                       };
                     }
                   }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("On-screen display");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("An icon and a word answer a change to the volume, the brightness, Wi-Fi or Bluetooth");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch osd_enable {
+                      name: "osd_enable";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("On-screen display position");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Where it sits; a top one sits under the bar");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown osd_position {
+                      name: "osd_position";
+                      valign: center;
+
+                      model: StringList {
+                        strings [
+                          _("Top right"),
+                          _("Top centre"),
+                          _("Top left"),
+                          _("Bottom right"),
+                          _("Bottom centre"),
+                          _("Bottom left"),
+                        ]
+                      };
+                    }
+                  }
+
 
                   Separator {}
 

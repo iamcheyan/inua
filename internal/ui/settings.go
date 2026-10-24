@@ -49,6 +49,8 @@ type settings struct {
 	clipEnable, clipBar, clipPaste, clipCustom                                      gtk.Switch
 	barEmptyCustom, barWindowCustom                                                 gtk.Switch
 	dockSize, dockPosition, barDensity                                              gtk.DropDown
+	osdEnable                                                                       gtk.Switch
+	osdPosition                                                                     gtk.DropDown
 	dockPinned                                                                      gtk.Box
 	bgImage, bgColor, clock, terminal, lock, screenshot                             gtk.Entry
 	clipSensitive                                                                   gtk.Entry
@@ -59,9 +61,9 @@ type settings struct {
 	textScales                                                                      []int    // textScale's choices
 	iconSets                                                                        []string // icons' choices
 	appIconSets                                                                     []string // appIcons' choices
-	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency, transparency gtk.Scale
-	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal    gtk.Label
-	transparencyVal                                                                 gtk.Label
+	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency, transparency, radius gtk.Scale
+	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal           gtk.Label
+	transparencyVal, radiusVal                                                              gtk.Label
 	clipClear, clipReveal                                                           gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
@@ -157,6 +159,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Keyring.Notify = on
 		case "mcp_enable":
 			c.MCP.Enable = on
+		case "osd_enable":
+			c.Osd.Enable = on
 		case "clip_enable":
 			c.Clipboard.Enable = on
 		case "clip_bar":
@@ -210,6 +214,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Bar.Workspaces = pick(wsChoices, i, c.Bar.Workspaces)
 		case "bar_density":
 			c.Bar.Density = pick(barDensities, i, c.Bar.Density)
+		case "osd_position":
+			c.Osd.Position = pick(config.OsdPositions, i, c.Osd.Position)
 		case "launch_mode":
 			c.Launcher.Mode = pick(modeChoices, i, c.Launcher.Mode)
 		case "dock_size":
@@ -328,6 +334,13 @@ func (s *shellUI) bindSettingsHandlers() {
 			s.changeSettings(c)
 			return false
 		}
+		if r.GetName() == "radius" {
+			val := int(math.Round(v))
+			c.Style.Radius = val
+			s.settings.radiusVal.SetText(i18n.Tf("%d px", val))
+			s.changeSettings(c)
+			return false
+		}
 		v = math.Round(max(-1, min(v, 1))*20) / 20 // the steps of 0.05
 		c.Input.TouchpadSpeed = &v
 		s.changeSettings(c)
@@ -421,6 +434,8 @@ func (s *shellUI) openSettings() {
 	ui.Get("bg_fit", &st.bgFit)
 	ui.Get("ws", &st.ws)
 	ui.Get("bar_density", &st.barDensity)
+	ui.Get("osd_enable", &st.osdEnable)
+	ui.Get("osd_position", &st.osdPosition)
 	ui.Get("bar_empty_transparency", &st.barEmptyTransparency)
 	ui.Get("bar_empty_transparency_val", &st.barEmptyTransparencyVal)
 	ui.Get("bar_window_transparency", &st.barWindowTransparency)
@@ -432,6 +447,8 @@ func (s *shellUI) openSettings() {
 	ui.Get("text_scale", &st.textScale)
 	ui.Get("transparency", &st.transparency)
 	ui.Get("transparency_val", &st.transparencyVal)
+	ui.Get("radius", &st.radius)
+	ui.Get("radius_val", &st.radiusVal)
 	st.textScales = nil // a new dropdown, without its choices
 	st.iconSets, st.appIconSets = nil, nil
 	ui.Get("lang_restart_row", &st.langRestartRow)
@@ -515,11 +532,11 @@ func (s *shellUI) openSettings() {
 		st.entries[e.GoPointer()] = e
 		gtkx.ConnectChanged(e, &s.onSettingsEntry)
 	}
-	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.textScale, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
+	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.osdPosition, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.textScale, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.barEmptyCustom, &st.barWindowCustom, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.clipCustom, &st.displays.lidOff} {
+	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.osdEnable, &st.barEmptyCustom, &st.barWindowCustom, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.clipCustom, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
 	for _, b := range []*gtk.Button{&choose, &clearImage, &themeAdd, &st.themeTrash, &themeFolder, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
@@ -530,6 +547,7 @@ func (s *shellUI) openSettings() {
 	st.barEmptyTransparency.ConnectChangeValue(&s.onSettingsScale)
 	st.barWindowTransparency.ConnectChangeValue(&s.onSettingsScale)
 	st.transparency.ConnectChangeValue(&s.onSettingsScale)
+	st.radius.ConnectChangeValue(&s.onSettingsScale)
 	s.buildSwatches()
 	st.hyprKb = s.hyprKbOptions()
 	st.sc.binds = s.hyprBinds()
@@ -715,6 +733,8 @@ func (s *shellUI) showSettings() {
 	st.ws.SetSelected(uint32(max(0, slices.Index(wsChoices, c.Bar.Workspaces))))
 	st.launchMode.SetSelected(uint32(max(0, slices.Index(modeChoices, c.Launcher.Mode))))
 	st.barDensity.SetSelected(uint32(max(0, slices.Index(barDensities, c.Bar.Density))))
+	st.osdEnable.SetActive(c.Osd.Enable)
+	st.osdPosition.SetSelected(uint32(max(0, slices.Index(config.OsdPositions, c.Osd.Position))))
 	empty, window := c.Style.Transparency, c.Style.Transparency
 	if c.Bar.EmptyTransparency != nil {
 		empty = *c.Bar.EmptyTransparency

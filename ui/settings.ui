@@ -1200,6 +1200,104 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         <child>
                                           <object class="GtkBox">
                                             <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
+                                                <property name="label" translatable="yes">On-screen display</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
+                                                <property name="label" translatable="yes">An icon and a word answer a change to the volume, the brightness, Wi-Fi or Bluetooth</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="osd_enable">
+                                            <property name="name">osd_enable</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
+                                                <property name="label" translatable="yes">On-screen display position</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
+                                                <property name="label" translatable="yes">Where it sits; a top one sits under the bar</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkDropDown" id="osd_position">
+                                            <property name="name">osd_position</property>
+                                            <property name="valign">3</property>
+                                            <property name="model">
+                                              <object class="GtkStringList">
+                                                <items>
+                                                  <item translatable="yes">Top right</item>
+                                                  <item translatable="yes">Top centre</item>
+                                                  <item translatable="yes">Top left</item>
+                                                  <item translatable="yes">Bottom right</item>
+                                                  <item translatable="yes">Bottom centre</item>
+                                                  <item translatable="yes">Bottom left</item>
+                                                </items>
+                                              </object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
                                             <property name="width-request">260</property>
                                             <property name="valign">3</property>
                                             <child>
