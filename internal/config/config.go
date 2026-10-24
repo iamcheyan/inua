@@ -145,6 +145,8 @@ type Style struct {
 	// TextScale sizes the built-in style's text, 80 to 150 percent. Icons,
 	// spacing and the user's stylesheet keep their sizes.
 	TextScale int `toml:"text_scale"`
+	// Radius rounds the shell's floating surfaces, from square (0) to 20 px.
+	Radius int `toml:"radius"`
 }
 
 type Background struct {
@@ -712,7 +714,7 @@ func Default() Config {
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100, Radius: 4},
 		Background: Background{Enable: true, Fit: "cover", Generate: true},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
@@ -847,6 +849,10 @@ func (c *Config) validate() []string {
 	if c.Style.TextScale < 80 || c.Style.TextScale > 150 {
 		w = append(w, fmt.Sprintf("style.text_scale = %d: want 80 to 150; using %d", c.Style.TextScale, d.Style.TextScale))
 		c.Style.TextScale = d.Style.TextScale
+	}
+	if c.Style.Radius < 0 || c.Style.Radius > 20 {
+		w = append(w, fmt.Sprintf("style.radius = %d: want 0 to 20; using %d", c.Style.Radius, d.Style.Radius))
+		c.Style.Radius = d.Style.Radius
 	}
 	oneOf("background.fit", &c.Background.Fit, d.Background.Fit, Fits...)
 	if !ValidColor(c.Background.Color) {

@@ -29,6 +29,7 @@ type styles struct {
 	clipboard *gtk.CssProvider // clipboard card opacity
 	swatches  *gtk.CssProvider // the settings window's theme swatches
 	bar       *gtk.CssProvider // per-workspace bar background transparency
+	radius    *gtk.CssProvider // corner radius of floating surfaces
 	drawing   string           // the picture inua is drawing, by its key (picturePath)
 	shown     string           // the file of the picture inua drew last shown
 	midnight  *time.Timer      // draws the next day's picture (nextPicture)
@@ -63,6 +64,30 @@ func (s *shellUI) loadStyles() {
 	s.loadClipboardStyle()
 	s.loadSwatchStyle()
 	s.loadBarStyle()
+	s.loadRadiusStyle()
+}
+
+// loadRadiusStyle applies the configured corners to the shell's floating
+// surfaces. The bar's workspace islands keep their existing geometry.
+func (s *shellUI) loadRadiusStyle() {
+	if s.styles.radius == nil {
+		s.styles.radius = gtk.NewCssProvider()
+		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), s.styles.radius, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+2))
+	}
+	r := s.cfg.Style.Radius
+	s.styles.radius.LoadFromString(fmt.Sprintf(`
+.launcher,
+.agenda .card,
+.control .card,
+.center .card,
+.settings .card,
+.dock,
+.shot-drawer,
+popover.menu > contents,
+popover.menu > arrow {
+  border-radius: %dpx;
+}
+`, r))
 }
 
 func (s *shellUI) loadBarStyle() {

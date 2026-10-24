@@ -271,6 +271,11 @@ next start or settings change.
 "Text size") sizes the text of the shell and inua's apps alone: icons,
 spacing and your own `style.css` keep their sizes.
 
+`style.radius` (0 to 20 px, default 4; the Appearance page's "Corner
+radius") sets the corners of the launcher's, panels', dock's, menus' and
+shot drawer's floating surfaces. Zero keeps them square; the bar islands
+retain their existing shape.
+
 Tests keep `config.toml` equal to the defaults (`internal/config`): add new
 settings to the sample too. `samples.go` embeds this directory's `hypr/` and
 `inua/` files in `inua`; a test keeps the sample theme setting every token

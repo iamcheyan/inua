@@ -159,6 +159,10 @@ edge_gaps = true
 # spacing and the stylesheet below keep their sizes.
 text_scale = 100
 
+# Corner radius of the shell's floating surfaces, in pixels: 0 is square,
+# 20 is the largest roundness.
+radius = 4
+
 # Extra stylesheet loaded after the built-in one, relative to this file's
 # directory. Ignored if the file does not exist. See style.css next to this
 # file for the colors you can override.

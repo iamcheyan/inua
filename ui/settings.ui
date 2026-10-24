@@ -676,6 +676,66 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkBox">
                                 <style>
+                                  <class name="row"/>
+                                </style>
+                                <property name="spacing">16</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">1</property>
+                                    <property name="hexpand">true</property>
+                                    <property name="valign">3</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="title"/>
+                                        </style>
+                                        <property name="label" translatable="yes">Corner radius</property>
+                                        <property name="xalign">0</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <style>
+                                          <class name="sub"/>
+                                        </style>
+                                        <property name="label" translatable="yes">Round the shell's floating surfaces; zero keeps square corners</property>
+                                        <property name="xalign">0</property>
+                                        <property name="wrap">true</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkScale" id="radius">
+                                    <property name="name">radius</property>
+                                    <property name="hexpand">true</property>
+                                    <property name="valign">3</property>
+                                    <property name="draw-value">false</property>
+                                    <property name="adjustment">
+                                      <object class="GtkAdjustment">
+                                        <property name="lower">0</property>
+                                        <property name="upper">20</property>
+                                        <property name="step-increment">1</property>
+                                        <property name="page-increment">4</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="radius_val">
+                                    <property name="name">radius_val</property>
+                                    <style>
+                                      <class name="readout"/>
+                                    </style>
+                                    <property name="width-chars">5</property>
+                                    <property name="xalign">1</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <style>
                                   <class name="section"/>
                                 </style>
                                 <property name="orientation">1</property>

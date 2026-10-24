@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -62,6 +63,8 @@ type settings struct {
 	iconSets                                                                     []string // icons' choices
 	appIconSets                                                                  []string // appIcons' choices
 	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency            gtk.Scale
+	radius                                                                       gtk.Scale
+	radiusVal                                                                    gtk.Label
 	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal gtk.Label
 	clipClear, clipReveal                                                        gtk.Button
 
@@ -304,6 +307,13 @@ func (s *shellUI) bindSettingsHandlers() {
 			s.changeSettings(c)
 			return false
 		}
+		if r.GetName() == "radius" {
+			val := int(math.Round(v))
+			c.Style.Radius = val
+			s.settings.radiusVal.SetText(strconv.Itoa(val) + " px")
+			s.changeSettings(c)
+			return false
+		}
 		v = math.Round(max(-1, min(v, 1))*20) / 20 // the steps of 0.05
 		c.Input.TouchpadSpeed = &v
 		s.changeSettings(c)
@@ -405,6 +415,8 @@ func (s *shellUI) openSettings() {
 	ui.Get("app_icons", &st.appIcons)
 	ui.Get("language", &st.language)
 	ui.Get("text_scale", &st.textScale)
+	ui.Get("radius", &st.radius)
+	ui.Get("radius_val", &st.radiusVal)
 	st.textScales = nil // a new dropdown, without its choices
 	st.iconSets, st.appIconSets = nil, nil
 	ui.Get("lang_restart_row", &st.langRestartRow)
@@ -502,6 +514,7 @@ func (s *shellUI) openSettings() {
 	st.clipOpacity.ConnectChangeValue(&s.onSettingsScale)
 	st.barEmptyTransparency.ConnectChangeValue(&s.onSettingsScale)
 	st.barWindowTransparency.ConnectChangeValue(&s.onSettingsScale)
+	st.radius.ConnectChangeValue(&s.onSettingsScale)
 	s.buildSwatches()
 	st.hyprKb = s.hyprKbOptions()
 	st.sc.binds = s.hyprBinds()
@@ -693,6 +706,8 @@ func (s *shellUI) showSettings() {
 	st.barEmptyTransparencyVal.SetText(i18n.Tf("%d%%", c.Bar.EmptyTransparency))
 	st.barWindowTransparency.SetValue(float64(c.Bar.WindowTransparency))
 	st.barWindowTransparencyVal.SetText(i18n.Tf("%d%%", c.Bar.WindowTransparency))
+	st.radius.SetValue(float64(c.Style.Radius))
+	st.radiusVal.SetText(strconv.Itoa(c.Style.Radius) + " px")
 	s.showIconSets()
 	s.showTextScale()
 	st.language.SetSelected(uint32(max(0, slices.Index(config.Languages, c.Language))))

@@ -493,6 +493,50 @@ ApplicationWindow settings {
                 }
               }
 
+              Box {
+                styles ["row"]
+                spacing: 16;
+
+                Box {
+                  orientation: vertical;
+                  hexpand: true;
+                  valign: center;
+
+                  Label {
+                    styles ["title"]
+                    label:  _("Corner radius");
+                    xalign: 0;
+                  }
+                  Label {
+                    styles ["sub"]
+                    label:  _("Round the shell's floating surfaces; zero keeps square corners");
+                    xalign: 0;
+                    wrap: true;
+                  }
+                }
+
+                Scale radius {
+                  name: "radius";
+                  hexpand: true;
+                  valign: center;
+                  draw-value: false;
+
+                  adjustment: Adjustment {
+                    lower: 0;
+                    upper: 20;
+                    step-increment: 1;
+                    page-increment: 4;
+                  };
+                }
+
+                Label radius_val {
+                  name: "radius_val";
+                  styles ["readout"]
+                  width-chars: 5;
+                  xalign: 1;
+                }
+              }
+
 
               // [PICTURE]
               Box {
