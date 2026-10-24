@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
@@ -31,6 +32,9 @@ type styles struct {
 	swatches  *gtk.CssProvider // the settings window's theme swatches
 	bar       *gtk.CssProvider // per-workspace bar background transparency
 	shell     *gtk.CssProvider // style.transparency, over every floating surface
+	drawing   string           // the picture inua is drawing, by its key (picturePath)
+	shown     string           // the file of the picture inua drew last shown
+	midnight  *time.Timer      // draws the next day's picture (nextPicture)
 }
 
 func (s *shellUI) theme() string { return cmp.Or(s.cfg.Style.Theme, "yoru") }
@@ -143,12 +147,16 @@ func (s *shellUI) loadShellStyle() {
 // alpha renders an opacity as the CSS alpha() argument, two decimals.
 func alpha(v float64) string { return fmt.Sprintf("%.2f", v) }
 
-// loadWallpaper styles the wallpaper windows from the settings. Without an
-// image they show the theme's ground with the texture, whose tile is
-// written to the runtime directory.
+// loadWallpaper styles the wallpaper windows from the settings: the picture
+// inua draws, once it is drawn (covering the screen, as it is drawn for
+// it), or the image. Without either they show the theme's ground with the
+// texture, whose tile is written to the runtime directory.
 func (s *shellUI) loadWallpaper() {
 	bg := s.cfg.Background
 	w := shell.Wallpaper{Image: s.cfg.ImagePath(), Fit: bg.Fit, Color: bg.Color}
+	if bg.Generate {
+		w = shell.Wallpaper{Image: s.picturePath(), Fit: "cover"}
+	}
 	if w.Image == "" {
 		colors := shellThemeColors(s, s.theme())
 		path, err := writeTile(colors["field"])
@@ -162,7 +170,7 @@ func (s *shellUI) loadWallpaper() {
 
 // shellThemeColors reads a theme's colour tokens.
 func shellThemeColors(s *shellUI, name string) map[string]string {
-	return shell.ThemeColors(s.cfg.ThemeCSS(name, s.readUI))
+	return config.ThemeColors(s.cfg.ThemeCSS(name, s.readUI))
 }
 
 func writeTile(field string) (string, error) {

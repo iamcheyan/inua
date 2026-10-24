@@ -44,27 +44,30 @@ type settings struct {
 	swatchNames           []string               // the themes the swatches show
 	themeTrash, iconTrash gtk.Button             // for the user's theme or icon set in use
 
-	bgEnable, title, tray, barPass, tpAccel, notifyOn, critFocus, noteHistory       gtk.Switch
-	barOn, dockOn, dockHide, dockDrawer, dockFlushBar                               gtk.Switch
-	clipEnable, clipBar, clipPaste, clipCustom                                      gtk.Switch
-	barEmptyCustom, barWindowCustom                                                 gtk.Switch
-	dockSize, dockPosition, barDensity                                              gtk.DropDown
-	osdEnable                                                                       gtk.Switch
-	osdPosition                                                                     gtk.DropDown
-	dockPinned                                                                      gtk.Box
-	bgImage, bgColor, clock, terminal, lock, screenshot                             gtk.Entry
-	clipSensitive                                                                   gtk.Entry
-	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner                      gtk.DropDown
-	clipLimit                                                                       gtk.DropDown
-	clipLimits                                                                      []int // clipLimit's choices
-	textScale                                                                       gtk.DropDown
-	textScales                                                                      []int    // textScale's choices
-	iconSets                                                                        []string // icons' choices
-	appIconSets                                                                     []string // appIcons' choices
+	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus                          gtk.Switch
+	noteHistory                                                                             gtk.Switch
+	bgOwn                                                                                   gtk.Box // the image's rows, hidden while inua draws
+	bgAnother                                                                               gtk.Button
+	barOn, dockOn, dockHide, dockDrawer, dockFlushBar                                       gtk.Switch
+	clipEnable, clipBar, clipPaste, clipCustom                                              gtk.Switch
+	barEmptyCustom, barWindowCustom                                                         gtk.Switch
+	dockSize, dockPosition, barDensity                                                      gtk.DropDown
+	osdEnable                                                                               gtk.Switch
+	osdPosition                                                                             gtk.DropDown
+	dockPinned                                                                              gtk.Box
+	bgImage, bgColor, clock, terminal, lock, screenshot                                     gtk.Entry
+	clipSensitive                                                                           gtk.Entry
+	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner                              gtk.DropDown
+	clipLimit                                                                               gtk.DropDown
+	clipLimits                                                                              []int // clipLimit's choices
+	textScale                                                                               gtk.DropDown
+	textScales                                                                              []int    // textScale's choices
+	iconSets                                                                                []string // icons' choices
+	appIconSets                                                                             []string // appIcons' choices
 	tpSpeed, clipOpacity, barEmptyTransparency, barWindowTransparency, transparency, radius gtk.Scale
-	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal           gtk.Label
+	clipOpacityVal, clipStats, barEmptyTransparencyVal, barWindowTransparencyVal            gtk.Label
 	transparencyVal, radiusVal                                                              gtk.Label
-	clipClear, clipReveal                                                           gtk.Button
+	clipClear, clipReveal                                                                   gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
 	// would do nothing.
@@ -129,8 +132,8 @@ func (s *shellUI) bindSettingsHandlers() {
 		}
 		c := s.cfg
 		switch sw.GetName() {
-		case "bg_enable":
-			c.Background.Enable = on
+		case "bg_generate":
+			c.Background.Generate = on
 		case "title":
 			c.Bar.Title = on
 		case "tray":
@@ -278,6 +281,8 @@ func (s *shellUI) bindSettingsHandlers() {
 		case name == "bg_clear":
 			c.Background.Image = ""
 			s.changeSettings(c)
+		case name == "bg_another":
+			s.anotherPicture()
 		case name == "clip_clear":
 			_ = clipboard.Clear(s.clipboard.path)
 			s.refreshClipboard()
@@ -421,7 +426,6 @@ func (s *shellUI) openSettings() {
 	ui.Get("index", &st.index)
 	ui.Get("themes", &st.themes)
 	ui.Get("clock_preview", &st.clockPreview)
-	ui.Get("bg_enable", &st.bgEnable)
 	ui.Get("title", &st.title)
 	ui.Get("tray", &st.tray)
 	ui.Get("bar_pass", &st.barPass)
@@ -506,6 +510,9 @@ func (s *shellUI) openSettings() {
 	var choose, clearImage gtk.Button
 	ui.Get("bg_choose", &choose)
 	ui.Get("bg_clear", &clearImage)
+	ui.Get("bg_generate", &st.bgGenerate)
+	ui.Get("bg_own", &st.bgOwn)
+	ui.Get("bg_another", &st.bgAnother)
 	var themeAdd, themeFolder, iconAdd, iconFolder gtk.Button
 	ui.Get("theme_add", &themeAdd)
 	ui.Get("theme_trash", &st.themeTrash)
@@ -536,10 +543,10 @@ func (s *shellUI) openSettings() {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgEnable, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.osdEnable, &st.barEmptyCustom, &st.barWindowCustom, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.clipCustom, &st.displays.lidOff} {
+	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.osdEnable, &st.barEmptyCustom, &st.barWindowCustom, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.clipCustom, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
-	for _, b := range []*gtk.Button{&choose, &clearImage, &themeAdd, &st.themeTrash, &themeFolder, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
+	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &themeAdd, &st.themeTrash, &themeFolder, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
 		b.ConnectClicked(&s.onSettingsButton)
 	}
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
@@ -715,7 +722,9 @@ func (s *shellUI) showSettings() {
 	}
 	st.themeTrash.SetSensitive(c.IsCustomTheme(s.theme()))
 	st.iconTrash.SetSensitive(c.IconSetDir() != "")
-	st.bgEnable.SetActive(c.Background.Enable)
+	st.bgGenerate.SetActive(c.Background.Generate)
+	st.bgOwn.SetVisible(!c.Background.Generate)
+	st.bgAnother.SetVisible(c.Background.Generate)
 	st.title.SetActive(c.Bar.Title)
 	st.tray.SetActive(c.Bar.Tray)
 	st.barPass.SetActive(c.Bar.Pass)
