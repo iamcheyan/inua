@@ -3,6 +3,10 @@ package ui
 import (
 	"context"
 	"log"
+	"os"
+	"os/exec"
+	"runtime"
+	"strings"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -73,6 +77,8 @@ type voiceSettings struct {
 	stateRow, offRow     gtk.Box
 	download             map[string]*gtk.Button
 	setup                gtk.Button
+	fixRow               gtk.Box
+	fix                  gtk.Button
 }
 
 // getVoiceSettings makes the page's sections in its box.
@@ -110,6 +116,9 @@ func (s *shellUI) getVoiceSettings(ui *gtkx.Builder) {
 			if b.GetName() == "voice_setup" {
 				s.voiceSetupModel()
 			}
+		}
+		s.onVoiceCheck = func(gtk.Button) {
+			s.voiceFix()
 		}
 	}
 	sw := func(body *gtk.Box, name, title, sub string) gtk.Switch {
@@ -154,11 +163,23 @@ func (s *shellUI) getVoiceSettings(ui *gtkx.Builder) {
 		gtkx.Append(body, &row.Widget)
 	}
 	row, _ = displayRow(i18n.T("Other models"), i18n.T("voxtype's own setup lists more of them"))
-	v.setup.SetName("voice_setup")
-	v.setup.AddCssClass("outlined")
-	v.setup.SetLabel(i18n.T("Open voxtype"))
-	v.setup.ConnectClicked(&s.onVoiceModel)
+	b := gtk.NewButton()
+	b.SetName("voice_setup")
+	b.AddCssClass("outlined")
+	b.SetLabel(i18n.T("Open voxtype"))
+	b.ConnectClicked(&s.onVoiceModel)
+	v.setup = *b
 	gtkx.Append(row, &v.setup.Widget)
+	gtkx.Append(body, &row.Widget)
+	row, _ = displayRow(i18n.T("Fix the setup"), i18n.T("The assistant looks at what is wrong and helps you fix it"))
+	v.fixRow = *row
+	b = gtk.NewButton()
+	b.SetName("voice_fix")
+	b.AddCssClass("outlined")
+	b.SetLabel(i18n.T("Fix"))
+	b.ConnectClicked(&s.onVoiceCheck)
+	v.fix = *b
+	gtkx.Append(row, &v.fix.Widget)
 	gtkx.Append(body, &row.Widget)
 	v.status = *gtk.NewLabel("")
 	v.status.AddCssClass("sub")
@@ -200,11 +221,15 @@ func (s *shellUI) setVoiceButton() {
 // what the shortcut is.
 func (s *shellUI) showVoice() {
 	st := &s.settings.voice
+	if s.settings.win == nil || st.page.GoPointer() == 0 {
+		return
+	}
 	v := s.sys.Voice
 	st.state.SetText(voiceStateText(v))
 	st.model.SetText(cmpOr(v.Model, i18n.T("Unknown")))
 	st.stateRow.SetVisible(v.Available)
 	st.offRow.SetVisible(!v.Available)
+	st.fixRow.SetVisible(!v.Available)
 }
 
 // voiceStateText is the daemon's state in a word for the settings.
@@ -282,4 +307,114 @@ func (s *shellUI) ensureVoiceShortcut(c *config.Config) {
 		}
 	}
 	c.Shortcuts = append(c.Shortcuts, config.Shortcut{Action: "voice", Keys: "SUPER+SHIFT+V"})
+}
+
+var voiceFixing bool
+
+// voiceFix asks inua-assistant to inspect and directly fix the voice input environment.
+func (s *shellUI) voiceFix() {
+	st := &s.settings.voice
+	if voiceFixing {
+		return
+	}
+	if _, err := exec.LookPath("inua-assistant"); err != nil {
+		st.status.SetText(i18n.T("inua-assistant is not installed"))
+		return
+	}
+	voiceFixing = true
+	st.fix.SetSensitive(false)
+	st.status.SetText(i18n.T("The assistant is looking at it."))
+	prompt := s.voiceAssistantPrompt()
+	go func() {
+		err := desktop.Spawn([]string{"inua-assistant", "--ask", prompt}, "")
+		gtkx.Post(func() {
+			voiceFixing = false
+			st.fix.SetSensitive(true)
+			if err != nil {
+				st.status.SetText(i18n.Tf("The assistant could not be started: %v", err))
+			} else {
+				st.status.SetText(i18n.T("The assistant is looking at it."))
+			}
+		})
+	}()
+}
+
+// voiceAssistantPrompt builds the diagnostic prompt for the assistant to directly
+// repair the voxtype environment.
+func (s *shellUI) voiceAssistantPrompt() string {
+	var b strings.Builder
+	b.WriteString(i18n.T("The voice input in inua (the voxtype daemon) is not fully set up: this machine is missing something it needs. Check what is wrong below read-only first, then say what you would change and carry it out, reporting item by item."))
+	b.WriteString("\n\n")
+
+	distro := hostDistro()
+	b.WriteString(i18n.Tf("This host: %s, distribution %s.", runtime.GOOS, distro))
+	b.WriteString("\n")
+
+	voxPath, err := exec.LookPath("voxtype")
+	if err != nil {
+		b.WriteString(i18n.T("voxtype executable: not found in PATH."))
+	} else {
+		b.WriteString(i18n.Tf("voxtype executable: %s.", voxPath))
+	}
+	b.WriteString("\n")
+
+	v := s.sys.Voice
+	if v.Available {
+		b.WriteString(i18n.Tf("The daemon answers: status %s, model %s.", v.Status, v.Model))
+	} else {
+		b.WriteString(i18n.Tf("The daemon does not answer: %s.", cmpOr(v.Error, i18n.T("not running"))))
+	}
+	b.WriteString("\n")
+
+	if out, err := exec.Command("systemctl", "--user", "is-active", "voxtype.service").Output(); err == nil {
+		b.WriteString(i18n.Tf("systemd user service voxtype.service: %s.", strings.TrimSpace(string(out))))
+		b.WriteString("\n")
+	}
+
+	var modelsDownloaded, modelsMissing []string
+	if s.svc.voice != nil {
+		for _, m := range voiceModels {
+			if s.svc.voice.ModelExists(m.ID) {
+				modelsDownloaded = append(modelsDownloaded, m.Label)
+			} else {
+				modelsMissing = append(modelsMissing, m.Label)
+			}
+		}
+	}
+	if len(modelsDownloaded) > 0 {
+		b.WriteString(i18n.Tf("Downloaded models: %s.", strings.Join(modelsDownloaded, ", ")))
+		b.WriteString("\n")
+	}
+	if len(modelsMissing) > 0 {
+		b.WriteString(i18n.Tf("Missing models: %s.", strings.Join(modelsMissing, ", ")))
+		b.WriteString("\n")
+	}
+	b.WriteString("\n")
+
+	if distro == "nixos" {
+		b.WriteString(i18n.T("This host is NixOS: if voxtype is installed, diagnose and fix the user service, configuration, or model files directly. If system configuration changes are required, specify what to add."))
+		b.WriteString("\n")
+	}
+
+	b.WriteString(i18n.T("First check each thing read-only - which, --version, ls, systemctl status, journalctl --user -u voxtype.service - and tell me what you actually see. Do not change anything yet."))
+	b.WriteString("\n")
+	b.WriteString(i18n.T("Then carry out the needed fixes directly (e.g. systemctl --user reset-failed voxtype.service, restarting the service, downloading missing models, or fixing permissions with pkexec if needed)."))
+	b.WriteString("\n")
+	b.WriteString(i18n.T("Finally tell me how to confirm each fix - which command, and what to look for. I will press the button again in inua once it is done."))
+	b.WriteString("\n")
+	b.WriteString(i18n.T("No keys, tokens or passwords are needed for this, and none are in this message."))
+	return b.String()
+}
+
+func hostDistro() string {
+	data, err := os.ReadFile("/etc/os-release")
+	if err != nil {
+		return ""
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if k, v, ok := strings.Cut(line, "="); ok && k == "ID" {
+			return strings.Trim(strings.TrimSpace(v), `"'`)
+		}
+	}
+	return ""
 }

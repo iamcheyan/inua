@@ -1694,7 +1694,7 @@ msgstr "뇌우"
 
 #: internal/apps/weather/weather.go:214
 #: internal/appui/sysmon.go:1082
-#: internal/ui/voice.go:202
+#: internal/ui/voice.go:229
 #: internal/vmui/window.go:2335
 msgid "Unknown"
 msgstr "알 수 없음"
@@ -3070,7 +3070,7 @@ msgid "User"
 msgstr "사용자"
 
 #: internal/appui/sysmon.go:785
-#: internal/ui/voice.go:130
+#: internal/ui/voice.go:142
 msgid "State"
 msgstr "상태"
 
@@ -3231,7 +3231,7 @@ msgstr "컴퓨터"
 #: internal/appui/sysmon.go:978
 #: internal/shell/cardterm.go:113
 #: internal/ui/settings_ai.go:494
-#: internal/ui/voice.go:134
+#: internal/ui/voice.go:146
 msgid "Model"
 msgstr "모델"
 
@@ -4175,7 +4175,7 @@ msgstr ""
 #: internal/hyprconf/keys.go:40
 #: internal/shell/status.go:48
 #: internal/ui/settings_ai.go:727
-#: internal/ui/voice.go:125
+#: internal/ui/voice.go:137
 #: ui/assistant.ui:193
 #: ui/bar.ui:164
 msgid "Voice input"
@@ -9187,6 +9187,7 @@ msgstr "보석금 $50 지불"
 
 #: internal/gamesui/fortune_ai.go:80
 #: internal/ui/settings_bench.go:227
+#: internal/ui/voice.go:321
 #: internal/vmui/assistant.go:109
 msgid "inua-assistant is not installed"
 msgstr "inua-assistant가 설치되어 있지 않습니다"
@@ -11036,7 +11037,7 @@ msgid "Fetching your mail"
 msgstr "메일을 가져오는 중"
 
 #: internal/mailui/welcome.go:726
-#: internal/ui/voice.go:217
+#: internal/ui/voice.go:245
 msgid "Ready"
 msgstr "준비됨"
 
@@ -15026,82 +15027,167 @@ msgstr "inua는 업그레이드할 수 없습니다."
 msgid "Could not upgrade: %s"
 msgstr "업그레이드할 수 없음: %s"
 
-#: internal/ui/voice.go:124
+#: internal/ui/voice.go:136
 msgid "VOICE"
 msgstr ""
 
-#: internal/ui/voice.go:124
+#: internal/ui/voice.go:136
 msgid "Talk, and the words are typed where you are"
 msgstr ""
 
-#: internal/ui/voice.go:125
+#: internal/ui/voice.go:137
 msgid "A microphone in the bar; a shortcut holds to talk"
 msgstr ""
 
-#: internal/ui/voice.go:126
+#: internal/ui/voice.go:138
 msgid "Push to talk"
 msgstr ""
 
-#: internal/ui/voice.go:126
+#: internal/ui/voice.go:138
 msgid "The shortcut records while it is held"
 msgstr ""
 
-#: internal/ui/voice.go:129
+#: internal/ui/voice.go:141
 msgid "ENGINE"
 msgstr ""
 
-#: internal/ui/voice.go:129
+#: internal/ui/voice.go:141
 msgid "The voxtype daemon does the listening"
 msgstr ""
 
-#: internal/ui/voice.go:142
+#: internal/ui/voice.go:154
 #: internal/vmui/window.go:2467
 msgid "Download"
 msgstr "다운로드"
 
-#: internal/ui/voice.go:144
+#: internal/ui/voice.go:156
 msgid "Downloaded"
 msgstr ""
 
-#: internal/ui/voice.go:153
+#: internal/ui/voice.go:165
 msgid "Other models"
 msgstr ""
 
-#: internal/ui/voice.go:153
+#: internal/ui/voice.go:165
 msgid "voxtype's own setup lists more of them"
 msgstr ""
 
-#: internal/ui/voice.go:156
+#: internal/ui/voice.go:169
 msgid "Open voxtype"
 msgstr ""
 
-#: internal/ui/voice.go:167
+#: internal/ui/voice.go:174
+msgid "Fix the setup"
+msgstr ""
+
+#: internal/ui/voice.go:174
+msgid "The assistant looks at what is wrong and helps you fix it"
+msgstr ""
+
+#: internal/ui/voice.go:179
+#: internal/vmui/window.go:1192
+msgid "Fix"
+msgstr "수정"
+
+#: internal/ui/voice.go:191
 msgid "Voxtype is not installed, or its daemon is not running."
 msgstr ""
 
-#: internal/ui/voice.go:211
+#: internal/ui/voice.go:239
 msgid "Not available"
 msgstr ""
 
-#: internal/ui/voice.go:213
+#: internal/ui/voice.go:241
 msgid "Listening"
 msgstr ""
 
-#: internal/ui/voice.go:215
+#: internal/ui/voice.go:243
 msgid "Transcribing"
 msgstr ""
 
-#: internal/ui/voice.go:232
+#: internal/ui/voice.go:260
 msgid "Downloading %s…"
 msgstr ""
 
-#: internal/ui/voice.go:246
+#: internal/ui/voice.go:274
 msgid "%s is ready."
 msgstr ""
 
-#: internal/ui/voice.go:258
+#: internal/ui/voice.go:286
 msgid "Could not start voxtype's setup: %s"
 msgstr ""
+
+#: internal/ui/voice.go:326
+#: internal/ui/voice.go:336
+msgid "The assistant is looking at it."
+msgstr ""
+
+#: internal/ui/voice.go:334
+#: internal/vmui/assistant.go:112
+msgid "The assistant could not be started: %v"
+msgstr "어시스턴트를 시작하지 못했습니다: %v"
+
+#: internal/ui/voice.go:346
+msgid "The voice input in inua (the voxtype daemon) is not fully set up: this machine is missing something it needs. Check what is wrong below read-only first, then say what you would change and carry it out, reporting item by item."
+msgstr ""
+
+#: internal/ui/voice.go:350
+#: internal/vmui/assistant.go:48
+msgid "This host: %s, distribution %s."
+msgstr "이 호스트: %s, 배포판 %s."
+
+#: internal/ui/voice.go:355
+msgid "voxtype executable: not found in PATH."
+msgstr ""
+
+#: internal/ui/voice.go:357
+msgid "voxtype executable: %s."
+msgstr ""
+
+#: internal/ui/voice.go:363
+msgid "The daemon answers: status %s, model %s."
+msgstr ""
+
+#: internal/ui/voice.go:365
+msgid "The daemon does not answer: %s."
+msgstr ""
+
+#: internal/ui/voice.go:365
+msgid "not running"
+msgstr ""
+
+#: internal/ui/voice.go:370
+msgid "systemd user service voxtype.service: %s."
+msgstr ""
+
+#: internal/ui/voice.go:385
+msgid "Downloaded models: %s."
+msgstr ""
+
+#: internal/ui/voice.go:389
+msgid "Missing models: %s."
+msgstr ""
+
+#: internal/ui/voice.go:395
+msgid "This host is NixOS: if voxtype is installed, diagnose and fix the user service, configuration, or model files directly. If system configuration changes are required, specify what to add."
+msgstr ""
+
+#: internal/ui/voice.go:399
+msgid "First check each thing read-only - which, --version, ls, systemctl status, journalctl --user -u voxtype.service - and tell me what you actually see. Do not change anything yet."
+msgstr ""
+
+#: internal/ui/voice.go:401
+msgid "Then carry out the needed fixes directly (e.g. systemctl --user reset-failed voxtype.service, restarting the service, downloading missing models, or fixing permissions with pkexec if needed)."
+msgstr ""
+
+#: internal/ui/voice.go:403
+msgid "Finally tell me how to confirm each fix - which command, and what to look for. I will press the button again in inua once it is done."
+msgstr ""
+
+#: internal/ui/voice.go:405
+#: internal/vmui/assistant.go:75
+msgid "No keys, tokens or passwords are needed for this, and none are in this message."
+msgstr "이 작업에는 키, 토큰, 비밀번호가 필요하지 않으며 이 메시지에도 없습니다."
 
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:700
@@ -15341,10 +15427,6 @@ msgstr "부팅 방식: 펌웨어 %s, 아키텍처 %s, 머신 유형 %s, 가속 %
 msgid "How it is seen: %s, %s."
 msgstr "표시 방식: %s, %s."
 
-#: internal/vmui/assistant.go:48
-msgid "This host: %s, distribution %s."
-msgstr "이 호스트: %s, 배포판 %s."
-
 #: internal/vmui/assistant.go:52
 msgid "%d checks failed:"
 msgstr "%d개 검사가 실패했습니다:"
@@ -15373,17 +15455,9 @@ msgstr "이 호스트는 NixOS입니다: 시스템을 변경하거나 재빌드�
 msgid "Finally tell me how to confirm each fix - which command, and what to look for. I will press Check again in inua and continue the installation once the checks pass."
 msgstr "마지막으로 각 수정을 어떻게 확인하는지(어떤 명령으로 무엇을 보는지) 알려주세요. inua에서 '다시 검사'를 누르고 검사가 통과하면 설치를 계속합니다."
 
-#: internal/vmui/assistant.go:75
-msgid "No keys, tokens or passwords are needed for this, and none are in this message."
-msgstr "이 작업에는 키, 토큰, 비밀번호가 필요하지 않으며 이 메시지에도 없습니다."
-
 #: internal/vmui/assistant.go:88
 msgid "not chosen yet"
 msgstr "아직 선택하지 않음"
-
-#: internal/vmui/assistant.go:112
-msgid "The assistant could not be started: %v"
-msgstr "어시스턴트를 시작하지 못했습니다: %v"
 
 #: internal/vmui/window.go:637
 msgid "Does not load"
@@ -15470,10 +15544,6 @@ msgstr "그 이름은 사용할 수 없습니다: %v"
 msgid "%d thing to fix"
 msgid_plural "%d things to fix"
 msgstr[0] "해결할 항목 %d개"
-
-#: internal/vmui/window.go:1192
-msgid "Fix"
-msgstr "수정"
 
 #: internal/vmui/window.go:1194
 msgid "Add me to %s"
