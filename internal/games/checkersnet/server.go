@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/games/gameweb"
 	"github.com/lyricat/inua/internal/i18n"
 )
@@ -38,6 +39,14 @@ func (h *Host) Serve(addr string) error {
 	if err != nil {
 		return err
 	}
+	h.srv = &server{http: &http.Server{Handler: h.Handler(), ReadHeaderTimeout: 10 * time.Second}, port: ln.Addr().(*net.TCPAddr).Port}
+	go h.srv.http.Serve(ln)
+	return nil
+}
+
+// Handler serves browsers the page at /, the game at /ws: Serve's, and a
+// lobby's through a relay (gamerelay.Publish).
+func (h *Host) Handler() http.Handler {
 	page, _ := fs.Sub(web, "web")
 	mux := http.NewServeMux()
 	mux.Handle("/", gameweb.Files(page))
@@ -47,9 +56,7 @@ func (h *Host) Serve(addr string) error {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(webTexts())
 	})
-	h.srv = &server{http: &http.Server{Handler: mux, ReadHeaderTimeout: 10 * time.Second}, port: ln.Addr().(*net.TCPAddr).Port}
-	go h.srv.http.Serve(ln)
-	return nil
+	return mux
 }
 
 // Port is the port the Host listens on; 0 before Serve.
@@ -142,4 +149,25 @@ func (h *Host) serveWS(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Close()
 	h.opt.Run(func() { h.leave(c) })
+}
+
+// Status is the game as a lobby lists it.
+func (h *Host) Status() gamerelay.Status {
+	st := gamerelay.Status{Game: "chinese-checkers", Code: h.Code, State: "lobby"}
+	switch {
+	case h.Game != nil && h.Game.Over:
+		st.State = "over"
+	case h.Game != nil:
+		st.State = "playing"
+	}
+	for _, s := range h.Seats {
+		st.Seats = append(st.Seats, gamerelay.Seat{Name: s.Name, Kind: kindNames[s.Kind], Here: s.Here})
+		if s.Kind == Open && h.Game == nil {
+			st.Room++
+		}
+	}
+	if l := h.Lead(); l >= 0 {
+		st.Lead = h.Seats[l].Name
+	}
+	return st
 }

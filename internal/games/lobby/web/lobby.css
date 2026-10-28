@@ -1,0 +1,63 @@
+/* The game lobby: the games' washi paper and ink, the tables as cards on
+   it, as many to a row as fit, one on a phone. */
+
+:root {
+  --paper: #f1e9d6;
+  --surface: #fbf8f1;
+  --ink: #1f1b17;
+  --t1: #4a443c;
+  --t2: #7d756a;
+  --line: #d8ccb4;
+  --shu: #bf4430;
+  --ok: #3f7a3a;
+  --accent: #2b4c7e;
+  --mincho: "Shippori Mincho", "Zen Old Mincho", "Noto Serif CJK JP", "Noto Serif", Georgia, serif;
+  --sans: "Noto Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "Geist Mono", "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.4 var(--sans); -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+
+main { width: min(1080px, 100%); margin: 0 auto; padding: 32px 16px 48px; }
+header { margin-bottom: 22px; }
+.title { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; font: 500 28px var(--mincho); }
+.seal { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border: 2px solid var(--shu); border-radius: 4px; color: var(--shu); font-size: 26px; }
+.sub { max-width: 60ch; margin: 0; color: var(--t1); }
+.note { color: var(--t2); font-size: 12.5px; }
+.kicker { margin: 0; font: 600 10.5px var(--mono); letter-spacing: 0.12em; color: var(--t2); }
+#notice { margin: 0 0 14px; }
+
+#tables { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.table { display: flex; flex-direction: column; gap: 10px; min-height: 196px; padding: 16px 16px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); box-shadow: 0 4px 18px rgb(0 0 0 / 0.05); }
+.table.free { background: transparent; box-shadow: none; border-style: dashed; }
+.table .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.table h2 { margin: 0; font: 500 18px var(--mincho); }
+.table .head h3 { flex: none; }
+.table .state { min-width: 0; overflow: hidden; font-size: 12px; color: var(--t2); text-overflow: ellipsis; white-space: nowrap; }
+.table .state.open { color: var(--ok); }
+.table .state.waiting { color: var(--shu); }
+.table h2 + .note, .table .head + .note { margin: -4px 0 0; }
+.table.away ul, .table.away h2 { opacity: 0.55; }
+.table ul { flex: 1; display: grid; align-content: start; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.table li { display: flex; align-items: baseline; gap: 8px; min-width: 0; font-size: 13px; }
+.table li b { overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.table li span { flex: none; margin-left: auto; font-size: 12px; color: var(--t2); }
+.table li.empty b { font-weight: 400; color: var(--t2); }
+.table li.gone { opacity: 0.55; }
+.table li::before { content: "●"; flex: none; font-size: 10px; color: var(--t2); }
+.table li.person::before { color: var(--accent); }
+.table li.empty::before { content: "○"; }
+.table .lead { margin: 0; }
+
+.row { display: flex; gap: 6px; }
+.row > a { flex: 1; }
+a.button {
+  display: grid; place-items: center; min-height: 38px; padding: 7px 16px; border: 1px solid var(--line); border-radius: 3px;
+  color: var(--t1); text-decoration: none;
+}
+a.button.primary { border-color: var(--accent); background: var(--accent); color: #fff; font-weight: 500; }
+a.button.quiet:hover { border-color: var(--accent); color: var(--ink); }
+a.button:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
