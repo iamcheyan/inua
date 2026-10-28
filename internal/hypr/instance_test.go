@@ -85,3 +85,20 @@ func TestInstanceOfTheSessionStarted(t *testing.T) {
 		t.Errorf("a process that started none: %+v, %v", i, err)
 	}
 }
+
+func TestSessionInstanceSkipsGoneSession(t *testing.T) {
+	runtime := t.TempDir()
+	t.Setenv("XDG_RUNTIME_DIR", runtime)
+	writeLock(t, runtime, "abc_1700000000_1", gonePID, "wayland-1") // the session it started in
+	writeLock(t, runtime, "abc_1800000000_2", os.Getpid(), "wayland-2")
+	writeLock(t, runtime, "abc_1800000500_3", os.Getpid(), "wayland-3") // nested
+
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "abc_1800000500_3")
+	if i, err := SessionInstance(); err != nil || i.Wayland != "wayland-3" {
+		t.Fatalf("its own, running: %+v, %v; want wayland-3", i, err)
+	}
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "abc_1700000000_1")
+	if i, err := SessionInstance(); err != nil || i.Wayland != "wayland-2" {
+		t.Fatalf("its own gone: %+v, %v; want the session's, wayland-2", i, err)
+	}
+}

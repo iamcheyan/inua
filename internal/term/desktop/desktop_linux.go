@@ -3,6 +3,7 @@ package desktop
 import (
 	"context"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"sync"
@@ -83,9 +84,13 @@ func (d *freedesktop) connect() {
 func (d *freedesktop) Raise() {
 	// Started again, the window would come to the workspace shown, as
 	// it does from the dock; from a notification it is gone to instead.
-	if paths, err := hypr.PathsFromEnv(); err == nil {
+	// The daemon may have been started in an earlier session: its own
+	// signature names a Hyprland gone, and inua-term started again would
+	// bring the window here.
+	inst, herr := hypr.SessionInstance()
+	if herr == nil {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		err = hypr.NewClient(paths).Focus(ctx, "class:^("+regexp.QuoteMeta(appID)+")$")
+		err := hypr.NewClient(inst.Paths()).Focus(ctx, "class:^("+regexp.QuoteMeta(appID)+")$")
 		cancel()
 		if err == nil {
 			return
@@ -93,6 +98,9 @@ func (d *freedesktop) Raise() {
 	}
 	if exe, err := host.Program("inua-term"); err == nil {
 		cmd := exec.Command(exe)
+		if herr == nil {
+			cmd.Env = append(os.Environ(), "HYPRLAND_INSTANCE_SIGNATURE="+inst.Signature, "WAYLAND_DISPLAY="+inst.Wayland)
+		}
 		if err := cmd.Start(); err == nil {
 			go cmd.Wait()
 		}

@@ -8974,7 +8974,7 @@ msgstr "NOTES"
 
 #: internal/lightui/pass.go:741
 #: internal/mailui/formatted.go:184
-#: internal/term/desktop/desktop_linux.go:42
+#: internal/term/desktop/desktop_linux.go:43
 #: internal/ui/passwords.go:640
 #: internal/vmui/window.go:2709
 #: internal/vmui/window.go:2710
