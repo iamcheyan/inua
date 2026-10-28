@@ -416,6 +416,14 @@ password beyond the code, and nothing leaves the network; to play from
 elsewhere, use a network such as Tailscale. A firewall must let port 7341
 in.
 
+**At a lobby.** With **At a lobby** set and a lobby's address given,
+the game takes a table at an `inua-game-lobby` instead, or as well
+([game-lobby.md](game-lobby.md)). When no one plays at this screen, the
+first to join from a browser sets the game up there (the city, the
+rounds, the starting money, the dice, building the day you buy, the
+computer players), starts it, and when it is over may start it again;
+the same holds on the network.
+
 Games are kept in memory; the network is used only for a game opened to
 it, and when the AI plays.
 
@@ -447,3 +455,10 @@ game up (the seats, the teams, the rule), starts it, and in a game may
 start it again or go back to setting it up; if they leave, the next
 visitor does. Someone gone for 15 seconds has the computer play for them
 until they come back.
+
+**At a lobby.** With **At a lobby** set and a lobby's address given,
+the game takes a table at an `inua-game-lobby` on the internet
+([game-lobby.md](game-lobby.md)), and the link and QR code are the
+table's. The game stays on this computer; the lobby passes the browsers'
+traffic on, so nothing here needs to be reachable. Both may be on at
+once.
