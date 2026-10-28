@@ -2,6 +2,7 @@ package gamesui
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"html"
 	goimage "image"
@@ -57,25 +58,65 @@ func (p *fortune) hostLobby() {
 		AI:       p.netAI(),
 		Seed:     uint64(time.Now().UnixNano()),
 	})
-	p.lobbyNote.SetText("")
-	if err := p.net.Serve(fortunenet.DefaultAddr); err != nil {
-		p.lobbyNote.SetText(i18n.Tf("The game could not open to the network: %v", err))
-	}
-	urls := p.net.URLs()
-	p.lobbyURL.SetText(strings.Join(urls[:min(1, len(urls))], ""))
-	p.lobbyMore.SetText(strings.Join(urls[min(1, len(urls)):], "\n"))
-	p.lobbyMore.SetVisible(len(urls) > 1)
-	p.qr = nil
-	if len(urls) > 0 {
-		if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(urls[0], gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
-			p.qr = m
+	p.serveErr = ""
+	if p.hostOn {
+		if err := p.net.Serve(fortunenet.DefaultAddr); err != nil {
+			p.serveErr = i18n.Tf("The game could not open to the network: %v", err)
 		}
 	}
-	p.qrCanvas.redraw()
+	if p.lobbyOn {
+		pub, err := publish(p.lobbyAddr.GetText(), p.net.Handler(), p.showLinks)
+		if err != nil {
+			p.serveErr = err.Error()
+		} else {
+			p.pub = pub
+			pub.Set(p.net.Status())
+		}
+	}
+	p.qrFor = ""
+	p.showLinks()
 	p.pages.SetVisibleChildName("lobby")
 	p.lobbySeats()
 	p.lobbyStart.GrabFocus()
 	p.lobbyURL.SelectRegion(0, 0) // a selectable label shows all of itself selected at first
+}
+
+// links are where others join: the lobby's table, then this computer's
+// addresses on the network.
+func (p *fortune) links() (urls []string, note string) {
+	if p.pub != nil {
+		link, n := lobbyState(p.pub, p.net.Code)
+		if link != "" {
+			urls = append(urls, link)
+		}
+		note = n
+	}
+	if p.net.Port() != 0 {
+		urls = append(urls, p.net.URLs()...)
+	}
+	return urls, note
+}
+
+// showLinks shows the links in the lobby, the first as a QR code too.
+func (p *fortune) showLinks() {
+	if p.net == nil {
+		return
+	}
+	urls, note := p.links()
+	p.lobbyURL.SetText(strings.Join(urls[:min(1, len(urls))], ""))
+	p.lobbyMore.SetText(strings.Join(urls[min(1, len(urls)):], "\n"))
+	p.lobbyMore.SetVisible(len(urls) > 1)
+	p.lobbyNote.SetText(strings.TrimSpace(note + "\n" + p.serveErr))
+	if first := strings.Join(urls[:min(1, len(urls))], ""); first != p.qrFor {
+		p.qrFor, p.qr = first, nil
+		if first != "" {
+			if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(first, gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
+				p.qr = m
+			}
+		}
+		p.qrCanvas.redraw()
+	}
+	p.lobbyURL.SelectRegion(0, 0)
 }
 
 // hostName is the name the host plays under, for the visitors to see:
@@ -92,8 +133,13 @@ func hostName() string {
 
 // netChanged: the lobby or the game changed, a visitor came or went.
 func (p *fortune) netChanged() {
+	if p.net != nil && p.pub != nil {
+		p.pub.Set(p.net.Status())
+	}
 	switch {
 	case p.net == nil:
+	case p.net.Game != nil && p.g != p.net.Game:
+		p.showNetGame() // started here, from a browser, or again
 	case p.pages.GetVisibleChildName() == "lobby":
 		p.lobbySeats()
 	case p.g == p.net.Game:
@@ -138,6 +184,14 @@ func (p *fortune) lobbySeats() {
 		gtkx.Append(&p.lobbyList, &row.Widget)
 	}
 	waiting := i18n.T("Waiting for visitors: open the link on a phone or a computer on the same network.")
+	if !p.hostOn {
+		waiting = i18n.T("Waiting for visitors: open the link in a browser.")
+	}
+	if l := p.net.Lead(); l >= 0 {
+		s := p.net.Settings
+		waiting = i18n.Tf("%s sets up the game from a browser, and may start it.", p.net.Seats[l].Name) + " " +
+			i18n.Tf("%s · %d rounds · $%s each", i18n.T(games.FortuneCities[s.City].Name), cmp.Or(s.Rounds, games.DefaultFortune.Rounds), thousands(cmp.Or(s.Cash, games.DefaultFortune.Cash)))
+	}
 	if room := p.net.Room(); room > 0 {
 		waiting += " " + i18n.Tf("Room for %d more", room)
 	}
@@ -145,11 +199,16 @@ func (p *fortune) lobbySeats() {
 	p.lobbyStart.SetSensitive(p.net.CanStart())
 }
 
-// hostStart starts the hosted game with the lobby as it is.
+// hostStart starts the hosted game with the lobby as it is; netChanged
+// shows it.
 func (p *fortune) hostStart() {
-	if p.net == nil || !p.net.Start() {
-		return
+	if p.net != nil {
+		p.net.Start()
 	}
+}
+
+// showNetGame shows the hosted game, just started.
+func (p *fortune) showNetGame() {
 	var here uint8
 	for i, s := range p.net.Seats {
 		if s.Kind == fortunenet.Local {
@@ -163,6 +222,10 @@ func (p *fortune) hostStart() {
 
 // hostClose closes the hosted game, if any: every browser is sent away.
 func (p *fortune) hostClose() {
+	if p.pub != nil {
+		p.pub.Close()
+		p.pub = nil
+	}
 	if p.net != nil {
 		p.net.Close()
 		p.net = nil

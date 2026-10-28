@@ -504,9 +504,10 @@ msgstr "DEV"
 #: internal/apps/disk/rules.go:43
 #: internal/games/checkersnet/host.go:326
 #: internal/games/checkersnet/texts.go:31
-#: internal/gamesui/checkers.go:429
-#: internal/gamesui/checkers.go:524
-#: internal/gamesui/fortune.go:416
+#: internal/games/lobby/texts.go:27
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:554
+#: internal/gamesui/fortune.go:424
 #: internal/gamesui/fortune_ai.go:199
 #: internal/mailui/panel.go:51
 #: internal/mailui/panel.go:309
@@ -2084,7 +2085,7 @@ msgstr "%s がペアリングを求めています。このキーが表示され
 #: internal/filesui/remotesetup.go:152
 #: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
-#: internal/gamesui/fortune_host.go:236
+#: internal/gamesui/fortune_host.go:299
 #: internal/lightui/workshop.go:991
 #: internal/mailui/dialog.go:92
 #: internal/remoteui/window.go:811
@@ -2966,7 +2967,7 @@ msgid "Runs in %s."
 msgstr "%s で実行します。"
 
 #: internal/diskui/details.go:578
-#: internal/gamesui/checkers.go:673
+#: internal/gamesui/checkers.go:727
 #: internal/lightui/gpg.go:884
 #: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
@@ -3242,7 +3243,7 @@ msgstr "速い"
 
 #: internal/filesui/archive.go:131
 #: internal/games/checkersnet/texts.go:34
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
 msgid "Normal"
 msgstr "標準"
 
@@ -4660,25 +4661,26 @@ msgid "Everyone is in one team: make two at least."
 msgstr "全員が同じチームです。少なくとも 2 チームにしてください。"
 
 #: internal/games/checkersnet/host.go:385
-#: internal/games/fortunenet/host.go:234
+#: internal/games/fortunenet/host.go:302
 msgid "The host sent you away."
 msgstr "ホストに退出させられました。"
 
 #: internal/games/checkersnet/host.go:507
-#: internal/games/fortunenet/host.go:374
+#: internal/games/fortunenet/host.go:442
 msgid "That is not this game's code."
 msgstr "このゲームのコードではありません。"
 
 #: internal/games/checkersnet/host.go:514
-#: internal/games/fortunenet/host.go:381
+#: internal/games/fortunenet/host.go:449
 msgid "Your seat was taken up in another window."
 msgstr "あなたの席は別のウィンドウで開かれました。"
 
-#: internal/games/checkersnet/server.go:75
+#: internal/games/checkersnet/server.go:82
 msgid "The host closed the game to the network."
 msgstr "ホストがネットワークでの公開を終えました。"
 
 #: internal/games/checkersnet/texts.go:12
+#: internal/games/lobby/texts.go:31
 #: internal/gamesui/catalog.go:30
 #: config/apps/io.github.lyricat.Inua.ChineseCheckers.desktop:3
 msgid "Chinese Checkers"
@@ -4693,12 +4695,14 @@ msgstr "あなたの名前"
 
 #: internal/games/checkersnet/texts.go:14
 #: internal/games/fortunenet/texts.go:19
+#: internal/games/lobby/texts.go:20
 #: internal/mailui/reader.go:1037
 msgid "Join"
 msgstr "参加"
 
 #: internal/games/checkersnet/texts.go:15
 #: internal/games/fortunenet/texts.go:20
+#: internal/games/lobby/texts.go:21
 msgid "Watch"
 msgstr "観戦"
 
@@ -4708,6 +4712,7 @@ msgid "Waiting for the host to start the game…"
 msgstr "ホストがゲームを始めるのを待っています…"
 
 #: internal/games/checkersnet/texts.go:17
+#: internal/games/fortunenet/texts.go:89
 msgid "Waiting for %s to start the game…"
 msgstr "%s がゲームを始めるのを待っています…"
 
@@ -4727,39 +4732,41 @@ msgstr "観戦中"
 
 #: internal/games/checkersnet/texts.go:21
 #: internal/games/fortunenet/texts.go:24
+#: internal/games/lobby/texts.go:28
 msgid "Connection lost: trying again…"
 msgstr "接続が切れました。再試行しています…"
 
 #: internal/games/checkersnet/texts.go:22
 #: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/checkers.go:170
-#: internal/gamesui/checkers.go:243
-#: internal/gamesui/fortune.go:252
-#: internal/gamesui/fortune.go:408
+#: internal/gamesui/checkers.go:178
+#: internal/gamesui/checkers.go:251
+#: internal/gamesui/fortune.go:260
+#: internal/gamesui/fortune.go:416
 msgid "PLAYERS"
 msgstr "プレイヤー"
 
 #: internal/games/checkersnet/texts.go:23
-#: internal/gamesui/checkers.go:312
+#: internal/games/fortunenet/texts.go:87
+#: internal/gamesui/checkers.go:320
 msgid "THE GAME"
 msgstr "ゲーム"
 
 #: internal/games/checkersnet/texts.go:24
 #: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/checkers.go:200
-#: internal/gamesui/fortune.go:276
+#: internal/gamesui/checkers.go:208
+#: internal/gamesui/fortune.go:284
 msgid "WHAT HAPPENED"
 msgstr "何が起こったのか"
 
 #: internal/games/checkersnet/texts.go:25
 #: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/checkers.go:131
-#: internal/gamesui/fortune.go:208
+#: internal/gamesui/checkers.go:139
+#: internal/gamesui/fortune.go:216
 msgid "ROUND"
 msgstr "ラウンド"
 
 #: internal/games/checkersnet/texts.go:26
-#: internal/gamesui/checkers.go:257
+#: internal/gamesui/checkers.go:265
 msgid "%d players"
 msgstr "%d 人"
 
@@ -4769,13 +4776,15 @@ msgstr "空席：参加を待っています"
 
 #: internal/games/checkersnet/texts.go:28
 #: internal/games/fortunenet/texts.go:27
+#: internal/games/lobby/texts.go:24
 msgid "at the host's screen"
 msgstr "ホストの画面で"
 
 #: internal/games/checkersnet/texts.go:29
 #: internal/games/fortunenet/texts.go:28
-#: internal/gamesui/checkers.go:454
-#: internal/gamesui/fortune_host.go:130
+#: internal/games/lobby/texts.go:25
+#: internal/gamesui/checkers.go:484
+#: internal/gamesui/fortune_host.go:176
 msgid "in a browser"
 msgstr "ブラウザーで"
 
@@ -4784,18 +4793,18 @@ msgid "the default profile"
 msgstr "既定のプロファイル"
 
 #: internal/games/checkersnet/texts.go:33
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
 msgid "Easy"
 msgstr "やさしい"
 
 #: internal/games/checkersnet/texts.go:35
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
 msgid "Hard"
 msgstr "むずかしい"
 
 #: internal/games/checkersnet/texts.go:36
-#: internal/gamesui/checkers.go:432
-#: internal/gamesui/checkers.go:958
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:1035
 msgid "Team %s"
 msgstr "チーム %s"
 
@@ -4806,59 +4815,62 @@ msgid "you"
 msgstr "自分"
 
 #: internal/games/checkersnet/texts.go:38
+#: internal/games/fortunenet/texts.go:90
 msgid "sets up the game"
 msgstr "ゲームを設定"
 
 #: internal/games/checkersnet/texts.go:39
-#: internal/gamesui/checkers.go:967
+#: internal/gamesui/checkers.go:1044
 msgid "away, the computer plays"
 msgstr "不在、コンピュータが代わりに打ちます"
 
 #: internal/games/checkersnet/texts.go:40
-#: internal/gamesui/checkers.go:342
+#: internal/gamesui/checkers.go:350
 msgid "Stay out of other points"
 msgstr "ほかの角に止まらない"
 
 #: internal/games/checkersnet/texts.go:41
-#: internal/gamesui/checkers.go:342
+#: internal/gamesui/checkers.go:350
 msgid "A marble may cross another player's point, but not stop in it."
 msgstr "ビー玉はほかの人の角を通り抜けられますが、そこで止まることはできません。"
 
 #: internal/games/checkersnet/texts.go:42
-#: internal/gamesui/checkers.go:357
-#: internal/gamesui/fortune_host.go:231
+#: internal/games/fortunenet/texts.go:99
+#: internal/gamesui/checkers.go:382
+#: internal/gamesui/fortune_host.go:294
 msgid "Start the game"
 msgstr "ゲームを始める"
 
 #: internal/games/checkersnet/texts.go:43
-#: internal/gamesui/checkers.go:186
-#: internal/gamesui/checkers.go:226
-#: internal/gamesui/fortune.go:322
-#: internal/gamesui/fortune.go:1140
+#: internal/games/fortunenet/texts.go:100
+#: internal/gamesui/checkers.go:194
+#: internal/gamesui/checkers.go:234
+#: internal/gamesui/fortune.go:330
+#: internal/gamesui/fortune.go:1175
 #: ui/game.ui:76
 msgid "New game"
 msgstr "新しいゲーム"
 
 #: internal/games/checkersnet/texts.go:44
-#: internal/gamesui/checkers.go:188
+#: internal/gamesui/checkers.go:196
 msgid "Set up again"
 msgstr "設定し直す"
 
 #: internal/games/checkersnet/texts.go:45
 #: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/checkers.go:931
-#: internal/gamesui/checkers.go:938
+#: internal/gamesui/checkers.go:1008
+#: internal/gamesui/checkers.go:1015
 #: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr "%s のターン"
 
 #: internal/games/checkersnet/texts.go:46
-#: internal/gamesui/checkers.go:929
+#: internal/gamesui/checkers.go:1006
 msgid "Your turn: pick one of your marbles."
 msgstr "あなたの番です。自分のビー玉を選んでください。"
 
 #: internal/games/checkersnet/texts.go:47
-#: internal/gamesui/checkers.go:934
+#: internal/gamesui/checkers.go:1011
 msgid "You are home: move %s's marbles."
 msgstr "ゴールしました。%s のビー玉を動かしてください。"
 
@@ -4871,12 +4883,12 @@ msgid "home"
 msgstr "ゴール"
 
 #: internal/games/checkersnet/texts.go:50
-#: internal/gamesui/checkers.go:965
+#: internal/gamesui/checkers.go:1042
 msgid "#%d home"
 msgstr "%d 番目にゴール"
 
 #: internal/games/checkersnet/texts.go:51
-#: internal/gamesui/checkers.go:962
+#: internal/gamesui/checkers.go:1039
 msgid "%d to go"
 msgstr "あと %d"
 
@@ -4885,49 +4897,49 @@ msgid "%d hops"
 msgstr "%d 回ジャンプ"
 
 #: internal/games/checkersnet/texts.go:53
-#: internal/gamesui/checkers.go:864
+#: internal/gamesui/checkers.go:941
 msgid "%s moved"
 msgstr "%s が動かしました"
 
 #: internal/games/checkersnet/texts.go:54
-#: internal/gamesui/checkers.go:862
+#: internal/gamesui/checkers.go:939
 msgid "%s hopped %d times"
 msgstr "%s が %d 回連続でジャンプ"
 
 #: internal/games/checkersnet/texts.go:55
-#: internal/gamesui/checkers.go:860
+#: internal/gamesui/checkers.go:937
 msgid "%s moved %s's marble"
 msgstr "%s が %s のビー玉を動かしました"
 
 #: internal/games/checkersnet/texts.go:56
-#: internal/gamesui/checkers.go:867
+#: internal/gamesui/checkers.go:944
 msgid "%s could not move"
 msgstr "%s は動かせませんでした"
 
 #: internal/games/checkersnet/texts.go:57
-#: internal/gamesui/checkers.go:869
+#: internal/gamesui/checkers.go:946
 msgid "%s is home"
 msgstr "%s がゴールしました"
 
 #: internal/games/checkersnet/texts.go:58
-#: internal/gamesui/checkers.go:894
+#: internal/gamesui/checkers.go:971
 msgid "%s wins"
 msgstr "%s の勝ち"
 
 #: internal/games/checkersnet/texts.go:59
-#: internal/gamesui/checkers.go:900
+#: internal/gamesui/checkers.go:977
 msgid "%s win"
 msgstr "%s の勝ち"
 
 #: internal/games/checkersnet/texts.go:60
-#: internal/gamesui/checkers.go:898
-#: internal/gamesui/fortune.go:562
+#: internal/gamesui/checkers.go:975
+#: internal/gamesui/fortune.go:590
 msgid "%s and %s"
 msgstr "%[1]sおよび%[2]s"
 
 #: internal/games/checkersnet/texts.go:61
-#: internal/gamesui/checkers.go:873
-#: internal/gamesui/checkers.go:927
+#: internal/gamesui/checkers.go:950
+#: internal/gamesui/checkers.go:1004
 msgid "No one got home in time: a draw."
 msgstr "時間内に誰もゴールできず、引き分けです。"
 
@@ -4942,7 +4954,7 @@ msgstr "ドラッグで盤を回し、スクロールで近づけます。"
 #: internal/games/fortune.go:54
 #: internal/games/fortunenet/texts.go:62
 #: internal/gamesui/fortune_board.go:881
-#: internal/gamesui/fortune_menu.go:181
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:144
 msgid "Chance"
 msgstr "チャンス"
@@ -4954,7 +4966,7 @@ msgid "Card Shop"
 msgstr "カードショップ"
 
 #: internal/games/fortune.go:65
-#: internal/gamesui/fortune_menu.go:174
+#: internal/gamesui/fortune_menu.go:172
 #: internal/lightui/clock.go:492
 #: internal/termui/guide.go:161
 #: internal/ui/voice_page.go:190
@@ -4967,22 +4979,22 @@ msgid "Start"
 msgstr "開始"
 
 #: internal/games/fortune.go:66
-#: internal/gamesui/fortune_menu.go:183
+#: internal/gamesui/fortune_menu.go:181
 msgid "Income Tax"
 msgstr "所得税"
 
 #: internal/games/fortune.go:70
-#: internal/gamesui/fortune_menu.go:175
+#: internal/gamesui/fortune_menu.go:173
 msgid "Jail"
 msgstr "刑務所"
 
 #: internal/games/fortune.go:75
-#: internal/gamesui/fortune_menu.go:176
+#: internal/gamesui/fortune_menu.go:174
 msgid "Fountain"
 msgstr "噴水"
 
 #: internal/games/fortune.go:80
-#: internal/gamesui/fortune_menu.go:177
+#: internal/gamesui/fortune_menu.go:175
 msgid "Go to Jail"
 msgstr "刑務所に行く"
 
@@ -4991,14 +5003,14 @@ msgid "Luxury Tax"
 msgstr "贅沢税"
 
 #: internal/games/fortune.go:314
-#: internal/gamesui/fortune.go:648
+#: internal/gamesui/fortune.go:676
 msgid "You"
 msgstr "あなた"
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/checkers.go:559
-#: internal/gamesui/fortune.go:644
-#: internal/gamesui/fortune_host.go:44
+#: internal/gamesui/checkers.go:589
+#: internal/gamesui/fortune.go:672
+#: internal/gamesui/fortune_host.go:45
 msgid "Player %d"
 msgstr "プレイヤー %d"
 
@@ -5028,14 +5040,14 @@ msgid "%s bought %s for $%d."
 msgstr "%[1]sは、%[2]sを$%[3]dで購入した。"
 
 #: internal/games/fortune.go:605
-#: internal/games/fortunenet/texts.go:89
-#: internal/gamesui/fortune_menu.go:175
+#: internal/games/fortunenet/texts.go:103
+#: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr "ダブル"
 
 #: internal/games/fortune.go:607
-#: internal/games/fortunenet/texts.go:90
+#: internal/games/fortunenet/texts.go:104
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr "6"
@@ -6675,53 +6687,55 @@ msgid "No answer from the AI: the computer plays this turn for %s."
 msgstr "AI から応答がありません。このターンは %s の代わりにコンピューターがプレイします。"
 
 #: internal/games/fortunenet/texts.go:17
+#: internal/games/lobby/texts.go:30
 #: internal/gamesui/catalog.go:26
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:3
 msgid "Small Fortune"
 msgstr "小さな福"
 
 #: internal/games/fortunenet/texts.go:25
+#: internal/gamesui/fortune_host.go:193
 msgid "%s · %d rounds · $%s each"
 msgstr "%s · %d ラウンド · 各 $%s"
 
 #: internal/games/fortunenet/texts.go:26
-#: internal/gamesui/fortune_host.go:142
+#: internal/gamesui/fortune_host.go:196
 msgid "Room for %d more"
 msgstr "あと %d 人参加できます"
 
 #: internal/games/fortunenet/texts.go:30
-#: internal/gamesui/fortune.go:1106
+#: internal/gamesui/fortune.go:1141
 msgid " · away, the computer plays"
 msgstr " · 不在、コンピューターが代わりにプレイ"
 
 #: internal/games/fortunenet/texts.go:31
-#: internal/gamesui/fortune.go:1109
+#: internal/gamesui/fortune.go:1144
 msgid " · the AI plays"
 msgstr " · AI がプレイ"
 
 #: internal/games/fortunenet/texts.go:33
-#: internal/gamesui/fortune.go:256
+#: internal/gamesui/fortune.go:264
 msgid "SQUARE"
 msgstr "マス"
 
 #: internal/games/fortunenet/texts.go:36
-#: internal/gamesui/fortune.go:209
+#: internal/gamesui/fortune.go:217
 msgid "FOUNTAIN"
 msgstr "ファウンテン"
 
 #: internal/games/fortunenet/texts.go:37
-#: internal/gamesui/fortune.go:263
-#: internal/gamesui/fortune.go:1152
+#: internal/gamesui/fortune.go:271
+#: internal/gamesui/fortune.go:1187
 msgid "Roll the dice"
 msgstr "サイコロを振る"
 
 #: internal/games/fortunenet/texts.go:38
-#: internal/gamesui/fortune.go:1155
+#: internal/gamesui/fortune.go:1190
 msgid "Roll for a double"
 msgstr "ゾロ目を狙う"
 
 #: internal/games/fortunenet/texts.go:39
-#: internal/gamesui/fortune.go:1155
+#: internal/gamesui/fortune.go:1190
 msgid "Roll for a six"
 msgstr "６の目を出す"
 
@@ -6730,29 +6744,29 @@ msgid "Pay $%d bail"
 msgstr "保釈金 $%d を払う"
 
 #: internal/games/fortunenet/texts.go:41
-#: internal/gamesui/fortune.go:1162
+#: internal/gamesui/fortune.go:1197
 #: internal/gamesui/fortune_panel.go:464
 msgid "Buy it for $%d"
 msgstr "$%d で購入"
 
 #: internal/games/fortunenet/texts.go:42
-#: internal/gamesui/fortune.go:1164
+#: internal/gamesui/fortune.go:1199
 msgid "Don't buy"
 msgstr "買わない"
 
 #: internal/games/fortunenet/texts.go:43
-#: internal/gamesui/fortune.go:1168
+#: internal/gamesui/fortune.go:1203
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
 msgstr "店を出る"
 
 #: internal/games/fortunenet/texts.go:44
-#: internal/gamesui/fortune.go:1171
+#: internal/gamesui/fortune.go:1206
 msgid "End turn"
 msgstr "ターン終了"
 
 #: internal/games/fortunenet/texts.go:45
-#: internal/gamesui/fortune.go:1143
+#: internal/gamesui/fortune.go:1178
 msgid "%s is playing…"
 msgstr "%s の手番です…"
 
@@ -6767,32 +6781,32 @@ msgid "round %d of %d"
 msgstr "%[2]dの%[1]dラウンド"
 
 #: internal/games/fortunenet/texts.go:49
-#: internal/gamesui/fortune.go:1085
+#: internal/gamesui/fortune.go:1120
 msgid "worth $%s"
 msgstr "$%s相当"
 
 #: internal/games/fortunenet/texts.go:50
-#: internal/gamesui/fortune.go:1088
+#: internal/gamesui/fortune.go:1123
 msgid "bankrupt"
 msgstr "破産"
 
 #: internal/games/fortunenet/texts.go:51
-#: internal/gamesui/fortune.go:1090
+#: internal/gamesui/fortune.go:1125
 msgid " · in jail"
 msgstr "· 刑務所にいる"
 
 #: internal/games/fortunenet/texts.go:52
-#: internal/gamesui/fortune.go:1097
+#: internal/gamesui/fortune.go:1132
 msgid " · free rent"
 msgstr " · 家賃免除"
 
 #: internal/games/fortunenet/texts.go:53
-#: internal/gamesui/fortune.go:1100
+#: internal/gamesui/fortune.go:1135
 msgid " · turtle"
 msgstr " · カメ"
 
 #: internal/games/fortunenet/texts.go:54
-#: internal/gamesui/fortune.go:1103
+#: internal/gamesui/fortune.go:1138
 msgid " · asleep"
 msgstr " · 睡眠中"
 
@@ -6832,7 +6846,7 @@ msgid "Utility · price $%d"
 msgstr "公共事業 · 価格 $%d"
 
 #: internal/games/fortunenet/texts.go:63
-#: internal/gamesui/fortune_menu.go:182
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
 msgstr "カードショップ"
@@ -6922,7 +6936,7 @@ msgid "Hotel"
 msgstr "ホテル"
 
 #: internal/games/fortunenet/texts.go:83
-#: internal/gamesui/fortune_menu.go:180
+#: internal/gamesui/fortune_menu.go:178
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
 msgstr "家賃はサイコロの目にこれを掛けた額です。"
@@ -6936,102 +6950,241 @@ msgid "Sound off: M turns it on"
 msgstr "サウンド オフ: M でオン"
 
 #: internal/games/fortunenet/texts.go:86
-#: internal/gamesui/fortune_menu.go:179
+#: internal/gamesui/fortune_menu.go:177
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
 msgstr "家賃は持ち主の桟橋の数で決まります。"
 
 #: internal/games/fortunenet/texts.go:88
-#: internal/gamesui/fortune_menu.go:174
+msgid "You set up the game: the city, the rounds, the money, the rules."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:91
+msgid "City"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:92
+#: internal/gamesui/fortune.go:557
+msgid "Rounds"
+msgstr "ラウンド"
+
+#: internal/games/fortunenet/texts.go:93
+#: internal/gamesui/fortune.go:558
+msgid "Starting money"
+msgstr "開始資金"
+
+#: internal/games/fortunenet/texts.go:94
+#: internal/gamesui/fortune.go:559
+msgid "Dice"
+msgstr "サイコロ"
+
+#: internal/games/fortunenet/texts.go:95
+#: internal/gamesui/fortune.go:559
+msgid "One die"
+msgstr "サイコロ1個"
+
+#: internal/games/fortunenet/texts.go:96
+#: internal/gamesui/fortune.go:559
+msgid "Two dice"
+msgstr "２つのサイコロ"
+
+#: internal/games/fortunenet/texts.go:97
+#: internal/gamesui/fortune.go:564
+msgid "Build the day you buy"
+msgstr "買ったその日に建てよう"
+
+#: internal/games/fortunenet/texts.go:98
+msgid "Computer players"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:102
+#: internal/gamesui/fortune_menu.go:172
 #: internal/gamesui/fortune_panel.go:273
 msgid "Collect $%d every time you pass."
 msgstr "通るたびに $%d を受け取ります。"
 
-#: internal/games/fortunenet/texts.go:89
-#: internal/games/fortunenet/texts.go:90
-#: internal/gamesui/fortune_menu.go:175
+#: internal/games/fortunenet/texts.go:103
+#: internal/games/fortunenet/texts.go:104
+#: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:275
 msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
 msgstr "ここに送信されない限り、訪問のみ。刑務所では、%s を出して出ていくか、出てくる前に $50 を支払います。 3回試したら、お金を払って出発します。"
 
-#: internal/games/fortunenet/texts.go:91
+#: internal/games/fortunenet/texts.go:105
 #: internal/gamesui/fortune_panel.go:278
 msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
 msgstr "税金と罰金は泉に注ぎ込まれます。ここに着地した次のプレイヤーがすべてを手に入れます: 今 $%d。"
 
-#: internal/games/fortunenet/texts.go:92
-#: internal/gamesui/fortune_menu.go:177
+#: internal/games/fortunenet/texts.go:106
+#: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:280
 msgid "Straight to jail, without passing Start."
 msgstr "スタートを通過せずに刑務所へ直行。"
 
-#: internal/games/fortunenet/texts.go:93
-#: internal/gamesui/fortune_menu.go:181
+#: internal/games/fortunenet/texts.go:107
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:282
 msgid "Draw a card: money, a fine, a trip, or a card for your hand."
 msgstr "カードを引きます: お金、罰金、移動、または手札のカード。"
 
-#: internal/games/fortunenet/texts.go:94
-#: internal/gamesui/fortune_menu.go:182
+#: internal/games/fortunenet/texts.go:108
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:284
 msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
 msgstr "3 枚のカードが売られています: どれを買っても、買わなくても構いません。手札は最大 %d 枚です。"
 
-#: internal/games/fortunenet/texts.go:95
-#: internal/gamesui/fortune_menu.go:183
+#: internal/games/fortunenet/texts.go:109
+#: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:286
 msgid "Pay $%d into the fountain."
 msgstr "噴水に$%dを支払います。"
 
-#: internal/games/fortunenet/texts.go:96
+#: internal/games/fortunenet/texts.go:110
 #: internal/gamesui/fortune_panel.go:244
 msgid "The whole group: bare rent doubled, built rents half again."
 msgstr "グループ全部: 更地の家賃は 2 倍、建物のある家賃は 1.5 倍。"
 
-#: internal/games/fortunenet/texts.go:97
-#: internal/gamesui/fortune_menu.go:178
+#: internal/games/fortunenet/texts.go:111
+#: internal/gamesui/fortune_menu.go:176
 #: internal/gamesui/fortune_panel.go:246
 msgid "With the whole group: bare rent doubled, built rents half again."
 msgstr "グループ全部を持つと: 更地の家賃は 2 倍、建物のある家賃は 1.5 倍。"
 
-#: internal/games/fortunenet/texts.go:98
+#: internal/games/fortunenet/texts.go:112
 #: internal/gamesui/fortune_panel.go:259
 msgid "Group:"
 msgstr "グループ:"
 
-#: internal/games/fortunenet/texts.go:99
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:269
 msgid "× %d"
 msgstr "× %d"
 
-#: internal/games/fortunenet/texts.go:101
+#: internal/games/fortunenet/texts.go:115
 #: internal/gamesui/fortune_panel.go:263
 msgid "%d pier"
 msgid_plural "%d piers"
 msgstr[0] "桟橋 %d 個"
 
-#: internal/games/fortunenet/texts.go:104
+#: internal/games/fortunenet/texts.go:118
 #: internal/gamesui/fortune_panel.go:269
 msgid "%d utility"
 msgid_plural "%d utilities"
 msgstr[0] "公共事業 %d 個"
 
-#: internal/games/fortunenet/texts.go:107
-#: internal/gamesui/fortune.go:1094
+#: internal/games/fortunenet/texts.go:121
+#: internal/gamesui/fortune.go:1129
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] " · カード %d 枚"
 
-#: internal/games/fortunenet/texts.go:110
+#: internal/games/fortunenet/texts.go:124
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] "とコンピューター %d 人"
 
-#: internal/games/fortunenet/texts.go:113
+#: internal/games/fortunenet/texts.go:127
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
 msgstr[0] "家 %d 軒"
+
+#: internal/games/gamerelay/publish.go:92
+msgid "Give the lobby's address."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:107
+#: internal/games/gamerelay/publish.go:115
+msgid "%s is not a lobby's address."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:188
+msgid "There is no lobby at this address."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:209
+msgid "The connection to the lobby was lost."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:248
+msgid "The lobby asks for another key."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:250
+msgid "Every table at the lobby is taken."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:252
+msgid "The lobby turned the game away."
+msgstr ""
+
+#: internal/games/lobby/lobby.go:118
+msgid "No game is at this table now."
+msgstr ""
+
+#: internal/games/lobby/lobby.go:139
+msgid "The table's host does not answer."
+msgstr ""
+
+#: internal/games/lobby/texts.go:9
+msgid "Game Lobby"
+msgstr ""
+
+#: internal/games/lobby/texts.go:10
+msgid "Join a game at a table, or watch one. A host opens a game here from Small Fortune or Chinese Checkers in inua."
+msgstr ""
+
+#: internal/games/lobby/texts.go:11
+msgid "TABLE %d"
+msgstr ""
+
+#: internal/games/lobby/texts.go:12
+#: internal/lightui/sysmon.go:997
+msgid "Free"
+msgstr "無料"
+
+#: internal/games/lobby/texts.go:13
+msgid "A host can open a game here."
+msgstr ""
+
+#: internal/games/lobby/texts.go:14
+msgid "The host’s connection dropped: waiting for it to come back…"
+msgstr ""
+
+#: internal/games/lobby/texts.go:15
+msgid "Reconnecting…"
+msgstr ""
+
+#: internal/games/lobby/texts.go:16
+msgid "Waiting to start"
+msgstr ""
+
+#: internal/games/lobby/texts.go:17
+msgid "Open seats: %d"
+msgstr ""
+
+#: internal/games/lobby/texts.go:18
+msgid "Playing"
+msgstr ""
+
+#: internal/games/lobby/texts.go:19
+msgid "Over"
+msgstr ""
+
+#: internal/games/lobby/texts.go:22
+msgid "%s sets up the game"
+msgstr ""
+
+#: internal/games/lobby/texts.go:23
+#: internal/gamesui/checkers.go:556
+#: internal/gamesui/fortune.go:424
+#: internal/gamesui/fortune.go:681
+msgid "Open seat"
+msgstr "空き席"
+
+#: internal/games/lobby/texts.go:26
+msgid "computer"
+msgstr ""
 
 #: internal/games/pinball_rules.go:63
 msgid "Cadet"
@@ -7375,153 +7528,140 @@ msgstr "10 個のビー玉を、星の自分の角から向かいの角まで運
 msgid "click one of your marbles, then where it goes  ·  Escape puts it back  ·  N new game"
 msgstr "自分のビー玉をクリックし、次に行き先をクリック  ·  Esc で戻す  ·  N 新しいゲーム"
 
-#: internal/gamesui/checkers.go:343
-#: internal/gamesui/fortune.go:468
+#: internal/gamesui/checkers.go:351
+#: internal/gamesui/fortune.go:476
 msgid "On the network"
 msgstr "ネットワーク"
 
-#: internal/gamesui/checkers.go:343
+#: internal/gamesui/checkers.go:351
 msgid "Others join from a browser on this network, with the link or the QR code."
 msgstr "同じネットワークのほかの人が、リンクか QR コードでブラウザから参加できます。"
 
-#: internal/gamesui/checkers.go:428
+#: internal/gamesui/checkers.go:365
+#: internal/gamesui/fortune.go:495
+msgid "At a lobby"
+msgstr ""
+
+#: internal/gamesui/checkers.go:365
+msgid "Others join from a game lobby on the internet, where the game takes a table."
+msgstr ""
+
+#: internal/gamesui/checkers.go:458
 msgid "At this screen"
 msgstr "この画面で"
 
-#: internal/gamesui/checkers.go:428
+#: internal/gamesui/checkers.go:458
 msgid "Open: someone in a browser"
 msgstr "空席：ブラウザの人"
 
-#: internal/gamesui/checkers.go:429
-#: internal/gamesui/checkers.go:429
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
 msgid "Computer · %s"
 msgstr "コンピュータ · %s"
 
-#: internal/gamesui/checkers.go:456
+#: internal/gamesui/checkers.go:486
 msgid "in a browser · sets up the game"
 msgstr "ブラウザ · ゲームを設定"
 
-#: internal/gamesui/checkers.go:458
-#: internal/gamesui/fortune_host.go:134
+#: internal/gamesui/checkers.go:488
+#: internal/gamesui/fortune_host.go:180
 msgid "Send away"
 msgstr "退出させる"
 
-#: internal/gamesui/checkers.go:492
+#: internal/gamesui/checkers.go:522
 msgid "No one plays at this screen: the first to join from a browser sets the game up, and may start it."
 msgstr "この画面では誰も遊びません。最初にブラウザから参加した人がゲームを設定し、開始できます。"
 
-#: internal/gamesui/checkers.go:526
-#: internal/gamesui/fortune.go:416
-#: internal/gamesui/fortune.go:653
-msgid "Open seat"
-msgstr "空き席"
-
-#: internal/gamesui/checkers.go:534
-#: internal/gamesui/fortune.go:641
-#: internal/gamesui/fortune_host.go:130
+#: internal/gamesui/checkers.go:564
+#: internal/gamesui/fortune.go:669
+#: internal/gamesui/fortune_host.go:176
 msgid "at this screen"
 msgstr "この画面で"
 
-#: internal/gamesui/checkers.go:536
+#: internal/gamesui/checkers.go:566
 msgid "the computer"
 msgstr "コンピュータ"
 
-#: internal/gamesui/checkers.go:540
+#: internal/gamesui/checkers.go:570
 msgid "Asking the AI…"
 msgstr "AI に問い合わせ中…"
 
-#: internal/gamesui/checkers.go:544
+#: internal/gamesui/checkers.go:574
 msgid "the AI of Settings → AI"
 msgstr "「設定 → AI」の AI"
 
-#: internal/gamesui/checkers.go:547
+#: internal/gamesui/checkers.go:577
 msgid "the computer, unless the game is on the network"
 msgstr "ネットワークで遊ばない限りコンピュータ"
 
-#: internal/gamesui/checkers.go:549
+#: internal/gamesui/checkers.go:579
 msgid "waiting for someone to join"
 msgstr "参加を待っています"
 
-#: internal/gamesui/checkers.go:588
+#: internal/gamesui/checkers.go:618
 msgid "no profile of Settings → AI makes decisions"
 msgstr "「設定 → AI」に判断を行うプロファイルがありません"
 
-#: internal/gamesui/checkers.go:644
-#: internal/gamesui/fortune.go:210
+#: internal/gamesui/checkers.go:698
+#: internal/gamesui/fortune.go:218
 msgid "JOIN CODE"
 msgstr "参加コード"
 
-#: internal/gamesui/checkers.go:653
-msgid "Scan the code, or open the link in a browser on this network."
-msgstr "QR コードを読み取るか、同じネットワークのブラウザでリンクを開いてください。"
-
-#: internal/gamesui/checkers.go:674
-#: internal/gamesui/checkers.go:677
+#: internal/gamesui/checkers.go:728
+#: internal/gamesui/checkers.go:731
 msgid "Copy link"
 msgstr "リンクをコピー"
 
-#: internal/gamesui/checkers.go:701
+#: internal/gamesui/checkers.go:770
 msgid "This computer is on no network a browser could reach it from."
 msgstr "このコンピュータは、ブラウザからつながるネットワークにありません。"
 
-#: internal/gamesui/checkers.go:976
+#: internal/gamesui/checkers.go:778
+msgid "Scan the code, or open the link in a browser."
+msgstr ""
+
+#: internal/gamesui/checkers.go:780
+msgid "Scan the code, or open the link in a browser on this network."
+msgstr "QR コードを読み取るか、同じネットワークのブラウザでリンクを開いてください。"
+
+#: internal/gamesui/checkers.go:1053
 msgid "Join code %s"
 msgstr "参加コード %s"
 
-#: internal/gamesui/fortune.go:412
+#: internal/gamesui/fortune.go:420
 msgid "Hot seat"
 msgstr "ホットシート"
 
-#: internal/gamesui/fortune.go:473
+#: internal/gamesui/fortune.go:501
 msgid "MAP"
 msgstr "マップ"
 
-#: internal/gamesui/fortune.go:529
-msgid "Rounds"
-msgstr "ラウンド"
-
-#: internal/gamesui/fortune.go:530
-msgid "Starting money"
-msgstr "開始資金"
-
-#: internal/gamesui/fortune.go:531
-msgid "Dice"
-msgstr "サイコロ"
-
-#: internal/gamesui/fortune.go:531
-msgid "One die"
-msgstr "サイコロ1個"
-
-#: internal/gamesui/fortune.go:531
-msgid "Two dice"
-msgstr "２つのサイコロ"
-
-#: internal/gamesui/fortune.go:536
-msgid "Build the day you buy"
-msgstr "買ったその日に建てよう"
-
-#: internal/gamesui/fortune.go:654
+#: internal/gamesui/fortune.go:682
 msgid "empty: no one plays here"
 msgstr "空席：誰もいない"
 
-#: internal/gamesui/fortune.go:656
+#: internal/gamesui/fortune.go:684
 msgid "for a visitor in a browser"
 msgstr "ブラウザーからの参加者用"
 
-#: internal/gamesui/fortune.go:723
+#: internal/gamesui/fortune.go:755
+msgid "Open the game at the lobby"
+msgstr ""
+
+#: internal/gamesui/fortune.go:758
 msgid "Open the game to the network"
 msgstr "ネットワークに公開する"
 
-#: internal/gamesui/fortune.go:725
+#: internal/gamesui/fortune.go:760
 msgid "Start in %s"
 msgstr "%sで開始"
 
-#: internal/gamesui/fortune.go:1145
+#: internal/gamesui/fortune.go:1180
 msgid "%s is thinking…"
 msgstr "%s が考えています…"
 
-#: internal/gamesui/fortune.go:1156
+#: internal/gamesui/fortune.go:1191
 msgid "Pay $50 bail"
 msgstr "保釈金50ドルを支払え"
 
@@ -7616,20 +7756,28 @@ msgstr "ヴィラ"
 msgid "palazzi"
 msgstr "パラッツィ"
 
-#: internal/gamesui/fortune_host.go:62
+#: internal/gamesui/fortune_host.go:64
 msgid "The game could not open to the network: %v"
 msgstr "ネットワークに公開できませんでした: %v"
 
-#: internal/gamesui/fortune_host.go:90
+#: internal/gamesui/fortune_host.go:131
 #: internal/term/web/strings.go:58
 msgid "Host"
 msgstr "ホスト"
 
-#: internal/gamesui/fortune_host.go:140
+#: internal/gamesui/fortune_host.go:186
 msgid "Waiting for visitors: open the link on a phone or a computer on the same network."
 msgstr "参加者を待っています。同じネットワークのスマートフォンやコンピューターでリンクを開いてください。"
 
-#: internal/gamesui/fortune_host.go:180
+#: internal/gamesui/fortune_host.go:188
+msgid "Waiting for visitors: open the link in a browser."
+msgstr ""
+
+#: internal/gamesui/fortune_host.go:192
+msgid "%s sets up the game from a browser, and may start it."
+msgstr ""
+
+#: internal/gamesui/fortune_host.go:243
 msgid "Others join from a browser"
 msgstr "ブラウザーから参加"
 
@@ -7642,7 +7790,7 @@ msgid "Restart game"
 msgstr "最初からやり直す"
 
 #: internal/gamesui/fortune_menu.go:44
-#: internal/gamesui/fortune_menu.go:103
+#: internal/gamesui/fortune_menu.go:101
 msgid "Compendium"
 msgstr "図鑑"
 
@@ -7650,7 +7798,7 @@ msgstr "図鑑"
 msgid "Quit to menu"
 msgstr "メニューに戻る"
 
-#: internal/gamesui/fortune_menu.go:109
+#: internal/gamesui/fortune_menu.go:107
 #: internal/mailui/welcome.go:494
 #: internal/mailui/welcome.go:598
 #: internal/term/web/strings.go:24
@@ -7662,35 +7810,35 @@ msgstr "メニューに戻る"
 msgid "Back"
 msgstr "戻る"
 
-#: internal/gamesui/fortune_menu.go:163
+#: internal/gamesui/fortune_menu.go:161
 msgid "CARDS"
 msgstr "カード"
 
-#: internal/gamesui/fortune_menu.go:176
+#: internal/gamesui/fortune_menu.go:174
 msgid "Taxes and fines go into the fountain; the next player to land there takes them all."
 msgstr "税金と罰金は泉にたまり、次にそこに止まった人がすべて受け取ります。"
 
-#: internal/gamesui/fortune_menu.go:178
+#: internal/gamesui/fortune_menu.go:176
 msgid "Street"
 msgstr "通り"
 
-#: internal/gamesui/fortune_menu.go:179
+#: internal/gamesui/fortune_menu.go:177
 msgid "Station or pier"
 msgstr "駅または桟橋"
 
-#: internal/gamesui/fortune_menu.go:180
+#: internal/gamesui/fortune_menu.go:178
 msgid "Utility"
 msgstr "公共事業"
 
-#: internal/gamesui/fortune_menu.go:211
+#: internal/gamesui/fortune_menu.go:209
 msgid "SQUARES"
 msgstr "マス"
 
-#: internal/gamesui/fortune_menu.go:236
+#: internal/gamesui/fortune_menu.go:234
 msgid "RIVALS"
 msgstr "ライバル"
 
-#: internal/gamesui/fortune_menu.go:242
+#: internal/gamesui/fortune_menu.go:240
 msgid "RULES"
 msgstr "ルール"
 
@@ -7705,6 +7853,26 @@ msgstr "%s のカード · %d / %d"
 #: internal/gamesui/fortune_panel.go:489
 msgid "Plays on the square in focus: %s."
 msgstr "選択中のマスに使います: %s。"
+
+#: internal/gamesui/lobby.go:34
+msgid "The lobby's address"
+msgstr ""
+
+#: internal/gamesui/lobby.go:35
+msgid "As the lobby's host gave it: lobby.example.org, with ?key=… when it asks for a key."
+msgstr ""
+
+#: internal/gamesui/lobby.go:58
+msgid "At table %d of the lobby."
+msgstr ""
+
+#: internal/gamesui/lobby.go:60
+msgid "Not at the lobby: %v"
+msgstr ""
+
+#: internal/gamesui/lobby.go:62
+msgid "Connecting to the lobby…"
+msgstr ""
 
 #: internal/gamesui/mines.go:37
 msgid "Small · 9 × 9"
@@ -9570,10 +9738,6 @@ msgstr "キャッシュ"
 #: internal/lightui/sysmon.go:996
 msgid "%s · given back when needed"
 msgstr "%s · 必要なときに返される"
-
-#: internal/lightui/sysmon.go:997
-msgid "Free"
-msgstr "無料"
 
 #: internal/lightui/sysmon.go:999
 msgid "Swap"

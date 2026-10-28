@@ -20,6 +20,7 @@ import (
 	"github.com/lyricat/inua/internal/games"
 	"github.com/lyricat/inua/internal/games/checkersai"
 	"github.com/lyricat/inua/internal/games/checkersnet"
+	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 )
@@ -54,10 +55,15 @@ type checkers struct {
 	rows                []seatRow
 	filling             bool
 	noParking, network  *gtk.Switch
+	lobby               *gtk.Switch // at a lobby (lobby.go), its address under it
+	lobbyAddr           *gtk.Entry
+	lobbyOn             bool
+	pub                 *gamerelay.Publication
 	start               *gtk.Button
 	why                 gtk.Label
-	join                *gtk.Box // the link, its QR code and the code, on the network
+	join                *gtk.Box // the link, its QR code and the code, on the network or at the lobby
 	joinCode, linkLabel gtk.Label
+	joinSub             *gtk.Label
 	linkMore, joinNote  gtk.Label
 	copyLink            *gtk.Button
 	onCopy              func(gtk.Button)
@@ -94,6 +100,8 @@ type checkers struct {
 	onKick    func(gtk.Button)
 	onRule    func(gtk.Switch, bool) bool
 	onNetwork func(gtk.Switch, bool) bool
+	onLobby   func(gtk.Switch, bool) bool
+	onAddr    func(gtk.Entry)
 	onStart   func(gtk.Button)
 	onAgain   func(gtk.Button)
 	onSetUp   func(gtk.Button)
@@ -341,6 +349,23 @@ func (p *checkers) setupPage() *gtk.Box {
 	}
 	option(0, i18n.T("Stay out of other points"), i18n.T("A marble may cross another player's point, but not stop in it."), &p.noParking, &p.onRule)
 	option(1, i18n.T("On the network"), i18n.T("Others join from a browser on this network, with the link or the QR code."), &p.network, &p.onNetwork)
+	p.onLobby = func(_ gtk.Switch, on bool) bool {
+		if !p.filling {
+			p.atLobby(on)
+		}
+		return false
+	}
+	p.onAddr = func(gtk.Entry) {
+		if p.lobby.GetActive() {
+			p.atLobby(true) // again, at the address as it now is
+		} else {
+			p.lobby.SetActive(true)
+		}
+	}
+	option(2, i18n.T("At a lobby"), i18n.T("Others join from a game lobby on the internet, where the game takes a table."), &p.lobby, &p.onLobby)
+	p.lobbyAddr = lobbyEntry(&p.onAddr)
+	p.lobbyAddr.SetVisible(false)
+	grid.Attach(&p.lobbyAddr.Widget, 0, 3, 2, 1)
 	gtkx.Append(right, &grid.Widget)
 	gtkx.Append(right, &p.joinBlock().Widget)
 	p.joinNote = *gtk.NewLabel("")
@@ -387,6 +412,9 @@ func (p *checkers) reset() {
 
 // changed: the lobby or the game changed (a visitor came, a move was made).
 func (p *checkers) changed() {
+	if p.pub != nil && p.host != nil {
+		p.pub.Set(p.host.Status())
+	}
 	switch {
 	case p.host == nil:
 	case p.host.Game == nil:
@@ -423,6 +451,8 @@ func (p *checkers) fill() {
 	}
 	p.noParking.SetActive(h.NoParking)
 	p.network.SetActive(h.Port() != 0)
+	p.lobby.SetActive(p.lobbyOn)
+	p.lobbyAddr.SetVisible(p.lobbyOn)
 	gtkx.Clear(&p.seatBox)
 	p.rows = nil
 	who := []string{i18n.T("At this screen"), i18n.T("Open: someone in a browser"),
@@ -488,7 +518,7 @@ func (p *checkers) fill() {
 		p.rows = append(p.rows, r)
 	}
 	why := h.Why()
-	if why == "" && !h.HostLeads() && h.Port() != 0 {
+	if why == "" && !h.HostLeads() && (h.Port() != 0 || p.pub != nil) {
 		why = i18n.T("No one plays at this screen: the first to join from a browser sets the game up, and may start it.")
 	}
 	p.why.SetText(why)
@@ -543,7 +573,7 @@ func (p *checkers) seatSub(s *checkersnet.Seat) string {
 		}
 		return i18n.T("the AI of Settings → AI")
 	}
-	if p.host.Port() == 0 {
+	if p.host.Port() == 0 && p.pub == nil {
 		return i18n.T("the computer, unless the game is on the network")
 	}
 	return i18n.T("waiting for someone to join")
@@ -625,6 +655,30 @@ func (p *checkers) serve(on bool) {
 	p.fill()
 }
 
+// atLobby publishes the game at the lobby whose address is given, or takes
+// it off; with no address yet, it waits for one.
+func (p *checkers) atLobby(on bool) {
+	if p.pub != nil {
+		p.pub.Close()
+		p.pub = nil
+	}
+	p.lobbyOn = on
+	if on && strings.TrimSpace(p.lobbyAddr.GetText()) != "" {
+		pub, err := publish(p.lobbyAddr.GetText(), p.host.Handler(), p.showLink)
+		if err != nil {
+			p.fill()
+			p.why.SetText(err.Error())
+			return
+		}
+		p.pub = pub
+		pub.Set(p.host.Status())
+	}
+	p.fill()
+	if on && p.pub == nil {
+		p.lobbyAddr.GrabFocus()
+	}
+}
+
 // joinBlock is how others join, while the game is on the network: the
 // QR code, beside it the join code to type and the link to open or copy,
 // and the computer's other addresses under them.
@@ -650,11 +704,11 @@ func (p *checkers) joinBlock() *gtk.Box {
 	p.joinCode.SetSelectable(true)
 	p.joinCode.SetXalign(0)
 	gtkx.Append(text, &p.joinCode.Widget)
-	sub := gtk.NewLabel(i18n.T("Scan the code, or open the link in a browser on this network."))
-	sub.AddCssClass("fortune-city-sub")
-	sub.SetWrap(true)
-	sub.SetXalign(0)
-	gtkx.Append(text, &sub.Widget)
+	p.joinSub = gtk.NewLabel("")
+	p.joinSub.AddCssClass("fortune-city-sub")
+	p.joinSub.SetWrap(true)
+	p.joinSub.SetXalign(0)
+	gtkx.Append(text, &p.joinSub.Widget)
 	link := func(l *gtk.Label, class string) {
 		*l = *gtk.NewLabel("")
 		l.AddCssClass(class)
@@ -666,7 +720,7 @@ func (p *checkers) joinBlock() *gtk.Box {
 	}
 	link(&p.linkLabel, "checkers-link")
 	p.onCopy = func(gtk.Button) {
-		if urls := p.host.URLs(); len(urls) > 0 {
+		if urls := p.links(); len(urls) > 0 {
 			clip := p.f.win.GetClipboard()
 			clip.SetText(urls[0])
 			clip.Unref()
@@ -686,21 +740,44 @@ func (p *checkers) joinBlock() *gtk.Box {
 // ckQR is the QR code's side.
 const ckQR = 132
 
-// showLink shows how to join while the lobby is on the network.
-func (p *checkers) showLink() {
-	urls := []string{}
-	if p.host.Port() != 0 {
-		urls = p.host.URLs()
+// links are where others join: the lobby's table, then this computer's
+// addresses on the network.
+func (p *checkers) links() []string {
+	var urls []string
+	if p.pub != nil {
+		if link, _ := lobbyState(p.pub, p.host.Code); link != "" {
+			urls = append(urls, link)
+		}
 	}
+	if p.host.Port() != 0 {
+		urls = append(urls, p.host.URLs()...)
+	}
+	return urls
+}
+
+// showLink shows how to join while the game is on the network or at a
+// lobby.
+func (p *checkers) showLink() {
+	urls := p.links()
 	on := len(urls) > 0
 	p.join.SetVisible(on)
-	p.joinNote.SetText("")
+	var notes []string
+	if p.pub != nil {
+		_, note := lobbyState(p.pub, p.host.Code)
+		notes = append(notes, note)
+	}
+	if p.host.Port() != 0 && len(p.host.URLs()) == 0 {
+		notes = append(notes, i18n.T("This computer is on no network a browser could reach it from."))
+	}
+	p.joinNote.SetText(strings.Join(notes, "\n"))
 	p.qr = nil
 	if !on {
-		if p.host.Port() != 0 {
-			p.joinNote.SetText(i18n.T("This computer is on no network a browser could reach it from."))
-		}
 		return
+	}
+	if p.pub != nil && len(urls) > len(p.host.URLs()) || p.host.Port() == 0 { // the lobby's link first
+		p.joinSub.SetText(i18n.T("Scan the code, or open the link in a browser."))
+	} else {
+		p.joinSub.SetText(i18n.T("Scan the code, or open the link in a browser on this network."))
 	}
 	if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(urls[0], gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
 		p.qr = m
@@ -972,7 +1049,7 @@ func (p *checkers) refresh() {
 		gtkx.Append(&p.players, &row.Widget)
 	}
 	p.again.SetVisible(g.Over || p.host.HostLeads())
-	if p.host.Port() != 0 {
+	if p.host.Port() != 0 || p.pub != nil {
 		p.code.SetText(i18n.Tf("Join code %s", p.host.Code))
 	} else {
 		p.code.SetText("")

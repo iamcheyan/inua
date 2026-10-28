@@ -504,9 +504,10 @@ msgstr "DEV"
 #: internal/apps/disk/rules.go:43
 #: internal/games/checkersnet/host.go:326
 #: internal/games/checkersnet/texts.go:31
-#: internal/gamesui/checkers.go:429
-#: internal/gamesui/checkers.go:524
-#: internal/gamesui/fortune.go:416
+#: internal/games/lobby/texts.go:27
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:554
+#: internal/gamesui/fortune.go:424
 #: internal/gamesui/fortune_ai.go:199
 #: internal/mailui/panel.go:51
 #: internal/mailui/panel.go:309
@@ -2084,7 +2085,7 @@ msgstr "%s에서 페어링을 요청합니다. 이 키가 표시될 때만 페�
 #: internal/filesui/remotesetup.go:152
 #: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
-#: internal/gamesui/fortune_host.go:236
+#: internal/gamesui/fortune_host.go:299
 #: internal/lightui/workshop.go:991
 #: internal/mailui/dialog.go:92
 #: internal/remoteui/window.go:811
@@ -2966,7 +2967,7 @@ msgid "Runs in %s."
 msgstr "%s에서 실행됩니다."
 
 #: internal/diskui/details.go:578
-#: internal/gamesui/checkers.go:673
+#: internal/gamesui/checkers.go:727
 #: internal/lightui/gpg.go:884
 #: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
@@ -3242,7 +3243,7 @@ msgstr "빠름"
 
 #: internal/filesui/archive.go:131
 #: internal/games/checkersnet/texts.go:34
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
 msgid "Normal"
 msgstr "보통"
 
@@ -4660,25 +4661,26 @@ msgid "Everyone is in one team: make two at least."
 msgstr "모두 한 팀입니다. 적어도 두 팀으로 나누세요."
 
 #: internal/games/checkersnet/host.go:385
-#: internal/games/fortunenet/host.go:234
+#: internal/games/fortunenet/host.go:302
 msgid "The host sent you away."
 msgstr "호스트가 당신을 내보냈습니다."
 
 #: internal/games/checkersnet/host.go:507
-#: internal/games/fortunenet/host.go:374
+#: internal/games/fortunenet/host.go:442
 msgid "That is not this game's code."
 msgstr "이 게임의 코드가 아닙니다."
 
 #: internal/games/checkersnet/host.go:514
-#: internal/games/fortunenet/host.go:381
+#: internal/games/fortunenet/host.go:449
 msgid "Your seat was taken up in another window."
 msgstr "다른 창에서 당신의 자리를 열었습니다."
 
-#: internal/games/checkersnet/server.go:75
+#: internal/games/checkersnet/server.go:82
 msgid "The host closed the game to the network."
 msgstr "호스트가 네트워크 게임을 닫았습니다."
 
 #: internal/games/checkersnet/texts.go:12
+#: internal/games/lobby/texts.go:31
 #: internal/gamesui/catalog.go:30
 #: config/apps/io.github.lyricat.Inua.ChineseCheckers.desktop:3
 msgid "Chinese Checkers"
@@ -4693,12 +4695,14 @@ msgstr "이름"
 
 #: internal/games/checkersnet/texts.go:14
 #: internal/games/fortunenet/texts.go:19
+#: internal/games/lobby/texts.go:20
 #: internal/mailui/reader.go:1037
 msgid "Join"
 msgstr "참가"
 
 #: internal/games/checkersnet/texts.go:15
 #: internal/games/fortunenet/texts.go:20
+#: internal/games/lobby/texts.go:21
 msgid "Watch"
 msgstr "관전"
 
@@ -4708,6 +4712,7 @@ msgid "Waiting for the host to start the game…"
 msgstr "호스트가 게임을 시작하기를 기다리는 중…"
 
 #: internal/games/checkersnet/texts.go:17
+#: internal/games/fortunenet/texts.go:89
 msgid "Waiting for %s to start the game…"
 msgstr "%s 님이 게임을 시작하기를 기다리는 중…"
 
@@ -4727,39 +4732,41 @@ msgstr "관전 중"
 
 #: internal/games/checkersnet/texts.go:21
 #: internal/games/fortunenet/texts.go:24
+#: internal/games/lobby/texts.go:28
 msgid "Connection lost: trying again…"
 msgstr "연결이 끊겼습니다. 다시 시도하는 중…"
 
 #: internal/games/checkersnet/texts.go:22
 #: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/checkers.go:170
-#: internal/gamesui/checkers.go:243
-#: internal/gamesui/fortune.go:252
-#: internal/gamesui/fortune.go:408
+#: internal/gamesui/checkers.go:178
+#: internal/gamesui/checkers.go:251
+#: internal/gamesui/fortune.go:260
+#: internal/gamesui/fortune.go:416
 msgid "PLAYERS"
 msgstr "플레이어"
 
 #: internal/games/checkersnet/texts.go:23
-#: internal/gamesui/checkers.go:312
+#: internal/games/fortunenet/texts.go:87
+#: internal/gamesui/checkers.go:320
 msgid "THE GAME"
 msgstr "게임"
 
 #: internal/games/checkersnet/texts.go:24
 #: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/checkers.go:200
-#: internal/gamesui/fortune.go:276
+#: internal/gamesui/checkers.go:208
+#: internal/gamesui/fortune.go:284
 msgid "WHAT HAPPENED"
 msgstr "무슨 일이 일어났는가"
 
 #: internal/games/checkersnet/texts.go:25
 #: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/checkers.go:131
-#: internal/gamesui/fortune.go:208
+#: internal/gamesui/checkers.go:139
+#: internal/gamesui/fortune.go:216
 msgid "ROUND"
 msgstr "라운드"
 
 #: internal/games/checkersnet/texts.go:26
-#: internal/gamesui/checkers.go:257
+#: internal/gamesui/checkers.go:265
 msgid "%d players"
 msgstr "%d명"
 
@@ -4769,13 +4776,15 @@ msgstr "빈자리: 참가를 기다리는 중"
 
 #: internal/games/checkersnet/texts.go:28
 #: internal/games/fortunenet/texts.go:27
+#: internal/games/lobby/texts.go:24
 msgid "at the host's screen"
 msgstr "호스트 화면에서"
 
 #: internal/games/checkersnet/texts.go:29
 #: internal/games/fortunenet/texts.go:28
-#: internal/gamesui/checkers.go:454
-#: internal/gamesui/fortune_host.go:130
+#: internal/games/lobby/texts.go:25
+#: internal/gamesui/checkers.go:484
+#: internal/gamesui/fortune_host.go:176
 msgid "in a browser"
 msgstr "브라우저에서"
 
@@ -4784,18 +4793,18 @@ msgid "the default profile"
 msgstr "기본 프로필"
 
 #: internal/games/checkersnet/texts.go:33
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
 msgid "Easy"
 msgstr "쉬움"
 
 #: internal/games/checkersnet/texts.go:35
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
 msgid "Hard"
 msgstr "어려움"
 
 #: internal/games/checkersnet/texts.go:36
-#: internal/gamesui/checkers.go:432
-#: internal/gamesui/checkers.go:958
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:1035
 msgid "Team %s"
 msgstr "%s팀"
 
@@ -4806,59 +4815,62 @@ msgid "you"
 msgstr "나"
 
 #: internal/games/checkersnet/texts.go:38
+#: internal/games/fortunenet/texts.go:90
 msgid "sets up the game"
 msgstr "게임 설정 담당"
 
 #: internal/games/checkersnet/texts.go:39
-#: internal/gamesui/checkers.go:967
+#: internal/gamesui/checkers.go:1044
 msgid "away, the computer plays"
 msgstr "자리 비움, 컴퓨터가 대신 합니다"
 
 #: internal/games/checkersnet/texts.go:40
-#: internal/gamesui/checkers.go:342
+#: internal/gamesui/checkers.go:350
 msgid "Stay out of other points"
 msgstr "다른 꼭짓점에 멈추지 않기"
 
 #: internal/games/checkersnet/texts.go:41
-#: internal/gamesui/checkers.go:342
+#: internal/gamesui/checkers.go:350
 msgid "A marble may cross another player's point, but not stop in it."
 msgstr "구슬은 다른 사람의 꼭짓점을 지나갈 수는 있지만 그곳에 멈출 수는 없습니다."
 
 #: internal/games/checkersnet/texts.go:42
-#: internal/gamesui/checkers.go:357
-#: internal/gamesui/fortune_host.go:231
+#: internal/games/fortunenet/texts.go:99
+#: internal/gamesui/checkers.go:382
+#: internal/gamesui/fortune_host.go:294
 msgid "Start the game"
 msgstr "게임 시작"
 
 #: internal/games/checkersnet/texts.go:43
-#: internal/gamesui/checkers.go:186
-#: internal/gamesui/checkers.go:226
-#: internal/gamesui/fortune.go:322
-#: internal/gamesui/fortune.go:1140
+#: internal/games/fortunenet/texts.go:100
+#: internal/gamesui/checkers.go:194
+#: internal/gamesui/checkers.go:234
+#: internal/gamesui/fortune.go:330
+#: internal/gamesui/fortune.go:1175
 #: ui/game.ui:76
 msgid "New game"
 msgstr "새로운 게임"
 
 #: internal/games/checkersnet/texts.go:44
-#: internal/gamesui/checkers.go:188
+#: internal/gamesui/checkers.go:196
 msgid "Set up again"
 msgstr "다시 설정"
 
 #: internal/games/checkersnet/texts.go:45
 #: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/checkers.go:931
-#: internal/gamesui/checkers.go:938
+#: internal/gamesui/checkers.go:1008
+#: internal/gamesui/checkers.go:1015
 #: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr "%s의 차례"
 
 #: internal/games/checkersnet/texts.go:46
-#: internal/gamesui/checkers.go:929
+#: internal/gamesui/checkers.go:1006
 msgid "Your turn: pick one of your marbles."
 msgstr "당신 차례입니다. 내 구슬 하나를 고르세요."
 
 #: internal/games/checkersnet/texts.go:47
-#: internal/gamesui/checkers.go:934
+#: internal/gamesui/checkers.go:1011
 msgid "You are home: move %s's marbles."
 msgstr "도착했습니다. %s 님의 구슬을 움직이세요."
 
@@ -4871,12 +4883,12 @@ msgid "home"
 msgstr "도착"
 
 #: internal/games/checkersnet/texts.go:50
-#: internal/gamesui/checkers.go:965
+#: internal/gamesui/checkers.go:1042
 msgid "#%d home"
 msgstr "%d번째로 도착"
 
 #: internal/games/checkersnet/texts.go:51
-#: internal/gamesui/checkers.go:962
+#: internal/gamesui/checkers.go:1039
 msgid "%d to go"
 msgstr "%d 남음"
 
@@ -4885,49 +4897,49 @@ msgid "%d hops"
 msgstr "%d번 점프"
 
 #: internal/games/checkersnet/texts.go:53
-#: internal/gamesui/checkers.go:864
+#: internal/gamesui/checkers.go:941
 msgid "%s moved"
 msgstr "%s 님이 움직였습니다"
 
 #: internal/games/checkersnet/texts.go:54
-#: internal/gamesui/checkers.go:862
+#: internal/gamesui/checkers.go:939
 msgid "%s hopped %d times"
 msgstr "%s 님이 %d번 연속 점프"
 
 #: internal/games/checkersnet/texts.go:55
-#: internal/gamesui/checkers.go:860
+#: internal/gamesui/checkers.go:937
 msgid "%s moved %s's marble"
 msgstr "%s 님이 %s 님의 구슬을 움직였습니다"
 
 #: internal/games/checkersnet/texts.go:56
-#: internal/gamesui/checkers.go:867
+#: internal/gamesui/checkers.go:944
 msgid "%s could not move"
 msgstr "%s 님은 움직일 수 없었습니다"
 
 #: internal/games/checkersnet/texts.go:57
-#: internal/gamesui/checkers.go:869
+#: internal/gamesui/checkers.go:946
 msgid "%s is home"
 msgstr "%s 님이 모두 도착했습니다"
 
 #: internal/games/checkersnet/texts.go:58
-#: internal/gamesui/checkers.go:894
+#: internal/gamesui/checkers.go:971
 msgid "%s wins"
 msgstr "%s 님 승리"
 
 #: internal/games/checkersnet/texts.go:59
-#: internal/gamesui/checkers.go:900
+#: internal/gamesui/checkers.go:977
 msgid "%s win"
 msgstr "%s 승리"
 
 #: internal/games/checkersnet/texts.go:60
-#: internal/gamesui/checkers.go:898
-#: internal/gamesui/fortune.go:562
+#: internal/gamesui/checkers.go:975
+#: internal/gamesui/fortune.go:590
 msgid "%s and %s"
 msgstr "%[1]s 및 %[2]s"
 
 #: internal/games/checkersnet/texts.go:61
-#: internal/gamesui/checkers.go:873
-#: internal/gamesui/checkers.go:927
+#: internal/gamesui/checkers.go:950
+#: internal/gamesui/checkers.go:1004
 msgid "No one got home in time: a draw."
 msgstr "제때 아무도 도착하지 못했습니다. 무승부입니다."
 
@@ -4942,7 +4954,7 @@ msgstr "드래그하여 판을 돌리고, 스크롤하여 가까이 봅니다."
 #: internal/games/fortune.go:54
 #: internal/games/fortunenet/texts.go:62
 #: internal/gamesui/fortune_board.go:881
-#: internal/gamesui/fortune_menu.go:181
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:144
 msgid "Chance"
 msgstr "기회"
@@ -4954,7 +4966,7 @@ msgid "Card Shop"
 msgstr "카드 상점"
 
 #: internal/games/fortune.go:65
-#: internal/gamesui/fortune_menu.go:174
+#: internal/gamesui/fortune_menu.go:172
 #: internal/lightui/clock.go:492
 #: internal/termui/guide.go:161
 #: internal/ui/voice_page.go:190
@@ -4967,22 +4979,22 @@ msgid "Start"
 msgstr "시작"
 
 #: internal/games/fortune.go:66
-#: internal/gamesui/fortune_menu.go:183
+#: internal/gamesui/fortune_menu.go:181
 msgid "Income Tax"
 msgstr "소득세"
 
 #: internal/games/fortune.go:70
-#: internal/gamesui/fortune_menu.go:175
+#: internal/gamesui/fortune_menu.go:173
 msgid "Jail"
 msgstr "감옥"
 
 #: internal/games/fortune.go:75
-#: internal/gamesui/fortune_menu.go:176
+#: internal/gamesui/fortune_menu.go:174
 msgid "Fountain"
 msgstr "분수"
 
 #: internal/games/fortune.go:80
-#: internal/gamesui/fortune_menu.go:177
+#: internal/gamesui/fortune_menu.go:175
 msgid "Go to Jail"
 msgstr "감옥에 가다"
 
@@ -4991,14 +5003,14 @@ msgid "Luxury Tax"
 msgstr "사치세"
 
 #: internal/games/fortune.go:314
-#: internal/gamesui/fortune.go:648
+#: internal/gamesui/fortune.go:676
 msgid "You"
 msgstr "당신"
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/checkers.go:559
-#: internal/gamesui/fortune.go:644
-#: internal/gamesui/fortune_host.go:44
+#: internal/gamesui/checkers.go:589
+#: internal/gamesui/fortune.go:672
+#: internal/gamesui/fortune_host.go:45
 msgid "Player %d"
 msgstr "플레이어 %d"
 
@@ -5028,14 +5040,14 @@ msgid "%s bought %s for $%d."
 msgstr "%[1]s는 $%[3]d에 %[2]s를 구입했습니다."
 
 #: internal/games/fortune.go:605
-#: internal/games/fortunenet/texts.go:89
-#: internal/gamesui/fortune_menu.go:175
+#: internal/games/fortunenet/texts.go:103
+#: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr "더블"
 
 #: internal/games/fortune.go:607
-#: internal/games/fortunenet/texts.go:90
+#: internal/games/fortunenet/texts.go:104
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr "6"
@@ -6675,53 +6687,55 @@ msgid "No answer from the AI: the computer plays this turn for %s."
 msgstr "AI가 응답하지 않습니다. 이번 차례는 컴퓨터가 %s 대신 플레이합니다."
 
 #: internal/games/fortunenet/texts.go:17
+#: internal/games/lobby/texts.go:30
 #: internal/gamesui/catalog.go:26
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:3
 msgid "Small Fortune"
 msgstr "작은 부자"
 
 #: internal/games/fortunenet/texts.go:25
+#: internal/gamesui/fortune_host.go:193
 msgid "%s · %d rounds · $%s each"
 msgstr "%s · %d라운드 · 각자 $%s"
 
 #: internal/games/fortunenet/texts.go:26
-#: internal/gamesui/fortune_host.go:142
+#: internal/gamesui/fortune_host.go:196
 msgid "Room for %d more"
 msgstr "%d명 더 참가 가능"
 
 #: internal/games/fortunenet/texts.go:30
-#: internal/gamesui/fortune.go:1106
+#: internal/gamesui/fortune.go:1141
 msgid " · away, the computer plays"
 msgstr " · 자리 비움, 컴퓨터가 대신 플레이"
 
 #: internal/games/fortunenet/texts.go:31
-#: internal/gamesui/fortune.go:1109
+#: internal/gamesui/fortune.go:1144
 msgid " · the AI plays"
 msgstr " · AI가 플레이"
 
 #: internal/games/fortunenet/texts.go:33
-#: internal/gamesui/fortune.go:256
+#: internal/gamesui/fortune.go:264
 msgid "SQUARE"
 msgstr "칸"
 
 #: internal/games/fortunenet/texts.go:36
-#: internal/gamesui/fortune.go:209
+#: internal/gamesui/fortune.go:217
 msgid "FOUNTAIN"
 msgstr "분수"
 
 #: internal/games/fortunenet/texts.go:37
-#: internal/gamesui/fortune.go:263
-#: internal/gamesui/fortune.go:1152
+#: internal/gamesui/fortune.go:271
+#: internal/gamesui/fortune.go:1187
 msgid "Roll the dice"
 msgstr "주사위를 굴려라"
 
 #: internal/games/fortunenet/texts.go:38
-#: internal/gamesui/fortune.go:1155
+#: internal/gamesui/fortune.go:1190
 msgid "Roll for a double"
 msgstr "같은 눈을 노리세요"
 
 #: internal/games/fortunenet/texts.go:39
-#: internal/gamesui/fortune.go:1155
+#: internal/gamesui/fortune.go:1190
 msgid "Roll for a six"
 msgstr "6에 대한 롤"
 
@@ -6730,29 +6744,29 @@ msgid "Pay $%d bail"
 msgstr "보석금 $%d 내기"
 
 #: internal/games/fortunenet/texts.go:41
-#: internal/gamesui/fortune.go:1162
+#: internal/gamesui/fortune.go:1197
 #: internal/gamesui/fortune_panel.go:464
 msgid "Buy it for $%d"
 msgstr "$%d에 구매하세요."
 
 #: internal/games/fortunenet/texts.go:42
-#: internal/gamesui/fortune.go:1164
+#: internal/gamesui/fortune.go:1199
 msgid "Don't buy"
 msgstr "사지 않기"
 
 #: internal/games/fortunenet/texts.go:43
-#: internal/gamesui/fortune.go:1168
+#: internal/gamesui/fortune.go:1203
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
 msgstr "상점 나가기"
 
 #: internal/games/fortunenet/texts.go:44
-#: internal/gamesui/fortune.go:1171
+#: internal/gamesui/fortune.go:1206
 msgid "End turn"
 msgstr "턴 종료"
 
 #: internal/games/fortunenet/texts.go:45
-#: internal/gamesui/fortune.go:1143
+#: internal/gamesui/fortune.go:1178
 msgid "%s is playing…"
 msgstr "%s 차례…"
 
@@ -6767,32 +6781,32 @@ msgid "round %d of %d"
 msgstr "%[2]d의 둥근 %[1]d"
 
 #: internal/games/fortunenet/texts.go:49
-#: internal/gamesui/fortune.go:1085
+#: internal/gamesui/fortune.go:1120
 msgid "worth $%s"
 msgstr "$%s 상당"
 
 #: internal/games/fortunenet/texts.go:50
-#: internal/gamesui/fortune.go:1088
+#: internal/gamesui/fortune.go:1123
 msgid "bankrupt"
 msgstr "파산하다"
 
 #: internal/games/fortunenet/texts.go:51
-#: internal/gamesui/fortune.go:1090
+#: internal/gamesui/fortune.go:1125
 msgid " · in jail"
 msgstr "· 감옥에 있다"
 
 #: internal/games/fortunenet/texts.go:52
-#: internal/gamesui/fortune.go:1097
+#: internal/gamesui/fortune.go:1132
 msgid " · free rent"
 msgstr " · 임대료 면제"
 
 #: internal/games/fortunenet/texts.go:53
-#: internal/gamesui/fortune.go:1100
+#: internal/gamesui/fortune.go:1135
 msgid " · turtle"
 msgstr " · 거북이"
 
 #: internal/games/fortunenet/texts.go:54
-#: internal/gamesui/fortune.go:1103
+#: internal/gamesui/fortune.go:1138
 msgid " · asleep"
 msgstr " · 잠듦"
 
@@ -6832,7 +6846,7 @@ msgid "Utility · price $%d"
 msgstr "공공시설 · 가격 $%d"
 
 #: internal/games/fortunenet/texts.go:63
-#: internal/gamesui/fortune_menu.go:182
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:146
 msgid "Card shop"
 msgstr "카드 상점"
@@ -6922,7 +6936,7 @@ msgid "Hotel"
 msgstr "호텔"
 
 #: internal/games/fortunenet/texts.go:83
-#: internal/gamesui/fortune_menu.go:180
+#: internal/gamesui/fortune_menu.go:178
 #: internal/gamesui/fortune_panel.go:271
 msgid "The rent is the dice times this."
 msgstr "임대료는 주사위 눈에 이 값을 곱한 금액입니다."
@@ -6936,102 +6950,241 @@ msgid "Sound off: M turns it on"
 msgstr "소리 꺼짐: M으로 켜기"
 
 #: internal/games/fortunenet/texts.go:86
-#: internal/gamesui/fortune_menu.go:179
+#: internal/gamesui/fortune_menu.go:177
 #: internal/gamesui/fortune_panel.go:265
 msgid "The rent is by how many piers the owner has."
 msgstr "임대료는 소유자가 가진 부두 수에 따라 정해집니다."
 
 #: internal/games/fortunenet/texts.go:88
-#: internal/gamesui/fortune_menu.go:174
+msgid "You set up the game: the city, the rounds, the money, the rules."
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:91
+msgid "City"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:92
+#: internal/gamesui/fortune.go:557
+msgid "Rounds"
+msgstr "라운드"
+
+#: internal/games/fortunenet/texts.go:93
+#: internal/gamesui/fortune.go:558
+msgid "Starting money"
+msgstr "돈을 시작하다"
+
+#: internal/games/fortunenet/texts.go:94
+#: internal/gamesui/fortune.go:559
+msgid "Dice"
+msgstr "주사위"
+
+#: internal/games/fortunenet/texts.go:95
+#: internal/gamesui/fortune.go:559
+msgid "One die"
+msgstr "주사위 1개"
+
+#: internal/games/fortunenet/texts.go:96
+#: internal/gamesui/fortune.go:559
+msgid "Two dice"
+msgstr "두 개의 주사위"
+
+#: internal/games/fortunenet/texts.go:97
+#: internal/gamesui/fortune.go:564
+msgid "Build the day you buy"
+msgstr "구매하는 날에 맞춰 구축하세요"
+
+#: internal/games/fortunenet/texts.go:98
+msgid "Computer players"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:102
+#: internal/gamesui/fortune_menu.go:172
 #: internal/gamesui/fortune_panel.go:273
 msgid "Collect $%d every time you pass."
 msgstr "지나갈 때마다 $%d을(를) 받습니다."
 
-#: internal/games/fortunenet/texts.go:89
-#: internal/games/fortunenet/texts.go:90
-#: internal/gamesui/fortune_menu.go:175
+#: internal/games/fortunenet/texts.go:103
+#: internal/games/fortunenet/texts.go:104
+#: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:275
 msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
 msgstr "여기로 보내지 않는 한 방문만 가능합니다. 감옥에서는 %s를 굴려 나가거나 굴리기 전에 $50를 지불합니다. 세 번 시도한 후에는 비용을 지불하고 가십시오."
 
-#: internal/games/fortunenet/texts.go:91
+#: internal/games/fortunenet/texts.go:105
 #: internal/gamesui/fortune_panel.go:278
 msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
 msgstr "세금과 벌금은 분수대로 흘러갑니다. 여기에 착지할 다음 플레이어가 모든 것을 가져갑니다: 지금 $%d."
 
-#: internal/games/fortunenet/texts.go:92
-#: internal/gamesui/fortune_menu.go:177
+#: internal/games/fortunenet/texts.go:106
+#: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:280
 msgid "Straight to jail, without passing Start."
 msgstr "스타트를 통과하지 못한 채 곧장 감옥으로 보내졌습니다."
 
-#: internal/games/fortunenet/texts.go:93
-#: internal/gamesui/fortune_menu.go:181
+#: internal/games/fortunenet/texts.go:107
+#: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:282
 msgid "Draw a card: money, a fine, a trip, or a card for your hand."
 msgstr "카드를 뽑습니다: 돈, 벌금, 이동, 또는 손패에 넣을 카드."
 
-#: internal/games/fortunenet/texts.go:94
-#: internal/gamesui/fortune_menu.go:182
+#: internal/games/fortunenet/texts.go:108
+#: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:284
 msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
 msgstr "카드 세 장을 팝니다: 아무것이나 사거나 사지 않아도 됩니다. 손패는 최대 %d장입니다."
 
-#: internal/games/fortunenet/texts.go:95
-#: internal/gamesui/fortune_menu.go:183
+#: internal/games/fortunenet/texts.go:109
+#: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:286
 msgid "Pay $%d into the fountain."
 msgstr "분수대에 $%d를 지불하세요."
 
-#: internal/games/fortunenet/texts.go:96
+#: internal/games/fortunenet/texts.go:110
 #: internal/gamesui/fortune_panel.go:244
 msgid "The whole group: bare rent doubled, built rents half again."
 msgstr "그룹 전체: 빈 땅 임대료 2배, 건물 임대료 1.5배."
 
-#: internal/games/fortunenet/texts.go:97
-#: internal/gamesui/fortune_menu.go:178
+#: internal/games/fortunenet/texts.go:111
+#: internal/gamesui/fortune_menu.go:176
 #: internal/gamesui/fortune_panel.go:246
 msgid "With the whole group: bare rent doubled, built rents half again."
 msgstr "그룹 전체를 가지면: 빈 땅 임대료 2배, 건물 임대료 1.5배."
 
-#: internal/games/fortunenet/texts.go:98
+#: internal/games/fortunenet/texts.go:112
 #: internal/gamesui/fortune_panel.go:259
 msgid "Group:"
 msgstr "그룹:"
 
-#: internal/games/fortunenet/texts.go:99
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:269
 msgid "× %d"
 msgstr "× %d"
 
-#: internal/games/fortunenet/texts.go:101
+#: internal/games/fortunenet/texts.go:115
 #: internal/gamesui/fortune_panel.go:263
 msgid "%d pier"
 msgid_plural "%d piers"
 msgstr[0] "부두 %d개"
 
-#: internal/games/fortunenet/texts.go:104
+#: internal/games/fortunenet/texts.go:118
 #: internal/gamesui/fortune_panel.go:269
 msgid "%d utility"
 msgid_plural "%d utilities"
 msgstr[0] "공공시설 %d개"
 
-#: internal/games/fortunenet/texts.go:107
-#: internal/gamesui/fortune.go:1094
+#: internal/games/fortunenet/texts.go:121
+#: internal/gamesui/fortune.go:1129
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] " · 카드 %d장"
 
-#: internal/games/fortunenet/texts.go:110
+#: internal/games/fortunenet/texts.go:124
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] "와 컴퓨터 플레이어 %d명"
 
-#: internal/games/fortunenet/texts.go:113
+#: internal/games/fortunenet/texts.go:127
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
 msgstr[0] "집 %d채"
+
+#: internal/games/gamerelay/publish.go:92
+msgid "Give the lobby's address."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:107
+#: internal/games/gamerelay/publish.go:115
+msgid "%s is not a lobby's address."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:188
+msgid "There is no lobby at this address."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:209
+msgid "The connection to the lobby was lost."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:248
+msgid "The lobby asks for another key."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:250
+msgid "Every table at the lobby is taken."
+msgstr ""
+
+#: internal/games/gamerelay/publish.go:252
+msgid "The lobby turned the game away."
+msgstr ""
+
+#: internal/games/lobby/lobby.go:118
+msgid "No game is at this table now."
+msgstr ""
+
+#: internal/games/lobby/lobby.go:139
+msgid "The table's host does not answer."
+msgstr ""
+
+#: internal/games/lobby/texts.go:9
+msgid "Game Lobby"
+msgstr ""
+
+#: internal/games/lobby/texts.go:10
+msgid "Join a game at a table, or watch one. A host opens a game here from Small Fortune or Chinese Checkers in inua."
+msgstr ""
+
+#: internal/games/lobby/texts.go:11
+msgid "TABLE %d"
+msgstr ""
+
+#: internal/games/lobby/texts.go:12
+#: internal/lightui/sysmon.go:997
+msgid "Free"
+msgstr "무료"
+
+#: internal/games/lobby/texts.go:13
+msgid "A host can open a game here."
+msgstr ""
+
+#: internal/games/lobby/texts.go:14
+msgid "The host’s connection dropped: waiting for it to come back…"
+msgstr ""
+
+#: internal/games/lobby/texts.go:15
+msgid "Reconnecting…"
+msgstr ""
+
+#: internal/games/lobby/texts.go:16
+msgid "Waiting to start"
+msgstr ""
+
+#: internal/games/lobby/texts.go:17
+msgid "Open seats: %d"
+msgstr ""
+
+#: internal/games/lobby/texts.go:18
+msgid "Playing"
+msgstr ""
+
+#: internal/games/lobby/texts.go:19
+msgid "Over"
+msgstr ""
+
+#: internal/games/lobby/texts.go:22
+msgid "%s sets up the game"
+msgstr ""
+
+#: internal/games/lobby/texts.go:23
+#: internal/gamesui/checkers.go:556
+#: internal/gamesui/fortune.go:424
+#: internal/gamesui/fortune.go:681
+msgid "Open seat"
+msgstr "빈 자리"
+
+#: internal/games/lobby/texts.go:26
+msgid "computer"
+msgstr ""
 
 #: internal/games/pinball_rules.go:63
 msgid "Cadet"
@@ -7375,153 +7528,140 @@ msgstr "별의 내 꼭짓점에서 건너편 꼭짓점까지 구슬 열 개를 �
 msgid "click one of your marbles, then where it goes  ·  Escape puts it back  ·  N new game"
 msgstr "내 구슬을 클릭한 뒤 갈 곳을 클릭  ·  Esc 되돌리기  ·  N 새 게임"
 
-#: internal/gamesui/checkers.go:343
-#: internal/gamesui/fortune.go:468
+#: internal/gamesui/checkers.go:351
+#: internal/gamesui/fortune.go:476
 msgid "On the network"
 msgstr "네트워크"
 
-#: internal/gamesui/checkers.go:343
+#: internal/gamesui/checkers.go:351
 msgid "Others join from a browser on this network, with the link or the QR code."
 msgstr "같은 네트워크의 다른 사람이 링크나 QR 코드로 브라우저에서 참가합니다."
 
-#: internal/gamesui/checkers.go:428
+#: internal/gamesui/checkers.go:365
+#: internal/gamesui/fortune.go:495
+msgid "At a lobby"
+msgstr ""
+
+#: internal/gamesui/checkers.go:365
+msgid "Others join from a game lobby on the internet, where the game takes a table."
+msgstr ""
+
+#: internal/gamesui/checkers.go:458
 msgid "At this screen"
 msgstr "이 화면에서"
 
-#: internal/gamesui/checkers.go:428
+#: internal/gamesui/checkers.go:458
 msgid "Open: someone in a browser"
 msgstr "빈자리: 브라우저 참가자"
 
-#: internal/gamesui/checkers.go:429
-#: internal/gamesui/checkers.go:429
-#: internal/gamesui/checkers.go:429
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
 msgid "Computer · %s"
 msgstr "컴퓨터 · %s"
 
-#: internal/gamesui/checkers.go:456
+#: internal/gamesui/checkers.go:486
 msgid "in a browser · sets up the game"
 msgstr "브라우저 · 게임 설정 담당"
 
-#: internal/gamesui/checkers.go:458
-#: internal/gamesui/fortune_host.go:134
+#: internal/gamesui/checkers.go:488
+#: internal/gamesui/fortune_host.go:180
 msgid "Send away"
 msgstr "내보내기"
 
-#: internal/gamesui/checkers.go:492
+#: internal/gamesui/checkers.go:522
 msgid "No one plays at this screen: the first to join from a browser sets the game up, and may start it."
 msgstr "이 화면에서는 아무도 하지 않습니다. 브라우저에서 처음 참가한 사람이 게임을 설정하고 시작할 수 있습니다."
 
-#: internal/gamesui/checkers.go:526
-#: internal/gamesui/fortune.go:416
-#: internal/gamesui/fortune.go:653
-msgid "Open seat"
-msgstr "빈 자리"
-
-#: internal/gamesui/checkers.go:534
-#: internal/gamesui/fortune.go:641
-#: internal/gamesui/fortune_host.go:130
+#: internal/gamesui/checkers.go:564
+#: internal/gamesui/fortune.go:669
+#: internal/gamesui/fortune_host.go:176
 msgid "at this screen"
 msgstr "이 화면에서"
 
-#: internal/gamesui/checkers.go:536
+#: internal/gamesui/checkers.go:566
 msgid "the computer"
 msgstr "컴퓨터"
 
-#: internal/gamesui/checkers.go:540
+#: internal/gamesui/checkers.go:570
 msgid "Asking the AI…"
 msgstr "AI에게 묻는 중…"
 
-#: internal/gamesui/checkers.go:544
+#: internal/gamesui/checkers.go:574
 msgid "the AI of Settings → AI"
 msgstr "설정 → AI의 AI"
 
-#: internal/gamesui/checkers.go:547
+#: internal/gamesui/checkers.go:577
 msgid "the computer, unless the game is on the network"
 msgstr "네트워크 게임이 아니면 컴퓨터"
 
-#: internal/gamesui/checkers.go:549
+#: internal/gamesui/checkers.go:579
 msgid "waiting for someone to join"
 msgstr "참가를 기다리는 중"
 
-#: internal/gamesui/checkers.go:588
+#: internal/gamesui/checkers.go:618
 msgid "no profile of Settings → AI makes decisions"
 msgstr "설정 → AI에 결정을 내리는 프로필이 없습니다"
 
-#: internal/gamesui/checkers.go:644
-#: internal/gamesui/fortune.go:210
+#: internal/gamesui/checkers.go:698
+#: internal/gamesui/fortune.go:218
 msgid "JOIN CODE"
 msgstr "참가 코드"
 
-#: internal/gamesui/checkers.go:653
-msgid "Scan the code, or open the link in a browser on this network."
-msgstr "QR 코드를 스캔하거나 같은 네트워크의 브라우저에서 링크를 여세요."
-
-#: internal/gamesui/checkers.go:674
-#: internal/gamesui/checkers.go:677
+#: internal/gamesui/checkers.go:728
+#: internal/gamesui/checkers.go:731
 msgid "Copy link"
 msgstr "링크 복사"
 
-#: internal/gamesui/checkers.go:701
+#: internal/gamesui/checkers.go:770
 msgid "This computer is on no network a browser could reach it from."
 msgstr "이 컴퓨터는 브라우저가 연결할 수 있는 네트워크에 없습니다."
 
-#: internal/gamesui/checkers.go:976
+#: internal/gamesui/checkers.go:778
+msgid "Scan the code, or open the link in a browser."
+msgstr ""
+
+#: internal/gamesui/checkers.go:780
+msgid "Scan the code, or open the link in a browser on this network."
+msgstr "QR 코드를 스캔하거나 같은 네트워크의 브라우저에서 링크를 여세요."
+
+#: internal/gamesui/checkers.go:1053
 msgid "Join code %s"
 msgstr "참가 코드 %s"
 
-#: internal/gamesui/fortune.go:412
+#: internal/gamesui/fortune.go:420
 msgid "Hot seat"
 msgstr "같은 화면"
 
-#: internal/gamesui/fortune.go:473
+#: internal/gamesui/fortune.go:501
 msgid "MAP"
 msgstr "지도"
 
-#: internal/gamesui/fortune.go:529
-msgid "Rounds"
-msgstr "라운드"
-
-#: internal/gamesui/fortune.go:530
-msgid "Starting money"
-msgstr "돈을 시작하다"
-
-#: internal/gamesui/fortune.go:531
-msgid "Dice"
-msgstr "주사위"
-
-#: internal/gamesui/fortune.go:531
-msgid "One die"
-msgstr "주사위 1개"
-
-#: internal/gamesui/fortune.go:531
-msgid "Two dice"
-msgstr "두 개의 주사위"
-
-#: internal/gamesui/fortune.go:536
-msgid "Build the day you buy"
-msgstr "구매하는 날에 맞춰 구축하세요"
-
-#: internal/gamesui/fortune.go:654
+#: internal/gamesui/fortune.go:682
 msgid "empty: no one plays here"
 msgstr "비어 있음: 아무도 없음"
 
-#: internal/gamesui/fortune.go:656
+#: internal/gamesui/fortune.go:684
 msgid "for a visitor in a browser"
 msgstr "브라우저 방문자용"
 
-#: internal/gamesui/fortune.go:723
+#: internal/gamesui/fortune.go:755
+msgid "Open the game at the lobby"
+msgstr ""
+
+#: internal/gamesui/fortune.go:758
 msgid "Open the game to the network"
 msgstr "네트워크에 게임 열기"
 
-#: internal/gamesui/fortune.go:725
+#: internal/gamesui/fortune.go:760
 msgid "Start in %s"
 msgstr "%s에서 시작"
 
-#: internal/gamesui/fortune.go:1145
+#: internal/gamesui/fortune.go:1180
 msgid "%s is thinking…"
 msgstr "%s 생각 중…"
 
-#: internal/gamesui/fortune.go:1156
+#: internal/gamesui/fortune.go:1191
 msgid "Pay $50 bail"
 msgstr "보석금 $50 지불"
 
@@ -7616,20 +7756,28 @@ msgstr "빌라"
 msgid "palazzi"
 msgstr "팔라치"
 
-#: internal/gamesui/fortune_host.go:62
+#: internal/gamesui/fortune_host.go:64
 msgid "The game could not open to the network: %v"
 msgstr "네트워크에 게임을 열 수 없습니다: %v"
 
-#: internal/gamesui/fortune_host.go:90
+#: internal/gamesui/fortune_host.go:131
 #: internal/term/web/strings.go:58
 msgid "Host"
 msgstr "호스트"
 
-#: internal/gamesui/fortune_host.go:140
+#: internal/gamesui/fortune_host.go:186
 msgid "Waiting for visitors: open the link on a phone or a computer on the same network."
 msgstr "방문자를 기다리는 중: 같은 네트워크의 휴대폰이나 컴퓨터에서 링크를 여세요."
 
-#: internal/gamesui/fortune_host.go:180
+#: internal/gamesui/fortune_host.go:188
+msgid "Waiting for visitors: open the link in a browser."
+msgstr ""
+
+#: internal/gamesui/fortune_host.go:192
+msgid "%s sets up the game from a browser, and may start it."
+msgstr ""
+
+#: internal/gamesui/fortune_host.go:243
 msgid "Others join from a browser"
 msgstr "브라우저로 참가하기"
 
@@ -7642,7 +7790,7 @@ msgid "Restart game"
 msgstr "처음부터 다시"
 
 #: internal/gamesui/fortune_menu.go:44
-#: internal/gamesui/fortune_menu.go:103
+#: internal/gamesui/fortune_menu.go:101
 msgid "Compendium"
 msgstr "도감"
 
@@ -7650,7 +7798,7 @@ msgstr "도감"
 msgid "Quit to menu"
 msgstr "메뉴로 나가기"
 
-#: internal/gamesui/fortune_menu.go:109
+#: internal/gamesui/fortune_menu.go:107
 #: internal/mailui/welcome.go:494
 #: internal/mailui/welcome.go:598
 #: internal/term/web/strings.go:24
@@ -7662,35 +7810,35 @@ msgstr "메뉴로 나가기"
 msgid "Back"
 msgstr "뒤로"
 
-#: internal/gamesui/fortune_menu.go:163
+#: internal/gamesui/fortune_menu.go:161
 msgid "CARDS"
 msgstr "카드"
 
-#: internal/gamesui/fortune_menu.go:176
+#: internal/gamesui/fortune_menu.go:174
 msgid "Taxes and fines go into the fountain; the next player to land there takes them all."
 msgstr "세금과 벌금은 분수에 모이고, 다음에 그곳에 멈추는 사람이 모두 가져갑니다."
 
-#: internal/gamesui/fortune_menu.go:178
+#: internal/gamesui/fortune_menu.go:176
 msgid "Street"
 msgstr "거리"
 
-#: internal/gamesui/fortune_menu.go:179
+#: internal/gamesui/fortune_menu.go:177
 msgid "Station or pier"
 msgstr "역 또는 부두"
 
-#: internal/gamesui/fortune_menu.go:180
+#: internal/gamesui/fortune_menu.go:178
 msgid "Utility"
 msgstr "공공시설"
 
-#: internal/gamesui/fortune_menu.go:211
+#: internal/gamesui/fortune_menu.go:209
 msgid "SQUARES"
 msgstr "칸"
 
-#: internal/gamesui/fortune_menu.go:236
+#: internal/gamesui/fortune_menu.go:234
 msgid "RIVALS"
 msgstr "라이벌"
 
-#: internal/gamesui/fortune_menu.go:242
+#: internal/gamesui/fortune_menu.go:240
 msgid "RULES"
 msgstr "규칙"
 
@@ -7705,6 +7853,26 @@ msgstr "%s의 카드 · %d / %d"
 #: internal/gamesui/fortune_panel.go:489
 msgid "Plays on the square in focus: %s."
 msgstr "선택한 칸에 사용합니다: %s."
+
+#: internal/gamesui/lobby.go:34
+msgid "The lobby's address"
+msgstr ""
+
+#: internal/gamesui/lobby.go:35
+msgid "As the lobby's host gave it: lobby.example.org, with ?key=… when it asks for a key."
+msgstr ""
+
+#: internal/gamesui/lobby.go:58
+msgid "At table %d of the lobby."
+msgstr ""
+
+#: internal/gamesui/lobby.go:60
+msgid "Not at the lobby: %v"
+msgstr ""
+
+#: internal/gamesui/lobby.go:62
+msgid "Connecting to the lobby…"
+msgstr ""
 
 #: internal/gamesui/mines.go:37
 msgid "Small · 9 × 9"
@@ -9570,10 +9738,6 @@ msgstr "캐시"
 #: internal/lightui/sysmon.go:996
 msgid "%s · given back when needed"
 msgstr "%s · 필요할 때 돌려받음"
-
-#: internal/lightui/sysmon.go:997
-msgid "Free"
-msgstr "무료"
 
 #: internal/lightui/sysmon.go:999
 msgid "Swap"
