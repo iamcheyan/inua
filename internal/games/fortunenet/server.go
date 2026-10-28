@@ -14,7 +14,10 @@ import (
 	"time"
 
 	samples "github.com/lyricat/inua/config"
+	"github.com/lyricat/inua/internal/games"
+	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/games/gameweb"
+	"github.com/lyricat/inua/internal/i18n"
 )
 
 // web is the page visitors play on.
@@ -42,6 +45,14 @@ func (h *Host) Serve(addr string) error {
 	if err != nil {
 		return err
 	}
+	h.srv = &server{http: &http.Server{Handler: h.Handler(), ReadHeaderTimeout: 10 * time.Second}, port: ln.Addr().(*net.TCPAddr).Port}
+	go h.srv.http.Serve(ln)
+	return nil
+}
+
+// Handler serves browsers the page at /, the game at /ws, the board's
+// pictures: Serve's, and a lobby's through a relay (gamerelay.Publish).
+func (h *Host) Handler() http.Handler {
 	mux := http.NewServeMux()
 	page, _ := fs.Sub(web, "web")
 	mux.Handle("/", gameweb.Files(page))
@@ -51,9 +62,7 @@ func (h *Host) Serve(addr string) error {
 	mux.HandleFunc("/texts.json", serveTexts)
 	mux.HandleFunc("/art/", h.serveArt)
 	mux.HandleFunc("/icons/", serveIcon)
-	h.srv = &server{http: &http.Server{Handler: mux, ReadHeaderTimeout: 10 * time.Second}, port: ln.Addr().(*net.TCPAddr).Port}
-	go h.srv.http.Serve(ln)
-	return nil
+	return mux
 }
 
 // Port is the port the Host listens on; 0 before Serve.
@@ -115,6 +124,12 @@ func (h *Host) serveWS(w http.ResponseWriter, r *http.Request) {
 			h.opt.Run(func() {
 				if h.clients[c] && c.Seat >= 0 {
 					h.Act(c.Seat, m.Action)
+				}
+			})
+		case joined:
+			h.opt.Run(func() {
+				if h.clients[c] {
+					h.fromLead(c, m)
 				}
 			})
 		}
@@ -212,4 +227,38 @@ func serveIcon(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 	w.Header().Set("Cache-Control", "max-age=86400")
 	w.Write(b)
+}
+
+// Status is the game as a lobby lists it: before the game, the people,
+// the computer players asked for and the seats open.
+func (h *Host) Status() gamerelay.Status {
+	st := gamerelay.Status{Game: "small-fortune", Code: h.Code, State: "lobby", Room: h.Room()}
+	switch {
+	case h.Game != nil && h.Game.Phase == games.PhaseOver:
+		st.State = "over"
+	case h.Game != nil:
+		st.State = "playing"
+	}
+	for _, s := range h.seatMsgs() {
+		st.Seats = append(st.Seats, gamerelay.Seat{Name: s.Name, Kind: s.Kind, Here: s.Here})
+	}
+	if h.Game == nil {
+		for _, name := range h.Settings.AIs {
+			st.Seats = append(st.Seats, gamerelay.Seat{Name: name, Kind: "ai", Here: true})
+		}
+		for i := range h.Settings.Rivals {
+			name := games.Rivals[min(i, len(games.Rivals)-1)].Name
+			if i < len(h.Settings.RivalNames) && h.Settings.RivalNames[i] != "" {
+				name = h.Settings.RivalNames[i]
+			}
+			st.Seats = append(st.Seats, gamerelay.Seat{Name: i18n.T(name), Kind: "computer", Here: true})
+		}
+		for range st.Room {
+			st.Seats = append(st.Seats, gamerelay.Seat{Kind: "open"})
+		}
+	}
+	if l := h.Lead(); l >= 0 {
+		st.Lead = h.Seats[l].Name
+	}
+	return st
 }

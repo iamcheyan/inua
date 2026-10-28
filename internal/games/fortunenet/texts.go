@@ -84,6 +84,20 @@ func webTexts() texts {
 		"soundOn":     i18n.T("Sound on: M turns it off"),
 		"soundOff":    i18n.T("Sound off: M turns it on"),
 		"rentByPiers": i18n.T("The rent is by how many piers the owner has."),
+		"setup":       i18n.T("THE GAME"),
+		"youLead":     i18n.T("You set up the game: the city, the rounds, the money, the rules."),
+		"waitingLead": i18n.T("Waiting for %s to start the game…"),
+		"leads":       i18n.T("sets up the game"),
+		"city":        i18n.T("City"),
+		"rounds":      i18n.T("Rounds"),
+		"cash":        i18n.T("Starting money"),
+		"dice":        i18n.T("Dice"),
+		"oneDie":      i18n.T("One die"),
+		"twoDice":     i18n.T("Two dice"),
+		"buildOnBuy":  i18n.T("Build the day you buy"),
+		"rivalsN":     i18n.T("Computer players"),
+		"start":       i18n.T("Start the game"),
+		"restart":     i18n.T("New game"),
 	}
 	t["noteStart"] = i18n.Tf("Collect $%d every time you pass.", games.StartPay)
 	t["noteJailDouble"] = i18n.Tf("Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go.", i18n.T("a double"))
