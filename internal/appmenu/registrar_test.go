@@ -58,6 +58,15 @@ func TestRegistrarLifecycleAndMenu(t *testing.T) {
 	if err := client.Object(RegistrarName, RegistrarPath).Call(RegistrarInterface+".RegisterWindow", 0, uint32(42), path).Err; err != nil {
 		t.Fatal(err)
 	}
+	if err := client.Object(RegistrarName, RegistrarPath).Call(RegistrarInterface+".RegisterWindow", 0, uint32(44), path).Err; err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := registrar.ForPID(int(pid)); ok {
+		t.Fatal("ambiguous PID registrations were accepted")
+	}
+	if err := client.Object(RegistrarName, RegistrarPath).Call(RegistrarInterface+".UnregisterWindow", 0, uint32(44)).Err; err != nil {
+		t.Fatal(err)
+	}
 	reg, ok := registrar.ForPID(int(pid))
 	if !ok || reg.Window != 42 || reg.Path != path {
 		t.Fatalf("registration=%+v ok=%v", reg, ok)

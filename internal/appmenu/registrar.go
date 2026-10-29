@@ -53,7 +53,7 @@ func (r *Registrar) GetMenuForWindow(window uint32) (string, dbus.ObjectPath, *d
 		}
 	}
 	if found.Service == "" {
-		return "", "/", nil
+		return "", "/", dbus.NewError("org.freedesktop.DBus.Error.UnknownObject", []any{"window is not registered"})
 	}
 	return found.Service, found.Path, nil
 }
