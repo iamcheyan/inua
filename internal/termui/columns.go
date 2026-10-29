@@ -25,10 +25,29 @@ type columns struct {
 	list       *gtk.ListBox
 	sessions   *gtk.Box
 	find       *gtk.SearchEntry
-	// The heads: the menu, the new workspace and new session buttons,
-	// and the shown workspace's name over its sessions.
+	// The head's menu and new workspace buttons, and the new session
+	// after the sessions.
 	menu, newWorkspace, newSession *gtk.Button
-	title                          *gtk.Label
+	// The grips that set the columns' widths (colwidth.go), the widths,
+	// and the width of the column dragged when the drag began.
+	grips                                [2]*gtk.Box
+	width                                [2]int
+	gripFrom                             int
+	gripX                                float64 // where the drag began, in the window
+	onGripBegin, onGripUpdate, onGripEnd [2]func(gtk.GestureDrag, float64, float64)
+	// Column 1 as it slides, and its toggles: in its head, and at the
+	// top of column 2 while it is hidden.
+	col1Reveal               *gtk.Revealer
+	sidebarHide, sidebarShow *gtk.Button
+	sidebarShowHead          *gtk.Box
+	onSidebar                func(gtk.Button)
+	onSlid                   func(uintptr, uintptr, uintptr)
+	// held is set while the terminals keep their sizes (holdSizes).
+	held bool
+	// The search's own row, and the button in the head that opens it.
+	findReveal   *gtk.Revealer
+	findButton   *gtk.ToggleButton
+	onFindButton func(gtk.ToggleButton)
 	// rowIDs is the workspace of each row of the list, in order, and
 	// wsRows their widgets.
 	rowIDs []int
@@ -90,11 +109,11 @@ func (a *App) buildColumns(ui *gtkx.Builder) {
 	ui.Get("workspaces", c.list)
 	ui.Get("sessions", c.sessions)
 	ui.Get("find", c.find)
-	c.menu, c.newWorkspace, c.newSession, c.title = &gtk.Button{}, &gtk.Button{}, &gtk.Button{}, &gtk.Label{}
+	c.menu, c.newWorkspace, c.newSession = &gtk.Button{}, &gtk.Button{}, &gtk.Button{}
 	ui.Get("menu", c.menu)
 	ui.Get("new_workspace", c.newWorkspace)
 	ui.Get("new_session", c.newSession)
-	ui.Get("sessions_title", c.title)
+	a.columnGrips(ui)
 	c.tips(a)
 	c.onRow = func(_ gtk.ListBox, row uintptr) {
 		i := int(gtk.ListBoxRowNewFromInternalPtr(row).GetIndex())
@@ -156,6 +175,8 @@ func (c *columns) tips(a *App) {
 	tip(c.menu, i18n.T("Actions"), "palette")
 	tip(c.newWorkspace, i18n.T("New workspace"), "new_workspace")
 	tip(c.newSession, i18n.T("New session"), "new_session")
+	tip(c.sidebarHide, i18n.T("Hide the sidebar"), "fold_workspaces")
+	tip(c.sidebarShow, i18n.T("Show the sidebar"), "fold_workspaces")
 }
 
 // update makes both columns from the State.
@@ -294,7 +315,7 @@ func (a *App) matches(w *model.Workspace, query string) bool {
 
 func (c *columns) fillSessions(a *App) {
 	w := a.shownWorkspace()
-	c.newSession.SetSensitive(w != nil)
+	c.newSession.SetVisible(w != nil)
 	// The shape: the workspace, then each session and its panes.
 	shape := []int{}
 	if w != nil {
@@ -309,10 +330,8 @@ func (c *columns) fillSessions(a *App) {
 		c.makeSessions(a, w)
 	}
 	if w == nil {
-		c.title.SetText("")
 		return
 	}
-	c.title.SetText(w.Name)
 	shown := a.state.Model.Shown.Session
 	for _, s := range w.Sessions {
 		h := c.heads[s.ID]

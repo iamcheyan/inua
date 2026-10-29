@@ -2727,8 +2727,8 @@ msgstr "Ouvre les dossiers"
 #: internal/term/web/strings.go:101
 #: internal/termui/app.go:114
 #: internal/termui/app.go:150
-#: internal/termui/app.go:350
-#: internal/termui/app.go:352
+#: internal/termui/app.go:356
+#: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
@@ -13124,7 +13124,7 @@ msgstr "Nouvelle session dans cet espace"
 
 #: internal/term/settings/settings.go:103
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:157
+#: internal/termui/columns.go:176
 msgid "New workspace"
 msgstr "Nouvel espace de travail"
 
@@ -13423,7 +13423,8 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:158
+#: internal/termui/columns.go:177
+#: ui/term.ui:235
 msgid "New session"
 msgstr "Nouvelle session"
 
@@ -13684,10 +13685,18 @@ msgstr "Les terminaux prennent les couleurs de la fenêtre"
 msgid "Your login shell (%s)"
 msgstr "Votre shell de connexion (%s)"
 
-#: internal/termui/columns.go:156
+#: internal/termui/columns.go:175
 #: internal/termui/palette.go:113
 msgid "Actions"
 msgstr "Actions"
+
+#: internal/termui/columns.go:178
+msgid "Hide the sidebar"
+msgstr "Masquer la barre latérale"
+
+#: internal/termui/columns.go:179
+msgid "Show the sidebar"
+msgstr "Afficher la barre latérale"
 
 #: internal/termui/copymode.go:35
 msgid "COPY"
@@ -19504,7 +19513,8 @@ msgstr "Filtrer par nom, adresse, OS ou tag"
 msgid "EXIT NODE"
 msgstr "NŒUD DE SORTIE"
 
-#: ui/term.ui:39
+#: ui/term.ui:54
+#: ui/term.ui:99
 msgid "Find a workspace or agent"
 msgstr "Chercher un espace ou un agent"
 

@@ -90,17 +90,20 @@ from it, or at `$INUA_VT_LIB`.
   works, hollow when quiet. Drag a workspace to put it in another place;
   its menu (a right click, or the Menu key) renames it or closes it,
   after asking, since every program in it quits.
-  The search finds workspaces by name, folder or pane title. At its
+  The search (its button in the head) finds workspaces by name, folder
+  or pane title. The framed button at the head's start hides the
+  column, sliding away (Ctrl+Shift+B); one at the top of column 2 brings
+  it back. At its
   foot, as Warcraft's idle worker, the finder counts the agents waiting
   for you (a square in warn) and those done or idle (hollow); a click on
   it, or Ctrl+`, goes to the next: waiting, then done, then idle.
-- **Sessions** (column 2): at its top, the shown workspace's name and
-  the new session button; then its sessions, each a section of its
+- **Sessions** (column 2): the shown workspace's sessions, each a section of its
   panes under a head with the same square and a badge counting the
   agents that wait. A pane's row shows its agent's mark and title, its state and
   how long it has been in it; an agent waiting for you shows what it
   asks. A shell shows the command running in it. An agent's mark takes
   its own colour (Claude Code's orange, Gemini's blue…) while it runs.
+  After the last session, *New session* starts one.
 - **Terminals** (column 3): the shown session's panes, tiled, each with a
   head (state, mark, title, folder). In a git checkout, the folder's
   place shows its name and branch (a linked worktree's with a fork for
@@ -115,7 +118,9 @@ from it, or at `$INUA_VT_LIB`.
   the others taking its room; a session closes with its last pane, a
   workspace with its last session, and the window with the last of all.
 
-A window narrower than 1040 px folds column 2, narrower than 720 px
+Drag a column's right edge to make it wider or narrower (column 1 from
+180 to 420 px, column 2 from 220 to 560); the next window opens with the
+same widths. A window narrower than 1040 px folds column 2, narrower than 720 px
 column 1 as well; Ctrl+Shift+S and Ctrl+Shift+B show them anyway.
 
 ## Agents

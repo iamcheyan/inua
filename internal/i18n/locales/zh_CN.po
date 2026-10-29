@@ -2722,8 +2722,8 @@ msgstr "打开文件夹"
 #: internal/term/web/strings.go:101
 #: internal/termui/app.go:114
 #: internal/termui/app.go:150
-#: internal/termui/app.go:350
-#: internal/termui/app.go:352
+#: internal/termui/app.go:356
+#: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
@@ -13053,7 +13053,7 @@ msgstr "在此工作区新建会话"
 
 #: internal/term/settings/settings.go:103
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:157
+#: internal/termui/columns.go:176
 msgid "New workspace"
 msgstr "新建工作区"
 
@@ -13352,7 +13352,8 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:158
+#: internal/termui/columns.go:177
+#: ui/term.ui:235
 msgid "New session"
 msgstr "新建会话"
 
@@ -13611,10 +13612,18 @@ msgstr "终端使用窗口的颜色"
 msgid "Your login shell (%s)"
 msgstr "你的登录 shell（%s）"
 
-#: internal/termui/columns.go:156
+#: internal/termui/columns.go:175
 #: internal/termui/palette.go:113
 msgid "Actions"
 msgstr "操作"
+
+#: internal/termui/columns.go:178
+msgid "Hide the sidebar"
+msgstr "隐藏侧边栏"
+
+#: internal/termui/columns.go:179
+msgid "Show the sidebar"
+msgstr "显示侧边栏"
 
 #: internal/termui/copymode.go:35
 msgid "COPY"
@@ -19406,7 +19415,8 @@ msgstr "按名称、地址、操作系统或标签过滤"
 msgid "EXIT NODE"
 msgstr "出口节点"
 
-#: ui/term.ui:39
+#: ui/term.ui:54
+#: ui/term.ui:99
 msgid "Find a workspace or agent"
 msgstr "查找工作区或智能体"
 

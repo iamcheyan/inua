@@ -2725,8 +2725,8 @@ msgstr ""
 #: internal/term/web/strings.go:101
 #: internal/termui/app.go:114
 #: internal/termui/app.go:150
-#: internal/termui/app.go:350
-#: internal/termui/app.go:352
+#: internal/termui/app.go:356
+#: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
@@ -13122,7 +13122,7 @@ msgstr ""
 
 #: internal/term/settings/settings.go:103
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:157
+#: internal/termui/columns.go:176
 msgid "New workspace"
 msgstr ""
 
@@ -13421,7 +13421,8 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:158
+#: internal/termui/columns.go:177
+#: ui/term.ui:235
 msgid "New session"
 msgstr ""
 
@@ -13682,9 +13683,17 @@ msgstr ""
 msgid "Your login shell (%s)"
 msgstr ""
 
-#: internal/termui/columns.go:156
+#: internal/termui/columns.go:175
 #: internal/termui/palette.go:113
 msgid "Actions"
+msgstr ""
+
+#: internal/termui/columns.go:178
+msgid "Hide the sidebar"
+msgstr ""
+
+#: internal/termui/columns.go:179
+msgid "Show the sidebar"
 msgstr ""
 
 #: internal/termui/copymode.go:35
@@ -19502,7 +19511,8 @@ msgstr ""
 msgid "EXIT NODE"
 msgstr ""
 
-#: ui/term.ui:39
+#: ui/term.ui:54
+#: ui/term.ui:99
 msgid "Find a workspace or agent"
 msgstr ""
 
