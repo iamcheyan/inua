@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
+	"codeberg.org/puregotk/puregotk/v4/pango"
 	"github.com/makiuchi-d/gozxing"
 	"github.com/makiuchi-d/gozxing/qrcode"
 
@@ -78,7 +79,8 @@ func (p *fortune) hostLobby() {
 	p.pages.SetVisibleChildName("lobby")
 	p.lobbySeats()
 	p.lobbyStart.GrabFocus()
-	p.lobbyURL.SelectRegion(0, 0) // a selectable label shows all of itself selected at first
+	p.lobbyCode.SelectRegion(0, 0) // a selectable label shows all of itself selected at first
+	p.lobbyURL.SelectRegion(0, 0)
 }
 
 // links are where others join: the lobby's table, then this computer's
@@ -103,10 +105,19 @@ func (p *fortune) showLinks() {
 		return
 	}
 	urls, note := p.links()
+	p.lobbyCode.SetText(p.net.Code)
+	if p.pub != nil && len(urls) > 0 && (p.net.Port() == 0 || len(urls) > len(p.net.URLs())) { // the lobby's link first
+		p.lobbySub.SetText(i18n.T("Scan the code, or open the link in a browser."))
+	} else {
+		p.lobbySub.SetText(i18n.T("Scan the code, or open the link in a browser on this network."))
+	}
 	p.lobbyURL.SetText(strings.Join(urls[:min(1, len(urls))], ""))
+	p.lobbyURL.SetVisible(len(urls) > 0)
+	p.lobbyCopy.SetVisible(len(urls) > 0)
 	p.lobbyMore.SetText(strings.Join(urls[min(1, len(urls)):], "\n"))
 	p.lobbyMore.SetVisible(len(urls) > 1)
 	p.lobbyNote.SetText(strings.TrimSpace(note + "\n" + p.serveErr))
+	p.lobbyNote.SetVisible(p.lobbyNote.GetText() != "")
 	if first := strings.Join(urls[:min(1, len(urls))], ""); first != p.qrFor {
 		p.qrFor, p.qr = first, nil
 		if first != "" {
@@ -116,6 +127,7 @@ func (p *fortune) showLinks() {
 		}
 		p.qrCanvas.redraw()
 	}
+	p.lobbyCode.SelectRegion(0, 0)
 	p.lobbyURL.SelectRegion(0, 0)
 }
 
@@ -245,36 +257,58 @@ func (p *fortune) setupLobby() *gtk.Box {
 	head.SetXalign(0)
 	gtkx.Append(page, &head.Widget)
 
+	// The QR code beside how to join (the code, the link), as Chinese
+	// Checkers' setup shows them; who has joined under them.
 	row := gtk.NewBox(gtk.OrientationHorizontalValue, 28)
 	p.qrCanvas = newCanvas(qrSide, qrSide, p.paintQR)
 	p.qrCanvas.area.SetSizeRequest(qrSide, qrSide)
 	p.qrCanvas.area.SetFocusable(false)
 	p.qrCanvas.area.SetValign(gtk.AlignStartValue)
+	p.qrCanvas.area.SetHexpand(false)
+	p.qrCanvas.area.AddCssClass("game-qr")
 	gtkx.Append(row, &p.qrCanvas.area.Widget)
-	side := gtk.NewBox(gtk.OrientationVerticalValue, 8)
+	side := gtk.NewBox(gtk.OrientationVerticalValue, 2)
 	side.SetSizeRequest(420, -1)
-	p.lobbyURL = gtk.NewLabel("")
-	p.lobbyURL.AddCssClass("fortune-card-title")
+	label := func(class string) *gtk.Label {
+		l := gtk.NewLabel("")
+		l.AddCssClass(class)
+		l.SetXalign(0)
+		l.SetWrap(true)
+		gtkx.Append(side, &l.Widget)
+		return l
+	}
+	k := label("kicker")
+	k.SetText(i18n.T("JOIN CODE"))
+	p.lobbyCode = label("checkers-code")
+	p.lobbyCode.SetSelectable(true)
+	p.lobbySub = label("fortune-city-sub")
+	p.lobbyURL = label("checkers-link")
 	p.lobbyURL.SetSelectable(true)
-	p.lobbyURL.SetXalign(0)
-	gtkx.Append(side, &p.lobbyURL.Widget)
-	p.lobbyMore = gtk.NewLabel("")
-	p.lobbyMore.AddCssClass("fortune-city-sub")
+	p.lobbyURL.SetWrapMode(pango.WrapCharValue) // a link has no spaces to break at
+	p.onLobbyCopy = func(gtk.Button) {
+		if urls, _ := p.links(); len(urls) > 0 {
+			clip := p.f.win.GetClipboard()
+			clip.SetText(urls[0])
+			clip.Unref()
+			p.lobbyCopy.SetLabel(i18n.T("Copied"))
+			time.AfterFunc(1500*time.Millisecond, func() { gtkx.Post(func() { p.lobbyCopy.SetLabel(i18n.T("Copy link")) }) })
+		}
+	}
+	p.lobbyCopy = button(i18n.T("Copy link"), &p.onLobbyCopy)
+	p.lobbyCopy.SetHalign(gtk.AlignStartValue)
+	p.lobbyCopy.AddCssClass("checkers-copy")
+	gtkx.Append(side, &p.lobbyCopy.Widget)
+	p.lobbyMore = label("checkers-link-more")
 	p.lobbyMore.SetSelectable(true)
-	p.lobbyMore.SetXalign(0)
-	gtkx.Append(side, &p.lobbyMore.Widget)
-	p.lobbyWait = gtk.NewLabel("")
-	p.lobbyWait.AddCssClass("fortune-city-sub")
-	p.lobbyWait.SetWrap(true)
-	p.lobbyWait.SetXalign(0)
-	gtkx.Append(side, &p.lobbyWait.Widget)
+	p.lobbyMore.SetWrapMode(pango.WrapCharValue)
+	p.lobbyNote = label("fortune-city-sub")
+	p.lobbyNote.AddCssClass("fortune-lobby-note")
+	k = label("kicker")
+	k.AddCssClass("fortune-lobby-kicker")
+	k.SetText(i18n.T("PLAYERS"))
+	p.lobbyWait = label("fortune-city-sub")
 	p.lobbyList = *gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	gtkx.Append(side, &p.lobbyList.Widget)
-	p.lobbyNote = gtk.NewLabel("")
-	p.lobbyNote.AddCssClass("fortune-city-sub")
-	p.lobbyNote.SetWrap(true)
-	p.lobbyNote.SetXalign(0)
-	gtkx.Append(side, &p.lobbyNote.Widget)
 	gtkx.Append(row, &side.Widget)
 	gtkx.Append(page, &row.Widget)
 
@@ -291,6 +325,7 @@ func (p *fortune) setupLobby() *gtk.Box {
 		p.reset()
 	}
 	acts := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
+	acts.AddCssClass("fortune-lobby-acts")
 	p.lobbyStart = button(i18n.T("Start the game"), &p.onLobbyStart)
 	p.lobbyStart.RemoveCssClass("outlined")
 	p.lobbyStart.AddCssClass("primary")

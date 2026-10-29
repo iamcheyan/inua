@@ -370,6 +370,7 @@ func (p *checkers) setupPage() *gtk.Box {
 	gtkx.Append(right, &p.joinBlock().Widget)
 	p.joinNote = *gtk.NewLabel("")
 	p.joinNote.AddCssClass("fortune-city-sub")
+	p.joinNote.AddCssClass("checkers-note")
 	p.joinNote.SetWrap(true)
 	p.joinNote.SetXalign(0)
 	gtkx.Append(right, &p.joinNote.Widget)
@@ -694,7 +695,7 @@ func (p *checkers) joinBlock() *gtk.Box {
 	p.qrCanvas.area.SetFocusable(false)
 	p.qrCanvas.area.SetValign(gtk.AlignStartValue)
 	p.qrCanvas.area.SetHexpand(false)
-	p.qrCanvas.area.AddCssClass("checkers-qr")
+	p.qrCanvas.area.AddCssClass("game-qr")
 	gtkx.Append(p.join, &p.qrCanvas.area.Widget)
 	text := gtk.NewBox(gtk.OrientationVerticalValue, 2)
 	text.SetHexpand(true)
@@ -773,6 +774,7 @@ func (p *checkers) showLink() {
 		notes = append(notes, i18n.T("This computer is on no network a browser could reach it from."))
 	}
 	p.joinNote.SetText(strings.Join(notes, "\n"))
+	p.joinNote.SetVisible(len(notes) > 0)
 	p.qr = nil
 	if !on {
 		return

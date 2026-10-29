@@ -46,6 +46,9 @@ type fortune struct {
 	serveErr                            string                 // why it is not on the network or at the lobby
 	qrFor                               string                 // the link the QR code is of
 	lobbyURL, lobbyMore                 *gtk.Label
+	lobbyCode, lobbySub                 *gtk.Label
+	lobbyCopy                           *gtk.Button
+	onLobbyCopy                         func(gtk.Button)
 	lobbyWait, lobbyNote, code          *gtk.Label
 	lobbyList                           gtk.Box
 	lobbyStart                          *gtk.Button
@@ -492,6 +495,7 @@ func (p *fortune) setupPage() *gtk.Box {
 	p.lobbyAddr = lobbyEntry(&p.onAddr)
 	p.lobbyOn = p.lobbyOn || lobbyFirst() // started from the Game Lobby window to host at its table
 	p.lobbyAddr.SetVisible(p.lobbyOn)
+	p.lobbyAddr.AddCssClass("fortune-lobby-addr")
 	gtkx.ConnectChanged(p.lobbyAddr, &p.onAddrChanged)
 	players(i18n.T("At a lobby"), toggle(p.lobbyOn, &p.onLobbyRule))
 	gtkx.Append(left, &p.lobbyAddr.Widget)
