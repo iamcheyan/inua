@@ -272,8 +272,9 @@ once; the icons and the text size follow inua's `config.toml`.
 
 The **Web Terminal** shows the terminals in a browser, a phone's over
 Tailscale. Turn it on in the settings (Ctrl+, → Web terminal): it runs
-`inua-termd serve` in a user service of its own (`inua-term-web.service`)
-and starts again at login while on; *Where* puts it on this computer
+`inua-termd serve` in a user service of its own (`inua-term-web.service`;
+on a Mac the launchd agent `io.github.lyricat.Inua.Term.Web`) and starts
+again at login while on; *Where* puts it on this computer
 only or on its Tailscale address, and the section gives its link to copy,
 or a new one. By hand:
 
@@ -418,9 +419,11 @@ bin/inua-termd serve --tailscale
 Linux as well. The page's token is kept in the login keychain, or in a file
 when the keychain is locked (over SSH); an agent
 that needs you posts a notification of the Mac's own (through
-osascript), which opens nothing when clicked. There is no service
-to start it at login yet: it runs while its terminal, or `nohup`, keeps
-it.
+osascript), which opens nothing when clicked. Turned on in the app's
+settings, it runs as a launchd agent: its property list is
+`~/Library/LaunchAgents/io.github.lyricat.Inua.Term.Web.plist` while it
+is on, so it starts again at login and 3 seconds after a failure, and
+its output goes to `~/Library/Logs/inua-term-web.log`.
 
 ## Not yet
 
