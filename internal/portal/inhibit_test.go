@@ -1,6 +1,8 @@
 package portal
 
 import (
+	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -8,6 +10,7 @@ import (
 	"github.com/godbus/dbus/v5"
 
 	"github.com/lyricat/inua/internal/dbustest"
+	"github.com/lyricat/inua/internal/proc"
 )
 
 // fakeScreenSaver is an idle daemon's org.freedesktop.ScreenSaver.
@@ -71,6 +74,26 @@ func TestInhibit(t *testing.T) {
 	}
 	if idle.count() != 0 || len(n.Holding(InhibitLogout|InhibitIdle)) != 0 {
 		t.Errorf("held after Close: idle %d, %v", idle.count(), n.Holding(InhibitLogout|InhibitIdle))
+	}
+}
+
+// An app outside a sandbox comes with no ID: it is named by its process,
+// found from the unique name the frontend puts in the handle.
+func TestInhibitNamesSender(t *testing.T) {
+	addr := dbustest.Start(t)
+	conn := dbustest.Conn(t, addr)
+	n := NewInhibits(conn, nil)
+	client := serveShell(t, addr, conn, n.Interface())
+	app := dbustest.Conn(t, addr) // the app, whose name the frontend passes on
+	sender := strings.ReplaceAll(strings.TrimPrefix(app.Names()[0], ":"), ".", "_")
+	handle := dbus.ObjectPath("/org/freedesktop/portal/desktop/request/" + sender + "/t1")
+	opts := map[string]dbus.Variant{"reason": dbus.MakeVariant("Download in progress")}
+	if err := client.Object(ShellName, Path).Call(Prefix+"Inhibit.Inhibit", 0, handle, "", "", InhibitLogout, opts).Err; err != nil {
+		t.Fatal(err)
+	}
+	want := proc.Name(os.Getpid())
+	if got := n.Holding(InhibitLogout); len(got) != 1 || got[0].App != want {
+		t.Errorf("Holding = %v, want app %q", got, want)
 	}
 }
 

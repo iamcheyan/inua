@@ -4,10 +4,13 @@ import (
 	"cmp"
 	"os"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
+
+	"github.com/lyricat/inua/internal/proc"
 )
 
 // What an app may hold off, Inhibit's flags.
@@ -134,12 +137,31 @@ func (n *Inhibits) release(handle dbus.ObjectPath) {
 	}
 }
 
+// sender names the program that asked for the request at handle: the
+// frontend puts the app's unique bus name in it ("1_62619" for
+// ":1.62619"), and the bus knows its process. "" when it has gone.
+func (n *Inhibits) sender(handle dbus.ObjectPath) string {
+	parts := strings.Split(string(handle), "/")
+	if len(parts) < 3 || parts[len(parts)-3] != "request" {
+		return ""
+	}
+	unique := ":" + strings.ReplaceAll(parts[len(parts)-2], "_", ".")
+	var pid uint32
+	if n.conn.BusObject().Call("org.freedesktop.DBus.GetConnectionUnixProcessID", 0, unique).Store(&pid) != nil {
+		return ""
+	}
+	return proc.Name(int(pid))
+}
+
 type inhibitObj struct{ n *Inhibits }
 
 // Inhibit holds until the frontend closes the request at handle.
 func (o inhibitObj) Inhibit(handle dbus.ObjectPath, appID, window string, flags uint32, options map[string]dbus.Variant) *dbus.Error {
 	n := o.n
 	reason := Options(options).String("reason")
+	if appID == "" {
+		appID = n.sender(handle) // an app outside a sandbox comes with no ID
+	}
 	h := &held{Inhibitor: Inhibitor{App: appID, Reason: reason, Flags: flags}}
 	who := appID
 	if who == "" {

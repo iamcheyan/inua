@@ -196,7 +196,10 @@ window forward, or starts it. While the shell shows no notifications
 `org.freedesktop.ScreenSaver.Inhibit` (hypridle's, when it runs; without
 one nothing goes idle to hold off). Suspend holds a logind lock, which
 stops the idle suspend; the shell's Suspend and Hibernate go past it, the
-user having asked (an app that forgets its lock would block them). Logout is
+user having asked (an app that forgets its lock would block them). An app
+outside a sandbox comes with no ID; it is named by its program
+(`firefox`), from the bus name in the request's handle, in logind's lock
+and before Log out. Logout is
 held by the shell: Restart, Shut down and Log out, asking for their
 second click, name the apps holding it (*"Firefox is busy. Log out?"*).
 Monitors hear the screen locked and unlocked, and the session asked to
