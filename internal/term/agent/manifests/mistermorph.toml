@@ -1,7 +1,7 @@
 type = "mistermorph"
 name = "Mister Morph"
 icon = "agent-mistermorph"
-process = ["mistermorph"]
+process = ["mistermorph", "morph"] # as built from source, it is morph
 
 # Asking: an approval fills the screen, its title at the top.
 [[state]]

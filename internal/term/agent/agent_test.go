@@ -28,6 +28,8 @@ func TestDetect(t *testing.T) {
 		{[]string{"python3", "-m", "aider"}, "", "aider"}, // python -m aider runs aider
 		{[]string{"cursor-agent"}, "", "cursor"},
 		{[]string{"/usr/bin/opencode", "--continue"}, "", "opencode"},
+		{[]string{"/usr/local/bin/mistermorph"}, "", "mistermorph"},
+		{[]string{"morph"}, "", "mistermorph"},
 		{[]string{"node", "/usr/local/bin/pi"}, "", "pi"},
 		{[]string{"mistermorph", "chat"}, "", "mistermorph"},
 		{[]string{"vim", "claude"}, "", ""},
