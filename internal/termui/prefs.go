@@ -14,7 +14,9 @@ import (
 )
 
 // The settings (Ctrl+,) edit term.toml in the settings window's
-// language: sections of rows, each change saved and used at once. The
+// language: an index of pages at the left, as Mail's settings have, and
+// the page chosen, its sections of rows; each change saved and used at
+// once. The
 // host's own (shell integration, agents, remembering, replay) take hold
 // when it starts again. A key is recorded by pressing it.
 
@@ -24,6 +26,9 @@ type prefs struct {
 	// recording is the action whose keys are being pressed; "" for none.
 	recording string
 	note      *gtk.Label
+	// The index and the pages it shows, by name.
+	index *gtk.ListBox
+	pages *gtk.Stack
 
 	cbs     []any // the callbacks GTK holds
 	onClose func(gtk.Window) bool
@@ -40,16 +45,43 @@ func (a *App) openSettings() {
 	pr.win = gtk.NewWindow()
 	pr.win.SetTitle(i18n.T("Terminal Settings"))
 	pr.win.SetTransientFor(&a.win.Window)
-	pr.win.SetDefaultSize(720, 760)
-	for _, c := range []string{"app", "settings", "term"} {
+	pr.win.SetDefaultSize(880, 640)
+	for _, c := range []string{"app", "settings", "term", "term-prefs"} {
 		pr.win.AddCssClass(c)
 	}
-	scroll := gtk.NewScrolledWindow()
-	scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
-	page := gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	page.AddCssClass("page")
-	scroll.SetChild(&page.Widget)
-	pr.win.SetChild(&scroll.Widget)
+	root := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+	side := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+	side.AddCssClass("index")
+	side.SetSizeRequest(220, -1)
+	iscroll := gtk.NewScrolledWindow()
+	iscroll.SetVexpand(true)
+	iscroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
+	pr.index = gtk.NewListBox()
+	pr.index.SetSelectionMode(gtk.SelectionBrowseValue)
+	iscroll.SetChild(&pr.index.Widget)
+	side.Append(&iscroll.Widget)
+	// What a key being recorded takes, and why a save failed: under the
+	// index, in sight from every page.
+	pr.note = gtk.NewLabel("")
+	pr.note.AddCssClass("sub")
+	pr.note.AddCssClass("term-prefs-note")
+	pr.note.SetXalign(0)
+	pr.note.SetWrap(true)
+	side.Append(&pr.note.Widget)
+	root.Append(&side.Widget)
+	pr.pages = gtk.NewStack()
+	pr.pages.SetHexpand(true)
+	pr.pages.SetTransitionType(gtk.StackTransitionTypeCrossfadeValue)
+	pr.pages.SetTransitionDuration(120)
+	root.Append(&pr.pages.Widget)
+	pr.win.SetChild(&root.Widget)
+	onRow := func(_ gtk.ListBox, row uintptr) {
+		if row != 0 {
+			pr.pages.SetVisibleChildName(gtk.ListBoxRowNewFromInternalPtr(row).GetName())
+		}
+	}
+	pr.cbs = append(pr.cbs, &onRow)
+	pr.index.ConnectRowSelected(&onRow)
 	s := &a.set
 	save := func() {
 		if err := settings.Save(settings.Path(), *s); err != nil {
@@ -60,6 +92,7 @@ func (a *App) openSettings() {
 		a.useSettings(*s)
 	}
 
+	page := pr.page("look", i18n.T("Look"), "preferences-desktop-appearance-symbolic")
 	sec := pr.section(page, i18n.T("LOOK"), "")
 	themes := themeChoices(a.c)
 	theme := gtk.NewDropDownFromStrings(choiceLabels(themes))
@@ -100,6 +133,7 @@ func (a *App) openSettings() {
 	pr.row(sec, i18n.T("Shape"), i18n.T("What a program resetting the cursor gets"), &style.Widget)
 	pr.row(sec, i18n.T("Blink"), "", pr.toggle(s.Cursor.Blink, func(on bool) { s.Cursor.Blink = on; save() }))
 
+	page = pr.page("terminal", i18n.T("Terminal"), "utilities-terminal-symbolic")
 	sec = pr.section(page, i18n.T("TERMINAL"), "")
 	pr.row(sec, i18n.T("Copy on select"), i18n.T("Selecting copies to the clipboard; the primary selection follows it either way"),
 		pr.toggle(s.Terminal.CopyOnSelect, func(on bool) { s.Terminal.CopyOnSelect = on; save() }))
@@ -112,6 +146,7 @@ func (a *App) openSettings() {
 	pr.spin(replay, func(v float64) { s.Terminal.Replay = int(v); save() })
 	pr.row(sec, i18n.T("Replay"), i18n.T("MiB of a pane's recent output kept for a window opened later"), &replay.Widget)
 
+	page = pr.page("shell", i18n.T("Shell and agents"), "disk-agent-symbolic")
 	sec = pr.section(page, i18n.T("SHELL AND AGENTS"), i18n.T("Below the shell: used when the terminal host starts again"))
 	shells := shellChoices(s.Shell.Program)
 	sh := gtk.NewDropDownFromStrings(choiceLabels(shells))
@@ -139,8 +174,9 @@ func (a *App) openSettings() {
 	})
 	pr.row(sec, i18n.T("Never keep"), i18n.T("Commands matching these patterns, comma-separated"), &forget.Widget)
 
-	pr.webSection(page, s, save)
+	pr.webSection(pr.page("web", i18n.T("Web terminal"), "connect-phone-symbolic"), s, save)
 
+	page = pr.page("keys", i18n.T("Keys"), "preferences-desktop-keyboard-shortcuts-symbolic")
 	sec = pr.section(page, i18n.T("KEYS"), i18n.T("Click a key, then press the new one; Backspace frees it"))
 	for _, act := range settings.Actions {
 		b := gtk.NewButtonWithLabel("")
@@ -151,11 +187,6 @@ func (a *App) openSettings() {
 		pr.click(b, func() { pr.record(a, name) })
 		pr.row(sec, i18n.T(act.Label), "", &b.Widget)
 	}
-	pr.note = gtk.NewLabel("")
-	pr.note.AddCssClass("sub")
-	pr.note.SetXalign(0)
-	pr.note.SetWrap(true)
-	page.Append(&pr.note.Widget)
 	pr.showKeys(a)
 
 	keys := gtk.NewEventControllerKey()
@@ -175,6 +206,34 @@ func (a *App) openSettings() {
 	}
 	pr.win.ConnectCloseRequest(&pr.onClose)
 	pr.win.Present()
+}
+
+// page adds a page, and its row in the index; its box comes back, for
+// its sections. The first page is the one shown.
+func (pr *prefs) page(name, title, icon string) *gtk.Box {
+	scroll := gtk.NewScrolledWindow()
+	scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
+	page := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+	page.AddCssClass("page")
+	scroll.SetChild(&page.Widget)
+	pr.pages.AddNamed(&scroll.Widget, name)
+
+	box := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
+	img := gtk.NewImageFromIconName(icon)
+	img.AddCssClass("index-icon")
+	box.Append(&img.Widget)
+	l := gtk.NewLabel(title)
+	l.SetXalign(0)
+	l.SetEllipsize(3)
+	box.Append(&l.Widget)
+	row := gtk.NewListBoxRow()
+	row.SetName(name)
+	row.SetChild(&box.Widget)
+	pr.index.Append(&row.Widget)
+	if pr.index.GetSelectedRow() == nil {
+		pr.index.SelectRow(row)
+	}
+	return page
 }
 
 // section is a section head (mark, [LABEL], a note) over a body; its

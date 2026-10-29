@@ -256,7 +256,8 @@ offered. Ctrl+click opens a link, an OSC 8 one or a URL in the text.
 ## Settings
 
 `~/.config/inua/term.toml`, written by the guide and the settings
-(Ctrl+,) with what each setting means: the window's theme (`look.theme`,
+(Ctrl+,: an index of pages at the left, Look, Terminal, Shell and
+agents, Web terminal and Keys) with what each setting means: the window's theme (`look.theme`,
 `""` for inua's) and the terminals' colours (`look.scheme`, `""` for the
 theme's), the font and its size, the cursor, copy on select, scrollback,
 the host's replay size, the shell new panes start (`shell.program`, `""`
@@ -269,7 +270,7 @@ once; the icons and the text size follow inua's `config.toml`.
 ## On a phone
 
 The **Web Terminal** shows the terminals in a browser, a phone's over
-Tailscale. Turn it on in the settings (Ctrl+, → Web Terminal): it runs
+Tailscale. Turn it on in the settings (Ctrl+, → Web terminal): it runs
 `inua-termd serve` in a user service of its own (`inua-term-web.service`)
 and starts again at login while on; *Where* puts it on this computer
 only or on its Tailscale address, and the section gives its link to copy,

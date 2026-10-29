@@ -2725,6 +2725,7 @@ msgstr "폴더 열기"
 #: internal/termui/app.go:356
 #: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
+#: internal/termui/prefs.go:136
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
@@ -2797,7 +2798,7 @@ msgstr "디스크 사용량"
 
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
-#: internal/termui/prefs.go:89
+#: internal/termui/prefs.go:122
 #: internal/viewerui/app.go:795
 #: internal/viewerui/app.go:813
 #: internal/viewerui/app.go:828
@@ -3693,6 +3694,7 @@ msgstr "새로 고침"
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
+#: internal/termui/prefs.go:179
 msgid "Keys"
 msgstr "단축키"
 
@@ -10127,7 +10129,7 @@ msgid "IN USE"
 msgstr "사용 중"
 
 #: internal/lightui/tailscale.go:602
-#: internal/termui/prefs.go:283
+#: internal/termui/prefs.go:342
 #: internal/ui/settings_ai.go:271
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
@@ -13298,7 +13300,7 @@ msgid "First load"
 msgstr "처음 불러오기"
 
 #: internal/term/web/strings.go:54
-#: internal/termui/prefs.go:85
+#: internal/termui/prefs.go:118
 msgid "Font"
 msgstr "글꼴"
 
@@ -13324,7 +13326,7 @@ msgid "INFO"
 msgstr "정보"
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:144
+#: internal/termui/prefs.go:180
 #: ui/gpg.ui:1042
 msgid "KEYS"
 msgstr "키"
@@ -13444,7 +13446,7 @@ msgstr "세션 %d"
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:120
+#: internal/termui/prefs.go:155
 msgid "Shell"
 msgstr "셸"
 
@@ -13458,7 +13460,7 @@ msgstr "기호"
 
 #: internal/term/web/strings.go:102
 #: internal/termui/guide.go:86
-#: internal/termui/prefs.go:73
+#: internal/termui/prefs.go:106
 msgid "Terminal colours"
 msgstr "터미널 색"
 
@@ -13650,7 +13652,7 @@ msgid "The colours programs draw with: the window theme's, so the terminal match
 msgstr "프로그램이 그릴 때 쓰는 색입니다. 창 테마의 색이면 터미널이 inua의 나머지와 어울리고, 고전적인 색 구성표를 따로 쓸 수도 있습니다."
 
 #: internal/termui/guide.go:95
-#: internal/termui/prefs.go:68
+#: internal/termui/prefs.go:101
 msgid "Window theme"
 msgstr "창 테마"
 
@@ -13757,156 +13759,168 @@ msgstr[0] "외 %d줄"
 msgid "Paste as one line"
 msgstr "한 줄로 붙여 넣기"
 
-#: internal/termui/prefs.go:41
+#: internal/termui/prefs.go:46
 msgid "Terminal Settings"
 msgstr "터미널 설정"
 
-#: internal/termui/prefs.go:63
+#: internal/termui/prefs.go:95
+msgid "Look"
+msgstr "모양"
+
+#: internal/termui/prefs.go:96
 msgid "LOOK"
 msgstr "모양"
 
-#: internal/termui/prefs.go:68
+#: internal/termui/prefs.go:101
 msgid "inua's theme, or one of its others for this window alone"
 msgstr "inua의 테마, 또는 이 창에만 쓰는 다른 테마"
 
-#: internal/termui/prefs.go:73
+#: internal/termui/prefs.go:106
 msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr "프로그램이 그릴 때 쓰는 색: 창 테마의 색, 또는 색 구성표"
 
-#: internal/termui/prefs.go:75
+#: internal/termui/prefs.go:108
 #: internal/viewerui/app.go:817
 msgid "TEXT"
 msgstr "텍스트"
 
-#: internal/termui/prefs.go:85
+#: internal/termui/prefs.go:118
 msgid "A monospace family; Pango falls back for CJK"
 msgstr "고정폭 글꼴. CJK는 Pango가 채웁니다"
 
-#: internal/termui/prefs.go:89
+#: internal/termui/prefs.go:122
 msgid "In points; Ctrl+= and Ctrl+- change it in the window"
 msgstr "포인트 단위. 창에서는 Ctrl+=와 Ctrl+-로 바꿉니다"
 
-#: internal/termui/prefs.go:91
+#: internal/termui/prefs.go:124
 msgid "CURSOR"
 msgstr "커서"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Block"
 msgstr "블록"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Bar"
 msgstr "막대"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Underline"
 msgstr "밑줄"
 
-#: internal/termui/prefs.go:100
+#: internal/termui/prefs.go:133
 msgid "Shape"
 msgstr "모양"
 
-#: internal/termui/prefs.go:100
+#: internal/termui/prefs.go:133
 msgid "What a program resetting the cursor gets"
 msgstr "프로그램이 커서를 되돌릴 때의 모양"
 
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:134
 msgid "Blink"
 msgstr "깜박임"
 
-#: internal/termui/prefs.go:103
+#: internal/termui/prefs.go:137
 msgid "TERMINAL"
 msgstr "터미널"
 
-#: internal/termui/prefs.go:104
+#: internal/termui/prefs.go:138
 msgid "Copy on select"
 msgstr "선택하면 복사"
 
-#: internal/termui/prefs.go:104
+#: internal/termui/prefs.go:138
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr "선택하면 클립보드에 복사. 기본 선택은 언제나 따라갑니다"
 
-#: internal/termui/prefs.go:109
+#: internal/termui/prefs.go:143
 msgid "Scrollback"
 msgstr "스크롤백"
 
-#: internal/termui/prefs.go:109
+#: internal/termui/prefs.go:143
 msgid "Lines kept per pane"
 msgstr "창마다 보관하는 줄 수"
 
-#: internal/termui/prefs.go:113
+#: internal/termui/prefs.go:147
 msgid "Replay"
 msgstr "다시 보내기"
 
-#: internal/termui/prefs.go:113
+#: internal/termui/prefs.go:147
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr "나중에 여는 창을 위해 보관하는 창의 최근 출력 (MiB)"
 
-#: internal/termui/prefs.go:115
+#: internal/termui/prefs.go:149
+msgid "Shell and agents"
+msgstr "셸과 에이전트"
+
+#: internal/termui/prefs.go:150
 msgid "SHELL AND AGENTS"
 msgstr "셸과 에이전트"
 
-#: internal/termui/prefs.go:115
+#: internal/termui/prefs.go:150
 msgid "Below the shell: used when the terminal host starts again"
 msgstr "셸 아래 항목: 터미널 호스트가 다시 시작될 때 적용"
 
-#: internal/termui/prefs.go:120
+#: internal/termui/prefs.go:155
 msgid "What new panes start; the panes open already keep theirs"
 msgstr "새 창이 시작하는 셸. 이미 열린 창은 그대로입니다"
 
-#: internal/termui/prefs.go:121
+#: internal/termui/prefs.go:156
 msgid "Shell integration"
 msgstr "셸 통합"
 
-#: internal/termui/prefs.go:121
+#: internal/termui/prefs.go:156
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr "bash, zsh, fish가 프롬프트를 표시해 명령을 기억할 수 있게 합니다"
 
-#: internal/termui/prefs.go:123
+#: internal/termui/prefs.go:158
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr "알림"
 
-#: internal/termui/prefs.go:123
+#: internal/termui/prefs.go:158
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr "보고 있지 않은 창에서 에이전트가 응답을 기다리거나 끝났을 때"
 
-#: internal/termui/prefs.go:125
+#: internal/termui/prefs.go:160
 msgid "Remember commands"
 msgstr "명령 기억"
 
-#: internal/termui/prefs.go:125
+#: internal/termui/prefs.go:160
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr "각 창의 마지막 명령을 실행하지 않고 프롬프트에 되돌려 놓습니다"
 
-#: internal/termui/prefs.go:140
+#: internal/termui/prefs.go:175
 msgid "Never keep"
 msgstr "기억하지 않기"
 
-#: internal/termui/prefs.go:140
+#: internal/termui/prefs.go:175
 msgid "Commands matching these patterns, comma-separated"
 msgstr "이 패턴과 일치하는 명령, 쉼표로 구분"
 
-#: internal/termui/prefs.go:144
+#: internal/termui/prefs.go:177
+msgid "Web terminal"
+msgstr "웹 터미널"
+
+#: internal/termui/prefs.go:180
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "키를 클릭한 뒤 새 키를 누르세요. Backspace는 해제합니다"
 
-#: internal/termui/prefs.go:295
+#: internal/termui/prefs.go:354
 #: internal/ui/shortcuts.go:197
 msgid "Press keys…"
 msgstr "키를 누른다..."
 
-#: internal/termui/prefs.go:296
+#: internal/termui/prefs.go:355
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr "Escape는 취소, Backspace는 이 동작의 키를 해제합니다."
 
-#: internal/termui/prefs.go:318
+#: internal/termui/prefs.go:377
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr "키에는 Ctrl, Alt 또는 Super가 필요합니다. 나머지는 프로그램의 것입니다."
 
-#: internal/termui/prefs.go:329
+#: internal/termui/prefs.go:388
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s은(는) %s의 키였습니다. 그 동작은 이제 키가 없습니다."
 

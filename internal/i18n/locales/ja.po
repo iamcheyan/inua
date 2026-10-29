@@ -2725,6 +2725,7 @@ msgstr "フォルダーを開く"
 #: internal/termui/app.go:356
 #: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
+#: internal/termui/prefs.go:136
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
@@ -2797,7 +2798,7 @@ msgstr "ディスク使用量"
 
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
-#: internal/termui/prefs.go:89
+#: internal/termui/prefs.go:122
 #: internal/viewerui/app.go:795
 #: internal/viewerui/app.go:813
 #: internal/viewerui/app.go:828
@@ -3693,6 +3694,7 @@ msgstr "再読み込み"
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
+#: internal/termui/prefs.go:179
 msgid "Keys"
 msgstr "キー"
 
@@ -10127,7 +10129,7 @@ msgid "IN USE"
 msgstr "使用中"
 
 #: internal/lightui/tailscale.go:602
-#: internal/termui/prefs.go:283
+#: internal/termui/prefs.go:342
 #: internal/ui/settings_ai.go:271
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
@@ -13298,7 +13300,7 @@ msgid "First load"
 msgstr "最初の読み込み"
 
 #: internal/term/web/strings.go:54
-#: internal/termui/prefs.go:85
+#: internal/termui/prefs.go:118
 msgid "Font"
 msgstr "フォント"
 
@@ -13324,7 +13326,7 @@ msgid "INFO"
 msgstr "情報"
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:144
+#: internal/termui/prefs.go:180
 #: ui/gpg.ui:1042
 msgid "KEYS"
 msgstr "鍵"
@@ -13444,7 +13446,7 @@ msgstr "セッション %d"
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:120
+#: internal/termui/prefs.go:155
 msgid "Shell"
 msgstr "シェル"
 
@@ -13458,7 +13460,7 @@ msgstr "記号"
 
 #: internal/term/web/strings.go:102
 #: internal/termui/guide.go:86
-#: internal/termui/prefs.go:73
+#: internal/termui/prefs.go:106
 msgid "Terminal colours"
 msgstr "ターミナルの色"
 
@@ -13650,7 +13652,7 @@ msgid "The colours programs draw with: the window theme's, so the terminal match
 msgstr "プログラムが描く色です。ウィンドウのテーマの色なら inua のほかの部分と揃い、定番の配色を選ぶこともできます。"
 
 #: internal/termui/guide.go:95
-#: internal/termui/prefs.go:68
+#: internal/termui/prefs.go:101
 msgid "Window theme"
 msgstr "ウィンドウのテーマ"
 
@@ -13757,156 +13759,168 @@ msgstr[0] "ほか %d 行"
 msgid "Paste as one line"
 msgstr "1 行にして貼り付け"
 
-#: internal/termui/prefs.go:41
+#: internal/termui/prefs.go:46
 msgid "Terminal Settings"
 msgstr "ターミナルの設定"
 
-#: internal/termui/prefs.go:63
+#: internal/termui/prefs.go:95
+msgid "Look"
+msgstr "外観"
+
+#: internal/termui/prefs.go:96
 msgid "LOOK"
 msgstr "外観"
 
-#: internal/termui/prefs.go:68
+#: internal/termui/prefs.go:101
 msgid "inua's theme, or one of its others for this window alone"
 msgstr "inua のテーマ、またはこのウィンドウだけのほかのテーマ"
 
-#: internal/termui/prefs.go:73
+#: internal/termui/prefs.go:106
 msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr "プログラムが描く色：ウィンドウのテーマの色、または配色"
 
-#: internal/termui/prefs.go:75
+#: internal/termui/prefs.go:108
 #: internal/viewerui/app.go:817
 msgid "TEXT"
 msgstr "テキスト"
 
-#: internal/termui/prefs.go:85
+#: internal/termui/prefs.go:118
 msgid "A monospace family; Pango falls back for CJK"
 msgstr "等幅フォント。CJK は Pango が補います"
 
-#: internal/termui/prefs.go:89
+#: internal/termui/prefs.go:122
 msgid "In points; Ctrl+= and Ctrl+- change it in the window"
 msgstr "ポイント単位。ウィンドウでは Ctrl+= と Ctrl+- で変更"
 
-#: internal/termui/prefs.go:91
+#: internal/termui/prefs.go:124
 msgid "CURSOR"
 msgstr "カーソル"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Block"
 msgstr "ブロック"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Bar"
 msgstr "バー"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Underline"
 msgstr "下線"
 
-#: internal/termui/prefs.go:100
+#: internal/termui/prefs.go:133
 msgid "Shape"
 msgstr "形"
 
-#: internal/termui/prefs.go:100
+#: internal/termui/prefs.go:133
 msgid "What a program resetting the cursor gets"
 msgstr "プログラムがカーソルを戻したときの形"
 
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:134
 msgid "Blink"
 msgstr "点滅"
 
-#: internal/termui/prefs.go:103
+#: internal/termui/prefs.go:137
 msgid "TERMINAL"
 msgstr "ターミナル"
 
-#: internal/termui/prefs.go:104
+#: internal/termui/prefs.go:138
 msgid "Copy on select"
 msgstr "選択でコピー"
 
-#: internal/termui/prefs.go:104
+#: internal/termui/prefs.go:138
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr "選択するとクリップボードにコピー。プライマリ選択は常に追従します"
 
-#: internal/termui/prefs.go:109
+#: internal/termui/prefs.go:143
 msgid "Scrollback"
 msgstr "スクロールバック"
 
-#: internal/termui/prefs.go:109
+#: internal/termui/prefs.go:143
 msgid "Lines kept per pane"
 msgstr "ペインごとに保つ行数"
 
-#: internal/termui/prefs.go:113
+#: internal/termui/prefs.go:147
 msgid "Replay"
 msgstr "リプレイ"
 
-#: internal/termui/prefs.go:113
+#: internal/termui/prefs.go:147
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr "あとで開くウィンドウのために保つ、ペインの最近の出力 (MiB)"
 
-#: internal/termui/prefs.go:115
+#: internal/termui/prefs.go:149
+msgid "Shell and agents"
+msgstr "シェルとエージェント"
+
+#: internal/termui/prefs.go:150
 msgid "SHELL AND AGENTS"
 msgstr "シェルとエージェント"
 
-#: internal/termui/prefs.go:115
+#: internal/termui/prefs.go:150
 msgid "Below the shell: used when the terminal host starts again"
 msgstr "シェルより下の項目：ターミナルホストの再起動時に反映"
 
-#: internal/termui/prefs.go:120
+#: internal/termui/prefs.go:155
 msgid "What new panes start; the panes open already keep theirs"
 msgstr "新しいペインで起動するもの。開いているペインはそのまま"
 
-#: internal/termui/prefs.go:121
+#: internal/termui/prefs.go:156
 msgid "Shell integration"
 msgstr "シェル統合"
 
-#: internal/termui/prefs.go:121
+#: internal/termui/prefs.go:156
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr "bash、zsh、fish がプロンプトに印を付け、コマンドを記憶できるようにします"
 
-#: internal/termui/prefs.go:123
+#: internal/termui/prefs.go:158
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/termui/prefs.go:123
+#: internal/termui/prefs.go:158
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr "見ていないペインでエージェントが応答を待つか完了したとき"
 
-#: internal/termui/prefs.go:125
+#: internal/termui/prefs.go:160
 msgid "Remember commands"
 msgstr "コマンドを記憶"
 
-#: internal/termui/prefs.go:125
+#: internal/termui/prefs.go:160
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr "各ペインの最後のコマンドを、実行せずにプロンプトに戻します"
 
-#: internal/termui/prefs.go:140
+#: internal/termui/prefs.go:175
 msgid "Never keep"
 msgstr "記憶しない"
 
-#: internal/termui/prefs.go:140
+#: internal/termui/prefs.go:175
 msgid "Commands matching these patterns, comma-separated"
 msgstr "これらのパターンに一致するコマンド（カンマ区切り）"
 
-#: internal/termui/prefs.go:144
+#: internal/termui/prefs.go:177
+msgid "Web terminal"
+msgstr "Web ターミナル"
+
+#: internal/termui/prefs.go:180
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "キーをクリックして新しいキーを押す。Backspace で解除"
 
-#: internal/termui/prefs.go:295
+#: internal/termui/prefs.go:354
 #: internal/ui/shortcuts.go:197
 msgid "Press keys…"
 msgstr "キーを押してください…"
 
-#: internal/termui/prefs.go:296
+#: internal/termui/prefs.go:355
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr "Escape で取り消し。Backspace でこの操作のキーを解除します。"
 
-#: internal/termui/prefs.go:318
+#: internal/termui/prefs.go:377
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr "キーには Ctrl、Alt、Super のいずれかが必要です。それ以外はプログラムのものです。"
 
-#: internal/termui/prefs.go:329
+#: internal/termui/prefs.go:388
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s は %s のキーでした。そちらはキーなしになりました。"
 

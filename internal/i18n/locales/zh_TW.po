@@ -2725,6 +2725,7 @@ msgstr "開啟資料夾"
 #: internal/termui/app.go:356
 #: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
+#: internal/termui/prefs.go:136
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
@@ -2797,7 +2798,7 @@ msgstr "磁碟用量"
 
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
-#: internal/termui/prefs.go:89
+#: internal/termui/prefs.go:122
 #: internal/viewerui/app.go:795
 #: internal/viewerui/app.go:813
 #: internal/viewerui/app.go:828
@@ -3693,6 +3694,7 @@ msgstr "重新載入"
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
+#: internal/termui/prefs.go:179
 msgid "Keys"
 msgstr "快速鍵"
 
@@ -10127,7 +10129,7 @@ msgid "IN USE"
 msgstr "使用中"
 
 #: internal/lightui/tailscale.go:602
-#: internal/termui/prefs.go:283
+#: internal/termui/prefs.go:342
 #: internal/ui/settings_ai.go:271
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
@@ -13298,7 +13300,7 @@ msgid "First load"
 msgstr "首次載入"
 
 #: internal/term/web/strings.go:54
-#: internal/termui/prefs.go:85
+#: internal/termui/prefs.go:118
 msgid "Font"
 msgstr "字體"
 
@@ -13324,7 +13326,7 @@ msgid "INFO"
 msgstr "資訊"
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:144
+#: internal/termui/prefs.go:180
 #: ui/gpg.ui:1042
 msgid "KEYS"
 msgstr "金鑰"
@@ -13444,7 +13446,7 @@ msgstr "工作階段 %d"
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:120
+#: internal/termui/prefs.go:155
 msgid "Shell"
 msgstr "Shell"
 
@@ -13458,7 +13460,7 @@ msgstr "符號"
 
 #: internal/term/web/strings.go:102
 #: internal/termui/guide.go:86
-#: internal/termui/prefs.go:73
+#: internal/termui/prefs.go:106
 msgid "Terminal colours"
 msgstr "終端機顏色"
 
@@ -13650,7 +13652,7 @@ msgid "The colours programs draw with: the window theme's, so the terminal match
 msgstr "程式繪製時使用的顏色：用視窗主題的顏色，終端機便與 inua 的其餘部分一致；也可以用一套經典配色。"
 
 #: internal/termui/guide.go:95
-#: internal/termui/prefs.go:68
+#: internal/termui/prefs.go:101
 msgid "Window theme"
 msgstr "視窗主題"
 
@@ -13757,156 +13759,168 @@ msgstr[0] "還有 %d 行"
 msgid "Paste as one line"
 msgstr "貼上為一行"
 
-#: internal/termui/prefs.go:41
+#: internal/termui/prefs.go:46
 msgid "Terminal Settings"
 msgstr "終端機設定"
 
-#: internal/termui/prefs.go:63
+#: internal/termui/prefs.go:95
+msgid "Look"
+msgstr "外觀"
+
+#: internal/termui/prefs.go:96
 msgid "LOOK"
 msgstr "外觀"
 
-#: internal/termui/prefs.go:68
+#: internal/termui/prefs.go:101
 msgid "inua's theme, or one of its others for this window alone"
 msgstr "inua 的主題，或僅用於此視窗的另一個主題"
 
-#: internal/termui/prefs.go:73
+#: internal/termui/prefs.go:106
 msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr "程式繪製時使用的顏色：視窗主題的，或一套配色"
 
-#: internal/termui/prefs.go:75
+#: internal/termui/prefs.go:108
 #: internal/viewerui/app.go:817
 msgid "TEXT"
 msgstr "文字"
 
-#: internal/termui/prefs.go:85
+#: internal/termui/prefs.go:118
 msgid "A monospace family; Pango falls back for CJK"
 msgstr "等寬字體；CJK 由 Pango 補足"
 
-#: internal/termui/prefs.go:89
+#: internal/termui/prefs.go:122
 msgid "In points; Ctrl+= and Ctrl+- change it in the window"
 msgstr "以點為單位；視窗中可用 Ctrl+= 和 Ctrl+- 調整"
 
-#: internal/termui/prefs.go:91
+#: internal/termui/prefs.go:124
 msgid "CURSOR"
 msgstr "游標"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Block"
 msgstr "方塊"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Bar"
 msgstr "直線"
 
-#: internal/termui/prefs.go:93
+#: internal/termui/prefs.go:126
 msgid "Underline"
 msgstr "底線"
 
-#: internal/termui/prefs.go:100
+#: internal/termui/prefs.go:133
 msgid "Shape"
 msgstr "形狀"
 
-#: internal/termui/prefs.go:100
+#: internal/termui/prefs.go:133
 msgid "What a program resetting the cursor gets"
 msgstr "程式重設游標時得到的形狀"
 
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:134
 msgid "Blink"
 msgstr "閃爍"
 
-#: internal/termui/prefs.go:103
+#: internal/termui/prefs.go:137
 msgid "TERMINAL"
 msgstr "終端機"
 
-#: internal/termui/prefs.go:104
+#: internal/termui/prefs.go:138
 msgid "Copy on select"
 msgstr "選取即複製"
 
-#: internal/termui/prefs.go:104
+#: internal/termui/prefs.go:138
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr "選取即複製到剪貼簿；主要選取一律跟隨"
 
-#: internal/termui/prefs.go:109
+#: internal/termui/prefs.go:143
 msgid "Scrollback"
 msgstr "捲動紀錄"
 
-#: internal/termui/prefs.go:109
+#: internal/termui/prefs.go:143
 msgid "Lines kept per pane"
 msgstr "每個窗格保留的行數"
 
-#: internal/termui/prefs.go:113
+#: internal/termui/prefs.go:147
 msgid "Replay"
 msgstr "重播"
 
-#: internal/termui/prefs.go:113
+#: internal/termui/prefs.go:147
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr "為之後開啟的視窗保留的窗格近期輸出（MiB）"
 
-#: internal/termui/prefs.go:115
+#: internal/termui/prefs.go:149
+msgid "Shell and agents"
+msgstr "Shell 與代理"
+
+#: internal/termui/prefs.go:150
 msgid "SHELL AND AGENTS"
 msgstr "SHELL 與代理"
 
-#: internal/termui/prefs.go:115
+#: internal/termui/prefs.go:150
 msgid "Below the shell: used when the terminal host starts again"
 msgstr "shell 以下各項：終端機主機再次啟動時生效"
 
-#: internal/termui/prefs.go:120
+#: internal/termui/prefs.go:155
 msgid "What new panes start; the panes open already keep theirs"
 msgstr "新窗格啟動的程式；已開啟的窗格保持原樣"
 
-#: internal/termui/prefs.go:121
+#: internal/termui/prefs.go:156
 msgid "Shell integration"
 msgstr "Shell 整合"
 
-#: internal/termui/prefs.go:121
+#: internal/termui/prefs.go:156
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr "讓 bash、zsh 和 fish 標記提示字元，以便記住命令"
 
-#: internal/termui/prefs.go:123
+#: internal/termui/prefs.go:158
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/termui/prefs.go:123
+#: internal/termui/prefs.go:158
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr "當代理在你未檢視的窗格中需要你或已完成時"
 
-#: internal/termui/prefs.go:125
+#: internal/termui/prefs.go:160
 msgid "Remember commands"
 msgstr "記住命令"
 
-#: internal/termui/prefs.go:125
+#: internal/termui/prefs.go:160
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr "將每個窗格的最後一個命令放回提示字元，不執行"
 
-#: internal/termui/prefs.go:140
+#: internal/termui/prefs.go:175
 msgid "Never keep"
 msgstr "永不保留"
 
-#: internal/termui/prefs.go:140
+#: internal/termui/prefs.go:175
 msgid "Commands matching these patterns, comma-separated"
 msgstr "符合這些模式的命令，以逗號分隔"
 
-#: internal/termui/prefs.go:144
+#: internal/termui/prefs.go:177
+msgid "Web terminal"
+msgstr "網頁終端機"
+
+#: internal/termui/prefs.go:180
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "點選一個按鍵，再按下新的按鍵；Backspace 清除"
 
-#: internal/termui/prefs.go:295
+#: internal/termui/prefs.go:354
 #: internal/ui/shortcuts.go:197
 msgid "Press keys…"
 msgstr "按鍵…"
 
-#: internal/termui/prefs.go:296
+#: internal/termui/prefs.go:355
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr "Escape 取消；Backspace 清除此動作的按鍵。"
 
-#: internal/termui/prefs.go:318
+#: internal/termui/prefs.go:377
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr "按鍵需搭配 Ctrl、Alt 或 Super：其餘按鍵屬於程式。"
 
-#: internal/termui/prefs.go:329
+#: internal/termui/prefs.go:388
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s 原屬於 %s；該動作現在沒有按鍵。"
 
