@@ -172,9 +172,9 @@ bar, over a full-screen backdrop that closes it on a click.
   on the bar closes it too.
 
 - **A drop shadow.** Every such card casts `0 8px 28px` at 32% black
-  (`.center .card`), and a notification banner a lighter one. It is the
-  one place a shadow is allowed: a surface floating over windows, not a
-  control. Nothing may clip it: a `GtkScrolledWindow` around the card
+  (`.center .card`), and a notification banner a lighter one. A shadow
+  is allowed on a surface floating over windows, not a control: these
+  cards and [menus](#menus). Nothing may clip it: a `GtkScrolledWindow` around the card
   does, and so do the edges of a window only as big as the card; scroll
   inside the card, and give such a window margins as wide as the shadow.
 - **Full height slides in from the side.** A card that runs from the bar
@@ -191,6 +191,60 @@ bar, over a full-screen backdrop that closes it on a click.
   it falls faster and faster, stretches, and wobbles still; closing, the
   bar draws it back up (`drop.go`, `shell.DropAt`). Nothing dims behind
   it.
+
+## Menus
+
+A menu that a button opens (the trigger) looks and moves as the dock's
+drawer does (`bubble.go`). The reference is inua-term's menu at the top
+of column 1 (`internal/termui/headmenu.go`, `popover.term-menu` in
+`ui/style.css`).
+
+```
+                     ≡                   ← the trigger
+  ┌─────────────────/ \─────────────────┐
+  │ Command palette        Ctrl Shift P │
+  │ Settings                     Ctrl , │
+  │ ─────────────────────────────────── │
+  │ WEB TERMINAL         ■ On, Tailscale│
+  │ Turn off the Web Terminal           │
+  │ ─────────────────────────────────── │
+  │ Restart the terminal host…          │
+  └─────────────────────────────────────┘
+```
+
+- **The surface**: the glass (`@glass`), a hairline round it
+  (`alpha(@line, 0.9)`), corners of `style.radius` (`style.Corners` lists
+  it), 6 px inside, and the floating card's shadow (`0 8px 28px` at 32%
+  black).
+- **An arrow at the trigger**, in the menu's glass and hairline, its tip
+  at the trigger's middle. The menu is centred under the trigger: GTK
+  counts the shadow in a popover's alignment, so one aligned to the
+  trigger's end leaves its arrow beside it.
+- **It grows out of the arrow**: from 55% of its size at the arrow's tip,
+  fading in, in 200 ms, the arrow fading in with it (140 ms). Without
+  the desktop's animations it is there at once. A GTK popover plays its
+  CSS animation when it is made, so the menu is made anew each time it
+  opens. It goes at once when it closes.
+- **Items**: running text, 13.5 px, at least 32 px tall and 240 px wide,
+  4 px corners, clear until the pointer is over them (accent at 7%, a
+  25% accent border); one that cannot be used now is `t2`. An item says
+  what it does: a switch is the item "Turn on the Web Terminal", not a
+  check mark.
+- **Keys**: an item with keys shows them at its end, as a keycap in the
+  menu's voice: mono 11 px, `t1`, a hairline box with no fill.
+- **Groups**: a hairline between groups. A group about one thing has a
+  title in the drawer's voice (mono 10.5 px, weight 600, upper case,
+  tracked 0.14 em, `t2`) on the hairline, and the thing's state at the
+  title's end: its status square and a few words in mono 11 px, in the
+  accent while it is on and running, `warn` when it is on but not, `t2`
+  otherwise. A state is never a greyed item: it would read as an action
+  out of reach.
+- **Real state**: what the menu shows of a state that has to be asked
+  for (a service running) is read when the menu opens, before it shows.
+- **After an item**: the menu closes, then the item runs. An item that
+  fails says so where its error can show (see [Feedback](#feedback)):
+  the Web Terminal that does not start opens the settings at its page,
+  with why.
 
 ## Controls
 
@@ -324,6 +378,12 @@ cannot see services on the session bus (Mobile Link shows "starting").
 
 ## Known differences
 
+- The other menus a button opens (Files' columns menu, at the end of
+  the list's heads; Mail's More, in the reader's bar; the tray's,
+  `popover.menu`) are framed on `app`, without an arrow or the glass,
+  and do not grow out of their trigger; they are to move to the rule in
+  [Menus](#menus). A menu at the pointer (a right click: Files' items,
+  inua-term's workspace rows) has no rule of its own yet.
 - The settings window and Mobile Link report errors in the index's
   status line, not where they happen.
 - `suggested-action` is styled per window (GPG, Pass, Files, Workshop,
