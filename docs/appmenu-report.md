@@ -89,6 +89,30 @@ Interface, end to end (screenshots in `docs/appmenu-evidence/`):
 | Games crashed at startup | `frame.go` took `root`/`help` from the builder *after* `u.Close()`; `game.blp` also had no `root` object |
 | Menu measured at 12x2 px | The test hook measured before layout; it now waits for the bar to lay out |
 
+
+## The rest of the applications
+
+Same method, same session bus.
+
+| Application | Published menu |
+| --- | --- |
+| Minesweeper | ゲーム / 新しいゲーム / 小・9×9 / 中・16×16 / 大・30×16 / Help / 遊び方 |
+| Space Pinball | ゲーム / 新しいゲーム / 一時停止 / Toggle sound / Help / 遊び方 |
+| Small Fortune | ゲーム / 最初からやり直す / 図鑑 / メニューに戻る / Toggle sound / Help / 遊び方 |
+| Chinese Checkers | ゲーム / 新しいゲーム / 設定し直す / Help / 遊び方 |
+| Files | ファイル / 新しい窓 / New Tab / 新規フォルダー… / 新規ファイル… / 開く / アプリケーションで開く… / ウィンドウを閉じる / 編集 / 元に戻す / 切り取る / コピー / 貼り付け / 完全に削除… / Select All / Invert Selection / View / 戻る / 転送 / 上へ / 再読み込み / 検索 / List / Grid / 列 / 隠しファイル / 詳細 / Help / Keyboard Shortcuts |
+| Mail | ファイル / 新規メッセージ / 設定 / メッセージ / 返信 / 全員に返信 / 転送 / アーカイブ / ゴミ箱に移動 / 未読にする / View / 検索 / Toggle Sidebar |
+| Terminal | ターミナル / 設定 / ターミナルホストを再起動 / やめる / シェル / … / 編集 / … / View / … / **フォント** / Larger Font / Smaller Font / Reset Font / 窓 / … / Help / … |
+
+The Terminal is the one inua application with a real second level: `View` holds a
+`フォント` submenu with three commands, published as a node with children and
+opened beside its row by the bar's cascade.
+
+## What runs
+
+`nixos-rebuild switch` builds inua from this checkout; the machine now runs the
+switched generation, and every application above was started from it.
+
 ## Not claimed
 
 - No screenshot here shows a second-level submenu of an inua application. The
@@ -96,5 +120,5 @@ Interface, end to end (screenshots in `docs/appmenu-evidence/`):
   but the cascade picture in this repository is Dolphin's.
 - Multi-window inua applications (Files, Mail, Terminal with several windows)
   intentionally show no global menu.
-- Games, Files, Mail and the Terminal were checked by starting them and reading
-  their published trees; their bar rendering was not photographed one by one.
+- The bar rendering was photographed for the Clock only; the other
+  applications were checked by reading the trees they publish.
