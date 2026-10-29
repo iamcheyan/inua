@@ -66,6 +66,16 @@ type drop struct {
 
 	onTick     gtk.TickCallback
 	onTickDone glib.DestroyNotify
+
+	// A card whose width eases to a new one (resizes) rather than jumping:
+	// the width drawn, and from and to which it goes, wu of the way.
+	resizes        bool
+	shownW         float64
+	fromW, toW, wu float64
+	wlast          time.Time
+	wtick          uint32
+	onWTick        gtk.TickCallback
+	onWTickDone    glib.DestroyNotify
 }
 
 // attach takes a newly built window, its keys' controller, its backdrop
@@ -76,9 +86,12 @@ func (d *drop) attach(win *gtk.Window, keys *gtk.EventController, backdrop *gtk.
 	d.backdrop, d.card, d.canvas, d.bar, d.host = backdrop, card, nil, nil, nil
 	d.end = flush
 	d.hanging, d.moving, d.back, d.gone = false, false, false, nil
+	d.shownW = 0
 	if d.onTick == nil {
 		d.onTick = func(uintptr, uintptr, uintptr) bool { return d.step() }
 		d.onTickDone = func(uintptr) { d.tick = 0 }
+		d.onWTick = func(uintptr, uintptr, uintptr) bool { return d.stepWidth() }
+		d.onWTickDone = func(uintptr) { d.wtick = 0 }
 	}
 }
 
@@ -266,6 +279,38 @@ func (d *drop) step() bool {
 	return true
 }
 
+// width is the width to allocate the card at: its natural width, or,
+// for a card that resizes, the width on its way to it, never under the
+// least it takes.
+func (d *drop) width(least, natural int32) int32 {
+	to := float64(natural)
+	switch {
+	case !d.resizes || d.shownW == 0 || d.moving || !gtk.SettingsGetDefault().GetPropertyGtkEnableAnimations():
+		d.shownW, d.toW = to, to // at once: the first time, or while it drops
+	case to != d.toW:
+		d.fromW, d.toW, d.wu = d.shownW, to, 0
+		d.wlast = time.Now()
+		if d.wtick == 0 {
+			d.wtick = d.canvas.AddTickCallback(&d.onWTick, 0, &d.onWTickDone)
+		}
+	}
+	return max(least, int32(math.Round(d.shownW)))
+}
+
+// stepWidth moves the width on a frame.
+func (d *drop) stepWidth() bool {
+	now := time.Now()
+	d.wu += min(float64(now.Sub(d.wlast).Milliseconds()), 34) / shell.DropResizeMS
+	d.wlast = now
+	d.shownW = shell.DropWidth(d.fromW, d.toW, d.wu)
+	d.canvas.QueueAllocate()
+	if d.wu >= 1 {
+		d.shownW = d.toW
+		return false
+	}
+	return true
+}
+
 // now is the card's shape now.
 func (d *drop) now() shell.Drop {
 	if !d.moving {
@@ -282,8 +327,9 @@ func (d *drop) now() shell.Drop {
 // in the bar as it has not yet come out, and stretched about where it
 // meets the bar.
 func (d *drop) allocate(_ *gtk.Widget, _, _ int) {
-	var w, h int32
-	d.card.Measure(gtk.OrientationHorizontalValue, -1, nil, &w, nil, nil)
+	var least, w, h int32
+	d.card.Measure(gtk.OrientationHorizontalValue, -1, &least, &w, nil, nil)
+	w = d.width(least, w)
 	d.card.Measure(gtk.OrientationVerticalValue, w, nil, &h, nil, nil)
 	d.w, d.h = float64(w), float64(h)
 	if d.end {

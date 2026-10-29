@@ -50,3 +50,25 @@ func TestDropSoft(t *testing.T) {
 		}
 	}
 }
+
+// A width on its way starts at the old one, ends at the new, and moves
+// only towards it.
+func TestDropWidth(t *testing.T) {
+	for _, c := range [][2]float64{{380, 520}, {520, 380}} {
+		from, to := c[0], c[1]
+		if got := DropWidth(from, to, 0); got != from {
+			t.Errorf("DropWidth(%v, %v, 0) = %v", from, to, got)
+		}
+		if got := DropWidth(from, to, 1.5); got != to {
+			t.Errorf("DropWidth(%v, %v, 1.5) = %v", from, to, got)
+		}
+		prev := from
+		for i := 1; i <= 100; i++ {
+			w := DropWidth(from, to, float64(i)/100)
+			if (to-from)*(w-prev) < 0 {
+				t.Fatalf("DropWidth(%v, %v) went back at %d: %v after %v", from, to, i, w, prev)
+			}
+			prev = w
+		}
+	}
+}

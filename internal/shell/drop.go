@@ -15,6 +15,15 @@ const (
 	DropCloseMS = 220
 )
 
+// DropResizeMS is how long a hanging panel takes to a new width.
+const DropResizeMS = 180
+
+// DropWidth is the panel's width at u (0 to 1) of the way from one width
+// to the next: quick at first, settling into the new.
+func DropWidth(from, to, u float64) float64 {
+	return from + (to-from)*easeOut(clamp01(u))
+}
+
 // Drop is the panel at a moment: the share of its height out of the bar,
 // and how it is stretched, about where its top edge meets the bar.
 type Drop struct {

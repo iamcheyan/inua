@@ -2223,6 +2223,10 @@ popover.ai-models button.ai-model:hover { background: alpha(@accent, 0.09); }
   font-size: 11px;
   color: @t2;
 }
+/* The list's scroll bar runs down the card's right edge, past its
+   padding, which the list keeps. */
+.passwords-panel scrolledwindow.passwords-scroll { margin-right: -16px; }
+.passwords-panel .passwords-list { margin-right: 16px; }
 .passwords-panel .passwords-head { padding: 2px 0 10px; border-bottom: 1px solid alpha(@line, 0.55); }
 .passwords-panel .passwords-title { font-size: 15px; color: @t0; }
 .passwords-panel .passwords-row { min-height: 36px; padding: 9px 0; border-bottom: 1px solid alpha(@line, 0.4); }

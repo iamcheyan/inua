@@ -2996,7 +2996,7 @@ msgstr "Copiado"
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:90
 #: internal/ui/askpass.go:232
-#: internal/ui/passwords.go:643
+#: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
 #: ui/disk.ui:697
 #: ui/gpg.ui:661
@@ -9154,7 +9154,7 @@ msgid "Right-click to rename or move"
 msgstr "Clic derecho para renombrar o mover"
 
 #: internal/lightui/pass.go:486
-#: internal/ui/passwords.go:484
+#: internal/ui/passwords.go:487
 msgid "Nothing matches. Each word is looked for in the whole path."
 msgstr "Nada coincide. Cada palabra se busca en toda la ruta."
 
@@ -9181,32 +9181,32 @@ msgid "Add a one-time code"
 msgstr "Añadir un código de un solo uso"
 
 #: internal/lightui/pass.go:697
-#: internal/ui/passwords.go:557
+#: internal/ui/passwords.go:560
 msgid "USERNAME"
 msgstr "USUARIO"
 
 #: internal/lightui/pass.go:700
-#: internal/ui/passwords.go:560
+#: internal/ui/passwords.go:563
 msgid "PASSWORD"
 msgstr "CONTRASEÑA"
 
 #: internal/lightui/pass.go:705
 #: internal/lightui/pass.go:757
-#: internal/ui/passwords.go:563
 #: internal/ui/passwords.go:566
+#: internal/ui/passwords.go:569
 #: ui/pass.ui:802
 msgid "ONE-TIME CODE"
 msgstr "CÓDIGO DE UN SOLO USO"
 
 #: internal/lightui/pass.go:712
-#: internal/ui/passwords.go:573
+#: internal/ui/passwords.go:576
 msgid "NOTES"
 msgstr "NOTAS"
 
 #: internal/lightui/pass.go:741
 #: internal/mailui/formatted.go:184
 #: internal/term/desktop/desktop_linux.go:43
-#: internal/ui/passwords.go:640
+#: internal/ui/passwords.go:643
 #: internal/vmui/window.go:2709
 #: internal/vmui/window.go:2710
 msgid "Show"
@@ -9214,13 +9214,13 @@ msgstr "Mostrar"
 
 #: internal/lightui/pass.go:743
 #: internal/ui/notify.go:410
-#: internal/ui/passwords.go:638
+#: internal/ui/passwords.go:641
 msgid "Hide"
 msgstr "Ocultar"
 
 #: internal/lightui/pass.go:786
 #: internal/lightui/pass_otp.go:246
-#: internal/ui/passwords.go:657
+#: internal/ui/passwords.go:660
 msgid "%d second left"
 msgid_plural "%d seconds left"
 msgstr[0] "%d segundo restante"
@@ -10351,7 +10351,7 @@ msgstr "No se pudo leer el tiempo.\n%s"
 
 #: internal/lightui/weather.go:274
 #: internal/mailui/panel.go:307
-#: internal/ui/passwords.go:530
+#: internal/ui/passwords.go:533
 #: ui/mail-compose.ui:456
 #: ui/pass.ui:375
 msgid "Try again"
@@ -14712,51 +14712,51 @@ msgstr "[CONTRASEÑAS]"
 msgid "Search every entry"
 msgstr "Buscar en todas las entradas"
 
-#: internal/ui/passwords.go:279
+#: internal/ui/passwords.go:282
 #: ui/bar.ui:116
 #: ui/settings.ui:1418
 msgid "Passwords"
 msgstr "Contraseñas"
 
-#: internal/ui/passwords.go:480
+#: internal/ui/passwords.go:483
 msgid "No password store. pass init YOUR-GPG-KEY-ID makes one in ~/.password-store."
 msgstr "No hay almacén de contraseñas. pass init SU-ID-DE-CLAVE-GPG crea uno en ~/.password-store."
 
-#: internal/ui/passwords.go:482
+#: internal/ui/passwords.go:485
 msgid "%d entry · type to search · Escape to close"
 msgid_plural "%d entries · type to search · Escape to close"
 msgstr[0] "%d entrada · escriba para buscar · Escape para cerrar"
 msgstr[1] "%d entradas · escriba para buscar · Escape para cerrar"
 
-#: internal/ui/passwords.go:486
+#: internal/ui/passwords.go:489
 msgid "%d found, the first %d shown · another word narrows them"
 msgid_plural "%d found, the first %d shown · another word narrows them"
 msgstr[0] "%d encontrada, se muestran las %d primeras · otra palabra las acota"
 msgstr[1] "%d encontradas, se muestran las %d primeras · otra palabra las acota"
 
-#: internal/ui/passwords.go:488
+#: internal/ui/passwords.go:491
 msgid "%d found · Enter opens · Escape to close"
 msgid_plural "%d found · Enter opens · Escape to close"
 msgstr[0] "%d encontrada · Intro la abre · Escape para cerrar"
 msgstr[1] "%d encontradas · Intro abre · Escape para cerrar"
 
-#: internal/ui/passwords.go:501
+#: internal/ui/passwords.go:504
 msgid "Back to the results"
 msgstr "Volver a los resultados"
 
-#: internal/ui/passwords.go:536
+#: internal/ui/passwords.go:539
 msgid "It could not be decrypted · Escape to close"
 msgstr "No se pudo descifrar · Escape para cerrar"
 
-#: internal/ui/passwords.go:544
+#: internal/ui/passwords.go:547
 msgid "Decrypting; gpg may ask for your passphrase."
 msgstr "Descifrando; gpg puede pedir su frase de contraseña."
 
-#: internal/ui/passwords.go:550
+#: internal/ui/passwords.go:553
 msgid "Escape to close"
 msgstr "Escape para cerrar"
 
-#: internal/ui/passwords.go:575
+#: internal/ui/passwords.go:578
 msgid "Copied secrets are cleared after %d seconds · Enter copies the password"
 msgstr "Lo copiado se borra a los %d segundos · Intro copia la contraseña"
 
