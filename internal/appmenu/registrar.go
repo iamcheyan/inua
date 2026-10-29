@@ -58,7 +58,7 @@ func (r *Registrar) GetMenuForWindow(window uint32) (string, dbus.ObjectPath, *d
 	return found.Service, found.Path, nil
 }
 
-// Entry is one dbusmenu item.
+// Entry is one menu item, from either source.
 type Entry struct {
 	ID        int32
 	Label     string
@@ -67,7 +67,21 @@ type Entry struct {
 	Toggle    string
 	Checked   bool
 	Children  []Entry
+	Action    Action
 }
+
+// Action says how to invoke an entry.
+type Action struct {
+	Kind  string          // ActionA11y or ActionDbusmenu; empty when the entry only groups children
+	Bus   string          // the connection that owns the menu
+	Path  dbus.ObjectPath // the menu or accessible object
+	Index int32           // an action index (AT-SPI) or an item id (dbusmenu)
+}
+
+const (
+	ActionA11y     = "atspi"
+	ActionDbusmenu = "dbusmenu"
+)
 
 type Registrar struct {
 	conn     *dbus.Conn
@@ -225,7 +239,19 @@ func (r *Registrar) Menu(reg Registration) ([]Entry, error) {
 	if !ok {
 		return nil, fmt.Errorf("appmenu: malformed or oversized layout")
 	}
+	setDbusmenuAction(node.Children, reg)
 	return node.Children, nil
+}
+
+// setDbusmenuAction gives every entry the endpoint that activates it.
+func setDbusmenuAction(entries []Entry, reg Registration) {
+	for i := range entries {
+		if len(entries[i].Children) > 0 {
+			setDbusmenuAction(entries[i].Children, reg)
+			continue
+		}
+		entries[i].Action = Action{Kind: ActionDbusmenu, Bus: reg.Service, Path: reg.Path, Index: entries[i].ID}
+	}
 }
 
 // Activate sends the dbusmenu click event to the registered application.

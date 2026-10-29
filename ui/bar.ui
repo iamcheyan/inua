@@ -21,10 +21,10 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
             <property name="margin-top">4</property>
             <property name="margin-start">4</property>
             <property name="margin-end">4</property>
-            <property name="height-request">30</property>
+            <property name="height-request">56</property>
             <property name="start-widget">
               <object class="GtkBox">
-                <property name="spacing">14</property>
+                <property name="spacing">10</property>
                 <child>
                   <object class="GtkBox" id="workspaces">
                     <style>
@@ -35,11 +35,11 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                   </object>
                 </child>
                 <child>
-                  <object class="GtkBox" id="app_menu">
+                  <object class="GtkImage" id="app_icon">
                     <style>
-                      <class name="app-menu"/>
+                      <class name="app-icon"/>
                     </style>
-                    <property name="spacing">2</property>
+                    <property name="visible">false</property>
                     <property name="valign">3</property>
                   </object>
                 </child>
@@ -52,21 +52,12 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                     <property name="max-width-chars">48</property>
                   </object>
                 </child>
-              </object>
-            </property>
-            <property name="center-widget">
-              <object class="GtkButton" id="clock_button">
-                <style>
-                  <class name="clock-button"/>
-                </style>
-                <property name="name">calendar</property>
-                <property name="focusable">false</property>
-                <property name="tooltip-text" translatable="yes">Calendar</property>
                 <child>
-                  <object class="GtkLabel" id="clock">
+                  <object class="GtkBox" id="app_menu">
                     <style>
-                      <class name="clock"/>
+                      <class name="app-menu"/>
                     </style>
+                    <property name="spacing">2</property>
                   </object>
                 </child>
               </object>
@@ -226,6 +217,23 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             </child>
                           </object>
                         </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="clock_button">
+                    <style>
+                      <class name="clock-button"/>
+                    </style>
+                    <property name="name">calendar</property>
+                    <property name="focusable">false</property>
+                    <property name="tooltip-text" translatable="yes">Calendar</property>
+                    <child>
+                      <object class="GtkLabel" id="clock">
+                        <style>
+                          <class name="clock"/>
+                        </style>
                       </object>
                     </child>
                   </object>

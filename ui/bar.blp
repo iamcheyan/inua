@@ -14,10 +14,10 @@ ApplicationWindow bar {
       margin-top: 4;
       margin-start: 4;
       margin-end: 4;
-      height-request: 30;
+      height-request: 56;
 
       start-widget: Box {
-        spacing: 14;
+        spacing: 10;
 
         Box workspaces {
           styles ["workspaces"]
@@ -25,9 +25,9 @@ ApplicationWindow bar {
           valign: center;
         }
 
-        Box app_menu {
-          styles ["app-menu"]
-          spacing: 2;
+        Image app_icon {
+          styles ["app-icon"]
+          visible: false;
           valign: center;
         }
 
@@ -36,17 +36,10 @@ ApplicationWindow bar {
           ellipsize: end;
           max-width-chars: 48;
         }
-      };
 
-      // The clock opens Calendar.
-      center-widget: Button clock_button {
-        styles ["clock-button"]
-        name: "calendar";
-        focusable: false;
-        tooltip-text:  _("Calendar");
-
-        Label clock {
-          styles ["clock"]
+        Box app_menu {
+          styles ["app-menu"]
+          spacing: 2;
         }
       };
 
@@ -174,6 +167,18 @@ ApplicationWindow bar {
                 styles ["numeric"]
               }
             }
+          }
+        }
+
+        // The clock opens Calendar; it sits at the right end of the bar.
+        Button clock_button {
+          styles ["clock-button"]
+          name: "calendar";
+          focusable: false;
+          tooltip-text:  _("Calendar");
+
+          Label clock {
+            styles ["clock"]
           }
         }
       };

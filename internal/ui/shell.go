@@ -156,6 +156,11 @@ type shellUI struct {
 	onTrayMenuAction       func(gio.SimpleAction, uintptr)
 	onTrayMenuClosed       func(gtk.Popover)
 	onAppMenuClicked       func(gtk.Button)
+	onAppMenuAction        func(gio.SimpleAction, uintptr)
+	onMenuRow              func(gtk.Button)
+	onMenuBackdrop         func(gtk.GestureClick, int32, float64, float64)
+	onMenuKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	menu                   menuPanel
 	onSettingsEntry        func(uintptr, uintptr)
 	onSettingsSwitch       func(gtk.Switch, bool) bool
 	onAIAbility            func(gtk.ToggleButton)
@@ -451,6 +456,7 @@ func (s *shellUI) start() {
 	s.bindTrayHandlers()
 	s.bindSettingsHandlers()
 	s.bindAppMenuHandlers()
+	s.bindMenuHandlers()
 	s.bindAboutHandlers()
 	s.bindCardHandlers()
 	s.bindWifiHandlers()

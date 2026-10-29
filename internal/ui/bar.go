@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"strings"
 	"time"
 	"unsafe"
 
@@ -12,7 +13,6 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
-	"github.com/lyricat/inua/internal/appmenu"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
@@ -32,7 +32,9 @@ type bar struct {
 	workspaces  gtk.Box
 	appMenu     gtk.Box
 	appMenuGen  uint64
-	appMenuReg  appmenu.Registration
+	appMenuPID  int
+	appMenuPop  *gtk.PopoverMenu
+	appIcon     gtk.Image
 	title       gtk.Label
 	clock       gtk.Label
 	clipboard   gtk.Button
@@ -167,6 +169,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	wheel := gtk.NewEventControllerScroll(gtk.EventControllerScrollVerticalValue | gtk.EventControllerScrollDiscreteValue)
 	wheel.ConnectScroll(&s.onWorkspaceScroll)
 	b.workspaces.AddController(&wheel.EventController)
+	ui.Get("app_icon", &b.appIcon)
 	ui.Get("title", &b.title)
 	ui.Get("clock", &b.clock)
 	ui.Get("notes", &b.notes)
@@ -399,6 +402,7 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.AddCssClass("empty")
 	}
 	b.title.SetText(shell.BarTitle(snap, name))
+	s.setAppIcon(b, snap, name)
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
@@ -598,4 +602,32 @@ func toggle(w *gtk.Widget, class string, on bool) {
 	} else {
 		w.RemoveCssClass(class)
 	}
+}
+
+// setAppIcon shows the focused application's icon before its name.
+func (s *shellUI) setAppIcon(b *bar, snap hypr.Snapshot, name string) {
+	class := ""
+	for _, win := range snap.Toplevels {
+		if win.Address == snap.ActiveToplevel {
+			class = win.Class
+			break
+		}
+	}
+	icon := ""
+	if class != "" {
+		if entry := s.dockState.apps.ForClass(class); entry != nil {
+			icon = entry.Icon
+		}
+		if icon == "" {
+			icon = strings.ToLower(class)
+		}
+	}
+	if icon == "" {
+		b.appIcon.SetVisible(false)
+		return
+	}
+	b.appIcon.SetPixelSize(16)
+	b.appIcon.SetFromIconName(icon)
+	b.appIcon.SetTooltipText(class)
+	b.appIcon.SetVisible(true)
 }

@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
+	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -72,9 +73,10 @@ type acct struct {
 
 // window is Mail's window.
 type window struct {
-	c   *appui.Ctx
-	h   *hub
-	win *gtk.ApplicationWindow
+	c    *appui.Ctx
+	h    *hub
+	win  *gtk.ApplicationWindow
+	menu *appui.MenuBar
 
 	top                                     gtk.Stack
 	side, filters, reader, welcomeBox       gtk.Box
@@ -222,10 +224,30 @@ func openWindow(c *appui.Ctx) *window {
 	w.sel.SetCanUnselect(true)
 	w.sel.Ref()
 	w.h.selection(w.sel, w.selectionChanged)
-	f := w.h.factory(w.setupRow, w.bindRow, w.teardownRow)
-	w.list = gtk.NewListView(w.sel, &f.ListItemFactory)
-	w.list.AddCssClass("mail-conversations")
-	w.listScroll.SetChild(&w.list.Widget)
+	w.menu = appui.NewMenuBar(c, []appui.MenuGroup{
+		{Title: "File", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
+			{Name: "mail-new-message", Label: "New message", Activate: func(gio.SimpleAction, uintptr) { w.newComposer(mail.Draft{}, nil) }},
+			{Name: "mail-settings", Label: "Settings", Activate: func(gio.SimpleAction, uintptr) { w.showSettings("") }},
+		}}}},
+		{Title: "Message", Sections: []appui.MenuSection{
+			{Actions: []appui.MenuAction{
+				{Name: "mail-reply", Label: "Reply", Activate: func(gio.SimpleAction, uintptr) { w.reply(false) }},
+				{Name: "mail-reply-all", Label: "Reply all", Activate: func(gio.SimpleAction, uintptr) { w.reply(true) }},
+				{Name: "mail-forward", Label: "Forward", Activate: func(gio.SimpleAction, uintptr) { w.forward() }},
+			}},
+			{Actions: []appui.MenuAction{
+				{Name: "mail-archive", Label: "Archive", Activate: func(gio.SimpleAction, uintptr) { w.archive() }},
+				{Name: "mail-trash", Label: "Move to Trash", Activate: func(gio.SimpleAction, uintptr) { w.trash() }},
+				{Name: "mail-mark-unread", Label: "Mark as unread", Activate: func(gio.SimpleAction, uintptr) { w.markUnread() }},
+			}},
+		}},
+		{Title: "View", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
+			{Name: "mail-search", Label: "Search", Activate: func(gio.SimpleAction, uintptr) { w.search.GrabFocus() }},
+			{Name: "mail-toggle-sidebar", Label: "Toggle Sidebar", Activate: func(gio.SimpleAction, uintptr) { w.toggleSidebar() }},
+		}}}},
+	})
+	w.menu.AppendLocal(&w.indexCol)
+	w.model = gtk.NewStringList(nil)
 	w.setupPeople()
 
 	w.h.click(&w.compose, func() { w.newComposer(mail.Draft{}, nil) })

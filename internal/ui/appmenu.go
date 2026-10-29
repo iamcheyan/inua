@@ -5,8 +5,6 @@ import (
 	"log"
 	"strconv"
 
-	"codeberg.org/puregotk/puregotk/v4/gio"
-	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/appmenu"
@@ -15,13 +13,18 @@ import (
 	"github.com/lyricat/inua/internal/system"
 )
 
+// appMenuTarget is what a click in the bar's menu acts on, kept per widget so a
+// delayed callback cannot reach a menu that has already been replaced.
 type appMenuTarget struct {
-	registration appmenu.Registration
-	id           int32
+	entry   appmenu.Entry
+	pid     int
+	bar     *bar
+	section bool // a top-level entry whose children hang from a popover
 }
 
 type appMenuState struct {
 	registrar  *appmenu.Registrar
+	client     *appmenu.Client
 	targets    map[string]appMenuTarget
 	nextTarget uint64
 }
@@ -33,6 +36,7 @@ func (s *shellUI) startAppMenu() {
 		return
 	}
 	s.appmenu.registrar = appmenu.New(conn)
+	s.appmenu.client = appmenu.NewClient(s.appmenu.registrar, appmenu.NewA11y())
 	s.appmenu.targets = make(map[string]appMenuTarget)
 	s.appmenu.registrar.SetOnChange(func() { gtkx.Post(s.syncAppMenu) })
 	go func() {
@@ -51,163 +55,144 @@ func focusedPID(snap hypr.Snapshot) int {
 	return 0
 }
 
+// syncAppMenu shows the focused process's menu on the focused monitor's bar.
 func (s *shellUI) syncAppMenu() {
-	if s.appmenu.registrar == nil {
+	if s.appmenu.client == nil {
 		return
 	}
-	reg, ok := s.appmenu.registrar.ForPID(focusedPID(s.snap))
+	pid := focusedPID(s.snap)
 	for _, b := range s.bars {
-		if b.connector() != s.snap.FocusedMonitor || !ok {
-			b.appMenuGen++
-			gtkx.Clear(&b.appMenu)
-			b.appMenuReg = appmenu.Registration{}
-			b.appMenu.SetVisible(false)
+		if b.connector() != s.snap.FocusedMonitor || pid == 0 {
+			if b.appMenuPID != 0 {
+				b.appMenuGen++
+				b.appMenuPID = 0
+				s.closeAppMenu(b)
+				gtkx.Clear(&b.appMenu)
+				b.appMenu.SetVisible(false)
+			}
 			continue
 		}
-		if b.appMenuReg == reg {
+		if b.appMenuPID == pid {
 			continue
 		}
+		b.appMenuPID = pid
 		b.appMenuGen++
-		gen := b.appMenuGen
+		s.closeAppMenu(b)
 		gtkx.Clear(&b.appMenu)
-		s.appmenu.targets = make(map[string]appMenuTarget)
-		b.appMenuReg = reg
 		b.appMenu.SetVisible(false)
-		go s.loadAppMenu(b, gen, reg)
+		go s.loadAppMenu(b, b.appMenuGen, pid)
 	}
 }
 
-func (s *shellUI) refreshAppMenu(reg appmenu.Registration) {
+// refreshAppMenu rereads the menu of the process the bar is showing, after an
+// item was activated and the application may have changed it.
+func (s *shellUI) refreshAppMenu(pid int) {
 	for _, b := range s.bars {
-		if b.appMenuReg != reg || b.connector() != s.snap.FocusedMonitor {
+		if b.appMenuPID != pid || b.connector() != s.snap.FocusedMonitor {
 			continue
 		}
 		b.appMenuGen++
-		gen := b.appMenuGen
-		gtkx.Clear(&b.appMenu)
-		b.appMenu.SetVisible(false)
-		go s.loadAppMenu(b, gen, reg)
+		go s.loadAppMenu(b, b.appMenuGen, pid)
 	}
 }
 
-func (s *shellUI) loadAppMenu(b *bar, gen uint64, reg appmenu.Registration) {
-	entries, err := s.appmenu.registrar.Menu(reg)
+func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
+	entries, err := s.appmenu.client.Menu(pid)
 	gtkx.Post(func() {
-		pid := focusedPID(s.snap)
-		if b.appMenuGen != gen || b.appMenuReg != reg || pid == 0 || uint32(pid) != reg.PID || b.connector() != s.snap.FocusedMonitor {
+		if b.appMenuGen != gen || b.appMenuPID != pid || focusedPID(s.snap) != pid {
+			return
+		}
+		if err != nil {
+			log.Printf("appmenu %d: %v", pid, err)
 			return
 		}
 		gtkx.Clear(&b.appMenu)
-		b.appMenu.SetVisible(false)
-		if err != nil {
-			log.Printf("appmenu %s: %v", reg.Service, err)
-			return
-		}
 		s.appmenu.targets = make(map[string]appMenuTarget)
 		for _, entry := range entries {
-			if !entry.Separator {
-				s.appendAppMenu(b, entry, reg)
+			if entry.Separator {
+				continue
 			}
+			s.appendAppMenu(b, entry, pid)
 		}
 		b.appMenu.SetVisible(b.appMenu.GetFirstChild() != nil)
+		log.Printf("appmenu: loaded %d entries pid=%d", len(entries), pid)
 	})
 }
 
-func (s *shellUI) appendAppMenu(b *bar, entry appmenu.Entry, reg appmenu.Registration) {
-	if len(entry.Children) > 0 {
-		button := gtk.NewMenuButton()
-		button.SetLabel(entry.Label)
-		button.SetHasFrame(false)
-		button.SetFocusable(false)
-		group := gio.NewSimpleActionGroup()
-		menu := s.buildAppMenu(entry.Children, group, reg)
-		button.SetMenuModel(&menu.MenuModel)
-		button.InsertActionGroup("appmenu", group)
-		gtkx.Append(&b.appMenu, &button.Widget)
-		menu.Unref()
-		group.Unref()
-		return
-	}
+func (s *shellUI) appendAppMenu(b *bar, entry appmenu.Entry, pid int) {
 	button := gtk.NewButton()
 	button.SetLabel(entry.Label)
 	button.SetHasFrame(false)
 	button.SetFocusable(false)
-	button.SetSensitive(entry.Enabled)
-	token := s.addAppMenuTarget(reg, entry.ID)
-	button.SetName(token)
+	button.SetSensitive(entry.Enabled || len(entry.Children) > 0)
+	button.SetName(s.addAppMenuTarget(b, entry, pid, len(entry.Children) > 0))
 	button.ConnectClicked(&s.onAppMenuClicked)
 	gtkx.Append(&b.appMenu, &button.Widget)
 }
 
-func (s *shellUI) addAppMenuTarget(reg appmenu.Registration, id int32) string {
+func (s *shellUI) addAppMenuTarget(b *bar, entry appmenu.Entry, pid int, section bool) string {
 	s.appmenu.nextTarget++
 	token := strconv.FormatUint(s.appmenu.nextTarget, 10)
-	s.appmenu.targets[token] = appMenuTarget{registration: reg, id: id}
+	s.appmenu.targets[token] = appMenuTarget{entry: entry, pid: pid, bar: b, section: section}
 	return token
 }
 
-func (s *shellUI) activateAppMenu(reg appmenu.Registration, id int32) {
-	current, ok := s.appmenu.registrar.ForPID(focusedPID(s.snap))
-	if !ok || current != reg {
+// closeAppMenu drops the menu the bar has open, if any.
+func (s *shellUI) closeAppMenu(b *bar) {
+	s.closeMenu()
+}
+
+// openAppMenu hangs the section the button names under it, and closes it
+// again when the same button is clicked while it is open.
+func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) {
+	m := &s.menu
+	if m.open && !m.closing && m.pid == target.pid && m.section == target.entry.Label {
+		s.closeMenu()
+		return
+	}
+	if m.open && !m.closing {
+		m.pid, m.section = target.pid, target.entry.Label
+		m.entries, m.stack = target.entry.Children, nil
+		s.fillMenu()
+		return
+	}
+	if m.closing {
+		show := target
+		m.gone = func() { s.showMenu(&button.Widget, show) }
+		return
+	}
+	s.showMenu(&button.Widget, target)
+}
+
+// activateAppMenu invokes an entry, but only while the process it belongs to
+// still has the focus the bar drew the menu for.
+func (s *shellUI) activateAppMenu(target appMenuTarget) {
+	if focusedPID(s.snap) != target.pid || !target.entry.Enabled {
 		return
 	}
 	go func() {
-		if err := s.appmenu.registrar.Activate(reg, id); err != nil {
-			log.Printf("appmenu activate: %v", err)
+		if err := s.appmenu.client.Activate(target.entry); err != nil {
+			log.Printf("appmenu activate %q: %v", target.entry.Label, err)
 		}
-		gtkx.Post(func() { s.refreshAppMenu(reg) })
+		gtkx.Post(func() { s.refreshAppMenu(target.pid) })
 	}()
 }
 
 func (s *shellUI) bindAppMenuHandlers() {
 	s.onAppMenuClicked = func(button gtk.Button) {
+		log.Printf("appmenu: click %q", button.GetName())
 		target, ok := s.appmenu.targets[button.GetName()]
-		if !ok || focusedPID(s.snap) == 0 || uint32(focusedPID(s.snap)) != target.registration.PID {
+		log.Printf("appmenu: target ok=%v", ok)
+		if !ok {
 			return
 		}
-		s.activateAppMenu(target.registration, target.id)
+		if target.section {
+			s.openAppMenu(target.bar, &button, target)
+			return
+		}
+		if !target.entry.Enabled {
+			return
+		}
+		s.activateAppMenu(target)
 	}
-}
-
-func (s *shellUI) buildAppMenu(entries []appmenu.Entry, group *gio.SimpleActionGroup, reg appmenu.Registration) *gio.Menu {
-	menu := gio.NewMenu()
-	for _, entry := range entries {
-		if entry.Separator {
-			continue
-		}
-		label := entry.Label
-		if entry.Toggle != "" && entry.Checked {
-			label = "✓  " + label
-		}
-		if len(entry.Children) > 0 {
-			sub := s.buildAppMenu(entry.Children, group, reg)
-			menu.AppendSubmenu(label, &sub.MenuModel)
-			sub.Unref()
-			continue
-		}
-		name := "i" + strconv.Itoa(int(entry.ID))
-		if entry.Enabled {
-			token := s.addAppMenuTarget(reg, entry.ID)
-			action := gio.NewSimpleAction(name, nil)
-			onActivate := func(gio.SimpleAction, uintptr) {
-				target, ok := s.appmenu.targets[token]
-				if !ok {
-					return
-				}
-				s.activateAppMenu(target.registration, target.id)
-			}
-			action.ConnectActivate(&onActivate)
-			group.AddAction(action)
-			action.Unref()
-			menu.Append(label, "appmenu."+name)
-		} else {
-			item := gio.NewMenuItem(label, "")
-			value := glib.NewVariantBoolean(false)
-			item.SetAttributeValue("enabled", value)
-			value.Unref()
-			menu.AppendItem(item)
-			item.Unref()
-		}
-	}
-	return menu
 }

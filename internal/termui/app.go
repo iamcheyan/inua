@@ -1,18 +1,16 @@
 package termui
 
 import (
+	"codeberg.org/puregotk/puregotk/v4/gdk"
+	"codeberg.org/puregotk/puregotk/v4/glib"
+	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"errors"
 	"fmt"
 	"log"
 	"os"
-	"runtime"
 	"sync"
 
-	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
-	"codeberg.org/puregotk/puregotk/v4/glib"
-	"codeberg.org/puregotk/puregotk/v4/gtk"
-
 	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
@@ -157,9 +155,7 @@ func (a *App) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	}
 	a.win.ConnectCloseRequest(&a.onClose)
 	a.windowKeys()
-	if runtime.GOOS == "darwin" {
-		a.menuBar()
-	}
+	a.menuBar()
 	if os.Getenv("INUA_TERM_SMOKE") != "" {
 		a.smokeTest()
 	}

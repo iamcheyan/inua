@@ -23,6 +23,66 @@ window to the current workspace. Their data is kept in
 | Light apps | `inua-apps NAME` | [below](#light-apps) |
 | Games | `inua-games NAME` | [below](#games) |
 | Your own | `inua workshop` | [workshop.md](workshop.md) |
+## Global menu coverage
+
+Every independently running inua GUI application exposes its application
+menu through a GTK/GIO menu model, so the shell can read the same actions
+through AT-SPI. The menu follows a shared macOS-style order: the app menu,
+then File, Edit, View, Window and Help where those groups have real actions.
+An item appears only when its action is implemented by that application;
+menu items do not stand in for missing features. The window's own menu and
+the shell's top-bar menu invoke the same application action.
+
+The table records the initial inventory and current menu status. “Absent”
+means the window had no top-level app menu before global-menu coverage; it
+may still have ordinary controls, context menus or dialogs. Every listed
+independent window is in scope, including auxiliary workflows with their
+own application ID.
+
+| Command / window | AppID suffix | Main window owner | Existing menus and meaningful actions | Menu coverage / verification |
+| --- | --- | --- | --- | --- |
+| `inua-apps clock` | `Clock` | `appui` / `clockApp` | No top-level menu; world clocks, alarms, stopwatch, timer | To implement; launch, inspect AT-SPI and top bar, exercise an alarm/timer action |
+| `inua-apps weather` | `Weather` | `appui` / `weatherApp` | No top-level menu; places and forecast views | To implement; inspect menus and change forecast view |
+| `inua-apps stocks` | `Stocks` | `appui` / `stocksApp` | No top-level menu; watchlist and remove action | To implement; inspect menus and remove a fixture watchlist item |
+| `inua-apps calculator` | `Calculator` | `appui` / `calcApp` | No top-level menu; keypad, expression and history | To implement; inspect menus and evaluate an expression |
+| `inua-apps calendar` | `Calendar` | `appui` / `calendarApp` | No top-level menu; month navigation | To implement; inspect menus and change month |
+| `inua-apps color-picker` | `ColorPicker` | `appui` / `colorApp` | No top-level menu; pick and clear | To implement; inspect menus and clear a test swatch |
+| `inua-apps system-monitor` | `SystemMonitor` | `appui` / `sysmonApp` | No top-level menu; overview, process details and process controls | To implement; inspect menus and switch view |
+| `inua-apps tailscale` | `Tailscale` | `appui` / `tailscaleApp` | No top-level menu; device and exit-node controls | To implement; inspect menus and open a view without changing network state |
+| `inua-apps pass` | `Pass` | `appui` / `passApp` | No top-level menu; entry editor, categories and OTP dialog | To implement; inspect menus and exercise a safe navigation/edit action |
+| `inua-apps gpg` | `GPG` | `appui` / `gpgApp` | No top-level menu; encrypt, decrypt, sign and key actions | To implement; inspect menus and open an operation view |
+| `inua-apps music [files…]` | `Music` | `appui` / `musicApp` | No top-level menu; open, playback, playlist and equalizer | To implement; inspect menus and exercise a playback action with test media |
+| `inua-apps video [file]` | `Video` | `appui` / `videoApp` | No top-level menu; playback controls | To implement; inspect menus and exercise playback with test media |
+| `inua-apps workshop` | `Workshop` | `appui.RunView` / workshop manager | No top-level menu; install/manage workshop apps | To implement; inspect menus and open a manager view |
+| `inua-apps workshop ID|DIR` | manifest `AppID` or normalized ID | `appui.RunView` / workshop app view | No top-level menu; actions depend on installed app manifest | To implement; inspect a bundled example and invoke its real action |
+| `inua-games minesweeper` | `Minesweeper` | `appui` / `gamesui.view` | No top-level menu; shared Help menu button and board actions | To implement; inspect menus, open Help submenu and start a safe game |
+| `inua-games space-pinball` | `SpacePinball` | `appui` / `gamesui.view` | No top-level menu; shared Help menu button and game controls | To implement; inspect menus and exercise a game action |
+| `inua-games small-fortune` | `SmallFortune` | `appui` / `gamesui.view` | No top-level menu; Game menu button and contextual game actions | To implement; inspect menus and invoke a safe setup action |
+| `inua-games chinese-checkers` | `ChineseCheckers` | `appui` / `gamesui.view` | No top-level menu; shared Help menu button and board actions | To implement; inspect menus and start a safe game |
+| `inua-term` | `Term` | `appui` / `termui.App` | macOS-only GIO menubar: Terminal, Shell, Edit, View, Window, Help; settings actions and Quit | Extend to Linux/Wayland and verify local/top-bar action parity |
+| `inua-term --quick` | `Term.Quick` | `appui` / `termui.App` quick view | Shares terminal implementation; no confirmed menu in quick mode | Verify its own AppID and accessible menu, then exercise a safe view action |
+| `inua-files` | `Files` | `appui` / `filesui.App` | No top-level menu; pane navigation, file operations, undo and context actions | To implement; inspect menus and exercise navigation/undo on a temporary folder |
+| `inua-viewer [FILE|FOLDER…]` | `Viewer` | `appui` / `viewerui.App` | No top-level menu; image/PDF/text controls, copy, zoom, rotate, trash | To implement; inspect menus and exercise zoom on a fixture |
+| `inua-mail` | `Mail` | `appui` / `mailui.App` | No top-level menu; account, message, compose and search actions | To implement; inspect menus and use a local safe view/action |
+| `inua-assistant` | `Assistant` | `appui` / `assistantui.view` | No top-level menu; send/voice/settings; GIO ask/background activation actions | To implement; inspect menus and open settings without sending a request |
+| `inua-vm` | `VM` | `appui` / `vmui.App` | No top-level menu; machine selection, templates and lifecycle actions | To implement; inspect menus and open a fixture machine page |
+| `inua-remote` | `Remote` | `appui` / `remoteui.App` | No top-level menu; sharing, pairing and stream actions | To implement; inspect menus and open settings without pairing/sharing |
+| `inua-connect` | `MobileLink` | `appui` / `connectui.App` | No top-level menu; device, pairing, clipboard and sharing controls | To implement; inspect menus and open a read-only view |
+| `inua-connect --reply …` | `MobileLink.Reply` | `appui.RegisterMany` / reply window | No top-level menu; reply, cancel and send | To implement; inspect menus and exercise cancel on a fixture reply |
+| `inua-disk-usage` | `DiskUsage` | `appui` / `diskui.App` | No top-level menu; scan, inspect and remove actions | To implement; inspect menus and open a fixture directory |
+
+The shell's settings window and shell-owned transient surfaces are separate
+from appui apps: they do not currently register an independent GApplication
+menu. Their lifecycle and focus ownership differ from standalone app windows;
+the shell menu client itself and its global top-bar panel are not target
+applications. Shell settings are in scope as an inua built-in program surface
+and need a shell-owned local menu/action integration; transient prompts and
+panels remain shell controls rather than independent app windows.
+
+This inventory is updated as the menus are implemented and tested. Runtime
+results, screenshots and any environment exception are recorded with the
+change; an item is not marked passed until its accessibility tree, top-bar
+presentation and action effect are observed.
 
 ## Files, Terminal, Mail
 

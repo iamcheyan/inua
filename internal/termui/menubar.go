@@ -3,13 +3,14 @@ package termui
 import (
 	"codeberg.org/puregotk/puregotk/v4/gio"
 
+	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/term/settings"
 )
 
-// menuBar gives a Mac's menu bar the window's actions, as the command
-// palette has them, in the menus a Mac app has. The keys stay the
-// window's own (chord): the menus show none, so a chord never runs twice.
+// menuBar gives the window's actions, as the command palette has them, in
+// menus. The keys stay the window's own (chord): the menus show none, so a
+// chord never runs twice.
 func (a *App) menuBar() {
 	a.onMenuItem = func(act gio.SimpleAction, _ uintptr) {
 		switch name := act.GetName(); name {
@@ -19,45 +20,30 @@ func (a *App) menuBar() {
 			a.do(name, a.focusedPane())
 		}
 	}
-	add := func(name string) {
-		act := gio.NewSimpleAction(name, nil)
-		act.ConnectActivate(&a.onMenuItem)
-		a.c.App.AddAction(act)
-		act.Unref()
+	groups := []appui.MenuGroup{
+		{Title: "Terminal", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "settings", Label: "Settings", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "restart_host", Label: "Restart Host", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "quit", Label: "Quit", Activate: a.onMenuItem}}}}},
+		{Title: "Shell", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "new_session", Label: "New Session", Activate: a.onMenuItem}, {Name: "new_workspace", Label: "New Workspace", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "split_right", Label: "Split Right", Activate: a.onMenuItem}, {Name: "split_down", Label: "Split Down", Activate: a.onMenuItem}, {Name: "close_pane", Label: "Close Pane", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "rename", Label: "Rename", Activate: a.onMenuItem}}}}},
+		{Title: "Edit", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "copy", Label: "Copy", Activate: a.onMenuItem}, {Name: "paste", Label: "Paste", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "find", Label: "Find", Activate: a.onMenuItem}, {Name: "copy_mode", Label: "Copy Mode", Activate: a.onMenuItem}}}}},
+		{Title: "View", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "zoom", Label: "Zoom", Activate: a.onMenuItem}, {Name: "equalize", Label: "Equalize", Activate: a.onMenuItem}, {Name: "next_layout", Label: "Next Layout", Activate: a.onMenuItem}, {Name: "swap", Label: "Swap", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "fold_workspaces", Label: "Fold Workspaces", Activate: a.onMenuItem}, {Name: "fold_sessions", Label: "Fold Sessions", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "font_larger", Label: "Larger Font", Activate: a.onMenuItem}, {Name: "font_smaller", Label: "Smaller Font", Activate: a.onMenuItem}, {Name: "font_reset", Label: "Reset Font", Activate: a.onMenuItem}}}}},
+		{Title: "Window", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "previous_session", Label: "Previous Session", Activate: a.onMenuItem}, {Name: "next_session", Label: "Next Session", Activate: a.onMenuItem}}}, {Actions: []appui.MenuAction{{Name: "next_waiting", Label: "Next Waiting", Activate: a.onMenuItem}, {Name: "next_idle", Label: "Next Idle", Activate: a.onMenuItem}, {Name: "agents", Label: "Agents", Activate: a.onMenuItem}}}}},
+		{Title: "Help", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "palette", Label: "Command Palette", Activate: a.onMenuItem}, {Name: "keys", Label: "Keyboard Shortcuts", Activate: a.onMenuItem}}}}},
 	}
-	label := map[string]string{}
+	labels := make(map[string]string, len(settings.Actions))
 	for _, act := range settings.Actions {
-		label[act.Name] = i18n.T(act.Label)
-		add(act.Name)
+		labels[act.Name] = i18n.T(act.Label)
 	}
-	add("quit")
-	label["quit"] = i18n.T("Quit")
-	bar := gio.NewMenu()
-	for _, m := range []struct {
-		title   string
-		actions [][]string // sections
-	}{
-		{i18n.T("Terminal"), [][]string{{"settings"}, {"restart_host"}, {"quit"}}},
-		{i18n.T("Shell"), [][]string{{"new_session", "new_workspace"}, {"split_right", "split_down", "close_pane"}, {"rename"}}},
-		{i18n.T("Edit"), [][]string{{"copy", "paste"}, {"find", "copy_mode"}}},
-		{i18n.T("View"), [][]string{{"zoom", "equalize", "next_layout", "swap"}, {"fold_workspaces", "fold_sessions"}, {"font_larger", "font_smaller", "font_reset"}}},
-		{i18n.T("Window"), [][]string{{"previous_session", "next_session"}, {"next_waiting", "next_idle", "agents"}}},
-		{i18n.T("Help"), [][]string{{"palette", "keys"}}},
-	} {
-		menu := gio.NewMenu()
-		for _, section := range m.actions {
-			sec := gio.NewMenu()
-			for _, name := range section {
-				sec.Append(label[name], "app."+name)
+	for gi := range groups {
+		for si := range groups[gi].Sections {
+			for ai := range groups[gi].Sections[si].Actions {
+				item := &groups[gi].Sections[si].Actions[ai]
+				if label := labels[item.Name]; label != "" {
+					item.Label = label
+				}
 			}
-			menu.AppendSection("", &sec.MenuModel)
-			sec.Unref()
 		}
-		bar.AppendSubmenu(m.title, &menu.MenuModel)
-		menu.Unref()
 	}
-	a.c.App.SetMenubar(&bar.MenuModel)
-	bar.Unref()
+	bar := appui.NewMenuBar(a.c, groups)
+	a.c.App.SetMenubar(&bar.Model.MenuModel)
 	a.win.SetShowMenubar(true)
 }
 
