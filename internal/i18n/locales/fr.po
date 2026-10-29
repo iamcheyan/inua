@@ -19996,7 +19996,7 @@ msgstr ""
 
 #: config/apps/io.github.lyricat.Inua.GameLobby.desktop:8
 msgid "games;lobby;tables;online;multiplayer;"
-msgstr ""
+msgstr "jeux;salon;tables;en ligne;multijoueur;"
 
 #: config/apps/io.github.lyricat.Inua.Mail.desktop:10
 msgid "Read and write mail from all your accounts"
