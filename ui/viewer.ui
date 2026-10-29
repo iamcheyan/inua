@@ -122,6 +122,15 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
               </object>
             </child>
             <child>
+              <object class="GtkButton" id="edit">
+                <style>
+                  <class name="plain"/>
+                </style>
+                <property name="icon-name">annot-pen-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Edit: draw on the image (E)</property>
+              </object>
+            </child>
+            <child>
               <object class="GtkButton" id="copy">
                 <style>
                   <class name="plain"/>
@@ -229,6 +238,24 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                 </child>
                               </object>
                             </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">edit</property>
+                        <property name="child">
+                          <object class="GtkOverlay" id="edit_stage">
+                            <style>
+                              <class name="viewer-stage"/>
+                            </style>
+                            <property name="child">
+                              <object class="GtkPicture" id="edit_picture">
+                                <property name="content-fit">1</property>
+                                <property name="can-shrink">true</property>
+                              </object>
+                            </property>
                           </object>
                         </property>
                       </object>

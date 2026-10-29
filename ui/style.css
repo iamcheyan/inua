@@ -1124,6 +1124,56 @@ button.shot-mode:checked { background: alpha(@accent, 0.09); border-color: alpha
 button.shot-mode:checked image { color: @accent; }
 .shot-hint { margin: 0 8px 0 4px; font-size: 12px; color: @t2; }
 
+/* Annotating (internal/annotui): the screenshot tool's area and Viewer's
+   images. The toolbar is the screenshot toolbar's glass; tools are square
+   icon buttons, the chosen one tinted as a chosen mode; the inks are small
+   squares of their colour, the chosen one ringed in the accent. */
+.annot-bar {
+  padding: 5px;
+  background: alpha(@app, 0.84);
+  border: 1px solid alpha(@line, 0.9);
+  border-radius: 4px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
+}
+.annot-bar separator { margin: 4px 6px; background: alpha(@line, 0.9); }
+.annot-bar button.annot-tool {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: @t1;
+}
+.annot-bar button.annot-tool:hover { background: alpha(@accent, 0.06); color: @t0; }
+.annot-bar button.annot-tool:checked { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); color: @accent; }
+.annot-bar button.annot-tool:disabled { color: alpha(@t2, 0.5); }
+.annot-bar button.annot-ink {
+  min-width: 26px;
+  min-height: 26px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+}
+.annot-bar button.annot-ink:hover { border-color: alpha(@accent, 0.2); }
+.annot-bar button.annot-ink:checked { border-color: @accent; }
+.annot-bar button.annot-done {
+  min-height: 32px;
+  padding: 0 14px;
+  border: 1px solid @line;
+  border-radius: 2px;
+  background: @surface;
+  box-shadow: none;
+  color: @t0;
+  font-weight: normal;
+}
+.annot-bar button.annot-done:hover { background: alpha(@accent, 0.06); border-color: alpha(@accent, 0.38); }
+.annot-swatch { min-width: 14px; min-height: 14px; outline: 1px solid alpha(@line, 0.9); outline-offset: 0; }
+popover.annot-text-pop > contents { padding: 4px; border: 1px solid @line; border-radius: 4px; background: @app; }
+
 /* The drawer, once something is taken: recent screenshots and recordings
    over a small toolbar. The panel's margin leaves room in the surface for
    the shadows. */

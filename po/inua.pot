@@ -66,6 +66,69 @@ msgstr ""
 msgid "“%s” · %s"
 msgstr ""
 
+#: internal/annotui/toolbar.go:17
+msgid "Arrow"
+msgstr ""
+
+#: internal/annotui/toolbar.go:18
+msgid "Rectangle"
+msgstr ""
+
+#: internal/annotui/toolbar.go:19
+msgid "Pen"
+msgstr ""
+
+#: internal/annotui/toolbar.go:20
+msgid "Highlighter"
+msgstr ""
+
+#: internal/annotui/toolbar.go:21
+#: internal/filesui/renamemany.go:158
+#: ui/gpg.ui:419
+#: ui/gpg.ui:783
+msgid "Text"
+msgstr ""
+
+#: internal/annotui/toolbar.go:22
+msgid "Numbered step"
+msgstr ""
+
+#: internal/annotui/toolbar.go:23
+msgid "Pixelate"
+msgstr ""
+
+#: internal/annotui/toolbar.go:92
+msgid "Undo (Ctrl+Z)"
+msgstr ""
+
+#: internal/annotui/toolbar.go:96
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr ""
+
+#: internal/annotui/toolbar.go:107
+msgid "Red"
+msgstr ""
+
+#: internal/annotui/toolbar.go:107
+msgid "Amber"
+msgstr ""
+
+#: internal/annotui/toolbar.go:107
+msgid "Green"
+msgstr ""
+
+#: internal/annotui/toolbar.go:107
+msgid "Blue"
+msgstr ""
+
+#: internal/annotui/toolbar.go:107
+msgid "White"
+msgstr ""
+
+#: internal/annotui/toolbar.go:107
+msgid "Black"
+msgstr ""
+
 #: internal/apps/calendar/calendar.go:69
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
@@ -1387,7 +1450,7 @@ msgid "Mon Jan 2, 2006, 15:04:05 -0700"
 msgstr ""
 
 #: internal/apps/mail/details.go:49
-#: internal/viewerui/app.go:805
+#: internal/viewerui/app.go:820
 #: ui/mail-compose.ui:161
 msgid "Subject"
 msgstr ""
@@ -2159,7 +2222,7 @@ msgstr ""
 #: internal/lightui/sysmon.go:968
 #: internal/lightui/tailscale.go:631
 #: internal/ui/settings_ai.go:486
-#: internal/viewerui/app.go:791
+#: internal/viewerui/app.go:806
 #: ui/connect.ui:290
 #: ui/files.ui:229
 #: ui/gpg.ui:1342
@@ -2804,9 +2867,9 @@ msgstr ""
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
 #: internal/termui/prefs.go:145
-#: internal/viewerui/app.go:795
-#: internal/viewerui/app.go:813
+#: internal/viewerui/app.go:810
 #: internal/viewerui/app.go:828
+#: internal/viewerui/app.go:843
 msgid "Size"
 msgstr ""
 
@@ -2821,7 +2884,7 @@ msgid "2006-01-02"
 msgstr ""
 
 #: internal/diskui/details.go:53
-#: internal/viewerui/app.go:809
+#: internal/viewerui/app.go:824
 msgid "Changed"
 msgstr ""
 
@@ -2983,7 +3046,8 @@ msgstr ""
 #: internal/mailui/welcome.go:480
 #: internal/term/web/strings.go:35
 #: internal/ui/askpass.go:571
-#: internal/viewerui/app.go:548
+#: internal/viewerui/app.go:561
+#: internal/viewerui/edit.go:292
 #: internal/vmui/window.go:893
 msgid "Copied"
 msgstr ""
@@ -3889,7 +3953,7 @@ msgstr ""
 #: internal/filesui/remotesetup.go:75
 #: internal/filesui/remotesetup.go:83
 #: internal/lightui/sysmon.go:794
-#: internal/viewerui/app.go:792
+#: internal/viewerui/app.go:807
 #: ui/vm.ui:322
 msgid "Folder"
 msgstr ""
@@ -4423,12 +4487,6 @@ msgstr ""
 
 #: internal/filesui/renamemany.go:156
 msgid "A regular expression ($1 in the replacement)"
-msgstr ""
-
-#: internal/filesui/renamemany.go:158
-#: ui/gpg.ui:419
-#: ui/gpg.ui:783
-msgid "Text"
 msgstr ""
 
 #: internal/filesui/renamemany.go:161
@@ -9279,7 +9337,7 @@ msgstr ""
 #: internal/lightui/pass.go:1014
 #: internal/mailui/reader.go:549
 #: internal/mailui/reader.go:794
-#: internal/viewerui/app.go:790
+#: internal/viewerui/app.go:805
 msgid "FILE"
 msgstr ""
 
@@ -10570,7 +10628,7 @@ msgid "Moved to Spam"
 msgstr ""
 
 #: internal/mailui/actions.go:216
-#: internal/viewerui/app.go:492
+#: internal/viewerui/app.go:505
 msgid "Moved to Trash"
 msgstr ""
 
@@ -11521,7 +11579,7 @@ msgstr ""
 #: internal/mailui/settings.go:519
 #: internal/mailui/settings.go:519
 #: internal/mailui/settings.go:519
-#: internal/viewerui/app.go:730
+#: internal/viewerui/app.go:745
 msgid "%d line"
 msgid_plural "%d lines"
 msgstr[0] ""
@@ -13903,7 +13961,7 @@ msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr ""
 
 #: internal/termui/prefs.go:131
-#: internal/viewerui/app.go:817
+#: internal/viewerui/app.go:832
 msgid "TEXT"
 msgstr ""
 
@@ -15525,6 +15583,7 @@ msgid "Save the card"
 msgstr ""
 
 #: internal/ui/settings_card.go:291
+#: internal/viewerui/edit.go:260
 msgid "Saved as %s"
 msgstr ""
 
@@ -16573,177 +16632,220 @@ msgid "voxtype did not start: %s"
 msgstr ""
 
 #: internal/viewerui/app.go:36
-#: internal/viewerui/app.go:700
-#: internal/viewerui/app.go:701
+#: internal/viewerui/app.go:715
+#: internal/viewerui/app.go:716
 #: config/apps/io.github.lyricat.Inua.Viewer.desktop:3
 msgid "Viewer"
 msgstr ""
 
-#: internal/viewerui/app.go:485
+#: internal/viewerui/app.go:498
 msgid "Could not move to Trash"
 msgstr ""
 
-#: internal/viewerui/app.go:495
+#: internal/viewerui/app.go:508
 msgid "Nothing left here."
 msgstr ""
 
-#: internal/viewerui/app.go:546
+#: internal/viewerui/app.go:559
+#: internal/viewerui/edit.go:268
+#: internal/viewerui/edit.go:274
+#: internal/viewerui/edit.go:289
 msgid "Could not copy"
 msgstr ""
 
-#: internal/viewerui/app.go:579
+#: internal/viewerui/app.go:592
 msgid "Open a File"
 msgstr ""
 
-#: internal/viewerui/app.go:581
+#: internal/viewerui/app.go:594
 msgid "Images, PDFs, Markdown and text"
 msgstr ""
 
-#: internal/viewerui/app.go:604
+#: internal/viewerui/app.go:617
 msgid "Open an image or a document to view it."
 msgstr ""
 
-#: internal/viewerui/app.go:668
+#: internal/viewerui/app.go:683
 msgid "Copy the page's text (Ctrl+C)"
 msgstr ""
 
-#: internal/viewerui/app.go:669
+#: internal/viewerui/app.go:684
 msgid "Previous file (Ctrl+Page Up)"
 msgstr ""
 
-#: internal/viewerui/app.go:670
+#: internal/viewerui/app.go:685
 msgid "Next file (Ctrl+Page Down)"
 msgstr ""
 
-#: internal/viewerui/app.go:672
+#: internal/viewerui/app.go:687
 msgid "Copy the text (Ctrl+C)"
 msgstr ""
 
-#: internal/viewerui/app.go:673
-#: internal/viewerui/app.go:677
-#: ui/viewer.ui:294
+#: internal/viewerui/app.go:688
+#: internal/viewerui/app.go:692
+#: ui/viewer.ui:321
 msgid "Previous (←)"
 msgstr ""
 
-#: internal/viewerui/app.go:674
-#: internal/viewerui/app.go:678
-#: ui/viewer.ui:305
+#: internal/viewerui/app.go:689
+#: internal/viewerui/app.go:693
+#: ui/viewer.ui:332
 msgid "Next (→)"
 msgstr ""
 
-#: internal/viewerui/app.go:676
-#: ui/viewer.ui:130
+#: internal/viewerui/app.go:691
+#: ui/viewer.ui:139
 msgid "Copy the image (Ctrl+C)"
 msgstr ""
 
-#: internal/viewerui/app.go:686
+#: internal/viewerui/app.go:701
 msgid "%s is locked with a password."
 msgstr ""
 
-#: internal/viewerui/app.go:688
+#: internal/viewerui/app.go:703
 msgid "%s is not UTF-8 text."
 msgstr ""
 
-#: internal/viewerui/app.go:690
+#: internal/viewerui/app.go:705
 msgid "Install libpoppler-glib8t64 to view PDFs."
 msgstr ""
 
-#: internal/viewerui/app.go:692
+#: internal/viewerui/app.go:707
 #: internal/viewerui/image.go:80
 msgid "Could not open %s.\n%v"
 msgstr ""
 
-#: internal/viewerui/app.go:726
+#: internal/viewerui/app.go:741
 msgid "Page %d of %d"
 msgstr ""
 
-#: internal/viewerui/app.go:788
+#: internal/viewerui/app.go:803
 msgid "Jan 2, 2006  15:04"
 msgstr ""
 
-#: internal/viewerui/app.go:796
-#: internal/viewerui/app.go:814
-#: internal/viewerui/app.go:838
+#: internal/viewerui/app.go:811
+#: internal/viewerui/app.go:829
+#: internal/viewerui/app.go:853
 msgid "Type"
 msgstr ""
 
-#: internal/viewerui/app.go:797
-#: internal/viewerui/app.go:815
-#: internal/viewerui/app.go:839
+#: internal/viewerui/app.go:812
+#: internal/viewerui/app.go:830
+#: internal/viewerui/app.go:854
 msgid "Modified"
 msgstr ""
 
-#: internal/viewerui/app.go:802
+#: internal/viewerui/app.go:817
 msgid "DOCUMENT"
 msgstr ""
 
-#: internal/viewerui/app.go:803
+#: internal/viewerui/app.go:818
 msgid "Title"
 msgstr ""
 
-#: internal/viewerui/app.go:804
+#: internal/viewerui/app.go:819
 msgid "Author"
 msgstr ""
 
-#: internal/viewerui/app.go:806
+#: internal/viewerui/app.go:821
 msgid "Pages"
 msgstr ""
 
-#: internal/viewerui/app.go:807
+#: internal/viewerui/app.go:822
 msgid "Page size"
 msgstr ""
 
-#: internal/viewerui/app.go:808
+#: internal/viewerui/app.go:823
 msgid "Created"
 msgstr ""
 
-#: internal/viewerui/app.go:810
+#: internal/viewerui/app.go:825
 msgid "Made with"
 msgstr ""
 
-#: internal/viewerui/app.go:818
+#: internal/viewerui/app.go:833
 msgid "Lines"
 msgstr ""
 
-#: internal/viewerui/app.go:819
+#: internal/viewerui/app.go:834
 msgid "Words"
 msgstr ""
 
-#: internal/viewerui/app.go:820
+#: internal/viewerui/app.go:835
 msgid "Characters"
 msgstr ""
 
-#: internal/viewerui/app.go:837
+#: internal/viewerui/app.go:852
 msgid "Dimensions"
 msgstr ""
 
-#: internal/viewerui/app.go:841
+#: internal/viewerui/app.go:856
 msgid "CAMERA"
 msgstr ""
 
-#: internal/viewerui/app.go:842
+#: internal/viewerui/app.go:857
 msgid "Camera"
 msgstr ""
 
-#: internal/viewerui/app.go:843
+#: internal/viewerui/app.go:858
 msgid "Lens"
 msgstr ""
 
-#: internal/viewerui/app.go:844
+#: internal/viewerui/app.go:859
 msgid "Exposure"
 msgstr ""
 
-#: internal/viewerui/app.go:845
+#: internal/viewerui/app.go:860
 msgid "Taken"
 msgstr ""
 
-#: internal/viewerui/app.go:861
+#: internal/viewerui/app.go:876
 msgid "Could not set the wallpaper"
 msgstr ""
 
-#: internal/viewerui/app.go:865
-#: ui/viewer.ui:139
+#: internal/viewerui/app.go:880
+#: ui/viewer.ui:148
 msgid "Set as wallpaper"
+msgstr ""
+
+#: internal/viewerui/edit.go:53
+msgid "Moving images cannot be edited"
+msgstr ""
+
+#: internal/viewerui/edit.go:57
+msgid "Still loading…"
+msgstr ""
+
+#: internal/viewerui/edit.go:67
+msgid "Opening for editing…"
+msgstr ""
+
+#: internal/viewerui/edit.go:107
+msgid "Save… (Ctrl+S)"
+msgstr ""
+
+#: internal/viewerui/edit.go:108
+msgid "Copy (Ctrl+C)"
+msgstr ""
+
+#: internal/viewerui/edit.go:117
+msgid "Done"
+msgstr ""
+
+#: internal/viewerui/edit.go:119
+msgid "Back to viewing (Esc)"
+msgstr ""
+
+#: internal/viewerui/edit.go:155
+msgid "Not saved: Esc again to leave"
+msgstr ""
+
+#: internal/viewerui/edit.go:228
+msgid "Save the Edited Image"
+msgstr ""
+
+#: internal/viewerui/edit.go:256
+msgid "Could not save"
 msgstr ""
 
 #: internal/viewerui/image.go:222
@@ -19600,7 +19702,7 @@ msgid "Mute (M)"
 msgstr ""
 
 #: ui/video.ui:273
-#: ui/viewer.ui:199
+#: ui/viewer.ui:208
 msgid "Full screen (F)"
 msgstr ""
 
@@ -19628,23 +19730,27 @@ msgstr ""
 msgid "Rotate (R, Shift+R the other way)"
 msgstr ""
 
-#: ui/viewer.ui:148
-msgid "Show in folder"
+#: ui/viewer.ui:130
+msgid "Edit: draw on the image (E)"
 msgstr ""
 
 #: ui/viewer.ui:157
+msgid "Show in folder"
+msgstr ""
+
+#: ui/viewer.ui:166
 msgid "Move to Trash (Delete)"
 msgstr ""
 
-#: ui/viewer.ui:170
+#: ui/viewer.ui:179
 msgid "Trash?"
 msgstr ""
 
-#: ui/viewer.ui:190
+#: ui/viewer.ui:199
 msgid "Details (I)"
 msgstr ""
 
-#: ui/viewer.ui:339
+#: ui/viewer.ui:366
 msgid "Open a File…"
 msgstr ""
 

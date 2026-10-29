@@ -115,6 +115,7 @@ weather-clear-night                   moon
 preferences-system-notifications      bell
 window-close                          x
 edit-undo                             arrow-counter-clockwise
+edit-redo                             arrow-clockwise
 # launcher and settings
 application-x-executable              app-window
 edit-clear                            x
@@ -348,6 +349,14 @@ mail-news                             newspaper
 mail-source                           file-code
 sidebar-show                          sidebar-simple
 disk-choose                           cursor-click
+# Annotating a screenshot or an image (internal/annotui)
+annot-arrow                           arrow-up-right
+annot-rect                            square
+annot-pen                             pencil-simple
+annot-text                            text-t
+annot-highlight                       highlighter
+annot-pixelate                        checkerboard
+annot-step                            number-circle-one
 disk-locate                           crosshair
 LIST
 if [ "$weight" = regular ] && [ -n "${LOBEHUB_ICONS:-}" ]; then

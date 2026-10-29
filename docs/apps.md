@@ -172,7 +172,7 @@ images, PDFs and Markdown; plain text it opens when asked.
 
 | | |
 | --- | --- |
-| **Images** | Zoom and pan, rotate, animations, EXIF, copy, set as wallpaper. `libturbojpeg0` makes JPEG faster. |
+| **Images** | Zoom and pan, rotate, animations, EXIF, copy, set as wallpaper. `libturbojpeg0` makes JPEG faster. E edits: arrows, rectangles, a pen, a highlighter, text, numbered steps and pixelating, drawn over the image as it stands; Save (Ctrl+S) asks where each time, Copy (Ctrl+C) puts the edited image on the clipboard, Esc goes back (twice when not saved). |
 | **PDFs** | Pages one under another, fitting the width; Page Up/Down, Home/End, Ctrl+wheel or pinch to zoom, Ctrl+C copies the page's text. Needs `libpoppler-glib8t64`; locked PDFs are not opened. |
 | **Markdown** | Laid out to read, with GitHub's tables and task lists; links open, `#heading` links scroll; S shows the source. |
 | **Plain text** | Fixed-width; Ctrl+C copies the selection, or everything. |

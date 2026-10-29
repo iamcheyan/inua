@@ -45,7 +45,7 @@ type App struct {
 	toolbar                                    gtk.Box
 	name, meta, status, trashLabel, emptyLabel gtk.Label
 	zoomLevel, prev, next, fullscreenB         gtk.Button
-	rotateB, copyB, wallpaperB                 gtk.Button
+	rotateB, copyB, wallpaperB, editB          gtk.Button
 	stage                                      gtk.Stack
 	scroller                                   gtk.ScrolledWindow
 	canvas                                     gtk.Fixed
@@ -64,6 +64,7 @@ type App struct {
 
 	pdf  pdfView
 	text textView
+	edit editing // drawing on the image shown (edit.go)
 
 	// The images loaded: the one shown, and those beside it (load.go).
 	cache      map[string]*shot
@@ -125,6 +126,9 @@ func (a *App) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	ui.Get("rotate", &a.rotateB)
 	ui.Get("copy", &a.copyB)
 	ui.Get("wallpaper", &a.wallpaperB)
+	ui.Get("edit", &a.editB)
+	ui.Get("edit_stage", &a.edit.stage)
+	ui.Get("edit_picture", &a.edit.picture)
 	ui.Get("empty", &a.empty)
 	ui.Get("empty_label", &a.emptyLabel)
 	ui.Get("details_reveal", &a.detailsReveal)
@@ -143,7 +147,9 @@ func (a *App) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	a.text.init(a, ui)
 	ui.Close()
 	buttons["zoom_level"], buttons["prev"], buttons["next"], buttons["fullscreen"] = &a.zoomLevel, &a.prev, &a.next, &a.fullscreenB
-	buttons["rotate"], buttons["copy"], buttons["wallpaper"] = &a.rotateB, &a.copyB, &a.wallpaperB
+	buttons["rotate"], buttons["copy"], buttons["wallpaper"], buttons["edit"] = &a.rotateB, &a.copyB, &a.wallpaperB, &a.editB
+	a.edit.onButton = func(b gtk.Button) { a.editAction(b.GetName()) }
+	a.edit.onSaved = func(_, result, _ uintptr) { a.savedEdit(result) }
 
 	a.onButton = func(b gtk.Button) { a.action(b.GetName()) }
 	for n, b := range buttons {
@@ -329,6 +335,9 @@ const (
 )
 
 func (a *App) key(keyval uint32, state gdk.ModifierType) bool {
+	if a.edit.on {
+		return a.editKey(keyval, state)
+	}
 	ctrl := state&gdk.ControlMaskValue != 0
 	shift := state&gdk.ShiftMaskValue != 0
 	switch {
@@ -380,6 +389,8 @@ func (a *App) key(keyval uint32, state gdk.ModifierType) bool {
 		a.sourceToggle.SetActive(!a.sourceToggle.GetActive())
 	case keyval == 'i' || keyval == 'I':
 		a.detailsToggle.SetActive(!a.detailsToggle.GetActive())
+	case (keyval == 'e' || keyval == 'E') && a.kind == viewer.Image:
+		a.startEdit()
 	case keyval == keyDelete:
 		a.action("trash")
 	default:
@@ -453,6 +464,8 @@ func (a *App) action(name string) {
 		}
 	case "rotate":
 		a.turn(1)
+	case "edit":
+		a.startEdit()
 	case "fullscreen":
 		if a.win.IsFullscreen() {
 			a.win.Unfullscreen()
@@ -640,6 +653,7 @@ func (a *App) show(i int) {
 // leave lets go of what the shown file's view holds, before a file of
 // kind next is shown.
 func (a *App) leave(next viewer.Kind) {
+	a.endEdit()
 	switch a.kind {
 	case viewer.Image:
 		if next != viewer.Image {
@@ -658,6 +672,7 @@ func (a *App) leave(next viewer.Kind) {
 func (a *App) setTools() {
 	image := a.kind == viewer.Image
 	a.rotateB.SetVisible(image)
+	a.editB.SetVisible(image)
 	a.wallpaperB.SetVisible(image)
 	a.sourceToggle.SetVisible(a.kind == viewer.Markdown)
 	many := len(a.files) > 1
