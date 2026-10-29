@@ -8004,7 +8004,7 @@ msgid "Notification center"
 msgstr "Centro de notificaciones"
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:126
+#: ui/bar.ui:135
 msgid "Clipboard history"
 msgstr "Historial del portapapeles"
 
@@ -8064,7 +8064,7 @@ msgstr "Elige un color"
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:173
-#: ui/bar.ui:167
+#: ui/bar.ui:176
 #: ui/settings.ui:6326
 msgid "Dictation"
 msgstr "Dictado"
@@ -8212,7 +8212,7 @@ msgid "Calculator"
 msgstr "Calculadora"
 
 #: internal/lightui/apps.go:20
-#: ui/bar.ui:55
+#: ui/bar.ui:64
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr "Calendario"
@@ -13703,7 +13703,7 @@ msgstr "bash, zsh y fish marcan sus avisos para recordar las órdenes"
 
 #: internal/termui/prefs.go:123
 #: internal/ui/notify.go:324
-#: ui/bar.ui:137
+#: ui/bar.ui:146
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr "Notificaciones"
@@ -14094,11 +14094,11 @@ msgstr "Oculto para la captura de pantalla."
 msgid "The passphrases do not match."
 msgstr "Las frases de contraseña no coinciden."
 
-#: internal/ui/bar.go:446
+#: internal/ui/bar.go:454
 msgid "Workspace %s"
 msgstr "Espacio de trabajo %s"
 
-#: internal/ui/bar.go:459
+#: internal/ui/bar.go:467
 msgid "WORKSPACE"
 msgstr "ESPACIO DE TRABAJO"
 
@@ -14486,7 +14486,7 @@ msgid "Search every entry"
 msgstr "Buscar en todas las entradas"
 
 #: internal/ui/passwords.go:279
-#: ui/bar.ui:116
+#: ui/bar.ui:125
 #: ui/settings.ui:1418
 msgid "Passwords"
 msgstr "Contraseñas"
@@ -17227,11 +17227,11 @@ msgstr "Preguntar, o decirme qué hacer"
 msgid "Discard the recording"
 msgstr "Descartar la grabación"
 
-#: ui/bar.ui:85
+#: ui/bar.ui:94
 msgid "Stop recording"
 msgstr "Detener grabación"
 
-#: ui/bar.ui:182
+#: ui/bar.ui:191
 msgid "Control Center"
 msgstr "Centro de control"
 

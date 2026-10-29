@@ -15,6 +15,17 @@ reach as well, adjusts the volume 5% a notch; on the workspaces, it goes
 to the next workspace the bar shows (down) or the previous one (up), a
 notch a step, stopping at the ends. One per monitor.
 
+When an application registers a Canonical AppMenu window and exports a
+`com.canonical.dbusmenu` tree, Inua can read and activate that menu. Menus are
+shown only when the registration can be matched unambiguously to the focused
+Hyprland process; otherwise they stay hidden. This path serves applications
+using the Canonical D-Bus registrar and dbusmenu protocol. GTK's
+`gtk-shell-shows-app-menu` setting is deprecated since GTK 4.20 and does not
+provide appmenu registration by itself. The current client reads on focus or
+registration changes; it does not follow live `LayoutUpdated` changes. Qt
+Wayland uses the separate `org_kde_kwin_appmenu` protocol, which Hyprland
+does not expose.
+
 When the volume or the screen's brightness changes, by the keys, the
 wheel or `inua system`, a card at the foot of the screen shows the level
 for a moment, as phones do. It takes no clicks, and stays away while the

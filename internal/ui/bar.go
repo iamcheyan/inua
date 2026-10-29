@@ -12,6 +12,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"github.com/lyricat/inua/internal/appmenu"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
@@ -29,6 +30,9 @@ type bar struct {
 	frame       gtk.Overlay // the island, and the panel hanging from it
 	island      gtk.CenterBox
 	workspaces  gtk.Box
+	appMenu     gtk.Box
+	appMenuGen  uint64
+	appMenuReg  appmenu.Registration
 	title       gtk.Label
 	clock       gtk.Label
 	clipboard   gtk.Button
@@ -153,6 +157,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("bar", &b.win)
 	ui.Get("frame", &b.frame)
 	ui.Get("island", &b.island)
+	ui.Get("app_menu", &b.appMenu)
 	ui.Get("workspaces", &b.workspaces)
 	overviewClick := gtk.NewGestureClick()
 	overviewClick.SetButton(3)
@@ -397,6 +402,9 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
+	if name == snap.FocusedMonitor {
+		s.syncAppMenu()
+	}
 }
 
 // scrollWorkspaces goes n notches' way (down the next, up the previous)

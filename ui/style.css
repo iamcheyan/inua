@@ -183,6 +183,7 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .bar .island .workspaces button.active { background: @t1; }
 .bar .island .workspaces button.focused { min-width: 18px; background: @accent; }
 .bar .island .workspaces button.urgent { background: @danger; }
+.bar .island .app-menu button { min-height: 24px; min-width: 0; padding: 0 5px; }
 
 /* min-width: 0 too, else GTK's icon buttons are wider than the bell. */
 .bar .island button.status, .bar .island button.passwords, .bar .island button.clipboard, .bar .island button.notes, .bar .island button.voice, .bar .island button.clock-button, .bar .island .tray button {

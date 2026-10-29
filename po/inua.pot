@@ -8002,7 +8002,7 @@ msgid "Notification center"
 msgstr ""
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:126
+#: ui/bar.ui:135
 msgid "Clipboard history"
 msgstr ""
 
@@ -8062,7 +8062,7 @@ msgstr ""
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:173
-#: ui/bar.ui:167
+#: ui/bar.ui:176
 #: ui/settings.ui:6326
 msgid "Dictation"
 msgstr ""
@@ -8210,7 +8210,7 @@ msgid "Calculator"
 msgstr ""
 
 #: internal/lightui/apps.go:20
-#: ui/bar.ui:55
+#: ui/bar.ui:64
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr ""
@@ -13701,7 +13701,7 @@ msgstr ""
 
 #: internal/termui/prefs.go:123
 #: internal/ui/notify.go:324
-#: ui/bar.ui:137
+#: ui/bar.ui:146
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr ""
@@ -14092,11 +14092,11 @@ msgstr ""
 msgid "The passphrases do not match."
 msgstr ""
 
-#: internal/ui/bar.go:446
+#: internal/ui/bar.go:454
 msgid "Workspace %s"
 msgstr ""
 
-#: internal/ui/bar.go:459
+#: internal/ui/bar.go:467
 msgid "WORKSPACE"
 msgstr ""
 
@@ -14484,7 +14484,7 @@ msgid "Search every entry"
 msgstr ""
 
 #: internal/ui/passwords.go:279
-#: ui/bar.ui:116
+#: ui/bar.ui:125
 #: ui/settings.ui:1418
 msgid "Passwords"
 msgstr ""
@@ -17225,11 +17225,11 @@ msgstr ""
 msgid "Discard the recording"
 msgstr ""
 
-#: ui/bar.ui:85
+#: ui/bar.ui:94
 msgid "Stop recording"
 msgstr ""
 
-#: ui/bar.ui:182
+#: ui/bar.ui:191
 msgid "Control Center"
 msgstr ""
 
