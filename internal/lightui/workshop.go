@@ -214,7 +214,7 @@ func (a *workshopApp) start() {
 	a.sess = s
 	cfg, _, _ := config.Load(config.DefaultPath())
 	go func() {
-		err := s.Start(i18n.Lang(), cfg.Style.Theme)
+		err := s.Start(i18n.Lang(), cfg.Style.ForApps())
 		if err != nil {
 			_, logText := s.Why()
 			gtkx.Post(func() {

@@ -286,7 +286,7 @@ func (c *Ctx) loadStyle() {
 		gtk.StyleContextAddProviderForDisplay(d, c.css, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION))
 		gtk.StyleContextAddProviderForDisplay(d, c.userCSS, uint32(gtk.STYLE_PROVIDER_PRIORITY_USER))
 	}
-	theme := cmp.Or(cfg.Style.Theme, "yoru")
+	theme := cfg.Style.ForApps()
 	if t, ok := c.v.(Themed); ok && t.Theme() != "" {
 		theme = t.Theme() // an app with a look of its own
 	}

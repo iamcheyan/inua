@@ -28,7 +28,7 @@ func themeChoices(c *appui.Ctx) []choice {
 	if err != nil {
 		cfg = config.Default()
 	}
-	out := []choice{{"", i18n.Tf("As inua (%s)", cmp.Or(cfg.Style.Theme, "yoru")), i18n.T("The window changes with inua's theme")}}
+	out := []choice{{"", i18n.Tf("As inua (%s)", cfg.Style.ForApps()), i18n.T("The window changes with inua's theme")}}
 	for _, name := range cfg.ThemeNames() {
 		ch := choice{name, name, i18n.T("A theme of your own")}
 		if slices.Contains(config.Themes, name) {
@@ -49,7 +49,7 @@ func themeColors(c *appui.Ctx, name string) map[string]string {
 	if err != nil {
 		cfg = config.Default()
 	}
-	name = cmp.Or(name, cfg.Style.Theme, "yoru")
+	name = cmp.Or(name, cfg.Style.ForApps())
 	return config.ThemeColors(cfg.ThemeCSS(name, c.ReadUI))
 }
 

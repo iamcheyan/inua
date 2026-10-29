@@ -71,7 +71,7 @@ func settingsNow() (config.Config, settings.Settings) {
 
 // windowTheme is inua-term's window theme: its own, else inua's.
 func windowTheme(cfg config.Config, set settings.Settings) string {
-	return cmp.Or(set.Look.Theme, cfg.Style.Theme, config.Default().Style.Theme)
+	return cmp.Or(set.Look.Theme, cfg.Style.ForApps())
 }
 
 func readLook() look {

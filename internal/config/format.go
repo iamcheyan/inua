@@ -20,7 +20,7 @@ func Format(c Config) string {
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
-		q(c.Style.Theme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS),
+		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS),
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		c.Background.Generate,
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
@@ -280,6 +280,12 @@ position = %s
 # inua init, lists them all); the others come from yoru, or from the
 # built-in theme it names.
 theme = %s
+
+# The apps' colour theme, one of the above: inua's apps (Files, the
+# terminal, the viewer …) and whether other apps are asked to be light or
+# dark. "" (the default) follows theme; the bar, dock, launcher, control
+# center and settings keep theme.
+app_theme = %s
 
 # Icons of the bar, control center, launcher and settings:
 #   "phosphor"  Phosphor's line icons, built in (the default)

@@ -858,3 +858,22 @@ scale = 2
 		t.Error("lid_off is on by default")
 	}
 }
+
+// The apps' theme follows the bar's unless set; an unknown one is dropped.
+func TestAppTheme(t *testing.T) {
+	c, w, err := Load(write(t, "[style]\ntheme = \"washi\"\n"))
+	if err != nil || len(w) != 0 {
+		t.Fatalf("err=%v warnings=%v", err, w)
+	}
+	if got := c.Style.ForApps(); got != "washi" {
+		t.Errorf("unset: apps get %q, want washi", got)
+	}
+	c, w, _ = Load(write(t, "[style]\ntheme = \"washi\"\napp_theme = \"rinko\"\n"))
+	if len(w) != 0 || c.Style.ForApps() != "rinko" || c.Style.Theme != "washi" {
+		t.Errorf("set: theme %q, apps %q, warnings %v", c.Style.Theme, c.Style.ForApps(), w)
+	}
+	c, w, _ = Load(write(t, "[style]\ntheme = \"washi\"\napp_theme = \"nope\"\n"))
+	if len(w) != 1 || c.Style.ForApps() != "washi" {
+		t.Errorf("unknown: apps %q, warnings %v", c.Style.ForApps(), w)
+	}
+}

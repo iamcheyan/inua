@@ -140,6 +140,12 @@ position = "bottom-center"
 # built-in theme it names.
 theme = "yoru"
 
+# The apps' colour theme, one of the above: inua's apps (Files, the
+# terminal, the viewer …) and whether other apps are asked to be light or
+# dark. "" (the default) follows theme; the bar, dock, launcher, control
+# center and settings keep theme.
+app_theme = ""
+
 # Icons of the bar, control center, launcher and settings:
 #   "phosphor"  Phosphor's line icons, built in (the default)
 #   "system"    the system's icon theme
