@@ -219,3 +219,12 @@ func TestHostURL(t *testing.T) {
 		}
 	}
 }
+
+func TestPageURL(t *testing.T) {
+	if u, _ := PageURL("lobby.example.org/games?key=x", "/t/3/"); u != "https://lobby.example.org/games/t/3/" {
+		t.Errorf("page %s", u)
+	}
+	if u, _ := WatchURL("127.0.0.1:7340"); u != "ws://127.0.0.1:7340/ws" {
+		t.Errorf("watch %s", u)
+	}
+}

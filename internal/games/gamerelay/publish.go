@@ -42,7 +42,7 @@ type Control struct {
 	// table free).
 	Key    string  `json:"key,omitempty"`
 	Token  string  `json:"token,omitempty"` // a table to have back, after a drop
-	Table  int     `json:"table,omitempty"`
+	Table  int     `json:"table,omitempty"` // in a hello, the table wanted; in a table, the one given
 	URL    string  `json:"url,omitempty"`
 	Text   string  `json:"text,omitempty"`
 	Status *Status `json:"status,omitempty"`
@@ -53,6 +53,7 @@ type Control struct {
 // browsers the lobby passes on.
 type Publication struct {
 	lobby, key string
+	want       int // the table wanted
 	handler    http.Handler
 	notify     func()
 	cancel     context.CancelFunc
@@ -68,17 +69,24 @@ type Publication struct {
 	ended  bool // turned away for good
 }
 
-// Publish publishes a game's handler at the lobby at addr (a lobby's
+// Publish publishes a game's handler at the lobby at addr, at its first
+// free table: PublishAt's table 0.
+func Publish(addr string, h http.Handler, notify func()) (*Publication, error) {
+	return PublishAt(addr, 0, h, notify)
+}
+
+// PublishAt publishes a game's handler at the lobby at addr (a lobby's
 // address as the user gives it: lobby.example.org, http://…, with
 // ?key=… when the lobby asks for one). notify is called, on a goroutine
-// of the Publication's, each time Table changes.
-func Publish(addr string, h http.Handler, notify func()) (*Publication, error) {
+// of the Publication's, each time Table changes. table is the table
+// wanted, when free; 0, or taken, for the first free one.
+func PublishAt(addr string, table int, h http.Handler, notify func()) (*Publication, error) {
 	u, key, err := HostURL(addr)
 	if err != nil {
 		return nil, err
 	}
 	ctx, cancel := context.WithCancel(context.Background())
-	p := &Publication{lobby: u, key: key, handler: h, notify: notify, cancel: cancel, nudge: make(chan struct{}, 1)}
+	p := &Publication{lobby: u, key: key, want: table, handler: h, notify: notify, cancel: cancel, nudge: make(chan struct{}, 1)}
 	go p.run(ctx)
 	return p, nil
 }
@@ -87,9 +95,40 @@ func Publish(addr string, h http.Handler, notify func()) (*Publication, error) {
 // key in it: https unless it says http, or names a port or a local
 // address.
 func HostURL(addr string) (string, string, error) {
+	u, key, err := lobbyURL(addr, "/host")
+	if err != nil {
+		return "", "", err
+	}
+	u.Scheme = map[string]string{"http": "ws", "https": "wss"}[u.Scheme]
+	return u.String(), key, nil
+}
+
+// PageURL is a lobby's page at path ("/", "/t/3/"), for a browser.
+func PageURL(addr, path string) (string, error) {
+	u, _, err := lobbyURL(addr, path)
+	if err != nil {
+		return "", err
+	}
+	return u.String(), nil
+}
+
+// WatchURL is the WebSocket a lobby tells its tables on.
+func WatchURL(addr string) (string, error) {
+	u, _, err := lobbyURL(addr, "/ws")
+	if err != nil {
+		return "", err
+	}
+	u.Scheme = map[string]string{"http": "ws", "https": "wss"}[u.Scheme]
+	return u.String(), nil
+}
+
+// lobbyURL is path at a lobby's address as the user gives it
+// (lobby.example.org, http://…, with ?key=…), and the key: https unless
+// it says http, or names a port or a local address.
+func lobbyURL(addr, path string) (*url.URL, string, error) {
 	addr = strings.TrimSpace(addr)
 	if addr == "" {
-		return "", "", errors.New(i18n.T("Give the lobby's address."))
+		return nil, "", errors.New(i18n.T("Give the lobby's address."))
 	}
 	if !strings.Contains(addr, "://") {
 		scheme := "https://"
@@ -104,20 +143,20 @@ func HostURL(addr string) (string, string, error) {
 	}
 	u, err := url.Parse(addr)
 	if err != nil || u.Host == "" {
-		return "", "", errors.New(i18n.Tf("%s is not a lobby's address.", addr))
+		return nil, "", errors.New(i18n.Tf("%s is not a lobby's address.", addr))
 	}
 	switch u.Scheme {
 	case "http", "ws":
-		u.Scheme = "ws"
+		u.Scheme = "http"
 	case "https", "wss":
-		u.Scheme = "wss"
+		u.Scheme = "https"
 	default:
-		return "", "", errors.New(i18n.Tf("%s is not a lobby's address.", addr))
+		return nil, "", errors.New(i18n.Tf("%s is not a lobby's address.", addr))
 	}
 	key := u.Query().Get("key")
-	u.Path = strings.TrimSuffix(u.Path, "/") + "/host"
-	u.RawQuery, u.Fragment = "", ""
-	return u.String(), key, nil
+	u.Path = strings.TrimSuffix(u.Path, "/") + path
+	u.RawPath, u.RawQuery, u.Fragment = "", "", ""
+	return u, key, nil
 }
 
 // Table is the table the game is at and its page, or why it is at none:
@@ -192,7 +231,7 @@ func (p *Publication) once(ctx context.Context) error {
 	sess := NewSession(ws, true)
 	defer sess.Close()
 	p.mu.Lock()
-	hello := Control{T: "hello", Key: p.key, Token: p.token}
+	hello := Control{T: "hello", Key: p.key, Token: p.token, Table: p.want}
 	p.mu.Unlock()
 	b, _ := json.Marshal(hello)
 	if err := sess.SendControl(b); err != nil {

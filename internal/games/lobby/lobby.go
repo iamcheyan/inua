@@ -174,7 +174,7 @@ func (l *Lobby) serveHost(w http.ResponseWriter, r *http.Request) {
 		bye(gamerelay.ByeKey)
 		return
 	}
-	t := l.seat(sess, hello.Token)
+	t := l.seat(sess, hello.Token, hello.Table)
 	if t == nil {
 		bye(gamerelay.ByeFull)
 		return
@@ -201,9 +201,9 @@ func (l *Lobby) serveHost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// seat gives a desktop its table: the one its token held, else the
-// first free; nil when none is.
-func (l *Lobby) seat(sess *gamerelay.Session, token string) *table {
+// seat gives a desktop its table: the one its token held, else the one it
+// wants if free, else the first free; nil when none is.
+func (l *Lobby) seat(sess *gamerelay.Session, token string, want int) *table {
 	proxy, closeIdle := proxyTo(sess)
 	go func() { <-sess.Done(); closeIdle() }()
 	l.mu.Lock()
@@ -216,6 +216,10 @@ func (l *Lobby) seat(sess *gamerelay.Session, token string) *table {
 			}
 			break
 		}
+	}
+	if t == nil && want >= 1 && want <= len(l.tables) && l.tables[want-1].sess == nil && l.tables[want-1].token == "" {
+		t = l.tables[want-1]
+		t.token, t.status = newToken(), nil
 	}
 	if t == nil {
 		for _, x := range l.tables {
@@ -275,24 +279,28 @@ func (l *Lobby) tableURL(r *http.Request, n int) string {
 	return base + "/t/" + strconv.Itoa(n) + "/"
 }
 
-// tableMsg is a table as the page lists it.
-type tableMsg struct {
+// Table is a table as the lobby's page and its watchers see it: free when
+// Status is nil and not Away.
+type Table struct {
 	N      int               `json:"n"`
 	Away   bool              `json:"away"` // its desktop's connection dropped
 	Status *gamerelay.Status `json:"status"`
 }
 
-func (l *Lobby) tablesMsg() any {
+// Tables is what a watcher is sent each time a table changes.
+type Tables struct {
+	T      string  `json:"t"` // "tables"
+	Tables []Table `json:"tables"`
+}
+
+func (l *Lobby) tablesMsg() Tables {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	out := make([]tableMsg, len(l.tables))
+	out := make([]Table, len(l.tables))
 	for i, t := range l.tables {
-		out[i] = tableMsg{N: t.n, Away: t.sess == nil && t.token != "", Status: t.status}
+		out[i] = Table{N: t.n, Away: t.sess == nil && t.token != "", Status: t.status}
 	}
-	return struct {
-		T      string     `json:"t"`
-		Tables []tableMsg `json:"tables"`
-	}{"tables", out}
+	return Tables{"tables", out}
 }
 
 // serveWatch keeps a browser's lobby page up to date.

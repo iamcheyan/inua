@@ -1,6 +1,7 @@
 package lobby
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -129,7 +130,7 @@ func TestPublish(t *testing.T) {
 	page.SetReadDeadline(time.Now().Add(5 * time.Second))
 	for {
 		var tm struct {
-			Tables []tableMsg `json:"tables"`
+			Tables []Table `json:"tables"`
 		}
 		if err := page.ReadJSON(&tm); err != nil {
 			t.Fatal(err)
@@ -200,5 +201,60 @@ func TestTexts(t *testing.T) {
 	}
 	if code, body := get(t, srv.URL+"/"); code != 200 || !strings.Contains(body, "lobby.js") {
 		t.Errorf("page %d", code)
+	}
+}
+
+// A desktop may ask for a table: it has it when free, else the first free.
+func TestWantedTable(t *testing.T) {
+	srv, _ := newLobby(t, Options{Tables: 3})
+	at := func(want int) int {
+		t.Helper()
+		ready := make(chan struct{}, 8)
+		p, err := gamerelay.PublishAt(srv.URL, want, game, func() { ready <- struct{}{} })
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(p.Close)
+		for {
+			select {
+			case <-ready:
+				if n, _, err := p.Table(); n > 0 || err != nil {
+					return n
+				}
+			case <-time.After(5 * time.Second):
+				t.Fatal("no table")
+			}
+		}
+	}
+	if n := at(3); n != 3 {
+		t.Errorf("wanted 3, at %d", n)
+	}
+	if n := at(3); n != 1 {
+		t.Errorf("3 taken: at %d", n)
+	}
+}
+
+// Watch follows the tables as the page does.
+func TestWatch(t *testing.T) {
+	srv, _ := newLobby(t, Options{Tables: 2})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	got := make(chan []Table, 8)
+	go Watch(ctx, srv.URL, func(ts []Table) { got <- ts })
+	if ts := <-got; len(ts) != 2 || ts[0].Status != nil {
+		t.Fatalf("tables %+v", ts)
+	}
+	p, _, _, _ := publish(t, srv, "")
+	p.Set(gamerelay.Status{Game: "small-fortune", Code: "ABC", State: "lobby"})
+	deadline := time.After(5 * time.Second)
+	for {
+		select {
+		case ts := <-got:
+			if ts[0].Status != nil && ts[0].Status.Code == "ABC" {
+				return
+			}
+		case <-deadline:
+			t.Fatal("never saw the game")
+		}
 	}
 }
