@@ -490,7 +490,8 @@ func (p *fortune) setupPage() *gtk.Box {
 	}
 	p.onAddrChanged = func(uintptr, uintptr) { p.fitSeats() }
 	p.lobbyAddr = lobbyEntry(&p.onAddr)
-	p.lobbyAddr.SetVisible(false)
+	p.lobbyOn = p.lobbyOn || lobbyFirst() // started from the Game Lobby window to host at its table
+	p.lobbyAddr.SetVisible(p.lobbyOn)
 	gtkx.ConnectChanged(p.lobbyAddr, &p.onAddrChanged)
 	players(i18n.T("At a lobby"), toggle(p.lobbyOn, &p.onLobbyRule))
 	gtkx.Append(left, &p.lobbyAddr.Widget)

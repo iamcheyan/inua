@@ -15,6 +15,13 @@ so it needs no address others can reach and no open port.
   well. The address is kept in `~/.local/share/inua/game-lobby.json`.
 - **Joining.** Open the lobby, pick a table and **Join** (or **Watch**).
   That opens the table's game page, the same page as on the network.
+- **Game Lobby window.** The dock drawer's **Game Lobby** (Play; `inua-games
+  game-lobby`) shows a lobby's tables as they change. **Join** and
+  **Watch** open a table in the browser; a free table's **Small Fortune**
+  and **Chinese Checkers** buttons start that game here with **At a
+  lobby** on, set to take that table (`inua-games -lobby ADDRESS
+  -lobby-table N GAME`). If the game is already open, it comes forward as
+  it is.
 - **Setting up.** Only a desktop opens a game. When no one plays at the
   host's screen, the first to join from a browser sets the game up and
   starts it: in Chinese Checkers the seats, teams and rule; in Small

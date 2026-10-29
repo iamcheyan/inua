@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Game Lobby
+Comment=See the tables at a game lobby, join a game in the browser, or host one
+Exec=inua-games game-lobby
+Icon=io.github.lyricat.Inua.GameLobby
+Categories=Game;
+Keywords=games;lobby;tables;online;multiplayer;
+StartupWMClass=io.github.lyricat.Inua.GameLobby
+StartupNotify=true

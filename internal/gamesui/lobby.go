@@ -21,9 +21,36 @@ type lobbyPrefs struct {
 }
 
 func lobbyAddress() string {
+	if hostAt.addr != "" {
+		return hostAt.addr
+	}
 	var p lobbyPrefs
 	store.Load("game-lobby", &p)
 	return p.Address
+}
+
+func saveLobbyAddress(addr string) { store.Save("game-lobby", lobbyPrefs{addr}) }
+
+// hostAt is the lobby and table inua-games was started to host its game
+// at (HostAt): the Game Lobby window's Host buttons.
+var hostAt struct {
+	addr  string
+	table int
+	open  bool // the setup is still to open with At a lobby on
+}
+
+// HostAt starts the game set to host at a lobby's table: its setup opens
+// with At a lobby on, at addr, and the game asks for table when it takes
+// one (any free one when that is taken).
+func HostAt(addr string, table int) {
+	hostAt.addr, hostAt.table, hostAt.open = strings.TrimSpace(addr), table, addr != ""
+}
+
+// lobbyFirst reports, once, whether the setup opens with At a lobby on.
+func lobbyFirst() bool {
+	on := hostAt.open
+	hostAt.open = false
+	return on
 }
 
 // lobbyEntry is where the user gives the lobby's address; activate runs
@@ -42,9 +69,16 @@ func lobbyEntry(activate *func(gtk.Entry)) *gtk.Entry {
 // address; changed runs on the main thread each time its table changes.
 func publish(addr string, h http.Handler, changed func()) (*gamerelay.Publication, error) {
 	addr = strings.TrimSpace(addr)
-	pub, err := gamerelay.Publish(addr, h, func() { gtkx.Post(changed) })
-	if err == nil && addr != lobbyAddress() {
-		store.Save("game-lobby", lobbyPrefs{addr})
+	table := 0
+	if addr == hostAt.addr {
+		table, hostAt.table = hostAt.table, 0 // once: a table again is any table
+	}
+	pub, err := gamerelay.PublishAt(addr, table, h, func() { gtkx.Post(changed) })
+	if err == nil {
+		var p lobbyPrefs
+		if store.Load("game-lobby", &p); p.Address != addr {
+			saveLobbyAddress(addr)
+		}
 	}
 	return pub, err
 }

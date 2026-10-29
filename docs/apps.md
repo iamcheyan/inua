@@ -362,7 +362,7 @@ files adds them (Music) or plays them (Video).
 
 ## Games
 
-Four games, each with its own launcher in the dock's Play
+Four games and the Game Lobby, each with its own launcher in the dock's Play
 section, run by `inua-games NAME`. Every window has its rules behind ⓘ,
 its keys along the bottom, and New game (N). Best scores are kept in
 `~/.local/share/inua/games.json`.
@@ -373,6 +373,7 @@ its keys along the bottom, and New game (N). Best scores are kept in
 | **Space Pinball** (`space-pinball`) | After the Windows table: missions and ranks, a hyperspace ramp, multiball, a skill shot, nudge and tilt. P pauses, M mutes (sound through `pw-cat`). |
 | **Small Fortune** (`small-fortune`) | A property game for two to four: people at the screen, people in a browser, and computer players. |
 | **Chinese Checkers** (`chinese-checkers`) | Stern-Halma for two, three, four or six, alone or in teams: people at the screen, people in a browser, the computer and the AI. |
+| **Game Lobby** (`game-lobby`) | A game lobby's tables, live: join or watch a game in the browser, or host one at a free table. See [game-lobby.md](game-lobby.md). |
 
 ### Small Fortune
 

@@ -408,6 +408,9 @@ func (p *checkers) reset() {
 	p.round.GetParent().SetVisible(false)
 	p.pages.SetVisibleChildName("setup")
 	p.fill()
+	if lobbyFirst() {
+		p.lobby.SetActive(true) // started from the Game Lobby window to host at its table
+	}
 }
 
 // changed: the lobby or the game changed (a visitor came, a move was made).

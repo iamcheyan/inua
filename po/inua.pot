@@ -506,10 +506,11 @@ msgstr ""
 #: internal/games/checkersnet/host.go:326
 #: internal/games/checkersnet/texts.go:31
 #: internal/games/lobby/texts.go:27
-#: internal/gamesui/checkers.go:459
-#: internal/gamesui/checkers.go:554
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:557
 #: internal/gamesui/fortune.go:424
 #: internal/gamesui/fortune_ai.go:199
+#: internal/gamesui/lobbywin.go:257
 #: internal/mailui/panel.go:51
 #: internal/mailui/panel.go:309
 #: internal/mailui/settings.go:215
@@ -2972,7 +2973,7 @@ msgid "Runs in %s."
 msgstr ""
 
 #: internal/diskui/details.go:578
-#: internal/gamesui/checkers.go:727
+#: internal/gamesui/checkers.go:730
 #: internal/lightui/gpg.go:884
 #: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
@@ -3252,7 +3253,7 @@ msgstr ""
 
 #: internal/filesui/archive.go:131
 #: internal/games/checkersnet/texts.go:34
-#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:462
 msgid "Normal"
 msgstr ""
 
@@ -4059,6 +4060,7 @@ msgstr ""
 
 #: internal/filesui/remote.go:160
 #: internal/filesui/remotesetup.go:132
+#: internal/gamesui/lobbywin.go:55
 #: internal/ui/settings_bluetooth.go:340
 #: internal/ui/settings_wifi.go:414
 #: internal/ui/settings_wifi.go:439
@@ -4711,6 +4713,8 @@ msgstr ""
 #: internal/games/checkersnet/texts.go:12
 #: internal/games/lobby/texts.go:31
 #: internal/gamesui/catalog.go:30
+#: internal/gamesui/lobbywin.go:173
+#: internal/gamesui/lobbywin.go:235
 #: config/apps/io.github.lyricat.Inua.ChineseCheckers.desktop:3
 msgid "Chinese Checkers"
 msgstr ""
@@ -4725,6 +4729,7 @@ msgstr ""
 #: internal/games/checkersnet/texts.go:14
 #: internal/games/fortunenet/texts.go:19
 #: internal/games/lobby/texts.go:20
+#: internal/gamesui/lobbywin.go:292
 #: internal/mailui/reader.go:1037
 msgid "Join"
 msgstr ""
@@ -4732,6 +4737,7 @@ msgstr ""
 #: internal/games/checkersnet/texts.go:15
 #: internal/games/fortunenet/texts.go:20
 #: internal/games/lobby/texts.go:21
+#: internal/gamesui/lobbywin.go:294
 msgid "Watch"
 msgstr ""
 
@@ -4806,14 +4812,16 @@ msgstr ""
 #: internal/games/checkersnet/texts.go:28
 #: internal/games/fortunenet/texts.go:27
 #: internal/games/lobby/texts.go:24
+#: internal/gamesui/lobbywin.go:256
 msgid "at the host's screen"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:29
 #: internal/games/fortunenet/texts.go:28
 #: internal/games/lobby/texts.go:25
-#: internal/gamesui/checkers.go:484
+#: internal/gamesui/checkers.go:487
 #: internal/gamesui/fortune_host.go:176
+#: internal/gamesui/lobbywin.go:256
 msgid "in a browser"
 msgstr ""
 
@@ -4822,18 +4830,18 @@ msgid "the default profile"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:33
-#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:462
 msgid "Easy"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:35
-#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:462
 msgid "Hard"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:36
-#: internal/gamesui/checkers.go:462
-#: internal/gamesui/checkers.go:1035
+#: internal/gamesui/checkers.go:465
+#: internal/gamesui/checkers.go:1038
 msgid "Team %s"
 msgstr ""
 
@@ -4849,7 +4857,7 @@ msgid "sets up the game"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:39
-#: internal/gamesui/checkers.go:1044
+#: internal/gamesui/checkers.go:1047
 msgid "away, the computer plays"
 msgstr ""
 
@@ -4875,7 +4883,7 @@ msgstr ""
 #: internal/gamesui/checkers.go:194
 #: internal/gamesui/checkers.go:234
 #: internal/gamesui/fortune.go:330
-#: internal/gamesui/fortune.go:1175
+#: internal/gamesui/fortune.go:1176
 #: ui/game.ui:76
 msgid "New game"
 msgstr ""
@@ -4887,19 +4895,19 @@ msgstr ""
 
 #: internal/games/checkersnet/texts.go:45
 #: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/checkers.go:1008
-#: internal/gamesui/checkers.go:1015
+#: internal/gamesui/checkers.go:1011
+#: internal/gamesui/checkers.go:1018
 #: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:46
-#: internal/gamesui/checkers.go:1006
+#: internal/gamesui/checkers.go:1009
 msgid "Your turn: pick one of your marbles."
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:47
-#: internal/gamesui/checkers.go:1011
+#: internal/gamesui/checkers.go:1014
 msgid "You are home: move %s's marbles."
 msgstr ""
 
@@ -4912,12 +4920,12 @@ msgid "home"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:50
-#: internal/gamesui/checkers.go:1042
+#: internal/gamesui/checkers.go:1045
 msgid "#%d home"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:51
-#: internal/gamesui/checkers.go:1039
+#: internal/gamesui/checkers.go:1042
 msgid "%d to go"
 msgstr ""
 
@@ -4926,49 +4934,49 @@ msgid "%d hops"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:53
-#: internal/gamesui/checkers.go:941
+#: internal/gamesui/checkers.go:944
 msgid "%s moved"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:54
-#: internal/gamesui/checkers.go:939
+#: internal/gamesui/checkers.go:942
 msgid "%s hopped %d times"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:55
-#: internal/gamesui/checkers.go:937
+#: internal/gamesui/checkers.go:940
 msgid "%s moved %s's marble"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:56
-#: internal/gamesui/checkers.go:944
+#: internal/gamesui/checkers.go:947
 msgid "%s could not move"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:57
-#: internal/gamesui/checkers.go:946
+#: internal/gamesui/checkers.go:949
 msgid "%s is home"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:58
-#: internal/gamesui/checkers.go:971
+#: internal/gamesui/checkers.go:974
 msgid "%s wins"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:59
-#: internal/gamesui/checkers.go:977
+#: internal/gamesui/checkers.go:980
 msgid "%s win"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:60
-#: internal/gamesui/checkers.go:975
-#: internal/gamesui/fortune.go:590
+#: internal/gamesui/checkers.go:978
+#: internal/gamesui/fortune.go:591
 msgid "%s and %s"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:61
-#: internal/gamesui/checkers.go:950
-#: internal/gamesui/checkers.go:1004
+#: internal/gamesui/checkers.go:953
+#: internal/gamesui/checkers.go:1007
 msgid "No one got home in time: a draw."
 msgstr ""
 
@@ -5032,13 +5040,13 @@ msgid "Luxury Tax"
 msgstr ""
 
 #: internal/games/fortune.go:314
-#: internal/gamesui/fortune.go:676
+#: internal/gamesui/fortune.go:677
 msgid "You"
 msgstr ""
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/checkers.go:589
-#: internal/gamesui/fortune.go:672
+#: internal/gamesui/checkers.go:592
+#: internal/gamesui/fortune.go:673
 #: internal/gamesui/fortune_host.go:45
 msgid "Player %d"
 msgstr ""
@@ -6718,6 +6726,8 @@ msgstr ""
 #: internal/games/fortunenet/texts.go:17
 #: internal/games/lobby/texts.go:30
 #: internal/gamesui/catalog.go:26
+#: internal/gamesui/lobbywin.go:173
+#: internal/gamesui/lobbywin.go:234
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:3
 msgid "Small Fortune"
 msgstr ""
@@ -6733,12 +6743,12 @@ msgid "Room for %d more"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:30
-#: internal/gamesui/fortune.go:1141
+#: internal/gamesui/fortune.go:1142
 msgid " · away, the computer plays"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:31
-#: internal/gamesui/fortune.go:1144
+#: internal/gamesui/fortune.go:1145
 msgid " · the AI plays"
 msgstr ""
 
@@ -6754,17 +6764,17 @@ msgstr ""
 
 #: internal/games/fortunenet/texts.go:37
 #: internal/gamesui/fortune.go:271
-#: internal/gamesui/fortune.go:1187
+#: internal/gamesui/fortune.go:1188
 msgid "Roll the dice"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:38
-#: internal/gamesui/fortune.go:1190
+#: internal/gamesui/fortune.go:1191
 msgid "Roll for a double"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:39
-#: internal/gamesui/fortune.go:1190
+#: internal/gamesui/fortune.go:1191
 msgid "Roll for a six"
 msgstr ""
 
@@ -6773,29 +6783,29 @@ msgid "Pay $%d bail"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:41
-#: internal/gamesui/fortune.go:1197
+#: internal/gamesui/fortune.go:1198
 #: internal/gamesui/fortune_panel.go:464
 msgid "Buy it for $%d"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:42
-#: internal/gamesui/fortune.go:1199
+#: internal/gamesui/fortune.go:1200
 msgid "Don't buy"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:43
-#: internal/gamesui/fortune.go:1203
+#: internal/gamesui/fortune.go:1204
 #: internal/gamesui/fortune_panel.go:376
 msgid "Leave the shop"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:44
-#: internal/gamesui/fortune.go:1206
+#: internal/gamesui/fortune.go:1207
 msgid "End turn"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:45
-#: internal/gamesui/fortune.go:1178
+#: internal/gamesui/fortune.go:1179
 msgid "%s is playing…"
 msgstr ""
 
@@ -6810,32 +6820,32 @@ msgid "round %d of %d"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:49
-#: internal/gamesui/fortune.go:1120
+#: internal/gamesui/fortune.go:1121
 msgid "worth $%s"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:50
-#: internal/gamesui/fortune.go:1123
+#: internal/gamesui/fortune.go:1124
 msgid "bankrupt"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:51
-#: internal/gamesui/fortune.go:1125
+#: internal/gamesui/fortune.go:1126
 msgid " · in jail"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:52
-#: internal/gamesui/fortune.go:1132
+#: internal/gamesui/fortune.go:1133
 msgid " · free rent"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:53
-#: internal/gamesui/fortune.go:1135
+#: internal/gamesui/fortune.go:1136
 msgid " · turtle"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:54
-#: internal/gamesui/fortune.go:1138
+#: internal/gamesui/fortune.go:1139
 msgid " · asleep"
 msgstr ""
 
@@ -6993,32 +7003,32 @@ msgid "City"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:92
-#: internal/gamesui/fortune.go:557
+#: internal/gamesui/fortune.go:558
 msgid "Rounds"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:93
-#: internal/gamesui/fortune.go:558
+#: internal/gamesui/fortune.go:559
 msgid "Starting money"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:94
-#: internal/gamesui/fortune.go:559
+#: internal/gamesui/fortune.go:560
 msgid "Dice"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:95
-#: internal/gamesui/fortune.go:559
+#: internal/gamesui/fortune.go:560
 msgid "One die"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:96
-#: internal/gamesui/fortune.go:559
+#: internal/gamesui/fortune.go:560
 msgid "Two dice"
 msgstr ""
 
 #: internal/games/fortunenet/texts.go:97
-#: internal/gamesui/fortune.go:564
+#: internal/gamesui/fortune.go:565
 msgid "Build the day you buy"
 msgstr ""
 
@@ -7104,7 +7114,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: internal/games/fortunenet/texts.go:121
-#: internal/gamesui/fortune.go:1129
+#: internal/gamesui/fortune.go:1130
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] ""
@@ -7123,32 +7133,32 @@ msgid_plural "%d houses"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/gamerelay/publish.go:92
+#: internal/games/gamerelay/publish.go:131
 msgid "Give the lobby's address."
 msgstr ""
 
-#: internal/games/gamerelay/publish.go:107
-#: internal/games/gamerelay/publish.go:115
+#: internal/games/gamerelay/publish.go:146
+#: internal/games/gamerelay/publish.go:154
 msgid "%s is not a lobby's address."
 msgstr ""
 
-#: internal/games/gamerelay/publish.go:188
+#: internal/games/gamerelay/publish.go:227
 msgid "There is no lobby at this address."
 msgstr ""
 
-#: internal/games/gamerelay/publish.go:209
+#: internal/games/gamerelay/publish.go:248
 msgid "The connection to the lobby was lost."
 msgstr ""
 
-#: internal/games/gamerelay/publish.go:248
+#: internal/games/gamerelay/publish.go:287
 msgid "The lobby asks for another key."
 msgstr ""
 
-#: internal/games/gamerelay/publish.go:250
+#: internal/games/gamerelay/publish.go:289
 msgid "Every table at the lobby is taken."
 msgstr ""
 
-#: internal/games/gamerelay/publish.go:252
+#: internal/games/gamerelay/publish.go:291
 msgid "The lobby turned the game away."
 msgstr ""
 
@@ -7161,6 +7171,8 @@ msgid "The table's host does not answer."
 msgstr ""
 
 #: internal/games/lobby/texts.go:9
+#: internal/gamesui/catalog.go:34
+#: config/apps/io.github.lyricat.Inua.GameLobby.desktop:3
 msgid "Game Lobby"
 msgstr ""
 
@@ -7169,10 +7181,12 @@ msgid "Join a game at a table, or watch one. A host opens a game here from Small
 msgstr ""
 
 #: internal/games/lobby/texts.go:11
+#: internal/gamesui/lobbywin.go:181
 msgid "TABLE %d"
 msgstr ""
 
 #: internal/games/lobby/texts.go:12
+#: internal/gamesui/lobbywin.go:230
 #: internal/lightui/sysmon.go:997
 msgid "Free"
 msgstr ""
@@ -7182,41 +7196,51 @@ msgid "A host can open a game here."
 msgstr ""
 
 #: internal/games/lobby/texts.go:14
+#: internal/gamesui/lobbywin.go:225
+#: internal/gamesui/lobbywin.go:241
 msgid "The host’s connection dropped: waiting for it to come back…"
 msgstr ""
 
 #: internal/games/lobby/texts.go:15
+#: internal/gamesui/lobbywin.go:220
 msgid "Reconnecting…"
 msgstr ""
 
 #: internal/games/lobby/texts.go:16
+#: internal/gamesui/lobbywin.go:245
 msgid "Waiting to start"
 msgstr ""
 
 #: internal/games/lobby/texts.go:17
+#: internal/gamesui/lobbywin.go:247
 msgid "Open seats: %d"
 msgstr ""
 
 #: internal/games/lobby/texts.go:18
+#: internal/gamesui/lobbywin.go:251
 msgid "Playing"
 msgstr ""
 
 #: internal/games/lobby/texts.go:19
+#: internal/gamesui/lobbywin.go:253
 msgid "Over"
 msgstr ""
 
 #: internal/games/lobby/texts.go:22
+#: internal/gamesui/lobbywin.go:287
 msgid "%s sets up the game"
 msgstr ""
 
 #: internal/games/lobby/texts.go:23
-#: internal/gamesui/checkers.go:556
+#: internal/gamesui/checkers.go:559
 #: internal/gamesui/fortune.go:424
-#: internal/gamesui/fortune.go:681
+#: internal/gamesui/fortune.go:682
+#: internal/gamesui/lobbywin.go:268
 msgid "Open seat"
 msgstr ""
 
 #: internal/games/lobby/texts.go:26
+#: internal/gamesui/lobbywin.go:257
 msgid "computer"
 msgstr ""
 
@@ -7562,6 +7586,14 @@ msgstr ""
 msgid "click one of your marbles, then where it goes  ·  Escape puts it back  ·  N new game"
 msgstr ""
 
+#: internal/gamesui/catalog.go:35
+msgid "The tables of a game lobby (inua-game-lobby) on the internet, as they change: the game at each, who plays, and the seats open. Join or Watch opens the table's game in the browser. A free table's buttons start Small Fortune or Chinese Checkers here, set to host at that table: set it up and start it, and others join it from the lobby. Give the lobby's address as its host gave it, with ?key=… when the lobby asks for a key to host."
+msgstr ""
+
+#: internal/gamesui/catalog.go:36
+msgid "Enter connects  ·  N connects again"
+msgstr ""
+
 #: internal/gamesui/checkers.go:351
 #: internal/gamesui/fortune.go:476
 msgid "On the network"
@@ -7572,7 +7604,7 @@ msgid "Others join from a browser on this network, with the link or the QR code.
 msgstr ""
 
 #: internal/gamesui/checkers.go:365
-#: internal/gamesui/fortune.go:495
+#: internal/gamesui/fortune.go:496
 msgid "At a lobby"
 msgstr ""
 
@@ -7580,86 +7612,86 @@ msgstr ""
 msgid "Others join from a game lobby on the internet, where the game takes a table."
 msgstr ""
 
-#: internal/gamesui/checkers.go:458
+#: internal/gamesui/checkers.go:461
 msgid "At this screen"
 msgstr ""
 
-#: internal/gamesui/checkers.go:458
+#: internal/gamesui/checkers.go:461
 msgid "Open: someone in a browser"
 msgstr ""
 
-#: internal/gamesui/checkers.go:459
-#: internal/gamesui/checkers.go:459
-#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:462
 msgid "Computer · %s"
 msgstr ""
 
-#: internal/gamesui/checkers.go:486
+#: internal/gamesui/checkers.go:489
 msgid "in a browser · sets up the game"
 msgstr ""
 
-#: internal/gamesui/checkers.go:488
+#: internal/gamesui/checkers.go:491
 #: internal/gamesui/fortune_host.go:180
 msgid "Send away"
 msgstr ""
 
-#: internal/gamesui/checkers.go:522
+#: internal/gamesui/checkers.go:525
 msgid "No one plays at this screen: the first to join from a browser sets the game up, and may start it."
 msgstr ""
 
-#: internal/gamesui/checkers.go:564
-#: internal/gamesui/fortune.go:669
+#: internal/gamesui/checkers.go:567
+#: internal/gamesui/fortune.go:670
 #: internal/gamesui/fortune_host.go:176
 msgid "at this screen"
 msgstr ""
 
-#: internal/gamesui/checkers.go:566
+#: internal/gamesui/checkers.go:569
 msgid "the computer"
 msgstr ""
 
-#: internal/gamesui/checkers.go:570
+#: internal/gamesui/checkers.go:573
 msgid "Asking the AI…"
 msgstr ""
 
-#: internal/gamesui/checkers.go:574
+#: internal/gamesui/checkers.go:577
 msgid "the AI of Settings → AI"
 msgstr ""
 
-#: internal/gamesui/checkers.go:577
+#: internal/gamesui/checkers.go:580
 msgid "the computer, unless the game is on the network"
 msgstr ""
 
-#: internal/gamesui/checkers.go:579
+#: internal/gamesui/checkers.go:582
 msgid "waiting for someone to join"
 msgstr ""
 
-#: internal/gamesui/checkers.go:618
+#: internal/gamesui/checkers.go:621
 msgid "no profile of Settings → AI makes decisions"
 msgstr ""
 
-#: internal/gamesui/checkers.go:698
+#: internal/gamesui/checkers.go:701
 #: internal/gamesui/fortune.go:218
 msgid "JOIN CODE"
 msgstr ""
 
-#: internal/gamesui/checkers.go:728
 #: internal/gamesui/checkers.go:731
+#: internal/gamesui/checkers.go:734
 msgid "Copy link"
 msgstr ""
 
-#: internal/gamesui/checkers.go:770
+#: internal/gamesui/checkers.go:773
 msgid "This computer is on no network a browser could reach it from."
 msgstr ""
 
-#: internal/gamesui/checkers.go:778
+#: internal/gamesui/checkers.go:781
 msgid "Scan the code, or open the link in a browser."
 msgstr ""
 
-#: internal/gamesui/checkers.go:780
+#: internal/gamesui/checkers.go:783
 msgid "Scan the code, or open the link in a browser on this network."
 msgstr ""
 
-#: internal/gamesui/checkers.go:1053
+#: internal/gamesui/checkers.go:1056
 msgid "Join code %s"
 msgstr ""
 
@@ -7667,35 +7699,35 @@ msgstr ""
 msgid "Hot seat"
 msgstr ""
 
-#: internal/gamesui/fortune.go:501
+#: internal/gamesui/fortune.go:502
 msgid "MAP"
 msgstr ""
 
-#: internal/gamesui/fortune.go:682
+#: internal/gamesui/fortune.go:683
 msgid "empty: no one plays here"
 msgstr ""
 
-#: internal/gamesui/fortune.go:684
+#: internal/gamesui/fortune.go:685
 msgid "for a visitor in a browser"
 msgstr ""
 
-#: internal/gamesui/fortune.go:755
+#: internal/gamesui/fortune.go:756
 msgid "Open the game at the lobby"
 msgstr ""
 
-#: internal/gamesui/fortune.go:758
+#: internal/gamesui/fortune.go:759
 msgid "Open the game to the network"
 msgstr ""
 
-#: internal/gamesui/fortune.go:760
+#: internal/gamesui/fortune.go:761
 msgid "Start in %s"
 msgstr ""
 
-#: internal/gamesui/fortune.go:1180
+#: internal/gamesui/fortune.go:1181
 msgid "%s is thinking…"
 msgstr ""
 
-#: internal/gamesui/fortune.go:1191
+#: internal/gamesui/fortune.go:1192
 msgid "Pay $50 bail"
 msgstr ""
 
@@ -7888,24 +7920,49 @@ msgstr ""
 msgid "Plays on the square in focus: %s."
 msgstr ""
 
-#: internal/gamesui/lobby.go:34
+#: internal/gamesui/lobby.go:61
 msgid "The lobby's address"
 msgstr ""
 
-#: internal/gamesui/lobby.go:35
+#: internal/gamesui/lobby.go:62
 msgid "As the lobby's host gave it: lobby.example.org, with ?key=… when it asks for a key."
 msgstr ""
 
-#: internal/gamesui/lobby.go:58
+#: internal/gamesui/lobby.go:92
 msgid "At table %d of the lobby."
 msgstr ""
 
-#: internal/gamesui/lobby.go:60
+#: internal/gamesui/lobby.go:94
 msgid "Not at the lobby: %v"
 msgstr ""
 
-#: internal/gamesui/lobby.go:62
+#: internal/gamesui/lobby.go:96
+#: internal/gamesui/lobbywin.go:105
 msgid "Connecting to the lobby…"
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:62
+msgid "Open in the browser"
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:97
+msgid "Give the address of a game lobby to see its tables."
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:128
+msgid "The lobby cannot be reached: %v. Trying again…"
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:159
+msgid "Games at %d of %d tables; %d free."
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:231
+msgid "Host a game here: it opens set to this table."
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:324
+msgid "The browser could not be opened: %v"
 msgstr ""
 
 #: internal/gamesui/mines.go:37
@@ -8147,7 +8204,7 @@ msgid "SPACE PINBALL"
 msgstr ""
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:311
+#: internal/shell/dock.go:312
 #: ui/settings.ui:1946
 msgid "Launcher"
 msgstr ""
@@ -8185,7 +8242,7 @@ msgstr ""
 #: internal/hyprconf/keys.go:31
 #: internal/mailui/picker.go:155
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:310
+#: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
 #: ui/control.ui:58
@@ -9484,7 +9541,7 @@ msgstr ""
 #: internal/lightui/sysmon.go:149
 #: internal/lightui/sysmon.go:1039
 #: internal/shell/dock.go:286
-#: internal/shell/dock.go:328
+#: internal/shell/dock.go:329
 msgid "NETWORK"
 msgstr ""
 
@@ -12525,7 +12582,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr ""
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:310
+#: internal/shell/dock.go:311
 msgid "inua's settings"
 msgstr ""
 
@@ -12684,12 +12741,12 @@ msgid "Web search"
 msgstr ""
 
 #: internal/shell/dock.go:264
-#: internal/shell/dock.go:328
+#: internal/shell/dock.go:329
 msgid "EVERYDAY"
 msgstr ""
 
 #: internal/shell/dock.go:274
-#: internal/shell/dock.go:328
+#: internal/shell/dock.go:329
 msgid "TOOLS"
 msgstr ""
 
@@ -12697,43 +12754,43 @@ msgstr ""
 msgid "PLAY"
 msgstr ""
 
-#: internal/shell/dock.go:297
-#: internal/shell/dock.go:330
+#: internal/shell/dock.go:298
+#: internal/shell/dock.go:331
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr ""
 
-#: internal/shell/dock.go:311
+#: internal/shell/dock.go:312
 msgid "Find apps, windows and answers"
 msgstr ""
 
-#: internal/shell/dock.go:312
+#: internal/shell/dock.go:313
 #: internal/ui/screenshot.go:814
 #: ui/settings.ui:1906
 msgid "Screenshot"
 msgstr ""
 
-#: internal/shell/dock.go:312
+#: internal/shell/dock.go:313
 msgid "Capture an area, a window or a screen"
 msgstr ""
 
-#: internal/shell/dock.go:329
+#: internal/shell/dock.go:330
 msgid "DEVELOPMENT"
 msgstr ""
 
-#: internal/shell/dock.go:329
+#: internal/shell/dock.go:330
 msgid "MEDIA"
 msgstr ""
 
-#: internal/shell/dock.go:329
+#: internal/shell/dock.go:330
 msgid "GAMES"
 msgstr ""
 
-#: internal/shell/dock.go:330
+#: internal/shell/dock.go:331
 msgid "OTHER"
 msgstr ""
 
-#: internal/shell/dock.go:355
+#: internal/shell/dock.go:356
 msgid "WORKSHOP"
 msgstr ""
 
@@ -19922,6 +19979,14 @@ msgstr ""
 
 #: config/apps/io.github.lyricat.Inua.GPG.desktop:20
 msgid "gpg;gnupg;pgp;openpgp;encrypt;decrypt;sign;signature;key;"
+msgstr ""
+
+#: config/apps/io.github.lyricat.Inua.GameLobby.desktop:4
+msgid "See the tables at a game lobby, join a game in the browser, or host one"
+msgstr ""
+
+#: config/apps/io.github.lyricat.Inua.GameLobby.desktop:8
+msgid "games;lobby;tables;online;multiplayer;"
 msgstr ""
 
 #: config/apps/io.github.lyricat.Inua.Mail.desktop:10
