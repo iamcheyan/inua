@@ -44,7 +44,7 @@ func (a *App) menuBar() {
 	}
 	bar := appui.NewMenuBar(a.c, groups)
 	a.c.App.SetMenubar(&bar.Model.MenuModel)
-	a.win.SetShowMenubar(true)
+	a.win.SetShowMenubar(false)
 }
 
 // focusedPane is the pane that has the keys, or nil.

@@ -70,6 +70,7 @@ func NewMenuBar(c *Ctx, groups []MenuGroup) *MenuBar {
 		submenu.Unref()
 	}
 	widget := gtk.NewPopoverMenuBarFromModel(&bar.MenuModel)
+	widget.SetVisible(false) // menus are presented by the shell, not duplicated in the app window
 	widget.InsertActionGroup("app", actions)
 	m := &MenuBar{Model: bar, Widget: widget, group: actions, actions: known}
 	m.publish(groups)

@@ -133,7 +133,8 @@ func (s *shellUI) appendAppMenu(b *bar, entry appmenu.Entry, pid int) {
 	button.SetHasFrame(false)
 	button.SetFocusable(false)
 	button.SetSensitive(entry.Enabled || len(entry.Children) > 0)
-	button.SetName(s.addAppMenuTarget(b, entry, pid, len(entry.Children) > 0))
+	token := s.addAppMenuTarget(b, entry, pid, len(entry.Children) > 0)
+	button.SetName(token)
 	button.ConnectClicked(&s.onAppMenuClicked)
 	gtkx.Append(&b.appMenu, &button.Widget)
 }

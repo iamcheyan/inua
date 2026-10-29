@@ -10,6 +10,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/appmenu"
+	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/layershell"
 )
 
@@ -69,6 +70,8 @@ func (s *shellUI) buildMenuPanel() {
 	m.backdrop.Append(&m.card.Widget)
 	m.backdrop.SetVexpand(true)
 	m.backdrop.SetHexpand(true)
+	m.backdrop.SetVexpand(true)
+	m.backdrop.SetHexpand(true)
 	m.win.SetChild(&m.backdrop.Widget)
 
 	keys := gtk.NewEventControllerKey()
@@ -83,6 +86,7 @@ func (s *shellUI) buildMenuPanel() {
 	m.backdrop.AddController(&click.EventController)
 
 	m.drop.attach(m.win, &keys.EventController, m.backdrop, &m.card.Widget, layershell.LayerOverlay, false)
+	m.drop.keyboard = layershell.KeyboardNone
 	m.drop.keyboard = layershell.KeyboardNone // preserve the focused app keyboard
 	m.win.SetApplication(s.app)
 	w := m.win.GoPointer()
@@ -331,6 +335,9 @@ func (s *shellUI) menuOwnedBy(pid int) bool {
 // rather than from the style sheet's row heights.
 func (s *shellUI) layoutMenu() bool {
 	m := &s.menu
+	if m.open && m.drop.hanging && m.drop.canvas != nil {
+		gtkx.PassInputBut(m.drop.win, int(m.drop.x), int(m.drop.y), int(m.drop.w), int(m.drop.h))
+	}
 	for _, pair := range m.pairs {
 		var r graphene.Rect
 		if !pair.row.ComputeBounds(&m.card.Widget, &r) {

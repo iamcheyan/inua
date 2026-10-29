@@ -625,7 +625,19 @@ func (s *shellUI) bindHandlers() {
 	}
 	s.onBarReleased = func(g gtk.GestureClick, _ int32, x, y float64) {
 		b := s.barOf(g.GetWidget())
-		if b == nil || b.pressHeld || b.held > 0 {
+		if b == nil || b.pressHeld {
+			return
+		}
+		if b.held > 0 {
+			if s.menu.open {
+				if b := s.barOf(g.GetWidget()); b != nil && b.overIsland(y) {
+					end, _ := b.endReach(x, y)
+					clock, _ := b.clockReach(x, y)
+					if end == "" && !clock {
+						s.closeMenu()
+					}
+				}
+			}
 			return
 		}
 		// The buttons take their own clicks; those around them are theirs too.
