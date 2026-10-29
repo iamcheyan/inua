@@ -115,7 +115,6 @@ func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
 			s.appendAppMenu(b, entry, pid)
 		}
 		b.appMenu.SetVisible(b.appMenu.GetFirstChild() != nil)
-		log.Printf("appmenu: loaded %d entries pid=%d", len(entries), pid)
 	})
 }
 
@@ -180,9 +179,7 @@ func (s *shellUI) activateAppMenu(target appMenuTarget) {
 
 func (s *shellUI) bindAppMenuHandlers() {
 	s.onAppMenuClicked = func(button gtk.Button) {
-		log.Printf("appmenu: click %q", button.GetName())
 		target, ok := s.appmenu.targets[button.GetName()]
-		log.Printf("appmenu: target ok=%v", ok)
 		if !ok {
 			return
 		}

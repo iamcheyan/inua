@@ -407,7 +407,10 @@ func quietA11y() {
 			return
 		}
 	}
-	os.Setenv("GTK_A11Y", "none")
+	// inua itself reads every application menu through AT-SPI, so a11y must
+	// stay on: with it off a light app has no accessible menu tree and the
+	// shell global menu shows nothing for it.
+	os.Setenv("GTK_A11Y", "auto")
 }
 
 // desktopIconTheme is the icon theme the desktop's settings choose, read

@@ -4476,19 +4476,21 @@ window.mail button.mail-assist-action image { color: @accent; }
 window.mail button.mail-assist-action:disabled image { color: @t2; }
 
 /* The application menu, hung under the bar as its own overlay surface
-   (appmenu_panel.go). Rows are flat buttons; a section opens in place. */
+   (appmenu_panel.go). A submenu is a column beside its item, as a Mac's is. */
 .menu-panel {
+  padding: 0;
+  background: transparent;
+}
+.menu-col {
   padding: 5px;
   border: 1px solid @line;
   border-radius: 4px;
   background: @surface;
   min-width: 232px;
 }
-.menu-item { padding: 4px 10px; border-radius: 3px; }
+.menu-item { padding: 0 10px; border-radius: 3px; min-height: 26px; }
 .menu-item:hover { background: alpha(@accent, 0.12); }
 .menu-item:disabled { opacity: 0.45; }
-.menu-item.menu-sub { margin-left: 16px; }
 .menu-row label { font-size: 13px; color: @t0; }
-.menu-item.menu-sub .menu-row label { font-size: 12.5px; color: @t1; }
 .menu-mark { color: @t2; font-size: 12px; }
-.menu-panel separator.menu-line { margin: 4px 8px; background: @line; }
+.menu-col separator.menu-line { margin: 4px 8px; background: @line; min-height: 1px; }

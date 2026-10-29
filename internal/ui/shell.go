@@ -158,6 +158,8 @@ type shellUI struct {
 	onAppMenuClicked       func(gtk.Button)
 	onAppMenuAction        func(gio.SimpleAction, uintptr)
 	onMenuRow              func(gtk.Button)
+	onMenuHover            func(gtk.EventControllerMotion, float64, float64)
+	onMenuLayout           glib.SourceFunc
 	onMenuBackdrop         func(gtk.GestureClick, int32, float64, float64)
 	onMenuKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	menu                   menuPanel
