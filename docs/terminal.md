@@ -143,7 +143,7 @@ any = ["Do you want to proceed?", "❯ 1. Yes"]
 
 [[state]]
 state = "working"
-lines = 6
+lines = 40                       # its spinner may be far up, over its todos
 any = ["esc to interrupt"]
 ```
 

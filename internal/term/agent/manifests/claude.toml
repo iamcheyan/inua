@@ -12,7 +12,10 @@ state = "blocked"
 lines = 12
 any = ["Do you want to proceed?", "Do you want to make this edit", "Do you want to create", "❯ 1. Yes", "Would you like to proceed?", "Enter to select", "Review your answers"]
 
+# Its spinner's row, over the todo list, the queued messages, the prompt
+# (as many rows as is typed), its mode and a status line: far up at
+# times. The row goes when the turn ends.
 [[state]]
 state = "working"
-lines = 6
+lines = 40
 any = ["esc to interrupt"]
