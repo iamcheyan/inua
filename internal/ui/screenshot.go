@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +19,8 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"github.com/lyricat/inua/internal/annotui"
+	"github.com/lyricat/inua/internal/apps/store"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/i18n"
@@ -38,18 +41,31 @@ type shooter struct {
 	open, busy bool
 	mode       string // "area", "window", "screen", or "color" to pick a colour
 	record     bool
-	silentNext bool
 	surfaces   []*shotSurface
 	refs       gtkx.Scope
 	filling    bool        // setting the mode buttons from Go
 	drawer     *shotDrawer // shown instead of the still once something is taken
 	reopen     string      // the mode to open in once the drawer is off screen
 
-	dragging *shotSurface // the area being dragged out is on this one
-	x0, y0   float64
+	// The area: sel on selOn, kept after it is dragged out, to resize,
+	// move and click (shotarea.go in shell). A drag on dragging works on
+	// part of it (shell.AreaOutside: a new one) from where it was (from,
+	// on fromOn).
 	sel      shell.Rect
+	selOn    *shotSurface
+	dragging *shotSurface
+	x0, y0   float64
+	part     shell.AreaPart
+	from     shell.Rect
+	fromOn   *shotSurface
 
 	portal *portalShot // an app waiting for what is taken (portal_shot.go)
+
+	// Window and Screen's grid (shotpick.go), and what it lists: the
+	// clients and the workspaces shown when the tool opened.
+	picker  shotPicker
+	clients []byte
+	shownWS []int
 }
 
 // shotSurface is the tool on one monitor.
@@ -79,6 +95,13 @@ type shotSurface struct {
 	loupe                    gtk.Box
 	loupePixels, loupeSwatch gtk.Picture
 	loupeHex                 gtk.Label
+	picker                   gtk.ScrolledWindow
+	pickerBody               gtk.Box
+	handles                  [8]*gtk.Box     // the area's grips: its corners and the middles of its edges
+	camera                   *gtk.Button     // at the area's middle while the pointer is there: takes it
+	ed                       *annotui.Editor // the area's annotations, in the capture's pixels
+	annotBar                 *gtk.Box        // their toolbar, under the area
+	nearMiddle               bool
 	inside                   bool
 	px, py                   float64 // the pointer, while inside
 	hover                    int     // the window under the pointer, -1 for none
@@ -92,15 +115,27 @@ func (s *shellUI) bindShotHandlers() {
 		if sf == nil || sh.mode != "area" {
 			return
 		}
-		sh.dragging, sh.x0, sh.y0, sh.sel = sf, x, y, shell.Rect{}
+		part := shell.AreaOutside
+		if sh.selOn == sf {
+			part = shell.HitArea(sh.sel, x, y)
+		}
+		sh.dragging, sh.x0, sh.y0, sh.part = sf, x, y, part
+		sh.from, sh.fromOn = sh.sel, sh.selOn
 	}
 	s.onShotDragUpdate = func(g gtk.GestureDrag, dx, dy float64) {
 		sf := sh.dragging
 		if sf == nil {
 			return
 		}
-		sh.sel = shell.SpanRect(sh.x0, sh.y0, sh.x0+dx, sh.y0+dy, sf.w, sf.h)
-		s.drawShot(sf)
+		if sh.part == shell.AreaOutside {
+			if math.Hypot(dx, dy) < 4 { // not yet a drag: the area stays
+				return
+			}
+			sh.sel, sh.selOn = shell.SpanRect(sh.x0, sh.y0, sh.x0+dx, sh.y0+dy, sf.w, sf.h), sf
+		} else {
+			sh.sel = shell.AdjustArea(sh.from, sh.part, dx, dy, sf.w, sf.h)
+		}
+		s.drawAllShots()
 	}
 	s.onShotDragEnd = func(g gtk.GestureDrag, dx, dy float64) {
 		sf := s.shotSurfaceOf(g.GetWidget())
@@ -114,13 +149,22 @@ func (s *shellUI) bindShotHandlers() {
 			return
 		}
 		if sh.mode == "area" {
-			sel := sh.sel
-			sh.dragging, sh.sel = nil, shell.Rect{}
-			if sf == nil || sel.Empty() {
-				s.drawShot(sf)
+			if sh.dragging == nil {
 				return
 			}
-			s.takeShot(sf, sel)
+			sh.dragging = nil
+			click := math.Hypot(dx, dy) < 6
+			switch {
+			case click && sh.part == shell.AreaInside: // a click inside takes it
+				s.takeShot(sf, sh.sel)
+			case sh.sel.Empty(): // too small: the one before stays
+				sh.sel, sh.selOn = sh.from, sh.fromOn
+				s.drawAllShots()
+			case !click:
+				s.keepShotArea()
+				s.showShotHint()
+				s.drawAllShots()
+			}
 			return
 		}
 		if math.Hypot(dx, dy) < 6 { // a click, not a drag
@@ -137,6 +181,19 @@ func (s *shellUI) bindShotHandlers() {
 			s.moveLoupe(sf, x, y)
 			return
 		}
+		if sh.mode == "area" && sh.dragging == nil {
+			cursor := "crosshair"
+			if sh.selOn == sf {
+				if c := shell.AreaCursor(shell.HitArea(sh.sel, x, y)); c != "" {
+					cursor = c
+				}
+			}
+			sf.marks.SetCursorFromName(cursor)
+			if near := sh.selOn == sf && !sf.ed.Busy() && shell.NearAreaMiddle(sh.sel, x, y); near != sf.nearMiddle {
+				sf.nearMiddle = near
+				s.drawShot(sf)
+			}
+		}
 		hover := shell.WindowAt(sf.windows, x, y)
 		if sh.mode == "window" && hover == sf.hover {
 			return
@@ -148,15 +205,25 @@ func (s *shellUI) bindShotHandlers() {
 	}
 	s.onShotLeave = func(c gtk.EventControllerMotion) {
 		if sf := s.shotSurfaceOf(c.GetWidget()); sf != nil {
-			sf.inside, sf.hover = false, -1
+			sf.inside, sf.hover, sf.nearMiddle = false, -1, false
 			sf.loupe.SetVisible(false)
 			s.drawShot(sf)
 		}
 	}
-	s.onShotKey = func(_ gtk.EventControllerKey, keyval, _ uint32, _ gdk.ModifierType) bool {
+	s.onShotKey = func(_ gtk.EventControllerKey, keyval, _ uint32, state gdk.ModifierType) bool {
+		if sh.selOn != nil && sh.selOn.ed.Typing() {
+			return false // the words of a text
+		}
+		if state&gdk.ControlMaskValue != 0 && (keyval == 'z' || keyval == 'Z') && sh.selOn != nil {
+			if state&gdk.ShiftMaskValue != 0 {
+				sh.selOn.ed.Redo()
+			} else {
+				sh.selOn.ed.Undo()
+			}
+			return true
+		}
 		switch keyval {
 		case keyEscape:
-			s.shot.silentNext = false
 			s.closeShot("")
 		case keySpace:
 			if sh.mode == "color" {
@@ -164,6 +231,13 @@ func (s *shellUI) bindShotHandlers() {
 			}
 			s.setShotMode(map[string]string{"area": "window", "window": "area", "screen": "area"}[sh.mode])
 		case keyReturn, keyKPEnter:
+			if sh.picker.on != nil {
+				return false // the card with the focus takes it
+			}
+			if sh.mode == "area" && sh.selOn != nil && !sh.sel.Empty() {
+				s.takeShot(sh.selOn, sh.sel) // the area, wherever the pointer is
+				break
+			}
 			for _, sf := range sh.surfaces {
 				if sf.inside && sh.mode == "color" {
 					s.pickColor(sf)
@@ -185,34 +259,36 @@ func (s *shellUI) bindShotHandlers() {
 		}
 	}
 	s.onShotCancel = func(gtk.Button) {
-		sh.silentNext = false
 		s.closeShot("")
+	}
+	s.onShotCamera = func(gtk.Button) {
+		if sh.mode == "area" && sh.selOn != nil && !sh.sel.Empty() {
+			on, r := sh.selOn, sh.sel
+			gtkx.Post(func() { s.takeShot(on, r) }) // the button lives on the surface
+		}
 	}
 	s.onShotRecord = func(b gtk.ToggleButton) {
 		if !sh.filling {
-			sh.silentNext = false
 			sh.record = b.GetActive()
 			s.setShotMode(sh.mode)
 		}
 	}
 }
 
-// screenshotRequest answers `inua call screenshot area|silent-area|window|screen`:
+// screenshotRequest answers `inua call screenshot area|window|screen`:
 // the selection tool, or the focused screen or window at once; `color` picks
 // a colour, `record` opens the tool to record, and `stop` ends a recording.
+// `silent-area` is `area`: a shot never opens the drawer now.
 func (s *shellUI) screenshotRequest(fn string) bool {
 	sh := &s.shot
-	sh.silentNext = fn == "silent-area"
 	switch fn {
 	case "area", "silent-area", "open":
 		sh.record = sh.open && sh.record
 		s.openShot("area")
 	case "color":
-		sh.silentNext = false
 		sh.record = false
 		s.openShot("color")
 	case "record":
-		sh.silentNext = false
 		if s.recordingNow() {
 			s.stopScreenRecording()
 		} else {
@@ -220,19 +296,14 @@ func (s *shellUI) screenshotRequest(fn string) bool {
 			s.openShot("area")
 		}
 	case "stop":
-		sh.silentNext = false
 		s.stopScreenRecording()
 	case "pick-window":
-		sh.silentNext = false
 		s.openShot("window")
 	case "pick-screen":
-		sh.silentNext = false
 		s.openShot("screen")
 	case "screen", "window":
-		sh.silentNext = false
 		s.shootNow(fn)
 	case "close":
-		sh.silentNext = false
 		s.closeShot("")
 	default:
 		return false
@@ -263,6 +334,10 @@ func (s *shellUI) openShot(mode string) {
 	wait := s.hideForShot()
 	go func() {
 		time.Sleep(wait)
+		var last shell.LastArea
+		if err := store.Load(shotAreaStore, &last); err != nil {
+			log.Printf("screenshot: %v", err)
+		}
 		dir, err := shotTempDir()
 		var clients []byte
 		if err == nil {
@@ -295,8 +370,13 @@ func (s *shellUI) openShot(mode string) {
 			sf.windows, err = shell.ShotWindows(clients, float64(m.X), float64(m.Y), shownWorkspaces(m))
 			surfaces = append(surfaces, sf)
 		}
+		var shown []int
+		for _, m := range mons {
+			shown = append(shown, shownWorkspaces(m)...)
+		}
 		gtkx.Post(func() {
 			sh.busy = false
+			sh.clients, sh.shownWS = clients, shown
 			if err != nil {
 				log.Printf("screenshot: %v", err)
 				removeShotFiles(surfaces, "")
@@ -304,7 +384,7 @@ func (s *shellUI) openShot(mode string) {
 				s.portalShotClosed()
 				return
 			}
-			s.showShot(surfaces, mode)
+			s.showShot(surfaces, mode, last)
 		})
 	}()
 }
@@ -331,7 +411,10 @@ func shownWorkspaces(m hypr.Monitor) []int {
 	return ws
 }
 
-func (s *shellUI) showShot(surfaces []*shotSurface, mode string) {
+// shotAreaStore keeps the last area and its monitor (store.Path).
+const shotAreaStore = "screenshot-area"
+
+func (s *shellUI) showShot(surfaces []*shotSurface, mode string, last shell.LastArea) {
 	sh := &s.shot
 	for _, sf := range surfaces {
 		mon := s.monitorByName(sf.name)
@@ -340,6 +423,12 @@ func (s *shellUI) showShot(surfaces []*shotSurface, mode string) {
 		}
 		s.buildShotSurface(sf, mon)
 		sh.surfaces = append(sh.surfaces, sf)
+		// The area as it was left, if its monitor is here.
+		if sf.name == last.Monitor {
+			if r, ok := shell.FitArea(last.Rect, sf.w, sf.h); ok {
+				sh.sel, sh.selOn = r, sf
+			}
+		}
 	}
 	if len(sh.surfaces) == 0 {
 		removeShotFiles(surfaces, "")
@@ -349,6 +438,24 @@ func (s *shellUI) showShot(surfaces []*shotSurface, mode string) {
 	s.setShotMode(mode)
 	for _, sf := range sh.surfaces {
 		sf.win.Present()
+	}
+	// The stills' pixels, for pixelating: read after the tool shows.
+	for _, sf := range sh.surfaces {
+		go func() {
+			img := sf.img
+			if img == nil {
+				var err error
+				if img, err = readPNG(sf.file); err != nil {
+					log.Printf("screenshot: %v", err)
+					return
+				}
+			}
+			gtkx.Post(func() {
+				if sh.open && slices.Contains(sh.surfaces, sf) {
+					sf.ed.SetSource(img)
+				}
+			})
+		}()
 	}
 }
 
@@ -386,6 +493,8 @@ func (s *shellUI) buildShotSurface(sf *shotSurface, mon *gdk.Monitor) {
 	ui.Get("loupe_pixels", &sf.loupePixels)
 	ui.Get("loupe_swatch", &sf.loupeSwatch)
 	ui.Get("loupe_hex", &sf.loupeHex)
+	ui.Get("picker", &sf.picker)
+	ui.Get("picker_body", &sf.pickerBody)
 	sf.modes = map[string]*gtk.ToggleButton{}
 	for _, m := range []string{"area", "window", "screen"} {
 		b := &gtk.ToggleButton{}
@@ -394,6 +503,32 @@ func (s *shellUI) buildShotSurface(sf *shotSurface, mon *gdk.Monitor) {
 		sf.modes[m] = b
 	}
 	ui.Close()
+	// The annotations' layer, over the area, under the camera and the
+	// grips; their toolbar, over everything.
+	sf.ed = annotui.New(nil, sf.bounds)
+	sf.ed.Changed = func() { s.drawShot(sf) }
+	layer := sf.ed.Layer()
+	layer.SetVisible(false)
+	sf.marks.Put(layer, 0, 0)
+	sf.camera = gtk.NewButtonFromIconName("camera-photo-symbolic")
+	sf.camera.AddCssClass("shot-camera")
+	sf.camera.SetVisible(false)
+	sf.camera.SetCursorFromName("pointer")
+	sf.camera.ConnectClicked(&s.onShotCamera)
+	sf.marks.Put(&sf.camera.Widget, 0, 0)
+	for i := range sf.handles {
+		h := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+		h.AddCssClass("shot-handle")
+		h.SetCanTarget(false)
+		h.SetVisible(false)
+		sf.marks.Put(&h.Widget, 0, 0)
+		sf.handles[i] = h
+	}
+
+	sf.annotBar = sf.ed.Toolbar()
+	sf.annotBar.SetCursorFromName("default") // not the area's crosshair or grips
+	sf.annotBar.SetVisible(false)
+	sf.marks.Put(&sf.annotBar.Widget, 0, 0)
 
 	frozen.SetFilename(sf.file)
 	sf.toolbar.SetVisible(sf.focusedMon)
@@ -452,14 +587,14 @@ func (s *shellUI) shotSurfaceOf(w *gtk.Widget) *shotSurface {
 }
 
 var shotHints = map[string]string{
-	"area":   i18n.M("Drag to take an area"),
+	"area":   i18n.M("Drag out an area"),
 	"window": i18n.M("Click a window"),
 	"screen": i18n.M("Click a screen"),
 	"color":  i18n.M("Click to copy a colour"),
 }
 
 var recordHints = map[string]string{
-	"area":   i18n.M("Drag to record an area"),
+	"area":   i18n.M("Drag out an area to record"),
 	"window": i18n.M("Click a window to record"),
 	"screen": i18n.M("Click a screen to record"),
 }
@@ -470,7 +605,7 @@ func (s *shellUI) setShotMode(mode string) {
 		return
 	}
 	sh.mode = mode
-	sh.dragging, sh.sel = nil, shell.Rect{}
+	sh.dragging = nil // the area stays, for when it is Area again
 	sh.filling = true
 	color := mode == "color"
 	for _, sf := range sh.surfaces {
@@ -485,16 +620,60 @@ func (s *shellUI) setShotMode(mode string) {
 		if b := sf.modes[mode]; b != nil {
 			b.SetActive(true)
 		}
-		hint := shotHints[mode]
-		if sh.record && !color {
-			hint = recordHints[mode]
-		}
-		sf.hint.SetText(i18n.T(hint))
 		toggle(&sf.toolbar.Widget, "recording", sh.record && !color)
+		if mode != "area" {
+			sf.marks.SetCursorFromName("crosshair")
+		}
 		sf.hover = shell.WindowAt(sf.windows, sf.px, sf.py)
 		s.drawShot(sf)
 	}
+	s.showShotHint()
 	sh.filling = false
+	s.syncPicker()
+}
+
+// showShotHint says in the toolbar what a click does: with an area, that
+// it can be adjusted and a click inside takes it.
+func (s *shellUI) showShotHint() {
+	sh := &s.shot
+	hint := shotHints[sh.mode]
+	if sh.record && sh.mode != "color" {
+		hint = recordHints[sh.mode]
+	}
+	if sh.mode == "area" && sh.selOn != nil && !sh.sel.Empty() {
+		hint = i18n.M("Drag to adjust · click inside to take")
+		if sh.record {
+			hint = i18n.M("Drag to adjust · click inside to record")
+		}
+	}
+	for _, sf := range sh.surfaces {
+		sf.hint.SetText(i18n.T(hint))
+	}
+}
+
+// keepShotArea remembers the area for the tool's next opening.
+func (s *shellUI) keepShotArea() {
+	sh := &s.shot
+	if sh.selOn == nil || sh.sel.Empty() {
+		return
+	}
+	last := shell.LastArea{Monitor: sh.selOn.name, Rect: sh.sel}
+	go func() {
+		if err := store.Save(shotAreaStore, last); err != nil {
+			log.Printf("screenshot: %v", err)
+		}
+	}()
+}
+
+// shotCamera is the camera button's size, in logical pixels.
+const shotCamera = 52
+
+// drawAllShots draws every surface: the area may have left one for
+// another.
+func (s *shellUI) drawAllShots() {
+	for _, sf := range s.shot.surfaces {
+		s.drawShot(sf)
+	}
 }
 
 // shotChoice is what a click on the surface would take now, if anything.
@@ -502,7 +681,7 @@ func (s *shellUI) shotChoice(sf *shotSurface) (shell.Rect, bool) {
 	sh := &s.shot
 	switch sh.mode {
 	case "area":
-		if sh.dragging == sf && !sh.sel.Empty() {
+		if sh.selOn == sf && !sh.sel.Empty() {
 			return sh.sel, true
 		}
 	case "window":
@@ -527,6 +706,15 @@ func (s *shellUI) drawShot(sf *shotSurface) {
 		b.SetSizeRequest(int32(max(0, x1-x0)), int32(max(0, y1-y0)))
 	}
 	W, H := int(sf.w), int(sf.h)
+	for _, h := range sf.handles {
+		h.SetVisible(false)
+	}
+	sf.camera.SetVisible(false)
+	// The annotations show only where placeAnnotations puts them; their
+	// visibility changes only when it must: hiding the layer takes the
+	// text's popover away, whose pointer leaving draws again.
+	annotations := false
+	defer func() { showAnnotations(sf, annotations) }()
 	if s.shot.mode == "color" { // the still as it is, for true colours
 		for _, d := range sf.dims {
 			d.SetVisible(false)
@@ -551,6 +739,36 @@ func (s *shellUI) drawShot(sf *shotSurface) {
 	place(&sf.dims[2].Widget, 0, y0, x0, y1)
 	place(&sf.dims[3].Widget, x1, y0, W, y1)
 	place(&sf.frame.Widget, x0, y0, x1, y1)
+	if s.shot.mode == "area" {
+		// The grips: at the corners and the middles of the edges.
+		const g = 8
+		xs := [3]int{x0, (x0 + x1) / 2, x1}
+		ys := [3]int{y0, (y0 + y1) / 2, y1}
+		i := 0
+		for yi, y := range ys {
+			for xi, x := range xs {
+				if xi == 1 && yi == 1 {
+					continue
+				}
+				h := sf.handles[i]
+				h.SetSizeRequest(g, g)
+				sf.marks.Move(&h.Widget, float64(x-g/2), float64(y-g/2))
+				h.SetVisible(true)
+				i++
+			}
+		}
+		// The camera, while the pointer is at the middle and nothing is
+		// being dragged: a click on it takes the area.
+		if sf.nearMiddle && s.shot.dragging == nil {
+			icon := "camera-photo-symbolic"
+			if s.shot.record {
+				icon = "camera-video-symbolic"
+			}
+			sf.camera.SetIconName(icon)
+			sf.marks.Move(&sf.camera.Widget, float64((x0+x1)/2-shotCamera/2), float64((y0+y1)/2-shotCamera/2))
+			sf.camera.SetVisible(true)
+		}
+	}
 	px := r.Pixels(sf.scale, sf.bounds)
 	sf.size.SetText(fmt.Sprintf("%d × %d", px.Dx(), px.Dy()))
 	sf.size.SetVisible(true)
@@ -558,7 +776,54 @@ func (s *shellUI) drawShot(sf *shotSurface) {
 	if ly+24 > H {
 		ly = y1 - 32
 	}
+	if s.shot.mode == "area" {
+		annotations = s.placeAnnotations(sf, r, x0, y0, x1, y1)
+		ly = y0 - 30 // above it: the toolbar is below
+		if ly < 0 {
+			ly = y0 + 6
+		}
+	}
 	sf.marks.Move(&sf.size.Widget, float64(x0), float64(max(0, ly)))
+}
+
+// placeAnnotations puts the annotations' layer over the area, drawing in
+// its pixels of the capture, and their toolbar under it (over it at the
+// screen's foot); neither while it is being dragged or with Record on.
+func (s *shellUI) placeAnnotations(sf *shotSurface, r shell.Rect, x0, y0, x1, y1 int) bool {
+	if s.shot.dragging != nil || s.shot.record {
+		return false
+	}
+	layer := sf.ed.Layer()
+	sf.marks.Move(layer, float64(x0), float64(y0))
+	layer.SetSizeRequest(int32(x1-x0), int32(y1-y0))
+	sf.ed.SetView(-float64(x0), -float64(y0), 1/sf.scale)
+	sf.ed.SetBounds(r.Pixels(sf.scale, sf.bounds))
+
+	var bw, bh int32
+	sf.annotBar.Measure(gtk.OrientationHorizontalValue, -1, nil, &bw, nil, nil)
+	sf.annotBar.Measure(gtk.OrientationVerticalValue, bw, nil, &bh, nil, nil)
+	W, H := int(sf.w), int(sf.h)
+	tx := max(8, min((x0+x1)/2-int(bw)/2, W-int(bw)-8))
+	ty := y1 + 12
+	if ty+int(bh) > H-8 {
+		ty = y0 - int(bh) - 12
+	}
+	if ty < 8 {
+		ty = y1 - int(bh) - 12 // no room either side: inside, at its foot
+	}
+	sf.marks.Move(&sf.annotBar.Widget, float64(tx), float64(ty))
+	return true
+}
+
+// showAnnotations shows or hides the annotations' layer and toolbar,
+// when they are not so already.
+func showAnnotations(sf *shotSurface, on bool) {
+	if layer := sf.ed.Layer(); layer.GetVisible() != on {
+		layer.SetVisible(on)
+	}
+	if sf.annotBar.GetVisible() != on {
+		sf.annotBar.SetVisible(on)
+	}
 }
 
 // takeHovered takes what a click on the surface would take.
@@ -584,6 +849,10 @@ func (s *shellUI) takeShot(sf *shotSurface, r shell.Rect) {
 		return
 	}
 	px := r.Pixels(sf.scale, sf.bounds)
+	if sh.mode == "area" && !sf.ed.Doc.Empty() {
+		s.takeAnnotated(sf, px)
+		return
+	}
 	// The capture stays the tool's; cut from a link to it, which closing
 	// the tool meanwhile does not take away.
 	file := sf.file + "." + strconv.FormatInt(time.Now().UnixNano(), 36) + ".png"
@@ -596,11 +865,6 @@ func (s *shellUI) takeShot(sf *shotSurface, r shell.Rect) {
 		return
 	}
 	s.closeCapture("")
-	silent := sh.silentNext
-	sh.silentNext = false
-	if !silent {
-		s.openShotDrawer() // at once; the shot joins it when written
-	}
 	go func() {
 		defer os.Remove(file)
 		img, err := readPNG(file)
@@ -614,6 +878,59 @@ func (s *shellUI) takeShot(sf *shotSurface, r shell.Rect) {
 				err = s.deliverShot(func(path string) error { return writePNG(path, sub.SubImage(px)) })
 			}
 		}
+		if err != nil {
+			log.Printf("screenshot: %v", err)
+			return
+		}
+		gtkx.Post(s.shotTaken)
+	}()
+}
+
+// takeAnnotated takes the part px of a surface's capture with its
+// annotations drawn in, at the capture's size: GSK draws them as on
+// screen, before the tool goes. An app that asked for a picture gets it
+// annotated too.
+func (s *shellUI) takeAnnotated(sf *shotSurface, px image.Rectangle) {
+	file := sf.file + "." + strconv.FormatInt(time.Now().UnixNano(), 36) + ".png"
+	err := func() error {
+		base, err := gdk.NewTextureFromFilename(sf.file)
+		if err != nil {
+			return err
+		}
+		defer base.Unref()
+		renderer := sf.win.GetRenderer()
+		if renderer == nil {
+			return fmt.Errorf("no renderer")
+		}
+		tex, err := sf.ed.Render(renderer, base, px)
+		if err != nil {
+			return err
+		}
+		defer tex.Unref()
+		if !tex.SaveToPng(file) {
+			return fmt.Errorf("cannot write %s", file)
+		}
+		return nil
+	}()
+	if err != nil {
+		log.Printf("screenshot: annotated: %v", err)
+		return
+	}
+	whole := image.Rect(0, 0, px.Dx(), px.Dy())
+	if s.portalTake(file, whole) {
+		s.closeCapture("")
+		return
+	}
+	s.closeCapture("")
+	go func() {
+		defer os.Remove(file)
+		err := s.deliverShot(func(path string) error {
+			b, err := os.ReadFile(file)
+			if err == nil {
+				err = os.WriteFile(path, b, 0o644)
+			}
+			return err
+		})
 		if err != nil {
 			log.Printf("screenshot: %v", err)
 			return
@@ -643,12 +960,15 @@ func (s *shellUI) closeCapture(keep string) {
 	if !sh.open {
 		return
 	}
+	s.closePicker()
 	for _, sf := range sh.surfaces {
+		sf.ed.Free()
 		sf.win.Destroy()
 	}
 	sh.refs.Release()
 	removeShotFiles(sh.surfaces, keep)
 	sh.open, sh.surfaces, sh.dragging, sh.record = false, nil, nil, false
+	sh.sel, sh.selOn, sh.fromOn = shell.Rect{}, nil, nil // kept in the store, read at the next opening
 	s.shotShown()
 	s.portalShotClosed()
 }

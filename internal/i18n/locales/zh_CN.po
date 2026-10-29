@@ -377,7 +377,7 @@ msgstr "来自 %s 的文件"
 #: internal/mailui/people.go:297
 #: internal/shell/wifi.go:62
 #: internal/term/web/web.go:140
-#: internal/ui/record.go:163
+#: internal/ui/record.go:157
 #: internal/ui/system_ipc.go:241
 #: internal/vmui/window.go:2705
 #: internal/vmui/window.go:2706
@@ -389,8 +389,8 @@ msgid "Open"
 msgstr "打开"
 
 #: internal/apps/connect/share.go:129
-#: internal/ui/record.go:163
-#: internal/ui/screenshot.go:820
+#: internal/ui/record.go:157
+#: internal/ui/screenshot.go:1140
 msgid "Show in Folder"
 msgstr "在文件夹中显示"
 
@@ -3697,7 +3697,7 @@ msgstr "在此打开终端"
 
 #: internal/filesui/cards.go:702
 #: internal/termui/menubar.go:44
-#: ui/screenshot.ui:162
+#: ui/screenshot.ui:180
 #: ui/shotdrawer.ui:122
 msgid "Window"
 msgstr "窗口"
@@ -12493,7 +12493,7 @@ msgstr "磁盘"
 #: internal/shell/cardterm.go:140
 #: internal/vmui/window.go:2710
 #: internal/vmui/window.go:2714
-#: ui/screenshot.ui:187
+#: ui/screenshot.ui:205
 #: ui/shotdrawer.ui:146
 msgid "Screen"
 msgstr "屏幕"
@@ -12594,6 +12594,7 @@ msgid "Screenshot Area"
 msgstr "截图区"
 
 #: internal/shell/commands.go:34
+#: internal/ui/screenshot.go:590
 msgid "Drag out an area"
 msgstr "拖出一个区域"
 
@@ -12602,8 +12603,8 @@ msgid "Screenshot Window"
 msgstr "截图窗口"
 
 #: internal/shell/commands.go:35
-#: internal/ui/screenshot.go:456
-#: ui/screenshot.ui:151
+#: internal/ui/screenshot.go:591
+#: ui/screenshot.ui:169
 msgid "Click a window"
 msgstr "单击窗口"
 
@@ -12612,8 +12613,8 @@ msgid "Screenshot Screen"
 msgstr "屏幕截图"
 
 #: internal/shell/commands.go:36
-#: internal/ui/screenshot.go:457
-#: ui/screenshot.ui:176
+#: internal/ui/screenshot.go:592
+#: ui/screenshot.ui:194
 msgid "Click a screen"
 msgstr "单击屏幕"
 
@@ -12768,7 +12769,7 @@ msgid "Find apps, windows and answers"
 msgstr "查找应用程序、窗口和答案"
 
 #: internal/shell/dock.go:313
-#: internal/ui/screenshot.go:814
+#: internal/ui/screenshot.go:1134
 #: ui/settings.ui:1906
 msgid "Screenshot"
 msgstr "截图"
@@ -14871,47 +14872,51 @@ msgstr "录屏失败"
 msgid "Recording saved"
 msgstr "录屏已保存"
 
-#: internal/ui/record.go:159
+#: internal/ui/record.go:153
 msgid "Screen recording"
 msgstr "屏幕录制"
 
-#: internal/ui/screenshot.go:437
+#: internal/ui/screenshot.go:572
 msgid "inua screenshot"
 msgstr "inua截图"
 
-#: internal/ui/screenshot.go:455
-msgid "Drag to take an area"
-msgstr ""
-
-#: internal/ui/screenshot.go:458
+#: internal/ui/screenshot.go:593
 msgid "Click to copy a colour"
 msgstr "单击复制颜色"
 
-#: internal/ui/screenshot.go:462
-msgid "Drag to record an area"
-msgstr ""
+#: internal/ui/screenshot.go:597
+msgid "Drag out an area to record"
+msgstr "拖出要录制的区域"
 
-#: internal/ui/screenshot.go:463
+#: internal/ui/screenshot.go:598
 msgid "Click a window to record"
 msgstr "点击窗口进行录制"
 
-#: internal/ui/screenshot.go:464
+#: internal/ui/screenshot.go:599
 msgid "Click a screen to record"
 msgstr "点击屏幕进行录制"
 
-#: internal/ui/screenshot.go:808
+#: internal/ui/screenshot.go:644
+msgid "Drag to adjust · click inside to take"
+msgstr "拖动以调整 · 点击区域内截图"
+
+#: internal/ui/screenshot.go:646
+msgid "Drag to adjust · click inside to record"
+msgstr "拖动以调整 · 点击区域内录制"
+
+#: internal/ui/screenshot.go:1128
 msgid "Screenshot saved and copied"
 msgstr "屏幕截图已保存并复制"
 
-#: internal/ui/screenshot.go:809
+#: internal/ui/screenshot.go:1129
 msgid "Screenshot saved"
 msgstr "屏幕截图已保存"
 
-#: internal/ui/screenshot.go:810
+#: internal/ui/screenshot.go:1130
 msgid "Screenshot copied"
 msgstr "截图已复制"
 
-#: internal/ui/screenshot.go:811
+#: internal/ui/screenshot.go:1131
 msgid "Screenshot taken"
 msgstr "截图"
 
@@ -16213,6 +16218,28 @@ msgstr "再截一张"
 #: internal/ui/shotdrawer.go:216
 msgid "inua recent screenshots"
 msgstr "inua近期截图"
+
+#: internal/ui/shotpick.go:202
+msgid "SCREENS"
+msgstr "屏幕"
+
+#: internal/ui/shotpick.go:202
+msgid "%d screen"
+msgid_plural "%d screens"
+msgstr[0] "%d 个屏幕"
+
+#: internal/ui/shotpick.go:216
+msgid "No windows are open."
+msgstr "没有打开的窗口。"
+
+#: internal/ui/shotpick.go:226
+msgid "WORKSPACE %s"
+msgstr "工作区 %s"
+
+#: internal/ui/shotpick.go:230
+msgid "%d window"
+msgid_plural "%d windows"
+msgstr[0] "%d 个窗口"
 
 #: internal/ui/updates.go:91
 msgid "You have %s."
@@ -18401,30 +18428,30 @@ msgstr ""
 msgid "Its address on the network: a name, an IP address, or either with :port."
 msgstr "它在网络上的地址：名称、IP 地址，或加上 :端口。"
 
-#: ui/screenshot.ui:126
+#: ui/screenshot.ui:144
 msgid "Drag to take an area (Space switches to windows)"
 msgstr "拖动取一个区域（空格切换到窗口）"
 
-#: ui/screenshot.ui:137
+#: ui/screenshot.ui:155
 #: ui/shotdrawer.ui:98
 msgid "Area"
 msgstr "区域"
 
-#: ui/screenshot.ui:205
+#: ui/screenshot.ui:223
 #: ui/shotdrawer.ui:164
 msgid "Record the screen instead of taking a picture"
 msgstr "录制屏幕而不是拍照"
 
-#: ui/screenshot.ui:219
+#: ui/screenshot.ui:237
 #: ui/shotdrawer.ui:178
 msgid "Record"
 msgstr "录制"
 
-#: ui/screenshot.ui:244
+#: ui/screenshot.ui:262
 msgid "Recent screenshots and recordings, to drag into an app"
 msgstr "最近的屏幕截图和录屏，拖入应用程序"
 
-#: ui/screenshot.ui:254
+#: ui/screenshot.ui:272
 msgid "Cancel (Esc)"
 msgstr "取消 (Esc)"
 

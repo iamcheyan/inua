@@ -377,7 +377,7 @@ msgstr "%s からのファイル"
 #: internal/mailui/people.go:297
 #: internal/shell/wifi.go:62
 #: internal/term/web/web.go:140
-#: internal/ui/record.go:163
+#: internal/ui/record.go:157
 #: internal/ui/system_ipc.go:241
 #: internal/vmui/window.go:2705
 #: internal/vmui/window.go:2706
@@ -389,8 +389,8 @@ msgid "Open"
 msgstr "開く"
 
 #: internal/apps/connect/share.go:129
-#: internal/ui/record.go:163
-#: internal/ui/screenshot.go:820
+#: internal/ui/record.go:157
+#: internal/ui/screenshot.go:1140
 msgid "Show in Folder"
 msgstr "フォルダ内で表示"
 
@@ -3697,7 +3697,7 @@ msgstr "ここで端末を開く"
 
 #: internal/filesui/cards.go:702
 #: internal/termui/menubar.go:44
-#: ui/screenshot.ui:162
+#: ui/screenshot.ui:180
 #: ui/shotdrawer.ui:122
 msgid "Window"
 msgstr "窓"
@@ -12493,7 +12493,7 @@ msgstr "ディスク"
 #: internal/shell/cardterm.go:140
 #: internal/vmui/window.go:2710
 #: internal/vmui/window.go:2714
-#: ui/screenshot.ui:187
+#: ui/screenshot.ui:205
 #: ui/shotdrawer.ui:146
 msgid "Screen"
 msgstr "スクリーン"
@@ -12594,6 +12594,7 @@ msgid "Screenshot Area"
 msgstr "スクリーンショット領域"
 
 #: internal/shell/commands.go:34
+#: internal/ui/screenshot.go:590
 msgid "Drag out an area"
 msgstr "領域をドラッグアウトする"
 
@@ -12602,8 +12603,8 @@ msgid "Screenshot Window"
 msgstr "スクリーンショットウィンドウ"
 
 #: internal/shell/commands.go:35
-#: internal/ui/screenshot.go:456
-#: ui/screenshot.ui:151
+#: internal/ui/screenshot.go:591
+#: ui/screenshot.ui:169
 msgid "Click a window"
 msgstr "ウィンドウをクリックする"
 
@@ -12612,8 +12613,8 @@ msgid "Screenshot Screen"
 msgstr "スクリーンショット画面"
 
 #: internal/shell/commands.go:36
-#: internal/ui/screenshot.go:457
-#: ui/screenshot.ui:176
+#: internal/ui/screenshot.go:592
+#: ui/screenshot.ui:194
 msgid "Click a screen"
 msgstr "画面をクリックします"
 
@@ -12768,7 +12769,7 @@ msgid "Find apps, windows and answers"
 msgstr "アプリ、ウィンドウ、および回答を見つける"
 
 #: internal/shell/dock.go:313
-#: internal/ui/screenshot.go:814
+#: internal/ui/screenshot.go:1134
 #: ui/settings.ui:1906
 msgid "Screenshot"
 msgstr "スクリーンショット"
@@ -14871,47 +14872,51 @@ msgstr "録音に失敗しました"
 msgid "Recording saved"
 msgstr "録音が保存されました"
 
-#: internal/ui/record.go:159
+#: internal/ui/record.go:153
 msgid "Screen recording"
 msgstr "画面記録"
 
-#: internal/ui/screenshot.go:437
+#: internal/ui/screenshot.go:572
 msgid "inua screenshot"
 msgstr "イヌアのスクリーンショット"
 
-#: internal/ui/screenshot.go:455
-msgid "Drag to take an area"
-msgstr ""
-
-#: internal/ui/screenshot.go:458
+#: internal/ui/screenshot.go:593
 msgid "Click to copy a colour"
 msgstr "クリックして色をコピーします"
 
-#: internal/ui/screenshot.go:462
-msgid "Drag to record an area"
-msgstr ""
+#: internal/ui/screenshot.go:597
+msgid "Drag out an area to record"
+msgstr "録画する領域をドラッグ"
 
-#: internal/ui/screenshot.go:463
+#: internal/ui/screenshot.go:598
 msgid "Click a window to record"
 msgstr "ウィンドウをクリックして記録する"
 
-#: internal/ui/screenshot.go:464
+#: internal/ui/screenshot.go:599
 msgid "Click a screen to record"
 msgstr "画面をクリックして記録する"
 
-#: internal/ui/screenshot.go:808
+#: internal/ui/screenshot.go:644
+msgid "Drag to adjust · click inside to take"
+msgstr "ドラッグで調整 · 内側をクリックで撮影"
+
+#: internal/ui/screenshot.go:646
+msgid "Drag to adjust · click inside to record"
+msgstr "ドラッグで調整 · 内側をクリックで録画"
+
+#: internal/ui/screenshot.go:1128
 msgid "Screenshot saved and copied"
 msgstr "スクリーンショットの保存とコピー"
 
-#: internal/ui/screenshot.go:809
+#: internal/ui/screenshot.go:1129
 msgid "Screenshot saved"
 msgstr "スクリーンショットが保存されました"
 
-#: internal/ui/screenshot.go:810
+#: internal/ui/screenshot.go:1130
 msgid "Screenshot copied"
 msgstr "スクリーンショットがコピーされました"
 
-#: internal/ui/screenshot.go:811
+#: internal/ui/screenshot.go:1131
 msgid "Screenshot taken"
 msgstr "撮影されたスクリーンショット"
 
@@ -16213,6 +16218,28 @@ msgstr "もう一度撮る"
 #: internal/ui/shotdrawer.go:216
 msgid "inua recent screenshots"
 msgstr "の最近のスクリーンショット"
+
+#: internal/ui/shotpick.go:202
+msgid "SCREENS"
+msgstr "画面"
+
+#: internal/ui/shotpick.go:202
+msgid "%d screen"
+msgid_plural "%d screens"
+msgstr[0] "%d 画面"
+
+#: internal/ui/shotpick.go:216
+msgid "No windows are open."
+msgstr "開いているウィンドウはありません。"
+
+#: internal/ui/shotpick.go:226
+msgid "WORKSPACE %s"
+msgstr "ワークスペース %s"
+
+#: internal/ui/shotpick.go:230
+msgid "%d window"
+msgid_plural "%d windows"
+msgstr[0] "%d ウィンドウ"
 
 #: internal/ui/updates.go:91
 msgid "You have %s."
@@ -18401,30 +18428,30 @@ msgstr ""
 msgid "Its address on the network: a name, an IP address, or either with :port."
 msgstr "ネットワーク上のアドレス：名前、IP アドレス、またはそれに :ポート を付けたもの。"
 
-#: ui/screenshot.ui:126
+#: ui/screenshot.ui:144
 msgid "Drag to take an area (Space switches to windows)"
 msgstr "ドラッグして領域を取得します（スペースはウィンドウに切り替わります）"
 
-#: ui/screenshot.ui:137
+#: ui/screenshot.ui:155
 #: ui/shotdrawer.ui:98
 msgid "Area"
 msgstr "範囲"
 
-#: ui/screenshot.ui:205
+#: ui/screenshot.ui:223
 #: ui/shotdrawer.ui:164
 msgid "Record the screen instead of taking a picture"
 msgstr "写真を撮る代わりに画面を記録する"
 
-#: ui/screenshot.ui:219
+#: ui/screenshot.ui:237
 #: ui/shotdrawer.ui:178
 msgid "Record"
 msgstr "録画"
 
-#: ui/screenshot.ui:244
+#: ui/screenshot.ui:262
 msgid "Recent screenshots and recordings, to drag into an app"
 msgstr "アプリにドラッグするための最近のスクリーンショットと録画"
 
-#: ui/screenshot.ui:254
+#: ui/screenshot.ui:272
 msgid "Cancel (Esc)"
 msgstr "キャンセル (Esc)"
 

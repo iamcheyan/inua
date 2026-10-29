@@ -213,6 +213,7 @@ type shellUI struct {
 	onShotKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onShotMode             func(gtk.ToggleButton)
 	onShotCancel           func(gtk.Button)
+	onShotCamera           func(gtk.Button)
 	onShotRecord           func(gtk.ToggleButton)
 	onShotDrawer           func(gtk.Button)
 	onShotItem             func(gtk.Button)

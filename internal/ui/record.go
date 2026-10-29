@@ -118,13 +118,7 @@ func (s *shellUI) recordingEnded(err error, stderr string) {
 		return
 	}
 	s.recordNote(i18n.T("Recording saved"), fmt.Sprintf("%s · %s", filepath.Base(file), clockDuration(took)), file)
-	// The drawer, the recording first, to drag into an app; not while
-	// another capture is open or over a locked screen.
-	sh := &s.shot
-	if !sh.open && !sh.busy && !s.lock.held() {
-		sh.record = true
-		s.openShotDrawer()
-	}
+	// The drawer stays shut: the screenshot tool's button opens it.
 }
 
 // showRecording shows the red square and the time so far in every bar

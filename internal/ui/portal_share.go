@@ -31,7 +31,7 @@ func (s *shellUI) askShare(ctx context.Context, req ipc.Request) ipc.Response {
 			return false
 		}
 		sh.portal = p
-		sh.record, sh.silentNext = false, true
+		sh.record = false
 		s.openShot("screen")
 		return true
 	})

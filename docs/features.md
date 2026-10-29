@@ -260,14 +260,30 @@ the system's `unix_chkpwd`; repeated wrong ones wait longer each time.
 
 ## Screenshots
 
-Print opens the screenshot tool over a still of every screen: drag out an
-area, click a window or a screen. Each shot is saved and copied, then
-shown as a notification with its thumbnail. Ctrl+Print does the same and
-then opens the drawer, where the recent shots and recordings wait to drag
-into other apps (Print alone leaves it closed: most shots go straight to
-the clipboard). Shift+Print takes the whole screen at once. With Record on, the choice is recorded instead
-(wf-recorder) until the red square in the bar stops it. `inua call
-screenshot color` picks a colour from the still with a loupe.
+Print opens the screenshot tool over a still of every screen.
+
+- **Area**: drag one out. It stays: its corners and edges resize it, a
+  drag inside moves it, and the next time the tool opens it is where it
+  was left. A camera shows at its middle under the pointer; a click on
+  it, a click inside the area, or Enter takes it.
+- **Annotating**: under the area, a toolbar draws on it before it is
+  taken: an arrow, a rectangle, a pen, a highlighter, text, numbered
+  steps and pixelating (to hide what is under it), in six inks, with
+  undo and redo (Ctrl+Z, Ctrl+Shift+Z). The shot is taken with them, at
+  the screen's full resolution.
+- **Window** and **Screen**: a grid of every window on every workspace,
+  grouped by workspace (the ones shown marked), each a live picture; or
+  of every screen. Click one, or move to it with the arrows and press
+  Enter. A window is taken whole even when its workspace is not shown.
+
+Each shot is saved and copied, then shown as a notification with its
+thumbnail. The recent shots and recordings, to drag into other apps,
+wait in the drawer, which the tool's toolbar opens; taking a shot never
+opens it. Shift+Print takes the whole screen at once. With Record on,
+the choice is recorded instead (wf-recorder) until the red square in the
+bar stops it; a window or a screen is then clicked on the still, as what
+is recorded must be on the screen. `inua call screenshot color` picks a
+colour from the still with a loupe.
 
 ## Passwords
 
@@ -610,6 +626,11 @@ built-in display off (`[displays] lid_off`).
 
 Seven colour themes, from 夜 yoru (night) to 青写真 aojashin (blueprint),
 Phosphor icons, and matching Fcitx 5 themes.
+
+The apps can take another theme than the bar and dock (*Apps* under the
+theme swatches, `style.app_theme`): inua's own apps follow it, and other
+apps are asked to be light or dark by it. The launcher, control center
+and settings stay with the bar.
 
 ## Wallpaper
 
