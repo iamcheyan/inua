@@ -33,6 +33,7 @@ const (
 	roleCheckMenuItem   = 8
 	roleRadioMenuItem   = 45
 	roleSeparator       = 50
+	roleLabel           = 29
 	roleTearoffMenuItem = 58
 
 	stateEnabled = 8
@@ -212,6 +213,10 @@ func decodeA11y(src a11ySource, ref a11yRef, depth, count int) ([]Entry, error) 
 			continue
 		}
 		label, _ := src.name(kid)
+		if strings.TrimSpace(label) == "" {
+			// GTK4 keeps a menu item's text on a label child, not on the item.
+			label = labelChildName(src, kid)
+		}
 		switch role {
 		case roleSeparator, roleTearoffMenuItem:
 			out = append(out, Entry{Separator: true})
@@ -424,4 +429,22 @@ func (b busSource) doAction(ref a11yRef, index uint32) error {
 		return fmt.Errorf("appmenu: the application refused the action")
 	}
 	return nil
+}
+
+// labelChildName is a widget's text when it hangs on a label child, as GTK4
+// menu items and buttons keep it: the first label child that has a name.
+func labelChildName(src a11ySource, ref a11yRef) string {
+	kids, err := src.children(ref)
+	if err != nil {
+		return ""
+	}
+	for _, kid := range kids {
+		if r, err := src.role(kid); err != nil || r != roleLabel {
+			continue
+		}
+		if n, err := src.name(kid); err == nil && strings.TrimSpace(n) != "" {
+			return n
+		}
+	}
+	return ""
 }

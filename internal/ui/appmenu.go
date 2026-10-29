@@ -3,8 +3,12 @@ package ui
 import (
 	"context"
 	"log"
+	"os"
 	"strconv"
+	"unsafe"
 
+	"codeberg.org/puregotk/puregotk/v4/glib"
+	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/appmenu"
@@ -115,6 +119,9 @@ func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
 			s.appendAppMenu(b, entry, pid)
 		}
 		b.appMenu.SetVisible(b.appMenu.GetFirstChild() != nil)
+		if os.Getenv("INUA_APPMENU_DEBUG") != "" {
+			glib.IdleAdd(&s.onAppMenuMeasure, 0)
+		}
 	})
 }
 
@@ -178,6 +185,7 @@ func (s *shellUI) activateAppMenu(target appMenuTarget) {
 }
 
 func (s *shellUI) bindAppMenuHandlers() {
+	s.onAppMenuMeasure = func(uintptr) bool { return s.logAppMenuBounds() }
 	s.onAppMenuClicked = func(button gtk.Button) {
 		target, ok := s.appmenu.targets[button.GetName()]
 		if !ok {
@@ -192,4 +200,22 @@ func (s *shellUI) bindAppMenuHandlers() {
 		}
 		s.activateAppMenu(target)
 	}
+}
+
+// logAppMenuBounds writes each section button's box to the log, so a test
+// script can click the label it wants instead of guessing at pixels. It runs
+// only with INUA_APPMENU_DEBUG set.
+func (s *shellUI) logAppMenuBounds() bool {
+	for _, b := range s.bars {
+		for w := b.appMenu.GetFirstChild(); w != nil; w = w.GetNextSibling() {
+			var r graphene.Rect
+			if !w.ComputeBounds(&b.win.Widget, &r) {
+				continue
+			}
+			box := *(*[4]float32)(unsafe.Pointer(&r))
+			label := (*gtk.Button)(unsafe.Pointer(w)).GetLabel()
+			log.Printf("appmenu-bounds %q x=%.0f y=%.0f w=%.0f h=%.0f", label, box[0], box[1], box[2], box[3])
+		}
+	}
+	return false
 }

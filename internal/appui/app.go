@@ -162,7 +162,7 @@ func run(name, appID, title string, v View, many bool, args []string, uiDir stri
 	if files {
 		flags |= gio.GApplicationHandlesOpenValue
 	}
-	quietA11y()
+	a11y()
 	restore := gtkx.ForcePortals(portalconf.PickerOn())
 	// The apps' icon theme is in place before the application starts:
 	// GtkApplication's start looks its icon up, which reads the whole
@@ -381,36 +381,18 @@ func (c *Ctx) DesktopIcons() string {
 	return c.desktop
 }
 
-// quietA11y turns GTK's accessibility off (GTK_A11Y=none) while nothing
-// uses it: no screen reader and no other assistive program, as the
-// session's AT-SPI bus says (org.a11y.Status), the way browsers decide.
-// GTK keeps every widget's accessible state current all the same, and
-// each change to a list costs in proportion to the list's length: Files
-// filled a folder of 457 items in 1.4 s with it and 0.6 s without. A
-// GTK_A11Y already set, and an answer not had, leave it on.
-func quietA11y() {
+// a11y is the accessibility bridge every light app runs with. inua's global
+// menu reads an application's menu through AT-SPI, so a light app with the
+// bridge off has no accessible menu tree and the bar shows nothing for it.
+// GTK_A11Y=atspi asks for the bridge outright; left unset, GTK decides from
+// the session's org.a11y.Status and usually keeps it off. The cost is real
+// (a list's rows are kept accessible too: Files filled 457 rows in 1.4 s
+// with it and 0.6 s without), so it is set here, once, rather than per app.
+func a11y() {
 	if os.Getenv("GTK_A11Y") != "" {
 		return
 	}
-	conn, err := dbus.ConnectSessionBus()
-	if err != nil {
-		return
-	}
-	defer conn.Close()
-	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
-	defer cancel()
-	status := conn.Object("org.a11y.Bus", "/org/a11y/bus")
-	for _, p := range []string{"IsEnabled", "ScreenReaderEnabled"} {
-		var v dbus.Variant
-		err := status.CallWithContext(ctx, "org.freedesktop.DBus.Properties.Get", 0, "org.a11y.Status", p).Store(&v)
-		if on, ok := v.Value().(bool); err != nil || !ok || on {
-			return
-		}
-	}
-	// inua itself reads every application menu through AT-SPI, so a11y must
-	// stay on: with it off a light app has no accessible menu tree and the
-	// shell global menu shows nothing for it.
-	os.Setenv("GTK_A11Y", "auto")
+	os.Setenv("GTK_A11Y", "atspi")
 }
 
 // desktopIconTheme is the icon theme the desktop's settings choose, read
