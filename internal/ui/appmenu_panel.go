@@ -124,6 +124,7 @@ func (s *shellUI) showMenu(button *gtk.Widget, target appMenuTarget) {
 	m.closing = false
 	s.fillMenu()
 	s.dropFromBar(&m.drop, nil, func(*bar) *gtk.Widget { return button })
+	glib.IdleAdd(&s.onMenuLayout, 0)
 }
 
 func (s *shellUI) closeMenu() {
@@ -335,9 +336,6 @@ func (s *shellUI) menuOwnedBy(pid int) bool {
 // rather than from the style sheet's row heights.
 func (s *shellUI) layoutMenu() bool {
 	m := &s.menu
-	if m.open && m.drop.hanging && m.drop.canvas != nil {
-		gtkx.PassInputBut(m.drop.win, int(m.drop.x), int(m.drop.y), int(m.drop.w), int(m.drop.h))
-	}
 	for _, pair := range m.pairs {
 		var r graphene.Rect
 		if !pair.row.ComputeBounds(&m.card.Widget, &r) {
@@ -345,6 +343,9 @@ func (s *shellUI) layoutMenu() bool {
 		}
 		box := *(*[4]float32)(unsafe.Pointer(&r))
 		pair.col.SetMarginTop(int32(box[1]))
+	}
+	if m.open && m.drop.hanging && m.drop.host != nil && m.drop.canvas != nil {
+		gtkx.PassInputBut(&m.drop.host.win.Window, int(m.drop.x), int(m.drop.y), int(m.drop.w), int(m.drop.h))
 	}
 	return false
 }
