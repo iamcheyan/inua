@@ -322,11 +322,11 @@ func (b *bar) setDensity(density string) {
 // hold grows the bar's window down over its monitor for a panel to hang
 // in, on layer and with the keyboard, the space it keeps from windows
 // as it was.
-func (b *bar) hold(layer layershell.Layer) {
+func (b *bar) hold(layer layershell.Layer, keyboard layershell.KeyboardMode) {
 	b.held++
 	w := b.win.GoPointer()
 	layershell.SetLayer(w, layer)
-	layershell.SetKeyboardMode(w, layershell.KeyboardExclusive)
+	layershell.SetKeyboardMode(w, keyboard)
 	if b.held > 1 {
 		return
 	}

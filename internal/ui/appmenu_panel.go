@@ -67,6 +67,8 @@ func (s *shellUI) buildMenuPanel() {
 	m.card = gtk.NewBox(gtk.OrientationHorizontalValue, 4)
 	m.card.AddCssClass("menu-panel")
 	m.backdrop.Append(&m.card.Widget)
+	m.backdrop.SetVexpand(true)
+	m.backdrop.SetHexpand(true)
 	m.win.SetChild(&m.backdrop.Widget)
 
 	keys := gtk.NewEventControllerKey()
@@ -76,10 +78,12 @@ func (s *shellUI) buildMenuPanel() {
 	m.keys = &keys.EventController
 
 	click := gtk.NewGestureClick()
+	click.SetPropagationPhase(gtk.PhaseCaptureValue)
 	click.ConnectPressed(&s.onMenuBackdrop)
 	m.backdrop.AddController(&click.EventController)
 
 	m.drop.attach(m.win, &keys.EventController, m.backdrop, &m.card.Widget, layershell.LayerOverlay, false)
+	m.drop.keyboard = layershell.KeyboardNone // preserve the focused app keyboard
 	m.win.SetApplication(s.app)
 	w := m.win.GoPointer()
 	if s.layer {

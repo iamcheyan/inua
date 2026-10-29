@@ -35,8 +35,9 @@ import (
 // card shows in that window instead.
 type drop struct {
 	win      *gtk.Window
-	keys     *gtk.EventController // the panel's, on the window it shows in
-	layer    layershell.Layer     // the bar's while it hangs from it
+	keys     *gtk.EventController    // the panel's, on the window it shows in
+	layer    layershell.Layer        // the bar's while it hangs from it
+	keyboard layershell.KeyboardMode // keyboard mode while held
 	canvas   *gtk.Widget
 	backdrop *gtk.Box
 	card     *gtk.Widget
@@ -75,6 +76,7 @@ func (d *drop) attach(win *gtk.Window, keys *gtk.EventController, backdrop *gtk.
 	d.win, d.keys, d.layer = win, keys, layer
 	d.backdrop, d.card, d.canvas, d.bar, d.host = backdrop, card, nil, nil, nil
 	d.end = flush
+	d.keyboard = layershell.KeyboardExclusive
 	d.hanging, d.moving, d.back, d.gone = false, false, false, nil
 	if d.onTick == nil {
 		d.onTick = func(uintptr, uintptr, uintptr) bool { return d.step() }
@@ -118,7 +120,7 @@ func (d *drop) moveTo(b *bar) {
 			d.backdrop.AddCssClass(c)
 		}
 	}
-	b.hold(d.layer)
+	b.hold(d.layer, d.keyboard)
 	b.frame.AddOverlay(&d.backdrop.Widget)
 	d.backdrop.Unref()
 	d.keys.Ref()
