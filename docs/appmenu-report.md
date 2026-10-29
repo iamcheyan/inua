@@ -1,76 +1,100 @@
-# Global application menu — state and evidence
+# Global application menu: state, evidence, and limits
 
-## What the shell does
+The top bar shows the focused application's menu. This records what each part
+does, what was measured on the real desktop, and what is deliberately not
+covered.
 
-The bar shows the focused application's menu between the app icon/title and the
-tray. It reads the menu two ways:
+## How an application publishes its menu
 
-- **Canonical AppMenu Registrar + `com.canonical.dbusmenu`** — what Mavernix
-  (the reference in issue #47) does; Qt apps such as Dolphin register here.
-- **AT-SPI** — a fallback for apps that export a menubar through their
-  accessibility tree but never register with the Canonical registrar.
+`internal/appui/menu.go` builds one `GMenu` for the window's own menu bar and
+publishes the same tree as `com.canonical.dbusmenu`, under a well-known name of
+its own:
 
-Because the bar is a layer-shell surface, a GTK popover cannot hang from it
-(Wayland only allows an `xdg_popup` to hang from an `xdg_toplevel`). The menu is
-therefore a card in its own overlay surface, hung under the bar the way the
-calendar is (`internal/ui/appmenu_panel.go`).
+```
+io.github.lyricat.Inua.Menu.p<PID>.w<N>     object /io/github/lyricat/Inua/MenuBar
+```
 
-**Submenus cascade**: each one is a column of its own, beside the item it hangs
-from and level with it, as a Mac's menus do, rather than rows indented into the
-parent list. Column positions come from GTK's own measurement, not from style
-sheet row heights.
+`internal/dbusmenu` implements the protocol: `GetLayout`, `GetGroupProperties`,
+`GetProperty`, `Event`, `AboutToShow`, `AboutToShowGroup`, and the `Version` /
+`Status` / `TextDirection` / `IconThemePath` properties. A submenu is a node
+with children; the window's own `GtkPopoverMenuBar` and the published tree come
+from the same `[]MenuGroup`, so the two cannot drift.
 
-![Dolphin's View menu with the Sort By submenu open beside it](appmenu-evidence/dolphin-cascade.png)
+## How the shell finds it
 
-## What is verified on the real desktop (hx90, Hyprland)
+`internal/appmenu/client.go` tries, in order:
 
-- Menu labels for the focused Qt application appear in the bar (Dolphin:
-  ファイル / 編集 / 表示 / 移動 / ツール / 設定 / ヘルプ).
-- Clicking a label opens the section; hovering an item with a submenu opens the
-  submenu beside it, level with the item, with a gap between the columns.
-- `←` / `Esc` step back one level, then close; a click outside closes.
-- The screenshot above is that behaviour, captured from the live session.
+1. **`com.canonical.AppMenu.Registrar`** — the de-facto protocol (KDE, Unity,
+   Mavernix). Its association key is an **X11 window ID**, so it covers Qt and
+   XWayland applications.
+2. **inua's own names** — the shell asks the bus which of those names belong to
+   the focused process, by the owner's Unix PID. This is how a native Wayland
+   GTK4 window gets a global menu without pretending a PID is an XID.
+3. **AT-SPI** — last, and only when the tree has at least one labelled item.
+   Plain GTK4 answers with a skeleton (a menu bar with unnamed items); taking
+   that at face value used to put blank buttons in the bar and hide the real
+   menu.
 
-## What is implemented but not yet proven end to end
+A process that owns **more than one** menu name (several windows) shows no
+global menu: without a per-window identity the shell cannot tell which window
+is focused, and showing the wrong window's commands is worse than showing none.
 
-Every inua application now builds a menu model and shows it in its own window:
+## What GTK and GNOME do
 
-| Where | Apps |
+- **GTK3** can export a menubar through `appmenu-gtk-module` on X11, which is
+  what feeds the Canonical registrar.
+- **GTK4** has no export mechanism at all — `gtk_application_dbus_register()`
+  registers nothing, no `_GTK_MENUBAR_OBJECT_PATH` property is set, and no GTK4
+  appmenu module exists. A GTK4 application that wants a global menu has to
+  publish dbusmenu itself, which is what inua's apps now do.
+- **GNOME Shell** has no global-menu service and its applications publish
+  nothing, so they correctly show no menu.
+
+## Measured on the real desktop (hx90, Hyprland, one 1280x1024 output)
+
+For each application: start it, read its published tree from the session bus,
+and record the labels. This is the exact data the bar renders.
+
+| Application | Published menu |
 | --- | --- |
-| `internal/lightui` | Clock, Weather, Stocks, Calculator, Calendar, Color Picker, System Monitor, Tailscale, Pass, GPG, Music, Video, Workshop |
-| `internal/gamesui` | Minesweeper, Space Pinball, Small Fortune, Chinese Checkers |
-| `internal/filesui` | Files |
-| `internal/mailui` | Mail |
-| `internal/termui` | Terminal (Applications menu, also on Linux now) |
+| Clock | View | World clocks | Alarms | Stopwatch | Timer |
+| Calculator | 編集 | Copy result | 歴史 |
+| Calendar | View | 今日 |
+| Weather | View | 更新 | 場所 |
+| Stocks | View | 更新 | Find a stock |
+| Color Picker | 編集 | Pick a color | 履歴をクリアする |
+| System Monitor | View | Processes | システム |
+| Tailscale | View | 更新 | デバイス | このデバイス |
+| Pass | ファイル | 新しいエントリー | Add store | 検索 |
+| GPG | View | 暗号化 | 復号 | キー |
+| Music | ファイル | ファイルを開く | ファイルを追加 | プレイリストを読み込む | プレイリストを保存 | Play or pause | Next track |
+| Video | ファイル | ビデオを開く | Play or pause | Fullscreen |
 
-`internal/appui/menu.go` builds the `GMenu` and the `GtkPopoverMenuBar` from a
-`[]MenuGroup`; `internal/appui/app.go` keeps the accessibility bridge on
-(`GTK_A11Y=atspi`) because the shell reads menus through AT-SPI.
+Interface, end to end (screenshots in `docs/appmenu-evidence/`):
 
-## The open problem
+- the focused Clock window puts **View** in the bar, right of its title;
+- clicking it opens a panel hanging under the bar with the four items above;
+- clicking **Timer** switches the app to its timer page — the click travels
+  bar -> dbusmenu `Event` -> the window's `GAction` -> the app;
+- `dolphin-cascade.png` shows a submenu opened *beside* its item, level with
+  it: the cascade, for an application that has a real second level.
 
-For inua's own GTK4 applications the bar still shows **no labels**. Their
-accessibility tree reaches the shell as a skeleton only:
+## Fixed while proving it
 
-```
-role=75 (application) -> role=23 (frame) -> role=39 (panel)
-  -> role=34 (menu bar) -> role=35 (menu item) -> role=29 (label)
-```
+| Symptom | Cause |
+| --- | --- |
+| No menu at all | The published name had two dots (Menu..p...), which is not a valid D-Bus name |
+| Every light app's window went blank | `menuWindow` appended the window's child before detaching it; GTK refuses a second parent and the content vanished |
+| Blank buttons in the bar | The AT-SPI skeleton (unnamed menubar) was accepted before the real menu |
+| Games crashed at startup | `frame.go` took `root`/`help` from the builder *after* `u.Close()`; `game.blp` also had no `root` object |
+| Menu measured at 12x2 px | The test hook measured before layout; it now waits for the bar to lay out |
 
-one unnamed child per level, and `ChildCount` reporting 0 where `GetChildren`
-returns 1. GTK4's `GtkPopoverMenuBar` therefore does not hand the reader the
-individual top-level menus through AT-SPI, so the registrar path is the one that
-will work for our own apps too.
+## Not claimed
 
-## Next step
-
-Publish each inua application's menu over **`com.canonical.dbusmenu`** and
-register the window with `com.canonical.AppMenu.Registrar` from `internal/appui`
-— the same pair the shell already speaks for Dolphin. That removes AT-SPI from
-the path entirely and makes the inua apps first-class citizens of the bar.
-
-## Test hooks
-
-`INUA_APPMENU_DEBUG=1` makes the shell log each section button's box
-(`appmenu-bounds …`), so a test script can click the label it wants instead of
-guessing at pixels.
+- No screenshot here shows a second-level submenu of an inua application. The
+  Terminal's `View -> Font` is wired (the one nested menu in inua's own apps),
+  but the cascade picture in this repository is Dolphin's.
+- Multi-window inua applications (Files, Mail, Terminal with several windows)
+  intentionally show no global menu.
+- Games, Files, Mail and the Terminal were checked by starting them and reading
+  their published trees; their bar rendering was not photographed one by one.

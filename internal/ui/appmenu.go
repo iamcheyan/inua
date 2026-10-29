@@ -120,7 +120,9 @@ func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
 		}
 		b.appMenu.SetVisible(b.appMenu.GetFirstChild() != nil)
 		if os.Getenv("INUA_APPMENU_DEBUG") != "" {
-			glib.IdleAdd(&s.onAppMenuMeasure, 0)
+			// Measure once the bar has laid the buttons out: an idle callback
+			// runs before that and reports a 12x2 box at y=-1.
+			glib.TimeoutAdd(300, &s.onAppMenuMeasure, 0)
 		}
 	})
 }

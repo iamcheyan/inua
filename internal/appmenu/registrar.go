@@ -72,10 +72,11 @@ type Entry struct {
 
 // Action says how to invoke an entry.
 type Action struct {
-	Kind  string          // ActionA11y or ActionDbusmenu; empty when the entry only groups children
-	Bus   string          // the connection that owns the menu
-	Path  dbus.ObjectPath // the menu or accessible object
-	Index int32           // an action index (AT-SPI) or an item id (dbusmenu)
+	Kind          string          // ActionA11y or ActionDbusmenu; empty when the entry only groups children
+	Bus           string          // the connection that owns the menu
+	Path          dbus.ObjectPath // the menu or accessible object
+	Index         int32           // an action index (AT-SPI) or an item id (dbusmenu)
+	NativeWayland bool            // this app has no X11 Registrar window ID
 }
 
 const (

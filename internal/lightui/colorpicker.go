@@ -70,7 +70,7 @@ func (a *colorApp) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	}
 	a.show()
 	glib.TimeoutAdd(700, &a.onTick, 0)
-	menuWindow(c, win, []appui.MenuGroup{{Title: "Color Picker", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "color-pick", Label: "Pick a color", Activate: func(gio.SimpleAction, uintptr) { a.button("pick") }}, {Name: "color-clear", Label: "Clear history", Activate: func(gio.SimpleAction, uintptr) { a.button("clear") }}}}}}})
+	menuWindow(c, win, []appui.MenuGroup{{Title: "Edit", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "color-pick", Label: "Pick a color", Activate: func(gio.SimpleAction, uintptr) { a.button("pick") }}, {Name: "color-clear", Label: "Clear history", Activate: func(gio.SimpleAction, uintptr) { a.button("clear") }}}}}}})
 	return win
 }
 
