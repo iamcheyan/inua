@@ -34,6 +34,8 @@ type appMenuState struct {
 }
 
 func (s *shellUI) startAppMenu() {
+	// Disabled until the global menu surface can be dismissed reliably.
+	return
 	conn, err := system.SessionBus()
 	if err != nil {
 		log.Printf("appmenu: %v", err)

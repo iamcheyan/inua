@@ -771,6 +771,9 @@ func (s *shellUI) apply(snap hypr.Snapshot) {
 	oldPID := focusedPID(s.snap)
 	s.snap = snap
 	if oldPID != focusedPID(snap) {
+		if s.menu.open {
+			s.closeMenu()
+		}
 		s.syncAppMenu()
 	}
 	s.overview.st.SetSnapshot(snap)

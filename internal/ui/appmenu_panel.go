@@ -86,8 +86,8 @@ func (s *shellUI) buildMenuPanel() {
 		layershell.InitForWindow(w)
 		layershell.SetNamespace(w, "inua-appmenu")
 		layershell.SetLayer(w, layershell.LayerOverlay)
-		// On demand: the focused application keeps the focus its menu is for.
-		layershell.SetKeyboardMode(w, layershell.KeyboardOnDemand)
+		// This pointer menu must not steal focus or block clicks outside it.
+		layershell.SetKeyboardMode(w, layershell.KeyboardNone)
 		for _, e := range []layershell.Edge{layershell.EdgeTop, layershell.EdgeBottom, layershell.EdgeLeft, layershell.EdgeRight} {
 			layershell.SetAnchor(w, e, true)
 		}

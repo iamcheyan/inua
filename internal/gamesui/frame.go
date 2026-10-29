@@ -149,6 +149,7 @@ func (v *view) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	f.loadColors()
 	f.hint.SetText(i18n.T(v.info.Keys))
 	f.menu = appui.NewMenuBar(c, v.menuGroups(f))
+	f.menu.Widget.SetVisible(false)
 	f.menu.AppendLocal(&f.root)
 	f.onRestart = func(gtk.Button) { v.g.reset() }
 	f.restart.ConnectClicked(&f.onRestart)
