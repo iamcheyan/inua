@@ -194,7 +194,9 @@ window forward, or starts it. While the shell shows no notifications
 `Inhibit` (logout, switch user, suspend, idle), `CreateMonitor` and
 `QueryEndResponse`. Idle goes to the idle daemon's
 `org.freedesktop.ScreenSaver.Inhibit` (hypridle's, when it runs; without
-one nothing goes idle to hold off). Suspend holds a logind lock. Logout is
+one nothing goes idle to hold off). Suspend holds a logind lock, which
+stops the idle suspend; the shell's Suspend and Hibernate go past it, the
+user having asked (an app that forgets its lock would block them). Logout is
 held by the shell: Restart, Shut down and Log out, asking for their
 second click, name the apps holding it (*"Firefox is busy. Log out?"*).
 Monitors hear the screen locked and unlocked, and the session asked to
