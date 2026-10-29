@@ -2024,7 +2024,8 @@ msgstr ""
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/prefsweb.go:164
+#: internal/termui/headmenu.go:153
+#: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
 #: internal/vmui/window.go:1927
@@ -2046,7 +2047,8 @@ msgstr ""
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/prefsweb.go:128
+#: internal/termui/headmenu.go:161
+#: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
 #: internal/ui/settings_displays.go:412
@@ -2728,7 +2730,7 @@ msgstr ""
 #: internal/termui/app.go:356
 #: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
-#: internal/termui/prefs.go:136
+#: internal/termui/prefs.go:159
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
@@ -2801,7 +2803,7 @@ msgstr ""
 
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
-#: internal/termui/prefs.go:122
+#: internal/termui/prefs.go:145
 #: internal/viewerui/app.go:795
 #: internal/viewerui/app.go:813
 #: internal/viewerui/app.go:828
@@ -2993,7 +2995,7 @@ msgstr ""
 #: internal/mailui/details.go:222
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
-#: internal/termui/prefsweb.go:90
+#: internal/termui/prefsweb.go:91
 #: internal/ui/askpass.go:232
 #: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
@@ -3706,7 +3708,7 @@ msgstr ""
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
-#: internal/termui/prefs.go:179
+#: internal/termui/prefs.go:202
 msgid "Keys"
 msgstr ""
 
@@ -4430,7 +4432,7 @@ msgid "Text"
 msgstr ""
 
 #: internal/filesui/renamemany.go:161
-#: internal/termui/prefsweb.go:79
+#: internal/termui/prefsweb.go:80
 msgid "Where"
 msgstr ""
 
@@ -8253,6 +8255,7 @@ msgstr ""
 #: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
+#: internal/termui/headmenu.go:108
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -8460,7 +8463,8 @@ msgid "System Monitor"
 msgstr ""
 
 #: internal/lightui/apps.go:23
-#: internal/termui/prefsweb.go:64
+#: internal/termui/headmenu.go:149
+#: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
 msgid "Tailscale"
@@ -10180,7 +10184,7 @@ msgid "IN USE"
 msgstr ""
 
 #: internal/lightui/tailscale.go:602
-#: internal/termui/prefs.go:342
+#: internal/termui/prefs.go:364
 #: internal/ui/settings_ai.go:271
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
@@ -13124,7 +13128,7 @@ msgstr ""
 
 #: internal/term/settings/settings.go:103
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:176
+#: internal/termui/columns.go:171
 msgid "New workspace"
 msgstr ""
 
@@ -13369,7 +13373,7 @@ msgid "First load"
 msgstr ""
 
 #: internal/term/web/strings.go:54
-#: internal/termui/prefs.go:118
+#: internal/termui/prefs.go:141
 msgid "Font"
 msgstr ""
 
@@ -13395,7 +13399,7 @@ msgid "INFO"
 msgstr ""
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:203
 #: ui/gpg.ui:1042
 msgid "KEYS"
 msgstr ""
@@ -13423,7 +13427,7 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:177
+#: internal/termui/columns.go:172
 #: ui/term.ui:235
 msgid "New session"
 msgstr ""
@@ -13515,7 +13519,7 @@ msgstr ""
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:155
+#: internal/termui/prefs.go:178
 msgid "Shell"
 msgstr ""
 
@@ -13529,7 +13533,7 @@ msgstr ""
 
 #: internal/term/web/strings.go:102
 #: internal/termui/guide.go:86
-#: internal/termui/prefs.go:106
+#: internal/termui/prefs.go:129
 msgid "Terminal colours"
 msgstr ""
 
@@ -13685,16 +13689,15 @@ msgstr ""
 msgid "Your login shell (%s)"
 msgstr ""
 
-#: internal/termui/columns.go:175
-#: internal/termui/palette.go:113
-msgid "Actions"
+#: internal/termui/columns.go:170
+msgid "Menu"
 msgstr ""
 
-#: internal/termui/columns.go:178
+#: internal/termui/columns.go:173
 msgid "Hide the sidebar"
 msgstr ""
 
-#: internal/termui/columns.go:179
+#: internal/termui/columns.go:174
 msgid "Show the sidebar"
 msgstr ""
 
@@ -13723,7 +13726,7 @@ msgid "The colours programs draw with: the window theme's, so the terminal match
 msgstr ""
 
 #: internal/termui/guide.go:95
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:124
 msgid "Window theme"
 msgstr ""
 
@@ -13733,6 +13736,49 @@ msgstr ""
 
 #: internal/termui/guide.go:108
 msgid "Keep these choices; the settings change them later"
+msgstr ""
+
+#: internal/termui/headmenu.go:101
+msgid "Command palette"
+msgstr ""
+
+#: internal/termui/headmenu.go:115
+#: internal/termui/prefsweb.go:41
+msgid "WEB TERMINAL"
+msgstr ""
+
+#: internal/termui/headmenu.go:132
+msgid "Turn on the Web Terminal"
+msgstr ""
+
+#: internal/termui/headmenu.go:134
+msgid "Turn off the Web Terminal"
+msgstr ""
+
+#: internal/termui/headmenu.go:139
+msgid "Restart the terminal host…"
+msgstr ""
+
+#: internal/termui/headmenu.go:147
+msgid "this computer only"
+msgstr ""
+
+#: internal/termui/headmenu.go:155
+#: internal/vmui/window.go:1820
+#: internal/vmui/window.go:1885
+#: internal/vmui/window.go:1966
+#: internal/vmui/window.go:1968
+#: internal/vmui/window.go:1970
+#: internal/vmui/window.go:1972
+msgid "Stopping…"
+msgstr ""
+
+#: internal/termui/headmenu.go:157
+msgid "On, %s"
+msgstr ""
+
+#: internal/termui/headmenu.go:159
+msgid "On, but not running"
 msgstr ""
 
 #: internal/termui/keys.go:257
@@ -13796,6 +13842,10 @@ msgstr ""
 msgid "Scroll to the previous / next prompt"
 msgstr ""
 
+#: internal/termui/palette.go:113
+msgid "Actions"
+msgstr ""
+
 #: internal/termui/palette.go:115
 msgid "Find an action"
 msgstr ""
@@ -13832,220 +13882,216 @@ msgstr[1] ""
 msgid "Paste as one line"
 msgstr ""
 
-#: internal/termui/prefs.go:46
+#: internal/termui/prefs.go:69
 msgid "Terminal Settings"
 msgstr ""
 
-#: internal/termui/prefs.go:95
+#: internal/termui/prefs.go:118
 msgid "Look"
 msgstr ""
 
-#: internal/termui/prefs.go:96
+#: internal/termui/prefs.go:119
 msgid "LOOK"
 msgstr ""
 
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:124
 msgid "inua's theme, or one of its others for this window alone"
 msgstr ""
 
-#: internal/termui/prefs.go:106
+#: internal/termui/prefs.go:129
 msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr ""
 
-#: internal/termui/prefs.go:108
+#: internal/termui/prefs.go:131
 #: internal/viewerui/app.go:817
 msgid "TEXT"
 msgstr ""
 
-#: internal/termui/prefs.go:118
+#: internal/termui/prefs.go:141
 msgid "A monospace family; Pango falls back for CJK"
 msgstr ""
 
-#: internal/termui/prefs.go:122
+#: internal/termui/prefs.go:145
 msgid "In points; Ctrl+= and Ctrl+- change it in the window"
 msgstr ""
 
-#: internal/termui/prefs.go:124
+#: internal/termui/prefs.go:147
 msgid "CURSOR"
 msgstr ""
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Block"
 msgstr ""
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Bar"
 msgstr ""
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Underline"
 msgstr ""
 
-#: internal/termui/prefs.go:133
+#: internal/termui/prefs.go:156
 msgid "Shape"
 msgstr ""
 
-#: internal/termui/prefs.go:133
+#: internal/termui/prefs.go:156
 msgid "What a program resetting the cursor gets"
 msgstr ""
 
-#: internal/termui/prefs.go:134
+#: internal/termui/prefs.go:157
 msgid "Blink"
 msgstr ""
 
-#: internal/termui/prefs.go:137
+#: internal/termui/prefs.go:160
 msgid "TERMINAL"
 msgstr ""
 
-#: internal/termui/prefs.go:138
+#: internal/termui/prefs.go:161
 msgid "Copy on select"
 msgstr ""
 
-#: internal/termui/prefs.go:138
+#: internal/termui/prefs.go:161
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr ""
 
-#: internal/termui/prefs.go:143
+#: internal/termui/prefs.go:166
 msgid "Scrollback"
 msgstr ""
 
-#: internal/termui/prefs.go:143
+#: internal/termui/prefs.go:166
 msgid "Lines kept per pane"
 msgstr ""
 
-#: internal/termui/prefs.go:147
+#: internal/termui/prefs.go:170
 msgid "Replay"
 msgstr ""
 
-#: internal/termui/prefs.go:147
+#: internal/termui/prefs.go:170
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr ""
 
-#: internal/termui/prefs.go:149
+#: internal/termui/prefs.go:172
 msgid "Shell and agents"
 msgstr ""
 
-#: internal/termui/prefs.go:150
+#: internal/termui/prefs.go:173
 msgid "SHELL AND AGENTS"
 msgstr ""
 
-#: internal/termui/prefs.go:150
+#: internal/termui/prefs.go:173
 msgid "Below the shell: used when the terminal host starts again"
 msgstr ""
 
-#: internal/termui/prefs.go:155
+#: internal/termui/prefs.go:178
 msgid "What new panes start; the panes open already keep theirs"
 msgstr ""
 
-#: internal/termui/prefs.go:156
+#: internal/termui/prefs.go:179
 msgid "Shell integration"
 msgstr ""
 
-#: internal/termui/prefs.go:156
+#: internal/termui/prefs.go:179
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr ""
 
-#: internal/termui/prefs.go:158
+#: internal/termui/prefs.go:181
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr ""
 
-#: internal/termui/prefs.go:158
+#: internal/termui/prefs.go:181
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr ""
 
-#: internal/termui/prefs.go:160
+#: internal/termui/prefs.go:183
 msgid "Remember commands"
 msgstr ""
 
-#: internal/termui/prefs.go:160
+#: internal/termui/prefs.go:183
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr ""
 
-#: internal/termui/prefs.go:175
+#: internal/termui/prefs.go:198
 msgid "Never keep"
 msgstr ""
 
-#: internal/termui/prefs.go:175
+#: internal/termui/prefs.go:198
 msgid "Commands matching these patterns, comma-separated"
 msgstr ""
 
-#: internal/termui/prefs.go:177
+#: internal/termui/prefs.go:200
 msgid "Web terminal"
 msgstr ""
 
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:203
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr ""
 
-#: internal/termui/prefs.go:354
+#: internal/termui/prefs.go:376
 #: internal/ui/shortcuts.go:197
 msgid "Press keys…"
 msgstr ""
 
-#: internal/termui/prefs.go:355
+#: internal/termui/prefs.go:377
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr ""
 
-#: internal/termui/prefs.go:377
+#: internal/termui/prefs.go:399
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr ""
 
-#: internal/termui/prefs.go:388
+#: internal/termui/prefs.go:410
 msgid "%s was %s's; that one has no keys now."
 msgstr ""
 
-#: internal/termui/prefsweb.go:40
-msgid "WEB TERMINAL"
-msgstr ""
-
-#: internal/termui/prefsweb.go:40
+#: internal/termui/prefsweb.go:41
 msgid "The terminals in a browser, a phone's over Tailscale"
 msgstr ""
 
-#: internal/termui/prefsweb.go:54
+#: internal/termui/prefsweb.go:55
 msgid "Web Terminal"
 msgstr ""
 
-#: internal/termui/prefsweb.go:54
+#: internal/termui/prefsweb.go:55
 msgid "Serve the terminals to a browser; it starts again at login while on"
 msgstr ""
 
-#: internal/termui/prefsweb.go:58
+#: internal/termui/prefsweb.go:59
 msgid "no address: is Tailscale up?"
 msgstr ""
 
-#: internal/termui/prefsweb.go:63
+#: internal/termui/prefsweb.go:64
 msgid "This computer only"
 msgstr ""
 
-#: internal/termui/prefsweb.go:79
+#: internal/termui/prefsweb.go:80
 msgid "Tailscale: on this computer's Tailscale address, for a phone on the tailnet"
 msgstr ""
 
-#: internal/termui/prefsweb.go:97
+#: internal/termui/prefsweb.go:98
 msgid "New link"
 msgstr ""
 
-#: internal/termui/prefsweb.go:103
+#: internal/termui/prefsweb.go:104
 msgid "Link"
 msgstr ""
 
-#: internal/termui/prefsweb.go:103
+#: internal/termui/prefsweb.go:104
 msgid "Open it on the phone; New link stops the old one working"
 msgstr ""
 
-#: internal/termui/prefsweb.go:148
+#: internal/termui/prefsweb.go:149
 msgid "The link's token could be kept neither in the keyring nor in a file."
 msgstr ""
 
-#: internal/termui/prefsweb.go:150
+#: internal/termui/prefsweb.go:151
 msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
 msgstr ""
 
-#: internal/termui/prefsweb.go:152
+#: internal/termui/prefsweb.go:153
 msgid "The Web Terminal did not start in time."
 msgstr ""
 
@@ -17053,15 +17099,6 @@ msgstr[1] ""
 
 #: internal/vmui/window.go:1818
 msgid "The system is installing; this takes a while."
-msgstr ""
-
-#: internal/vmui/window.go:1820
-#: internal/vmui/window.go:1885
-#: internal/vmui/window.go:1966
-#: internal/vmui/window.go:1968
-#: internal/vmui/window.go:1970
-#: internal/vmui/window.go:1972
-msgid "Stopping…"
 msgstr ""
 
 #: internal/vmui/window.go:1824

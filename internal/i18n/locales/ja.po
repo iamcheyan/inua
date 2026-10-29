@@ -2021,7 +2021,8 @@ msgstr "KDE Connect、GSConnect、Valent を使うデバイスは、このネッ
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/prefsweb.go:164
+#: internal/termui/headmenu.go:153
+#: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
 #: internal/vmui/window.go:1927
@@ -2043,7 +2044,8 @@ msgstr "サービスを起動しています。"
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/prefsweb.go:128
+#: internal/termui/headmenu.go:161
+#: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
 #: internal/ui/settings_displays.go:412
@@ -2725,7 +2727,7 @@ msgstr "フォルダーを開く"
 #: internal/termui/app.go:356
 #: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
-#: internal/termui/prefs.go:136
+#: internal/termui/prefs.go:159
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
@@ -2798,7 +2800,7 @@ msgstr "ディスク使用量"
 
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
-#: internal/termui/prefs.go:122
+#: internal/termui/prefs.go:145
 #: internal/viewerui/app.go:795
 #: internal/viewerui/app.go:813
 #: internal/viewerui/app.go:828
@@ -2988,7 +2990,7 @@ msgstr "コピーしました"
 #: internal/mailui/details.go:222
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
-#: internal/termui/prefsweb.go:90
+#: internal/termui/prefsweb.go:91
 #: internal/ui/askpass.go:232
 #: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
@@ -3694,7 +3696,7 @@ msgstr "再読み込み"
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
-#: internal/termui/prefs.go:179
+#: internal/termui/prefs.go:202
 msgid "Keys"
 msgstr "キー"
 
@@ -4407,7 +4409,7 @@ msgid "Text"
 msgstr "テキスト"
 
 #: internal/filesui/renamemany.go:161
-#: internal/termui/prefsweb.go:79
+#: internal/termui/prefsweb.go:80
 msgid "Where"
 msgstr "位置"
 
@@ -8218,6 +8220,7 @@ msgstr "フォーカスのオンまたはオフ"
 #: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
+#: internal/termui/headmenu.go:108
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -8425,7 +8428,8 @@ msgid "System Monitor"
 msgstr "システムモニター"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/prefsweb.go:64
+#: internal/termui/headmenu.go:149
+#: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
 msgid "Tailscale"
@@ -10129,7 +10133,7 @@ msgid "IN USE"
 msgstr "使用中"
 
 #: internal/lightui/tailscale.go:602
-#: internal/termui/prefs.go:342
+#: internal/termui/prefs.go:364
 #: internal/ui/settings_ai.go:271
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
@@ -13055,7 +13059,7 @@ msgstr "このワークスペースに新しいセッション"
 
 #: internal/term/settings/settings.go:103
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:176
+#: internal/termui/columns.go:171
 msgid "New workspace"
 msgstr "新しいワークスペース"
 
@@ -13300,7 +13304,7 @@ msgid "First load"
 msgstr "最初の読み込み"
 
 #: internal/term/web/strings.go:54
-#: internal/termui/prefs.go:118
+#: internal/termui/prefs.go:141
 msgid "Font"
 msgstr "フォント"
 
@@ -13326,7 +13330,7 @@ msgid "INFO"
 msgstr "情報"
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:203
 #: ui/gpg.ui:1042
 msgid "KEYS"
 msgstr "鍵"
@@ -13354,7 +13358,7 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:177
+#: internal/termui/columns.go:172
 #: ui/term.ui:235
 msgid "New session"
 msgstr "新しいセッション"
@@ -13446,7 +13450,7 @@ msgstr "セッション %d"
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:155
+#: internal/termui/prefs.go:178
 msgid "Shell"
 msgstr "シェル"
 
@@ -13460,7 +13464,7 @@ msgstr "記号"
 
 #: internal/term/web/strings.go:102
 #: internal/termui/guide.go:86
-#: internal/termui/prefs.go:106
+#: internal/termui/prefs.go:129
 msgid "Terminal colours"
 msgstr "ターミナルの色"
 
@@ -13614,16 +13618,15 @@ msgstr "ターミナルはウィンドウの色を使います"
 msgid "Your login shell (%s)"
 msgstr "ログインシェル（%s）"
 
-#: internal/termui/columns.go:175
-#: internal/termui/palette.go:113
-msgid "Actions"
-msgstr "操作"
+#: internal/termui/columns.go:170
+msgid "Menu"
+msgstr "メニュー"
 
-#: internal/termui/columns.go:178
+#: internal/termui/columns.go:173
 msgid "Hide the sidebar"
 msgstr "サイドバーを隠す"
 
-#: internal/termui/columns.go:179
+#: internal/termui/columns.go:174
 msgid "Show the sidebar"
 msgstr "サイドバーを表示"
 
@@ -13652,7 +13655,7 @@ msgid "The colours programs draw with: the window theme's, so the terminal match
 msgstr "プログラムが描く色です。ウィンドウのテーマの色なら inua のほかの部分と揃い、定番の配色を選ぶこともできます。"
 
 #: internal/termui/guide.go:95
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:124
 msgid "Window theme"
 msgstr "ウィンドウのテーマ"
 
@@ -13663,6 +13666,49 @@ msgstr "ターミナルを囲むウィンドウの見た目です。inua のテ�
 #: internal/termui/guide.go:108
 msgid "Keep these choices; the settings change them later"
 msgstr "この選択のままにします。あとで設定から変えられます"
+
+#: internal/termui/headmenu.go:101
+msgid "Command palette"
+msgstr "コマンドパレット"
+
+#: internal/termui/headmenu.go:115
+#: internal/termui/prefsweb.go:41
+msgid "WEB TERMINAL"
+msgstr "WEB ターミナル"
+
+#: internal/termui/headmenu.go:132
+msgid "Turn on the Web Terminal"
+msgstr "Web ターミナルをオンにする"
+
+#: internal/termui/headmenu.go:134
+msgid "Turn off the Web Terminal"
+msgstr "Web ターミナルをオフにする"
+
+#: internal/termui/headmenu.go:139
+msgid "Restart the terminal host…"
+msgstr "ターミナルホストを再起動…"
+
+#: internal/termui/headmenu.go:147
+msgid "this computer only"
+msgstr "このコンピューターのみ"
+
+#: internal/termui/headmenu.go:155
+#: internal/vmui/window.go:1820
+#: internal/vmui/window.go:1885
+#: internal/vmui/window.go:1966
+#: internal/vmui/window.go:1968
+#: internal/vmui/window.go:1970
+#: internal/vmui/window.go:1972
+msgid "Stopping…"
+msgstr "停止中…"
+
+#: internal/termui/headmenu.go:157
+msgid "On, %s"
+msgstr "オン、%s"
+
+#: internal/termui/headmenu.go:159
+msgid "On, but not running"
+msgstr "オンですが動いていません"
 
 #: internal/termui/keys.go:257
 #: internal/termui/wsmenu.go:135
@@ -13725,6 +13771,10 @@ msgstr "先頭 / 末尾へ"
 msgid "Scroll to the previous / next prompt"
 msgstr "前 / 次のプロンプトへ"
 
+#: internal/termui/palette.go:113
+msgid "Actions"
+msgstr "操作"
+
 #: internal/termui/palette.go:115
 msgid "Find an action"
 msgstr "操作を探す"
@@ -13759,220 +13809,216 @@ msgstr[0] "ほか %d 行"
 msgid "Paste as one line"
 msgstr "1 行にして貼り付け"
 
-#: internal/termui/prefs.go:46
+#: internal/termui/prefs.go:69
 msgid "Terminal Settings"
 msgstr "ターミナルの設定"
 
-#: internal/termui/prefs.go:95
+#: internal/termui/prefs.go:118
 msgid "Look"
 msgstr "外観"
 
-#: internal/termui/prefs.go:96
+#: internal/termui/prefs.go:119
 msgid "LOOK"
 msgstr "外観"
 
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:124
 msgid "inua's theme, or one of its others for this window alone"
 msgstr "inua のテーマ、またはこのウィンドウだけのほかのテーマ"
 
-#: internal/termui/prefs.go:106
+#: internal/termui/prefs.go:129
 msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr "プログラムが描く色：ウィンドウのテーマの色、または配色"
 
-#: internal/termui/prefs.go:108
+#: internal/termui/prefs.go:131
 #: internal/viewerui/app.go:817
 msgid "TEXT"
 msgstr "テキスト"
 
-#: internal/termui/prefs.go:118
+#: internal/termui/prefs.go:141
 msgid "A monospace family; Pango falls back for CJK"
 msgstr "等幅フォント。CJK は Pango が補います"
 
-#: internal/termui/prefs.go:122
+#: internal/termui/prefs.go:145
 msgid "In points; Ctrl+= and Ctrl+- change it in the window"
 msgstr "ポイント単位。ウィンドウでは Ctrl+= と Ctrl+- で変更"
 
-#: internal/termui/prefs.go:124
+#: internal/termui/prefs.go:147
 msgid "CURSOR"
 msgstr "カーソル"
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Block"
 msgstr "ブロック"
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Bar"
 msgstr "バー"
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Underline"
 msgstr "下線"
 
-#: internal/termui/prefs.go:133
+#: internal/termui/prefs.go:156
 msgid "Shape"
 msgstr "形"
 
-#: internal/termui/prefs.go:133
+#: internal/termui/prefs.go:156
 msgid "What a program resetting the cursor gets"
 msgstr "プログラムがカーソルを戻したときの形"
 
-#: internal/termui/prefs.go:134
+#: internal/termui/prefs.go:157
 msgid "Blink"
 msgstr "点滅"
 
-#: internal/termui/prefs.go:137
+#: internal/termui/prefs.go:160
 msgid "TERMINAL"
 msgstr "ターミナル"
 
-#: internal/termui/prefs.go:138
+#: internal/termui/prefs.go:161
 msgid "Copy on select"
 msgstr "選択でコピー"
 
-#: internal/termui/prefs.go:138
+#: internal/termui/prefs.go:161
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr "選択するとクリップボードにコピー。プライマリ選択は常に追従します"
 
-#: internal/termui/prefs.go:143
+#: internal/termui/prefs.go:166
 msgid "Scrollback"
 msgstr "スクロールバック"
 
-#: internal/termui/prefs.go:143
+#: internal/termui/prefs.go:166
 msgid "Lines kept per pane"
 msgstr "ペインごとに保つ行数"
 
-#: internal/termui/prefs.go:147
+#: internal/termui/prefs.go:170
 msgid "Replay"
 msgstr "リプレイ"
 
-#: internal/termui/prefs.go:147
+#: internal/termui/prefs.go:170
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr "あとで開くウィンドウのために保つ、ペインの最近の出力 (MiB)"
 
-#: internal/termui/prefs.go:149
+#: internal/termui/prefs.go:172
 msgid "Shell and agents"
 msgstr "シェルとエージェント"
 
-#: internal/termui/prefs.go:150
+#: internal/termui/prefs.go:173
 msgid "SHELL AND AGENTS"
 msgstr "シェルとエージェント"
 
-#: internal/termui/prefs.go:150
+#: internal/termui/prefs.go:173
 msgid "Below the shell: used when the terminal host starts again"
 msgstr "シェルより下の項目：ターミナルホストの再起動時に反映"
 
-#: internal/termui/prefs.go:155
+#: internal/termui/prefs.go:178
 msgid "What new panes start; the panes open already keep theirs"
 msgstr "新しいペインで起動するもの。開いているペインはそのまま"
 
-#: internal/termui/prefs.go:156
+#: internal/termui/prefs.go:179
 msgid "Shell integration"
 msgstr "シェル統合"
 
-#: internal/termui/prefs.go:156
+#: internal/termui/prefs.go:179
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr "bash、zsh、fish がプロンプトに印を付け、コマンドを記憶できるようにします"
 
-#: internal/termui/prefs.go:158
+#: internal/termui/prefs.go:181
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/termui/prefs.go:158
+#: internal/termui/prefs.go:181
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr "見ていないペインでエージェントが応答を待つか完了したとき"
 
-#: internal/termui/prefs.go:160
+#: internal/termui/prefs.go:183
 msgid "Remember commands"
 msgstr "コマンドを記憶"
 
-#: internal/termui/prefs.go:160
+#: internal/termui/prefs.go:183
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr "各ペインの最後のコマンドを、実行せずにプロンプトに戻します"
 
-#: internal/termui/prefs.go:175
+#: internal/termui/prefs.go:198
 msgid "Never keep"
 msgstr "記憶しない"
 
-#: internal/termui/prefs.go:175
+#: internal/termui/prefs.go:198
 msgid "Commands matching these patterns, comma-separated"
 msgstr "これらのパターンに一致するコマンド（カンマ区切り）"
 
-#: internal/termui/prefs.go:177
+#: internal/termui/prefs.go:200
 msgid "Web terminal"
 msgstr "Web ターミナル"
 
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:203
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "キーをクリックして新しいキーを押す。Backspace で解除"
 
-#: internal/termui/prefs.go:354
+#: internal/termui/prefs.go:376
 #: internal/ui/shortcuts.go:197
 msgid "Press keys…"
 msgstr "キーを押してください…"
 
-#: internal/termui/prefs.go:355
+#: internal/termui/prefs.go:377
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr "Escape で取り消し。Backspace でこの操作のキーを解除します。"
 
-#: internal/termui/prefs.go:377
+#: internal/termui/prefs.go:399
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr "キーには Ctrl、Alt、Super のいずれかが必要です。それ以外はプログラムのものです。"
 
-#: internal/termui/prefs.go:388
+#: internal/termui/prefs.go:410
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s は %s のキーでした。そちらはキーなしになりました。"
 
-#: internal/termui/prefsweb.go:40
-msgid "WEB TERMINAL"
-msgstr "WEB ターミナル"
-
-#: internal/termui/prefsweb.go:40
+#: internal/termui/prefsweb.go:41
 msgid "The terminals in a browser, a phone's over Tailscale"
 msgstr "ブラウザーで使うターミナル。電話からは Tailscale 経由で"
 
-#: internal/termui/prefsweb.go:54
+#: internal/termui/prefsweb.go:55
 msgid "Web Terminal"
 msgstr "Web ターミナル"
 
-#: internal/termui/prefsweb.go:54
+#: internal/termui/prefsweb.go:55
 msgid "Serve the terminals to a browser; it starts again at login while on"
 msgstr "ブラウザーにターミナルを提供します。オンの間はログイン時に再び起動します"
 
-#: internal/termui/prefsweb.go:58
+#: internal/termui/prefsweb.go:59
 msgid "no address: is Tailscale up?"
 msgstr "アドレスなし：Tailscale は起動していますか？"
 
-#: internal/termui/prefsweb.go:63
+#: internal/termui/prefsweb.go:64
 msgid "This computer only"
 msgstr "このコンピューターのみ"
 
-#: internal/termui/prefsweb.go:79
+#: internal/termui/prefsweb.go:80
 msgid "Tailscale: on this computer's Tailscale address, for a phone on the tailnet"
 msgstr "Tailscale：このコンピューターの Tailscale アドレスで。tailnet 上の電話向け"
 
-#: internal/termui/prefsweb.go:97
+#: internal/termui/prefsweb.go:98
 msgid "New link"
 msgstr "新しいリンク"
 
-#: internal/termui/prefsweb.go:103
+#: internal/termui/prefsweb.go:104
 msgid "Link"
 msgstr "リンク"
 
-#: internal/termui/prefsweb.go:103
+#: internal/termui/prefsweb.go:104
 msgid "Open it on the phone; New link stops the old one working"
 msgstr "電話で開きます。新しいリンクを作ると古いリンクは使えなくなります"
 
-#: internal/termui/prefsweb.go:148
+#: internal/termui/prefsweb.go:149
 msgid "The link's token could be kept neither in the keyring nor in a file."
 msgstr ""
 
-#: internal/termui/prefsweb.go:150
+#: internal/termui/prefsweb.go:151
 msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
 msgstr "このコンピューターには Tailscale アドレスがありません。Tailscale は起動していますか？（tailscale up）"
 
-#: internal/termui/prefsweb.go:152
+#: internal/termui/prefsweb.go:153
 msgid "The Web Terminal did not start in time."
 msgstr "Web ターミナルは時間内に起動しませんでした。"
 
@@ -16958,15 +17004,6 @@ msgstr[0] "%d システム"
 #: internal/vmui/window.go:1818
 msgid "The system is installing; this takes a while."
 msgstr "システムをインストールしています。しばらくかかります。"
-
-#: internal/vmui/window.go:1820
-#: internal/vmui/window.go:1885
-#: internal/vmui/window.go:1966
-#: internal/vmui/window.go:1968
-#: internal/vmui/window.go:1970
-#: internal/vmui/window.go:1972
-msgid "Stopping…"
-msgstr "停止中…"
 
 #: internal/vmui/window.go:1824
 msgid "The installation is paused. Continue to resume."

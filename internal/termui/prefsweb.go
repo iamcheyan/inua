@@ -37,6 +37,7 @@ const webTimeout = 30 * time.Second
 
 func (pr *prefs) webSection(page *gtk.Box, s *settings.Settings, save func()) {
 	w := &webPrefs{}
+	pr.web = w
 	sec := pr.section(page, i18n.T("WEB TERMINAL"), i18n.T("The terminals in a browser, a phone's over Tailscale"))
 
 	w.on = gtk.NewSwitch()

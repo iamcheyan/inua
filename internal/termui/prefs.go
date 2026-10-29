@@ -29,17 +29,40 @@ type prefs struct {
 	// The index and the pages it shows, by name.
 	index *gtk.ListBox
 	pages *gtk.Stack
+	web   *webPrefs // the Web Terminal page's controls
 
 	cbs     []any // the callbacks GTK holds
 	onClose func(gtk.Window) bool
 	onKey   func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 }
 
-func (a *App) openSettings() {
-	if a.prefs != nil {
-		a.prefs.win.Present()
-		return
+func (a *App) openSettings() { a.openSettingsAt("", nil) }
+
+// openSettingsAt opens the settings at a page ("" for the first, or the
+// one shown), with the Web Terminal's error when one is given.
+func (a *App) openSettingsAt(page string, webErr error) {
+	if a.prefs == nil {
+		a.buildSettings()
 	}
+	pr := a.prefs
+	for i := int32(0); page != ""; i++ {
+		r := pr.index.GetRowAtIndex(i)
+		if r == nil {
+			break
+		}
+		if r.GetName() == page {
+			pr.index.SelectRow(r) // its page shows (onRow)
+			break
+		}
+	}
+	if webErr != nil && pr.web != nil {
+		pr.web.fail(webErr)
+	}
+	pr.win.Present()
+}
+
+// buildSettings makes the settings window, not yet shown.
+func (a *App) buildSettings() {
 	pr := &prefs{keycaps: map[string]*gtk.Button{}}
 	a.prefs = pr
 	pr.win = gtk.NewWindow()
@@ -205,7 +228,6 @@ func (a *App) openSettings() {
 		return false
 	}
 	pr.win.ConnectCloseRequest(&pr.onClose)
-	pr.win.Present()
 }
 
 // page adds a page, and its row in the index; its box comes back, for

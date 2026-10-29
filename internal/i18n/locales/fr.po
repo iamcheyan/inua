@@ -2026,7 +2026,8 @@ msgstr "Les appareils avec KDE Connect, GSConnect ou Valent trouvent cet ordinat
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/prefsweb.go:164
+#: internal/termui/headmenu.go:153
+#: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
 #: internal/vmui/window.go:1927
@@ -2048,7 +2049,8 @@ msgstr "Le service démarre."
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/prefsweb.go:128
+#: internal/termui/headmenu.go:161
+#: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
 #: internal/ui/settings_displays.go:412
@@ -2730,7 +2732,7 @@ msgstr "Ouvre les dossiers"
 #: internal/termui/app.go:356
 #: internal/termui/app.go:358
 #: internal/termui/menubar.go:40
-#: internal/termui/prefs.go:136
+#: internal/termui/prefs.go:159
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
@@ -2803,7 +2805,7 @@ msgstr "Utilisation du disque"
 
 #: internal/diskui/details.go:47
 #: internal/term/web/strings.go:98
-#: internal/termui/prefs.go:122
+#: internal/termui/prefs.go:145
 #: internal/viewerui/app.go:795
 #: internal/viewerui/app.go:813
 #: internal/viewerui/app.go:828
@@ -2995,7 +2997,7 @@ msgstr "Copié"
 #: internal/mailui/details.go:222
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
-#: internal/termui/prefsweb.go:90
+#: internal/termui/prefsweb.go:91
 #: internal/ui/askpass.go:232
 #: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
@@ -3708,7 +3710,7 @@ msgstr "Recharger"
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
-#: internal/termui/prefs.go:179
+#: internal/termui/prefs.go:202
 msgid "Keys"
 msgstr "Raccourcis"
 
@@ -4432,7 +4434,7 @@ msgid "Text"
 msgstr "Texte"
 
 #: internal/filesui/renamemany.go:161
-#: internal/termui/prefsweb.go:79
+#: internal/termui/prefsweb.go:80
 msgid "Where"
 msgstr "Où"
 
@@ -8255,6 +8257,7 @@ msgstr "Mise au point activée ou désactivée"
 #: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
+#: internal/termui/headmenu.go:108
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -8462,7 +8465,8 @@ msgid "System Monitor"
 msgstr "Moniteur système"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/prefsweb.go:64
+#: internal/termui/headmenu.go:149
+#: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
 msgid "Tailscale"
@@ -10182,7 +10186,7 @@ msgid "IN USE"
 msgstr "EN UTILISATION"
 
 #: internal/lightui/tailscale.go:602
-#: internal/termui/prefs.go:342
+#: internal/termui/prefs.go:364
 #: internal/ui/settings_ai.go:271
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
@@ -13126,7 +13130,7 @@ msgstr "Nouvelle session dans cet espace"
 
 #: internal/term/settings/settings.go:103
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:176
+#: internal/termui/columns.go:171
 msgid "New workspace"
 msgstr "Nouvel espace de travail"
 
@@ -13371,7 +13375,7 @@ msgid "First load"
 msgstr "Premier chargement"
 
 #: internal/term/web/strings.go:54
-#: internal/termui/prefs.go:118
+#: internal/termui/prefs.go:141
 msgid "Font"
 msgstr "Police"
 
@@ -13397,7 +13401,7 @@ msgid "INFO"
 msgstr "INFOS"
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:203
 #: ui/gpg.ui:1042
 msgid "KEYS"
 msgstr "CLÉS"
@@ -13425,7 +13429,7 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:177
+#: internal/termui/columns.go:172
 #: ui/term.ui:235
 msgid "New session"
 msgstr "Nouvelle session"
@@ -13517,7 +13521,7 @@ msgstr "Session %d"
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:155
+#: internal/termui/prefs.go:178
 msgid "Shell"
 msgstr "Shell"
 
@@ -13531,7 +13535,7 @@ msgstr "Symboles"
 
 #: internal/term/web/strings.go:102
 #: internal/termui/guide.go:86
-#: internal/termui/prefs.go:106
+#: internal/termui/prefs.go:129
 msgid "Terminal colours"
 msgstr "Couleurs du terminal"
 
@@ -13687,16 +13691,15 @@ msgstr "Les terminaux prennent les couleurs de la fenêtre"
 msgid "Your login shell (%s)"
 msgstr "Votre shell de connexion (%s)"
 
-#: internal/termui/columns.go:175
-#: internal/termui/palette.go:113
-msgid "Actions"
-msgstr "Actions"
+#: internal/termui/columns.go:170
+msgid "Menu"
+msgstr "Menu"
 
-#: internal/termui/columns.go:178
+#: internal/termui/columns.go:173
 msgid "Hide the sidebar"
 msgstr "Masquer la barre latérale"
 
-#: internal/termui/columns.go:179
+#: internal/termui/columns.go:174
 msgid "Show the sidebar"
 msgstr "Afficher la barre latérale"
 
@@ -13725,7 +13728,7 @@ msgid "The colours programs draw with: the window theme's, so the terminal match
 msgstr "Les couleurs avec lesquelles les programmes dessinent : celles du thème de la fenêtre, pour que le terminal s'accorde au reste d'inua, ou un schéma classique à lui."
 
 #: internal/termui/guide.go:95
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:124
 msgid "Window theme"
 msgstr "Thème de la fenêtre"
 
@@ -13736,6 +13739,49 @@ msgstr "L'apparence de la fenêtre autour des terminaux. Elle suit le thème d'i
 #: internal/termui/guide.go:108
 msgid "Keep these choices; the settings change them later"
 msgstr "Garder ces choix ; les réglages les changent ensuite"
+
+#: internal/termui/headmenu.go:101
+msgid "Command palette"
+msgstr "Palette de commandes"
+
+#: internal/termui/headmenu.go:115
+#: internal/termui/prefsweb.go:41
+msgid "WEB TERMINAL"
+msgstr "TERMINAL WEB"
+
+#: internal/termui/headmenu.go:132
+msgid "Turn on the Web Terminal"
+msgstr "Activer le terminal web"
+
+#: internal/termui/headmenu.go:134
+msgid "Turn off the Web Terminal"
+msgstr "Désactiver le terminal web"
+
+#: internal/termui/headmenu.go:139
+msgid "Restart the terminal host…"
+msgstr "Redémarrer l'hôte du terminal…"
+
+#: internal/termui/headmenu.go:147
+msgid "this computer only"
+msgstr "cet ordinateur seulement"
+
+#: internal/termui/headmenu.go:155
+#: internal/vmui/window.go:1820
+#: internal/vmui/window.go:1885
+#: internal/vmui/window.go:1966
+#: internal/vmui/window.go:1968
+#: internal/vmui/window.go:1970
+#: internal/vmui/window.go:1972
+msgid "Stopping…"
+msgstr "Arrêt…"
+
+#: internal/termui/headmenu.go:157
+msgid "On, %s"
+msgstr "Activé, %s"
+
+#: internal/termui/headmenu.go:159
+msgid "On, but not running"
+msgstr "Activé, mais arrêté"
 
 #: internal/termui/keys.go:257
 #: internal/termui/wsmenu.go:135
@@ -13798,6 +13844,10 @@ msgstr "Aller en haut / en bas"
 msgid "Scroll to the previous / next prompt"
 msgstr "Aller à l’invite précédente / suivante"
 
+#: internal/termui/palette.go:113
+msgid "Actions"
+msgstr "Actions"
+
 #: internal/termui/palette.go:115
 msgid "Find an action"
 msgstr "Chercher une action"
@@ -13834,220 +13884,216 @@ msgstr[1] "et %d lignes de plus"
 msgid "Paste as one line"
 msgstr "Coller sur une ligne"
 
-#: internal/termui/prefs.go:46
+#: internal/termui/prefs.go:69
 msgid "Terminal Settings"
 msgstr "Réglages du terminal"
 
-#: internal/termui/prefs.go:95
+#: internal/termui/prefs.go:118
 msgid "Look"
 msgstr "Apparence"
 
-#: internal/termui/prefs.go:96
+#: internal/termui/prefs.go:119
 msgid "LOOK"
 msgstr "APPARENCE"
 
-#: internal/termui/prefs.go:101
+#: internal/termui/prefs.go:124
 msgid "inua's theme, or one of its others for this window alone"
 msgstr "Le thème d'inua, ou un autre des siens pour cette fenêtre seule"
 
-#: internal/termui/prefs.go:106
+#: internal/termui/prefs.go:129
 msgid "The colours programs draw with: the window theme's, or a scheme"
 msgstr "Les couleurs avec lesquelles les programmes dessinent : celles du thème de la fenêtre, ou un schéma"
 
-#: internal/termui/prefs.go:108
+#: internal/termui/prefs.go:131
 #: internal/viewerui/app.go:817
 msgid "TEXT"
 msgstr "TEXTE"
 
-#: internal/termui/prefs.go:118
+#: internal/termui/prefs.go:141
 msgid "A monospace family; Pango falls back for CJK"
 msgstr "Une famille à chasse fixe ; Pango complète le CJK"
 
-#: internal/termui/prefs.go:122
+#: internal/termui/prefs.go:145
 msgid "In points; Ctrl+= and Ctrl+- change it in the window"
 msgstr "En points ; Ctrl+= et Ctrl+- la changent dans la fenêtre"
 
-#: internal/termui/prefs.go:124
+#: internal/termui/prefs.go:147
 msgid "CURSOR"
 msgstr "CURSEUR"
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Block"
 msgstr "Bloc"
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Bar"
 msgstr "Barre"
 
-#: internal/termui/prefs.go:126
+#: internal/termui/prefs.go:149
 msgid "Underline"
 msgstr "Souligné"
 
-#: internal/termui/prefs.go:133
+#: internal/termui/prefs.go:156
 msgid "Shape"
 msgstr "Forme"
 
-#: internal/termui/prefs.go:133
+#: internal/termui/prefs.go:156
 msgid "What a program resetting the cursor gets"
 msgstr "Celle qu’obtient un programme qui réinitialise le curseur"
 
-#: internal/termui/prefs.go:134
+#: internal/termui/prefs.go:157
 msgid "Blink"
 msgstr "Clignotement"
 
-#: internal/termui/prefs.go:137
+#: internal/termui/prefs.go:160
 msgid "TERMINAL"
 msgstr "TERMINAL"
 
-#: internal/termui/prefs.go:138
+#: internal/termui/prefs.go:161
 msgid "Copy on select"
 msgstr "Copier à la sélection"
 
-#: internal/termui/prefs.go:138
+#: internal/termui/prefs.go:161
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr "Sélectionner copie dans le presse-papiers ; la sélection primaire suit toujours"
 
-#: internal/termui/prefs.go:143
+#: internal/termui/prefs.go:166
 msgid "Scrollback"
 msgstr "Historique"
 
-#: internal/termui/prefs.go:143
+#: internal/termui/prefs.go:166
 msgid "Lines kept per pane"
 msgstr "Lignes gardées par panneau"
 
-#: internal/termui/prefs.go:147
+#: internal/termui/prefs.go:170
 msgid "Replay"
 msgstr "Rejeu"
 
-#: internal/termui/prefs.go:147
+#: internal/termui/prefs.go:170
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr "Mio de la sortie récente d’un panneau gardés pour une fenêtre ouverte plus tard"
 
-#: internal/termui/prefs.go:149
+#: internal/termui/prefs.go:172
 msgid "Shell and agents"
 msgstr "Shell et agents"
 
-#: internal/termui/prefs.go:150
+#: internal/termui/prefs.go:173
 msgid "SHELL AND AGENTS"
 msgstr "SHELL ET AGENTS"
 
-#: internal/termui/prefs.go:150
+#: internal/termui/prefs.go:173
 msgid "Below the shell: used when the terminal host starts again"
 msgstr "Sous le shell : pris en compte au prochain démarrage de l'hôte du terminal"
 
-#: internal/termui/prefs.go:155
+#: internal/termui/prefs.go:178
 msgid "What new panes start; the panes open already keep theirs"
 msgstr "Ce que lancent les nouveaux panneaux ; ceux déjà ouverts gardent le leur"
 
-#: internal/termui/prefs.go:156
+#: internal/termui/prefs.go:179
 msgid "Shell integration"
 msgstr "Intégration au shell"
 
-#: internal/termui/prefs.go:156
+#: internal/termui/prefs.go:179
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr "bash, zsh et fish marquent leurs invites, pour retenir les commandes"
 
-#: internal/termui/prefs.go:158
+#: internal/termui/prefs.go:181
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
 #: ui/settings.ui:3316
 msgid "Notifications"
 msgstr "Notifications"
 
-#: internal/termui/prefs.go:158
+#: internal/termui/prefs.go:181
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr "Quand un agent a besoin de vous ou a fini dans un panneau que vous ne regardez pas"
 
-#: internal/termui/prefs.go:160
+#: internal/termui/prefs.go:183
 msgid "Remember commands"
 msgstr "Retenir les commandes"
 
-#: internal/termui/prefs.go:160
+#: internal/termui/prefs.go:183
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr "Remettre la dernière commande de chaque panneau à son invite, sans l’exécuter"
 
-#: internal/termui/prefs.go:175
+#: internal/termui/prefs.go:198
 msgid "Never keep"
 msgstr "Ne jamais garder"
 
-#: internal/termui/prefs.go:175
+#: internal/termui/prefs.go:198
 msgid "Commands matching these patterns, comma-separated"
 msgstr "Les commandes qui correspondent à ces motifs, séparés par des virgules"
 
-#: internal/termui/prefs.go:177
+#: internal/termui/prefs.go:200
 msgid "Web terminal"
 msgstr "Terminal web"
 
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:203
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "Cliquez une touche, puis pressez la nouvelle ; Retour arrière la libère"
 
-#: internal/termui/prefs.go:354
+#: internal/termui/prefs.go:376
 #: internal/ui/shortcuts.go:197
 msgid "Press keys…"
 msgstr "Appuyez sur les touches…"
 
-#: internal/termui/prefs.go:355
+#: internal/termui/prefs.go:377
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr "Échap annule ; Retour arrière libère les touches de l’action."
 
-#: internal/termui/prefs.go:377
+#: internal/termui/prefs.go:399
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr "Une touche demande Ctrl, Alt ou Super : les autres sont aux programmes."
 
-#: internal/termui/prefs.go:388
+#: internal/termui/prefs.go:410
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s était à %s ; cette action n’a plus de touches."
 
-#: internal/termui/prefsweb.go:40
-msgid "WEB TERMINAL"
-msgstr "TERMINAL WEB"
-
-#: internal/termui/prefsweb.go:40
+#: internal/termui/prefsweb.go:41
 msgid "The terminals in a browser, a phone's over Tailscale"
 msgstr "Les terminaux dans un navigateur, celui d'un téléphone par Tailscale"
 
-#: internal/termui/prefsweb.go:54
+#: internal/termui/prefsweb.go:55
 msgid "Web Terminal"
 msgstr "Terminal web"
 
-#: internal/termui/prefsweb.go:54
+#: internal/termui/prefsweb.go:55
 msgid "Serve the terminals to a browser; it starts again at login while on"
 msgstr "Sert les terminaux à un navigateur ; tant qu'il est activé, il redémarre à la connexion"
 
-#: internal/termui/prefsweb.go:58
+#: internal/termui/prefsweb.go:59
 msgid "no address: is Tailscale up?"
 msgstr "pas d'adresse : Tailscale est-il lancé ?"
 
-#: internal/termui/prefsweb.go:63
+#: internal/termui/prefsweb.go:64
 msgid "This computer only"
 msgstr "Cet ordinateur seulement"
 
-#: internal/termui/prefsweb.go:79
+#: internal/termui/prefsweb.go:80
 msgid "Tailscale: on this computer's Tailscale address, for a phone on the tailnet"
 msgstr "Tailscale : à l'adresse Tailscale de cet ordinateur, pour un téléphone du tailnet"
 
-#: internal/termui/prefsweb.go:97
+#: internal/termui/prefsweb.go:98
 msgid "New link"
 msgstr "Nouveau lien"
 
-#: internal/termui/prefsweb.go:103
+#: internal/termui/prefsweb.go:104
 msgid "Link"
 msgstr "Lien"
 
-#: internal/termui/prefsweb.go:103
+#: internal/termui/prefsweb.go:104
 msgid "Open it on the phone; New link stops the old one working"
 msgstr "Ouvrez-le sur le téléphone ; un nouveau lien rend l'ancien inutilisable"
 
-#: internal/termui/prefsweb.go:148
+#: internal/termui/prefsweb.go:149
 msgid "The link's token could be kept neither in the keyring nor in a file."
 msgstr ""
 
-#: internal/termui/prefsweb.go:150
+#: internal/termui/prefsweb.go:151
 msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
 msgstr "Cet ordinateur n'a pas d'adresse Tailscale : Tailscale est-il lancé ? (tailscale up)"
 
-#: internal/termui/prefsweb.go:152
+#: internal/termui/prefsweb.go:153
 msgid "The Web Terminal did not start in time."
 msgstr "Le terminal web n'a pas démarré à temps."
 
@@ -17056,15 +17102,6 @@ msgstr[1] "%d systèmes"
 #: internal/vmui/window.go:1818
 msgid "The system is installing; this takes a while."
 msgstr "Le système s'installe ; cela prend un moment."
-
-#: internal/vmui/window.go:1820
-#: internal/vmui/window.go:1885
-#: internal/vmui/window.go:1966
-#: internal/vmui/window.go:1968
-#: internal/vmui/window.go:1970
-#: internal/vmui/window.go:1972
-msgid "Stopping…"
-msgstr "Arrêt…"
 
 #: internal/vmui/window.go:1824
 msgid "The installation is paused. Continue to resume."

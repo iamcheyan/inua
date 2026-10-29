@@ -83,8 +83,9 @@ from it, or at `$INUA_VT_LIB`.
 ## The window
 
 - **Workspaces** (column 1): at its top, the search, then the new
-  workspace button and the menu button, which opens the actions as
-  Ctrl+Shift+P does. Each
+  workspace button and the menu button. Its menu has the command
+  palette (Ctrl+Shift+P) and the settings; the Web Terminal, what it is
+  doing and a switch for it; and restarting the terminal host. Each
   workspace is a name, its folder, and what its agents add up to: a
   square filled in warn while one waits for you, in the accent while one
   works, hollow when quiet. Drag a workspace to put it in another place;

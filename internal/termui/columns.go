@@ -70,6 +70,7 @@ type columns struct {
 	onRow          func(gtk.ListBox, uintptr)
 	onFind         func(uintptr, uintptr)
 	onMenu         func(gtk.Button)
+	headMenu       headMenu // the menu button's (headmenu.go)
 	onNewWorkspace func(gtk.Button)
 	onNewSession   func(gtk.Button)
 	// clickAt is what each session head and pane row of column 2 shows,
@@ -128,13 +129,7 @@ func (a *App) buildColumns(ui *gtkx.Builder) {
 	c.finder.build(a, ui)
 	c.onFind = func(uintptr, uintptr) { c.update(a) }
 	gtkx.ConnectChanged(c.find, &c.onFind)
-	c.onMenu = func(gtk.Button) {
-		var p *termPane
-		if s := a.shown(); s != nil {
-			p = a.paneFor(s.Focus)
-		}
-		a.palette(p)
-	}
+	c.onMenu = func(gtk.Button) { a.showHeadMenu() }
 	c.menu.ConnectClicked(&c.onMenu)
 	// A session head or pane row clicked: what it stands for, by its
 	// button (makeSessions).
@@ -172,7 +167,7 @@ func (c *columns) tips(a *App) {
 		}
 		b.SetTooltipText(label)
 	}
-	tip(c.menu, i18n.T("Actions"), "palette")
+	tip(c.menu, i18n.T("Menu"), "")
 	tip(c.newWorkspace, i18n.T("New workspace"), "new_workspace")
 	tip(c.newSession, i18n.T("New session"), "new_session")
 	tip(c.sidebarHide, i18n.T("Hide the sidebar"), "fold_workspaces")
