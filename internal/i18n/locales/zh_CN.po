@@ -306,8 +306,8 @@ msgstr "来自 %s 的文件"
 
 #: internal/apps/connect/share.go:129
 #: internal/filesui/cards.go:678
-#: internal/filesui/picker.go:490
-#: internal/filesui/window.go:744
+#: internal/filesui/picker.go:488
+#: internal/filesui/window.go:803
 #: internal/lightui/workshop_blocks.go:427
 #: internal/lightui/workshop_manager.go:63
 #: internal/mailui/actions.go:533
@@ -515,7 +515,7 @@ msgstr "开发"
 #: internal/mailui/settings.go:215
 #: internal/mailui/settings.go:581
 #: ui/mail-compose.ui:269
-#: ui/mail.ui:377
+#: ui/mail.ui:384
 #: ui/settings.ui:2258
 msgid "AI"
 msgstr "人工智能"
@@ -1143,10 +1143,10 @@ msgstr "项目的历史、分支和 stash；未推送的内容只存在于这里
 
 #: internal/apps/disk/rules.go:331
 #: internal/filesui/details.go:55
-#: internal/filesui/pane.go:1058
-#: internal/filesui/sidebar.go:59
+#: internal/filesui/pane.go:1068
+#: internal/filesui/sidebar.go:50
 #: internal/filesui/tabs.go:97
-#: internal/filesui/window.go:294
+#: internal/filesui/window.go:309
 #: internal/mailui/window.go:775
 msgid "Trash"
 msgstr "垃圾箱"
@@ -2080,7 +2080,7 @@ msgstr "%s 请求配对。仅当它显示此密钥时才配对："
 #: internal/filesui/cards.go:451
 #: internal/filesui/cards.go:489
 #: internal/filesui/cards.go:588
-#: internal/filesui/picker.go:370
+#: internal/filesui/picker.go:368
 #: internal/filesui/remote.go:159
 #: internal/filesui/remote.go:219
 #: internal/filesui/remotesetup.go:152
@@ -2108,8 +2108,8 @@ msgstr "%s 请求配对。仅当它显示此密钥时才配对："
 #: ui/clock.ui:244
 #: ui/clock.ui:454
 #: ui/connectreply.ui:49
-#: ui/files.ui:159
-#: ui/files.ui:257
+#: ui/files.ui:176
+#: ui/files.ui:274
 #: ui/gpg.ui:1252
 #: ui/gpg.ui:1469
 #: ui/gpg.ui:1563
@@ -2156,7 +2156,7 @@ msgstr "已请求 %s 连接。"
 #: internal/ui/settings_ai.go:486
 #: internal/viewerui/app.go:791
 #: ui/connect.ui:290
-#: ui/files.ui:212
+#: ui/files.ui:229
 #: ui/gpg.ui:1342
 #: ui/settings.ui:5011
 #: ui/sysmon.ui:96
@@ -2981,7 +2981,7 @@ msgid "Copied"
 msgstr "已复制"
 
 #: internal/diskui/details.go:581
-#: internal/filesui/window.go:760
+#: internal/filesui/window.go:819
 #: internal/lightui/pass.go:747
 #: internal/lightui/pass.go:772
 #: internal/mailui/details.go:222
@@ -3029,9 +3029,9 @@ msgstr "%s 移除了 %s：释放了 %s。"
 
 #: internal/diskui/window.go:327
 #: internal/filesui/cards.go:682
-#: internal/filesui/sidebar.go:45
+#: internal/filesui/sidebar.go:36
 #: internal/filesui/tabs.go:99
-#: internal/filesui/window.go:298
+#: internal/filesui/window.go:313
 msgid "Home"
 msgstr "主文件夹"
 
@@ -3051,7 +3051,7 @@ msgstr "正在扫描…"
 
 #: internal/diskui/window.go:361
 #: internal/filesui/remote.go:266
-#: internal/filesui/sidebar.go:74
+#: internal/filesui/sidebar.go:65
 msgid "%s free of %s"
 msgstr "%s 可用，共 %s"
 
@@ -3089,7 +3089,7 @@ msgid "%s in %s files · %s"
 msgstr "%s，%s 个文件 · %s"
 
 #: internal/diskui/window.go:557
-#: internal/filesui/pane.go:1542
+#: internal/filesui/pane.go:1552
 msgid "15:04"
 msgstr "15:04"
 
@@ -3129,7 +3129,7 @@ msgid_plural "%d more items"
 msgstr[0] "另有 %d 项"
 
 #: internal/diskui/window.go:871
-#: internal/filesui/pane.go:808
+#: internal/filesui/pane.go:818
 msgid "This folder is empty."
 msgstr "此文件夹是空的。"
 
@@ -3161,9 +3161,8 @@ msgstr[0] "%s，%d 个文件夹 · %s 可安全删除"
 #: internal/filesui/app.go:86
 #: internal/filesui/cards.go:689
 #: internal/filesui/remote.go:371
-#: internal/filesui/sidebar.go:31
-#: internal/filesui/window.go:106
-#: internal/filesui/window.go:291
+#: internal/filesui/window.go:109
+#: internal/filesui/window.go:306
 #: ui/gpg.ui:445
 #: ui/gpg.ui:810
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
@@ -3339,7 +3338,7 @@ msgstr "“%s”已加密"
 #: internal/filesui/jobs.go:150
 #: internal/filesui/jobs.go:152
 #: internal/filesui/jobs.go:154
-#: internal/filesui/pane.go:1136
+#: internal/filesui/pane.go:1146
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 项"
@@ -3403,12 +3402,12 @@ msgid "They do not go to the trash, and this cannot be undone."
 msgstr "它们不会进入垃圾箱，且无法撤销。"
 
 #: internal/filesui/cards.go:452
-#: internal/filesui/sidebar.go:60
-#: internal/filesui/window.go:717
-#: internal/filesui/window.go:723
+#: internal/filesui/sidebar.go:51
+#: internal/filesui/window.go:776
+#: internal/filesui/window.go:782
 #: internal/mailui/actions.go:265
 #: internal/shell/commands.go:32
-#: ui/filespane.ui:272
+#: ui/filespane.ui:288
 msgid "Empty Trash"
 msgstr "清空垃圾箱"
 
@@ -3438,7 +3437,7 @@ msgid "Merge"
 msgstr "合并"
 
 #: internal/filesui/cards.go:497
-#: internal/filesui/picker.go:371
+#: internal/filesui/picker.go:369
 #: internal/lightui/pass_otp.go:189
 msgid "Replace"
 msgstr "替换"
@@ -3452,7 +3451,7 @@ msgid "A folder “%s” is already in %s"
 msgstr "文件夹“%s”已在 %s 中"
 
 #: internal/filesui/cards.go:505
-#: ui/files.ui:355
+#: ui/files.ui:372
 msgid "Do the same for the rest"
 msgstr "其余的也这样处理"
 
@@ -3470,7 +3469,7 @@ msgstr[0] "……还有 %d 项"
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
-#: ui/mail.ui:388
+#: ui/mail.ui:395
 #: ui/settings.ui:3285
 #: ui/settings.ui:4766
 #: ui/vm.ui:3499
@@ -3564,7 +3563,7 @@ msgid "Jump to a folder used before"
 msgstr "跳转到用过的文件夹"
 
 #: internal/filesui/cards.go:686
-#: ui/filespane.ui:115
+#: ui/filespane.ui:127
 msgid "Search below this folder"
 msgstr "在此文件夹下搜索"
 
@@ -3585,7 +3584,7 @@ msgid "Copy the paths (none selected: the folder's)"
 msgstr "复制路径（未选择时复制文件夹路径）"
 
 #: internal/filesui/cards.go:693
-#: internal/filesui/window.go:785
+#: internal/filesui/window.go:844
 #: internal/lightui/gpg.go:1538
 #: internal/mailui/picker.go:143
 #: ui/disk.ui:771
@@ -3606,7 +3605,7 @@ msgstr "新建文件夹 / 新建文件"
 #: internal/mailui/compose.go:529
 #: internal/mailui/quick.go:129
 #: internal/mailui/quick.go:142
-#: ui/mail.ui:277
+#: ui/mail.ui:284
 msgid "Undo"
 msgstr "撤销"
 
@@ -3615,17 +3614,17 @@ msgid "Copy / move to the other pane"
 msgstr "复制 / 移动到另一窗格"
 
 #: internal/filesui/cards.go:698
-#: internal/filesui/window.go:746
+#: internal/filesui/window.go:805
 msgid "Open with…"
 msgstr "打开方式……"
 
 #: internal/filesui/cards.go:699
-#: internal/filesui/window.go:799
+#: internal/filesui/window.go:858
 msgid "Bookmark"
 msgstr "添加书签"
 
 #: internal/filesui/cards.go:700
-#: internal/filesui/window.go:732
+#: internal/filesui/window.go:791
 msgid "Terminal here"
 msgstr "在此打开终端"
 
@@ -3645,7 +3644,7 @@ msgid "Next / previous tab"
 msgstr "下一个 / 上一个标签页"
 
 #: internal/filesui/cards.go:705
-#: internal/filesui/window.go:749
+#: internal/filesui/window.go:808
 msgid "Middle click"
 msgstr "中键点击"
 
@@ -3658,8 +3657,8 @@ msgid "List / grid / columns"
 msgstr "列表 / 网格 / 分栏"
 
 #: internal/filesui/cards.go:707
-#: internal/filesui/picker.go:503
-#: internal/filesui/window.go:737
+#: internal/filesui/picker.go:501
+#: internal/filesui/window.go:796
 msgid "Hidden files"
 msgstr "隐藏文件"
 
@@ -3672,7 +3671,7 @@ msgid "Sidebar"
 msgstr "侧边栏"
 
 #: internal/filesui/cards.go:710
-#: internal/filesui/window.go:791
+#: internal/filesui/window.go:850
 msgid "Details"
 msgstr "详细信息"
 
@@ -3685,8 +3684,8 @@ msgid "New window, close it"
 msgstr "新窗口，关闭窗口"
 
 #: internal/filesui/cards.go:713
-#: internal/filesui/picker.go:504
-#: internal/filesui/window.go:738
+#: internal/filesui/picker.go:502
+#: internal/filesui/window.go:797
 msgid "Reload"
 msgstr "重新加载"
 
@@ -3737,25 +3736,25 @@ msgstr "所有者"
 msgid "GROUP"
 msgstr "组"
 
-#: internal/filesui/columns.go:46
+#: internal/filesui/columns.go:50
 #: internal/filesui/details.go:90
 msgid "TRASHED"
 msgstr "删除时间"
 
-#: internal/filesui/columns.go:48
+#: internal/filesui/columns.go:52
 #: internal/filesui/details.go:89
 msgid "FROM"
 msgstr "原位置"
 
-#: internal/filesui/columns.go:50
+#: internal/filesui/columns.go:54
 msgid "FOLDER"
 msgstr "文件夹"
 
-#: internal/filesui/columns.go:128
+#: internal/filesui/columns.go:133
 msgid "Columns"
 msgstr "列"
 
-#: internal/filesui/columns.go:176
+#: internal/filesui/columns.go:181
 #: internal/lightui/pass.go:1011
 msgid "NAME"
 msgstr "名称"
@@ -3897,80 +3896,80 @@ msgstr[0] "用以下应用打开 %d 个文件"
 msgid "Always open %s with it"
 msgstr "总是用它打开%s"
 
-#: internal/filesui/pane.go:369
+#: internal/filesui/pane.go:379
 msgid "%s → %s"
 msgstr "%s → %s"
 
-#: internal/filesui/pane.go:497
+#: internal/filesui/pane.go:507
 msgid "%s free"
 msgstr "剩余 %s"
 
-#: internal/filesui/pane.go:792
+#: internal/filesui/pane.go:802
 msgid "You may not read this folder."
 msgstr "你无权读取此文件夹。"
 
-#: internal/filesui/pane.go:794
+#: internal/filesui/pane.go:804
 msgid "This folder does not exist."
 msgstr "此文件夹不存在。"
 
-#: internal/filesui/pane.go:796
+#: internal/filesui/pane.go:806
 msgid "This folder cannot be read: %v"
 msgstr "无法读取此文件夹：%v"
 
-#: internal/filesui/pane.go:798
+#: internal/filesui/pane.go:808
 msgid "Nothing here matches “%s”."
 msgstr "这里没有与“%s”匹配的项目。"
 
-#: internal/filesui/pane.go:800
+#: internal/filesui/pane.go:810
 msgid "Type to search below this folder."
 msgstr "输入以在此文件夹下搜索。"
 
-#: internal/filesui/pane.go:802
+#: internal/filesui/pane.go:812
 msgid "Nothing below this folder matches “%s”."
 msgstr "此文件夹下没有与“%s”匹配的项目。"
 
-#: internal/filesui/pane.go:804
+#: internal/filesui/pane.go:814
 msgid "The trash is empty."
 msgstr "垃圾箱是空的。"
 
-#: internal/filesui/pane.go:806
+#: internal/filesui/pane.go:816
 msgid "Only hidden files: %d of them (Ctrl+H shows them)."
 msgid_plural "Only hidden files: %d of them (Ctrl+H shows them)."
 msgstr[0] "只有隐藏文件：共 %d 个（Ctrl+H 显示）。"
 
-#: internal/filesui/pane.go:991
+#: internal/filesui/pane.go:1001
 msgid "%s does not exist."
 msgstr "%s 不存在。"
 
-#: internal/filesui/pane.go:1092
+#: internal/filesui/pane.go:1102
 msgid "SEARCH"
 msgstr "搜索"
 
-#: internal/filesui/pane.go:1134
+#: internal/filesui/pane.go:1144
 msgid "%d found"
 msgid_plural "%d found"
 msgstr[0] "找到 %d 项"
 
-#: internal/filesui/pane.go:1148
+#: internal/filesui/pane.go:1158
 msgid "%d not of this kind"
 msgid_plural "%d not of this kind"
 msgstr[0] ""
 
-#: internal/filesui/pane.go:1152
+#: internal/filesui/pane.go:1162
 msgid "%d hidden"
 msgid_plural "%d hidden"
 msgstr[0] "%d 项隐藏"
 
-#: internal/filesui/pane.go:1166
+#: internal/filesui/pane.go:1176
 msgid "%d selected"
 msgid_plural "%d selected"
 msgstr[0] "已选 %d 项"
 
-#: internal/filesui/pane.go:1288
+#: internal/filesui/pane.go:1298
 msgid "done"
 msgstr "完成"
 
-#: internal/filesui/pane.go:1544
+#: internal/filesui/pane.go:1554
 #: internal/lightui/pass.go:1214
 #: internal/lightui/sysmon.go:973
 #: internal/ui/settings_keyring.go:508
@@ -3978,57 +3977,57 @@ msgstr "完成"
 msgid "Jan 2 15:04"
 msgstr "1月2日 15:04"
 
-#: internal/filesui/pane.go:1546
+#: internal/filesui/pane.go:1556
 #: internal/ui/shotdrawer.go:329
 msgid "Jan 2 2006"
 msgstr "2006年1月2日"
 
-#: internal/filesui/picker.go:249
-#: internal/filesui/picker.go:339
+#: internal/filesui/picker.go:247
+#: internal/filesui/picker.go:337
 msgid "Files cannot be saved in this folder."
 msgstr ""
 
-#: internal/filesui/picker.go:304
+#: internal/filesui/picker.go:302
 msgid "Choose a file."
 msgstr ""
 
-#: internal/filesui/picker.go:353
+#: internal/filesui/picker.go:351
 msgid "Type a name to save under."
 msgstr ""
 
-#: internal/filesui/picker.go:355
+#: internal/filesui/picker.go:353
 msgid "There is no such folder."
 msgstr ""
 
-#: internal/filesui/picker.go:357
+#: internal/filesui/picker.go:355
 msgid "A folder has this name."
 msgstr ""
 
-#: internal/filesui/picker.go:359
+#: internal/filesui/picker.go:357
 msgid "A name cannot hold that."
 msgstr ""
 
-#: internal/filesui/picker.go:365
+#: internal/filesui/picker.go:363
 msgid "Replace “%s”?"
 msgstr ""
 
-#: internal/filesui/picker.go:367
+#: internal/filesui/picker.go:365
 msgid "Replace %d file?"
 msgid_plural "Replace %d files?"
 msgstr[0] ""
 
-#: internal/filesui/picker.go:372
+#: internal/filesui/picker.go:370
 msgid "A file of the same name is in this folder; the app will write over it."
 msgstr ""
 
-#: internal/filesui/picker.go:496
-#: internal/filesui/window.go:780
+#: internal/filesui/picker.go:494
+#: internal/filesui/window.go:839
 #: internal/termui/wsmenu.go:80
 msgid "Rename…"
 msgstr "重命名……"
 
-#: internal/filesui/picker.go:502
-#: internal/filesui/window.go:728
+#: internal/filesui/picker.go:500
+#: internal/filesui/window.go:787
 msgid "New folder…"
 msgstr "新建文件夹……"
 
@@ -4488,42 +4487,42 @@ msgstr "太长"
 msgid "Some names cannot be given: they are marked."
 msgstr "有些名称无法使用：已标出。"
 
-#: internal/filesui/sidebar.go:40
+#: internal/filesui/sidebar.go:31
 #: ui/disk.ui:54
 msgid "PLACES"
 msgstr "位置"
 
-#: internal/filesui/sidebar.go:49
+#: internal/filesui/sidebar.go:40
 msgid "Remove from the bookmarks"
 msgstr "从书签中移除"
 
-#: internal/filesui/sidebar.go:63
+#: internal/filesui/sidebar.go:54
 #: ui/connect.ui:112
 #: ui/tailscale.ui:112
 msgid "DEVICES"
 msgstr "装置"
 
-#: internal/filesui/sidebar.go:64
+#: internal/filesui/sidebar.go:55
 #: internal/games/checkersnet/texts.go:30
 msgid "Computer"
 msgstr "计算机"
 
-#: internal/filesui/sidebar.go:77
+#: internal/filesui/sidebar.go:68
 msgid "%s, locked"
 msgstr "%s，已锁定"
 
-#: internal/filesui/sidebar.go:88
-#: internal/filesui/sidebar.go:181
+#: internal/filesui/sidebar.go:79
+#: internal/filesui/sidebar.go:172
 msgid "Eject"
 msgstr "弹出"
 
-#: internal/filesui/sidebar.go:152
-#: internal/filesui/window.go:749
+#: internal/filesui/sidebar.go:143
+#: internal/filesui/window.go:808
 msgid "Open in a new tab"
 msgstr "在新标签页中打开"
 
-#: internal/filesui/sidebar.go:153
-#: internal/filesui/window.go:750
+#: internal/filesui/sidebar.go:144
+#: internal/filesui/window.go:809
 msgid "Open in a new window"
 msgstr "在新窗口中打开"
 
@@ -4551,107 +4550,107 @@ msgstr "在“设置”→“AI”中打开“运行命令”，助手才能整�
 msgid "Asked the assistant to tidy %s."
 msgstr "已让助手整理 %s。"
 
-#: internal/filesui/window.go:720
+#: internal/filesui/window.go:779
 msgid "Restore"
 msgstr "恢复"
 
-#: internal/filesui/window.go:721
-#: internal/filesui/window.go:786
+#: internal/filesui/window.go:780
+#: internal/filesui/window.go:845
 msgid "Delete for good…"
 msgstr "永久删除……"
 
-#: internal/filesui/window.go:729
+#: internal/filesui/window.go:788
 msgid "New file…"
 msgstr "新建文件……"
 
-#: internal/filesui/window.go:730
+#: internal/filesui/window.go:789
 #: internal/term/settings/settings.go:119
 #: internal/termui/paste.go:339
 msgid "Paste"
 msgstr "粘贴"
 
-#: internal/filesui/window.go:733
-#: internal/filesui/window.go:765
+#: internal/filesui/window.go:792
+#: internal/filesui/window.go:824
 msgid "Tidy with AI…"
 msgstr "用 AI 整理…"
 
-#: internal/filesui/window.go:734
+#: internal/filesui/window.go:793
 msgid "Copy the folder's path"
 msgstr "复制文件夹路径"
 
-#: internal/filesui/window.go:752
+#: internal/filesui/window.go:811
 msgid "Open in the other pane"
 msgstr "在另一窗格中打开"
 
-#: internal/filesui/window.go:756
+#: internal/filesui/window.go:815
 msgid "Show in its folder"
 msgstr "在所在文件夹中显示"
 
-#: internal/filesui/window.go:759
+#: internal/filesui/window.go:818
 msgid "Cut"
 msgstr "剪切"
 
-#: internal/filesui/window.go:761
+#: internal/filesui/window.go:820
 msgid "Copy the path"
 msgstr "复制路径"
 
-#: internal/filesui/window.go:764
+#: internal/filesui/window.go:823
 msgid "Paste into the folder"
 msgstr "粘贴到该文件夹"
 
-#: internal/filesui/window.go:769
+#: internal/filesui/window.go:828
 msgid "Extract here"
 msgstr "解压到此处"
 
-#: internal/filesui/window.go:771
+#: internal/filesui/window.go:830
 msgid "Compress…"
 msgstr "压缩……"
 
-#: internal/filesui/window.go:774
+#: internal/filesui/window.go:833
 msgid "Copy to the other pane"
 msgstr "复制到另一窗格"
 
-#: internal/filesui/window.go:775
+#: internal/filesui/window.go:834
 msgid "Move to the other pane"
 msgstr "移动到另一窗格"
 
-#: internal/filesui/window.go:782
+#: internal/filesui/window.go:841
 msgid "Rename %d item…"
 msgid_plural "Rename %d items…"
 msgstr[0] "重命名 %d 个项目……"
 
-#: internal/filesui/window.go:797
+#: internal/filesui/window.go:856
 msgid "Remove the bookmark"
 msgstr "移除书签"
 
-#: internal/filesui/window.go:852
+#: internal/filesui/window.go:911
 msgid "Cut %d item: paste to move it."
 msgid_plural "Cut %d items: paste to move them."
 msgstr[0] "已剪切 %d 项：粘贴即可移动。"
 
-#: internal/filesui/window.go:854
+#: internal/filesui/window.go:913
 msgid "Copied %d item."
 msgid_plural "Copied %d items."
 msgstr[0] "已复制 %d 项。"
 
-#: internal/filesui/window.go:862
+#: internal/filesui/window.go:921
 msgid "Copied %d path."
 msgid_plural "Copied %d paths."
 msgstr[0] "已复制 %d 个路径。"
 
-#: internal/filesui/window.go:944
+#: internal/filesui/window.go:1003
 msgid "Bookmarked %s."
 msgstr "已为 %s 添加书签。"
 
-#: internal/filesui/window.go:946
+#: internal/filesui/window.go:1005
 msgid "Removed the bookmark of %s."
 msgstr "已移除 %s 的书签。"
 
-#: internal/filesui/window.go:971
+#: internal/filesui/window.go:1030
 msgid "Copied %s."
 msgstr "已复制 %s。"
 
-#: internal/filesui/window.go:1000
+#: internal/filesui/window.go:1059
 msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr "未找到终端：请安装 xdg-terminal-exec 或设置 $TERMINAL。"
 
@@ -10968,7 +10967,7 @@ msgid "No mail with them kept on this computer."
 msgstr ""
 
 #: internal/mailui/people.go:346
-#: ui/mail.ui:304
+#: ui/mail.ui:311
 msgid "No conversation chosen"
 msgstr "未选择会话"
 
@@ -11994,7 +11993,7 @@ msgstr ""
 
 #: internal/mailui/window.go:814
 #: internal/mailui/window.go:1758
-#: ui/mail.ui:141
+#: ui/mail.ui:148
 msgid "Search, or ask in a sentence"
 msgstr "搜索，或用一句话提问"
 
@@ -17629,71 +17628,81 @@ msgstr "[能否删除]"
 msgid "Clean it with:"
 msgstr "清理命令："
 
-#: ui/files.ui:61
+#: ui/files.ui:46
+#: ui/mail.ui:51
+msgid "Hide the sidebar (F9)"
+msgstr "隐藏侧边栏 (F9)"
+
+#: ui/files.ui:78
 msgid "Hidden files (Ctrl+H)"
 msgstr "隐藏文件（Ctrl+H）"
 
-#: ui/files.ui:71
+#: ui/files.ui:88
 msgid "Two panes (F3)"
 msgstr "双窗格（F3）"
 
-#: ui/files.ui:81
+#: ui/files.ui:98
 msgid "Details (Space)"
 msgstr "详细信息（空格）"
 
-#: ui/files.ui:96
+#: ui/files.ui:113
 msgid "Keys (Ctrl+?)"
 msgstr "快捷键（Ctrl+?）"
 
-#: ui/filespane.ui:47
+#: ui/filespane.ui:38
+#: ui/mail.ui:138
+msgid "Show the sidebar (F9)"
+msgstr "显示侧边栏 (F9)"
+
+#: ui/filespane.ui:59
 msgid "Back (Alt+←)"
 msgstr "后退（Alt+←）"
 
-#: ui/filespane.ui:57
+#: ui/filespane.ui:69
 msgid "Forward (Alt+→)"
 msgstr "前进（Alt+→）"
 
-#: ui/filespane.ui:67
+#: ui/filespane.ui:79
 msgid "Parent folder (Alt+↑)"
 msgstr "上级文件夹（Alt+↑）"
 
-#: ui/filespane.ui:102
+#: ui/filespane.ui:114
 msgid "A path, or a remote disk: sftp://host/dir, smb://server/share"
 msgstr "路径，或远程磁盘：sftp://host/dir、smb://server/share"
 
-#: ui/filespane.ui:129
+#: ui/filespane.ui:141
 msgid "Edit the path (Ctrl+L)"
 msgstr "编辑路径（Ctrl+L）"
 
-#: ui/filespane.ui:139
+#: ui/filespane.ui:151
 msgid "Copy the path (Ctrl+Shift+C)"
 msgstr "复制路径（Ctrl+Shift+C）"
 
-#: ui/filespane.ui:149
+#: ui/filespane.ui:161
 msgid "Terminal here (Ctrl+Alt+T)"
 msgstr "在此打开终端（Ctrl+Alt+T）"
 
-#: ui/filespane.ui:182
+#: ui/filespane.ui:200
 msgid "List (Ctrl+1)"
 msgstr "列表（Ctrl+1）"
 
-#: ui/filespane.ui:194
+#: ui/filespane.ui:210
 msgid "Grid (Ctrl+2)"
 msgstr "网格（Ctrl+2）"
 
-#: ui/filespane.ui:206
+#: ui/filespane.ui:222
 msgid "Columns (Ctrl+3)"
 msgstr "分栏（Ctrl+3）"
 
-#: ui/filespane.ui:295
+#: ui/filespane.ui:311
 msgid "Smaller (Ctrl+−)"
 msgstr "缩小（Ctrl+−）"
 
-#: ui/filespane.ui:304
+#: ui/filespane.ui:320
 msgid "Normal size (Ctrl+0)"
 msgstr "正常大小（Ctrl+0）"
 
-#: ui/filespane.ui:314
+#: ui/filespane.ui:330
 msgid "Bigger (Ctrl++)"
 msgstr "放大（Ctrl++）"
 
@@ -17906,23 +17915,15 @@ msgstr "Enter"
 msgid "Esc"
 msgstr "Esc"
 
-#: ui/mail.ui:46
-msgid "Hide the sidebar (F9)"
-msgstr "隐藏侧边栏 (F9)"
-
-#: ui/mail.ui:103
+#: ui/mail.ui:108
 msgid "Settings (Ctrl+,)"
 msgstr "设置 (Ctrl+,)"
 
-#: ui/mail.ui:131
-msgid "Show the sidebar (F9)"
-msgstr "显示侧边栏 (F9)"
-
-#: ui/mail.ui:153
+#: ui/mail.ui:160
 msgid "Write a message (C)"
 msgstr "写一封邮件 (C)"
 
-#: ui/mail.ui:250
+#: ui/mail.ui:257
 msgid "Loading older mail…"
 msgstr "正在加载更早的邮件…"
 

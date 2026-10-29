@@ -41,13 +41,16 @@ type pane struct {
 
 	box, tabsBox, mark                              gtk.Box
 	back, fwd, up, emptyTrash, zoomLevel            gtk.Button
+	sidebarShow                                     gtk.Button
 	pathStack                                       gtk.Stack
 	crumbs                                          gtk.Box
 	crumbScroll                                     gtk.ScrolledWindow
 	location                                        gtk.Entry
 	search                                          gtk.SearchEntry
 	columns                                         gtk.Box
+	columnsHead                                     gtk.ScrolledWindow
 	nameHead                                        gtk.Label
+	nameCol                                         *gtk.Button
 	colHeads                                        [len(columns)]*gtk.Button
 	colLabels                                       [len(columns)]*gtk.Label
 	views                                           gtk.Stack
@@ -130,6 +133,8 @@ func newPane(w *window, n int) *pane {
 	ui.Get("location", &p.location)
 	ui.Get("search", &p.search)
 	ui.Get("columns", &p.columns)
+	ui.Get("columns_head", &p.columnsHead)
+	ui.Get("sidebar_show", &p.sidebarShow)
 	ui.Get("views", &p.views)
 	ui.Get("list_scroll", &p.listScroll)
 	ui.Get("grid_scroll", &p.gridScroll)
@@ -148,6 +153,7 @@ func newPane(w *window, n int) *pane {
 	}
 	ui.Close()
 
+	w.click(&p.sidebarShow, func() { w.setSidebar(true) })
 	w.click(&p.back, func() { p.goBack() })
 	w.click(&p.fwd, func() { p.goForward() })
 	w.click(&p.up, func() { p.goUp() })
@@ -201,6 +207,9 @@ func newPane(w *window, n int) *pane {
 	w.activate(p.list.GoPointer(), func(pos uint32) { p.activate(pos) })
 	p.list.ConnectActivate(&w.app.h.onListAct)
 	p.listScroll.SetChild(&p.list.Widget)
+	// The heads follow the list sideways.
+	hadj := p.listScroll.GetHadjustment()
+	w.notify(hadj, "value", func() { p.columnsHead.GetHadjustment().SetValue(hadj.GetValue()) })
 
 	gf := w.factory(p.setupCell, p.bindRow, p.teardownRow)
 	p.grid = gtk.NewGridView(noModel, &gf.ListItemFactory)
@@ -265,6 +274,7 @@ func (p *pane) setupRow(item uintptr) {
 	r.name.SetXalign(0)
 	r.name.SetHexpand(true)
 	r.name.SetEllipsize(2) // middle: the extension stays in view
+	r.name.SetSizeRequest(nameMin, -1)
 	gtkx.Append(&r.box, &r.name.Widget)
 	for k, c := range columns {
 		l := fixedLabel(c.width, c.right)
@@ -751,7 +761,7 @@ func (p *pane) saveView() {
 // nothing, and gives the model to the view shown only.
 func (p *pane) syncView() {
 	v := p.shownView()
-	p.columns.SetVisible(v == files.ListView)
+	p.columnsHead.SetVisible(v == files.ListView)
 	if v != files.ListView {
 		p.list.SetModel(noModel)
 	}

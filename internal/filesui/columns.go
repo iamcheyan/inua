@@ -33,6 +33,10 @@ var columns = [...]column{
 	{files.ByGroup, i18n.M("GROUP"), 84, false},
 }
 
+// nameMin is the least the name keeps in the list; a narrower pane
+// scrolls the list sideways instead.
+const nameMin = 160
+
 // trailing is the width at the end of the head that holds the columns
 // button; rows leave it empty, so both line up.
 const trailing = 24
@@ -102,6 +106,7 @@ func (p *pane) buildColumns() {
 	w := p.w
 	name := gtk.NewButton()
 	name.AddCssClass("files-col")
+	p.nameCol = name
 	name.SetHexpand(true)
 	p.nameHead = *gtk.NewLabel("")
 	p.nameHead.AddCssClass("kicker")
@@ -175,6 +180,7 @@ func (p *pane) syncColumns() {
 	}
 	p.nameHead.SetText(i18n.T("NAME") + arrow(by == files.ByName))
 	p.nameHead.SetMarginStart(listIcon(s.Zoom) + 10) // past the icons
+	p.nameCol.SetSizeRequest(listIcon(s.Zoom)+10+nameMin, -1)
 	for k, c := range columns {
 		p.colHeads[k].SetVisible(s.ShowsColumn(c.by))
 		p.colLabels[k].SetText(p.columnTitle(c) + arrow(by == c.by))

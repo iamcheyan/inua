@@ -20,6 +20,15 @@ Box pane {
     styles ["files-head"]
     spacing: 2;
 
+    // The sidebar's toggle while it is hidden, on the left pane only.
+    Button sidebar_show {
+      styles ["files-tool", "files-sidebar-show"]
+      valign: center;
+      icon-name: "sidebar-show-symbolic";
+      tooltip-text: _("Show the sidebar (F9)");
+      visible: false;
+    }
+
     // With two panes: filled for the one the keys go to, hollow for the other.
     Box pane_mark {
       styles ["mark", "files-pane-mark"]
@@ -115,10 +124,16 @@ Box pane {
   }
 
   // The list's column heads: a click sorts by the column, again reverses;
-  // a right click, or the button at the end, chooses the columns.
-  Box columns {
-    styles ["files-columns"]
-    spacing: 10;
+  // a right click, or the button at the end, chooses the columns. In a
+  // pane too narrow for them all they scroll along with the list.
+  ScrolledWindow columns_head {
+    hscrollbar-policy: external;
+    vscrollbar-policy: never;
+
+    Box columns {
+      styles ["files-columns"]
+      spacing: 10;
+    }
   }
 
   Overlay {
@@ -133,9 +148,9 @@ Box pane {
         title: _("List (Ctrl+1)");
         icon-name: "view-list-symbolic";
 
-        child: ScrolledWindow list_scroll {
-          hscrollbar-policy: never;
-        };
+        // Sideways when the pane is narrower than the name and the
+        // columns: the name never shrinks out of view.
+        child: ScrolledWindow list_scroll {};
       }
 
       StackPage {

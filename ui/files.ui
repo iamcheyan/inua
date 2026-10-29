@@ -20,7 +20,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 <child>
                   <object class="GtkRevealer" id="sidebar_reveal">
                     <property name="transition-type">2</property>
-                    <property name="transition-duration">160</property>
+                    <property name="transition-duration">200</property>
                     <property name="reveal-child">true</property>
                     <property name="child">
                       <object class="GtkBox" id="sidebar_col">
@@ -31,6 +31,23 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                         <property name="orientation">1</property>
                         <property name="width-request">216</property>
                         <property name="hexpand">false</property>
+                        <child>
+                          <object class="GtkBox">
+                            <style>
+                              <class name="files-sidebar-head"/>
+                            </style>
+                            <child>
+                              <object class="GtkButton" id="sidebar_hide">
+                                <style>
+                                  <class name="files-tool"/>
+                                </style>
+                                <property name="valign">3</property>
+                                <property name="icon-name">sidebar-show-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Hide the sidebar (F9)</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                         <child>
                           <object class="GtkScrolledWindow">
                             <property name="vexpand">true</property>

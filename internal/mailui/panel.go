@@ -31,7 +31,7 @@ func (w *window) toggleAssist() {
 	w.assistOpen = !w.assistOpen
 	w.assistReveal.SetRevealChild(w.assistOpen)
 	switch {
-	case w.assistOpen && w.indexCol.GetVisible() && int(w.readerStack.GetWidth())-assistWidth < readerRoom:
+	case w.assistOpen && w.indexReveal.GetRevealChild() && int(w.readerStack.GetWidth())-assistWidth < readerRoom:
 		w.setSidebar(false)
 		w.sidebarForPanel = true
 	case !w.assistOpen && w.sidebarForPanel:

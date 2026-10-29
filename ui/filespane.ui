@@ -28,6 +28,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
         </style>
         <property name="spacing">2</property>
         <child>
+          <object class="GtkButton" id="sidebar_show">
+            <style>
+              <class name="files-tool"/>
+              <class name="files-sidebar-show"/>
+            </style>
+            <property name="valign">3</property>
+            <property name="icon-name">sidebar-show-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Show the sidebar (F9)</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkBox" id="pane_mark">
             <style>
               <class name="mark"/>
@@ -162,11 +174,17 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
       </object>
     </child>
     <child>
-      <object class="GtkBox" id="columns">
-        <style>
-          <class name="files-columns"/>
-        </style>
-        <property name="spacing">10</property>
+      <object class="GtkScrolledWindow" id="columns_head">
+        <property name="hscrollbar-policy">3</property>
+        <property name="vscrollbar-policy">2</property>
+        <child>
+          <object class="GtkBox" id="columns">
+            <style>
+              <class name="files-columns"/>
+            </style>
+            <property name="spacing">10</property>
+          </object>
+        </child>
       </object>
     </child>
     <child>
@@ -182,9 +200,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 <property name="title" translatable="yes">List (Ctrl+1)</property>
                 <property name="icon-name">view-list-symbolic</property>
                 <property name="child">
-                  <object class="GtkScrolledWindow" id="list_scroll">
-                    <property name="hscrollbar-policy">2</property>
-                  </object>
+                  <object class="GtkScrolledWindow" id="list_scroll"></object>
                 </property>
               </object>
             </child>

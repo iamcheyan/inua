@@ -24,88 +24,95 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
             <property name="child">
               <object class="GtkBox">
                 <child>
-                  <object class="GtkBox" id="index_col">
-                    <style>
-                      <class name="index"/>
-                      <class name="mail-index"/>
-                    </style>
-                    <property name="orientation">1</property>
-                    <property name="width-request">236</property>
-                    <property name="hexpand">false</property>
-                    <child>
+                  <object class="GtkRevealer" id="index_reveal">
+                    <property name="transition-type">2</property>
+                    <property name="transition-duration">200</property>
+                    <property name="reveal-child">true</property>
+                    <property name="child">
                       <object class="GtkBox">
                         <style>
-                          <class name="mail-index-head"/>
+                          <class name="index"/>
+                          <class name="mail-index"/>
                         </style>
+                        <property name="orientation">1</property>
+                        <property name="width-request">236</property>
+                        <property name="hexpand">false</property>
                         <child>
-                          <object class="GtkButton" id="sidebar_hide">
+                          <object class="GtkBox">
                             <style>
-                              <class name="mail-tool"/>
+                              <class name="mail-index-head"/>
                             </style>
-                            <property name="icon-name">sidebar-show-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Hide the sidebar (F9)</property>
+                            <child>
+                              <object class="GtkButton" id="sidebar_hide">
+                                <style>
+                                  <class name="mail-tool"/>
+                                </style>
+                                <property name="icon-name">sidebar-show-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Hide the sidebar (F9)</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow">
+                            <property name="hscrollbar-policy">2</property>
+                            <property name="propagate-natural-width">false</property>
+                            <property name="vexpand">true</property>
+                            <child>
+                              <object class="GtkBox" id="side">
+                                <style>
+                                  <class name="mail-side"/>
+                                </style>
+                                <property name="orientation">1</property>
+                                <property name="spacing">1</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <style>
+                              <class name="mail-index-foot"/>
+                            </style>
+                            <property name="spacing">8</property>
+                            <child>
+                              <object class="GtkBox" id="status_mark">
+                                <style>
+                                  <class name="mark"/>
+                                  <class name="mail-status-mark"/>
+                                </style>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="status_state">
+                                <style>
+                                  <class name="mail-status"/>
+                                </style>
+                                <property name="xalign">0</property>
+                                <property name="hexpand">true</property>
+                                <property name="wrap">true</property>
+                                <property name="wrap-mode">2</property>
+                                <property name="lines">2</property>
+                                <property name="ellipsize">3</property>
+                                <property name="max-width-chars">1</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="settings_button">
+                                <style>
+                                  <class name="outlined"/>
+                                  <class name="mail-head-button"/>
+                                </style>
+                                <property name="icon-name">emblem-system-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Settings (Ctrl+,)</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkScrolledWindow">
-                        <property name="hscrollbar-policy">2</property>
-                        <property name="propagate-natural-width">false</property>
-                        <property name="vexpand">true</property>
-                        <child>
-                          <object class="GtkBox" id="side">
-                            <style>
-                              <class name="mail-side"/>
-                            </style>
-                            <property name="orientation">1</property>
-                            <property name="spacing">1</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <style>
-                          <class name="mail-index-foot"/>
-                        </style>
-                        <property name="spacing">8</property>
-                        <child>
-                          <object class="GtkBox" id="status_mark">
-                            <style>
-                              <class name="mark"/>
-                              <class name="mail-status-mark"/>
-                            </style>
-                            <property name="valign">3</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="status_state">
-                            <style>
-                              <class name="mail-status"/>
-                            </style>
-                            <property name="xalign">0</property>
-                            <property name="hexpand">true</property>
-                            <property name="wrap">true</property>
-                            <property name="wrap-mode">2</property>
-                            <property name="lines">2</property>
-                            <property name="ellipsize">3</property>
-                            <property name="max-width-chars">1</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="settings_button">
-                            <style>
-                              <class name="outlined"/>
-                              <class name="mail-head-button"/>
-                            </style>
-                            <property name="icon-name">emblem-system-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Settings (Ctrl+,)</property>
-                            <property name="valign">3</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+                    </property>
                   </object>
                 </child>
                 <child>

@@ -30,7 +30,6 @@ type picker struct {
 	answer  chan<- pickResult // answered once
 	checks  map[string]*gtk.CheckButton
 	lists   map[string]*gtk.DropDown
-	app     string // the name of the app that asked
 	done    bool
 	filters *gtk.StringList
 }
@@ -89,8 +88,7 @@ func (a *App) openPicker(r pick.Request, ch chan<- pickResult) *window {
 		a.pickMem = pick.LoadMemory(pick.MemoryPath())
 	}
 	w := a.newWindow()
-	w.pick = &picker{req: r, filter: r.Filter, answer: ch, checks: map[string]*gtk.CheckButton{}, lists: map[string]*gtk.DropDown{},
-		app: appName(r.AppID)}
+	w.pick = &picker{req: r, filter: r.Filter, answer: ch, checks: map[string]*gtk.CheckButton{}, lists: map[string]*gtk.DropDown{}}
 	w.setupPicker()
 	a.holdPicker()
 
@@ -141,8 +139,8 @@ func (w *window) setupPicker() {
 	m := w.app.pickMem
 	width, height, details := m.View()
 	w.win.SetDefaultSize(int32(width), int32(height))
-	w.detailsReveal.SetRevealChild(details)
 	w.detailsToggle.SetActive(details)
+	w.fitDetails()
 
 	if r.Kind == pick.Save {
 		f.nameRow.SetVisible(true)

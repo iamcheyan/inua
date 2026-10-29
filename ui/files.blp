@@ -18,7 +18,7 @@ ApplicationWindow files {
 
         Revealer sidebar_reveal {
           transition-type: slide_right;
-          transition-duration: 160;
+          transition-duration: 200;
           reveal-child: true;
 
           // hexpand set: the footer's spacer must not widen the sidebar.
@@ -27,6 +27,19 @@ ApplicationWindow files {
             orientation: vertical;
             width-request: 216;
             hexpand: false;
+
+            // Hiding the sidebar, as Mail does; the pane's head shows it
+            // again.
+            Box {
+              styles ["files-sidebar-head"]
+
+              Button sidebar_hide {
+                styles ["files-tool"]
+                valign: center;
+                icon-name: "sidebar-show-symbolic";
+                tooltip-text: _("Hide the sidebar (F9)");
+              }
+            }
 
             ScrolledWindow {
               vexpand: true;
