@@ -62,7 +62,7 @@ func TestScreenState(t *testing.T) {
 	if st, _ := m.State(todos); st != Working {
 		t.Errorf("working screen with todos: %q", st)
 	}
-		blocked := []string{"╭──────────────────────────╮", "│ Bash command              │", "│   rm -rf build            │", "│ Do you want to proceed?   │", "│ ❯ 1. Yes                  │", "│   2. No                   │", "╰──────────────────────────╯"}
+	blocked := []string{"╭──────────────────────────╮", "│ Bash command              │", "│   rm -rf build            │", "│ Do you want to proceed?   │", "│ ❯ 1. Yes                  │", "│   2. No                   │", "╰──────────────────────────╯"}
 	st, ask := m.State(blocked)
 	if st != Blocked || ask != "Do you want to proceed?" {
 		t.Errorf("blocked screen: %q %q", st, ask)
