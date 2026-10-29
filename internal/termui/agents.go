@@ -69,11 +69,20 @@ func paint(mark *gtk.Box, label *gtk.Label, l look) {
 }
 
 // iconOf is a pane's mark: its agent's, or the terminal's.
-func iconOf(info host.PaneInfo) string {
-	if info.Icon != "" {
-		return info.Icon + "-symbolic"
+// An agent may have its own colours, NAME-light and NAME-dark for light
+// and dark themes (Mister Morph's), shown instead of its one-colour mark.
+func (a *App) iconOf(info host.PaneInfo) string {
+	if info.Icon == "" {
+		return "agent-shell-symbolic"
 	}
-	return "agent-shell-symbolic"
+	own := info.Icon + "-light"
+	if parseHex(a.c.Colors["app"]).luma() < 0.5 {
+		own = info.Icon + "-dark"
+	}
+	if gtk.IconThemeGetForDisplay(gdk.DisplayGetDefault()).HasIcon(own) {
+		return own
+	}
+	return info.Icon + "-symbolic"
 }
 
 // brands colour the agents' marks, each its manifest's colour (a class of
@@ -340,7 +349,7 @@ func (a *App) overview() {
 		info := a.info[x.pane]
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
 		row.AddCssClass("term-overview-row")
-		icon := gtk.NewImageFromIconName(iconOf(info))
+		icon := gtk.NewImageFromIconName(a.iconOf(info))
 		icon.SetPixelSize(15)
 		a.brand(icon, info)
 		row.Append(&icon.Widget)

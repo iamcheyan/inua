@@ -428,7 +428,7 @@ func makePaneRow() *paneRowWidgets {
 func (c *columns) setPaneRow(a *App, r *paneRowWidgets, id int, current bool) {
 	info := a.info[id]
 	classIf(&r.button.Widget, "current", current)
-	r.icon.SetFromIconName(iconOf(info))
+	r.icon.SetFromIconName(a.iconOf(info))
 	a.brand(r.icon, info)
 	r.title.SetText(paneTitle(info))
 	paint(r.mark, r.state, lookOf(info))

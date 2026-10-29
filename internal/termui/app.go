@@ -400,6 +400,11 @@ func (a *App) closeWindow() {
 
 func (a *App) ThemeChanged() {
 	a.schemeChanged()
+	// Marks in an agent's own colours follow the theme's light or dark.
+	for id, t := range a.tiles {
+		t.update(a, a.info[id])
+	}
+	a.cols.update(a)
 	if a.guide != nil {
 		a.guide.themeChanged(a)
 	}

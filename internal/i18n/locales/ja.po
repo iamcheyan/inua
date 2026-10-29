@@ -13192,7 +13192,7 @@ msgid "Add a snippet"
 msgstr ""
 
 #: internal/term/web/strings.go:20
-#: internal/termui/agents.go:327
+#: internal/termui/agents.go:336
 msgid "Agents"
 msgstr "エージェント"
 
@@ -13565,25 +13565,25 @@ msgstr ""
 msgid "EXITED %d"
 msgstr "終了 %d"
 
-#: internal/termui/agents.go:182
+#: internal/termui/agents.go:191
 msgid "Agents that need you"
 msgstr "応答を待つエージェント"
 
-#: internal/termui/agents.go:289
+#: internal/termui/agents.go:298
 msgid "%d agent needs you"
 msgid_plural "%d agents need you"
 msgstr[0] "%d 個のエージェントが対応を待っています"
 
-#: internal/termui/agents.go:292
+#: internal/termui/agents.go:301
 msgid "%d agent is idle"
 msgid_plural "%d agents are idle"
 msgstr[0] "%d 個のエージェントが待機中です"
 
-#: internal/termui/agents.go:296
+#: internal/termui/agents.go:305
 msgid "%s goes to the next"
 msgstr "%s で次へ"
 
-#: internal/termui/agents.go:334
+#: internal/termui/agents.go:343
 msgid "No agent runs in any workspace."
 msgstr "どのワークスペースでもエージェントは動いていません。"
 

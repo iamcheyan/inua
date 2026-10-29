@@ -13263,7 +13263,7 @@ msgid "Add a snippet"
 msgstr ""
 
 #: internal/term/web/strings.go:20
-#: internal/termui/agents.go:327
+#: internal/termui/agents.go:336
 msgid "Agents"
 msgstr "Agents"
 
@@ -13636,27 +13636,27 @@ msgstr ""
 msgid "EXITED %d"
 msgstr "TERMINÉ %d"
 
-#: internal/termui/agents.go:182
+#: internal/termui/agents.go:191
 msgid "Agents that need you"
 msgstr "Agents qui ont besoin de vous"
 
-#: internal/termui/agents.go:289
+#: internal/termui/agents.go:298
 msgid "%d agent needs you"
 msgid_plural "%d agents need you"
 msgstr[0] "%d agent a besoin de vous"
 msgstr[1] "%d agents ont besoin de vous"
 
-#: internal/termui/agents.go:292
+#: internal/termui/agents.go:301
 msgid "%d agent is idle"
 msgid_plural "%d agents are idle"
 msgstr[0] "%d agent est inactif"
 msgstr[1] "%d agents sont inactifs"
 
-#: internal/termui/agents.go:296
+#: internal/termui/agents.go:305
 msgid "%s goes to the next"
 msgstr "%s passe au suivant"
 
-#: internal/termui/agents.go:334
+#: internal/termui/agents.go:343
 msgid "No agent runs in any workspace."
 msgstr "Aucun agent ne tourne dans aucun espace de travail."
 
