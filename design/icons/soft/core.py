@@ -40,15 +40,15 @@ def mail(ic):
 @soft("Term")
 def term(ic):
     tile(ic, "#22282D", "#0B0E10")
-    soft_shadow(ic, 128, 222, 70, 9)
-    ic.path("M112 186h32l5 24h-42z", fill="#8D949C")
-    ic.rect(84, 206, 88, 12, rx=6, fill=two(ic, "#AEB4BB", "#8D949C"))
-    ic.rect(28, 40, 200, 150, rx=22, fill=two(ic, "#454B53", "#2E3338"))
-    ic.rect(42, 54, 172, 122, rx=12, fill="#0C2416")
-    ic.path("M60 86 L80 104 L60 122", fill="none", stroke="#7CF7A6", stroke_width=10, stroke_linecap="round", stroke_linejoin="round")
-    ic.rect(92, 112, 30, 10, rx=3, fill="#7CF7A6")
-    bar(ic, 60, 140, 96, 8, fill="#7CF7A6", opacity=0.3)
-    bar(ic, 60, 156, 64, 8, fill="#7CF7A6", opacity=0.3)
+    soft_shadow(ic, 128, 212, 96, 11)
+    with ic.g(transform="translate(0 15)"):  # the screen alone, no stand
+        ic.rect(28, 40, 200, 150, rx=22, fill=two(ic, "#454B53", "#2E3338"))
+        ic.rect(42, 54, 172, 122, rx=12, fill="#0C2416")
+        ic.path("M60 86 L80 104 L60 122", fill="none", stroke="#7CF7A6", stroke_width=10, stroke_linecap="round",
+                stroke_linejoin="round")
+        ic.rect(92, 112, 30, 10, rx=3, fill="#7CF7A6")
+        bar(ic, 60, 140, 96, 8, fill="#7CF7A6", opacity=0.3)
+        bar(ic, 60, 156, 64, 8, fill="#7CF7A6", opacity=0.3)
 
 
 @soft("Music")

@@ -72,6 +72,37 @@ def _fox_band(gx, gy, m, step=2.5):
         a -= step
     return out, inn
 
+def _sleeping_head(gx, gy, m):
+    """The fox's head lying along the ring past the band's start, asleep:
+    its inner edge, the snout's tip and its outer edge back, as points."""
+    inner, outer = [], []
+    a = 40.0
+    while a <= 72:
+        t = 22 + 8 * math.sin(math.radians((a - 40) / 32 * 180))  # the skull, rounder
+        inner.append(polar(gx, gy, m - t / 2, a))
+        outer.append(polar(gx, gy, m + t / 2, a))
+        a += 2
+    snout = [polar(gx, gy, m - 6, 78), polar(gx, gy, m - 2, 84), polar(gx, gy, m + 2, 88),
+             polar(gx, gy, m + 6, 84), polar(gx, gy, m + 9, 78)]
+    return inner + snout + outer[::-1]
+
+
+def _sleeping_face(ic, gx, gy, m, fur, ear_in, eye):
+    """Its ear laid back, the cheek, the shut eye and the nose."""
+    ic.path(_d([polar(gx, gy, m + 11, 47), polar(gx, gy, m + 19, 34), polar(gx, gy, m + 13, 58)]),
+            fill=fur, stroke=fur, stroke_width=2, stroke_linejoin="round")
+    ic.path(_d([polar(gx, gy, m + 13, 47), polar(gx, gy, m + 18, 38), polar(gx, gy, m + 14, 54)]), fill=ear_in)
+    cheek = [polar(gx, gy, m - 13, a) for a in range(56, 73, 4)] + \
+        [polar(gx, gy, m - 6, 78), polar(gx, gy, m - 2, 84), polar(gx, gy, m + 2, 88)] + \
+        [polar(gx, gy, m - 1, a) for a in range(80, 55, -5)]
+    ic.path(_d(cheek), fill="#FFF3D6", stroke="#FFF3D6", stroke_width=2, stroke_linejoin="round")
+    (x1, y1), (x2, y2), (cx, cy) = polar(gx, gy, m + 4, 58), polar(gx, gy, m + 4, 70), polar(gx, gy, m + 9, 64)
+    ic.path(f"M{x1:.1f} {y1:.1f}Q{cx:.1f} {cy:.1f} {x2:.1f} {y2:.1f}", fill="none", stroke=eye,
+            stroke_width=3, stroke_linecap="round")
+    x, y = polar(gx, gy, m + 2, 87)
+    ic.circle(x, y, 3.6, fill=eye)
+
+
 
 @icon("firefox", kind="app", title="Firefox",
       names=["firefox", "firefox-beta", "firefox-bin", "firefox-esr", "firefox-icon", "firefox-mozilla-build",
@@ -112,18 +143,14 @@ def firefox(ic):
     # the fox's shadow on the glass
     out, inn = _fox_band(gx + 2, gy + 3, 68)
     ic.path(_d(out + inn[::-1]), fill="#120A40", opacity=0.35)
-    # the fox, curled round it: head at the top right, tail round the bottom
+    # the fox, curled round it asleep: its head laid along the ring at the
+    # top right, its tail round the bottom
     out, inn = _fox_band(gx, gy, 68)
-    head = [(170, 80), (188, 86), (211, 78), (205, 66), (199, 57), (203, 34), (192, 45), (181, 22), (174, 44)]
+    head = _sleeping_head(gx, gy, 68)
     fur = ic.lin([(0, "#FFE65C"), (0.28, "#FFA733"), (0.62, "#FF5A2C"), (1, "#E0205E")], 204, 30, 40, 196,
                  units="userSpaceOnUse")
     ic.path(_d([inn[0]] + head + out + inn[::-1]), fill=fur, stroke=fur, stroke_width=2, stroke_linejoin="round")
-    # its ear, cheek, eye and nose
-    ic.path("M182 29l4 14-6 1z", fill="#9A2A16", opacity=0.55)
-    ic.path("M201 40l-1 12-5-6z", fill="#9A2A16", opacity=0.45)
-    ic.path("M186 70c8 0 16 4 25 8-8 5-17 8-27 6-6-1-9-6-6-10z", fill="#FFF3D6")
-    ic.ellipse(194, 63, 3, 2, fill="#2A0E06", transform="rotate(25 194 63)")
-    ic.circle(209.5, 77.5, 2.3, fill="#2A0E06")
+    _sleeping_face(ic, gx, gy, 68, fur, "#9A2A16", "#2A0E06")
     # the tail's pale tip
     tip_o, tip_i = _fox_band(gx, gy, 68, 1.5)
     k = next(i for i, p in enumerate(tip_o) if _angle(gx, gy, p) < -218)

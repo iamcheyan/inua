@@ -8,6 +8,8 @@ import (
 	"math"
 	"net/http"
 	"os/exec"
+	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 	"unsafe"
@@ -735,7 +737,9 @@ func (s *shellUI) footIcon(name string) *gtk.IconPaintable {
 	var p *gtk.IconPaintable
 	display := gtk.IconThemeGetForDisplay(gdk.DisplayGetDefault())
 	defer display.Unref()
-	if strings.HasPrefix(name, "/") {
+	if n := themedFile(name); strings.HasPrefix(name, "/") && n != "" {
+		p = appIcons.LookupIcon(n, nil, size, scale, gtk.TextDirLtrValue, 0)
+	} else if strings.HasPrefix(name, "/") {
 		f := gio.FileNewForPath(name)
 		p = gtk.NewIconPaintableForFile(f, size, scale)
 		unref(f)
@@ -860,6 +864,9 @@ func (s *shellUI) markLauncherResult(w *gtk.Widget, i int) {
 // class, which usually names the app's icon too, in any case.
 func setIcon(img *gtk.Image, name string) {
 	if strings.HasPrefix(name, "/") {
+		if n := themedFile(name); n != "" && setFromTheme(img, appIcons, n) {
+			return
+		}
 		img.SetFromFile(name)
 		return
 	}
@@ -878,6 +885,39 @@ func setIcon(img *gtk.Image, name string) {
 		}
 	}
 	img.SetFromIconName("application-x-executable")
+}
+
+// themedFile is the name, in the theme app icons come from, of an app's
+// icon given as a file, when the theme draws it: "" for none. An icon
+// theme cannot stand in for a file, so a snap's (Chromium's
+// /snap/chromium/current/chromium.png) would never follow it otherwise.
+func themedFile(path string) string {
+	if appIcons == nil {
+		return ""
+	}
+	for _, n := range fileIconNames(path) {
+		if appIcons.HasIcon(n) {
+			return n
+		}
+	}
+	return ""
+}
+
+// fileIconNames are the names an app's icon file may go by in an icon
+// theme: a snap's name (/snap/NAME/…), then the file's own, without its
+// extension.
+func fileIconNames(path string) []string {
+	var names []string
+	if rest, ok := strings.CutPrefix(path, "/snap/"); ok {
+		if snap, _, _ := strings.Cut(rest, "/"); snap != "" {
+			names = append(names, snap)
+		}
+	}
+	base := filepath.Base(path)
+	if base = strings.TrimSuffix(base, filepath.Ext(base)); base != "" && base != "." && base != "/" && !slices.Contains(names, base) {
+		names = append(names, base)
+	}
+	return names
 }
 
 // setFromTheme shows the theme's file for the icon name, which the image

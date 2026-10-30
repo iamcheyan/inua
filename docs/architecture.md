@@ -366,9 +366,11 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   user's set, `icons/<name>/` beside `config.toml`, is copied over the
   Phosphor icons into an icon theme of its own name (`style.IconTheme`),
   in the shell and in inua's apps. `style.app_icons` naming an installed
-  theme (inua's three among them) takes app icons from it: in the shell from a `GtkIconTheme` of
-  its own (`appIcons`, apart from the shell's icons), in Files with the
-  files' icons (`DesktopIcons`); the tray's stay each app's.
+  theme (inua's three among them) takes app icons from it: in the shell
+  from a `GtkIconTheme` of its own (`appIcons`, apart from the shell's
+  icons; an icon given as a file, a snap's, by the snap's or the file's
+  name, `fileIconNames`), in Files with the files' icons
+  (`DesktopIcons`); the tray's stay each app's.
 - Text size: `style.text_scale` (80 to 150 percent, the Appearance page's
   "Text size") multiplies the `font-size` pixel values of `ui/style.css` as
   it loads (`style.ScaleText`), in the shell and in inua's apps; icons,

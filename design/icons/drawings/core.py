@@ -83,34 +83,33 @@ def mail16(ic):
 @icon("Term")
 def term(ic):
     tile(ic, "#22282D", "#0B0E10")
-    shadow(ic, 128, 222, 70, 9)
-    ic.path("M112 186h32l6 26h-44z", fill=steel(ic))
-    ic.rect(86, 208, 84, 10, rx=5, fill=steel(ic))
-    ic.rect(28, 40, 200, 150, rx=18, fill=ic.lin([(0, "#4A5058"), (0.08, "#30353B"), (1, "#16191C")]))
-    ic.rect(28.75, 40.75, 198.5, 148.5, rx=17.25, fill="none", stroke="#fff", stroke_opacity=0.12, stroke_width=1.5)
-    ic.rect(40, 52, 176, 122, rx=9, fill=ic.rad([(0, "#103A22"), (1, "#050B08")], cx=0.35, cy=0.4, r=0.8))
-    dim = dict(font="mono-semibold", fill="#4FBF78", opacity=0.6)
-    ic.text("~/inua $ go test ./...", 50, 72, 10, **dim)
-    ic.text("ok   internal/ui     0.04s", 50, 86, 10, **dim)
-    ic.text("ok   internal/shell  0.07s", 50, 100, 10, **dim)
-    ic.text("PASS · 412 tests", 50, 114, 10, font="mono-semibold", fill="#F2C45C", opacity=0.75)
-    ic.path("M53 133 L62 141.5 L53 150", fill="none", stroke="#7CF7A6", stroke_width=3.2, stroke_linecap="round", stroke_linejoin="round")
-    ic.rect(70, 133, 10, 17, fill="#7CF7A6")
-    scan = ic.define('<pattern id="{id}" width="4" height="3" patternUnits="userSpaceOnUse">'
-                     '<rect width="4" height="1" fill="#000" opacity=".35"/></pattern>', "p")
-    ic.rect(40, 52, 176, 122, rx=9, fill=f"url(#{scan})", opacity=0.5)
-    ic.path("M40 61a9 9 0 0 1 9-9h86L64 174H49a9 9 0 0 1-9-9z", fill=glare(ic))
-    ic.circle(128, 182, 2.2, fill="#7CF7A6", opacity=0.7)
+    shadow(ic, 128, 212, 96, 11)
+    # the screen alone, standing on the desk: no stand
+    with ic.g(transform="translate(0 15)"):
+        ic.rect(28, 40, 200, 150, rx=18, fill=ic.lin([(0, "#4A5058"), (0.08, "#30353B"), (1, "#16191C")]))
+        ic.rect(28.75, 40.75, 198.5, 148.5, rx=17.25, fill="none", stroke="#fff", stroke_opacity=0.12, stroke_width=1.5)
+        ic.rect(40, 52, 176, 122, rx=9, fill=ic.rad([(0, "#103A22"), (1, "#050B08")], cx=0.35, cy=0.4, r=0.8))
+        dim = dict(font="mono-semibold", fill="#4FBF78", opacity=0.6)
+        ic.text("~/inua $ go test ./...", 50, 72, 10, **dim)
+        ic.text("ok   internal/ui     0.04s", 50, 86, 10, **dim)
+        ic.text("ok   internal/shell  0.07s", 50, 100, 10, **dim)
+        ic.text("PASS · 412 tests", 50, 114, 10, font="mono-semibold", fill="#F2C45C", opacity=0.75)
+        ic.path("M53 133 L62 141.5 L53 150", fill="none", stroke="#7CF7A6", stroke_width=3.2, stroke_linecap="round", stroke_linejoin="round")
+        ic.rect(70, 133, 10, 17, fill="#7CF7A6")
+        scan = ic.define('<pattern id="{id}" width="4" height="3" patternUnits="userSpaceOnUse">'
+                         '<rect width="4" height="1" fill="#000" opacity=".35"/></pattern>', "p")
+        ic.rect(40, 52, 176, 122, rx=9, fill=f"url(#{scan})", opacity=0.5)
+        ic.path("M40 61a9 9 0 0 1 9-9h86L64 174H49a9 9 0 0 1-9-9z", fill=glare(ic))
+        ic.circle(128, 182, 2.2, fill="#7CF7A6", opacity=0.7)
 
 
 @small("Term")
 def term16(ic):
     tile(ic, "#22282D", "#0B0E10")
-    ic.rect(2, 3, 12, 9, rx=1.5, fill="#3A4047")
-    ic.rect(3, 4, 10, 7, rx=0.8, fill="#07150D")
-    ic.path("M4.5 6 L6.5 7.5 L4.5 9", fill="none", stroke="#7CF7A6", stroke_width=1.1, stroke_linecap="round", stroke_linejoin="round")
-    ic.rect(7.5, 8.3, 3, 1, fill="#7CF7A6")
-    ic.rect(5.5, 12.5, 5, 1.2, rx=0.6, fill="#9AA1A9")
+    ic.rect(2, 3.5, 12, 9, rx=1.5, fill="#3A4047")
+    ic.rect(3, 4.5, 10, 7, rx=0.8, fill="#07150D")
+    ic.path("M4.5 6.5 L6.5 8 L4.5 9.5", fill="none", stroke="#7CF7A6", stroke_width=1.1, stroke_linecap="round", stroke_linejoin="round")
+    ic.rect(7.5, 8.8, 3, 1, fill="#7CF7A6")
 
 
 # --- Music: a record slid out of its sleeve -----------------------------------
