@@ -77,6 +77,7 @@ type Action struct {
 	Path          dbus.ObjectPath // the menu or accessible object
 	Index         int32           // an action index (AT-SPI) or an item id (dbusmenu)
 	NativeWayland bool            // this app has no X11 Registrar window ID
+	Direct        bool            // the shell read this menu itself, not through the Registrar
 }
 
 const (

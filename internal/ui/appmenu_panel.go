@@ -15,8 +15,14 @@ import (
 
 // A menu cannot be a GTK popover here: the bar is a layer-shell surface, and
 // Wayland only lets a popup hang from an xdg_toplevel. The menu is a card in
-// its own overlay surface instead, hung under the bar the way the calendar is
+// its own surface instead, hung under the bar the way the calendar is
 // (drop.go).
+//
+// The card hangs in the bar's own layer (top, not overlay): Hyprland
+// arranges the surfaces that reserve space in layer order, so a bar raised
+// to overlay while the dock stays on top would be laid out after the dock
+// and start at the dock's edge, clear of the screen's corner, for as long as
+// the menu is open. The bar keeps its space from windows meanwhile (hold).
 //
 // Submenus cascade: each one is a column of its own, beside the item it hangs
 // from and level with it, as a Mac's menus do. They are columns in the one
@@ -82,7 +88,7 @@ func (s *shellUI) buildMenuPanel() {
 	click.ConnectPressed(&s.onMenuBackdrop)
 	m.backdrop.AddController(&click.EventController)
 
-	m.drop.attach(m.win, &keys.EventController, m.backdrop, &m.card.Widget, layershell.LayerOverlay, false)
+	m.drop.attach(m.win, &keys.EventController, m.backdrop, &m.card.Widget, layershell.LayerTop, false)
 	m.drop.keyboard = layershell.KeyboardNone // the menu never takes the keyboard from the app
 	m.win.SetApplication(s.app)
 	w := m.win.GoPointer()
@@ -113,7 +119,7 @@ func (s *shellUI) showMenu(button *gtk.Widget, target appMenuTarget) {
 		s.buildMenuPanel()
 	} else if m.drop.card == nil {
 		// Closed since: the card went back into the panel's window.
-		m.drop.attach(m.win, m.keys, m.backdrop, &m.card.Widget, layershell.LayerOverlay, false)
+		m.drop.attach(m.win, m.keys, m.backdrop, &m.card.Widget, layershell.LayerTop, false)
 		m.drop.keyboard = layershell.KeyboardNone
 	}
 	m.pid = target.pid
@@ -123,7 +129,7 @@ func (s *shellUI) showMenu(button *gtk.Widget, target appMenuTarget) {
 	m.open = true
 	m.closing = false
 	s.fillMenu()
-	s.dropFromBar(&m.drop, nil, func(*bar) *gtk.Widget { return button })
+	s.dropFromThisBar(&m.drop, target.bar, func(*bar) *gtk.Widget { return button })
 	glib.IdleAdd(&s.onMenuLayout, 0)
 }
 

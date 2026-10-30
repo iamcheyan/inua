@@ -29,6 +29,11 @@ type bar struct {
 	frame       gtk.Overlay // the island, and the panel hanging from it
 	island      gtk.CenterBox
 	workspaces  gtk.Box
+	app         gtk.Box
+	appIcon     gtk.Image
+	appClass    string // the focused window's class
+	appName     string // the application the bar names, and its icon
+	appIconName string
 	appMenu     gtk.Box
 	appMenuGen  uint64
 	appMenuPID  int
@@ -163,6 +168,8 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("frame", &b.frame)
 	ui.Get("island", &b.island)
 	ui.Get("workspaces", &b.workspaces)
+	ui.Get("app", &b.app)
+	ui.Get("app_icon", &b.appIcon)
 	ui.Get("app_menu", &b.appMenu)
 	ui.Get("end", &b.end)
 	ui.Get("widgets", &b.widgetsMark)
@@ -241,7 +248,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	b.setStatus(&s.sys)
 	b.setHypr(s, s.snap)
 	b.setClock(s, time.Now())
-	b.title.SetVisible(s.cfg.Bar.Title)
+	b.app.SetVisible(s.cfg.Bar.Title)
 	b.tray.SetVisible(s.cfg.Bar.Tray)
 	s.renderTray(b)
 
@@ -413,6 +420,24 @@ func (b *bar) setClock(s *shellUI, now time.Time) {
 	b.clock.SetText(config.Strftime(s.cfg.Bar.Clock, now))
 }
 
+// setApp names the window in the bar: its application's icon and name, the
+// same way for every application, its own title not with them. A window of
+// an app with no desktop entry is named by its class.
+func (b *bar) setApp(s *shellUI, t hypr.Toplevel) {
+	name, icon := t.Class, t.Class
+	b.appClass = t.Class
+	if e := s.dockState.apps.ForClass(t.Class); e != nil {
+		name, icon = shell.AppName(e), e.Icon
+	}
+	if b.appName == name && b.appIconName == icon {
+		return
+	}
+	b.appName, b.appIconName = name, icon
+	b.title.SetText(name)
+	setIcon(&b.appIcon, icon)
+	b.appIcon.SetVisible(icon != "")
+}
+
 func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 	name := b.connector()
 	activeWorkspace := 0
@@ -436,7 +461,7 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.RemoveCssClass("occupied")
 		b.win.AddCssClass("empty")
 	}
-	b.title.SetText(shell.BarTitle(snap, name))
+	b.setApp(s, shell.BarWindow(snap, name))
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))

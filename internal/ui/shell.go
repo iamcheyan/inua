@@ -1224,6 +1224,14 @@ func (s *shellUI) scanApps() {
 			s.apps = entries
 			s.launcher.st.SetApps(entries)
 			s.dockApps(entries)
+			// The bar names the focused app: with its entry read now, its
+			// name and icon can be the application's, not its class.
+			for _, b := range s.bars {
+				if b.appClass != "" {
+					b.appName, b.appIconName = "", ""
+					b.setApp(s, shell.BarWindow(s.snap, b.connector()))
+				}
+			}
 			s.notes.apps = map[string]*desktop.Entry{}
 			for _, e := range entries {
 				s.notes.apps[e.ID] = e

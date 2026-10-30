@@ -201,6 +201,7 @@ func (s Style) InuaIconTheme() string {
 	}
 	return ""
 }
+
 // ForApps is the colour theme of the apps: AppTheme, else Theme.
 func (s Style) ForApps() string { return cmp.Or(s.AppTheme, s.Theme, "yoru") }
 

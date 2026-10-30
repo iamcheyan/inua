@@ -3,8 +3,8 @@ package filesui
 import (
 	"codeberg.org/puregotk/puregotk/v4/gio"
 
-	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/apps/files"
+	"github.com/lyricat/inua/internal/appui"
 )
 
 // menuBar gives the file manager's commands, also available from its keys

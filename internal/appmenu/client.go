@@ -32,6 +32,9 @@ func (c *Client) Menu(pid int) ([]Entry, error) {
 			return c.Registrar.Menu(r)
 		}
 	}
+	if e, ok, err := c.kdeMenu(pid); ok || err != nil {
+		return e, err
+	}
 	if e, ok, err := c.nativeWaylandMenu(pid); ok || err != nil {
 		return e, err
 	}
@@ -46,11 +49,14 @@ func (c *Client) Menu(pid int) ([]Entry, error) {
 	return nil, nil
 }
 
-// labelled reports whether the menu says anything: at least one top-level item
-// with text. A tree of unnamed items is a toolkit skeleton, not a menu.
+// labelled reports whether the menu says anything: at least one top-level
+// item with text and a menu under it. A tree of unnamed items is a toolkit
+// skeleton, not a menu; a bar of sections whose items the application only
+// makes when its own menu opens (Firefox's, Chrome's) is a menu the shell
+// cannot fill, and showing its titles would offer empty menus.
 func labelled(entries []Entry) bool {
 	for _, e := range entries {
-		if strings.TrimSpace(e.Label) != "" {
+		if strings.TrimSpace(e.Label) != "" && len(e.Children) > 0 {
 			return true
 		}
 	}
@@ -136,9 +142,10 @@ func (c *Client) Activate(e Entry) error {
 		return c.A11y.Activate(e)
 	case ActionDbusmenu:
 		r := Registration{Service: e.Action.Bus, Path: e.Action.Path}
-		if e.Action.NativeWayland {
-			// inua's own menu lives on its own connection; the shell's
-			// registrar connection is not the one that serves it.
+		if e.Action.NativeWayland || e.Action.Direct {
+			// An endpoint the shell reads itself (inua's own menu, a KDE
+			// application's) lives on the application's own connection: the
+			// shell's registrar connection is not the one that serves it.
 			conn, err := dbus.ConnectSessionBus()
 			if err != nil {
 				return err
@@ -153,4 +160,111 @@ func (c *Client) Activate(e Entry) error {
 		return c.Registrar.Activate(r, e.Action.Index)
 	}
 	return nil
+}
+
+// kdeNamePrefix starts the well-known name a KDE application publishes its
+// menu on: "org.kde.dolphin-280254", "org.kde.kate-3230144".
+const kdeNamePrefix = "org.kde."
+
+// kdeMenuRoot is where a KDE application's menus hang: /MenuBar, with one
+// child for each window's menu (/MenuBar/1, /MenuBar/2 …).
+const kdeMenuRoot = dbus.ObjectPath("/MenuBar")
+
+// kdeMenu reads the menu a KDE application (Dolphin, Kate, Konsole …)
+// exports on its own well-known name. KDE does not use the Canonical
+// registrar and its applications are native Wayland, so this is the only
+// place their menu is; the object is a plain com.canonical.dbusmenu tree,
+// which the registrar's reader takes as it is.
+//
+// A process with more than one menu (several windows) shows none, as with
+// inua's own: without a per-window identity the shell cannot tell which
+// window's menu belongs to the focused one.
+func (c *Client) kdeMenu(pid int) ([]Entry, bool, error) {
+	conn, err := dbus.ConnectSessionBus()
+	if err != nil {
+		return nil, false, err
+	}
+	defer conn.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), callTimeout)
+	defer cancel()
+	var names []string
+	if err = conn.BusObject().CallWithContext(ctx, "org.freedesktop.DBus.ListNames", 0).Store(&names); err != nil {
+		return nil, false, err
+	}
+	var found []Registration
+	for _, name := range names {
+		if !strings.HasPrefix(name, kdeNamePrefix) {
+			continue
+		}
+		var owner uint32
+		if conn.BusObject().CallWithContext(ctx, "org.freedesktop.DBus.GetConnectionUnixProcessID", 0, name).Store(&owner) != nil || int(owner) != pid {
+			continue
+		}
+		path, err := kdeMenuPath(conn, name)
+		if err != nil || path == "" {
+			// A name of KDE's with no menu (Kate until it is asked for
+			// one, an application that keeps its menus to itself): not a
+			// reason to stop looking, nor to stop the other sources.
+			continue
+		}
+		found = append(found, Registration{PID: uint32(pid), Service: name, Path: path})
+	}
+	if len(found) != 1 {
+		return nil, len(found) > 1, nil
+	}
+	entries, err := c.readMenu(conn, found[0])
+	if err != nil {
+		return nil, true, err
+	}
+	if !labelled(entries) {
+		return nil, true, nil
+	}
+	direct(entries)
+	return entries, true, nil
+}
+
+// kdeMenuPath is the object a KDE application exports its menu at: the
+// first child of /MenuBar ("/MenuBar/2"), or "" when it has none. KDE
+// names the child after the window it belongs to, so the path is read from
+// the introspection XML rather than guessed at.
+func kdeMenuPath(conn *dbus.Conn, service string) (dbus.ObjectPath, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), callTimeout)
+	defer cancel()
+	var xml string
+	call := conn.Object(service, kdeMenuRoot).CallWithContext(ctx, "org.freedesktop.DBus.Introspectable.Introspect", 0)
+	if call.Err != nil {
+		return "", call.Err
+	}
+	if err := call.Store(&xml); err != nil {
+		return "", err
+	}
+	// The reply opens with the object's own node, then its children as
+	// <node name="2"/>: the first child after that is the menu's, when the
+	// application hangs one off /MenuBar at all.
+	const open = `<node name="`
+	_, xml, ok := strings.Cut(xml, open)
+	if !ok {
+		return "", nil
+	}
+	_, rest, ok := strings.Cut(xml, open)
+	if !ok {
+		return "", nil
+	}
+	name, _, ok := strings.Cut(rest, `"`)
+	if !ok || name == "" || strings.ContainsAny(name, "/<>") {
+		return "", nil
+	}
+	return kdeMenuRoot + "/" + dbus.ObjectPath(name), nil
+}
+
+// direct marks entries the shell read itself: their clicks go to the
+// application's connection, not through the Registrar.
+func direct(entries []Entry) {
+	for i := range entries {
+		if len(entries[i].Children) > 0 {
+			direct(entries[i].Children)
+			continue
+		}
+		entries[i].Action.Direct = true
+	}
 }

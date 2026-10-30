@@ -24,20 +24,42 @@ from the same `[]MenuGroup`, so the two cannot drift.
 
 `internal/appmenu/client.go` tries, in order:
 
-1. **`com.canonical.AppMenu.Registrar`** — the de-facto protocol (KDE, Unity,
+1. **`com.canonical.AppMenu.Registrar`** — the de-facto protocol (Unity,
    Mavernix). Its association key is an **X11 window ID**, so it covers Qt and
-   XWayland applications.
-2. **inua's own names** — the shell asks the bus which of those names belong to
+   XWayland applications that register with it.
+2. **KDE's own export** — a KDE application (Dolphin, Kate, Konsole) publishes
+   `com.canonical.dbusmenu` at `/MenuBar/N` **on its own well-known name**
+   (`org.kde.dolphin-280254`), one child of `/MenuBar` per window. KDE does not
+   use the Canonical registrar, and its applications are native Wayland, so
+   this is the only place their menu is. The child is found by introspecting
+   `/MenuBar`, not guessed: KDE numbers it after the window.
+3. **inua's own names** — the shell asks the bus which of those names belong to
    the focused process, by the owner's Unix PID. This is how a native Wayland
    GTK4 window gets a global menu without pretending a PID is an XID.
-3. **AT-SPI** — last, and only when the tree has at least one labelled item.
-   Plain GTK4 answers with a skeleton (a menu bar with unnamed items); taking
-   that at face value used to put blank buttons in the bar and hide the real
-   menu.
+4. **AT-SPI** — last. It is what browsers offer: Firefox and Chromium expose a
+   menubar of labelled sections (`File`, `Edit`, …), while plain GTK4 answers
+   with a skeleton (a menu bar with unnamed items). A menu counts only when it
+   has a section with items under it, so the skeleton and a browser's
+   not-yet-filled sections never put empty buttons in the bar.
 
 A process that owns **more than one** menu name (several windows) shows no
 global menu: without a per-window identity the shell cannot tell which window
 is focused, and showing the wrong window's commands is worse than showing none.
+
+The bar names the application, not the window: its icon, its name, then its
+menus, the same way for every application. The window's own title stays in
+the overview, where the window is what matters.
+
+## What each toolkit offers
+
+| Application | Where its menu comes from |
+| --- | --- |
+| inua's own apps (Files, Mail, Terminal, the light apps, the games) | dbusmenu, published by `internal/appui` (below) |
+| Dolphin, Kate, Konsole (KDE, native Wayland) | `com.canonical.dbusmenu` at `/MenuBar/N` on `org.kde.<app>-<pid>` |
+| Firefox | AT-SPI: a menubar of sections; the items appear when a section opens |
+| Chromium, Chrome | AT-SPI, the same shape as Firefox |
+| VS Code | AT-SPI exposes one menu ("その他"), not the bar's sections: no global menu |
+| other GTK4 apps | nothing to publish; their menu bar is inside the window |
 
 ## What GTK and GNOME do
 
@@ -112,6 +134,30 @@ opened beside its row by the bar's cascade.
 
 `nixos-rebuild switch` builds inua from this checkout; the machine now runs the
 switched generation, and every application above was started from it.
+
+## Desktop applications read on the real session
+
+Read from the live session, through the client the bar uses, with each
+application focused. These are the trees the bar renders.
+
+| Application | Source | What the bar showed |
+| --- | --- | --- |
+| Dolphin | KDE `/MenuBar/2` | ファイル / 編集 / 表示 / 移動 / ツール / 設定 / ヘルプ, each with its items (20, 19, 23, 7, 5, 8, 10) |
+| Kate | AT-SPI | ファイル / 編集 / Selection / 表示 / 移動 / Projects / LSP Client / セッション / ツール / 設定 / ヘルプ |
+| Chrome | AT-SPI | ファイル / 編集 / 表示 / 履歴 / ツール / プロファイル / ヘルプ |
+| Firefox | AT-SPI | File / Edit / View / History / Bookmarks / Profiles / Tools / Help |
+| VS Code | AT-SPI | none: one "その他" menu, not the bar's sections |
+
+## Fixed in this pass
+
+| Symptom | Cause |
+| --- | --- |
+| A KDE application (Dolphin, Kate) showed no menu | Inua only asked the Canonical registrar; KDE publishes at `/MenuBar/N` on its own name, which was never read |
+| A browser showed no menu | AT-SPI's name and role are *properties* there, and inua read only the legacy methods; and `DoAction` sent a `uint32` index where the bus's signature is `i` (`int32`), so every call failed |
+| A browser's sections came out empty, or as blank buttons | Labelled `role=33` sections were spliced in as if they were Qt's unnamed popup nodes; and a menu was accepted with no items under it |
+| The bar jumped to the dock's edge while a menu was open, and the menu drew over the window instead of under the bar | The menu raised the bar to the **overlay** layer while the dock stayed on **top**; Hyprland reserves space in layer order, so the dock took its width first and the bar was laid out after it. The menu now hangs in the bar's own layer (`top`) |
+| The bar showed the window's title, not the application | It now shows the application: its icon, its name, then its menus, the same format for every application |
+| Reopening a menu crashed the shell (SIGSEGV in `g_object_ref`) | Closing a panel moved its key controller out of the bar without holding a reference; the controller was freed and the next open moved a dead object |
 
 ## Not claimed
 

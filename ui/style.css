@@ -219,7 +219,15 @@ button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20p
 .bar.compact .island button.clock-button,
 .bar.compact .island .tray button { min-height: 0; padding: 1px 6px; margin: 1px 0; }
 .bar.compact .island .tray button { padding-left: 4px; padding-right: 4px; }
-.bar .island .title { color: @t1; }
+/* The focused application, always the same way: its icon, its name, then
+   its menus (app_menu). The icon is the app's own, quiet beside the name;
+   the name is a title, not the window's, so it stays the same while the
+   window's changes. */
+.bar .island .app { min-width: 0; }
+.bar .island .app .app-icon { color: @t1; -gtk-icon-size: 16px; }
+.bar .island .title { color: @t0; font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 13px; }
+.bar.compact .island .app .app-icon { -gtk-icon-size: 14px; }
+.bar.compact .island .title { font-size: 12px; }
 .bar .island .clock {
   color: @t0; /* not the button's colour it sits in */
   font-size: 12px;
@@ -282,7 +290,9 @@ button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20p
 .bar .island .workspaces button.widgets-mark.open { min-width: 16px; background: @accent; border-color: @accent; }
 .bar .island .workspaces.under-page button.focused { min-width: 6px; background: @t1; }
 
-.bar .island .app-menu button { min-height: 24px; min-width: 0; padding: 0 5px; }
+.bar .island .app-menu { margin-left: 2px; }
+.bar .island .app-menu button { min-height: 24px; min-width: 0; padding: 0 5px; color: @t1; }
+.bar .island .app-menu button:hover { color: @t0; }
 
 /* min-width: 0 too, else GTK's icon buttons are wider than the bell. */
 .bar .island button.status, .bar .island button.passwords, .bar .island button.clipboard, .bar .island button.notes, .bar .island button.voice, .bar .island button.clock-button, .bar .island .tray button {

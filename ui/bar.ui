@@ -45,12 +45,29 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="title">
+                  <object class="GtkBox" id="app">
                     <style>
-                      <class name="title"/>
+                      <class name="app"/>
                     </style>
-                    <property name="ellipsize">3</property>
-                    <property name="max-width-chars">48</property>
+                    <property name="spacing">8</property>
+                    <child>
+                      <object class="GtkImage" id="app_icon">
+                        <style>
+                          <class name="app-icon"/>
+                        </style>
+                        <property name="valign">3</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="title">
+                        <style>
+                          <class name="title"/>
+                        </style>
+                        <property name="ellipsize">3</property>
+                        <property name="max-width-chars">32</property>
+                        <property name="valign">3</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child>

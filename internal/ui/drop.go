@@ -110,7 +110,15 @@ func (d *drop) detach() {
 		gtkx.ForgetCanvas(d.canvas)
 	}
 	if b := d.host; b != nil {
+		// The keys' controller goes back to the panel's window, which then
+		// holds the only reference again. It is held across the move: the
+		// bar's window dropping the last reference frees it, and the next
+		// open would move a freed object into the bar (a SIGSEGV inside
+		// g_object_ref).
+		d.keys.Ref()
 		b.win.RemoveController(d.keys)
+		d.win.AddController(d.keys)
+		d.keys.Unref()
 		d.backdrop.Ref()
 		b.frame.RemoveOverlay(&d.backdrop.Widget)
 		for _, c := range d.win.GetCssClasses() {
@@ -153,9 +161,10 @@ func (d *drop) moveTo(b *bar) {
 	b.hold(d.layer, d.keyboard)
 	b.frame.AddOverlay(&d.backdrop.Widget)
 	d.backdrop.Unref()
-	d.keys.Ref()
+	d.keys.Ref() // held across the move: its old window drops its own
 	d.win.RemoveController(d.keys)
 	b.win.AddController(d.keys)
+	d.keys.Unref()
 	d.host = b
 }
 
@@ -562,6 +571,23 @@ func (s *shellUI) dropFromBar(d *drop, mon *gdk.Monitor, button func(*bar) *gtk.
 			}
 		}
 	}
+	s.hangFrom(d, on, button)
+}
+
+// dropFromThisBar hangs d's card from b's own bar, under the button it
+// gives: the bar the control sits on, not the focused monitor's. A panel
+// opened from one monitor's bar hangs from that bar, where its control is,
+// whatever monitor has the focus by then.
+func (s *shellUI) dropFromThisBar(d *drop, b *bar, button func(*bar) *gtk.Widget) {
+	if !s.layer {
+		b = nil
+	}
+	s.hangFrom(d, b, button)
+}
+
+// hangFrom is the rest of dropFromBar: the card in the bar's window, under
+// its button, or the panel's own window when there is no bar to hang it in.
+func (s *shellUI) hangFrom(d *drop, on *bar, button func(*bar) *gtk.Widget) {
 	var r, br graphene.Rect
 	if on != nil && on.island.ComputeBounds(&on.win.Widget, &r) && button(on).ComputeBounds(&on.win.Widget, &br) {
 		b := *(*[4]float32)(unsafe.Pointer(&br))

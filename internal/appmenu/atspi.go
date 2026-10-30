@@ -59,7 +59,7 @@ type a11ySource interface {
 	role(ref a11yRef) (uint32, error)
 	states(ref a11yRef) ([]uint32, error)
 	actions(ref a11yRef) ([]string, error)
-	doAction(ref a11yRef, index uint32) error
+	doAction(ref a11yRef, index int32) error
 }
 
 // A11y reads menus over the accessibility bus.
@@ -137,7 +137,7 @@ func (a *A11y) Activate(entry Entry) error {
 		return err
 	}
 	ref := a11yRef{Name: entry.Action.Bus, Path: entry.Action.Path}
-	return src.doAction(ref, uint32(entry.Action.Index))
+	return src.doAction(ref, entry.Action.Index)
 }
 
 // menuFor walks the accessibility tree of one process to its menubar.
@@ -222,12 +222,30 @@ func decodeA11y(src a11ySource, ref a11yRef, depth, count int) ([]Entry, error) 
 			out = append(out, Entry{Separator: true})
 			continue
 		case roleMenu, rolePopupMenu:
-			// Qt hangs a menu item's items from a popup-menu node; splice them in
-			// so a submenu is the item's own children.
-			inner, err := decodeA11y(src, kid, depth+1, count+1)
-			if err == nil {
-				out = append(out, inner...)
+			// Qt and GTK hang an item's items from an unlabelled popup-menu
+			// node: splice them in, so a submenu is the item's own children.
+			// Firefox and Chromium put the section itself there, labelled
+			// ("File", "Edit"): that one is an item, and its menu is its
+			// children.
+			if strings.TrimSpace(label) == "" {
+				inner, err := decodeA11y(src, kid, depth+1, count+1)
+				if err == nil {
+					out = append(out, inner...)
+				}
+				continue
 			}
+			// A labelled one is a section of the bar ("File"): an item whose
+			// items Firefox and Chromium fill in when the menu opens, so it
+			// is read here, not spliced.
+			section := Entry{
+				Label:   strings.TrimSpace(stripMnemonic(label)),
+				Enabled: true,
+				Action:  a11yOpenAction(src, kid),
+			}
+			if inner, err := decodeA11y(src, kid, depth+1, count+1); err == nil {
+				section.Children = inner
+			}
+			out = append(out, section)
 			continue
 		case roleMenuItem, roleCheckMenuItem, roleRadioMenuItem:
 		default:
@@ -256,6 +274,13 @@ func decodeA11y(src a11ySource, ref a11yRef, depth, count int) ([]Entry, error) 
 		out = append(out, entry)
 	}
 	return trimSeparators(out), nil
+}
+
+// a11yOpenAction is the action that opens a menu section: the one that
+// says it opens a menu, else the first the item has.
+func a11yOpenAction(src a11ySource, ref a11yRef) Action {
+	names, _ := src.actions(ref)
+	return a11yActionFor(ref, names)
 }
 
 // a11yActionFor picks the action that opens or presses an item.
@@ -369,31 +394,58 @@ func (b busSource) children(ref a11yRef) ([]a11yRef, error) {
 func (b busSource) name(ref a11yRef) (string, error) {
 	var name string
 	call := b.call(ref, a11yAccessible+".GetName")
-	if call.Err != nil {
-		return "", call.Err
+	if call.Err == nil {
+		if err := call.Store(&name); err == nil {
+			return name, nil
+		}
 	}
-	err := call.Store(&name)
-	return name, err
+	// Firefox and Chromium answer no GetName: their accessible's name is
+	// the property alone.
+	return b.property(ref, "Name")
 }
 
 func (b busSource) role(ref a11yRef) (uint32, error) {
 	var role uint32
 	call := b.call(ref, a11yAccessible+".GetRole")
-	if call.Err != nil {
-		return 0, call.Err
+	if call.Err == nil {
+		if err := call.Store(&role); err == nil {
+			return role, nil
+		}
 	}
-	err := call.Store(&role)
-	return role, err
+	// The same for the role: a property, where there is no method.
+	var v dbus.Variant
+	if err := b.call(ref, "org.freedesktop.DBus.Properties.Get", a11yAccessible, "Role").Store(&v); err != nil {
+		return 0, err
+	}
+	role, _ = v.Value().(uint32)
+	return role, nil
+}
+
+// property is an accessible's property of name, read over Properties.
+func (b busSource) property(ref a11yRef, name string) (string, error) {
+	var v dbus.Variant
+	call := b.call(ref, "org.freedesktop.DBus.Properties.Get", a11yAccessible, name)
+	if call.Err != nil {
+		return "", call.Err
+	}
+	if err := call.Store(&v); err != nil {
+		return "", err
+	}
+	s, _ := v.Value().(string)
+	return s, nil
 }
 
 func (b busSource) states(ref a11yRef) ([]uint32, error) {
 	var bits []uint32
 	call := b.call(ref, a11yAccessible+".GetState")
-	if call.Err != nil {
-		return nil, call.Err
+	if call.Err == nil {
+		if err := call.Store(&bits); err == nil {
+			return bits, nil
+		}
 	}
-	err := call.Store(&bits)
-	return bits, err
+	// The StateSet property, for a toolkit with no GetState: a list of
+	// state names there, which are not the bit field the caller reads.
+	return nil, call.Err
 }
 
 func (b busSource) actions(ref a11yRef) ([]string, error) {
@@ -416,7 +468,7 @@ func (b busSource) actions(ref a11yRef) ([]string, error) {
 	return names, nil
 }
 
-func (b busSource) doAction(ref a11yRef, index uint32) error {
+func (b busSource) doAction(ref a11yRef, index int32) error {
 	call := b.call(ref, a11yActionIface+".DoAction", index)
 	if call.Err != nil {
 		return call.Err
