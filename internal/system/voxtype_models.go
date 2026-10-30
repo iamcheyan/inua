@@ -10,7 +10,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
+	"time"
+
+	"github.com/BurntSushi/toml"
 )
 
 // VoxtypeModel is a speech model voxtype can download for one of its
@@ -196,8 +200,17 @@ func activateModel(ctx context.Context, bin, engine, name, arg string) error {
 // VoxtypeHandsOver is voxtype's post-process command that hands each
 // transcription to inua (`inua call voice type -`), which types it as it
 // types the AI engine's; the daemon then outputs nothing itself.
+//
+// The command carries PUREGOTK_LIB_FOLDER when this process has it: inua
+// links puregotk (through the VM command's view), and a build without the
+// wrapper that sets the folder at start-up (a development one) finds no
+// library in the daemon's environment, which none of inua's is.
 func VoxtypeHandsOver(inua, instance string) string {
-	return shellQuote(inua) + " call -n " + shellQuote(instance) + " voice type -"
+	cmd := shellQuote(inua) + " call -n " + shellQuote(instance) + " voice type -"
+	if dir := os.Getenv("PUREGOTK_LIB_FOLDER"); dir != "" {
+		cmd = "env PUREGOTK_LIB_FOLDER=" + shellQuote(dir) + " " + cmd
+	}
+	return cmd
 }
 
 // ConfigureVoxtype has voxtype hand its transcriptions to inua (command,
@@ -206,12 +219,58 @@ func VoxtypeHandsOver(inua, instance string) string {
 // (the card shows them), no hotkey of its own (inua's shortcut drives it,
 // and voxtype's own reads keyboards it cannot open). It restarts the
 // daemon when anything changed, and reports whether it did.
+//
+// voxtype 1.1 has `config get` and `config set`; older releases (0.7, which
+// distributions still package) have neither, so their config.toml is read
+// and written here, leaving the rest of the file as the user keeps it.
 func ConfigureVoxtype(ctx context.Context, command string) (bool, error) {
 	bin := VoxtypePath()
 	if bin == "" {
 		return false, errors.New("voxtype is not installed")
 	}
-	get := func(key string) (string, error) {
+	get, set := voxtypeConfig(bin)
+	want := [][2]string{
+		{"output.notification.on_transcription", "false"},
+		{"hotkey.enabled", "false"},
+	}
+	now, err := get(ctx, "output.post_process.command")
+	if err != nil {
+		return false, err
+	}
+	if now == "" || strings.Contains(now, " voice type -") { // not the user's own
+		want = append(want, [2]string{"output.post_process.command", command}, [2]string{"output.post_process.fallback_on_empty", "false"})
+	}
+	changed := false
+	for _, kv := range want {
+		v, err := get(ctx, kv[0])
+		if err != nil {
+			return changed, err
+		}
+		if v == kv[1] {
+			continue
+		}
+		if err := set(ctx, kv[0], kv[1]); err != nil {
+			return changed, err
+		}
+		changed = true
+	}
+	if !changed {
+		return false, nil
+	}
+	return true, runStep(ctx, "systemctl", "--user", "restart", "voxtype.service")
+}
+
+// voxtypeConfig reads and writes voxtype's settings: through its own
+// `config get` and `config set` when it has them, else through its
+// config.toml.
+func voxtypeConfig(bin string) (get func(context.Context, string) (string, error), set func(context.Context, string, string) error) {
+	probe, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	hasCLI := exec.CommandContext(probe, bin, "config", "get", "hotkey.enabled").Run() == nil
+	get = func(ctx context.Context, key string) (string, error) {
+		if !hasCLI {
+			return voxtypeFileGet(key)
+		}
 		out, err := exec.CommandContext(ctx, bin, "config", "get", key).Output()
 		if err != nil {
 			return "", fmt.Errorf("voxtype config get %s: %w", key, err)
@@ -222,35 +281,207 @@ func ConfigureVoxtype(ctx context.Context, command string) (bool, error) {
 		}
 		return v, nil
 	}
-	want := [][2]string{
-		{"output.notification.on_transcription", "false"},
-		{"hotkey.enabled", "false"},
-	}
-	now, err := get("output.post_process.command")
-	if err != nil {
-		return false, err
-	}
-	if now == "" || strings.Contains(now, " voice type -") { // not the user's own
-		want = append(want, [2]string{"output.post_process.command", command}, [2]string{"output.post_process.fallback_on_empty", "false"})
-	}
-	changed := false
-	for _, kv := range want {
-		v, err := get(kv[0])
-		if err != nil {
-			return changed, err
+	set = func(ctx context.Context, key, value string) error {
+		if !hasCLI {
+			if err := voxtypeFileSet(key, value); err != nil {
+				return fmt.Errorf("voxtype's config.toml, %s: %w", key, err)
+			}
+			return nil
 		}
-		if v == kv[1] {
+		if err := runStep(ctx, bin, "config", "set", key, value); err != nil {
+			return fmt.Errorf("voxtype config set %s: %w", key, err)
+		}
+		return nil
+	}
+	return get, set
+}
+
+// voxtypeFile is voxtype's config.toml: $XDG_CONFIG_HOME/voxtype/config.toml,
+// else ~/.config/voxtype/config.toml, where voxtype looks for it.
+func voxtypeFile() string {
+	dir := os.Getenv("XDG_CONFIG_HOME")
+	if dir == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return ""
+		}
+		dir = filepath.Join(home, ".config")
+	}
+	return filepath.Join(dir, "voxtype", "config.toml")
+}
+
+// voxtypeFileGet reads a setting of voxtype's config.toml, named as voxtype
+// names it ("output.notification.on_transcription"); "" when the file or the
+// setting is not there, which is voxtype's own default for the settings
+// ConfigureVoxtype writes.
+func voxtypeFileGet(key string) (string, error) {
+	path := voxtypeFile()
+	data, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return "", nil
+	}
+	if err != nil {
+		return "", err
+	}
+	var cfg map[string]any
+	if err := toml.Unmarshal(data, &cfg); err != nil {
+		return "", fmt.Errorf("%s: %w", path, err)
+	}
+	var v any = cfg
+	table, name := voxtypeTable(key)
+	for _, part := range table {
+		v, _ = v.(map[string]any)[part]
+	}
+	if m, ok := v.(map[string]any); ok {
+		v = m[name]
+	}
+	switch v := v.(type) {
+	case nil:
+		return "", nil
+	case bool:
+		return strconv.FormatBool(v), nil
+	case string:
+		return v, nil
+	default:
+		return fmt.Sprint(v), nil
+	}
+}
+
+// voxtypeFileSet writes a setting of voxtype's config.toml, in the table it
+// belongs to, and changes nothing else of the file: its comments, its order
+// and the user's own settings stay as they are.
+func voxtypeFileSet(key, value string) error {
+	path := voxtypeFile()
+	if path == "" {
+		return errors.New("no home directory")
+	}
+	// A config.toml that is a link (chezmoi, stow) is written where it
+	// points: replacing the link would drop the user's own copy.
+	if real, err := filepath.EvalSymlinks(path); err == nil {
+		path = real
+	}
+	data, err := os.ReadFile(path)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	table, name := voxtypeTable(key)
+	text := voxtypePut(string(data), strings.Join(table, "."), name, voxtypeValue(value))
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return err
+	}
+	tmp, err := os.CreateTemp(dir, ".config.toml-*")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(tmp.Name())
+	if _, err := tmp.WriteString(text); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	if err := os.Chmod(tmp.Name(), 0o600); err != nil {
+		return err
+	}
+	return os.Rename(tmp.Name(), path)
+}
+
+// voxtypePut is the TOML in text with name set to value in the table
+// ("output.post_process"; "" for the top level): the key replaced where it
+// is, added to its table where the table is, else in a table of its own at
+// the end.
+func voxtypePut(text, table, name, value string) string {
+	lines := strings.Split(strings.TrimRight(text, "\n"), "\n")
+	if text == "" {
+		lines = nil
+	}
+	// The table's own lines: the file's before its first header, else those
+	// after its header up to the next one.
+	start, end := 0, len(lines)
+	if table != "" {
+		start = -1
+		for i, l := range lines {
+			trimmed := strings.TrimSpace(l)
+			if !strings.HasPrefix(trimmed, "[") {
+				continue
+			}
+			if start >= 0 {
+				end = i
+				break
+			}
+			if voxtypeHeader(trimmed) == table {
+				start, end = i+1, len(lines)
+			}
+		}
+		if start < 0 {
+			out := strings.Join(lines, "\n")
+			if out != "" {
+				out += "\n\n"
+			}
+			return out + "[" + table + "]\n" + name + " = " + value + "\n"
+		}
+	}
+	key := name + " = " + value
+	indent := ""
+	for i := start; i < end; i++ {
+		l := lines[i]
+		if strings.TrimSpace(l) == "" {
 			continue
 		}
-		if err := runStep(ctx, bin, "config", "set", kv[0], kv[1]); err != nil {
-			return changed, fmt.Errorf("voxtype config set %s: %w", kv[0], err)
+		if indent == "" {
+			indent = l[:len(l)-len(strings.TrimLeft(l, " \t"))]
 		}
-		changed = true
+		if voxtypeLineIs(l, name) {
+			lines[i] = indent + key
+			return strings.Join(lines, "\n") + "\n"
+		}
 	}
-	if !changed {
-		return false, nil
+	// Its table is there without it: the key goes last in the table, before
+	// the blank lines that close it.
+	at := end
+	for at > start && strings.TrimSpace(lines[at-1]) == "" {
+		at--
 	}
-	return true, runStep(ctx, "systemctl", "--user", "restart", "voxtype.service")
+	lines = append(lines[:at], append([]string{indent + key}, lines[at:]...)...)
+	return strings.Join(lines, "\n") + "\n"
+}
+
+// voxtypeHeader is a TOML table header's name: "[output.post_process]" is
+// "output.post_process", "[ a . b ]" is "a.b".
+func voxtypeHeader(header string) string {
+	inner, _, _ := strings.Cut(strings.TrimPrefix(header, "["), "]")
+	parts := strings.Split(inner, ".")
+	for i := range parts {
+		parts[i] = strings.TrimSpace(parts[i])
+	}
+	return strings.Join(parts, ".")
+}
+
+// voxtypeValue is value as TOML writes it: the settings written here are
+// booleans ("true", "false") and strings (a command). A command's own quotes
+// and backslashes are escaped, a literal string being unable to hold a quote.
+func voxtypeValue(value string) string {
+	if value == "true" || value == "false" {
+		return value
+	}
+	return strconv.Quote(value)
+}
+
+// voxtypeTable is a dotted setting's table and its key there:
+// "output.notification.on_transcription" is on_transcription in
+// [output.notification].
+func voxtypeTable(key string) (table []string, name string) {
+	parts := strings.Split(key, ".")
+	return parts[:len(parts)-1], parts[len(parts)-1]
+}
+
+// voxtypeLineIs reports whether a line of the file sets name (TOML allows
+// spaces around its "="), not a comment nor another key ending like it.
+func voxtypeLineIs(line, name string) bool {
+	key, _, ok := strings.Cut(strings.TrimSpace(line), "=")
+	return ok && strings.TrimSpace(key) == name
 }
 
 // shellQuote quotes s for sh, which runs voxtype's post-process command.

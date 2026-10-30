@@ -120,18 +120,28 @@ func TestConfigureVoxtype(t *testing.T) {
 	t.Setenv("HOME", home)
 	t.Setenv("PATH", bin+":/usr/bin:/bin")
 	calls := filepath.Join(home, "calls")
-	// A voxtype whose config is a file a key.
+	// A voxtype whose config is a file a key, with the shell's own `read`
+	// rather than cat and printf, which a system need not have on PATH.
 	os.WriteFile(filepath.Join(bin, "voxtype"), []byte(`#!/bin/sh
 case "$2" in
-get) cat "`+keys+`/$3" 2>/dev/null || echo null ;;
-set) echo "set $3" >>"`+calls+`"; printf '%s\n' "$4" >"`+keys+`/$3" ;;
+get) { read -r v <"`+keys+`/$3"; } 2>/dev/null && echo "$v" || echo null ;;
+set) echo "set $3" >>"`+calls+`"; echo "$4" >"`+keys+`/$3" ;;
 esac
 `), 0o755)
 	os.WriteFile(filepath.Join(bin, "systemctl"), []byte("#!/bin/sh\necho \"systemctl $*\" >>"+calls+"\n"), 0o755)
+	// The daemon's environment is not inua's: the command carries the
+	// library folder a development build needs, and nothing when the
+	// build has its own (a wrapped one).
+	t.Setenv("PUREGOTK_LIB_FOLDER", "/opt/puregotk/lib")
 	want := VoxtypeHandsOver("/opt/inua's/inua", "default")
-	if want != `'/opt/inua'\''s/inua' call -n 'default' voice type -` {
+	if want != `env PUREGOTK_LIB_FOLDER='/opt/puregotk/lib' '/opt/inua'\''s/inua' call -n 'default' voice type -` {
 		t.Errorf("command %s", want)
 	}
+	t.Setenv("PUREGOTK_LIB_FOLDER", "")
+	if got := VoxtypeHandsOver("/opt/inua", "default"); got != `'/opt/inua' call -n 'default' voice type -` {
+		t.Errorf("wrapped command %s", got)
+	}
+	t.Setenv("PUREGOTK_LIB_FOLDER", "/opt/puregotk/lib")
 	run := func() string {
 		os.Remove(calls)
 		if _, err := ConfigureVoxtype(context.Background(), want); err != nil {
@@ -154,6 +164,82 @@ esac
 	}
 	if b, _ := os.ReadFile(filepath.Join(keys, "output.post_process.command")); string(b) != "/home/me/clean.sh\n" {
 		t.Errorf("the user's command became %q", b)
+	}
+}
+
+// voxtype 0.7 has no `config get` or `config set`: its settings are read
+// and written in its config.toml, and the rest of the file (the comments,
+// the order, the user's own settings and tables) stays as it was.
+func TestConfigureVoxtypeFile(t *testing.T) {
+	home, bin := t.TempDir(), t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("PATH", bin+":/usr/bin:/bin")
+	// A voxtype of 0.7: no `config get`, no `config set`.
+	os.WriteFile(filepath.Join(bin, "voxtype"), []byte("#!/bin/sh\nexit 2\n"), 0o755)
+	calls := filepath.Join(home, "calls")
+	os.WriteFile(filepath.Join(bin, "systemctl"), []byte("#!/bin/sh\necho \"systemctl $*\" >>"+calls+"\n"), 0o755)
+	conf := filepath.Join(home, ".config", "voxtype", "config.toml")
+	os.MkdirAll(filepath.Dir(conf), 0o755)
+	before := `engine = "sensevoice"
+
+[hotkey]
+  enabled = true
+  key = "HOME"
+
+[output]
+  mode = "clipboard"
+  [output.notification]
+    on_recording_start = false
+    on_transcription = true
+`
+	os.WriteFile(conf, []byte(before), 0o644)
+	command := VoxtypeHandsOver("/opt/inua/inua", "default")
+	changed, err := ConfigureVoxtype(context.Background(), command)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !changed {
+		t.Error("nothing changed")
+	}
+	want := `engine = "sensevoice"
+
+[hotkey]
+  enabled = false
+  key = "HOME"
+
+[output]
+  mode = "clipboard"
+  [output.notification]
+    on_recording_start = false
+    on_transcription = false
+
+[output.post_process]
+command = "` + strings.ReplaceAll(command, `"`, `\"`) + `"
+fallback_on_empty = false
+`
+	if got, _ := os.ReadFile(conf); string(got) != want {
+		t.Errorf("config.toml:\n%s\nwant:\n%s", got, want)
+	}
+	// Again: nothing to write, and no restart.
+	os.Remove(calls)
+	if changed, err := ConfigureVoxtype(context.Background(), command); err != nil || changed {
+		t.Errorf("again: changed=%v err=%v", changed, err)
+	}
+	if b, _ := os.ReadFile(calls); len(b) != 0 {
+		t.Errorf("again restarted voxtype: %s", b)
+	}
+	// A post-process command of the user's own stays; the rest is inua's.
+	own := strings.Replace(before, "  mode = \"clipboard\"\n", "  mode = \"clipboard\"\n  [output.post_process]\n    command = \"/home/me/clean.sh\"\n", 1)
+	os.WriteFile(conf, []byte(own), 0o644)
+	if _, err := ConfigureVoxtype(context.Background(), command); err != nil {
+		t.Fatal(err)
+	}
+	got, _ := os.ReadFile(conf)
+	if !strings.Contains(string(got), "command = \"/home/me/clean.sh\"") || strings.Contains(string(got), command) {
+		t.Errorf("the user's command was replaced:\n%s", got)
+	}
+	if !strings.Contains(string(got), "  enabled = false\n") {
+		t.Errorf("the hotkey is still on:\n%s", got)
 	}
 }
 
