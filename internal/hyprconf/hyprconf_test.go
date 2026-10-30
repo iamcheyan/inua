@@ -340,6 +340,20 @@ func TestRenderLockRestore(t *testing.T) {
 	}
 }
 
+// The apps' menus (popups) are blurred as the shell's glass is, their
+// shadows not.
+func TestRenderPopupBlur(t *testing.T) {
+	got := Render(config.Default(), Devices{})
+	for _, want := range []string{"popups = true", "popups_ignorealpha = 0.4"} {
+		if !strings.Contains(got, want) {
+			t.Errorf("inua.conf lacks %q:\n%s", want, got)
+		}
+	}
+	if got := RenderLua(config.Default(), Devices{}); !strings.Contains(got, "blur = { popups = true, popups_ignorealpha = 0.4 }") {
+		t.Errorf("inua.lua does not blur popups:\n%s", got)
+	}
+}
+
 // inua.lua for a Lua config sets the same as inua.conf, in Hyprland
 // 0.55's calls.
 func TestRenderLua(t *testing.T) {

@@ -5,7 +5,7 @@ The sample configuration inua needs on a new system:
 | File | Installed to | What |
 | --- | --- | --- |
 | `hypr/hyprland.conf` | `~/.config/hypr/hyprland.conf` | Hyprland 0.53: starts `inua-shell`; the shell's shortcuts, blur rules for its surfaces, common window management keys and media keys. Companions (hypridle, Fcitx 5) start only when installed. inua shows notifications, draws the wallpaper and asks for administrator passwords (as the Polkit agent) itself |
-| `hypr/inua.conf` | `~/.config/hypr/inua.conf` | The Hyprland settings inua manages (keyboard, touchpad, shortcuts, the session lock restore setting, the light apps' window rule), written by inua from `config.toml`. The sample has no settings of yours; `hyprland.conf` sources it last |
+| `hypr/inua.conf` | `~/.config/hypr/inua.conf` | The Hyprland settings inua manages (keyboard, touchpad, shortcuts, the session lock restore setting, the light apps' window rule, blur behind the apps' menus), written by inua from `config.toml`. The sample has no settings of yours; `hyprland.conf` sources it last |
 | `inua/config.toml` | `~/.config/inua/config.toml` | The shell's settings: every option at its default, documented |
 | `inua/style.css` | `~/.config/inua/style.css` | Style overrides: the built-in colours and examples, all commented out |
 | `inua/themes/nord.css` | `~/.config/inua/themes/nord.css` | A sample theme of your own, the Nord palette (MIT): every colour token, each with what it paints. Not in use until chosen |
