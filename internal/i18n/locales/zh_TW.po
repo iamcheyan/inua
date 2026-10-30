@@ -2087,7 +2087,7 @@ msgstr "執行 KDE Connect、GSConnect 或 Valent 的裝置可在此網路和 ta
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/headmenu.go:153
+#: internal/termui/headmenu.go:154
 #: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
@@ -2110,7 +2110,7 @@ msgstr "服務正在啟動。"
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/headmenu.go:161
+#: internal/termui/headmenu.go:162
 #: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
@@ -8282,7 +8282,7 @@ msgstr "聚焦或關閉"
 #: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
-#: internal/termui/headmenu.go:108
+#: internal/termui/headmenu.go:109
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -8498,7 +8498,7 @@ msgid "System Monitor"
 msgstr "系統監視器"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:149
+#: internal/termui/headmenu.go:150
 #: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
@@ -13273,7 +13273,7 @@ msgid "Add a snippet"
 msgstr ""
 
 #: internal/term/web/strings.go:20
-#: internal/termui/agents.go:336
+#: internal/termui/agents.go:337
 msgid "Agents"
 msgstr "代理"
 
@@ -13647,25 +13647,25 @@ msgstr ""
 msgid "EXITED %d"
 msgstr "已結束 %d"
 
-#: internal/termui/agents.go:191
+#: internal/termui/agents.go:192
 msgid "Agents that need you"
 msgstr "需要你的代理"
 
-#: internal/termui/agents.go:298
+#: internal/termui/agents.go:299
 msgid "%d agent needs you"
 msgid_plural "%d agents need you"
 msgstr[0] "%d 個代理需要你"
 
-#: internal/termui/agents.go:301
+#: internal/termui/agents.go:302
 msgid "%d agent is idle"
 msgid_plural "%d agents are idle"
 msgstr[0] "%d 個代理閒置中"
 
-#: internal/termui/agents.go:305
+#: internal/termui/agents.go:306
 msgid "%s goes to the next"
 msgstr "%s 前往下一個"
 
-#: internal/termui/agents.go:343
+#: internal/termui/agents.go:344
 msgid "No agent runs in any workspace."
 msgstr "沒有工作區在執行代理。"
 
@@ -13742,32 +13742,32 @@ msgstr "終端機周圍視窗的外觀。它跟隨 inua 的主題，或者無論
 msgid "Keep these choices; the settings change them later"
 msgstr "保留這些選擇；之後可在設定中變更"
 
-#: internal/termui/headmenu.go:101
+#: internal/termui/headmenu.go:102
 msgid "Command palette"
 msgstr "命令面板"
 
-#: internal/termui/headmenu.go:115
+#: internal/termui/headmenu.go:116
 #: internal/termui/prefsweb.go:41
 msgid "WEB TERMINAL"
 msgstr "網頁終端機"
 
-#: internal/termui/headmenu.go:132
+#: internal/termui/headmenu.go:133
 msgid "Turn on the Web Terminal"
 msgstr "開啟網頁終端機"
 
-#: internal/termui/headmenu.go:134
+#: internal/termui/headmenu.go:135
 msgid "Turn off the Web Terminal"
 msgstr "關閉網頁終端機"
 
-#: internal/termui/headmenu.go:139
+#: internal/termui/headmenu.go:140
 msgid "Restart the terminal host…"
 msgstr "重新啟動終端機主機…"
 
-#: internal/termui/headmenu.go:147
+#: internal/termui/headmenu.go:148
 msgid "this computer only"
 msgstr "僅限這台電腦"
 
-#: internal/termui/headmenu.go:155
+#: internal/termui/headmenu.go:156
 #: internal/vmui/window.go:1820
 #: internal/vmui/window.go:1885
 #: internal/vmui/window.go:1966
@@ -13777,11 +13777,11 @@ msgstr "僅限這台電腦"
 msgid "Stopping…"
 msgstr "正在停止…"
 
-#: internal/termui/headmenu.go:157
+#: internal/termui/headmenu.go:158
 msgid "On, %s"
 msgstr "已開啟，%s"
 
-#: internal/termui/headmenu.go:159
+#: internal/termui/headmenu.go:160
 msgid "On, but not running"
 msgstr "已開啟，但未執行"
 

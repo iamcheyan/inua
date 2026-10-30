@@ -286,9 +286,9 @@ func (g *guide) windowMock() *gtk.Widget {
 		mark.SetValign(gtk.AlignCenterValue)
 		switch i {
 		case 0:
-			mark.AddCssClass("s-on")
+			mark.AddCssClass("on")
 		case 2:
-			mark.AddCssClass("s-warn")
+			mark.AddCssClass("warn")
 		}
 		row.Append(&mark.Widget)
 		bar := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
@@ -306,7 +306,7 @@ func (g *guide) windowMock() *gtk.Widget {
 	thead.AddCssClass("g-head")
 	accent := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
 	accent.AddCssClass("mark")
-	accent.AddCssClass("s-on")
+	accent.AddCssClass("on")
 	accent.SetValign(gtk.AlignCenterValue)
 	thead.Append(&accent.Widget)
 	bar := gtk.NewBox(gtk.OrientationHorizontalValue, 0)

@@ -85,12 +85,18 @@ depend on text being a fixed size.
 
 ## Marks
 
-The status mark (`.mark`) is a 7 px square: hollow (`t2` border) when off,
-filled with the accent when on. It starts a section head, a launcher head,
-a pane's path (Files, with two panes) and a list of states.
+The status mark (`.mark`) is a 7 px square, its 1 px border counted, with
+1 px corners: hollow (`t2` border) when off, filled with the accent when
+`on`. A state other than on fills it in its colour (`ok`, `warn`,
+`danger`); `wait` is hollow in the accent. It marks a tile, a pane's path
+(Files, with two panes), a row of a list of states. The rules are written
+once in `ui/style.css`; a window adds a state class, not a rule.
 
-The section mark (`.settings .section-head .mark`) is the same 7 px
-square, filled with `mix(t0, accent, 0.68)`, 1 px corners.
+The head mark is the same square before a head's `[LABEL]`, filled with
+`mix(t0, accent, 0.68)`: a section's head (`.section-head`), and the heads
+of the launcher, the agenda, the notification center, the clipboard, the
+widget page and its cards. A head is not a state, so its mark is never the
+accent.
 
 In a layout a mark is an **empty `Box`**, never a `Label`: an empty label
 is as tall as a line of text, so the "square" draws as a bar.
@@ -198,7 +204,7 @@ The place before the first workspace (`widgets.blp`). It is glass over the
 windows between the bar and the dock, never over them, so apps can be
 dragged in from the dock. It slides in from the left edge and back out
 (`GtkRevealer`, 260 ms), and Hyprland does not animate it as well. Its
-head is a page's: the filled mark, `[WIDGETS]`, the keys as a hint and
+head is a page's: the head mark, `[WIDGETS]`, the keys as a hint and
 Add widget as a link. The widgets are cards like a library's tiles
 (`surface`, a `line` border, 4 px corners), on a grid of 60 px. A card's
 outer edges are on the grid: six cells wide, its height rounded up to

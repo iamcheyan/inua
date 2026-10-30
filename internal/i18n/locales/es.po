@@ -2092,7 +2092,7 @@ msgstr "Los dispositivos con KDE Connect, GSConnect o Valent encuentran este ord
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/headmenu.go:153
+#: internal/termui/headmenu.go:154
 #: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
@@ -2115,7 +2115,7 @@ msgstr "El servicio se está iniciando."
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/headmenu.go:161
+#: internal/termui/headmenu.go:162
 #: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
@@ -8319,7 +8319,7 @@ msgstr "Enfoque activado o desactivado"
 #: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
-#: internal/termui/headmenu.go:108
+#: internal/termui/headmenu.go:109
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -8535,7 +8535,7 @@ msgid "System Monitor"
 msgstr "Monitor del sistema"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:149
+#: internal/termui/headmenu.go:150
 #: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
@@ -13344,7 +13344,7 @@ msgid "Add a snippet"
 msgstr ""
 
 #: internal/term/web/strings.go:20
-#: internal/termui/agents.go:336
+#: internal/termui/agents.go:337
 msgid "Agents"
 msgstr "Agentes"
 
@@ -13718,27 +13718,27 @@ msgstr ""
 msgid "EXITED %d"
 msgstr "SALIÓ %d"
 
-#: internal/termui/agents.go:191
+#: internal/termui/agents.go:192
 msgid "Agents that need you"
 msgstr "Agentes que te necesitan"
 
-#: internal/termui/agents.go:298
+#: internal/termui/agents.go:299
 msgid "%d agent needs you"
 msgid_plural "%d agents need you"
 msgstr[0] "%d agente te necesita"
 msgstr[1] "%d agentes te necesitan"
 
-#: internal/termui/agents.go:301
+#: internal/termui/agents.go:302
 msgid "%d agent is idle"
 msgid_plural "%d agents are idle"
 msgstr[0] "%d agente está inactivo"
 msgstr[1] "%d agentes están inactivos"
 
-#: internal/termui/agents.go:305
+#: internal/termui/agents.go:306
 msgid "%s goes to the next"
 msgstr "%s va al siguiente"
 
-#: internal/termui/agents.go:343
+#: internal/termui/agents.go:344
 msgid "No agent runs in any workspace."
 msgstr "No hay ningún agente en ningún espacio de trabajo."
 
@@ -13815,32 +13815,32 @@ msgstr "El aspecto de la ventana alrededor de los terminales. Sigue el tema de i
 msgid "Keep these choices; the settings change them later"
 msgstr "Conservar estas opciones; los ajustes las cambian después"
 
-#: internal/termui/headmenu.go:101
+#: internal/termui/headmenu.go:102
 msgid "Command palette"
 msgstr "Paleta de comandos"
 
-#: internal/termui/headmenu.go:115
+#: internal/termui/headmenu.go:116
 #: internal/termui/prefsweb.go:41
 msgid "WEB TERMINAL"
 msgstr "TERMINAL WEB"
 
-#: internal/termui/headmenu.go:132
+#: internal/termui/headmenu.go:133
 msgid "Turn on the Web Terminal"
 msgstr "Activar el terminal web"
 
-#: internal/termui/headmenu.go:134
+#: internal/termui/headmenu.go:135
 msgid "Turn off the Web Terminal"
 msgstr "Desactivar el terminal web"
 
-#: internal/termui/headmenu.go:139
+#: internal/termui/headmenu.go:140
 msgid "Restart the terminal host…"
 msgstr "Reiniciar el anfitrión del terminal…"
 
-#: internal/termui/headmenu.go:147
+#: internal/termui/headmenu.go:148
 msgid "this computer only"
 msgstr "solo este ordenador"
 
-#: internal/termui/headmenu.go:155
+#: internal/termui/headmenu.go:156
 #: internal/vmui/window.go:1820
 #: internal/vmui/window.go:1885
 #: internal/vmui/window.go:1966
@@ -13850,11 +13850,11 @@ msgstr "solo este ordenador"
 msgid "Stopping…"
 msgstr "Deteniendo…"
 
-#: internal/termui/headmenu.go:157
+#: internal/termui/headmenu.go:158
 msgid "On, %s"
 msgstr "Activado, %s"
 
-#: internal/termui/headmenu.go:159
+#: internal/termui/headmenu.go:160
 msgid "On, but not running"
 msgstr "Activado, pero no está en marcha"
 

@@ -49,16 +49,17 @@ func lookOf(info host.PaneInfo) look {
 	return look{label: i18n.T("IDLE")}
 }
 
-// paint gives a mark and a label a look.
+// paint gives a mark and a label a look: the mark the shared state of the
+// same name (on, warn, ok), the label the colour class.
 func paint(mark *gtk.Box, label *gtk.Label, l look) {
 	for _, c := range []string{"s-on", "s-warn", "s-ok"} {
-		mark.RemoveCssClass(c)
+		mark.RemoveCssClass(strings.TrimPrefix(c, "s-"))
 		if label != nil {
 			label.RemoveCssClass(c)
 		}
 	}
-	if l.filled {
-		mark.AddCssClass(l.class)
+	if l.filled && l.class != "" {
+		mark.AddCssClass(strings.TrimPrefix(l.class, "s-"))
 	}
 	if label != nil {
 		label.SetText(l.label)

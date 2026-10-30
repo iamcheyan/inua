@@ -2,6 +2,7 @@ package termui
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
@@ -123,7 +124,7 @@ func (a *App) dropHeadMenu(running bool) {
 	meta := gtk.NewLabel(state)
 	meta.AddCssClass("term-menu-state")
 	if class != "" {
-		mark.AddCssClass(class)
+		mark.AddCssClass(strings.TrimPrefix(class, "s-")) // the mark's state: on, warn
 		meta.AddCssClass(class)
 	}
 	head.Append(&mark.Widget)
