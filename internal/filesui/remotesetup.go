@@ -175,7 +175,7 @@ func (s *setup) build() {
 	w.cardText.SetText(kindText(s.kind))
 
 	kinds := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	kinds.AddCssClass("files-kinds")
+	kinds.AddCssClass("segmented")
 	kinds.SetHalign(gtk.AlignStartValue)
 	s.kinds = map[remote.Kind]*gtk.ToggleButton{}
 	var first *gtk.ToggleButton

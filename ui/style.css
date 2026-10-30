@@ -1674,24 +1674,29 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .settings .fetch { padding: 16px 0 18px; }
 .settings .fetch .card-view { border-radius: 2px; }
 
-/* Toggle buttons joined in a row: °C/°F, chart ranges. */
-.settings .segmented > button {
-  min-height: 0;
+/* A segmented control (design/ui.md, Controls), a box of toggle buttons
+   or a stack switcher: °C/°F, chart ranges, GPG's Text | Files, Files'
+   list | grid. The options in one hairline frame, 34 px in all, the one
+   chosen tinted with the accent in the accent's colour; words in the
+   monospace, or icons (.icons), square. */
+.segmented { padding: 2px; border: 1px solid alpha(@line, 0.7); border-radius: 2px; background: @app; }
+.segmented > button {
+  min-height: 28px;
   min-width: 0;
-  padding: 4px 11px;
-  border: 1px solid @line;
-  border-left-width: 0;
+  padding: 0 12px;
+  border: none;
   border-radius: 0;
-  background: transparent;
   box-shadow: none;
-  color: @t1;
+  background: transparent;
+  color: @t2;
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 12px;
+  font-weight: 500;
 }
-.settings .segmented > button:first-child { border-left-width: 1px; border-radius: 2px 0 0 2px; }
-.settings .segmented > button:last-child { border-radius: 0 2px 2px 0; }
-.settings .segmented > button:hover { color: @t0; }
-.settings .segmented > button:checked { background: alpha(@accent, 0.09); color: @t0; box-shadow: inset 0 0 0 1px alpha(@accent, 0.38); }
+.segmented > button:hover { background: alpha(@t0, 0.06); color: @t0; }
+.segmented > button:checked { background: alpha(@accent, 0.16); color: @accent; }
+.segmented > button image { -gtk-icon-size: 14px; }
+.segmented.icons > button { min-width: 28px; padding: 0; }
 
 /* Facts in small frames: weather details, a stock's day. */
 .settings .cells { padding: 12px 0 4px; }
@@ -2684,15 +2689,6 @@ window.gpg popover.gpg-from-pop .sub { font-family: "Geist Mono", "IBM Plex Mono
 window.gpg menubutton.gpg-from image { color: @t1; }
 window.gpg button.gpg-from-row { padding: 8px 10px; border: none; border-radius: 2px; background: transparent; }
 window.gpg button.gpg-from-row:hover { background: alpha(@accent, 0.08); }
-/* A segmented control (GPG's Text | Files, Files' list | grid): the
-   options in one hairline frame, the one chosen tinted with the accent
-   (as Mister Morph's console tabs); icons or words. */
-.settings stackswitcher.segmented { padding: 2px; border: 1px solid alpha(@line, 0.7); border-radius: 0; background: @app; }
-.settings stackswitcher.segmented > button { min-height: 24px; min-width: 0; padding: 0 12px; border: none; border-radius: 0; box-shadow: none; background: transparent; color: @t2; font-size: 12px; font-weight: 500; }
-.settings stackswitcher.segmented > button:hover { background: alpha(@t0, 0.06); color: @t0; }
-.settings stackswitcher.segmented > button:checked { background: alpha(@accent, 0.16); color: @accent; }
-.settings stackswitcher.segmented > button image { -gtk-icon-size: 14px; }
-.settings stackswitcher.segmented.icons > button { min-width: 24px; min-height: 24px; padding: 0; } /* icons: square */
 window.gpg .gpg-drop { margin-top: 12px; padding: 30px; border: 1px dashed alpha(@line, 0.9); border-radius: 3px; }
 /* An offer on top of a page: a message on the clipboard, no key yet. */
 window.gpg .gpg-offer { margin: 14px 0 4px; padding: 12px 14px; border: 1px solid alpha(@accent, 0.4); border-radius: 3px; background: alpha(@accent, 0.06); }
@@ -3043,12 +3039,6 @@ window.files .files-card-title {
 }
 window.files .files-card .sub { color: @t1; font-size: 13.5px; }
 window.files .files-card-error { color: @danger; font-size: 13px; }
-/* A remote disk's setup: its kinds as a segmented control (as the pane's
-   list | grid), then a label beside each field. */
-window.files box.files-kinds { padding: 2px; border: 1px solid alpha(@line, 0.7); background: @app; }
-window.files box.files-kinds > button { min-height: 26px; padding: 0 12px; border: none; border-radius: 0; box-shadow: none; background: transparent; color: @t2; font-size: 12.5px; font-weight: 500; }
-window.files box.files-kinds > button:hover { background: alpha(@t0, 0.06); color: @t0; }
-window.files box.files-kinds > button:checked { background: alpha(@accent, 0.16); color: @accent; }
 /* A remote disk's edit button: there while the pointer is on its row, or
    the keys are on the button. */
 window.files .files-rename-preview { border: 1px solid alpha(@line, 0.7); background: @app; }
@@ -3108,8 +3098,8 @@ window.files checkbutton check:checked { border-color: @accent; background: @acc
 .music-dim { color: @t2; }
 .music-seek { margin: 0 -6px; }
 .music-transport > button {
-  min-width: 30px;
-  min-height: 30px;
+  min-width: 34px;
+  min-height: 34px;
   padding: 0;
   border: 1px solid @line;
   border-radius: 0;
