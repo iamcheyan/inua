@@ -70,6 +70,16 @@ func TestScreenState(t *testing.T) {
 	if st, _ := m.State([]string{"> ", ""}); st != "" {
 		t.Errorf("prompt: %q", st)
 	}
+	// Its turn over while agents it started work in the background.
+	waiting := []string{"● Two agents are on it; I'll report when they finish.", "", "────────────", "> ", "────────────",
+		"  ⏵⏵ auto mode on · 2 local agents · ↓ to manage", "  Opus 5.5 · ~/src/app · main"}
+	if st, _ := m.State(waiting); st != Working {
+		t.Errorf("waiting on background agents: %q", st)
+	}
+	shell := []string{"────────────", "> ", "────────────", "  ⏵⏵ auto mode on · 1 shell · ↓ to manage"}
+	if st, _ := m.State(shell); st != "" {
+		t.Errorf("a background shell: %q", st)
+	}
 	// A question of AskUserQuestion's: the question shows, not the keys.
 	picker := []string{"☐ Layout  ☐ Keys  ✔ Submit", "", "Which layout should the guide use?", "", "› 1. Steps", "     One step at a time", "  2. One page", "  3. Type something.", "", "Enter to select · ↑/↓ to navigate · Esc to cancel", "", "  ? for shortcuts"}
 	if st, ask := m.State(picker); st != Blocked || ask != "Which layout should the guide use?" {

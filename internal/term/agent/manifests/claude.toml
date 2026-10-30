@@ -19,3 +19,11 @@ any = ["Do you want to proceed?", "Do you want to make this edit", "Do you want 
 state = "working"
 lines = 40
 any = ["esc to interrupt"]
+
+# Its turn over, waiting on agents it started in the background: their
+# count by the mode, under the prompt ("1 local agent", "3 background
+# dynamic workflows"). Shells left running (a server) do not count.
+[[state]]
+state = "working"
+lines = 5
+any = ["local agent", "background dynamic workflow"]
