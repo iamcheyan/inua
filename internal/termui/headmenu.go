@@ -76,7 +76,7 @@ func (a *App) dropHeadMenu(running bool) {
 	m.runs = map[uintptr]func(){}
 	item := func(label, action string, enabled bool, run func()) {
 		b := gtk.NewButton()
-		b.AddCssClass("term-menu-item")
+		b.AddCssClass("menu-item")
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 16)
 		l := gtk.NewLabel(label)
 		l.SetXalign(0)

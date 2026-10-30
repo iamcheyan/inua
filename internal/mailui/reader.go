@@ -345,7 +345,7 @@ func (w *window) drawBar(c *mail.Conversation) {
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	item := func(label string, f func()) {
 		b := gtk.NewButtonWithLabel(label)
-		b.AddCssClass("mail-menu-item")
+		b.AddCssClass("menu-item")
 		if l := b.GetChild(); l != nil {
 			(&gtk.Label{Widget: *l}).SetXalign(0)
 		}

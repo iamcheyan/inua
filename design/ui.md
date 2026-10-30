@@ -138,7 +138,7 @@ carry `.settings`):
 ```
 
 - **Index** (left, `panel`, a hairline on its right): the title (IBM Plex
-  Sans 20 px), kickers for groups, items 40–44 px tall with an icon, a
+  Sans 20 px), kickers for groups, items at least 40 px tall (`.settings button.index-item`, in every app) with an icon, a
   title and a sub line. Hover: accent at 6% with a 20% border; selected:
   `mix(surface, primary, 0.1)` with a 30% accent border.
 - **Page** (right, `app`, padding 18 px 32 px): sections of rows.
@@ -263,7 +263,8 @@ of column 1 (`internal/termui/headmenu.go`, `popover.term-menu` in
   4 px corners, clear until the pointer is over them (accent at 7%, a
   25% accent border); one that cannot be used now is `t2`. An item says
   what it does: a switch is the item "Turn on the Web Terminal", not a
-  check mark.
+  check mark. Every menu's items have this look, a framed one's too: a
+  button item is `.menu-item`, GTK's own (`popover.menu`) take it as is.
 - **Keys**: an item with keys shows them at its end, as a keycap in the
   menu's voice: mono 11 px, `t1`, a hairline box with no fill.
 - **Groups**: a hairline between groups. A group about one thing has a

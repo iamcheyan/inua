@@ -59,7 +59,7 @@ func (m *popMenu) fill() {
 			continue
 		}
 		b := gtk.NewButton()
-		b.AddCssClass("files-menu-item")
+		b.AddCssClass("menu-item")
 		box := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
 		if it.check {
 			mark := gtk.NewImageFromIconName("object-select-symbolic")

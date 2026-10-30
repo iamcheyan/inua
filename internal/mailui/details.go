@@ -63,7 +63,7 @@ func (w *window) personCard(a mail.Address, verified bool) *gtk.Popover {
 
 	item := func(icon, label string, f func()) {
 		b := gtk.NewButton()
-		b.AddCssClass("mail-menu-item")
+		b.AddCssClass("menu-item")
 		in := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
 		img := gtk.NewImageFromIconName(icon)
 		img.SetPixelSize(16)
