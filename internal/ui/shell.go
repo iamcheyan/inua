@@ -122,6 +122,7 @@ type shellUI struct {
 	onLauncherPick         func(gtk.GestureClick, int32, float64, float64)
 	onLauncherAction       func(gio.SimpleAction, uintptr)
 	onLauncherMenuClosed   func(gtk.Popover)
+	onLauncherGone         glib.SourceFunc
 	onLauncherScrolled     func(gtk.Adjustment)
 	onLauncherLaidOut      func(gtk.Adjustment)
 	onLauncherFootLaidOut  func(gtk.Adjustment)

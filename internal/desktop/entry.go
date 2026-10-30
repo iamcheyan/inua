@@ -31,14 +31,23 @@ type Entry struct {
 	WMClass       string   // StartupWMClass: the class of the app's windows
 	MimeTypes     []string // the types it opens: "audio/flac", "x-scheme-handler/http"
 	Path          string   // file the entry came from
+	Actions       []Action // its own actions (Firefox's New Private Window), in order
 }
 
-// Parse reads the [Desktop Entry] group. locale is like "zh_CN.UTF-8"; ""
-// selects untranslated values. Entries that are not applications, or are
-// Hidden, return an error.
+// Action is one of an app's own actions, a [Desktop Action ID] group the
+// Actions key lists.
+type Action struct {
+	ID, Name string
+	Command  []string
+}
+
+// Parse reads the [Desktop Entry] group and the action groups it lists.
+// locale is like "zh_CN.UTF-8"; "" selects untranslated values. Entries
+// that are not applications, or are Hidden, return an error.
 func Parse(r io.Reader, id, locale string) (*Entry, error) {
 	vals := map[string]string{}
-	inMain := false
+	groups := map[string]map[string]string{} // the action groups, by ID
+	var group map[string]string              // the group being read; nil for another
 	sc := bufio.NewScanner(r)
 	sc.Buffer(make([]byte, 64*1024), 1024*1024)
 	for sc.Scan() {
@@ -47,17 +56,23 @@ func Parse(r io.Reader, id, locale string) (*Entry, error) {
 			continue
 		}
 		if line[0] == '[' {
-			inMain = line == "[Desktop Entry]"
+			group = nil
+			if line == "[Desktop Entry]" {
+				group = vals
+			} else if a, ok := strings.CutPrefix(line, "[Desktop Action "); ok {
+				group = map[string]string{}
+				groups[strings.TrimSuffix(a, "]")] = group
+			}
 			continue
 		}
-		if !inMain {
+		if group == nil {
 			continue
 		}
 		k, v, ok := strings.Cut(line, "=")
 		if !ok {
 			continue
 		}
-		vals[strings.TrimSpace(k)] = strings.TrimSpace(v)
+		group[strings.TrimSpace(k)] = strings.TrimSpace(v)
 	}
 	if err := sc.Err(); err != nil {
 		return nil, err
@@ -69,7 +84,7 @@ func Parse(r io.Reader, id, locale string) (*Entry, error) {
 	if vals["Hidden"] == "true" {
 		return nil, fmt.Errorf("%s: hidden", id)
 	}
-	get := func(key string) string {
+	in := func(vals map[string]string, key string) string {
 		for _, l := range localeKeys(locale) {
 			if v, ok := vals[key+"["+l+"]"]; ok {
 				return unescape(v)
@@ -77,6 +92,7 @@ func Parse(r io.Reader, id, locale string) (*Entry, error) {
 		}
 		return unescape(vals[key])
 	}
+	get := func(key string) string { return in(vals, key) }
 	e := &Entry{
 		ID:            id,
 		Name:          get("Name"),
@@ -101,6 +117,15 @@ func Parse(r io.Reader, id, locale string) (*Entry, error) {
 			return nil, fmt.Errorf("%s: %w", id, err)
 		}
 		e.Command = cmd
+	}
+	for _, a := range splitList(vals["Actions"]) {
+		g := groups[a]
+		name := in(g, "Name")
+		cmd, err := ParseExec(unescape(g["Exec"]), e)
+		if name == "" || err != nil || len(cmd) == 0 {
+			continue
+		}
+		e.Actions = append(e.Actions, Action{ID: a, Name: name, Command: cmd})
 	}
 	return e, nil
 }

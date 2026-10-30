@@ -66,6 +66,8 @@ type launcher struct {
 	fetching bool // exchange rates are being read
 
 	win       *gtk.ApplicationWindow // nil while closed
+	closed    *gtk.ApplicationWindow // the last one, fading away
+	gone      uint32                 // the timer that destroys it
 	mode      gtk.Label
 	query     gtk.Entry
 	scroll    gtk.ScrolledWindow
@@ -179,11 +181,28 @@ func (s *shellUI) bindLauncherHandlers() {
 	s.onLauncherAction = func(a gio.SimpleAction, _ uintptr) {
 		s.launcherAction(a.GetName())
 	}
+	s.onLauncherGone = func(uintptr) bool {
+		s.launcher.gone = 0
+		s.dropClosedLauncher()
+		return false
+	}
 	s.onLauncherMenuClosed = func(gtk.Popover) {
 		l := &s.launcher
 		l.menu = nil
-		if l.win != nil {
-			l.query.GrabFocus()
+		if l.win == nil {
+			return
+		}
+		l.query.GrabFocus()
+		if s.layer {
+			// Hyprland leaves the keyboard with the menu's popup once it
+			// has gone: let go of it and take it again.
+			w := l.win
+			layershell.SetKeyboardMode(w.GoPointer(), layershell.KeyboardNone)
+			s.runAfter(30, func() {
+				if l.win == w {
+					layershell.SetKeyboardMode(w.GoPointer(), layershell.KeyboardExclusive)
+				}
+			})
 		}
 	}
 	s.onQueryFocus = func(gtk.EventControllerFocus) {
@@ -374,16 +393,43 @@ func (s *shellUI) syncLauncher() {
 	l := &s.launcher
 	switch {
 	case l.st.Open && l.win == nil:
+		s.dropClosedLauncher()
 		s.buildLauncher()
 		s.renderLauncher()
 		l.win.Present()
 		l.query.GrabFocus()
 	case !l.st.Open && l.win != nil:
-		l.win.Destroy()
-		l.refs.Release()
+		// It fades away (style.css); the keyboard goes back at once, for
+		// the window focused after it.
+		if s.layer {
+			layershell.SetKeyboardMode(l.win.GoPointer(), layershell.KeyboardNone)
+		}
+		if box := l.win.GetChild(); box != nil {
+			box.AddCssClass("closing")
+		}
+		l.closed = l.win
 		l.win, l.hasFocus, l.menu = nil, false, nil
+		l.gone = glib.TimeoutAdd(closeMS, &s.onLauncherGone, 0)
 	case l.st.Open:
 		s.renderLauncher()
+	}
+}
+
+// closeMS is how long the launcher takes to fade away (launcher-out).
+const closeMS = 130
+
+// dropClosedLauncher destroys the window of a launcher closed and fading
+// away, if there is one.
+func (s *shellUI) dropClosedLauncher() {
+	l := &s.launcher
+	if l.gone != 0 {
+		glib.SourceRemove(l.gone)
+		l.gone = 0
+	}
+	if l.closed != nil {
+		l.closed.Destroy()
+		l.closed = nil
+		l.refs.Release()
 	}
 }
 
@@ -1098,6 +1144,9 @@ func (s *shellUI) launcherAction(id string) {
 	case "open", "focus", "copy", "open-url":
 		s.executeLauncher()
 		return
+	case "new":
+		s.launchApp(r.Entry)
+		l.st.Done(nil)
 	case "pin", "unpin":
 		c := s.cfg
 		c.Dock.Pinned = shell.Pin(c.Dock.Pinned, r.Entry.ID, id == "pin")
@@ -1116,7 +1165,21 @@ func (s *shellUI) launcherAction(id string) {
 		} else {
 			l.st.Done(nil)
 		}
-	default: // a window's: close-window, float, fullscreen, center
+	default:
+		var own int
+		if _, err := fmt.Sscanf(id, "own-%d", &own); err == nil && r.Entry != nil && own < len(r.Entry.Actions) {
+			// The app's own: its entry with the action's command.
+			e := *r.Entry
+			e.Command = r.Entry.Actions[own].Command
+			log.Printf("launcher: %s %s", e.ID, r.Entry.Actions[own].ID)
+			if err := desktop.LaunchWith(&e, s.cfg.TerminalCommand()); err != nil {
+				l.st.Done(fmt.Errorf("could not start %s: %v", e.Name, err))
+			} else {
+				l.st.Done(nil)
+			}
+			break
+		}
+		// A window's: close-window, float, fullscreen, center.
 		l.st.Done(nil)
 		s.runAfter(120, func() { s.runCommand(id, "", r.Address) })
 	}

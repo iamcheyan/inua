@@ -378,8 +378,8 @@ msgstr "Un fichier de %s"
 #: internal/lightui/workshop_manager.go:63
 #: internal/mailui/actions.go:533
 #: internal/mailui/people.go:297
-#: internal/shell/launcher_actions.go:20
-#: internal/shell/launcher_actions.go:44
+#: internal/shell/launcher_actions.go:28
+#: internal/shell/launcher_actions.go:61
 #: internal/shell/wifi.go:62
 #: internal/term/web/web.go:140
 #: internal/ui/record.go:157
@@ -3065,7 +3065,7 @@ msgstr "Copié"
 #: internal/lightui/pass.go:748
 #: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
-#: internal/shell/launcher_actions.go:42
+#: internal/shell/launcher_actions.go:59
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:91
@@ -3552,7 +3552,7 @@ msgstr[1] "… et %d de plus"
 #: internal/filesui/cards.go:516
 #: internal/filesui/cards.go:716
 #: internal/mailui/welcome.go:156
-#: internal/shell/launcher_actions.go:36
+#: internal/shell/launcher_actions.go:53
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
@@ -9557,7 +9557,7 @@ msgstr "Impossible de rechercher : %s"
 
 #: internal/lightui/sysmon.go:54
 #: internal/lightui/sysmon.go:54
-#: internal/shell/launcher_actions.go:28
+#: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
 #: internal/ui/dock.go:487
 #: internal/ui/portal_ask.go:80
@@ -12786,12 +12786,12 @@ msgid "Close Window"
 msgstr "Fermer la fenêtre"
 
 #: internal/shell/commands.go:47
-#: internal/shell/launcher_actions.go:37
+#: internal/shell/launcher_actions.go:54
 msgid "Toggle Floating"
 msgstr "Basculer le flottement"
 
 #: internal/shell/commands.go:48
-#: internal/shell/launcher_actions.go:38
+#: internal/shell/launcher_actions.go:55
 msgid "Toggle Fullscreen"
 msgstr "Basculer vers le plein écran"
 
@@ -12966,30 +12966,35 @@ msgstr "Demandez à l'assistant"
 msgid "%s · workspace %s"
 msgstr "%[1]s · espace de travail %[2]s"
 
-#: internal/shell/launcher_actions.go:22
+#: internal/shell/launcher_actions.go:33
+#: internal/ui/dock.go:478
+msgid "New Window"
+msgstr "Nouvelle fenêtre"
+
+#: internal/shell/launcher_actions.go:39
 #: internal/ui/dock.go:481
 msgid "Remove from Dock"
 msgstr "Supprimer du Dock"
 
-#: internal/shell/launcher_actions.go:24
+#: internal/shell/launcher_actions.go:41
 #: internal/ui/dock.go:483
 msgid "Keep in Dock"
 msgstr "Épingler au dock"
 
-#: internal/shell/launcher_actions.go:30
+#: internal/shell/launcher_actions.go:47
 #: internal/ui/dock.go:489
 msgid "Quit (%d windows)"
 msgstr "Quitter (fenêtres %d)"
 
-#: internal/shell/launcher_actions.go:35
+#: internal/shell/launcher_actions.go:52
 msgid "Switch to"
 msgstr "Aller à"
 
-#: internal/shell/launcher_actions.go:39
+#: internal/shell/launcher_actions.go:56
 msgid "Center"
 msgstr "Centrer"
 
-#: internal/shell/launcher_actions.go:44
+#: internal/shell/launcher_actions.go:61
 msgid "Copy Address"
 msgstr "Copier l’adresse"
 
@@ -14660,10 +14665,6 @@ msgstr "Le Bluetooth est désactivé."
 msgid "No devices paired yet"
 msgstr "Aucun appareil associé pour l’instant"
 
-#: internal/ui/dock.go:478
-msgid "New Window"
-msgstr "Nouvelle fenêtre"
-
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:579
 #: internal/ui/widgets.go:598
@@ -14720,7 +14721,7 @@ msgstr "hyprland.lua redéfinit ces réglages après avoir chargé inua.lua, ce 
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf les définit à nouveau après le chargement d'inua.conf, qui l'emporte sur inua : %s. Déplacez la ligne source en dessous d’eux."
 
-#: internal/ui/launcher.go:425
+#: internal/ui/launcher.go:471
 msgid "inua launcher"
 msgstr "lanceur inua"
 
@@ -16755,7 +16756,7 @@ msgstr "Retirer de la page"
 
 #: internal/ui/widgets.go:578
 msgid "inua widgets"
-msgstr "Widgets d’inua"
+msgstr ""
 
 #: internal/ui/widgets.go:597
 msgid "Now Playing"
@@ -17788,7 +17789,7 @@ msgstr "Abandonner l'enregistrement"
 
 #: ui/bar.ui:40
 msgid "Widgets"
-msgstr "Widgets"
+msgstr ""
 
 #: ui/bar.ui:95
 msgid "Stop recording"
@@ -20235,11 +20236,11 @@ msgstr "DÉTAILS"
 
 #: ui/widgets.ui:45
 msgid "[WIDGETS]"
-msgstr "[WIDGETS]"
+msgstr ""
 
 #: ui/widgets.ui:57
 msgid "Drag a head to move it on the grid · Right-click to remove · Esc · back"
-msgstr "Glissez un en-tête pour le déplacer sur la grille · Clic droit pour retirer · Échap · retour"
+msgstr ""
 
 #: ui/widgets.ui:65
 msgid "Add widget"

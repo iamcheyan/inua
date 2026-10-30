@@ -559,7 +559,7 @@ func TestAppsFirst(t *testing.T) {
 	}
 }
 
-// Tab's actions: an app's follow the dock and its windows; a window's are
+// Tab's actions: an app's follow its own, the dock and its windows; a window's are
 // the window commands; a result with nothing more has none.
 func TestItemActions(t *testing.T) {
 	ids := func(acts []ItemAction) []string {
@@ -570,6 +570,8 @@ func TestItemActions(t *testing.T) {
 		return out
 	}
 	app := Result{Title: "a", Entry: &desktop.Entry{ID: "a"}}
+	ff := Result{Title: "ff", Entry: &desktop.Entry{ID: "ff", Actions: []desktop.Action{{ID: "new-window", Name: "New Window"}, {ID: "private", Name: "New Private Window"}}}}
+	tool := Result{Title: "t", Entry: &desktop.Entry{ID: "inua:clipboard"}}
 	for _, c := range []struct {
 		r       Result
 		pinned  bool
@@ -577,7 +579,9 @@ func TestItemActions(t *testing.T) {
 		want    []string
 	}{
 		{app, false, 0, []string{"open", "pin"}},
-		{app, true, 2, []string{"open", "unpin", "quit"}},
+		{app, true, 2, []string{"open", "new", "unpin", "quit"}},
+		{ff, false, 1, []string{"open", "own-0", "own-1", "pin", "quit"}},
+		{tool, false, 1, []string{"open", "pin", "quit"}},
 		{Result{Address: "0x1"}, false, 0, []string{"focus", "close-window", "float", "fullscreen", "center"}},
 		{Result{Copy: "42"}, false, 0, []string{"copy"}},
 		{Result{URL: "https://example.org"}, false, 0, []string{"open-url", "copy-url"}},

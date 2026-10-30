@@ -15,10 +15,12 @@ reach as well, adjusts the volume 5% a notch; on the workspaces, it goes
 to the next workspace the bar shows (down) or the previous one (up), a
 notch a step, stopping at the ends. One per monitor.
 
-## Widget page
+## Engawa
 
-A place before the first workspace: a page of widgets over the windows,
-between the bar and the dock, that slides in from the left and blurs
+Engawa (縁側, a veranda at the edge of a house) is the widget page, the
+place before the first workspace: a page of widgets over the windows,
+between the bar and the dock, as far from them and the screen's edges as
+the windows are (Hyprland's `gaps_out`), that slides in from the left and blurs
 what is behind it (a layer rule inua.conf has while the page is on). The hollow
 dot before the workspaces opens it (it stretches into the accent pill
 while the page shows), and so do the wheel up past the first workspace,
@@ -60,8 +62,9 @@ control center is open.
 
 One search for apps and open windows (Super+Space), ranked by
 prefix, word starts and subsequences; Enter launches or focuses, Tab
-opens the selected result's other actions (keep an app in the dock,
-quit it; close, float or centre a window), Esc returns focus where it
+opens the selected result's other actions (an app's own, such as
+Firefox's New Private Window, a new window of it, keeping it in the
+dock, quitting it; closing, floating or centring a window), Esc returns focus where it
 was. It also answers: arithmetic (`2^10 + 3`),
 units (`10 km to mi`, `32 f in c`) and currencies (`100 usd to jpy`, ECB
 rates) and crypto (`1 eth to usd`, `100 usd to btc`, Coinbase's prices);

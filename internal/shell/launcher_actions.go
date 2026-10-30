@@ -1,6 +1,13 @@
 package shell
 
-import "github.com/lyricat/inua/internal/i18n"
+import (
+	"fmt"
+	"slices"
+	"strings"
+
+	"github.com/lyricat/inua/internal/desktop"
+	"github.com/lyricat/inua/internal/i18n"
+)
 
 // ItemAction is one of the things a launcher result can do besides its
 // own (Enter's), which Tab opens: ID names it for the view, Title is its
@@ -9,8 +16,9 @@ type ItemAction struct {
 	ID, Title string
 }
 
-// ItemActions are what result r can do: an app opened, kept in the dock or
-// taken out of it (pinned), its windows closed (windows of them open); a
+// ItemActions are what result r can do: an app opened, another window of
+// it opened (windows of them open), its own actions ("own-0" its first),
+// kept in the dock or taken out of it (pinned), its windows closed; a
 // window focused, closed, floated, made fullscreen or centred; an answer
 // copied, an address opened. Nil for a result with nothing more than
 // Enter does.
@@ -18,6 +26,15 @@ func ItemActions(r Result, pinned bool, windows int) []ItemAction {
 	switch {
 	case r.Entry != nil:
 		acts := []ItemAction{{"open", i18n.T("Open")}}
+		// The shell's tools have one window; an app with a New Window of
+		// its own shows that one.
+		own := slices.ContainsFunc(r.Entry.Actions, func(a desktop.Action) bool { return a.ID == "new-window" })
+		if windows > 0 && !own && !strings.HasPrefix(r.Entry.ID, "inua:") {
+			acts = append(acts, ItemAction{"new", i18n.T("New Window")})
+		}
+		for i, a := range r.Entry.Actions {
+			acts = append(acts, ItemAction{fmt.Sprintf("own-%d", i), a.Name})
+		}
 		if pinned {
 			acts = append(acts, ItemAction{"unpin", i18n.T("Remove from Dock")})
 		} else {

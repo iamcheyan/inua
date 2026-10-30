@@ -130,12 +130,11 @@ layerrule {
     ignore_alpha = 0.4
 }
 
-# The launcher grows into place as it opens and shrinks away as it closes,
-# fading with the layers' animation; its menus blur what is behind them.
+# The launcher's menus (a result's actions) too, the launcher keeping its
+# own blur.
 layerrule {
-    name = inua-launcher-pop
+    name = inua-launcher-menus
     match:namespace = ^inua-launcher$
-    animation = popin 94%
     blur_popups = on
 }
 `
@@ -409,12 +408,11 @@ hl.layer_rule({
     ignore_alpha = 0.4,
 })
 
--- The launcher grows into place as it opens and shrinks away as it closes,
--- fading with the layers' animation; its menus blur what is behind them.
+-- The launcher's menus (a result's actions) too, the launcher keeping its
+-- own blur.
 hl.layer_rule({
-    name = "inua-launcher-pop",
+    name = "inua-launcher-menus",
     match = { namespace = "^inua-launcher$" },
-    animation = "popin 94%",
     blur_popups = true,
 })
 `

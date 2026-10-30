@@ -22,10 +22,20 @@ Exec=firefox %u
 Categories=Network;WebBrowser;
 Keywords=web;internet;
 Keywords[zh]=网页;互联网;
+Actions=new-window;new-private-window;gone;
 
 [Desktop Action new-window]
 Name=New Window
+Name[zh_CN]=新建窗口
 Exec=firefox --new-window
+
+[Desktop Action new-private-window]
+Name=New Private Window
+Exec=firefox --private-window %u
+
+[Desktop Action unlisted]
+Name=Unlisted
+Exec=firefox --unlisted
 `
 
 func TestParseLocalized(t *testing.T) {
@@ -44,6 +54,16 @@ func TestParseLocalized(t *testing.T) {
 	}
 	if !slices.Equal(e.Categories, []string{"Network", "WebBrowser"}) {
 		t.Errorf("categories %q", e.Categories)
+	}
+
+	// Its actions: those the Actions key lists and that exist, in order,
+	// named in the locale.
+	var acts []string
+	for _, a := range e.Actions {
+		acts = append(acts, a.ID+"="+a.Name+":"+strings.Join(a.Command, " "))
+	}
+	if want := []string{"new-window=新建窗口:firefox --new-window", "new-private-window=New Private Window:firefox --private-window"}; !slices.Equal(acts, want) {
+		t.Errorf("actions %q, want %q", acts, want)
 	}
 
 	e, _ = Parse(strings.NewReader(firefox), "firefox", "")
