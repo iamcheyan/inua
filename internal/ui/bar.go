@@ -429,6 +429,9 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
+	if name == snap.FocusedMonitor {
+		s.syncAppMenu()
+	}
 }
 
 // scrollWorkspaces goes n notches' way (down the next, up the previous)

@@ -766,7 +766,14 @@ func (h hyprHandler) OnConnection(up bool, err error) {
 }
 
 func (s *shellUI) apply(snap hypr.Snapshot) {
+	oldPID := focusedPID(s.snap)
 	s.snap = snap
+	if s.menu.open && s.menu.pid != focusedPID(snap) {
+		s.closeMenu()
+	}
+	if oldPID != focusedPID(snap) {
+		s.syncAppMenu()
+	}
 	s.overview.st.SetSnapshot(snap)
 	for _, b := range s.bars {
 		b.setHypr(s, snap)
