@@ -427,8 +427,8 @@ func (a *tailscaleApp) showDevices() {
 	for _, p := range peers {
 		inner := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
 		dot := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-		dot.AddCssClass("ts-dot")
-		setClass(&dot.Widget, "online", p.Online)
+		dot.AddCssClass("mark") // filled in ok while it is online
+		setClass(&dot.Widget, "ok", p.Online)
 		dot.SetValign(gtk.AlignCenterValue)
 		gtkx.Append(inner, &dot.Widget)
 		parts := []string{p.OS, p.Seen(now)}
