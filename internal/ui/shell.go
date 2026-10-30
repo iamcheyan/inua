@@ -458,6 +458,8 @@ func (s *shellUI) start() {
 	s.bindVoiceHandlers()
 	s.bindTrayHandlers()
 	s.bindSettingsHandlers()
+	s.bindAppMenuHandlers()
+	s.bindMenuHandlers()
 	s.bindAboutHandlers()
 	s.bindCardHandlers()
 	s.bindWifiHandlers()
