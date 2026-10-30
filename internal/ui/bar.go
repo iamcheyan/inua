@@ -144,6 +144,7 @@ func (s *shellUI) dropBar(b *bar) {
 		}
 	}
 	delete(s.bars, b.mon.GoPointer())
+	b.clockButton.Unref() // the reference newBar took
 	dropWallpaper(b)
 	dropDock(b)
 	b.win.Destroy()
@@ -176,6 +177,8 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("rec", &b.rec)
 	ui.Get("rec_time", &b.recTime)
 	ui.Get("clock_button", &b.clockButton)
+	b.clockButton.Ref() // ours: it moves between the island's middle and its end, and a
+	// box drops the reference it held when the widget leaves it
 	ui.Get("notes_icon", &b.notesIcon)
 	ui.Get("voice", &b.voice)
 	ui.Get("voice_icon", &b.voiceIcon)
