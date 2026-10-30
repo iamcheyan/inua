@@ -57,8 +57,8 @@ type widgetPage struct {
 	rows  map[string]int      // how many rows each card is tall (sizeWidget)
 	// columns is how many columns the monitor it opened on shows.
 	columns int
-	lines   *gtk.Box // the grid, shown while a card is dragged
-	spot    *gtk.Box // where the dragged card lands
+	lines   *gtk.Widget // the grid (snapshotGrid), shown while a card is dragged
+	spot    *gtk.Box    // where the dragged card lands
 
 	// The card dragged: its kind, where it was, and where it would land.
 	dragKind string
@@ -237,7 +237,7 @@ func (s *shellUI) bindWidgetsHandlers() {
 		card.InsertBefore(&p.board.Widget, &gtk.Widget{}) // over the others
 		card.AddCssClass("lifted")
 		p.lines.SetSizeRequest(p.board.GetWidth(), p.board.GetHeight())
-		p.lines.SetVisible(true)
+		p.lines.AddCssClass("shown") // fades in (style.css)
 		r := s.widgetRect(kind, 0, 0)
 		p.spot.SetSizeRequest(int32(r.Columns*shell.WidgetCell), int32(r.Rows*shell.WidgetCell))
 		p.spot.SetVisible(true)
@@ -251,7 +251,7 @@ func (s *shellUI) bindWidgetsHandlers() {
 		}
 		s.dragWidget(dx, dy)
 		card.RemoveCssClass("lifted")
-		p.lines.SetVisible(false)
+		p.lines.RemoveCssClass("shown")
 		p.spot.SetVisible(false)
 		kind, to, fits := p.dragKind, p.dragTo, p.dragFits
 		p.dragKind = ""
@@ -489,6 +489,9 @@ func (s *shellUI) dropWidgets() {
 	if !p.open {
 		return
 	}
+	if p.lines != nil {
+		gtkx.ForgetCanvas(p.lines)
+	}
 	p.win.Destroy()
 	p.refs.Release()
 	p.open, p.closing, p.picker = false, false, nil
@@ -554,11 +557,15 @@ func (s *shellUI) buildWidgets(b *bar) {
 	p.page.InsertActionGroup("widgets", group)
 	group.Unref()
 
+	// The page's sides are the bar's, and its gaps above and below the
+	// bar's gap from the screen's top.
+	side, gap := b.island.GetMarginStart(), b.island.GetMarginTop()
 	// The columns its monitor shows, for the places found before the board
-	// is laid out: less the page's sides (style.css, .widget-page).
+	// is laid out: less the page's sides and padding (style.css,
+	// .widget-page).
 	var geo gdk.Rectangle
 	b.mon.GetGeometry(&geo)
-	p.columns = (int(geo.Width) - 2*32) / shell.WidgetCell
+	p.columns = (int(geo.Width) - 2*32 - 2*int(side)) / shell.WidgetCell
 
 	p.win.SetApplication(s.app)
 	w := p.win.GoPointer()
@@ -574,11 +581,30 @@ func (s *shellUI) buildWidgets(b *bar) {
 		// to drag apps from.
 		layershell.SetExclusiveZone(w, 0)
 		layershell.SetMonitor(w, b.mon.GoPointer())
+		layershell.SetMargin(w, layershell.EdgeLeft, side)
+		layershell.SetMargin(w, layershell.EdgeRight, side)
+		layershell.SetMargin(w, layershell.EdgeTop, gap)
+		layershell.SetMargin(w, layershell.EdgeBottom, gap)
 	} else {
-		p.win.SetTitle(i18n.T("inua widgets"))
+		p.win.SetTitle(i18n.T("Engawa"))
 		p.win.SetDefaultSize(1000, 700)
 	}
 	p.win.Present()
+}
+
+// snapshotGrid draws the grid a card snaps to: a cross at each joint,
+// every WidgetCell, in the grid's colour (style.css, .widget-grid).
+func snapshotGrid(w *gtk.Widget, sn *gtk.Snapshot) {
+	var c gdk.RGBA
+	w.GetColor(&c)
+	const arm = 4 // each side of the joint's pixel
+	width, height := int(w.GetWidth()), int(w.GetHeight())
+	for y := 0; y <= height; y += shell.WidgetCell {
+		for x := 0; x <= width; x += shell.WidgetCell {
+			sn.AppendColor(&c, rect(float32(x-arm), float32(y), 2*arm+1, 1))
+			sn.AppendColor(&c, rect(float32(x), float32(y-arm), 1, 2*arm+1))
+		}
+	}
 }
 
 func addActions() []string {
@@ -627,18 +653,19 @@ func (s *shellUI) fillWidgets() {
 	if !p.open {
 		return
 	}
+	if p.lines != nil {
+		gtkx.ForgetCanvas(p.lines)
+	}
 	for ch := p.board.GetFirstChild(); ch != nil; ch = p.board.GetFirstChild() {
 		p.board.Remove(ch) // drops the board's reference
 		ch.Unref()         // and GetFirstChild's
 	}
 	p.time, p.zones, p.grid, p.wxDays, p.art, p.artURL = nil, nil, nil, nil, nil, ""
 	p.cards, p.heads, p.rows, p.dragKind = map[string]*gtk.Box{}, map[string]*gtk.Box{}, map[string]int{}, ""
-	p.lines = gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+	p.lines = gtkx.NewCanvas(&gtkx.Canvas{Snapshot: snapshotGrid})
 	p.lines.AddCssClass("widget-grid")
 	p.lines.SetCanTarget(false)
-	p.lines.SetVisible(false)
-	p.board.Put(&p.lines.Widget, 0, 0)
-	p.lines.Unref()
+	p.board.Put(p.lines, 0, 0) // floating: the board takes it
 	p.spot = gtk.NewBox(gtk.OrientationHorizontalValue, 0)
 	p.spot.AddCssClass("widget-spot")
 	p.spot.SetCanTarget(false)

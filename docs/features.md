@@ -19,8 +19,8 @@ notch a step, stopping at the ends. One per monitor.
 
 Engawa (縁側, a veranda at the edge of a house) is the widget page, the
 place before the first workspace: a page of widgets over the windows,
-between the bar and the dock, as far from them and the screen's edges as
-the windows are (Hyprland's `gaps_out`), that slides in from the left and blurs
+between the bar and the dock, its sides in line with the bar's and as far
+from the bar and the dock as the bar is from the screen's top, that fades in and blurs
 what is behind it (a layer rule inua.conf has while the page is on). The hollow
 dot before the workspaces opens it (it stretches into the accent pill
 while the page shows), and so do the wheel up past the first workspace,

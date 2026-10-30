@@ -1,6 +1,6 @@
-// The widget page, the place before the first workspace: the bar's dot,
+// Engawa, the widget page: the place before the first workspace: the bar's dot,
 // the wheel up past the first workspace, a swipe right or the shortcut
-// opens it, and it slides in from the left over the windows,
+// opens it, and it fades in over the windows,
 // between the bar and the dock. Escape, a workspace, the wheel down or a
 // swipe left goes back. Go puts the cards on the board where
 // widgets.widget places them.
@@ -10,8 +10,8 @@ ApplicationWindow widgets {
   styles ["widgets"]
 
   Revealer reveal {
-    transition-type: slide_right;
-    transition-duration: 260;
+    transition-type: crossfade;
+    transition-duration: 200;
     hexpand: true;
     vexpand: true;
 
@@ -31,7 +31,7 @@ ApplicationWindow widgets {
 
         Label {
           styles ["tag"]
-          label: _("[WIDGETS]");
+          label: _("[ENGAWA]");
         }
 
         Label {
@@ -39,7 +39,7 @@ ApplicationWindow widgets {
           hexpand: true;
           xalign: 0;
           ellipsize: end;
-          label: _("Drag a head to move it on the grid · Right-click to remove · Esc · back");
+          label: _("Drag a head to move it on the grid · Right-click to remove");
         }
 
         MenuButton add {

@@ -204,14 +204,17 @@ bar, over a full-screen backdrop that closes it on a click.
   bar draws it back up (`drop.go`, `shell.DropAt`). Nothing dims behind
   it.
 
-### The widget page
+### Engawa, the widget page
 
 The place before the first workspace (`widgets.blp`). It is glass over the
 windows between the bar and the dock, never over them, so apps can be
-dragged in from the dock. It slides in from the left edge and back out
-(`GtkRevealer`, 260 ms), and Hyprland does not animate it as well. Its
-head is a page's: the head mark, `[WIDGETS]`, the keys as a hint and
-Add widget as a link. The widgets are cards like a library's tiles
+dragged in from the dock. Its sides are in line with the bar's, it is as
+far from the bar and the dock as the bar is from the screen's top, and it
+has a floating surface's `line` border and corners. It fades in and out
+(`GtkRevealer`, 200 ms), and Hyprland does not animate it as well. Its
+head is a page's: the head mark, `[ENGAWA]`, how to move and remove a
+card as a hint (no keys) and Add widget as a link. The widgets are cards
+like a library's tiles
 (`surface`, a `line` border, 4 px corners), on a grid of 60 px. A card's
 outer edges are on the grid: six cells wide, its height rounded up to
 whole cells, and a clear cell between it and any other. Its glass blurs
@@ -219,7 +222,8 @@ what is behind (a layer rule). Each card's head is a section's mark and
 `[LABEL]`: right-click it
 for its menu, drag it to move the card. A dragged card is lifted (`surface`,
 an accent border at 38%, a floating surface's shadow) and follows the
-pointer. The grid shows under it as a dot at each joint, and the cells it
+pointer. The grid fades in under it (160 ms) as a small cross at each
+joint, and the cells it
 would land on as a dashed spot, accent or `danger` where another card is.
 It snaps there when released, or goes back. The bar's mark for the page
 is a dot like the workspaces' but hollow, before them. While the page

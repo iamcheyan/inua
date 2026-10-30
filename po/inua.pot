@@ -133,7 +133,7 @@ msgstr ""
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
-#: internal/ui/widgets.go:951
+#: internal/ui/widgets.go:978
 msgid "Monday, January 2"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 #: internal/mailui/window.go:1434
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
-#: internal/ui/widgets.go:1009
+#: internal/ui/widgets.go:1036
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr ""
@@ -222,7 +222,7 @@ msgstr ""
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:360
-#: internal/ui/widgets.go:1011
+#: internal/ui/widgets.go:1038
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -379,7 +379,7 @@ msgstr ""
 #: internal/shell/launcher_actions.go:28
 #: internal/shell/launcher_actions.go:61
 #: internal/shell/wifi.go:62
-#: internal/term/web/web.go:140
+#: internal/term/web/web.go:141
 #: internal/ui/record.go:157
 #: internal/ui/system_ipc.go:241
 #: internal/vmui/window.go:2705
@@ -3169,7 +3169,7 @@ msgstr ""
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
-#: internal/ui/widgets.go:1013
+#: internal/ui/widgets.go:1040
 msgid "15:04"
 msgstr ""
 
@@ -8491,7 +8491,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: internal/ui/widgets.go:594
+#: internal/ui/widgets.go:620
 #: ui/settings.ui:1188
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8500,8 +8500,8 @@ msgstr ""
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:224
 #: internal/ui/agenda.go:334
-#: internal/ui/widgets.go:596
-#: internal/ui/widgets.go:1030
+#: internal/ui/widgets.go:622
+#: internal/ui/widgets.go:1057
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr ""
@@ -8518,7 +8518,7 @@ msgid "Calculator"
 msgstr ""
 
 #: internal/lightui/apps.go:20
-#: internal/ui/widgets.go:595
+#: internal/ui/widgets.go:621
 #: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
@@ -8575,7 +8575,7 @@ msgstr ""
 
 #: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
-#: internal/ui/widgets.go:983
+#: internal/ui/widgets.go:1010
 msgid "January 2006"
 msgstr ""
 
@@ -9126,7 +9126,7 @@ msgid "Cannot play %s: %s"
 msgstr ""
 
 #: internal/lightui/music.go:560
-#: internal/ui/widgets.go:1061
+#: internal/ui/widgets.go:1088
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr ""
@@ -9473,7 +9473,7 @@ msgstr ""
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
-#: internal/ui/widgets.go:909
+#: internal/ui/widgets.go:936
 #: ui/connect.ui:967
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -12907,7 +12907,7 @@ msgid "[WINDOWS]"
 msgstr ""
 
 #: internal/shell/launcher.go:50
-#: internal/ui/widgets.go:607
+#: internal/ui/widgets.go:633
 msgid "[APPS]"
 msgstr ""
 
@@ -13734,15 +13734,15 @@ msgstr ""
 msgid "the theme's colours"
 msgstr ""
 
-#: internal/term/web/web.go:136
+#: internal/term/web/web.go:137
 msgid "The Web Terminal's token"
 msgstr ""
 
-#: internal/term/web/web.go:137
+#: internal/term/web/web.go:138
 msgid "It is in the link the computer gives: in inua-term's Terminal Settings, Web Terminal, Link. Paste the whole link or the part after t=."
 msgstr ""
 
-#: internal/term/web/web.go:139
+#: internal/term/web/web.go:140
 msgid "That token is not right. The link may be an old one, from before New link."
 msgstr ""
 
@@ -14270,32 +14270,32 @@ msgid "inua calendar"
 msgstr ""
 
 #: internal/ui/agenda.go:227
-#: internal/ui/widgets.go:951
+#: internal/ui/widgets.go:978
 msgid "%s · WK %d"
 msgstr ""
 
 #: internal/ui/agenda.go:335
-#: internal/ui/widgets.go:1031
+#: internal/ui/widgets.go:1058
 msgid "Add a place in Weather to see it here"
 msgstr ""
 
 #: internal/ui/agenda.go:346
-#: internal/ui/widgets.go:1037
+#: internal/ui/widgets.go:1064
 msgid "No forecast: offline?"
 msgstr ""
 
 #: internal/ui/agenda.go:348
-#: internal/ui/widgets.go:1035
+#: internal/ui/widgets.go:1062
 msgid "Reading the forecast…"
 msgstr ""
 
 #: internal/ui/agenda.go:356
-#: internal/ui/widgets.go:1044
+#: internal/ui/widgets.go:1071
 msgid "%s · feels %s"
 msgstr ""
 
 #: internal/ui/agenda.go:359
-#: internal/ui/widgets.go:1046
+#: internal/ui/widgets.go:1073
 msgid "H %s  L %s"
 msgstr ""
 
@@ -14665,7 +14665,7 @@ msgstr ""
 
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:579
-#: internal/ui/widgets.go:598
+#: internal/ui/widgets.go:624
 #: ui/settings.ui:181
 #: ui/settings.ui:2011
 msgid "Apps"
@@ -16752,61 +16752,62 @@ msgstr ""
 msgid "Remove from the Page"
 msgstr ""
 
-#: internal/ui/widgets.go:578
-msgid "inua widgets"
+#: internal/ui/widgets.go:589
+#: ui/bar.ui:40
+msgid "Engawa"
 msgstr ""
 
-#: internal/ui/widgets.go:597
+#: internal/ui/widgets.go:623
 msgid "Now Playing"
 msgstr ""
 
-#: internal/ui/widgets.go:603
+#: internal/ui/widgets.go:629
 msgid "[CLOCK]"
 msgstr ""
 
-#: internal/ui/widgets.go:604
+#: internal/ui/widgets.go:630
 #: ui/agenda.ui:46
 msgid "[CALENDAR]"
 msgstr ""
 
-#: internal/ui/widgets.go:605
+#: internal/ui/widgets.go:631
 msgid "[WEATHER]"
 msgstr ""
 
-#: internal/ui/widgets.go:606
+#: internal/ui/widgets.go:632
 msgid "[NOW PLAYING]"
 msgstr ""
 
-#: internal/ui/widgets.go:793
+#: internal/ui/widgets.go:820
 msgid "Open Clock"
 msgstr ""
 
-#: internal/ui/widgets.go:811
+#: internal/ui/widgets.go:838
 msgid "Open Calendar"
 msgstr ""
 
-#: internal/ui/widgets.go:846
+#: internal/ui/widgets.go:873
 #: ui/agenda.ui:116
 msgid "Open Weather"
 msgstr ""
 
-#: internal/ui/widgets.go:911
+#: internal/ui/widgets.go:938
 msgid "Add an app, or drag one here from the dock"
 msgstr ""
 
-#: internal/ui/widgets.go:1013
+#: internal/ui/widgets.go:1040
 msgid "Alarm %s %s · %s"
 msgstr ""
 
-#: internal/ui/widgets.go:1062
+#: internal/ui/widgets.go:1089
 msgid "A player that plays shows here"
 msgstr ""
 
-#: internal/ui/widgets.go:1096
+#: internal/ui/widgets.go:1123
 msgid "Search apps"
 msgstr ""
 
-#: internal/ui/widgets.go:1145
+#: internal/ui/widgets.go:1172
 msgid "No app by that name"
 msgstr ""
 
@@ -17783,10 +17784,6 @@ msgstr ""
 
 #: ui/assistant.ui:181
 msgid "Discard the recording"
-msgstr ""
-
-#: ui/bar.ui:40
-msgid "Widgets"
 msgstr ""
 
 #: ui/bar.ui:95
@@ -20233,11 +20230,11 @@ msgid "DETAILS"
 msgstr ""
 
 #: ui/widgets.ui:45
-msgid "[WIDGETS]"
+msgid "[ENGAWA]"
 msgstr ""
 
 #: ui/widgets.ui:57
-msgid "Drag a head to move it on the grid · Right-click to remove · Esc · back"
+msgid "Drag a head to move it on the grid · Right-click to remove"
 msgstr ""
 
 #: ui/widgets.ui:65
