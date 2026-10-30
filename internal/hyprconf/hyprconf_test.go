@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -100,6 +101,14 @@ func TestApplyWithoutHyprland(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(filepath.Dir(path), LuaName)); !os.IsNotExist(err) {
 		t.Errorf("inua.lua written for hyprland.conf: %v", err)
+	}
+	// The window and layer rules' names are not devices.
+	if names := known(string(got)); !slices.Equal(names, []string{"bt-trackpad"}) {
+		t.Errorf("known = %q, want only the touchpad", names)
+	}
+	// Nor are the device blocks an earlier inua wrote for them.
+	if names := known(string(got) + "\ndevice {\n    name = inua-bar-still\n    sensitivity = 0.35\n}\n"); !slices.Equal(names, []string{"bt-trackpad"}) {
+		t.Errorf("known = %q, want the rule's device block dropped", names)
 	}
 }
 

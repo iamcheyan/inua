@@ -449,7 +449,7 @@ func luaString(s string) string {
 
 var (
 	nameRe     = regexp.MustCompile(`^[a-z0-9][a-z0-9:._-]*$`)
-	nameLineRe = regexp.MustCompile(`(?m)^\s*name\s*=\s*(\S+)\s*$`)
+	nameLineRe = regexp.MustCompile(`(?m)^device\s*\{\s*\n\s*name\s*=\s*(\S+)\s*$`)
 	luaNameRe  = regexp.MustCompile(`hl\.device\(\{\s*name\s*=\s*"([^"]+)"`)
 	touchpadRe = regexp.MustCompile(`touchpad|trackpad`)
 )
@@ -484,7 +484,8 @@ func known(file string) []string {
 		re = luaNameRe
 	}
 	for _, m := range re.FindAllStringSubmatch(file, -1) {
-		if nameRe.MatchString(m[1]) {
+		// inua-…: a rule's name an earlier inua took for a device's
+		if nameRe.MatchString(m[1]) && !strings.HasPrefix(m[1], "inua-") {
 			names = append(names, m[1])
 		}
 	}
