@@ -10,105 +10,137 @@ ApplicationWindow term {
   // The sheets (actions, agents, keys, renaming) over the whole window.
   Overlay sheets {
     Box {
-      // Column 1: the workspaces.
-      Box workspaces_col {
-        styles ["index", "term-col1"]
-        orientation: vertical;
-        hexpand: false;
-        width-request: 232;
+      // Column 1: the workspaces, sliding away when hidden (its toggle,
+      // Ctrl+Shift+B), with the grip at its edge.
+      Revealer col1_reveal {
+        transition-type: slide_right;
+        transition-duration: 200;
+        reveal-child: true;
 
-        // Finding a workspace, a new one and the menu, as tall as column 2's
-        // head.
-        Box {
-          styles ["term-col-head", "term-find-row"]
-          spacing: 6;
+        child: Box {
+          Box workspaces_col {
+            styles ["index", "term-col1"]
+            orientation: vertical;
+            hexpand: false;
+            width-request: 232;
 
-          SearchEntry find {
-            styles ["index-search", "term-find-entry"]
-            hexpand: true;
-            placeholder-text: _("Find a workspace or agent");
-          }
-
-          Button new_workspace {
-            styles ["plain", "term-head-button"]
-            icon-name: "list-add-symbolic";
-            valign: center;
-          }
-
-          Button menu {
-            styles ["plain", "term-head-button"]
-            icon-name: "open-menu-symbolic";
-            valign: center;
-          }
-        }
-
-        ScrolledWindow {
-          vexpand: true;
-          hscrollbar-policy: never;
-
-          ListBox workspaces {
-            selection-mode: single;
-          }
-        }
-
-        // The agents that need you and those idle, as Warcraft's idle
-        // worker: a click (or Ctrl+`) goes to the next one.
-        Button finder {
-          styles ["plain", "term-finder"]
-          visible: false;
-          halign: start;
-
-          Box {
-            spacing: 10;
-
-            Box finder_waiting {
+            // Hiding the column, as Files and Mail do; then finding a
+            // workspace (in a row of its own, opened by its button), a new one
+            // and the menu.
+            Box {
+              styles ["term-col-head"]
               spacing: 6;
 
-              Box {
-                styles ["mark", "s-warn"]
+              Button sidebar_hide {
+                styles ["term-tool"]
+                icon-name: "sidebar-show-symbolic";
                 valign: center;
               }
 
-              Label finder_waiting_count {}
-            }
+              ToggleButton find_button {
+                styles ["plain", "term-head-button"]
+                icon-name: "system-search-symbolic";
+                tooltip-text: _("Find a workspace or agent");
+                valign: center;
+                hexpand: true;
+                halign: end;
+              }
 
-            Box finder_idle {
-              spacing: 6;
-
-              Box {
-                styles ["mark"]
+              Button new_workspace {
+                styles ["plain", "term-head-button"]
+                icon-name: "list-add-symbolic";
                 valign: center;
               }
 
-              Label finder_idle_count {}
+              Button menu {
+                styles ["plain", "term-head-button"]
+                icon-name: "open-menu-symbolic";
+                valign: center;
+              }
+            }
+
+            Revealer find_reveal {
+              transition-type: slide_down;
+              transition-duration: 160;
+
+              child: Box {
+                styles ["term-find-slot", "term-find-row"]
+
+                SearchEntry find {
+                  styles ["index-search", "term-find-entry"]
+                  hexpand: true;
+                  placeholder-text: _("Find a workspace or agent");
+                }
+              };
+            }
+
+            ScrolledWindow {
+              vexpand: true;
+              hscrollbar-policy: never;
+
+              ListBox workspaces {
+                selection-mode: single;
+              }
+            }
+
+            // The agents that need you and those idle, as Warcraft's idle
+            // worker: a click (or Ctrl+`) goes to the next one.
+            Button finder {
+              styles ["plain", "term-finder"]
+              visible: false;
+              halign: start;
+
+              Box {
+                spacing: 10;
+
+                Box finder_waiting {
+                  spacing: 6;
+
+                  Box {
+                    styles ["mark", "s-warn"]
+                    valign: center;
+                  }
+
+                  Label finder_waiting_count {}
+                }
+
+                Box finder_idle {
+                  spacing: 6;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label finder_idle_count {}
+                }
+              }
             }
           }
-        }
+
+          // Dragged, it sets the width of the column before it; Go keeps it.
+          Box grip1 {
+            styles ["term-col-grip"]
+          }
+        };
       }
 
       // Column 2: the shown workspace's sessions, each a section of its
-      // panes.
+      // panes, and a new session after the last.
       Box sessions_col {
         styles ["index", "term-col2"]
         orientation: vertical;
         hexpand: false;
         width-request: 312;
 
-        Box {
+        // Showing column 1 again, while it is hidden.
+        Box sidebar_show_head {
           styles ["term-col-head"]
-          spacing: 8;
+          visible: false;
 
-          Label sessions_title {
-            styles ["term-col-title"]
-            hexpand: true;
-            xalign: 0;
-            ellipsize: end;
-            max-width-chars: 1;
-          }
-
-          Button new_session {
-            styles ["plain", "term-head-button"]
-            icon-name: "list-add-symbolic";
+          Button sidebar_show {
+            styles ["term-tool"]
+            icon-name: "sidebar-show-symbolic";
             valign: center;
           }
         }
@@ -117,11 +149,36 @@ ApplicationWindow term {
           vexpand: true;
           hscrollbar-policy: never;
 
-          Box sessions {
+          Box {
             styles ["term-sessions"]
             orientation: vertical;
+
+            Box sessions {
+              orientation: vertical;
+            }
+
+            Button new_session {
+              styles ["term-new-session"]
+
+              Box {
+                spacing: 8;
+                halign: center;
+
+                Image {
+                  icon-name: "list-add-symbolic";
+                }
+
+                Label {
+                  label: _("New session");
+                }
+              }
+            }
           }
         }
+      }
+
+      Box grip2 {
+        styles ["term-col-grip"]
       }
 
       // Column 3: the shown session's panes, tiled, and nothing else.

@@ -131,6 +131,35 @@ ApplicationWindow settings {
                     column-spacing: 8;
                   }
 
+                  // Go fills the choices: the bar's theme, then each theme.
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Apps");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown app_theme {
+                      name: "app_theme";
+                      valign: center;
+                    }
+                  }
+
                   Box {
                     styles ["row"]
                     spacing: 16;
@@ -971,6 +1000,36 @@ ApplicationWindow settings {
 
                     Switch title {
                       name: "title";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Global menu");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Experimental: the focused application's menus in the bar; click elsewhere to close them");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch bar_menu {
+                      name: "bar_menu";
                       valign: center;
                     }
                   }

@@ -23,66 +23,6 @@ window to the current workspace. Their data is kept in
 | Light apps | `inua-apps NAME` | [below](#light-apps) |
 | Games | `inua-games NAME` | [below](#games) |
 | Your own | `inua workshop` | [workshop.md](workshop.md) |
-## Global menu coverage
-
-Every independently running inua GUI application exposes its application
-menu through a GTK/GIO menu model, so the shell can read the same actions
-through AT-SPI. The menu follows a shared macOS-style order: the app menu,
-then File, Edit, View, Window and Help where those groups have real actions.
-An item appears only when its action is implemented by that application;
-menu items do not stand in for missing features. The window's own menu and
-the shell's top-bar menu invoke the same application action.
-
-The table records the initial inventory and current menu status. “Absent”
-means the window had no top-level app menu before global-menu coverage; it
-may still have ordinary controls, context menus or dialogs. Every listed
-independent window is in scope, including auxiliary workflows with their
-own application ID.
-
-| Command / window | AppID suffix | Main window owner | Existing menus and meaningful actions | Menu coverage / verification |
-| --- | --- | --- | --- | --- |
-| `inua-apps clock` | `Clock` | `appui` / `clockApp` | No top-level menu; world clocks, alarms, stopwatch, timer | To implement; launch, inspect AT-SPI and top bar, exercise an alarm/timer action |
-| `inua-apps weather` | `Weather` | `appui` / `weatherApp` | No top-level menu; places and forecast views | To implement; inspect menus and change forecast view |
-| `inua-apps stocks` | `Stocks` | `appui` / `stocksApp` | No top-level menu; watchlist and remove action | To implement; inspect menus and remove a fixture watchlist item |
-| `inua-apps calculator` | `Calculator` | `appui` / `calcApp` | No top-level menu; keypad, expression and history | To implement; inspect menus and evaluate an expression |
-| `inua-apps calendar` | `Calendar` | `appui` / `calendarApp` | No top-level menu; month navigation | To implement; inspect menus and change month |
-| `inua-apps color-picker` | `ColorPicker` | `appui` / `colorApp` | No top-level menu; pick and clear | To implement; inspect menus and clear a test swatch |
-| `inua-apps system-monitor` | `SystemMonitor` | `appui` / `sysmonApp` | No top-level menu; overview, process details and process controls | To implement; inspect menus and switch view |
-| `inua-apps tailscale` | `Tailscale` | `appui` / `tailscaleApp` | No top-level menu; device and exit-node controls | To implement; inspect menus and open a view without changing network state |
-| `inua-apps pass` | `Pass` | `appui` / `passApp` | No top-level menu; entry editor, categories and OTP dialog | To implement; inspect menus and exercise a safe navigation/edit action |
-| `inua-apps gpg` | `GPG` | `appui` / `gpgApp` | No top-level menu; encrypt, decrypt, sign and key actions | To implement; inspect menus and open an operation view |
-| `inua-apps music [files…]` | `Music` | `appui` / `musicApp` | No top-level menu; open, playback, playlist and equalizer | To implement; inspect menus and exercise a playback action with test media |
-| `inua-apps video [file]` | `Video` | `appui` / `videoApp` | No top-level menu; playback controls | To implement; inspect menus and exercise playback with test media |
-| `inua-apps workshop` | `Workshop` | `appui.RunView` / workshop manager | No top-level menu; install/manage workshop apps | To implement; inspect menus and open a manager view |
-| `inua-apps workshop ID|DIR` | manifest `AppID` or normalized ID | `appui.RunView` / workshop app view | No top-level menu; actions depend on installed app manifest | To implement; inspect a bundled example and invoke its real action |
-| `inua-games minesweeper` | `Minesweeper` | `appui` / `gamesui.view` | No top-level menu; shared Help menu button and board actions | To implement; inspect menus, open Help submenu and start a safe game |
-| `inua-games space-pinball` | `SpacePinball` | `appui` / `gamesui.view` | No top-level menu; shared Help menu button and game controls | To implement; inspect menus and exercise a game action |
-| `inua-games small-fortune` | `SmallFortune` | `appui` / `gamesui.view` | No top-level menu; Game menu button and contextual game actions | To implement; inspect menus and invoke a safe setup action |
-| `inua-games chinese-checkers` | `ChineseCheckers` | `appui` / `gamesui.view` | No top-level menu; shared Help menu button and board actions | To implement; inspect menus and start a safe game |
-| `inua-term` | `Term` | `appui` / `termui.App` | macOS-only GIO menubar: Terminal, Shell, Edit, View, Window, Help; settings actions and Quit | Extend to Linux/Wayland and verify local/top-bar action parity |
-| `inua-term --quick` | `Term.Quick` | `appui` / `termui.App` quick view | Shares terminal implementation; no confirmed menu in quick mode | Verify its own AppID and accessible menu, then exercise a safe view action |
-| `inua-files` | `Files` | `appui` / `filesui.App` | No top-level menu; pane navigation, file operations, undo and context actions | To implement; inspect menus and exercise navigation/undo on a temporary folder |
-| `inua-viewer [FILE|FOLDER…]` | `Viewer` | `appui` / `viewerui.App` | No top-level menu; image/PDF/text controls, copy, zoom, rotate, trash | To implement; inspect menus and exercise zoom on a fixture |
-| `inua-mail` | `Mail` | `appui` / `mailui.App` | No top-level menu; account, message, compose and search actions | To implement; inspect menus and use a local safe view/action |
-| `inua-assistant` | `Assistant` | `appui` / `assistantui.view` | No top-level menu; send/voice/settings; GIO ask/background activation actions | To implement; inspect menus and open settings without sending a request |
-| `inua-vm` | `VM` | `appui` / `vmui.App` | No top-level menu; machine selection, templates and lifecycle actions | To implement; inspect menus and open a fixture machine page |
-| `inua-remote` | `Remote` | `appui` / `remoteui.App` | No top-level menu; sharing, pairing and stream actions | To implement; inspect menus and open settings without pairing/sharing |
-| `inua-connect` | `MobileLink` | `appui` / `connectui.App` | No top-level menu; device, pairing, clipboard and sharing controls | To implement; inspect menus and open a read-only view |
-| `inua-connect --reply …` | `MobileLink.Reply` | `appui.RegisterMany` / reply window | No top-level menu; reply, cancel and send | To implement; inspect menus and exercise cancel on a fixture reply |
-| `inua-disk-usage` | `DiskUsage` | `appui` / `diskui.App` | No top-level menu; scan, inspect and remove actions | To implement; inspect menus and open a fixture directory |
-
-The shell's settings window and shell-owned transient surfaces are separate
-from appui apps: they do not currently register an independent GApplication
-menu. Their lifecycle and focus ownership differ from standalone app windows;
-the shell menu client itself and its global top-bar panel are not target
-applications. Shell settings are in scope as an inua built-in program surface
-and need a shell-owned local menu/action integration; transient prompts and
-panels remain shell controls rather than independent app windows.
-
-This inventory is updated as the menus are implemented and tested. Runtime
-results, screenshots and any environment exception are recorded with the
-change; an item is not marked passed until its accessibility tree, top-bar
-presentation and action effect are observed.
 
 ## Files, Terminal, Mail
 
@@ -232,7 +172,7 @@ images, PDFs and Markdown; plain text it opens when asked.
 
 | | |
 | --- | --- |
-| **Images** | Zoom and pan, rotate, animations, EXIF, copy, set as wallpaper. `libturbojpeg0` makes JPEG faster. |
+| **Images** | Zoom and pan, rotate, animations, EXIF, copy, set as wallpaper. `libturbojpeg0` makes JPEG faster. E edits: arrows, rectangles, a pen, a highlighter, text, numbered steps and pixelating, drawn over the image as it stands; Save (Ctrl+S) asks where each time, Copy (Ctrl+C) puts the edited image on the clipboard, Esc goes back (twice when not saved). |
 | **PDFs** | Pages one under another, fitting the width; Page Up/Down, Home/End, Ctrl+wheel or pinch to zoom, Ctrl+C copies the page's text. Needs `libpoppler-glib8t64`; locked PDFs are not opened. |
 | **Markdown** | Laid out to read, with GitHub's tables and task lists; links open, `#heading` links scroll; S shows the source. |
 | **Plain text** | Fixed-width; Ctrl+C copies the selection, or everything. |
@@ -422,7 +362,7 @@ files adds them (Music) or plays them (Video).
 
 ## Games
 
-Four games, each with its own launcher in the dock's Play
+Four games and the Game Lobby, each with its own launcher in the dock's Play
 section, run by `inua-games NAME`. Every window has its rules behind ⓘ,
 its keys along the bottom, and New game (N). Best scores are kept in
 `~/.local/share/inua/games.json`.
@@ -433,6 +373,7 @@ its keys along the bottom, and New game (N). Best scores are kept in
 | **Space Pinball** (`space-pinball`) | After the Windows table: missions and ranks, a hyperspace ramp, multiball, a skill shot, nudge and tilt. P pauses, M mutes (sound through `pw-cat`). |
 | **Small Fortune** (`small-fortune`) | A property game for two to four: people at the screen, people in a browser, and computer players. |
 | **Chinese Checkers** (`chinese-checkers`) | Stern-Halma for two, three, four or six, alone or in teams: people at the screen, people in a browser, the computer and the AI. |
+| **Game Lobby** (`game-lobby`) | A game lobby's tables, live: join or watch a game in the browser, or host one at a free table. See [game-lobby.md](game-lobby.md). |
 
 ### Small Fortune
 
@@ -476,6 +417,14 @@ password beyond the code, and nothing leaves the network; to play from
 elsewhere, use a network such as Tailscale. A firewall must let port 7341
 in.
 
+**At a lobby.** With **At a lobby** set and a lobby's address given,
+the game takes a table at an `inua-game-lobby` instead, or as well
+([game-lobby.md](game-lobby.md)). When no one plays at this screen, the
+first to join from a browser sets the game up there (the city, the
+rounds, the starting money, the dice, building the day you buy, the
+computer players), starts it, and when it is over may start it again;
+the same holds on the network.
+
 Games are kept in memory; the network is used only for a game opened to
 it, and when the AI plays.
 
@@ -507,3 +456,10 @@ game up (the seats, the teams, the rule), starts it, and in a game may
 start it again or go back to setting it up; if they leave, the next
 visitor does. Someone gone for 15 seconds has the computer play for them
 until they come back.
+
+**At a lobby.** With **At a lobby** set and a lobby's address given,
+the game takes a table at an `inua-game-lobby` on the internet
+([game-lobby.md](game-lobby.md)), and the link and QR code are the
+table's. The game stays on this computer; the lobby passes the browsers'
+traffic on, so nothing here needs to be reachable. Both may be on at
+once.

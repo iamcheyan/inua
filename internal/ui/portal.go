@@ -88,10 +88,11 @@ func (s *shellUI) syncPortalSettings() {
 		return
 	}
 	a := portal.Appearance{TextScale: float64(s.cfg.Style.TextScale) / 100}
-	if pal, err := wallgen.NewPalette(shellThemeColors(s, s.theme())); err == nil {
+	theme := s.cfg.Style.ForApps() // other apps go with inua's
+	if pal, err := wallgen.NewPalette(shellThemeColors(s, theme)); err == nil {
 		a.Dark, a.Accent = pal.Dark(), pal.Accent
 	} else {
-		log.Printf("portals: theme %s: %v", s.theme(), err)
+		log.Printf("portals: theme %s: %v", theme, err)
 	}
 	if icons := s.cfg.Style.AppIcons; icons != "system" {
 		a.IconTheme = icons

@@ -2,6 +2,7 @@ package gamesui
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"html"
 	goimage "image"
@@ -14,6 +15,7 @@ import (
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
+	"codeberg.org/puregotk/puregotk/v4/pango"
 	"github.com/makiuchi-d/gozxing"
 	"github.com/makiuchi-d/gozxing/qrcode"
 
@@ -57,25 +59,76 @@ func (p *fortune) hostLobby() {
 		AI:       p.netAI(),
 		Seed:     uint64(time.Now().UnixNano()),
 	})
-	p.lobbyNote.SetText("")
-	if err := p.net.Serve(fortunenet.DefaultAddr); err != nil {
-		p.lobbyNote.SetText(i18n.Tf("The game could not open to the network: %v", err))
-	}
-	urls := p.net.URLs()
-	p.lobbyURL.SetText(strings.Join(urls[:min(1, len(urls))], ""))
-	p.lobbyMore.SetText(strings.Join(urls[min(1, len(urls)):], "\n"))
-	p.lobbyMore.SetVisible(len(urls) > 1)
-	p.qr = nil
-	if len(urls) > 0 {
-		if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(urls[0], gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
-			p.qr = m
+	p.serveErr = ""
+	if p.hostOn {
+		if err := p.net.Serve(fortunenet.DefaultAddr); err != nil {
+			p.serveErr = i18n.Tf("The game could not open to the network: %v", err)
 		}
 	}
-	p.qrCanvas.redraw()
+	if p.lobbyOn {
+		pub, err := publish(p.lobbyAddr.GetText(), p.net.Handler(), p.showLinks)
+		if err != nil {
+			p.serveErr = err.Error()
+		} else {
+			p.pub = pub
+			pub.Set(p.net.Status())
+		}
+	}
+	p.qrFor = ""
+	p.showLinks()
 	p.pages.SetVisibleChildName("lobby")
 	p.lobbySeats()
 	p.lobbyStart.GrabFocus()
-	p.lobbyURL.SelectRegion(0, 0) // a selectable label shows all of itself selected at first
+	p.lobbyCode.SelectRegion(0, 0) // a selectable label shows all of itself selected at first
+	p.lobbyURL.SelectRegion(0, 0)
+}
+
+// links are where others join: the lobby's table, then this computer's
+// addresses on the network.
+func (p *fortune) links() (urls []string, note string) {
+	if p.pub != nil {
+		link, n := lobbyState(p.pub, p.net.Code)
+		if link != "" {
+			urls = append(urls, link)
+		}
+		note = n
+	}
+	if p.net.Port() != 0 {
+		urls = append(urls, p.net.URLs()...)
+	}
+	return urls, note
+}
+
+// showLinks shows the links in the lobby, the first as a QR code too.
+func (p *fortune) showLinks() {
+	if p.net == nil {
+		return
+	}
+	urls, note := p.links()
+	p.lobbyCode.SetText(p.net.Code)
+	if p.pub != nil && len(urls) > 0 && (p.net.Port() == 0 || len(urls) > len(p.net.URLs())) { // the lobby's link first
+		p.lobbySub.SetText(i18n.T("Scan the code, or open the link in a browser."))
+	} else {
+		p.lobbySub.SetText(i18n.T("Scan the code, or open the link in a browser on this network."))
+	}
+	p.lobbyURL.SetText(strings.Join(urls[:min(1, len(urls))], ""))
+	p.lobbyURL.SetVisible(len(urls) > 0)
+	p.lobbyCopy.SetVisible(len(urls) > 0)
+	p.lobbyMore.SetText(strings.Join(urls[min(1, len(urls)):], "\n"))
+	p.lobbyMore.SetVisible(len(urls) > 1)
+	p.lobbyNote.SetText(strings.TrimSpace(note + "\n" + p.serveErr))
+	p.lobbyNote.SetVisible(p.lobbyNote.GetText() != "")
+	if first := strings.Join(urls[:min(1, len(urls))], ""); first != p.qrFor {
+		p.qrFor, p.qr = first, nil
+		if first != "" {
+			if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(first, gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
+				p.qr = m
+			}
+		}
+		p.qrCanvas.redraw()
+	}
+	p.lobbyCode.SelectRegion(0, 0)
+	p.lobbyURL.SelectRegion(0, 0)
 }
 
 // hostName is the name the host plays under, for the visitors to see:
@@ -92,8 +145,13 @@ func hostName() string {
 
 // netChanged: the lobby or the game changed, a visitor came or went.
 func (p *fortune) netChanged() {
+	if p.net != nil && p.pub != nil {
+		p.pub.Set(p.net.Status())
+	}
 	switch {
 	case p.net == nil:
+	case p.net.Game != nil && p.g != p.net.Game:
+		p.showNetGame() // started here, from a browser, or again
 	case p.pages.GetVisibleChildName() == "lobby":
 		p.lobbySeats()
 	case p.g == p.net.Game:
@@ -138,6 +196,14 @@ func (p *fortune) lobbySeats() {
 		gtkx.Append(&p.lobbyList, &row.Widget)
 	}
 	waiting := i18n.T("Waiting for visitors: open the link on a phone or a computer on the same network.")
+	if !p.hostOn {
+		waiting = i18n.T("Waiting for visitors: open the link in a browser.")
+	}
+	if l := p.net.Lead(); l >= 0 {
+		s := p.net.Settings
+		waiting = i18n.Tf("%s sets up the game from a browser, and may start it.", p.net.Seats[l].Name) + " " +
+			i18n.Tf("%s · %d rounds · $%s each", i18n.T(games.FortuneCities[s.City].Name), cmp.Or(s.Rounds, games.DefaultFortune.Rounds), thousands(cmp.Or(s.Cash, games.DefaultFortune.Cash)))
+	}
 	if room := p.net.Room(); room > 0 {
 		waiting += " " + i18n.Tf("Room for %d more", room)
 	}
@@ -145,11 +211,16 @@ func (p *fortune) lobbySeats() {
 	p.lobbyStart.SetSensitive(p.net.CanStart())
 }
 
-// hostStart starts the hosted game with the lobby as it is.
+// hostStart starts the hosted game with the lobby as it is; netChanged
+// shows it.
 func (p *fortune) hostStart() {
-	if p.net == nil || !p.net.Start() {
-		return
+	if p.net != nil {
+		p.net.Start()
 	}
+}
+
+// showNetGame shows the hosted game, just started.
+func (p *fortune) showNetGame() {
 	var here uint8
 	for i, s := range p.net.Seats {
 		if s.Kind == fortunenet.Local {
@@ -163,6 +234,10 @@ func (p *fortune) hostStart() {
 
 // hostClose closes the hosted game, if any: every browser is sent away.
 func (p *fortune) hostClose() {
+	if p.pub != nil {
+		p.pub.Close()
+		p.pub = nil
+	}
 	if p.net != nil {
 		p.net.Close()
 		p.net = nil
@@ -182,36 +257,58 @@ func (p *fortune) setupLobby() *gtk.Box {
 	head.SetXalign(0)
 	gtkx.Append(page, &head.Widget)
 
+	// The QR code beside how to join (the code, the link), as Chinese
+	// Checkers' setup shows them; who has joined under them.
 	row := gtk.NewBox(gtk.OrientationHorizontalValue, 28)
 	p.qrCanvas = newCanvas(qrSide, qrSide, p.paintQR)
 	p.qrCanvas.area.SetSizeRequest(qrSide, qrSide)
 	p.qrCanvas.area.SetFocusable(false)
 	p.qrCanvas.area.SetValign(gtk.AlignStartValue)
+	p.qrCanvas.area.SetHexpand(false)
+	p.qrCanvas.area.AddCssClass("game-qr")
 	gtkx.Append(row, &p.qrCanvas.area.Widget)
-	side := gtk.NewBox(gtk.OrientationVerticalValue, 8)
+	side := gtk.NewBox(gtk.OrientationVerticalValue, 2)
 	side.SetSizeRequest(420, -1)
-	p.lobbyURL = gtk.NewLabel("")
-	p.lobbyURL.AddCssClass("fortune-card-title")
+	label := func(class string) *gtk.Label {
+		l := gtk.NewLabel("")
+		l.AddCssClass(class)
+		l.SetXalign(0)
+		l.SetWrap(true)
+		gtkx.Append(side, &l.Widget)
+		return l
+	}
+	k := label("kicker")
+	k.SetText(i18n.T("JOIN CODE"))
+	p.lobbyCode = label("checkers-code")
+	p.lobbyCode.SetSelectable(true)
+	p.lobbySub = label("fortune-city-sub")
+	p.lobbyURL = label("checkers-link")
 	p.lobbyURL.SetSelectable(true)
-	p.lobbyURL.SetXalign(0)
-	gtkx.Append(side, &p.lobbyURL.Widget)
-	p.lobbyMore = gtk.NewLabel("")
-	p.lobbyMore.AddCssClass("fortune-city-sub")
+	p.lobbyURL.SetWrapMode(pango.WrapCharValue) // a link has no spaces to break at
+	p.onLobbyCopy = func(gtk.Button) {
+		if urls, _ := p.links(); len(urls) > 0 {
+			clip := p.f.win.GetClipboard()
+			clip.SetText(urls[0])
+			clip.Unref()
+			p.lobbyCopy.SetLabel(i18n.T("Copied"))
+			time.AfterFunc(1500*time.Millisecond, func() { gtkx.Post(func() { p.lobbyCopy.SetLabel(i18n.T("Copy link")) }) })
+		}
+	}
+	p.lobbyCopy = button(i18n.T("Copy link"), &p.onLobbyCopy)
+	p.lobbyCopy.SetHalign(gtk.AlignStartValue)
+	p.lobbyCopy.AddCssClass("checkers-copy")
+	gtkx.Append(side, &p.lobbyCopy.Widget)
+	p.lobbyMore = label("checkers-link-more")
 	p.lobbyMore.SetSelectable(true)
-	p.lobbyMore.SetXalign(0)
-	gtkx.Append(side, &p.lobbyMore.Widget)
-	p.lobbyWait = gtk.NewLabel("")
-	p.lobbyWait.AddCssClass("fortune-city-sub")
-	p.lobbyWait.SetWrap(true)
-	p.lobbyWait.SetXalign(0)
-	gtkx.Append(side, &p.lobbyWait.Widget)
+	p.lobbyMore.SetWrapMode(pango.WrapCharValue)
+	p.lobbyNote = label("fortune-city-sub")
+	p.lobbyNote.AddCssClass("fortune-lobby-note")
+	k = label("kicker")
+	k.AddCssClass("fortune-lobby-kicker")
+	k.SetText(i18n.T("PLAYERS"))
+	p.lobbyWait = label("fortune-city-sub")
 	p.lobbyList = *gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	gtkx.Append(side, &p.lobbyList.Widget)
-	p.lobbyNote = gtk.NewLabel("")
-	p.lobbyNote.AddCssClass("fortune-city-sub")
-	p.lobbyNote.SetWrap(true)
-	p.lobbyNote.SetXalign(0)
-	gtkx.Append(side, &p.lobbyNote.Widget)
 	gtkx.Append(row, &side.Widget)
 	gtkx.Append(page, &row.Widget)
 
@@ -228,6 +325,7 @@ func (p *fortune) setupLobby() *gtk.Box {
 		p.reset()
 	}
 	acts := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
+	acts.AddCssClass("fortune-lobby-acts")
 	p.lobbyStart = button(i18n.T("Start the game"), &p.onLobbyStart)
 	p.lobbyStart.RemoveCssClass("outlined")
 	p.lobbyStart.AddCssClass("primary")

@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -73,16 +72,15 @@ type acct struct {
 
 // window is Mail's window.
 type window struct {
-	c    *appui.Ctx
-	h    *hub
-	win  *gtk.ApplicationWindow
-	menu *appui.MenuBar
+	c   *appui.Ctx
+	h   *hub
+	win *gtk.ApplicationWindow
 
 	top                                     gtk.Stack
 	side, filters, reader, welcomeBox       gtk.Box
-	readerBar, indexCol, assist             gtk.Box
+	readerBar, assist                       gtk.Box
 	listProgress, listLoading               gtk.Box
-	assistReveal                            gtk.Revealer
+	indexReveal, assistReveal               gtk.Revealer
 	assistClose                             gtk.Button
 	assistIcon                              gtk.Image
 	assistTitle                             gtk.Label
@@ -207,7 +205,7 @@ func openWindow(c *appui.Ctx) *window {
 		"side": &w.side, "filters": &w.filters, "reader": &w.reader,
 		"compose": &w.compose, "settings_button": &w.settingsButton, "older": &w.older,
 		"top": &w.top, "welcome": &w.welcomeBox, "status_mark": &w.statusMark,
-		"status_state": &w.statusState, "reader_bar": &w.readerBar, "list_progress": &w.listProgress, "list_loading": &w.listLoading, "index_col": &w.indexCol, "assist": &w.assist, "assist_reveal": &w.assistReveal, "assist_close": &w.assistClose, "assist_icon": &w.assistIcon, "assist_title": &w.assistTitle,
+		"status_state": &w.statusState, "reader_bar": &w.readerBar, "list_progress": &w.listProgress, "list_loading": &w.listLoading, "index_reveal": &w.indexReveal, "assist": &w.assist, "assist_reveal": &w.assistReveal, "assist_close": &w.assistClose, "assist_icon": &w.assistIcon, "assist_title": &w.assistTitle,
 		"sidebar_hide": &w.sidebarHide, "sidebar_show": &w.sidebarShow,
 		"undo_bar": &w.undoBar, "undo_text": &w.undoText, "undo": &w.undoBtn,
 		"search": &w.search, "search_note": &w.searchNote, "list_empty": &w.listEmpty, "list_error": &w.listError,
@@ -224,30 +222,10 @@ func openWindow(c *appui.Ctx) *window {
 	w.sel.SetCanUnselect(true)
 	w.sel.Ref()
 	w.h.selection(w.sel, w.selectionChanged)
-	w.menu = appui.NewMenuBar(c, []appui.MenuGroup{
-		{Title: "File", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
-			{Name: "mail-new-message", Label: "New message", Activate: func(gio.SimpleAction, uintptr) { w.newComposer(mail.Draft{}, nil) }},
-			{Name: "mail-settings", Label: "Settings", Activate: func(gio.SimpleAction, uintptr) { w.showSettings("") }},
-		}}}},
-		{Title: "Message", Sections: []appui.MenuSection{
-			{Actions: []appui.MenuAction{
-				{Name: "mail-reply", Label: "Reply", Activate: func(gio.SimpleAction, uintptr) { w.reply(false) }},
-				{Name: "mail-reply-all", Label: "Reply all", Activate: func(gio.SimpleAction, uintptr) { w.reply(true) }},
-				{Name: "mail-forward", Label: "Forward", Activate: func(gio.SimpleAction, uintptr) { w.forward() }},
-			}},
-			{Actions: []appui.MenuAction{
-				{Name: "mail-archive", Label: "Archive", Activate: func(gio.SimpleAction, uintptr) { w.archive() }},
-				{Name: "mail-trash", Label: "Move to Trash", Activate: func(gio.SimpleAction, uintptr) { w.trash() }},
-				{Name: "mail-mark-unread", Label: "Mark as unread", Activate: func(gio.SimpleAction, uintptr) { w.markUnread() }},
-			}},
-		}},
-		{Title: "View", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
-			{Name: "mail-search", Label: "Search", Activate: func(gio.SimpleAction, uintptr) { w.search.GrabFocus() }},
-			{Name: "mail-toggle-sidebar", Label: "Toggle Sidebar", Activate: func(gio.SimpleAction, uintptr) { w.toggleSidebar() }},
-		}}}},
-	})
-	w.menu.AppendLocal(&w.indexCol)
-	w.model = gtk.NewStringList(nil)
+	f := w.h.factory(w.setupRow, w.bindRow, w.teardownRow)
+	w.list = gtk.NewListView(w.sel, &f.ListItemFactory)
+	w.list.AddCssClass("mail-conversations")
+	w.listScroll.SetChild(&w.list.Widget)
 	w.setupPeople()
 
 	w.h.click(&w.compose, func() { w.newComposer(mail.Draft{}, nil) })
@@ -1748,21 +1726,21 @@ func (w *window) drawStatus() {
 // the list's head while it is hidden.
 func (w *window) toggleSidebar() {
 	w.sidebarForPanel = false // the user's choice from now on
-	w.setSidebar(!w.indexCol.GetVisible())
+	w.setSidebar(!w.indexReveal.GetRevealChild())
 	w.keepLayout()
 }
 
 // setSidebar shows or hides the index; its toggle moves to the list's
 // head while it is hidden.
 func (w *window) setSidebar(shown bool) {
-	w.indexCol.SetVisible(shown)
+	w.indexReveal.SetRevealChild(shown)
 	w.sidebarShow.SetVisible(!shown)
 }
 
 // keepLayout keeps in mail.toml whether the sidebar is hidden (and
 // whether the right panel hid it) and the panel open, when that changed.
 func (w *window) keepLayout() {
-	hide := !w.indexCol.GetVisible()
+	hide := !w.indexReveal.GetRevealChild()
 	l := &w.settings.Window
 	if l.HideSidebar == hide && l.Assistant == w.assistOpen && l.PanelHid == w.sidebarForPanel {
 		return

@@ -79,6 +79,21 @@ ApplicationWindow screenshot {
       }
     }
 
+    // Window and Screen: every window on every workspace, or every
+    // screen, as a grid of pictures to click (shotpick.go fills it).
+    [overlay]
+    ScrolledWindow picker {
+      styles ["shot-picker"]
+      hscrollbar-policy: never;
+      visible: false;
+
+      Box picker_body {
+        styles ["shot-picker-body"]
+        orientation: vertical;
+        halign: center;
+      }
+    }
+
     [overlay]
     Box toolbar {
       styles ["shot-bar"]

@@ -84,6 +84,13 @@ ApplicationWindow viewer {
         tooltip-text:  _("Rotate (R, Shift+R the other way)");
       }
 
+      // Annotating the image: arrows, boxes, text… (edit.go).
+      Button edit {
+        styles ["plain"]
+        icon-name: "annot-pen-symbolic";
+        tooltip-text:  _("Edit: draw on the image (E)");
+      }
+
       Button copy {
         styles ["plain"]
         icon-name: "edit-copy-symbolic";
@@ -164,6 +171,22 @@ ApplicationWindow viewer {
                   content-fit: fill;
                 }
               }
+            };
+          }
+
+          // Annotating the image, fitted to the window: the picture, the
+          // annotations' layer over it and their toolbar at the foot, the
+          // last two made in Go (edit.go).
+          StackPage {
+            name: "edit";
+
+            child: Overlay edit_stage {
+              styles ["viewer-stage"]
+
+              child: Picture edit_picture {
+                content-fit: contain;
+                can-shrink: true;
+              };
             };
           }
 

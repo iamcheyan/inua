@@ -6,7 +6,6 @@ import (
 
 	"codeberg.org/puregotk/puregotk/v4/cairo"
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -37,11 +36,9 @@ type frame struct {
 	c                            *appui.Ctx
 	win                          *gtk.ApplicationWindow
 	heading, status, rules, hint gtk.Label
-	stats, body, root            gtk.Box
+	stats, body                  gtk.Box
 	restart                      gtk.Button
-	help                         gtk.MenuButton
 	col                          palette
-	menu                         *appui.MenuBar
 
 	// keyDown and keyUp get the game's keys, letters in lower case.
 	keyDown func(key uint32) bool
@@ -70,56 +67,6 @@ func lower(k uint32) uint32 {
 	}
 	return k
 }
-func (v *view) menuGroups(f *frame) []appui.MenuGroup {
-	help := appui.MenuGroup{Title: "Help", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{
-		Name: "how-to-play", Label: "How to play", Activate: func(gio.SimpleAction, uintptr) { f.help.SetActive(true) },
-	}}}}}
-	switch game := v.g.(type) {
-	case *mines:
-		return []appui.MenuGroup{
-			{Title: "Game", Sections: []appui.MenuSection{
-				{Actions: []appui.MenuAction{{Name: "new-game", Label: "New game", Activate: func(gio.SimpleAction, uintptr) { game.reset() }}}},
-				{Actions: []appui.MenuAction{
-					{Name: "small-board", Label: "Small · 9 × 9", Activate: func(gio.SimpleAction, uintptr) { game.size = 0; game.reset() }},
-					{Name: "medium-board", Label: "Medium · 16 × 16", Activate: func(gio.SimpleAction, uintptr) { game.size = 1; game.reset() }},
-					{Name: "large-board", Label: "Large · 30 × 16", Activate: func(gio.SimpleAction, uintptr) { game.size = 2; game.reset() }},
-				}},
-			}}, help,
-		}
-	case *pinball:
-		return []appui.MenuGroup{
-			{Title: "Game", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
-				{Name: "new-game", Label: "New game", Activate: func(gio.SimpleAction, uintptr) { game.reset() }},
-				{Name: "pause-game", Label: "Pause", Activate: func(gio.SimpleAction, uintptr) {
-					if game.g != nil && game.g.Result == games.Playing {
-						game.paused = !game.paused
-						game.update()
-						game.run()
-					}
-				}},
-				{Name: "toggle-sound", Label: "Toggle sound", Activate: func(gio.SimpleAction, uintptr) { game.key('m', true) }},
-			}}}}, help,
-		}
-	case *fortune:
-		return []appui.MenuGroup{
-			{Title: "Game", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
-				{Name: "restart-game", Label: "Restart game", Activate: func(gio.SimpleAction, uintptr) { game.restart() }},
-				{Name: "fortune-compendium", Label: "Compendium", Activate: func(gio.SimpleAction, uintptr) { game.showCompendium() }},
-				{Name: "quit-to-menu", Label: "Quit to menu", Activate: func(gio.SimpleAction, uintptr) { game.reset() }},
-				{Name: "toggle-sound", Label: "Toggle sound", Activate: func(gio.SimpleAction, uintptr) { game.key('m') }},
-			}}}}, help,
-		}
-	case *checkers:
-		return []appui.MenuGroup{
-			{Title: "Game", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{
-				{Name: "new-game", Label: "New game", Activate: func(gio.SimpleAction, uintptr) { game.onAgain(*game.again) }},
-				{Name: "checkers-setup", Label: "Set up again", Activate: func(gio.SimpleAction, uintptr) { game.reset() }},
-			}}}}, help,
-		}
-	default:
-		return []appui.MenuGroup{{Title: "Game", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "new-game", Label: "New game", Activate: func(gio.SimpleAction, uintptr) { v.g.reset() }}}}}}, help}
-	}
-}
 
 // view is a game as an appui light app.
 type view struct {
@@ -141,16 +88,11 @@ func (v *view) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	u.Get("stats", &f.stats)
 	u.Get("body", &f.body)
 	u.Get("restart", &f.restart)
-	u.Get("root", &f.root)
-	u.Get("help", &f.help)
-	u.Close() // last: the builder is dropped here, nothing may be taken after it
+	u.Close()
 	f.heading.SetText(i18n.T(v.info.Title))
 	f.rules.SetText(i18n.T(v.info.Rules))
-	f.loadColors()
 	f.hint.SetText(i18n.T(v.info.Keys))
-	f.menu = appui.NewMenuBar(c, v.menuGroups(f))
-	f.menu.Widget.SetVisible(false)
-	f.menu.AppendLocal(&f.root)
+	f.loadColors()
 	f.onRestart = func(gtk.Button) { v.g.reset() }
 	f.restart.ConnectClicked(&f.onRestart)
 	f.onKey = func(_ gtk.EventControllerKey, key, _ uint32, mod gdk.ModifierType) bool {

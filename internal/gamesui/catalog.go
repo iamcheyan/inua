@@ -31,6 +31,10 @@ var catalog = []entry{
 		i18n.M("Race your ten marbles from your point of the star to the point across. In your turn move one marble: a step into a neighbouring hole, or hops over a neighbouring marble (anyone's) into the empty hole beyond, as many in a row as you can. Marbles hopped over stay where they are. You are home when every hole of your goal is filled, some with your marbles. Two, three, four or six play: people at this screen, the computer at three levels, the AI, and people in a browser on the same network (set On the network: the setup shows the link and its QR code). Partners in a team win together when all of them are home, and a player home moves a partner's marbles. With Stay out of other points, a marble may cross another player's point but not stop in it. When no one plays at this screen, the first to join from a browser sets the game up and starts it."),
 		i18n.M("click one of your marbles, then where it goes  ·  Escape puts it back  ·  N new game"),
 		func() play { return &checkers{} }},
+	{"game-lobby", "GameLobby", i18n.M("Game Lobby"),
+		i18n.M("The tables of a game lobby (inua-game-lobby) on the internet, as they change: the game at each, who plays, and the seats open. Join or Watch opens the table's game in the browser. A free table's buttons start Small Fortune or Chinese Checkers here, set to host at that table: set it up and start it, and others join it from the lobby. Give the lobby's address as its host gave it, with ?key=… when the lobby asks for a key to host."),
+		i18n.M("Enter connects  ·  N connects again"),
+		func() play { return &lobbyRoom{} }},
 }
 
 // Names are the games' command names, in the catalog's order.

@@ -31,11 +31,15 @@ type appMenuState struct {
 	client     *appmenu.Client
 	targets    map[string]appMenuTarget
 	nextTarget uint64
+	cancel     context.CancelFunc // stops the registrar when the bar's menus are turned off
 }
 
+// startAppMenu reads the focused application's menu for the bar, when the
+// bar's global menu is on (Settings, Bar & Dock) and it is not already.
 func (s *shellUI) startAppMenu() {
-	// Keep global menus disabled until their desktop interactions are reliable.
-	return
+	if !s.cfg.Bar.Menu || s.appmenu.client != nil {
+		return
+	}
 	conn, err := system.SessionBus()
 	if err != nil {
 		log.Printf("appmenu: %v", err)
@@ -45,11 +49,42 @@ func (s *shellUI) startAppMenu() {
 	s.appmenu.client = appmenu.NewClient(s.appmenu.registrar, appmenu.NewA11y())
 	s.appmenu.targets = make(map[string]appMenuTarget)
 	s.appmenu.registrar.SetOnChange(func() { gtkx.Post(s.syncAppMenu) })
+	ctx, cancel := context.WithCancel(context.Background())
+	s.appmenu.cancel = cancel
 	go func() {
-		if err := s.appmenu.registrar.Run(context.Background()); err != nil {
+		if err := s.appmenu.registrar.Run(ctx); err != nil {
 			log.Printf("appmenu registrar: %v", err)
 		}
 	}()
+}
+
+// stopAppMenu takes the bar's menus away and stops the registrar, leaving
+// the applications' own menus to themselves.
+func (s *shellUI) stopAppMenu() {
+	s.closeMenu()
+	m := &s.appmenu
+	if m.cancel != nil {
+		m.cancel()
+		m.cancel = nil
+	}
+	for _, b := range s.bars {
+		b.appMenuGen++
+		b.appMenuPID = 0
+		gtkx.Clear(&b.appMenu)
+		b.appMenu.SetVisible(false)
+	}
+	m.registrar, m.client, m.targets = nil, nil, nil
+}
+
+// setAppMenuOn starts or stops the bar's application menus, as the settings
+// switch asks.
+func (s *shellUI) setAppMenuOn(on bool) {
+	if !on {
+		s.stopAppMenu()
+		return
+	}
+	s.startAppMenu()
+	s.syncAppMenu()
 }
 
 func focusedPID(snap hypr.Snapshot) int {

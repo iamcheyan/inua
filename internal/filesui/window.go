@@ -11,7 +11,6 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/apps/files"
-	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/i18n"
@@ -24,7 +23,6 @@ type window struct {
 
 	sidebarReveal, detailsReveal, jobsReveal gtk.Revealer
 	sidebar, sidebarCol, details             gtk.Box
-	menu                                     *appui.MenuBar
 	hiddenToggle, dualToggle, detailsToggle  gtk.ToggleButton
 	paned                                    gtk.Paned
 	jobLabel, jobRate                        gtk.Label
@@ -51,6 +49,8 @@ type window struct {
 	detGen   uint64
 	flashes  uint64
 	closing  bool // asked to close while operations ran
+
+	onRealize func(gtk.Widget)
 
 	foot footer  // the picker's footer, hidden in Files' windows
 	pick *picker // the request, when the window picks for an app
@@ -86,8 +86,9 @@ func (a *App) newWindow() *window {
 	ui.Get("card_secret", &w.cardSecret)
 	ui.Get("card_scroll", &w.cardScroll)
 	ui.Get("card_check", &w.cardCheck)
-	var keysButton, jobCancel gtk.Button
+	var keysButton, jobCancel, sidebarHide gtk.Button
 	ui.Get("keys_button", &keysButton)
+	ui.Get("sidebar_hide", &sidebarHide)
 	ui.Get("job_cancel", &jobCancel)
 	f := &w.foot
 	ui.Get("picker_foot", &f.foot)
@@ -116,6 +117,7 @@ func (a *App) newWindow() *window {
 	}
 
 	w.click(&keysButton, func() { w.showKeys() })
+	w.click(&sidebarHide, func() { w.setSidebar(false) })
 	w.click(&jobCancel, func() { w.cancelJob() })
 	w.toggle(&w.hiddenToggle, func(on bool) {
 		if p := w.cur(); p.fv.Order.ShowsHidden != on {
@@ -142,14 +144,23 @@ func (a *App) newWindow() *window {
 	w.own(w.win.GoPointer())
 	w.win.ConnectCloseRequest(&w.app.h.onClose)
 
+	// The details follow the window's width (fitDetails).
+	w.onRealize = func(gtk.Widget) {
+		if sf := w.win.GetSurface(); sf != nil {
+			w.notify(sf, "width", func() { w.fitDetails() })
+			sf.Unref() // GetSurface takes a reference
+		}
+		w.fitDetails()
+	}
+	w.win.ConnectRealize(&w.onRealize)
+
 	s := a.settings
 	w.sidebarReveal.SetRevealChild(s.Sidebar)
+	w.p[0].sidebarShow.SetVisible(!s.Sidebar)
 	w.setDetails(s.Details)
 	w.dualToggle.SetActive(s.Dual)
 	w.sideMenu = newPopMenu(a.h, &w.sidebarCol.Widget)
 	w.buildSidebar()
-	w.menu = w.menuBar()
-	w.menu.AppendLocal(&w.sidebarCol)
 	return w
 }
 
@@ -360,27 +371,71 @@ func (w *window) setDual(on bool) {
 	}
 	w.app.settings.Dual = on
 	w.app.settings.Touch()
+	w.fitDetails()
 	w.cur().focus()
 }
 
 func (w *window) setDetails(on bool) {
 	w.detailsToggle.SetActive(on)
-	w.detailsReveal.SetRevealChild(on)
 	if w.pick != nil { // the picker's own
 		go w.app.pickMem.SetDetails(on)
 	} else if w.app.settings.Details != on {
 		w.app.settings.Details = on
 		w.app.settings.Touch()
 	}
-	if on {
+	if !w.fitDetails() && w.detailsReveal.GetRevealChild() {
 		w.showDetails()
 	}
 }
 
+// The widths fitDetails weighs: the sidebar's and the details' (files.blp),
+// and the least each pane keeps beside the details.
+const (
+	sidebarWidth = 216
+	detailsWidth = 300
+	paneRoom     = 440
+)
+
+// fitDetails shows the details when they are on and the window has room
+// for them beside the panes; a narrower window leaves them hidden, the
+// toggle still on, until it widens again. It says whether they came or
+// went.
+func (w *window) fitDetails() bool {
+	on := w.detailsToggle.GetActive()
+	// The surface's width: the window's own is allocated only after.
+	var width int32
+	if sf := w.win.GetSurface(); sf != nil {
+		width = sf.GetWidth()
+		sf.Unref()
+	}
+	if on && width > 0 {
+		need := detailsWidth + paneRoom
+		if w.dual {
+			need += paneRoom
+		}
+		if w.sidebarReveal.GetRevealChild() {
+			need += sidebarWidth
+		}
+		on = int(width) >= need
+	}
+	if on == w.detailsReveal.GetRevealChild() {
+		return false
+	}
+	w.detailsReveal.SetRevealChild(on)
+	if on {
+		w.showDetails()
+	}
+	return true
+}
+
+// setSidebar shows or hides the sidebar; its toggle moves to the left
+// pane's head while it is hidden.
 func (w *window) setSidebar(on bool) {
 	w.sidebarReveal.SetRevealChild(on)
+	w.p[0].sidebarShow.SetVisible(!on)
 	w.app.settings.Sidebar = on
 	w.app.settings.Touch()
+	w.fitDetails()
 }
 
 // selectionChanged follows a pane's selection: the status line, and the
@@ -525,7 +580,7 @@ func (w *window) key(keyval uint32, state gdk.ModifierType) bool {
 		case 'r':
 			w.do("reload")
 		case 'i':
-			w.setDetails(!w.detailsReveal.GetRevealChild())
+			w.setDetails(!w.detailsToggle.GetActive())
 		case 't':
 			p.newTab(p.locationKey(), true)
 		case 'w':
@@ -645,7 +700,7 @@ func (w *window) key(keyval uint32, state gdk.ModifierType) bool {
 		if p.filter != "" {
 			p.setFilter(p.filter + " ")
 		} else {
-			w.setDetails(!w.detailsReveal.GetRevealChild())
+			w.setDetails(!w.detailsToggle.GetActive())
 		}
 	default:
 		r := rune(gdk.KeyvalToUnicode(keyval))

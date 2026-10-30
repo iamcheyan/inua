@@ -35,14 +35,14 @@ import (
 // card shows in that window instead.
 type drop struct {
 	win      *gtk.Window
-	keys     *gtk.EventController    // the panel's, on the window it shows in
-	layer    layershell.Layer        // the bar's while it hangs from it
-	keyboard layershell.KeyboardMode // keyboard mode while held
+	keys     *gtk.EventController // the panel's, on the window it shows in
+	layer    layershell.Layer     // the bar's while it hangs from it
 	canvas   *gtk.Widget
 	backdrop *gtk.Box
 	card     *gtk.Widget
 	host     *bar
-	bar      *gtk.Widget // the window of the bar it hangs from
+	bar      *gtk.Widget             // the window of the bar it hangs from
+	keyboard layershell.KeyboardMode // the bar's keyboard mode while it hangs
 
 	// Where it hangs, in the window's coordinates: the bar's island ends
 	// at left and right and its lower edge is at y, with corners of
@@ -54,7 +54,6 @@ type drop struct {
 	under          float64 // the middle of the button it hangs under
 	x, w, h        float64 // the card's box, at rest
 	glass, line    gdk.RGBA
-	onRegion       glib.SourceFunc
 
 	hanging bool
 	moving  bool
@@ -68,6 +67,16 @@ type drop struct {
 
 	onTick     gtk.TickCallback
 	onTickDone glib.DestroyNotify
+
+	// A card whose width eases to a new one (resizes) rather than jumping:
+	// the width drawn, and from and to which it goes, wu of the way.
+	resizes        bool
+	shownW         float64
+	fromW, toW, wu float64
+	wlast          time.Time
+	wtick          uint32
+	onWTick        gtk.TickCallback
+	onWTickDone    glib.DestroyNotify
 }
 
 // attach takes a newly built window, its keys' controller, its backdrop
@@ -79,9 +88,12 @@ func (d *drop) attach(win *gtk.Window, keys *gtk.EventController, backdrop *gtk.
 	d.end = flush
 	d.keyboard = layershell.KeyboardExclusive
 	d.hanging, d.moving, d.back, d.gone = false, false, false, nil
+	d.shownW = 0
 	if d.onTick == nil {
 		d.onTick = func(uintptr, uintptr, uintptr) bool { return d.step() }
 		d.onTickDone = func(uintptr) { d.tick = 0 }
+		d.onWTick = func(uintptr, uintptr, uintptr) bool { return d.stepWidth() }
+		d.onWTickDone = func(uintptr) { d.wtick = 0 }
 	}
 }
 
@@ -91,9 +103,6 @@ func (d *drop) detach() {
 	if d.bar != nil {
 		d.bar.RemoveCssClass("joined")
 		d.bar.RemoveCssClass("joined-end")
-	}
-	if d.host != nil {
-		gtkx.PassInput(&d.host.win.Window)
 	}
 	if d.canvas != nil {
 		d.card.Unparent()
@@ -150,8 +159,6 @@ func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under float64) bool {
 	d.backdrop.Append(d.canvas)
 	d.card.SetMarginTop(0)
 	d.card.SetMarginEnd(0)
-	d.card.SetCanTarget(false)
-	d.canvas.SetCanTarget(false)
 	d.card.AddCssClass("hanging")
 	d.backdrop.AddCssClass("hanging")
 
@@ -170,37 +177,11 @@ func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under float64) bool {
 		d.bar.AddCssClass("joined-end")
 	}
 	d.hanging = true
-	d.onRegion = func(uintptr) bool { return d.updateInputRegion(0) }
-	glib.TimeoutAdd(0, &d.onRegion, 0)
 	return true
 }
 
 // colors reads the bar's glass (empty, an empty workspace's) and border
 // from the theme.
-func (d *drop) updateInputRegion(uintptr) bool {
-	if d.host == nil || d.host.win.GetSurface() == nil {
-		return false
-	}
-	x, y, w, h := 0, 0, int(d.host.win.GetWidth()), int(d.host.win.GetHeight())
-	if d.opening {
-		dy := int(d.y - d.h*(1-d.u))
-		x, y, w, h = int(d.x)-8, dy-8, int(d.w)+16, int(d.h)+16
-		if x < 0 {
-			w += x
-			x = 0
-		}
-		if y < 0 {
-			h += y
-			y = 0
-		}
-	} else if d.u >= 1 && !d.back {
-		// Closing: leave the bar island interactive; let clicks elsewhere through.
-		x, y, w, h = 0, 0, int(d.host.win.GetWidth()), int(d.y)
-	}
-	gtkx.PassInputBut(&d.host.win.Window, x, y, w, h)
-	return false
-}
-
 func (d *drop) colors(empty bool) bool {
 	sc := d.backdrop.GetStyleContext()
 	glass := "glass"
@@ -287,16 +268,46 @@ func (d *drop) step() bool {
 	switch {
 	case d.opening && d.u >= 1:
 		d.u, d.moving = 1, false
-		glib.TimeoutAdd(0, &d.onRegion, 0)
 		return false
 	case !d.opening && d.moving && (d.back && d.u <= 0 || !d.back && d.u >= 1):
 		d.u, d.moving = 0, false // drawn out of sight first, then gone
-		glib.TimeoutAdd(0, &d.onRegion, 0)
 	case !d.opening && !d.moving:
 		if gone := d.gone; gone != nil {
 			d.gone = nil
 			gone()
 		}
+		return false
+	}
+	return true
+}
+
+// width is the width to allocate the card at: its natural width, or,
+// for a card that resizes, the width on its way to it, never under the
+// least it takes.
+func (d *drop) width(least, natural int32) int32 {
+	to := float64(natural)
+	switch {
+	case !d.resizes || d.shownW == 0 || d.moving || !gtk.SettingsGetDefault().GetPropertyGtkEnableAnimations():
+		d.shownW, d.toW = to, to // at once: the first time, or while it drops
+	case to != d.toW:
+		d.fromW, d.toW, d.wu = d.shownW, to, 0
+		d.wlast = time.Now()
+		if d.wtick == 0 {
+			d.wtick = d.canvas.AddTickCallback(&d.onWTick, 0, &d.onWTickDone)
+		}
+	}
+	return max(least, int32(math.Round(d.shownW)))
+}
+
+// stepWidth moves the width on a frame.
+func (d *drop) stepWidth() bool {
+	now := time.Now()
+	d.wu += min(float64(now.Sub(d.wlast).Milliseconds()), 34) / shell.DropResizeMS
+	d.wlast = now
+	d.shownW = shell.DropWidth(d.fromW, d.toW, d.wu)
+	d.canvas.QueueAllocate()
+	if d.wu >= 1 {
+		d.shownW = d.toW
 		return false
 	}
 	return true
@@ -318,8 +329,9 @@ func (d *drop) now() shell.Drop {
 // in the bar as it has not yet come out, and stretched about where it
 // meets the bar.
 func (d *drop) allocate(_ *gtk.Widget, _, _ int) {
-	var w, h int32
-	d.card.Measure(gtk.OrientationHorizontalValue, -1, nil, &w, nil, nil)
+	var least, w, h int32
+	d.card.Measure(gtk.OrientationHorizontalValue, -1, &least, &w, nil, nil)
+	w = d.width(least, w)
 	d.card.Measure(gtk.OrientationVerticalValue, w, nil, &h, nil, nil)
 	d.w, d.h = float64(w), float64(h)
 	if d.end {

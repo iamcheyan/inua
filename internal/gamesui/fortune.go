@@ -18,6 +18,7 @@ import (
 	"github.com/lyricat/inua/internal/games"
 	"github.com/lyricat/inua/internal/games/fortuneai"
 	"github.com/lyricat/inua/internal/games/fortunenet"
+	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 )
@@ -39,14 +40,24 @@ type fortune struct {
 	// and buttons; the code in the header while the game is on.
 	hostOn                              bool
 	net                                 *fortunenet.Host
+	lobbyOn                             bool                   // at a lobby (lobby.go)
+	lobbyAddr                           *gtk.Entry             // the lobby's address
+	pub                                 *gamerelay.Publication // the game at the lobby
+	serveErr                            string                 // why it is not on the network or at the lobby
+	qrFor                               string                 // the link the QR code is of
 	lobbyURL, lobbyMore                 *gtk.Label
+	lobbyCode, lobbySub                 *gtk.Label
+	lobbyCopy                           *gtk.Button
+	onLobbyCopy                         func(gtk.Button)
 	lobbyWait, lobbyNote, code          *gtk.Label
 	lobbyList                           gtk.Box
 	lobbyStart                          *gtk.Button
 	qrCanvas                            *canvas
 	qr                                  *gozxing.BitMatrix
 	onKick, onLobbyStart, onLobbyCancel func(gtk.Button)
-	onHostRule                          func(gtk.Switch, bool) bool
+	onHostRule, onLobbyRule             func(gtk.Switch, bool) bool
+	onAddr                              func(gtk.Entry)
+	onAddrChanged                       func(uintptr, uintptr)
 
 	// The people who play at this screen, a bit a player (games.Seat), and
 	// the one of them the board is shown for: whose turn it is, or was last
@@ -466,6 +477,28 @@ func (p *fortune) setupPage() *gtk.Box {
 		return false
 	}
 	players(i18n.T("On the network"), toggle(p.hostOn, &p.onHostRule))
+	p.onLobbyRule = func(_ gtk.Switch, on bool) bool {
+		p.lobbyOn = on
+		p.lobbyAddr.SetVisible(on)
+		if on && strings.TrimSpace(p.lobbyAddr.GetText()) == "" {
+			p.lobbyAddr.GrabFocus()
+		}
+		p.fitSeats()
+		return false
+	}
+	p.onAddr = func(gtk.Entry) {
+		if p.start.GetSensitive() {
+			p.begin()
+		}
+	}
+	p.onAddrChanged = func(uintptr, uintptr) { p.fitSeats() }
+	p.lobbyAddr = lobbyEntry(&p.onAddr)
+	p.lobbyOn = p.lobbyOn || lobbyFirst() // started from the Game Lobby window to host at its table
+	p.lobbyAddr.SetVisible(p.lobbyOn)
+	p.lobbyAddr.AddCssClass("fortune-lobby-addr")
+	gtkx.ConnectChanged(p.lobbyAddr, &p.onAddrChanged)
+	players(i18n.T("At a lobby"), toggle(p.lobbyOn, &p.onLobbyRule))
+	gtkx.Append(left, &p.lobbyAddr.Widget)
 	gtkx.Append(cols, &left.Widget)
 
 	// The map: the city chosen, large, with its buildings; the four; the
@@ -626,7 +659,7 @@ func (p *fortune) fitSeats() {
 	p.settings.AIs, p.aiProfiles = p.aiPlayers()
 	aiReady := true
 	open := 0
-	if p.hostOn {
+	if p.hosting() {
 		open = p.open
 	}
 	hot, visitor, ai, cpu := 0, 0, 0, 0
@@ -642,7 +675,7 @@ func (p *fortune) fitSeats() {
 			switch {
 			case p.people > 1:
 				name = i18n.Tf("Player %d", hot)
-			case p.hostOn:
+			case p.hosting():
 				name = hostName()
 			default:
 				name = i18n.T("You")
@@ -652,7 +685,7 @@ func (p *fortune) fitSeats() {
 			visitor++
 			name = i18n.T("Open seat")
 			sub = i18n.T("empty: no one plays here")
-			if p.hostOn {
+			if p.hosting() {
 				sub = i18n.T("for a visitor in a browser")
 			}
 		case seatAI:
@@ -672,24 +705,24 @@ func (p *fortune) fitSeats() {
 		p.seatSubs[i].SetText(sub)
 		p.seatRows[i].SetTooltipText(about)
 		markup := html.EscapeString(name)
-		if c != seatOpen || p.hostOn {
+		if c != seatOpen || p.hosting() {
 			col := p.playerColor(min(player, 3))
 			markup = fmt.Sprintf(`<span foreground="#%02x%02x%02x">●</span>  %s`, col.R, col.G, col.B, markup)
 		} else {
 			markup = "<span alpha=\"1\">●</span>  " + markup // no one sits there
 		}
 		p.seatNames[i].SetMarkup(markup)
-		if c == seatOpen && !p.hostOn {
+		if c == seatOpen && !p.hosting() {
 			p.seatRows[i].AddCssClass("open")
 		} else {
 			p.seatRows[i].RemoveCssClass("open")
 		}
 	}
 	can := p.people >= 1 && p.people+ais+len(rivals) >= 2
-	if p.hostOn {
+	if p.hosting() {
 		can = p.people+open >= 1 && p.people+ais+len(rivals)+open >= 2
 	}
-	can = can && aiReady
+	can = can && aiReady && (!p.lobbyOn || strings.TrimSpace(p.lobbyAddr.GetText()) != "")
 	p.start.SetSensitive(can)
 	p.start.SetLabel(p.startLabel())
 }
@@ -716,10 +749,17 @@ func (p *fortune) paintPreview(pn pen) {
 	pn.Blit(p.preview, 1/scale, false)
 }
 
+// hosting reports whether the game opens to others first: on the network,
+// at a lobby, or both.
+func (p *fortune) hosting() bool { return p.hostOn || p.lobbyOn }
+
 // startLabel is what Start says: where the game is, or that it opens to
-// the network first.
+// the network or the lobby first.
 func (p *fortune) startLabel() string {
-	if p.hostOn {
+	if p.lobbyOn {
+		return i18n.T("Open the game at the lobby")
+	}
+	if p.hosting() {
 		return i18n.T("Open the game to the network")
 	}
 	return i18n.Tf("Start in %s", i18n.T(games.FortuneCities[p.settings.City].Name))
@@ -745,7 +785,7 @@ func (p *fortune) reset() {
 
 // begin starts a game as set up, or on the network its lobby.
 func (p *fortune) begin() {
-	if p.hostOn {
+	if p.hosting() {
 		p.hostLobby()
 		return
 	}

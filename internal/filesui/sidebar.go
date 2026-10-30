@@ -28,15 +28,6 @@ func (w *window) buildSidebar() {
 	w.side = w.side[:0]
 	gtkx.Clear(&w.sidebar)
 
-	name := i18n.T("Files")
-	if w.pick != nil && w.pick.app != "" {
-		name = w.pick.app // who will get the file
-	}
-	title := gtk.NewLabel(name)
-	title.AddCssClass("index-title")
-	title.SetXalign(0)
-	gtkx.Append(&w.sidebar, &title.Widget)
-
 	w.sideHead(i18n.T("PLACES"))
 	for _, pl := range files.Places() {
 		path := pl.Path

@@ -67,7 +67,7 @@ func (a *App) buildQuick(c *appui.Ctx) *gtk.ApplicationWindow {
 		}
 		return false
 	}
-	a.menuBar()
+	a.win.ConnectCloseRequest(&q.onClose)
 	p.widget.GrabFocus()
 	go a.startQuick()
 	return a.win

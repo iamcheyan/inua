@@ -29,6 +29,9 @@ func (s *shellUI) customButton(name string) bool {
 			return true
 		}
 		if s.trash(c.ThemePath(c.Style.Theme)) {
+			if c.Style.AppTheme == c.Style.Theme {
+				c.Style.AppTheme = ""
+			}
 			c.Style.Theme = config.Default().Style.Theme
 			s.changeSettings(c)
 		}

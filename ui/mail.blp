@@ -24,67 +24,74 @@ ApplicationWindow mail {
 
       child: Box {
         // ── the index ──────────────────────────────────────────────────
-        Box index_col {
-          styles ["index", "mail-index"]
-          orientation: vertical;
-          width-request: 236;
-          hexpand: false;
+        // Sliding away to the left when hidden (F9).
+        Revealer index_reveal {
+          transition-type: slide_right;
+          transition-duration: 200;
+          reveal-child: true;
 
-          // Hiding the index, as Apple Mail does.
-          Box {
-            styles ["mail-index-head"]
+          child: Box {
+            styles ["index", "mail-index"]
+            orientation: vertical;
+            width-request: 236;
+            hexpand: false;
 
-            Button sidebar_hide {
-              styles ["mail-tool"]
-              icon-name: "sidebar-show-symbolic";
-              tooltip-text: _("Hide the sidebar (F9)");
-            }
-          }
+            // Hiding the index, as Apple Mail does.
+            Box {
+              styles ["mail-index-head"]
 
-          ScrolledWindow {
-            hscrollbar-policy: never;
-            propagate-natural-width: false;
-            vexpand: true;
-
-            // All inboxes, Needs reply, Starred, then each account's mailboxes.
-            Box side {
-              styles ["mail-side"]
-              orientation: vertical;
-              spacing: 1;
-            }
-          }
-
-          // The sync, in words (Go fills it; what is wrong on hover), and
-          // the settings.
-          Box {
-            styles ["mail-index-foot"]
-            spacing: 8;
-
-            Box status_mark {
-              styles ["mark", "mail-status-mark"]
-              valign: center;
+              Button sidebar_hide {
+                styles ["mail-tool"]
+                icon-name: "sidebar-show-symbolic";
+                tooltip-text: _("Hide the sidebar (F9)");
+              }
             }
 
-            // Its text never widens the index: two lines at most, the
-            // whole of it on hover.
-            Label status_state {
-              styles ["mail-status"]
-              xalign: 0;
-              hexpand: true;
-              wrap: true;
-              wrap-mode: word_char;
-              lines: 2;
-              ellipsize: end;
-              max-width-chars: 1;
+            ScrolledWindow {
+              hscrollbar-policy: never;
+              propagate-natural-width: false;
+              vexpand: true;
+
+              // All inboxes, Needs reply, Starred, then each account's mailboxes.
+              Box side {
+                styles ["mail-side"]
+                orientation: vertical;
+                spacing: 1;
+              }
             }
 
-            Button settings_button {
-              styles ["outlined", "mail-head-button"]
-              icon-name: "emblem-system-symbolic";
-              tooltip-text: _("Settings (Ctrl+,)");
-              valign: center;
+            // The sync, in words (Go fills it; what is wrong on hover), and
+            // the settings.
+            Box {
+              styles ["mail-index-foot"]
+              spacing: 8;
+
+              Box status_mark {
+                styles ["mark", "mail-status-mark"]
+                valign: center;
+              }
+
+              // Its text never widens the index: two lines at most, the
+              // whole of it on hover.
+              Label status_state {
+                styles ["mail-status"]
+                xalign: 0;
+                hexpand: true;
+                wrap: true;
+                wrap-mode: word_char;
+                lines: 2;
+                ellipsize: end;
+                max-width-chars: 1;
+              }
+
+              Button settings_button {
+                styles ["outlined", "mail-head-button"]
+                icon-name: "emblem-system-symbolic";
+                tooltip-text: _("Settings (Ctrl+,)");
+                valign: center;
+              }
             }
-          }
+          };
         }
 
         // ── the conversations ──────────────────────────────────────────

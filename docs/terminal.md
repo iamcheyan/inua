@@ -83,24 +83,28 @@ from it, or at `$INUA_VT_LIB`.
 ## The window
 
 - **Workspaces** (column 1): at its top, the search, then the new
-  workspace button and the menu button, which opens the actions as
-  Ctrl+Shift+P does. Each
+  workspace button and the menu button. Its menu has the command
+  palette (Ctrl+Shift+P) and the settings; the Web Terminal, what it is
+  doing and a switch for it; and restarting the terminal host. Each
   workspace is a name, its folder, and what its agents add up to: a
   square filled in warn while one waits for you, in the accent while one
   works, hollow when quiet. Drag a workspace to put it in another place;
   its menu (a right click, or the Menu key) renames it or closes it,
   after asking, since every program in it quits.
-  The search finds workspaces by name, folder or pane title. At its
+  The search (its button in the head) finds workspaces by name, folder
+  or pane title. The framed button at the head's start hides the
+  column, sliding away (Ctrl+Shift+B); one at the top of column 2 brings
+  it back. At its
   foot, as Warcraft's idle worker, the finder counts the agents waiting
   for you (a square in warn) and those done or idle (hollow); a click on
   it, or Ctrl+`, goes to the next: waiting, then done, then idle.
-- **Sessions** (column 2): at its top, the shown workspace's name and
-  the new session button; then its sessions, each a section of its
+- **Sessions** (column 2): the shown workspace's sessions, each a section of its
   panes under a head with the same square and a badge counting the
   agents that wait. A pane's row shows its agent's mark and title, its state and
   how long it has been in it; an agent waiting for you shows what it
   asks. A shell shows the command running in it. An agent's mark takes
   its own colour (Claude Code's orange, Gemini's blue…) while it runs.
+  After the last session, *New session* starts one.
 - **Terminals** (column 3): the shown session's panes, tiled, each with a
   head (state, mark, title, folder). In a git checkout, the folder's
   place shows its name and branch (a linked worktree's with a fork for
@@ -115,7 +119,9 @@ from it, or at `$INUA_VT_LIB`.
   the others taking its room; a session closes with its last pane, a
   workspace with its last session, and the window with the last of all.
 
-A window narrower than 1040 px folds column 2, narrower than 720 px
+Drag a column's right edge to make it wider or narrower (column 1 from
+180 to 420 px, column 2 from 220 to 560); the next window opens with the
+same widths. A window narrower than 1040 px folds column 2, narrower than 720 px
 column 1 as well; Ctrl+Shift+S and Ctrl+Shift+B show them anyway.
 
 ## Agents
@@ -143,7 +149,7 @@ any = ["Do you want to proceed?", "❯ 1. Yes"]
 
 [[state]]
 state = "working"
-lines = 6
+lines = 40                       # its spinner may be far up, over its todos
 any = ["esc to interrupt"]
 ```
 
@@ -251,7 +257,8 @@ offered. Ctrl+click opens a link, an OSC 8 one or a URL in the text.
 ## Settings
 
 `~/.config/inua/term.toml`, written by the guide and the settings
-(Ctrl+,) with what each setting means: the window's theme (`look.theme`,
+(Ctrl+,: an index of pages at the left, Look, Terminal, Shell and
+agents, Web terminal and Keys) with what each setting means: the window's theme (`look.theme`,
 `""` for inua's) and the terminals' colours (`look.scheme`, `""` for the
 theme's), the font and its size, the cursor, copy on select, scrollback,
 the host's replay size, the shell new panes start (`shell.program`, `""`
@@ -264,9 +271,10 @@ once; the icons and the text size follow inua's `config.toml`.
 ## On a phone
 
 The **Web Terminal** shows the terminals in a browser, a phone's over
-Tailscale. Turn it on in the settings (Ctrl+, → Web Terminal): it runs
-`inua-termd serve` in a user service of its own (`inua-term-web.service`)
-and starts again at login while on; *Where* puts it on this computer
+Tailscale. Turn it on in the settings (Ctrl+, → Web terminal): it runs
+`inua-termd serve` in a user service of its own (`inua-term-web.service`;
+on a Mac the launchd agent `io.github.lyricat.Inua.Term.Web`) and starts
+again at login while on; *Where* puts it on this computer
 only or on its Tailscale address, and the section gives its link to copy,
 or a new one. By hand:
 
@@ -411,9 +419,11 @@ bin/inua-termd serve --tailscale
 Linux as well. The page's token is kept in the login keychain, or in a file
 when the keychain is locked (over SSH); an agent
 that needs you posts a notification of the Mac's own (through
-osascript), which opens nothing when clicked. There is no service
-to start it at login yet: it runs while its terminal, or `nohup`, keeps
-it.
+osascript), which opens nothing when clicked. Turned on in the app's
+settings, it runs as a launchd agent: its property list is
+`~/Library/LaunchAgents/io.github.lyricat.Inua.Term.Web.plist` while it
+is on, so it starts again at login and 3 seconds after a failure, and
+its output goes to `~/Library/Logs/inua-term-web.log`.
 
 ## Not yet
 

@@ -79,7 +79,7 @@ function join(name) {
 }
 
 function connect(name) {
-  ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+  ws = new WebSocket(new URL('ws', location.href.replace(/^http/, 'ws')));
   ws.onopen = () => {
     retry = 0;
     ws.send(JSON.stringify({ t: 'join', code, name, key: store(keyOf()) || '' }));
@@ -124,6 +124,7 @@ function receive(m) {
       break;
     case 'state':
       latest = m;
+      lead = !!m.lead;
       fresh = true;
       if (!shown) shown = viewOf(m);
       break;
@@ -145,10 +146,50 @@ function showLobby(m) {
     li.append(dot(i), who, el('span', 'note', s.kind === 'local' ? T.local : T.visitor));
     ul.append(li);
   });
-  let note = m.you >= 0 ? T.waiting : m.room > 0 ? T.waiting : T.full;
+  let note = m.lead ? T.youLead : m.hostLeads || !m.leadName ? T.waiting : fmt(T.waitingLead, m.leadName);
+  if (m.you < 0 && m.room === 0) note = T.full;
   if (m.room > 0) note += ' ' + fmt(T.seatsOpen, m.room);
   $('lobby-note').textContent = note;
+  showSetup(m);
 }
+
+// showSetup lets the lead visitor set the game up, when no one plays at
+// the host's screen; each change goes to the host, which sends the lobby
+// back as it now is.
+function showSetup(m) {
+  lead = m.lead;
+  $('setup').hidden = !m.lead;
+  if (!m.lead) return;
+  const u = m.setup;
+  const fill = (id, items, value) => {
+    const sel = $(id);
+    sel.replaceChildren(...items.map(([v, text]) => {
+      const o = el('option', '', text);
+      o.value = v;
+      return o;
+    }));
+    sel.value = String(value);
+  };
+  fill('setup-city', m.cities.map((c, i) => [i, c]), u.city);
+  fill('setup-rounds', m.roundsOf.map((r) => [r, String(r)]), u.rounds);
+  fill('setup-cash', m.cashOf.map((c) => [c, '$' + money(c)]), u.cash);
+  fill('setup-dice', [[1, T.oneDie], [2, T.twoDice]], u.dice);
+  fill('setup-rivals', Array.from({ length: Math.max(m.maxRivals, u.rivals) + 1 }, (_, n) => [n, String(n)]), u.rivals);
+  $('setup-build').checked = u.buildOnBuy;
+}
+
+let lead = false;
+function sendSetup() {
+  const n = (id) => Number($(id).value);
+  tell({ t: 'setup', setup: { city: n('setup-city'), rounds: n('setup-rounds'), cash: n('setup-cash'), dice: n('setup-dice'),
+    rivals: n('setup-rivals'), buildOnBuy: $('setup-build').checked } });
+}
+const tell = (m) => ws?.readyState === WebSocket.OPEN && ws.send(JSON.stringify(m));
+for (const id of ['setup-city', 'setup-rounds', 'setup-cash', 'setup-dice', 'setup-rivals', 'setup-build']) {
+  $(id).addEventListener('change', sendSetup);
+}
+$('setup-start').addEventListener('click', () => tell({ t: 'start' }));
+$('restart').addEventListener('click', () => tell({ t: 'restart' }));
 
 function dot(i) {
   const d = el('span', 'swatch-dot', '●');
@@ -652,6 +693,7 @@ function renderOver() {
   const s = latest, over = s.phase === 'over' && !busy();
   $('over').hidden = !over;
   if (!over) return;
+  $('restart').hidden = !lead;
   const w = s.winner;
   $('over-title').textContent = w === seat ? T.youWon : fmt(T.won, s.players[w]?.name ?? '');
   const ol = $('standings');

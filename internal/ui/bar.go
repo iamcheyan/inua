@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"slices"
-	"strings"
 	"time"
 	"unsafe"
 
@@ -33,10 +32,9 @@ type bar struct {
 	appMenu     gtk.Box
 	appMenuGen  uint64
 	appMenuPID  int
-	appMenuPop  *gtk.PopoverMenu
-	appIcon     gtk.Image
 	title       gtk.Label
 	clock       gtk.Label
+	end         gtk.Box
 	clipboard   gtk.Button
 	passwords   gtk.Button
 	notes       gtk.Button
@@ -159,8 +157,9 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("bar", &b.win)
 	ui.Get("frame", &b.frame)
 	ui.Get("island", &b.island)
-	ui.Get("app_menu", &b.appMenu)
 	ui.Get("workspaces", &b.workspaces)
+	ui.Get("app_menu", &b.appMenu)
+	ui.Get("end", &b.end)
 	overviewClick := gtk.NewGestureClick()
 	overviewClick.SetButton(3)
 	overviewClick.SetPropagationPhase(gtk.PhaseCaptureValue)
@@ -169,7 +168,6 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	wheel := gtk.NewEventControllerScroll(gtk.EventControllerScrollVerticalValue | gtk.EventControllerScrollDiscreteValue)
 	wheel.ConnectScroll(&s.onWorkspaceScroll)
 	b.workspaces.AddController(&wheel.EventController)
-	ui.Get("app_icon", &b.appIcon)
 	ui.Get("title", &b.title)
 	ui.Get("clock", &b.clock)
 	ui.Get("notes", &b.notes)
@@ -193,6 +191,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Close()
 	b.setEdgeGap(s.cfg.Style.EdgeGaps)
 	b.setDensity(s.cfg.Bar.Density)
+	b.setClockAtEnd(s.cfg.Bar.Menu)
 	b.status.ConnectClicked(&s.onControlButton)
 	b.notes.ConnectClicked(&s.onNotesButton)
 	b.voice.ConnectClicked(&s.onVoiceButton)
@@ -374,6 +373,31 @@ func (b *bar) release() {
 	}
 }
 
+// clockAtEnd reports whether the clock is at the bar's right end.
+func (b *bar) clockAtEnd() bool {
+	if w := b.island.GetCenterWidget(); w != nil {
+		w.Unref() // GetCenterWidget takes a reference
+		return false
+	}
+	return true
+}
+
+// setClockAtEnd puts the clock at the bar's right end while the bar shows the
+// focused application's menu, and in the middle otherwise: the menu's titles
+// take the left of the bar, and its card hangs under them.
+func (b *bar) setClockAtEnd(atEnd bool) {
+	if b.clockAtEnd() == atEnd {
+		return
+	}
+	if atEnd {
+		b.island.SetCenterWidget(nil)
+		gtkx.Append(&b.end, &b.clockButton.Widget)
+		return
+	}
+	b.end.Remove(&b.clockButton.Widget)
+	b.island.SetCenterWidget(&b.clockButton.Widget)
+}
+
 func (b *bar) setClock(s *shellUI, now time.Time) {
 	b.clock.SetText(config.Strftime(s.cfg.Bar.Clock, now))
 }
@@ -402,13 +426,9 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.AddCssClass("empty")
 	}
 	b.title.SetText(shell.BarTitle(snap, name))
-	s.setAppIcon(b, snap, name)
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
-	if name == snap.FocusedMonitor {
-		s.syncAppMenu()
-	}
 }
 
 // scrollWorkspaces goes n notches' way (down the next, up the previous)
@@ -602,32 +622,4 @@ func toggle(w *gtk.Widget, class string, on bool) {
 	} else {
 		w.RemoveCssClass(class)
 	}
-}
-
-// setAppIcon shows the focused application's icon before its name.
-func (s *shellUI) setAppIcon(b *bar, snap hypr.Snapshot, name string) {
-	class := ""
-	for _, win := range snap.Toplevels {
-		if win.Address == snap.ActiveToplevel {
-			class = win.Class
-			break
-		}
-	}
-	icon := ""
-	if class != "" {
-		if entry := s.dockState.apps.ForClass(class); entry != nil {
-			icon = entry.Icon
-		}
-		if icon == "" {
-			icon = strings.ToLower(class)
-		}
-	}
-	if icon == "" {
-		b.appIcon.SetVisible(false)
-		return
-	}
-	b.appIcon.SetPixelSize(16)
-	b.appIcon.SetFromIconName(icon)
-	b.appIcon.SetTooltipText(class)
-	b.appIcon.SetVisible(true)
 }

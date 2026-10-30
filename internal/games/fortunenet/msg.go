@@ -21,6 +21,7 @@ type inMsg struct {
 	Name string `json:"name"`
 	Key  string `json:"key"`
 	Action
+	Setup Setup `json:"setup"`
 }
 
 type joinMsg = inMsg
@@ -46,17 +47,27 @@ type seatMsg struct {
 	Kicked bool   `json:"kicked"`
 }
 
-// lobbyMsg is who is in the lobby, and the game they will play.
+// lobbyMsg is who is in the lobby, and the game they will play; the lead
+// is sent what it may choose from.
 type lobbyMsg struct {
-	T      string    `json:"t"`
-	Seats  []seatMsg `json:"seats"`
-	You    int       `json:"you"`
-	Room   int       `json:"room"`
-	Rivals int       `json:"rivals"`
-	City   string    `json:"city"`
-	Rounds int       `json:"rounds"`
-	Cash   int       `json:"cash"`
-	Text   texts     `json:"text"`
+	T         string    `json:"t"`
+	Seats     []seatMsg `json:"seats"`
+	You       int       `json:"you"`
+	Room      int       `json:"room"`
+	Rivals    int       `json:"rivals"` // the computer players and the AI's
+	City      string    `json:"city"`
+	Rounds    int       `json:"rounds"`
+	Cash      int       `json:"cash"`
+	Lead      bool      `json:"lead"`
+	LeadName  string    `json:"leadName"`
+	HostLeads bool      `json:"hostLeads"`
+	Setup     Setup     `json:"setup"`
+	AIs       int       `json:"ais"`       // the AI's players, the host's to choose
+	Cities    []string  `json:"cities"`    // for the lead
+	RoundsOf  []int     `json:"roundsOf"`  // for the lead
+	CashOf    []int     `json:"cashOf"`    // for the lead
+	MaxRivals int       `json:"maxRivals"` // for the lead
+	Text      texts     `json:"text"`
 }
 
 type squareMsg struct {
@@ -154,6 +165,7 @@ type stateMsg struct {
 	Round   int         `json:"round"`
 	Turn    int         `json:"turn"`
 	Phase   string      `json:"phase"` // roll, buy, shop, end, cpu, over
+	Lead    bool        `json:"lead"`  // this browser may start the game again
 	Dice    [2]int      `json:"dice"`
 	Pot     int         `json:"pot"`
 	Winner  int         `json:"winner"`
@@ -205,10 +217,27 @@ func (h *Host) seatMsgs() []seatMsg {
 }
 
 func (h *Host) lobbyMsg(c *gameweb.Client) lobbyMsg {
-	s := h.opt.Settings
-	city := games.FortuneCities[max(0, min(len(games.FortuneCities)-1, s.City))]
-	return lobbyMsg{T: "lobby", Seats: h.seatMsgs(), You: c.Seat, Room: h.Room(), Rivals: s.Rivals + len(s.AIs),
-		City: i18n.T(city.Name), Rounds: cmp.Or(s.Rounds, games.DefaultFortune.Rounds), Cash: cmp.Or(s.Cash, games.DefaultFortune.Cash), Text: webTexts()}
+	s := h.Settings
+	city := max(0, min(len(games.FortuneCities)-1, s.City))
+	m := lobbyMsg{T: "lobby", Seats: h.seatMsgs(), You: c.Seat, Room: h.Room(), Rivals: s.Rivals + len(s.AIs),
+		City: i18n.T(games.FortuneCities[city].Name), Rounds: cmp.Or(s.Rounds, games.DefaultFortune.Rounds),
+		Cash: cmp.Or(s.Cash, games.DefaultFortune.Cash), HostLeads: h.HostLeads(), AIs: len(s.AIs), Text: webTexts()}
+	m.Setup = Setup{City: city, Rounds: m.Rounds, Cash: m.Cash, Dice: 2, BuildOnBuy: s.BuildOnBuy, Rivals: s.Rivals}
+	if s.Dice == 1 {
+		m.Setup.Dice = 1
+	}
+	if l := h.Lead(); l >= 0 {
+		m.LeadName = h.Seats[l].Name
+		m.Lead = l == c.Seat
+	}
+	if m.Lead {
+		for _, c := range games.FortuneCities {
+			m.Cities = append(m.Cities, i18n.T(c.Name))
+		}
+		m.RoundsOf, m.CashOf = games.FortuneRounds, games.FortuneCash
+		m.MaxRivals = max(0, min(len(games.Rivals), MaxPlayers-len(h.Seats)-len(s.AIs)))
+	}
+	return m
 }
 
 func (h *Host) startMsg(c *gameweb.Client) startMsg {
@@ -250,7 +279,7 @@ func (h *Host) stateMsg(c *gameweb.Client) stateMsg {
 	g := h.Game
 	v := g.View()
 	m := stateMsg{T: "state", Round: g.Round, Turn: g.Turn, Phase: phaseNames[g.Phase], Dice: g.Dice, Pot: g.Pot,
-		Winner: g.Winner, Owner: v.Owner[:], Houses: v.Houses[:], Offer: cardInts(g.Offer)}
+		Winner: g.Winner, Owner: v.Owner[:], Houses: v.Houses[:], Offer: cardInts(g.Offer), Lead: c.Seat >= 0 && c.Seat == h.Lead()}
 	seats := h.seatMsgs()
 	for i, p := range g.Players {
 		m.Players = append(m.Players, playerMsg{seatMsg: seats[i], Cash: p.Cash, At: p.At, InJail: p.InJail, Out: p.Out,

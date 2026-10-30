@@ -25,10 +25,29 @@ type columns struct {
 	list       *gtk.ListBox
 	sessions   *gtk.Box
 	find       *gtk.SearchEntry
-	// The heads: the menu, the new workspace and new session buttons,
-	// and the shown workspace's name over its sessions.
+	// The head's menu and new workspace buttons, and the new session
+	// after the sessions.
 	menu, newWorkspace, newSession *gtk.Button
-	title                          *gtk.Label
+	// The grips that set the columns' widths (colwidth.go), the widths,
+	// and the width of the column dragged when the drag began.
+	grips                                [2]*gtk.Box
+	width                                [2]int
+	gripFrom                             int
+	gripX                                float64 // where the drag began, in the window
+	onGripBegin, onGripUpdate, onGripEnd [2]func(gtk.GestureDrag, float64, float64)
+	// Column 1 as it slides, and its toggles: in its head, and at the
+	// top of column 2 while it is hidden.
+	col1Reveal               *gtk.Revealer
+	sidebarHide, sidebarShow *gtk.Button
+	sidebarShowHead          *gtk.Box
+	onSidebar                func(gtk.Button)
+	onSlid                   func(uintptr, uintptr, uintptr)
+	// held is set while the terminals keep their sizes (holdSizes).
+	held bool
+	// The search's own row, and the button in the head that opens it.
+	findReveal   *gtk.Revealer
+	findButton   *gtk.ToggleButton
+	onFindButton func(gtk.ToggleButton)
 	// rowIDs is the workspace of each row of the list, in order, and
 	// wsRows their widgets.
 	rowIDs []int
@@ -51,6 +70,7 @@ type columns struct {
 	onRow          func(gtk.ListBox, uintptr)
 	onFind         func(uintptr, uintptr)
 	onMenu         func(gtk.Button)
+	headMenu       headMenu // the menu button's (headmenu.go)
 	onNewWorkspace func(gtk.Button)
 	onNewSession   func(gtk.Button)
 	// clickAt is what each session head and pane row of column 2 shows,
@@ -90,11 +110,11 @@ func (a *App) buildColumns(ui *gtkx.Builder) {
 	ui.Get("workspaces", c.list)
 	ui.Get("sessions", c.sessions)
 	ui.Get("find", c.find)
-	c.menu, c.newWorkspace, c.newSession, c.title = &gtk.Button{}, &gtk.Button{}, &gtk.Button{}, &gtk.Label{}
+	c.menu, c.newWorkspace, c.newSession = &gtk.Button{}, &gtk.Button{}, &gtk.Button{}
 	ui.Get("menu", c.menu)
 	ui.Get("new_workspace", c.newWorkspace)
 	ui.Get("new_session", c.newSession)
-	ui.Get("sessions_title", c.title)
+	a.columnGrips(ui)
 	c.tips(a)
 	c.onRow = func(_ gtk.ListBox, row uintptr) {
 		i := int(gtk.ListBoxRowNewFromInternalPtr(row).GetIndex())
@@ -109,13 +129,7 @@ func (a *App) buildColumns(ui *gtkx.Builder) {
 	c.finder.build(a, ui)
 	c.onFind = func(uintptr, uintptr) { c.update(a) }
 	gtkx.ConnectChanged(c.find, &c.onFind)
-	c.onMenu = func(gtk.Button) {
-		var p *termPane
-		if s := a.shown(); s != nil {
-			p = a.paneFor(s.Focus)
-		}
-		a.palette(p)
-	}
+	c.onMenu = func(gtk.Button) { a.showHeadMenu() }
 	c.menu.ConnectClicked(&c.onMenu)
 	// A session head or pane row clicked: what it stands for, by its
 	// button (makeSessions).
@@ -153,9 +167,11 @@ func (c *columns) tips(a *App) {
 		}
 		b.SetTooltipText(label)
 	}
-	tip(c.menu, i18n.T("Actions"), "palette")
+	tip(c.menu, i18n.T("Menu"), "")
 	tip(c.newWorkspace, i18n.T("New workspace"), "new_workspace")
 	tip(c.newSession, i18n.T("New session"), "new_session")
+	tip(c.sidebarHide, i18n.T("Hide the sidebar"), "fold_workspaces")
+	tip(c.sidebarShow, i18n.T("Show the sidebar"), "fold_workspaces")
 }
 
 // update makes both columns from the State.
@@ -294,7 +310,7 @@ func (a *App) matches(w *model.Workspace, query string) bool {
 
 func (c *columns) fillSessions(a *App) {
 	w := a.shownWorkspace()
-	c.newSession.SetSensitive(w != nil)
+	c.newSession.SetVisible(w != nil)
 	// The shape: the workspace, then each session and its panes.
 	shape := []int{}
 	if w != nil {
@@ -309,10 +325,8 @@ func (c *columns) fillSessions(a *App) {
 		c.makeSessions(a, w)
 	}
 	if w == nil {
-		c.title.SetText("")
 		return
 	}
-	c.title.SetText(w.Name)
 	shown := a.state.Model.Shown.Session
 	for _, s := range w.Sessions {
 		h := c.heads[s.ID]
@@ -428,7 +442,7 @@ func makePaneRow() *paneRowWidgets {
 func (c *columns) setPaneRow(a *App, r *paneRowWidgets, id int, current bool) {
 	info := a.info[id]
 	classIf(&r.button.Widget, "current", current)
-	r.icon.SetFromIconName(iconOf(info))
+	r.icon.SetFromIconName(a.iconOf(info))
 	a.brand(r.icon, info)
 	r.title.SetText(paneTitle(info))
 	paint(r.mark, r.state, lookOf(info))

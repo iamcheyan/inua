@@ -78,21 +78,29 @@ func instances(runtime string) []Instance {
 	}
 	var found []Instance
 	for _, d := range dirs {
-		lock, err := os.ReadFile(filepath.Join(runtime, "hypr", d.Name(), "hyprland.lock"))
-		if err != nil {
-			continue
+		if i, ok := running(runtime, d.Name()); ok {
+			found = append(found, i)
 		}
-		lines := strings.Fields(string(lock))
-		if len(lines) < 2 {
-			continue
-		}
-		pid, err := strconv.Atoi(lines[0])
-		if err != nil || pid <= 0 || syscall.Kill(pid, 0) == syscall.ESRCH {
-			continue
-		}
-		found = append(found, Instance{Signature: d.Name(), Runtime: runtime, PID: pid, Wayland: lines[1]})
 	}
 	return found
+}
+
+// running is the instance of signature sig under runtime, if its process
+// is still there.
+func running(runtime, sig string) (Instance, bool) {
+	lock, err := os.ReadFile(filepath.Join(runtime, "hypr", sig, "hyprland.lock"))
+	if err != nil {
+		return Instance{}, false
+	}
+	lines := strings.Fields(string(lock))
+	if len(lines) < 2 {
+		return Instance{}, false
+	}
+	pid, err := strconv.Atoi(lines[0])
+	if err != nil || pid <= 0 || syscall.Kill(pid, 0) == syscall.ESRCH {
+		return Instance{}, false
+	}
+	return Instance{Signature: sig, Runtime: runtime, PID: pid, Wayland: lines[1]}, true
 }
 
 // parent is the process ID of pid's parent, or 0.
@@ -110,15 +118,18 @@ func parent(pid int) int {
 	return ppid
 }
 
-// SessionPaths are the sockets of the Hyprland this process runs under,
-// or else of the one running for this user.
-func SessionPaths() (Paths, error) {
-	if p, err := PathsFromEnv(); err == nil {
-		return p, nil
+// SessionInstance is the Hyprland this process runs under, or else the
+// one running for this user: a program that outlives its session (inua-
+// termd) keeps the signature of a Hyprland gone since.
+func SessionInstance() (Instance, error) {
+	runtime := os.Getenv("XDG_RUNTIME_DIR")
+	if runtime == "" {
+		runtime = fmt.Sprintf("/run/user/%d", os.Getuid())
 	}
-	i, err := FindInstance(os.Getenv("XDG_RUNTIME_DIR"))
-	if err != nil {
-		return Paths{}, err
+	if sig := os.Getenv("HYPRLAND_INSTANCE_SIGNATURE"); sig != "" {
+		if i, ok := running(runtime, sig); ok {
+			return i, nil
+		}
 	}
-	return i.Paths(), nil
+	return FindInstance(runtime)
 }

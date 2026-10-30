@@ -1,8 +1,9 @@
 // Package webterm is the Web Terminal: inua-termd serve (internal/term/web)
-// run in a systemd user unit of its own, turned on in inua-term's
-// settings and started again at login while it is on, and its link. It
-// holds the page's token, kept in the keyring. No GTK, and none of the
-// page's files: the shell starts it too.
+// run as a service of its own (a systemd user unit on Linux, a launchd
+// agent on macOS), turned on in inua-term's settings and started again at
+// login while it is on, and its link. It holds the page's token, kept in
+// the keyring. No GTK, and none of the page's files: the shell starts it
+// too.
 package webterm
 
 import (
@@ -11,23 +12,12 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"os"
-	"os/exec"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/lyricat/inua/internal/term/host"
 	"github.com/lyricat/inua/internal/term/settings"
 )
-
-// Unit is the systemd user unit inua-termd serve runs in.
-const Unit = "inua-term-web.service"
-
-// Running says whether the unit runs.
-func Running(ctx context.Context) bool {
-	return exec.CommandContext(ctx, "systemctl", "--user", "is-active", "--quiet", Unit).Run() == nil
-}
 
 // Addr is where the Web Terminal listens: this computer, or its Tailscale
 // address.
@@ -56,15 +46,15 @@ func Link(ctx context.Context, w settings.Web) (string, error) {
 	return "http://" + addr + "/?t=" + url.QueryEscape(token), nil
 }
 
-// Start runs inua-termd serve in its unit, as w says, and waits for it to
-// listen. One running already is stopped first: its address may have
+// Start runs inua-termd serve in its service, as w says, and waits for it
+// to listen. One running already is stopped first: its address may have
 // changed.
 func Start(ctx context.Context, w settings.Web) error {
 	addr, err := Addr(w)
 	if err != nil {
 		return err
 	}
-	// The token first: the unit has no one to ask for the keyring.
+	// The token first: the service has no one to ask for the keyring.
 	if _, err := Token(ctx, false); err != nil {
 		return err
 	}
@@ -73,22 +63,7 @@ func Start(ctx context.Context, w settings.Web) error {
 		return err
 	}
 	Stop(ctx)
-	exec.CommandContext(ctx, "systemctl", "--user", "reset-failed", Unit).Run()
-	args := []string{"--user", "--unit=" + Unit, "--description=inua-term Web Terminal", "--collect", "--quiet",
-		"--property=Restart=on-failure", "--property=RestartSec=3"}
-	// The unit starts in the user manager's environment; inua-termd serve
-	// needs the session's bus (the keyring) and runtime folder (the
-	// host's socket), and the language.
-	for _, k := range []string{"XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS", "PATH", "LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"} {
-		if v := os.Getenv(k); v != "" {
-			args = append(args, "--setenv="+k+"="+v)
-		}
-	}
-	args = append(args, "--", self, "serve", "--addr", addr)
-	if out, err := exec.CommandContext(ctx, "systemd-run", args...).CombinedOutput(); err != nil {
-		if s := strings.TrimSpace(string(out)); s != "" {
-			return errors.New(s)
-		}
+	if err := launch(ctx, self, addr); err != nil {
 		return err
 	}
 	for {
@@ -97,7 +72,7 @@ func Start(ctx context.Context, w settings.Web) error {
 			return nil
 		}
 		if !Running(ctx) {
-			return fmt.Errorf("inua-termd serve stopped: journalctl --user -u %s says why", Unit)
+			return fmt.Errorf("inua-termd serve stopped: %s says why", logHint)
 		}
 		select {
 		case <-ctx.Done():
@@ -105,11 +80,6 @@ func Start(ctx context.Context, w settings.Web) error {
 		case <-time.After(200 * time.Millisecond):
 		}
 	}
-}
-
-// Stop ends the unit.
-func Stop(ctx context.Context) {
-	exec.CommandContext(ctx, "systemctl", "--user", "stop", Unit).Run()
 }
 
 // AtLogin starts the Web Terminal when it was left on: the shell calls it

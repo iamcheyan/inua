@@ -14,20 +14,14 @@ ApplicationWindow bar {
       margin-top: 4;
       margin-start: 4;
       margin-end: 4;
-      height-request: 56;
+      height-request: 30;
 
       start-widget: Box {
-        spacing: 10;
+        spacing: 14;
 
         Box workspaces {
           styles ["workspaces"]
           spacing: 5;
-          valign: center;
-        }
-
-        Image app_icon {
-          styles ["app-icon"]
-          visible: false;
           valign: center;
         }
 
@@ -37,13 +31,26 @@ ApplicationWindow bar {
           max-width-chars: 48;
         }
 
+        // The focused application's menus (appmenu.go); Go fills it.
         Box app_menu {
           styles ["app-menu"]
           spacing: 2;
         }
       };
 
-      end-widget: Box {
+      // The clock opens Calendar.
+      center-widget: Button clock_button {
+        styles ["clock-button"]
+        name: "calendar";
+        focusable: false;
+        tooltip-text:  _("Calendar");
+
+        Label clock {
+          styles ["clock"]
+        }
+      };
+
+      end-widget: Box end {
         spacing: 6;
 
         Box tray {
@@ -167,18 +174,6 @@ ApplicationWindow bar {
                 styles ["numeric"]
               }
             }
-          }
-        }
-
-        // The clock opens Calendar; it sits at the right end of the bar.
-        Button clock_button {
-          styles ["clock-button"]
-          name: "calendar";
-          focusable: false;
-          tooltip-text:  _("Calendar");
-
-          Label clock {
-            styles ["clock"]
           }
         }
       };

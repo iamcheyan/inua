@@ -10,7 +10,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     <property name="default-width">560</property>
     <property name="default-height">860</property>
     <child>
-      <object class="GtkBox" id="root">
+      <object class="GtkBox">
         <style>
           <class name="gamewin"/>
         </style>

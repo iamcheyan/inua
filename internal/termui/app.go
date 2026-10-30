@@ -1,16 +1,18 @@
 package termui
 
 import (
-	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/glib"
-	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"sync"
 
+	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
+	"codeberg.org/puregotk/puregotk/v4/glib"
+	"codeberg.org/puregotk/puregotk/v4/gtk"
+
 	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
@@ -155,7 +157,9 @@ func (a *App) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 	}
 	a.win.ConnectCloseRequest(&a.onClose)
 	a.windowKeys()
-	a.menuBar()
+	if runtime.GOOS == "darwin" {
+		a.menuBar()
+	}
 	if os.Getenv("INUA_TERM_SMOKE") != "" {
 		a.smokeTest()
 	}
@@ -334,7 +338,13 @@ func (a *App) apply(st *host.State) {
 			a.win.SetDefaultSize(int32(ui.Width), int32(ui.Height))
 		}
 		a.fold = [2]bool{ui.Fold1, ui.Fold2}
+		a.setColWidth(0, ui.Col1)
+		a.setColWidth(1, ui.Col2)
+		// As it was left, at once; it slides from now on.
+		d := a.cols.col1Reveal.GetTransitionDuration()
+		a.cols.col1Reveal.SetTransitionDuration(0)
 		a.applyFolds()
+		a.cols.col1Reveal.SetTransitionDuration(d)
 	}
 	a.info = map[int]host.PaneInfo{}
 	for _, p := range st.Panes {
@@ -379,10 +389,7 @@ func (a *App) fail(err error) {
 func (a *App) closeWindow() {
 	log.Printf("term: the window closes")
 	if a.client != nil && a.uiDone {
-		a.client.SetUI(model.UI{
-			Width: int(a.win.GetWidth()), Height: int(a.win.GetHeight()),
-			Fold1: a.fold[0], Fold2: a.fold[1],
-		})
+		a.client.SetUI(a.uiNow())
 	}
 	for id := range a.tiles {
 		a.dropTile(id)
@@ -396,6 +403,11 @@ func (a *App) closeWindow() {
 
 func (a *App) ThemeChanged() {
 	a.schemeChanged()
+	// Marks in an agent's own colours follow the theme's light or dark.
+	for id, t := range a.tiles {
+		t.update(a, a.info[id])
+	}
+	a.cols.update(a)
 	if a.guide != nil {
 		a.guide.themeChanged(a)
 	}

@@ -105,16 +105,19 @@ const MaxPlayers = 4
 
 // Host holds the lobby, then the game.
 type Host struct {
-	opt     Options
-	Code    string  // what visitors join with
-	Seats   []*Seat // the people, local first, then visitors; at Start, the computer players
-	Game    *games.Fortune
-	clients map[*gameweb.Client]bool
-	cpu     *time.Timer // the computer's next move, paced to the board
-	closed  bool
-	srv     *server
-	print   []byte              // the board's print, once asked for
-	art     map[string]*Picture // the pictures, each once asked for
+	opt  Options
+	Code string // what visitors join with
+	// Settings are the game's: the host's to begin with, the lead
+	// visitor's to change when no one plays at the host's screen.
+	Settings games.FortuneSettings
+	Seats    []*Seat // the people, local first, then visitors; at Start, the computer players
+	Game     *games.Fortune
+	clients  map[*gameweb.Client]bool
+	cpu      *time.Timer // the computer's next move, paced to the board
+	closed   bool
+	srv      *server
+	print    []byte              // the board's print, once asked for
+	art      map[string]*Picture // the pictures, each once asked for
 }
 
 // paceScale speeds the computer's pace up, for tests.
@@ -126,7 +129,7 @@ var AwayAfter = 15 * time.Second
 
 // NewHost opens a lobby with the people at the host's screen.
 func NewHost(opt Options) *Host {
-	h := &Host{opt: opt, Code: newCode(), clients: map[*gameweb.Client]bool{}}
+	h := &Host{opt: opt, Code: newCode(), Settings: opt.Settings, clients: map[*gameweb.Client]bool{}}
 	for _, name := range opt.Local[:min(len(opt.Local), MaxPlayers)] {
 		h.Seats = append(h.Seats, &Seat{Name: name, Kind: Local, Here: true})
 	}
@@ -134,14 +137,14 @@ func NewHost(opt Options) *Host {
 }
 
 // Room is how many more visitors the lobby takes: up to four players
-// with the computer players asked for, and the seats open (Options.Open),
-// while the game has not started.
+// with the computer players asked for, and the seats open (Options.Open)
+// when the host's screen leads, while the game has not started.
 func (h *Host) Room() int {
 	if h.Game != nil {
 		return 0
 	}
-	room := MaxPlayers - len(h.Seats) - len(h.opt.Settings.AIs) - h.opt.Settings.Rivals
-	if h.opt.Open > 0 {
+	room := MaxPlayers - len(h.Seats) - len(h.Settings.AIs) - h.Settings.Rivals
+	if h.opt.Open > 0 && h.HostLeads() {
 		visitors := 0
 		for _, s := range h.Seats {
 			if s.Kind == Visitor {
@@ -151,6 +154,71 @@ func (h *Host) Room() int {
 		room = min(room, h.opt.Open-visitors)
 	}
 	return max(0, room)
+}
+
+// HostLeads reports whether the host's screen sets the game up: when
+// people play at it. Otherwise the lead visitor does (Lead).
+func (h *Host) HostLeads() bool {
+	return slices.ContainsFunc(h.Seats, func(s *Seat) bool { return s.Kind == Local })
+}
+
+// Lead is the visitor's seat that sets the game up when the host only
+// hosts: the first of those here; -1 for none, or when the host's screen
+// leads.
+func (h *Host) Lead() int {
+	if h.HostLeads() {
+		return -1
+	}
+	return slices.IndexFunc(h.Seats, func(s *Seat) bool { return s.Kind == Visitor && s.Here && !s.Kicked })
+}
+
+// Setup is what the lead may change of the game before it starts.
+type Setup struct {
+	City       int  `json:"city"`
+	Rounds     int  `json:"rounds"`
+	Cash       int  `json:"cash"`
+	Dice       int  `json:"dice"` // 1 or 2
+	BuildOnBuy bool `json:"buildOnBuy"`
+	Rivals     int  `json:"rivals"` // computer players
+}
+
+// SetUp changes the game's settings before it starts; false for a
+// setting the game does not offer, or more players than seats.
+func (h *Host) SetUp(u Setup) bool {
+	if h.Game != nil || u.City < 0 || u.City >= len(games.FortuneCities) || !slices.Contains(games.FortuneRounds, u.Rounds) ||
+		!slices.Contains(games.FortuneCash, u.Cash) || u.Dice != 1 && u.Dice != 2 ||
+		u.Rivals < 0 || u.Rivals > len(games.Rivals) || len(h.Seats)+len(h.Settings.AIs)+u.Rivals > MaxPlayers {
+		return false
+	}
+	s := &h.Settings
+	s.City, s.Rounds, s.Cash, s.Dice, s.BuildOnBuy = u.City, u.Rounds, u.Cash, u.Dice, u.BuildOnBuy
+	names := s.RivalNames[:min(len(s.RivalNames), u.Rivals)]
+	for _, r := range games.Rivals {
+		if len(names) < u.Rivals && !slices.Contains(names, r.Name) {
+			names = append(names, r.Name)
+		}
+	}
+	s.Rivals, s.RivalNames = u.Rivals, names
+	h.lobby()
+	return true
+}
+
+// fromLead does what the lead visitor asked: set the game up, start it,
+// start it again.
+func (h *Host) fromLead(c *gameweb.Client, m inMsg) {
+	if c.Seat < 0 || c.Seat != h.Lead() {
+		return
+	}
+	switch m.T {
+	case "setup":
+		h.SetUp(m.Setup)
+	case "start":
+		h.Start()
+	case "restart":
+		if h.Game != nil && h.Game.Phase == games.PhaseOver {
+			h.Restart()
+		}
+	}
 }
 
 // CanStart reports whether the game can start: one person at least, two
@@ -165,7 +233,7 @@ func (h *Host) Start() bool {
 	if !h.CanStart() {
 		return false
 	}
-	s := h.opt.Settings
+	s := h.Settings
 	s.Humans = nil
 	for _, seat := range h.Seats {
 		s.Humans = append(s.Humans, seat.Name)

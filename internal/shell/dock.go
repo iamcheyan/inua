@@ -293,6 +293,7 @@ var LightAppGroups = []struct {
 		"io.github.lyricat.Inua.SpacePinball",
 		"io.github.lyricat.Inua.SmallFortune",
 		"io.github.lyricat.Inua.ChineseCheckers",
+		"io.github.lyricat.Inua.GameLobby",
 	}},
 	{i18n.M("SYSTEM"), []string{
 		"inua:settings",

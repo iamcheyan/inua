@@ -472,7 +472,7 @@ func (a *App) addTile(id int) error {
 	t.mark.AddCssClass("mark")
 	t.mark.SetValign(gtk.AlignCenterValue)
 	head.Append(&t.mark.Widget)
-	t.icon = gtk.NewImageFromIconName(iconOf(info))
+	t.icon = gtk.NewImageFromIconName(a.iconOf(info))
 	t.icon.SetPixelSize(14)
 	t.icon.AddCssClass("term-kind")
 	head.Append(&t.icon.Widget)
@@ -581,7 +581,7 @@ func (t *tile) update(a *App, info host.PaneInfo) {
 	title := paneTitle(info)
 	t.title.SetText(title)
 	t.dir.SetText(shortDir(info.Dir))
-	t.icon.SetFromIconName(iconOf(info))
+	t.icon.SetFromIconName(a.iconOf(info))
 	a.brand(t.icon, info)
 	paint(t.mark, t.state, lookOf(info))
 	if r, ok := a.tiling.rects[t.id]; ok && t.width == 0 {

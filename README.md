@@ -54,7 +54,7 @@ In detail: [docs/features.md](docs/features.md).
 | **Mobile Link** | Your phone and this computer together, over KDE Connect's protocol. [docs/mobile-link.md](docs/mobile-link.md) |
 | **Disk Usage** | What fills a disk, and what of it can safely go. [docs/disk-usage.md](docs/disk-usage.md) |
 | **Light apps** | Clock, Weather, Stocks, Calculator, Calendar, Color Picker, System Monitor, Tailscale, Pass, GPG, Music and Video. |
-| **Games** | Minesweeper, Space Pinball and Small Fortune. |
+| **Games** | Minesweeper, Space Pinball, Small Fortune and Chinese Checkers; the last two with others in a browser, on the network or at a lobby. [docs/game-lobby.md](docs/game-lobby.md) |
 | **Workshop** | Write your own light apps in any language; inua draws them in its look. [docs/workshop.md](docs/workshop.md) |
 
 In detail: [docs/apps.md](docs/apps.md).

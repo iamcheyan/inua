@@ -64,6 +64,10 @@ type Bar struct {
 	// Pass shows a button that searches the password store (the Pass
 	// app's) and copies from it, when there is a store.
 	Pass bool `toml:"pass"`
+	// Menu shows the focused application's menu in the bar: the menus of
+	// applications that publish one (inua's own apps, and Qt apps through
+	// the AppMenu registrar).
+	Menu bool `toml:"menu"`
 }
 
 type Launcher struct {
@@ -141,6 +145,11 @@ type Style struct {
 	// Theme is the colour theme, one of Themes or a theme of the user's
 	// (ThemeNames).
 	Theme string `toml:"theme"`
+	// AppTheme is the colour theme of the apps (inua's own windows outside
+	// the shell, and the light or dark other apps are asked for), like
+	// Theme; "" follows Theme. The bar, dock, launcher, panels and the
+	// settings window keep Theme.
+	AppTheme string `toml:"app_theme"`
 	// CSS is a stylesheet loaded after the built-in style, relative to the
 	// config directory. Ignored if the file does not exist.
 	CSS string `toml:"css"`
@@ -165,6 +174,9 @@ type Style struct {
 	// (square) to 20 pixels; the dock's is half as much again.
 	Radius int `toml:"radius"`
 }
+
+// ForApps is the colour theme of the apps: AppTheme, else Theme.
+func (s Style) ForApps() string { return cmp.Or(s.AppTheme, s.Theme, "yoru") }
 
 type Background struct {
 	// Enable draws the wallpaper; off leaves the background to another
@@ -811,6 +823,7 @@ func Default() Config {
 			Title:      true,
 			Tray:       true,
 			Pass:       true,
+			Menu:       false,
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
 		Overview: Overview{MRU: false, PerMonitor: true},
@@ -942,6 +955,7 @@ func (c *Config) validate() []string {
 	})
 	oneOf("language", &c.Language, d.Language, Languages...)
 	oneOf("style.theme", &c.Style.Theme, d.Style.Theme, c.ThemeNames()...)
+	oneOf("style.app_theme", &c.Style.AppTheme, d.Style.AppTheme, append([]string{""}, c.ThemeNames()...)...)
 	if sets := c.IconSetNames(); !slices.Contains(sets, c.Style.Icons) && !IsIconTheme(c.Style.Icons) {
 		w = append(w, fmt.Sprintf("style.icons = %q: want %s or an installed icon theme; using %q", c.Style.Icons, strings.Join(sets, " or "), d.Style.Icons))
 		c.Style.Icons = d.Style.Icons

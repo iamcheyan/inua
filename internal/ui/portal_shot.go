@@ -102,7 +102,7 @@ func (h portalShots) open(p *portalShot, mode string) bool {
 			return false
 		}
 		sh.portal = p
-		sh.record, sh.silentNext = false, true
+		sh.record = false
 		s.openShot(mode)
 		return true
 	})

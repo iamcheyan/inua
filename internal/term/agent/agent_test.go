@@ -28,6 +28,8 @@ func TestDetect(t *testing.T) {
 		{[]string{"python3", "-m", "aider"}, "", "aider"}, // python -m aider runs aider
 		{[]string{"cursor-agent"}, "", "cursor"},
 		{[]string{"/usr/bin/opencode", "--continue"}, "", "opencode"},
+		{[]string{"/usr/local/bin/mistermorph"}, "", "mistermorph"},
+		{[]string{"morph"}, "", "mistermorph"},
 		{[]string{"node", "/usr/local/bin/pi"}, "", "pi"},
 		{[]string{"mistermorph", "chat"}, "", "mistermorph"},
 		{[]string{"vim", "claude"}, "", ""},
@@ -50,6 +52,15 @@ func TestScreenState(t *testing.T) {
 	working := []string{"● Update(host.go)", "", "✻ Writing the attach test… (2m 14s · esc to interrupt)", "", "╭───╮", "│ > │", "╰───╯"}
 	if st, _ := m.State(working); st != Working {
 		t.Errorf("working screen: %q", st)
+	}
+	// The spinner far up: the todos under it, then a prompt of several
+	// lines being typed, the mode and a status line.
+	todos := []string{"● Update(host.go)", "", "✻ Writing the attach test… (2m 14s · ↓ 3.1k tokens · esc to interrupt · ctrl+t to hide todos)",
+		"  ⎿  ☒ Read the host", "     ☐ Write the attach test", "     ☐ Run the tests", "     ☐ Update the docs", "     ☐ Commit", "",
+		"  ⎿  Press up to edit queued messages", "", "────────────", "> and then the readme", "  as well", "────────────",
+		"  ⏵⏵ accept edits on (shift+tab to cycle)", "  Opus 5.5 · ~/src/app · main"}
+	if st, _ := m.State(todos); st != Working {
+		t.Errorf("working screen with todos: %q", st)
 	}
 	blocked := []string{"╭──────────────────────────╮", "│ Bash command              │", "│   rm -rf build            │", "│ Do you want to proceed?   │", "│ ❯ 1. Yes                  │", "│   2. No                   │", "╰──────────────────────────╯"}
 	st, ask := m.State(blocked)

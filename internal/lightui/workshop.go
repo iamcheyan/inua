@@ -193,7 +193,6 @@ func (a *workshopApp) Build(c *appui.Ctx) *gtk.ApplicationWindow {
 		})
 	}
 	a.start()
-	menuWindow(c, a.win, []appui.MenuGroup{{Title: "View", Sections: []appui.MenuSection{{Actions: []appui.MenuAction{{Name: "workshop-restart", Label: "Restart", Activate: func(gio.SimpleAction, uintptr) { a.start() }}}}}}})
 	return a.win
 }
 
@@ -215,7 +214,7 @@ func (a *workshopApp) start() {
 	a.sess = s
 	cfg, _, _ := config.Load(config.DefaultPath())
 	go func() {
-		err := s.Start(i18n.Lang(), cfg.Style.Theme)
+		err := s.Start(i18n.Lang(), cfg.Style.ForApps())
 		if err != nil {
 			_, logText := s.Why()
 			gtkx.Post(func() {

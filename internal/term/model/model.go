@@ -31,6 +31,9 @@ type UI struct {
 	Height int  `json:"height,omitempty"`
 	Fold1  bool `json:"fold1,omitempty"` // column 1, the workspaces
 	Fold2  bool `json:"fold2,omitempty"` // column 2, the sessions
+	// The columns' widths as dragged; 0 for their first.
+	Col1 int `json:"col1,omitempty"`
+	Col2 int `json:"col2,omitempty"`
 }
 
 // Shown is a workspace and its session on screen; 0 for none.

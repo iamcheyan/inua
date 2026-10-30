@@ -14,112 +14,165 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
         <child>
           <object class="GtkBox">
             <child>
-              <object class="GtkBox" id="workspaces_col">
-                <style>
-                  <class name="index"/>
-                  <class name="term-col1"/>
-                </style>
-                <property name="orientation">1</property>
-                <property name="hexpand">false</property>
-                <property name="width-request">232</property>
-                <child>
+              <object class="GtkRevealer" id="col1_reveal">
+                <property name="transition-type">2</property>
+                <property name="transition-duration">200</property>
+                <property name="reveal-child">true</property>
+                <property name="child">
                   <object class="GtkBox">
-                    <style>
-                      <class name="term-col-head"/>
-                      <class name="term-find-row"/>
-                    </style>
-                    <property name="spacing">6</property>
                     <child>
-                      <object class="GtkSearchEntry" id="find">
+                      <object class="GtkBox" id="workspaces_col">
                         <style>
-                          <class name="index-search"/>
-                          <class name="term-find-entry"/>
+                          <class name="index"/>
+                          <class name="term-col1"/>
                         </style>
-                        <property name="hexpand">true</property>
-                        <property name="placeholder-text" translatable="yes">Find a workspace or agent</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="new_workspace">
-                        <style>
-                          <class name="plain"/>
-                          <class name="term-head-button"/>
-                        </style>
-                        <property name="icon-name">list-add-symbolic</property>
-                        <property name="valign">3</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="menu">
-                        <style>
-                          <class name="plain"/>
-                          <class name="term-head-button"/>
-                        </style>
-                        <property name="icon-name">open-menu-symbolic</property>
-                        <property name="valign">3</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkScrolledWindow">
-                    <property name="vexpand">true</property>
-                    <property name="hscrollbar-policy">2</property>
-                    <child>
-                      <object class="GtkListBox" id="workspaces">
-                        <property name="selection-mode">1</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="finder">
-                    <style>
-                      <class name="plain"/>
-                      <class name="term-finder"/>
-                    </style>
-                    <property name="visible">false</property>
-                    <property name="halign">1</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="spacing">10</property>
+                        <property name="orientation">1</property>
+                        <property name="hexpand">false</property>
+                        <property name="width-request">232</property>
                         <child>
-                          <object class="GtkBox" id="finder_waiting">
+                          <object class="GtkBox">
+                            <style>
+                              <class name="term-col-head"/>
+                            </style>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkButton" id="sidebar_hide">
                                 <style>
-                                  <class name="mark"/>
-                                  <class name="s-warn"/>
+                                  <class name="term-tool"/>
                                 </style>
+                                <property name="icon-name">sidebar-show-symbolic</property>
                                 <property name="valign">3</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="finder_waiting_count"></object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="finder_idle">
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkBox">
+                              <object class="GtkToggleButton" id="find_button">
                                 <style>
-                                  <class name="mark"/>
+                                  <class name="plain"/>
+                                  <class name="term-head-button"/>
                                 </style>
+                                <property name="icon-name">system-search-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Find a workspace or agent</property>
+                                <property name="valign">3</property>
+                                <property name="hexpand">true</property>
+                                <property name="halign">2</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="new_workspace">
+                                <style>
+                                  <class name="plain"/>
+                                  <class name="term-head-button"/>
+                                </style>
+                                <property name="icon-name">list-add-symbolic</property>
                                 <property name="valign">3</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="finder_idle_count"></object>
+                              <object class="GtkButton" id="menu">
+                                <style>
+                                  <class name="plain"/>
+                                  <class name="term-head-button"/>
+                                </style>
+                                <property name="icon-name">open-menu-symbolic</property>
+                                <property name="valign">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkRevealer" id="find_reveal">
+                            <property name="transition-type">5</property>
+                            <property name="transition-duration">160</property>
+                            <property name="child">
+                              <object class="GtkBox">
+                                <style>
+                                  <class name="term-find-slot"/>
+                                  <class name="term-find-row"/>
+                                </style>
+                                <child>
+                                  <object class="GtkSearchEntry" id="find">
+                                    <style>
+                                      <class name="index-search"/>
+                                      <class name="term-find-entry"/>
+                                    </style>
+                                    <property name="hexpand">true</property>
+                                    <property name="placeholder-text" translatable="yes">Find a workspace or agent</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow">
+                            <property name="vexpand">true</property>
+                            <property name="hscrollbar-policy">2</property>
+                            <child>
+                              <object class="GtkListBox" id="workspaces">
+                                <property name="selection-mode">1</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="finder">
+                            <style>
+                              <class name="plain"/>
+                              <class name="term-finder"/>
+                            </style>
+                            <property name="visible">false</property>
+                            <property name="halign">1</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="spacing">10</property>
+                                <child>
+                                  <object class="GtkBox" id="finder_waiting">
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="mark"/>
+                                          <class name="s-warn"/>
+                                        </style>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="finder_waiting_count"></object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox" id="finder_idle">
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="mark"/>
+                                        </style>
+                                        <property name="valign">3</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="finder_idle_count"></object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
                             </child>
                           </object>
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkBox" id="grip1">
+                        <style>
+                          <class name="term-col-grip"/>
+                        </style>
+                      </object>
+                    </child>
                   </object>
-                </child>
+                </property>
               </object>
             </child>
             <child>
@@ -132,29 +185,17 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 <property name="hexpand">false</property>
                 <property name="width-request">312</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="sidebar_show_head">
                     <style>
                       <class name="term-col-head"/>
                     </style>
-                    <property name="spacing">8</property>
+                    <property name="visible">false</property>
                     <child>
-                      <object class="GtkLabel" id="sessions_title">
+                      <object class="GtkButton" id="sidebar_show">
                         <style>
-                          <class name="term-col-title"/>
+                          <class name="term-tool"/>
                         </style>
-                        <property name="hexpand">true</property>
-                        <property name="xalign">0</property>
-                        <property name="ellipsize">3</property>
-                        <property name="max-width-chars">1</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="new_session">
-                        <style>
-                          <class name="plain"/>
-                          <class name="term-head-button"/>
-                        </style>
-                        <property name="icon-name">list-add-symbolic</property>
+                        <property name="icon-name">sidebar-show-symbolic</property>
                         <property name="valign">3</property>
                       </object>
                     </child>
@@ -165,15 +206,50 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                     <property name="vexpand">true</property>
                     <property name="hscrollbar-policy">2</property>
                     <child>
-                      <object class="GtkBox" id="sessions">
+                      <object class="GtkBox">
                         <style>
                           <class name="term-sessions"/>
                         </style>
                         <property name="orientation">1</property>
+                        <child>
+                          <object class="GtkBox" id="sessions">
+                            <property name="orientation">1</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="new_session">
+                            <style>
+                              <class name="term-new-session"/>
+                            </style>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="spacing">8</property>
+                                <property name="halign">3</property>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="icon-name">list-add-symbolic</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="label" translatable="yes">New session</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="grip2">
+                <style>
+                  <class name="term-col-grip"/>
+                </style>
               </object>
             </child>
             <child>

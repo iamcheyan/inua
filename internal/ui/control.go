@@ -590,7 +590,9 @@ func (s *shellUI) doPower(name string) {
 		}
 		go func() {
 			time.Sleep(700 * time.Millisecond) // the lock screen is up first
-			run("systemctl " + name)
+			// The user asked: an app's lock holds off idle suspend, not
+			// this one (one that forgot its lock would block it for good).
+			run("systemctl " + name + " --check-inhibitors=no")
 		}()
 	case "reboot":
 		go run("systemctl reboot")

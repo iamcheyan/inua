@@ -14,7 +14,9 @@
 # inua-term's agent marks come from LobeHub's icons (MIT; the marks are
 # their owners' trademarks), as agent-NAME-symbolic.svg, when LOBEHUB_ICONS
 # names the package (npm i @lobehub/icons-static-svg); without it, the
-# agent marks already in ui/icons stay.
+# agent marks already in ui/icons stay. Mister Morph's are its own (its
+# module's design/brand, Apache-2.0; ui/icons/LICENSE-mistermorph) and
+# not made here.
 set -eu
 src=${1:?usage: $0 PHOSPHOR_CORE_DIR (node_modules/@phosphor-icons/core) [WEIGHT]}
 weight=${2:-regular}
@@ -113,6 +115,7 @@ weather-clear-night                   moon
 preferences-system-notifications      bell
 window-close                          x
 edit-undo                             arrow-counter-clockwise
+edit-redo                             arrow-clockwise
 # launcher and settings
 application-x-executable              app-window
 edit-clear                            x
@@ -308,7 +311,6 @@ term-git-branch                       git-branch
 term-git-worktree                     git-fork
 # inua-term: agents LobeHub has no mark of
 agent-pi                              pi
-agent-mistermorph                     butterfly
 # Mobile Link
 connect-this                          devices
 connect-phone                         device-mobile
@@ -347,6 +349,14 @@ mail-news                             newspaper
 mail-source                           file-code
 sidebar-show                          sidebar-simple
 disk-choose                           cursor-click
+# Annotating a screenshot or an image (internal/annotui)
+annot-arrow                           arrow-up-right
+annot-rect                            square
+annot-pen                             pencil-simple
+annot-text                            text-t
+annot-highlight                       highlighter
+annot-pixelate                        checkerboard
+annot-step                            number-circle-one
 disk-locate                           crosshair
 LIST
 if [ "$weight" = regular ] && [ -n "${LOBEHUB_ICONS:-}" ]; then

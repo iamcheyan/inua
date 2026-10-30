@@ -109,7 +109,7 @@ function join(name) {
 }
 
 function connect(name) {
-  ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+  ws = new WebSocket(new URL('ws', location.href.replace(/^http/, 'ws')));
   ws.onopen = () => {
     retry = 0;
     ws.send(JSON.stringify({ t: 'join', code, name, key: store(keyOf()) || '' }));

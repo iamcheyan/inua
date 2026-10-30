@@ -234,10 +234,12 @@ func (s *shellUI) openPasswords(mon *gdk.Monitor) {
 	p.search.ConnectActivate(&s.onPasswordsActivate)
 	gtkx.Append(card, &p.search.Widget)
 	p.scroll = gtk.NewScrolledWindow()
+	p.scroll.AddCssClass("passwords-scroll") // its bar at the card's edge
 	p.scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
 	p.scroll.SetPropagateNaturalHeight(true)
 	p.scroll.SetMaxContentHeight(480)
 	p.list = gtk.NewBox(gtk.OrientationVerticalValue, 4)
+	p.list.AddCssClass("passwords-list")
 	p.scroll.SetChild(&p.list.Widget)
 	p.list.Unref()
 	gtkx.Append(card, &p.scroll.Widget)
@@ -258,6 +260,7 @@ func (s *shellUI) openPasswords(mon *gdk.Monitor) {
 	keys.ConnectKeyPressed(&s.onPasswordsKey)
 	p.win.AddController(&keys.EventController)
 	p.drop.attach(&p.win.Window, &keys.EventController, p.backdrop, &card.Widget, layershell.LayerTop, false)
+	p.drop.resizes = true // an entry's values widen it, the results narrow it again
 	if s.layer {
 		w := p.win.GoPointer()
 		layershell.InitForWindow(w)

@@ -49,6 +49,7 @@ type settings struct {
 	bgOwn                                                          gtk.Box // the image's rows, hidden while inua draws
 	bgAnother                                                      gtk.Button
 	barOn, dockOn, dockHide, dockDrawer, dockFlushBar              gtk.Switch
+	barMenu                                                        gtk.Switch
 	clipEnable, clipBar, clipPaste                                 gtk.Switch
 	dockSize, dockPosition, barDensity                             gtk.DropDown
 	dockPinned                                                     gtk.Box
@@ -61,6 +62,8 @@ type settings struct {
 	textScales                                                     []int    // textScale's choices
 	iconSets                                                       []string // icons' choices
 	appIconSets                                                    []string // appIcons' choices
+	appTheme                                                       gtk.DropDown
+	appThemes, appThemeLabels                                      []string // appTheme's choices, "" first
 	tpSpeed, transparency, radius                                  gtk.Scale
 	transparencyVal, radiusVal, clipStats                          gtk.Label
 	clipClear, clipReveal                                          gtk.Button
@@ -139,6 +142,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Bar.Tray = on
 		case "bar_pass":
 			c.Bar.Pass = on
+		case "bar_menu":
+			c.Bar.Menu = on
 		case "bar_enable":
 			c.Bar.Enable = on
 		case "dock_enable":
@@ -178,6 +183,9 @@ func (s *shellUI) bindSettingsHandlers() {
 			s.aiSwitch(sw.GetName(), on, &c)
 		}
 		s.changeSettings(c)
+		if sw.GetName() == "bar_menu" {
+			s.setAppMenuOn(on)
+		}
 		return false // let the switch move
 	}
 	s.onSettingsDrop = func(ptr, _, _ uintptr) {
@@ -212,6 +220,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			}
 		case "icons":
 			c.Style.Icons = pick(s.settings.iconSets, i, c.Style.Icons)
+		case "app_theme":
+			c.Style.AppTheme = pick(s.settings.appThemes, i, c.Style.AppTheme)
 		case "app_icons":
 			c.Style.AppIcons = pick(s.settings.appIconSets, i, c.Style.AppIcons)
 		case "text_scale":
@@ -385,6 +395,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("title", &st.title)
 	ui.Get("tray", &st.tray)
 	ui.Get("bar_pass", &st.barPass)
+	ui.Get("bar_menu", &st.barMenu)
 	ui.Get("bg_image", &st.bgImage)
 	ui.Get("bg_color", &st.bgColor)
 	ui.Get("clock", &st.clock)
@@ -397,6 +408,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("launch_mode", &st.launchMode)
 	ui.Get("icons", &st.icons)
 	ui.Get("app_icons", &st.appIcons)
+	ui.Get("app_theme", &st.appTheme)
 	ui.Get("language", &st.language)
 	ui.Get("text_scale", &st.textScale)
 	ui.Get("transparency", &st.transparency)
@@ -487,11 +499,11 @@ func (s *shellUI) openSettings() {
 		st.entries[e.GoPointer()] = e
 		gtkx.ConnectChanged(e, &s.onSettingsEntry)
 	}
-	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.textScale, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
+	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.appTheme, &st.textScale, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
+	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.barMenu, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
 	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &themeAdd, &st.themeTrash, &themeFolder, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
@@ -667,6 +679,7 @@ func (s *shellUI) showSettings() {
 		toggle(&btn.Widget, "on", name == s.theme())
 	}
 	st.themeTrash.SetSensitive(c.IsCustomTheme(s.theme()))
+	s.showAppTheme()
 	st.iconTrash.SetSensitive(c.IconSetDir() != "")
 	st.bgGenerate.SetActive(c.Background.Generate)
 	st.bgOwn.SetVisible(!c.Background.Generate)
@@ -674,6 +687,7 @@ func (s *shellUI) showSettings() {
 	st.title.SetActive(c.Bar.Title)
 	st.tray.SetActive(c.Bar.Tray)
 	st.barPass.SetActive(c.Bar.Pass)
+	st.barMenu.SetActive(c.Bar.Menu)
 	setEntry(&st.bgImage, c.Background.Image)
 	setEntry(&st.bgColor, c.Background.Color)
 	setEntry(&st.clock, c.Bar.Clock)
@@ -716,6 +730,21 @@ func (s *shellUI) showSettings() {
 	for _, e := range st.entries {
 		e.RemoveCssClass("invalid")
 	}
+}
+
+// showAppTheme offers the apps' themes: the bar's, then each theme.
+func (s *shellUI) showAppTheme() {
+	st := &s.settings
+	themes := append([]string{""}, s.cfg.ThemeNames()...)
+	labels := slices.Clone(themes)
+	labels[0] = i18n.Tf("As the bar (%s)", s.theme())
+	if !slices.Equal(labels, st.appThemeLabels) {
+		list := gtk.NewStringList(labels)
+		st.appTheme.SetModel(list)
+		list.Unref()
+		st.appThemes, st.appThemeLabels = themes, labels
+	}
+	st.appTheme.SetSelected(uint32(max(0, slices.Index(themes, s.cfg.Style.AppTheme))))
 }
 
 // showTextScale offers the usual text sizes, and the one in the file if it

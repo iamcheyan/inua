@@ -26,11 +26,17 @@ Before you start, check you have:
 
 You make the private key yourself and send Apple only a certificate signing request (CSR). Apple never sees the private key.
 
-1. Make a private working folder, outside the repository. `umask 077` makes the new files readable only by you.
+1. Make a private working folder, outside the repository. This guide calls it `<signing folder>`: replace that with the folder's path wherever it appears. `chmod 700` lets only you open the folder, even one that was there before; `umask 077` makes the new files readable only by you.
 
    ```bash
-   mkdir -p ~/apple-signing && cd ~/apple-signing && umask 077
+   mkdir -p <signing folder> && chmod 700 <signing folder> && cd <signing folder> && umask 077
    ```
+
+   Protect this folder until you delete it in Part 7. It will hold your private key, the `.p12` and the App Store Connect key: with them anyone can sign and notarize software as your team. Keep the `.p12`'s password in your password manager, not in this folder.
+
+   - Put it on an encrypted disk, and not in a folder that syncs or is backed up (Dropbox, iCloud Drive, Google Drive, Nextcloud, an unencrypted backup), in a Git repository, or in a shared folder such as `/tmp`.
+   - Don't show its files on screen or paste them into chats, issues or AI tools.
+   - Keep it only as long as this guide takes. If you stop halfway, delete it and start again later.
 
 2. Create the key and the CSR. Put your Apple ID email in `emailAddress`, and replace `<name>` with your name or your company's, in English letters, as registered with Apple. `C=JP` is the country code for Japan; use your own country's code if it differs. Apple puts your team's registered name in the final certificate, so these fields only need to be sensible.
 
@@ -54,7 +60,7 @@ Apple signs your request and gives back a `.cer` file. This happens in the brows
 4. In the **Software** section, select **Developer ID Application** and click **Continue**. Don't pick "Developer ID Installer" (that one is for `.pkg` installers) or "Apple Distribution" (that one is for the App Store).
 5. For **Profile Type**, choose **G2 Sub-CA (Xcode 11.4.1 or later)**, not "Previous Sub-CA".
 6. Click **Choose File**, select `developer_id.csr` from Part 1, then click **Continue**.
-7. Click **Download**. Save the file into `~/apple-signing` as `developer_id.cer`.
+7. Click **Download**. Save the file into `<signing folder>` as `developer_id.cer`.
 
 The certificate is valid for five years. A team can only have a few Developer ID Application certificates at once. If Apple says you've reached the limit, the old one is still active; read Part 7 before you revoke anything.
 
@@ -65,7 +71,7 @@ The `.p12` bundles your certificate, your private key and Apple's intermediate c
 1. Download Apple's Developer ID intermediate certificate:
 
    ```bash
-   cd ~/apple-signing
+   cd <signing folder>
    curl -fsSLO https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer
    ```
 
@@ -118,7 +124,7 @@ The `.p12` bundles your certificate, your private key and Apple's intermediate c
 1. Open [appstoreconnect.apple.com](https://appstoreconnect.apple.com) → **Users and Access** → **Integrations** → **App Store Connect API**.
 2. The first time, the Account Holder clicks **Request Access** and accepts the terms.
 3. Under **Team Keys**, click **+**. Name it, for example `inua notarization`, and give it the **Developer** role.
-4. Click **Download API Key** and save `AuthKey_<KEY ID>.p8` into `~/apple-signing`.
+4. Click **Download API Key** and save `AuthKey_<KEY ID>.p8` into `<signing folder>`.
 5. Copy the **Key ID** from the key's row; that is `APPLE_API_KEY_ID`. Copy the **Issuer ID** shown above the list; that is `APPLE_API_ISSUER_ID`.
 
 Apple lets you download a key only once. If you lose the `.p8`, revoke that key and create a new one.
@@ -131,10 +137,10 @@ The release workflow reads the six secrets on every tag.
 
    ```bash
    cd path/to/inua
-   base64 -w0 ~/apple-signing/DeveloperID.p12 | gh secret set APPLE_CERTIFICATE_BASE64
+   base64 -w0 <signing folder>/DeveloperID.p12 | gh secret set APPLE_CERTIFICATE_BASE64
    gh secret set APPLE_CERTIFICATE_PASSWORD
    gh secret set APPLE_CODESIGN_IDENTITY --body "Developer ID Application: Example Inc (TEAMID1234)"
-   base64 -w0 ~/apple-signing/AuthKey_ABCD123456.p8 | gh secret set APPLE_API_KEY_BASE64
+   base64 -w0 <signing folder>/AuthKey_ABCD123456.p8 | gh secret set APPLE_API_KEY_BASE64
    gh secret set APPLE_API_KEY_ID
    gh secret set APPLE_API_ISSUER_ID
    ```
@@ -187,7 +193,7 @@ GitHub secrets can't be read back, so keep your own copy of the files in a passw
    - `developer_id.key` (only needed to rebuild the `.p12`)
    - `AuthKey_<KEY ID>.p8`, the key ID and the issuer ID
    - The identity name and the certificate's expiry date (five years from Part 2)
-2. Delete the working folder: `rm -rf ~/apple-signing`.
+2. Delete the working folder: `rm -rf <signing folder>`.
 
 When to replace what:
 

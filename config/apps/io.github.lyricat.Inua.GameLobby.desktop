@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Game Lobby
+Comment=See the tables at a game lobby, join a game in the browser, or host one
+Exec=inua-games game-lobby
+Icon=io.github.lyricat.Inua.GameLobby
+Categories=Game;
+Keywords=games;lobby;tables;online;multiplayer;
+Keywords[es]=juegos;sala;mesas;en línea;multijugador;
+Keywords[fr]=jeux;salon;tables;en ligne;multijoueur;
+Keywords[ja]=ゲーム;ロビー;テーブル;オンライン;マルチプレイヤー;
+Keywords[ko]=게임;로비;테이블;온라인;멀티플레이어;
+Keywords[zh_CN]=游戏;大厅;牌桌;在线;多人;
+Keywords[zh_TW]=遊戲;大廳;牌桌;線上;多人;
+StartupWMClass=io.github.lyricat.Inua.GameLobby
+StartupNotify=true

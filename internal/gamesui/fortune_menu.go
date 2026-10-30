@@ -70,9 +70,7 @@ func (p *fortune) restart() {
 		return
 	}
 	if p.net != nil {
-		if p.net.Restart() {
-			p.newGame(p.net.Game, p.here)
-		}
+		p.net.Restart() // netChanged shows it
 		return
 	}
 	p.begin()

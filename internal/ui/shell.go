@@ -27,7 +27,6 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
-
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
@@ -107,8 +106,9 @@ type shellUI struct {
 	settings  settings
 	wifi      wifiState // the networks, while a list shows them
 	appmenu   appMenuState
-	osd       osd
+	menu      menuPanel // the bar's application menu, when open
 	tray      tray
+	osd       osd
 	dictation dictationCard // dictation as it goes
 	sys       shell.System
 	svc       services
@@ -119,6 +119,13 @@ type shellUI struct {
 	onWorkspaceClicked     func(gtk.Button)
 	onWorkspaceSettle      glib.SourceFunc
 	onClock                glib.SourceFunc
+	onAppMenuClicked       func(gtk.Button)
+	onAppMenuMeasure       glib.SourceFunc
+	onMenuRow              func(gtk.Button)
+	onMenuHover            func(gtk.EventControllerMotion, float64, float64)
+	onMenuLayout           glib.SourceFunc
+	onMenuBackdrop         func(gtk.GestureClick, int32, float64, float64)
+	onMenuKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onLauncherScroll       func(gtk.EventControllerScroll, float64, float64) bool
 	onOverviewKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
@@ -156,15 +163,6 @@ type shellUI struct {
 	onTrayPressed          func(gtk.GestureClick, int32, float64, float64)
 	onTrayMenuAction       func(gio.SimpleAction, uintptr)
 	onTrayMenuClosed       func(gtk.Popover)
-	onAppMenuClicked       func(gtk.Button)
-	onAppMenuAction        func(gio.SimpleAction, uintptr)
-	onMenuRow              func(gtk.Button)
-	onMenuHover            func(gtk.EventControllerMotion, float64, float64)
-	onMenuLayout           glib.SourceFunc
-	onAppMenuMeasure       glib.SourceFunc
-	onMenuBackdrop         func(gtk.GestureClick, int32, float64, float64)
-	onMenuKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	menu                   menuPanel
 	onSettingsEntry        func(uintptr, uintptr)
 	onSettingsSwitch       func(gtk.Switch, bool) bool
 	onAIAbility            func(gtk.ToggleButton)
@@ -224,6 +222,7 @@ type shellUI struct {
 	onShotKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onShotMode             func(gtk.ToggleButton)
 	onShotCancel           func(gtk.Button)
+	onShotCamera           func(gtk.Button)
 	onShotRecord           func(gtk.ToggleButton)
 	onShotDrawer           func(gtk.Button)
 	onShotItem             func(gtk.Button)
@@ -459,8 +458,6 @@ func (s *shellUI) start() {
 	s.bindVoiceHandlers()
 	s.bindTrayHandlers()
 	s.bindSettingsHandlers()
-	s.bindAppMenuHandlers()
-	s.bindMenuHandlers()
 	s.bindAboutHandlers()
 	s.bindCardHandlers()
 	s.bindWifiHandlers()
@@ -498,7 +495,6 @@ func (s *shellUI) start() {
 		s.startPolkit()
 	}
 	s.startPortals()
-	s.startAppMenu()
 	if s.cfg.Bar.Tray {
 		s.startTray()
 	}
@@ -619,42 +615,14 @@ func (s *shellUI) bindHandlers() {
 	}
 	// While a panel hangs from the bar, its window's clicks are the
 	// panel's (barClick for those on the bar).
-	s.onBarPressed = func(g gtk.GestureClick, _ int32, x, y float64) {
-		b := s.barOf(g.GetWidget())
-		if b == nil {
-			return
-		}
-		b.pressHeld = b.held > 0
-		// A press below the bar that misses the menu card dismisses the menu:
-		// the bar covers the screen while one hangs, so nothing else sees it.
-		m := &s.menu
-		if m.open && !m.closing {
-			inCard := x >= m.drop.x && x <= m.drop.x+m.drop.w && y >= m.drop.y && y <= m.drop.y+m.drop.h
-			inTitles := x < float64(b.win.GetHeight()) && b.appMenu.GetVisible()
-			if hit := b.appMenu.Pick(x, y, gtk.PickDefaultValue); hit != nil {
-				inTitles = true
-				hit.Unref()
-			}
-			if !inCard && !inTitles {
-				s.closeMenu()
-			}
+	s.onBarPressed = func(g gtk.GestureClick, _ int32, _, _ float64) {
+		if b := s.barOf(g.GetWidget()); b != nil {
+			b.pressHeld = b.held > 0
 		}
 	}
 	s.onBarReleased = func(g gtk.GestureClick, _ int32, x, y float64) {
 		b := s.barOf(g.GetWidget())
-		if b == nil || b.pressHeld {
-			return
-		}
-		if b.held > 0 {
-			if s.menu.open {
-				if b := s.barOf(g.GetWidget()); b != nil && b.overIsland(y) {
-					end, _ := b.endReach(x, y)
-					clock, _ := b.clockReach(x, y)
-					if end == "" && !clock {
-						s.closeMenu()
-					}
-				}
-			}
+		if b == nil || b.pressHeld || b.held > 0 {
 			return
 		}
 		// The buttons take their own clicks; those around them are theirs too.
@@ -797,14 +765,7 @@ func (h hyprHandler) OnConnection(up bool, err error) {
 }
 
 func (s *shellUI) apply(snap hypr.Snapshot) {
-	oldPID := focusedPID(s.snap)
 	s.snap = snap
-	if s.menu.open && s.menu.pid != focusedPID(snap) {
-		s.closeMenu()
-	}
-	if oldPID != focusedPID(snap) {
-		s.syncAppMenu()
-	}
 	s.overview.st.SetSnapshot(snap)
 	for _, b := range s.bars {
 		b.setHypr(s, snap)

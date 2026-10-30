@@ -27,6 +27,16 @@
     </form>
     <section id="lobby" hidden>
       <ul id="seats"></ul>
+      <form id="setup" hidden>
+        <h3 class="kicker" data-t="setup">THE GAME</h3>
+        <label><span data-t="city">City</span><select id="setup-city"></select></label>
+        <label><span data-t="rounds">Rounds</span><select id="setup-rounds"></select></label>
+        <label><span data-t="cash">Starting money</span><select id="setup-cash"></select></label>
+        <label><span data-t="dice">Dice</span><select id="setup-dice"></select></label>
+        <label><span data-t="rivalsN">Computer players</span><select id="setup-rivals"></select></label>
+        <label class="rule"><input type="checkbox" id="setup-build"><span data-t="buildOnBuy">Build the day you buy</span></label>
+        <button type="button" id="setup-start" class="primary" data-t="start">Start the game</button>
+      </form>
       <p id="lobby-note" class="note"></p>
     </section>
     <p id="notice" class="note"></p>
@@ -47,7 +57,8 @@
     </div>
     <div id="picker" class="overlay" hidden><h2 id="picker-title"></h2><div id="picker-choices"></div>
       <button type="button" id="picker-cancel" class="quiet" data-t="cancel">Cancel</button></div>
-    <div id="over" class="overlay" hidden><h2 id="over-title"></h2><ol id="standings"></ol></div>
+    <div id="over" class="overlay" hidden><h2 id="over-title"></h2><ol id="standings"></ol>
+      <button type="button" id="restart" class="primary" data-t="restart" hidden>New game</button></div>
   </div>
   <aside id="panel">
     <header>
