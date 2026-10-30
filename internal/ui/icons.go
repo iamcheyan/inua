@@ -13,19 +13,19 @@ import (
 	layouts "github.com/lyricat/inua/ui"
 )
 
-// The shell's icon set. style.icons naming one of inua's sets puts the
-// icons in ui/icons in an icon theme of inua's own, which inherits the
-// system's, so app icons (and any icon the set lacks) still come from it. A user's
+// The shell's line icons. style.icons = "phosphor" puts the icons in
+// ui/icons in an icon theme of inua's own, which inherits the system's,
+// so app icons (and any icon the set lacks) still come from it. A user's
 // set goes over the Phosphor icons in a theme named after it, so changing
 // sets changes the theme's name and GTK loads it afresh; an installed
 // theme is used as it is. The icon theme in GtkSettings belongs to this
 // process: other apps keep theirs.
 //
-// style.app_icons naming a theme gives app icons a GtkIconTheme of their
-// own (appIcons), whatever the shell's icons are: a theme inheriting it
-// could not keep the two apart, the first theme in the chain having both.
-// inua's apps' icons come from the set style.icons names (inuaIcons),
-// before app_icons' theme.
+// The other apps' icons come from a GtkIconTheme of their own (appIcons):
+// style.app_icons, else the app style, whatever the line icons are; a
+// theme inheriting it could not keep the two apart, the first theme in the
+// chain having both. inua's apps' icons come from the app style
+// (inuaIcons, style.app_style), before appIcons.
 
 // iconThemeName names inua's icon theme.
 const iconThemeName = "inua-phosphor"

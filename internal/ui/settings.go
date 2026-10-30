@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"cmp"
 	"fmt"
 	"log"
 	"math"
@@ -42,8 +43,15 @@ type settings struct {
 	themes               gtk.FlowBox
 	swatches             map[string]*gtk.Button // by theme, owned by the flow box
 	swatchNames          []string               // the themes the swatches show
-	iconTrash            gtk.Button             // for the user's icon set in use
-	themeMenu            string                 // the theme of yours a right click opened a menu for
+	iconSetTitles        map[string]string      // each set of line icons' title, as the menu shows it
+	appstyles            gtk.FlowBox            // the app styles
+	styleTiles           map[string]*gtk.Button // by style
+	styleTitles          map[string]string
+	iconSetMenu          string // the app style whose tile a right click opened a menu for
+	// The icon themes the tiles and previews take icons from, by
+	// "line:SET" and "style:STYLE" (shellUI.lineTheme, styleTheme).
+	setThemes map[string]*gtk.IconTheme
+	themeMenu string // the theme of yours a right click opened a menu for
 
 	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus gtk.Switch
 	noteHistory                                                    gtk.Switch
@@ -213,10 +221,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			if i >= 0 && i < len(s.settings.clipLimits) {
 				c.Clipboard.Limit = s.settings.clipLimits[i]
 			}
-		case "icons":
-			c.Style.Icons = pick(s.settings.iconSets, i, c.Style.Icons)
 		case "app_theme":
 			c.Style.AppTheme = pick(s.settings.appThemes, i, c.Style.AppTheme)
+		case "icons":
+			c.Style.Icons = pick(s.settings.iconSets, i, c.Style.Icons)
 		case "app_icons":
 			c.Style.AppIcons = pick(s.settings.appIconSets, i, c.Style.AppIcons)
 		case "text_scale":
@@ -258,6 +266,24 @@ func (s *shellUI) bindSettingsHandlers() {
 	s.onThemeMenuClosed = func(pop gtk.Popover) {
 		gtkx.Post(func() { pop.Unparent() })
 	}
+	s.onIconSetMenu = func(g gtk.GestureClick, _ int32, x, y float64) {
+		if w := g.GetWidget(); w != nil {
+			s.styleMenu(w, x, y)
+		}
+	}
+	s.onIconSetAction = func(gio.SimpleAction, uintptr) {
+		style := s.settings.iconSetMenu
+		gtkx.Post(func() { s.previewAppStyle(style) }) // the menu goes first
+	}
+	s.onPreviewKey = func(k gtk.EventControllerKey, keyval, _ uint32, _ gdk.ModifierType) bool {
+		if keyval != keyEscape {
+			return false
+		}
+		if w := k.GetWidget(); w != nil {
+			gtk.WindowNewFromInternalPtr(w.Ptr).Close()
+		}
+		return true
+	}
 	s.onSettingsButton = func(b gtk.Button) {
 		name := b.GetName()
 		if s.shortcutButton(name) || s.aiButton(name) || s.aboutButton(name) || s.keyringButton(name) || s.customButton(name) {
@@ -268,6 +294,13 @@ func (s *shellUI) bindSettingsHandlers() {
 		case strings.HasPrefix(name, "theme:"):
 			c.Style.Theme = strings.TrimPrefix(name, "theme:")
 			s.changeSettings(c)
+		case name == "iconset_preview":
+			s.previewIconSet(c.Style.Icons)
+		case strings.HasPrefix(name, "appstyle:"):
+			c.Style.AppStyle = strings.TrimPrefix(name, "appstyle:")
+			s.changeSettings(c)
+		case name == "appstyle_preview":
+			s.previewAppStyle(c.Style.AppStyle)
 		case name == "bg_choose":
 			s.chooseImage()
 		case name == "bg_clear":
@@ -413,6 +446,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("bar_density", &st.barDensity)
 	ui.Get("launch_mode", &st.launchMode)
 	ui.Get("icons", &st.icons)
+	ui.Get("appstyles", &st.appstyles)
 	ui.Get("app_icons", &st.appIcons)
 	ui.Get("app_theme", &st.appTheme)
 	ui.Get("language", &st.language)
@@ -422,7 +456,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("radius", &st.radius)
 	ui.Get("radius_val", &st.radiusVal)
 	st.textScales = nil // a new dropdown, without its choices
-	st.iconSets, st.appIconSets = nil, nil
+	st.iconSets, st.appIconSets, st.styleTiles = nil, nil, nil
 	st.appThemes, st.appThemeLabels = nil, nil
 	ui.Get("lang_restart_row", &st.langRestartRow)
 	ui.Get("lang_restart", &st.langRestart)
@@ -477,10 +511,9 @@ func (s *shellUI) openSettings() {
 	ui.Get("bg_generate", &st.bgGenerate)
 	ui.Get("bg_own", &st.bgOwn)
 	ui.Get("bg_another", &st.bgAnother)
-	var iconAdd, iconFolder gtk.Button
-	ui.Get("iconset_add", &iconAdd)
-	ui.Get("iconset_trash", &st.iconTrash)
-	ui.Get("iconset_folder", &iconFolder)
+	var iconPreview, stylePreview gtk.Button
+	ui.Get("iconset_preview", &iconPreview)
+	ui.Get("appstyle_preview", &stylePreview)
 	s.buildStickyHeads(ui)
 	st.entries = map[uintptr]*gtk.Entry{}
 	st.drops = map[uintptr]*gtk.DropDown{}
@@ -510,7 +543,7 @@ func (s *shellUI) openSettings() {
 	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
-	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
+	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &iconPreview, &stylePreview, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
 		b.ConnectClicked(&s.onSettingsButton)
 	}
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
@@ -596,6 +629,11 @@ func (s *shellUI) closeSettings() {
 	st.win.Destroy()
 	st.refs.Release()
 	st.win, st.swatches, st.entries, st.drops, st.sticky, st.overlay = nil, nil, nil, nil, nil, nil
+	st.styleTiles = nil
+	for _, t := range st.setThemes {
+		t.Unref()
+	}
+	st.setThemes = nil
 	// Closed with a pairing request on it: the request is turned down.
 	if pr := st.bt.prompt; pr != nil {
 		select {
@@ -717,7 +755,6 @@ func (s *shellUI) showSettings() {
 		toggle(&btn.Widget, "on", name == s.theme())
 	}
 	s.showAppTheme()
-	st.iconTrash.SetSensitive(c.IconSetDir() != "")
 	st.bgGenerate.SetActive(c.Background.Generate)
 	st.bgOwn.SetVisible(!c.Background.Generate)
 	st.bgAnother.SetVisible(c.Background.Generate)
@@ -783,43 +820,41 @@ func (s *shellUI) showAppTheme() {
 	st.appTheme.SetSelected(uint32(max(0, slices.Index(themes, s.cfg.Style.AppTheme))))
 }
 
-// showTextScale offers the usual text sizes, and the one in the file if it
-// is another.
-// showIconSets offers inua's icon sets, the user's and the installed icon
-// themes for inua's icons, and the installed themes, inua's first, for
-// app icons.
+// showIconSets offers the app styles, the other apps' themes (the app
+// style's, the system's, the installed ones) and the line icons' sets
+// (Phosphor's, the system's, the user's, the installed themes).
 func (s *shellUI) showIconSets() {
 	st := &s.settings
+	c := s.cfg
 	inua := map[string]string{
-		config.ObjectsTheme: i18n.T("inua Objects"),
-		config.SoftTheme:    i18n.T("inua Objects Soft"),
-		config.FlatTheme:    i18n.T("inua Objects Flat"),
+		config.ObjectsTheme: i18n.T("inua objects"),
+		config.SoftTheme:    i18n.T("inua objects soft"),
+		config.FlatTheme:    i18n.T("inua objects flat"),
 	}
-	sets := s.cfg.IconSetNames()
+	if st.styleTiles == nil {
+		s.buildAppStyleTiles(inua)
+		st.styleTitles = inua
+	}
+	sets := c.IconSetNames()
 	names := slices.Clone(sets)
-	for i, name := range config.InuaThemes { // config.IconSets: inua's, then "system"
-		names[i] = inua[name]
-	}
-	names[len(config.InuaThemes)] = i18n.T("System theme")
-	apps, appNames := []string{"system"}, []string{i18n.T("System theme")}
-	for _, name := range config.InuaThemes {
-		if config.IsIconTheme(name) {
-			apps, appNames = append(apps, name), append(appNames, inua[name])
-		}
-	}
+	names[0], names[1] = i18n.T("Phosphor"), i18n.T("System theme") // config.IconSets
+	apps, appNames := []string{"", "system"}, []string{i18n.T("As the app style"), i18n.T("System theme")}
 	for _, t := range config.IconThemes() {
-		if !slices.Contains(sets, t.Name) { // a set of the user's of its name wins
-			sets, names = append(sets, t.Name), append(names, t.Title)
+		title := cmp.Or(inua[t.Name], t.Title)
+		if !slices.Contains(sets, t.Name) && !slices.Contains(config.InuaThemes, t.Name) { // a set of the user's of its name wins
+			sets, names = append(sets, t.Name), append(names, title)
 		}
-		if !slices.Contains(config.InuaThemes, t.Name) {
-			apps, appNames = append(apps, t.Name), append(appNames, t.Title)
-		}
+		apps, appNames = append(apps, t.Name), append(appNames, title)
 	}
 	if !slices.Equal(sets, st.iconSets) {
 		list := gtk.NewStringList(names)
 		st.icons.SetModel(list)
 		list.Unref()
 		st.iconSets = sets
+		st.iconSetTitles = map[string]string{}
+		for i, set := range sets {
+			st.iconSetTitles[set] = names[i]
+		}
 	}
 	if !slices.Equal(apps, st.appIconSets) {
 		list := gtk.NewStringList(appNames)
@@ -827,8 +862,11 @@ func (s *shellUI) showIconSets() {
 		list.Unref()
 		st.appIconSets = apps
 	}
-	st.icons.SetSelected(uint32(max(0, slices.Index(sets, s.cfg.Style.Icons))))
-	st.appIcons.SetSelected(uint32(max(0, slices.Index(apps, s.cfg.Style.AppIcons))))
+	st.icons.SetSelected(uint32(max(0, slices.Index(sets, c.Style.Icons))))
+	for name, btn := range st.styleTiles {
+		toggle(&btn.Widget, "on", name == c.Style.AppStyle)
+	}
+	st.appIcons.SetSelected(uint32(max(0, slices.Index(apps, c.Style.AppIcons))))
 }
 
 func (s *shellUI) showTextScale() {

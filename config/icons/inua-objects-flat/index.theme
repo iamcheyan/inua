@@ -1,5 +1,5 @@
 [Icon Theme]
-Name=inua Objects Flat
+Name=inua objects flat
 Comment=Apps drawn as the objects they stand for, flat, in inua's style
 Inherits=inua-objects,Papirus,Numix-Circle,Adwaita,hicolor
 Directories=scalable/apps,16/apps

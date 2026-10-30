@@ -672,12 +672,16 @@ built-in display off (`[displays] lid_off`).
 Seven colour themes, from 夜 yoru (night) to 青写真 aojashin (blueprint),
 Phosphor icons, and matching Fcitx 5 themes.
 
-Three icon sets of inua's own draw every app as the object it stands for:
-*inua Objects*, with real materials and detail, *inua Objects Soft*, the
-same objects drawn more simply, and *inua Objects Flat*, drawn flat. *inua icons* picks the set for inua's
-apps (with Phosphor's line icons inside them), *App icons* the one for
-other apps, about 240 of the popular ones; an app neither draws keeps its
-own icon. `inua icons missing` lists the installed apps without one.
+Three app styles of inua's own draw every app as the object it stands
+for: *inua objects*, with real materials and detail, *inua objects soft*,
+the same objects drawn more simply, and *inua objects flat*, drawn flat.
+*App style* picks one for inua's apps and the other apps it draws, about
+240 of the popular ones; *Other apps* can give the rest the system's
+icons or an installed theme's instead, inua's apps keeping the style. An
+app no theme draws keeps its own icon; `inua icons missing` lists the
+installed apps without one. *Line icons* picks the icons in the bar,
+Settings and inua's apps: Phosphor's, your own set or a theme's. Each
+style and set has Preview All, every icon of it in a window.
 
 The apps can take another theme than the bar and dock (*Apps* under the
 theme swatches, `style.app_theme`): inua's own apps follow it, and other

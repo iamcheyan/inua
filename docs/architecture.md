@@ -351,24 +351,30 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   tokens it changes (`config.ThemeCSS`). It is a swatch among the
   built-in ones; a right click on it opens Show in Folder and Move to
   Trash, and a last swatch adds one.
-- Icons: `style.icons` (Settings, "inua icons") picks inua's icon set:
-  `inua-objects` (the default), `inua-objects-soft` or `inua-objects-flat`,
-  which differ in inua's apps' own icons, drawn by `design/icons` (the
-  objects, or the same objects drawn more simply or flat) and installed as
-  icon themes of those names;
-  both have Phosphor's regular icons (`ui/icons`, MIT) for the rest,
-  written as an icon theme for the shell's process that inherits the
-  system's. The shell looks inua's apps' icons up in the chosen set's
-  theme (`inuaIcons`, `Style.InuaIconTheme`) before app_icons'; elsewhere
-  they are hicolor's, the objects. inua's apps write a theme of the
-  Phosphor icons that inherits Adwaita, set before they start
-  (docs/performance.md). `"phosphor"`, the set's old name, means
-  `inua-objects`. `style.icons = "system"`
+- Icons, in three: the app style (`style.app_style`, Settings' "App
+  style"): `inua-objects` (the default), `inua-objects-soft` or
+  `inua-objects-flat`, drawn by `design/icons` and installed as icon
+  themes of those names; inua's apps' own icons come from it
+  (`inuaIcons`, `Style.InuaIconTheme`), and the other apps' too unless
+  `style.app_icons` ("Other apps") names the system's or an installed
+  theme (`appIcons`, `Style.AppIconTheme`); elsewhere inua's apps' icons
+  are hicolor's, the objects. The line icons (`style.icons`, "Line
+  icons"): Phosphor's regular icons (`ui/icons`, MIT), written as an icon
+  theme for the shell's process that inherits the system's; inua's apps
+  write one that inherits Adwaita, set before they start
+  (docs/performance.md). An inua set in `style.icons`, as it held the app
+  style for a while, becomes the app style. `style.icons = "system"`
   uses the system theme in the shell, and an installed theme's name
   (`config.IconThemes`) that theme; the apps keep Phosphor for both. A
   user's set, `icons/<name>/` beside `config.toml`, is copied over the
   Phosphor icons into an icon theme of its own name (`style.IconTheme`),
-  in the shell and in inua's apps. `style.app_icons` naming an installed
+  in the shell and in inua's apps. Settings shows the app styles as tiles,
+  each with a few of its apps, a right click opening Preview All (every
+  app the style draws, in a window), and the line icons in a menu with
+  Preview All beside it (every icon of the set), the user's sets among
+  them; the icons are filled off
+  the main thread, reading a large theme taking a quarter of a second
+  (`settings_iconsets.go`). `style.app_icons` naming an installed
   theme (inua's three among them) takes app icons from it: in the shell
   from a `GtkIconTheme` of its own (`appIcons`, apart from the shell's
   icons; an icon given as a file, a snap's, by the snap's or the file's

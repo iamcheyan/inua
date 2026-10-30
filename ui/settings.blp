@@ -335,6 +335,8 @@ ApplicationWindow settings {
                   styles ["section-body"]
                   orientation: vertical;
 
+                  // Go fills the app styles: inua's three, each showing a few
+                  // of its apps, a right click opening Preview All.
                   Box {
                     styles ["row"]
                     spacing: 16;
@@ -346,30 +348,33 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
-                        label:  _("inua icons");
+                        label:  _("App style");
                         xalign: 0;
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("inua's apps and the icons in them: inua's, the system's, an installed theme or one of yours");
+                        label:  _("How inua draws apps: its own, and the other apps it draws");
                         xalign: 0;
                         wrap: true;
                       }
                     }
 
-                    DropDown icons {
-                      name: "icons";
+                    Button appstyle_preview {
+                      styles ["plain"]
+                      name: "appstyle_preview";
                       valign: center;
-
-                      model: StringList {
-                        strings [
-                          _("inua Objects"),
-                          _("inua Objects Soft"),
-                          _("inua Objects Flat"),
-                          _("System theme"),
-                        ]
-                      };
+                      icon-name: "view-reveal-symbolic";
+                      tooltip-text:  _("Every app of the style in use");
                     }
+                  }
+
+                  FlowBox appstyles {
+                    selection-mode: none;
+                    homogeneous: true;
+                    min-children-per-line: 3;
+                    max-children-per-line: 4;
+                    row-spacing: 8;
+                    column-spacing: 8;
                   }
 
                   // Go adds the installed icon themes.
@@ -384,12 +389,12 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
-                        label:  _("App icons");
+                        label:  _("Other apps");
                         xalign: 0;
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("Other apps in the dock, launcher and notifications, and files");
+                        label:  _("Apps that aren't inua's, and files: as the app style, the system's or an installed theme");
                         xalign: 0;
                         wrap: true;
                       }
@@ -401,7 +406,7 @@ ApplicationWindow settings {
 
                       model: StringList {
                         strings [
-                          _("System theme"),
+                          _("As the app style"),
                         ]
                       };
                     }
@@ -418,37 +423,30 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
-                        label:  _("Your icon sets");
+                        label:  _("Line icons");
                         xalign: 0;
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("A folder of SVG icons named like inua's, kept in icons beside config.toml");
+                        label:  _("The bar, the settings and inua's apps: Phosphor's, the system's, an installed theme or one of yours");
                         xalign: 0;
                         wrap: true;
                       }
                     }
 
-                    Button iconset_add {
-                      styles ["outlined"]
-                      name: "iconset_add";
-                      label:  _("Add…");
+                    // Go fills the choices: Phosphor, the system's, yours and the
+                    // installed themes.
+                    DropDown icons {
+                      name: "icons";
                       valign: center;
                     }
 
-                    Button iconset_trash {
-                      styles ["outlined", "danger"]
-                      name: "iconset_trash";
-                      label:  _("Move to Trash");
-                      tooltip-text:  _("The icon set in use, if it is one of yours");
+                    Button iconset_preview {
+                      styles ["plain"]
+                      name: "iconset_preview";
                       valign: center;
-                    }
-
-                    Button iconset_folder {
-                      styles ["outlined"]
-                      name: "iconset_folder";
-                      label:  _("Open Folder");
-                      valign: center;
+                      icon-name: "view-reveal-symbolic";
+                      tooltip-text:  _("Every icon of the set in use");
                     }
                   }
                 }

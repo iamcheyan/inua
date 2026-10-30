@@ -402,8 +402,9 @@ App icons are objects on the desk, unlike the flat interface icons: inua's
 own apps and games (`config/apps/`) and the `inua-objects` theme for other
 apps (`config/icons/inua-objects/`, the default `app_icons`), all drawn by
 `design/icons/build.py`; see `design/icons/README.md`. `inua-objects-soft`
-draws the same objects more simply, `inua-objects-flat` flat; "inua icons" in Settings picks the set
-for inua's apps, "App icons" for other apps. They may use
+draws the same objects more simply, `inua-objects-flat` flat; Settings'
+"App style" picks one, "Other apps" may give the rest another theme, and
+"Line icons" the flat interface icons. They may use
 gradients, a light from the top left and one shadow; no filters, no live
 text, under 80 KB each, with a simpler drawing for 16 px. Apps the theme
 does not draw fall back to the desktop's theme; `inua icons missing` lists

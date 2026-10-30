@@ -15,31 +15,17 @@ import (
 	"github.com/lyricat/inua/internal/uikit"
 )
 
-// Themes and icon sets of the user's own, on the Appearance page: Add…
-// (a theme: the last swatch) copies a file or a folder beside config.toml
-// and chooses it; Move to Trash takes one away (a theme: from its swatch's
-// menu, on a right click), Open Folder (Show in Folder) shows where they
-// live.
+// Themes of the user's own, on the Appearance page: the last swatch adds
+// one, copying a file beside config.toml and choosing it; a right click on
+// one of yours opens Show in Folder and Move to Trash. (Sets of line
+// icons of the user's are folders in icons beside it, chosen in the menu.)
 
-// customButton handles the buttons of the user's themes and icon sets.
+// customButton handles the theme tile that adds one.
 func (s *shellUI) customButton(name string) bool {
-	c := s.cfg
 	switch name {
 	case "theme_add":
-		s.chooseCustom(false)
-	case "iconset_add":
-		s.chooseCustom(true)
+		s.chooseTheme()
 
-	case "iconset_trash":
-		if c.IconSetDir() == "" {
-			return true
-		}
-		if s.trash(c.IconSetDir()) {
-			c.Style.Icons = config.Default().Style.Icons
-			s.changeSettings(c)
-		}
-	case "iconset_folder":
-		go revealFolder(filepath.Join(c.Dir, "icons"), c.IconSetDir())
 	default:
 		return false
 	}
@@ -126,15 +112,15 @@ func (s *shellUI) trash(path string) bool {
 	return true
 }
 
-// chooseCustom asks for a theme file or an icon set folder with the
-// portal's (or GTK's) file chooser; onCustomChosen takes the answer.
-func (s *shellUI) chooseCustom(icons bool) {
+// chooseTheme asks for a theme file with the portal's (or GTK's) file
+// chooser; onCustomChosen takes the answer.
+func (s *shellUI) chooseTheme() {
 	st := &s.settings
 	if st.dialog != nil {
 		return
 	}
 	if s.onCustomChosen == nil {
-		s.onCustomChosen = func(_, result, data uintptr) { s.customChosen(result, data == 1) }
+		s.onCustomChosen = func(_, result, _ uintptr) { s.themeChosen(result) }
 	}
 	d := gtk.NewFileDialog()
 	if home, err := os.UserHomeDir(); err == nil {
@@ -143,11 +129,6 @@ func (s *shellUI) chooseCustom(icons bool) {
 		unref(f)
 	}
 	st.dialog = d
-	if icons {
-		d.SetTitle(i18n.T("Choose a folder of SVG icons"))
-		d.SelectFolder(&st.win.Window, nil, &s.onCustomChosen, 1)
-		return
-	}
 	d.SetTitle(i18n.T("Choose a theme"))
 	filter := gtk.NewFileFilter()
 	filter.SetName(i18n.T("Themes (CSS)"))
@@ -157,9 +138,9 @@ func (s *shellUI) chooseCustom(icons bool) {
 	d.Open(&st.win.Window, nil, &s.onCustomChosen, 0)
 }
 
-// customChosen installs the theme or icon set chosen and puts it in use;
-// its swatch or its place in the list shows it.
-func (s *shellUI) customChosen(result uintptr, icons bool) {
+// themeChosen installs the theme chosen and puts it in use; its swatch
+// shows it.
+func (s *shellUI) themeChosen(result uintptr) {
 	st := &s.settings
 	d := st.dialog
 	st.dialog = nil
@@ -167,13 +148,7 @@ func (s *shellUI) customChosen(result uintptr, icons bool) {
 		return
 	}
 	defer d.Unref()
-	var file *gio.FileBase
-	var err error
-	if icons {
-		file, err = d.SelectFolderFinish(&gio.AsyncResultBase{Ptr: result})
-	} else {
-		file, err = d.OpenFinish(&gio.AsyncResultBase{Ptr: result})
-	}
+	file, err := d.OpenFinish(&gio.AsyncResultBase{Ptr: result})
 	if err != nil || file == nil || st.win == nil {
 		return // cancelled, or the window closed meanwhile
 	}
@@ -183,16 +158,6 @@ func (s *shellUI) customChosen(result uintptr, icons bool) {
 		return
 	}
 	c := s.cfg
-	if icons {
-		name, _, err := c.InstallIconSet(path)
-		if err != nil {
-			s.setStatus(installError(name, err), true)
-			return
-		}
-		c.Style.Icons = name
-		s.changeSettings(c)
-		return
-	}
 	name, err := c.InstallTheme(path)
 	if err != nil {
 		s.setStatus(installError(name, err), true)
@@ -208,8 +173,6 @@ func installError(name string, err error) string {
 		return i18n.Tf("Not added: the name %s is taken; rename the file or folder", name)
 	case errors.Is(err, config.ErrNotTheme):
 		return i18n.T("Not added: a theme has @define-color lines with #rrggbb colours")
-	case errors.Is(err, config.ErrNoIcons):
-		return i18n.T("Not added: the folder has no SVG files")
 	}
 	return i18n.Tf("Not added: %s", err.Error())
 }

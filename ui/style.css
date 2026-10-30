@@ -1281,6 +1281,15 @@ window.settings { background: @app; font-size: 14px; }
 .swatch .chip { min-width: 9px; min-height: 9px; }
 .swatch label { font-size: 11px; color: @t1; }
 .settings button.swatch.on label { color: @t0; }
+/* An app style's tile: a few of the apps it draws, on the panel colour
+   (settings_iconsets.go). */
+.swatch.iconset .ground { background: @surface; border: 1px solid @line; padding: 10px; }
+.swatch.iconset .ground image { color: @t1; }
+/* Preview All: every icon of a set, in a window of its own. */
+.icon-preview .preview-body { padding: 22px 26px 28px; }
+.icon-preview .preview-title { font-size: 20px; color: @t0; }
+.icon-preview .preview-app label { font-size: 11.5px; color: @t1; }
+.icon-preview .preview-icon { color: @t0; padding: 6px; }
 /* The last swatch adds a theme: a dashed ground, a plus in it. */
 .swatch.add .ground { border: 1px dashed alpha(@line, 0.9); background: transparent; }
 .swatch.add image { color: @t2; }

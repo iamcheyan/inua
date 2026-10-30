@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -71,7 +72,7 @@ func TestIconThemeSettings(t *testing.T) {
 	}
 
 	c, w, err = Load(userFiles(t, "[style]\nicons = \"Gone\"\napp_icons = \"Gone\"\n"))
-	if err != nil || len(w) != 2 || c.Style.Icons != ObjectsTheme || c.Style.AppIcons != "system" {
+	if err != nil || len(w) != 2 || c.Style.Icons != "phosphor" || c.Style.AppIcons != "" {
 		t.Errorf("err=%v warnings=%v icons %q app icons %q", err, w, c.Style.Icons, c.Style.AppIcons)
 	}
 }
@@ -85,7 +86,7 @@ func TestObjectsTheme(t *testing.T) {
 		t.Errorf("not installed: %q, want system", got)
 	}
 	fakeIconThemes(t, map[string]string{
-		ObjectsTheme: "[Icon Theme]\nName=inua Objects\nDirectories=scalable/apps\n",
+		ObjectsTheme: "[Icon Theme]\nName=inua objects\nDirectories=scalable/apps\n",
 		"inua-icons": "[Icon Theme]\nName=inua\nDirectories=16x16/apps\n",
 	})
 	if !IsIconTheme(ObjectsTheme) || IsIconTheme("inua-icons") {
@@ -99,30 +100,61 @@ func TestObjectsTheme(t *testing.T) {
 	}
 }
 
-// inua's apps' own icons come from the set style.icons names when it is
-// one of inua's and installed; the soft set is offered as a theme too.
+// inua's apps' own icons come from the app style once it is installed;
+// the other apps' from app_icons, else the app style.
 func TestInuaIconTheme(t *testing.T) {
-	fakeIconThemes(t, map[string]string{ObjectsTheme: "[Icon Theme]\nName=inua Objects\nDirectories=scalable/apps\n"})
-	for icons, want := range map[string]string{ObjectsTheme: ObjectsTheme, SoftTheme: "", "system": "", "Papirus": ""} {
-		if got := (Style{Icons: icons}).InuaIconTheme(); got != want {
-			t.Errorf("soft not installed, icons %q: %q, want %q", icons, got, want)
+	fakeIconThemes(t, map[string]string{ObjectsTheme: "[Icon Theme]\nName=inua objects\nDirectories=scalable/apps\n"})
+	for style, want := range map[string]string{ObjectsTheme: ObjectsTheme, SoftTheme: ""} {
+		if got := (Style{AppStyle: style}).InuaIconTheme(); got != want {
+			t.Errorf("soft not installed, style %q: %q, want %q", style, got, want)
 		}
 	}
-	if got := (Style{AppIcons: SoftTheme}).AppIconTheme(); got != "system" {
-		t.Errorf("soft not installed: app icons %q, want system", got)
+	if got := (Style{AppStyle: SoftTheme}).AppIconTheme(); got != "system" {
+		t.Errorf("soft not installed: other apps %q, want system", got)
 	}
 	fakeIconThemes(t, map[string]string{
-		ObjectsTheme: "[Icon Theme]\nName=inua Objects\nDirectories=scalable/apps\n",
-		SoftTheme:    "[Icon Theme]\nName=inua Objects Soft\nDirectories=scalable/apps\n",
-		FlatTheme:    "[Icon Theme]\nName=inua Objects Flat\nDirectories=scalable/apps\n",
+		ObjectsTheme: "[Icon Theme]\nName=inua objects\nDirectories=scalable/apps\n",
+		SoftTheme:    "[Icon Theme]\nName=inua objects soft\nDirectories=scalable/apps\n",
+		FlatTheme:    "[Icon Theme]\nName=inua objects flat\nDirectories=scalable/apps\n",
+		"Papirus":    "[Icon Theme]\nName=Papirus\nDirectories=16x16/apps\n",
 	})
-	if got := (Style{Icons: SoftTheme}).InuaIconTheme(); got != SoftTheme {
-		t.Errorf("soft installed: %q", got)
+	for _, c := range []struct {
+		s          Style
+		inua, rest string
+	}{
+		{Style{AppStyle: SoftTheme}, SoftTheme, SoftTheme},
+		{Style{AppStyle: FlatTheme, AppIcons: "Papirus"}, FlatTheme, "Papirus"},
+		{Style{AppStyle: ObjectsTheme, AppIcons: "system"}, ObjectsTheme, "system"},
+	} {
+		if got := c.s.InuaIconTheme(); got != c.inua {
+			t.Errorf("%+v: inua's apps %q, want %q", c.s, got, c.inua)
+		}
+		if got := c.s.AppIconTheme(); got != c.rest {
+			t.Errorf("%+v: other apps %q, want %q", c.s, got, c.rest)
+		}
 	}
-	if got := (Style{Icons: FlatTheme}).InuaIconTheme(); got != FlatTheme || !IsIconTheme(FlatTheme) {
-		t.Errorf("flat installed: %q, offered %v", got, IconThemes())
+}
+
+// A theme's drawn apps are its files in scalable/apps, not its links and
+// not inua's own apps.
+func TestDrawnApps(t *testing.T) {
+	fakeIconThemes(t, map[string]string{SoftTheme: "[Icon Theme]\nName=inua objects soft\nDirectories=scalable/apps\n"})
+	apps := filepath.Join(os.Getenv("XDG_DATA_DIRS"), "icons", SoftTheme, "scalable", "apps")
+	if err := os.MkdirAll(apps, 0o755); err != nil {
+		t.Fatal(err)
 	}
-	if got := (Style{AppIcons: SoftTheme}).AppIconTheme(); got != SoftTheme {
-		t.Errorf("soft installed: app icons %q", got)
+	for _, f := range []string{"vlc.svg", "firefox.svg", "io.github.lyricat.Inua.Files.svg", "notes.txt"} {
+		if err := os.WriteFile(filepath.Join(apps, f), []byte("<svg/>"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.Symlink("vlc.svg", filepath.Join(apps, "org.videolan.VLC.svg")); err != nil {
+		t.Fatal(err)
+	}
+	if got := DrawnApps(SoftTheme); !slices.Equal(got, []string{"firefox", "vlc"}) {
+		t.Errorf("DrawnApps = %q", got)
+	}
+	if got := DrawnApps("gone"); got != nil {
+		t.Errorf("a theme not installed: %q", got)
 	}
 }

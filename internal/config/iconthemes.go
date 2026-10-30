@@ -135,3 +135,24 @@ func readIconTheme(path string) (string, bool) {
 	}
 	return name, dirs && !hidden
 }
+
+// DrawnApps are the apps' icons an installed theme draws itself, by name,
+// sorted: the files (not the links naming one under another name) in its
+// scalable/apps folder, inua's own apps left out.
+func DrawnApps(theme string) []string {
+	for _, d := range iconThemeDirs() {
+		entries, err := os.ReadDir(filepath.Join(d, theme, "scalable", "apps"))
+		if err != nil {
+			continue
+		}
+		var names []string
+		for _, e := range entries {
+			name, ok := strings.CutSuffix(e.Name(), ".svg")
+			if ok && e.Type().IsRegular() && !strings.HasPrefix(name, "io.github.lyricat.Inua.") {
+				names = append(names, name)
+			}
+		}
+		return names // os.ReadDir sorts
+	}
+	return nil
+}

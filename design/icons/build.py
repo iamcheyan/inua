@@ -42,7 +42,7 @@ ICONS_DIR = os.path.join(ROOT, "config", "icons")
 SHEET = os.path.join(ROOT, "bin", "icon-sheet")
 
 INDEX = """[Icon Theme]
-Name=inua Objects
+Name=inua objects
 Comment=Apps drawn as the objects they stand for, in inua's style
 Inherits=Papirus,Numix-Circle,Adwaita,hicolor
 Directories=scalable/apps,16/apps
@@ -64,13 +64,13 @@ Context=Applications
 # them has its object, and share its 16 px drawings (a link to its 16
 # directory). Each: the drawing it renders, its theme's name and title.
 SETS = {
-    "soft": ("inua-objects-soft", "inua Objects Soft", "more simply"),
-    "flat": ("inua-objects-flat", "inua Objects Flat", "flat"),
+    "soft": ("inua-objects-soft", "inua objects soft", "more simply"),
+    "flat": ("inua-objects-flat", "inua objects flat", "flat"),
 }
 
 
 def set_index(title, how):
-    return INDEX.replace("Name=inua Objects\n", f"Name={title}\n").replace(
+    return INDEX.replace("Name=inua objects\n", f"Name={title}\n").replace(
         "in inua's style\n", f"{how}, in inua's style\n").replace(
         "Inherits=", "Inherits=inua-objects,")
 
