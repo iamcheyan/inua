@@ -1281,6 +1281,10 @@ window.settings { background: @app; font-size: 14px; }
 .swatch .chip { min-width: 9px; min-height: 9px; }
 .swatch label { font-size: 11px; color: @t1; }
 .settings button.swatch.on label { color: @t0; }
+/* The last swatch adds a theme: a dashed ground, a plus in it. */
+.swatch.add .ground { border: 1px dashed alpha(@line, 0.9); background: transparent; }
+.swatch.add image { color: @t2; }
+.settings button.swatch.add:hover image { color: @accent; }
 
 .settings scrollbar { background: transparent; border: none; }
 .settings scrollbar slider { min-width: 4px; border-radius: 0; background: @line; }

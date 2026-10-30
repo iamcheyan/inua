@@ -36,13 +36,14 @@ type settings struct {
 	overlay *gtk.Overlay           // over the window's page, for the Benchmark dialog; made on its first use
 	refs    gtkx.Scope
 
-	status, clockPreview  gtk.Label
-	pages                 gtk.Stack
-	index                 gtk.ListBox // the pages' list, beside them
-	themes                gtk.FlowBox
-	swatches              map[string]*gtk.Button // by theme, owned by the flow box
-	swatchNames           []string               // the themes the swatches show
-	themeTrash, iconTrash gtk.Button             // for the user's theme or icon set in use
+	status, clockPreview gtk.Label
+	pages                gtk.Stack
+	index                gtk.ListBox // the pages' list, beside them
+	themes               gtk.FlowBox
+	swatches             map[string]*gtk.Button // by theme, owned by the flow box
+	swatchNames          []string               // the themes the swatches show
+	iconTrash            gtk.Button             // for the user's icon set in use
+	themeMenu            string                 // the theme of yours a right click opened a menu for
 
 	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus gtk.Switch
 	noteHistory                                                    gtk.Switch
@@ -244,6 +245,18 @@ func (s *shellUI) bindSettingsHandlers() {
 			}
 		}
 		s.changeSettings(c)
+	}
+	s.onThemeMenu = func(g gtk.GestureClick, _ int32, x, y float64) {
+		if w := g.GetWidget(); w != nil {
+			s.themeMenu(w, x, y)
+		}
+	}
+	s.onThemeAction = func(a gio.SimpleAction, _ uintptr) {
+		name := a.GetName()
+		gtkx.Post(func() { s.themeAction(name) }) // the menu goes first
+	}
+	s.onThemeMenuClosed = func(pop gtk.Popover) {
+		gtkx.Post(func() { pop.Unparent() })
 	}
 	s.onSettingsButton = func(b gtk.Button) {
 		name := b.GetName()
@@ -464,10 +477,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("bg_generate", &st.bgGenerate)
 	ui.Get("bg_own", &st.bgOwn)
 	ui.Get("bg_another", &st.bgAnother)
-	var themeAdd, themeFolder, iconAdd, iconFolder gtk.Button
-	ui.Get("theme_add", &themeAdd)
-	ui.Get("theme_trash", &st.themeTrash)
-	ui.Get("theme_folder", &themeFolder)
+	var iconAdd, iconFolder gtk.Button
 	ui.Get("iconset_add", &iconAdd)
 	ui.Get("iconset_trash", &st.iconTrash)
 	ui.Get("iconset_folder", &iconFolder)
@@ -500,7 +510,7 @@ func (s *shellUI) openSettings() {
 	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
-	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &themeAdd, &st.themeTrash, &themeFolder, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
+	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &iconAdd, &st.iconTrash, &iconFolder, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
 		b.ConnectClicked(&s.onSettingsButton)
 	}
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
@@ -598,7 +608,8 @@ func (s *shellUI) closeSettings() {
 }
 
 // buildSwatches adds one button per theme: its ground with its accent and
-// text colours, and its name.
+// text colours, and its name; a theme of the user's opens a menu on a
+// right click (Move to Trash, Show in Folder). A last tile adds one.
 func (s *shellUI) buildSwatches() {
 	st := &s.settings
 	st.themes.RemoveAll()
@@ -630,11 +641,44 @@ func (s *shellUI) buildSwatches() {
 		btn.SetChild(&box.Widget)
 		box.Unref()
 		btn.ConnectClicked(&s.onSettingsButton)
+		if s.cfg.IsCustomTheme(name) {
+			menu := gtk.NewGestureClick()
+			menu.SetButton(3)
+			menu.ConnectPressed(&s.onThemeMenu)
+			btn.AddController(&menu.EventController)
+			btn.SetTooltipText(i18n.Tf("%s · yours: right-click for more", name))
+		}
 		st.themes.Append(&btn.Widget)
 		btn.Unref() // the flow box holds it
 		st.swatches[name] = btn
 	}
+	st.themes.Append(s.addThemeTile())
 	s.loadSwatchStyle()
+}
+
+// addThemeTile is the last swatch: a tile, as large as a theme's, to add
+// a theme of the user's (theme_add).
+func (s *shellUI) addThemeTile() *gtk.Widget {
+	btn := gtk.NewButton()
+	btn.SetName("theme_add")
+	btn.AddCssClass("swatch")
+	btn.AddCssClass("add")
+	btn.SetTooltipText(i18n.T("A CSS file of @define-color lines, kept in themes beside config.toml"))
+	box := gtk.NewBox(gtk.OrientationVerticalValue, 6)
+	ground := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+	ground.AddCssClass("ground")
+	plus := gtk.NewImageFromIconName("list-add-symbolic")
+	plus.SetHexpand(true)
+	plus.SetHalign(gtk.AlignCenterValue)
+	gtkx.Append(ground, &plus.Widget)
+	gtkx.Append(box, &ground.Widget)
+	label := gtk.NewLabel(i18n.T("Add Theme…"))
+	label.SetXalign(0)
+	gtkx.Append(box, &label.Widget)
+	btn.SetChild(&box.Widget)
+	box.Unref()
+	btn.ConnectClicked(&s.onSettingsButton)
+	return &btn.Widget
 }
 
 // loadSwatchStyle colours the theme swatches from the theme files, whatever
@@ -672,7 +716,6 @@ func (s *shellUI) showSettings() {
 	for name, btn := range st.swatches {
 		toggle(&btn.Widget, "on", name == s.theme())
 	}
-	st.themeTrash.SetSensitive(c.IsCustomTheme(s.theme()))
 	s.showAppTheme()
 	st.iconTrash.SetSensitive(c.IconSetDir() != "")
 	st.bgGenerate.SetActive(c.Background.Generate)

@@ -348,7 +348,9 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   chosen with `style.theme`; a test keeps the names and the files in step.
   A user's theme, `themes/<name>.css` beside `config.toml`, is loaded over
   `yoru` (or over the built-in theme of its name), so it needs only the
-  tokens it changes (`config.ThemeCSS`).
+  tokens it changes (`config.ThemeCSS`). It is a swatch among the
+  built-in ones; a right click on it opens Show in Folder and Move to
+  Trash, and a last swatch adds one.
 - Icons: `style.icons` (Settings, "inua icons") picks inua's icon set:
   `inua-objects` (the default), `inua-objects-soft` or `inua-objects-flat`,
   which differ in inua's apps' own icons, drawn by `design/icons` (the

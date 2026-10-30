@@ -4,17 +4,22 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // Themes and icon sets of the user's own, on the Appearance page: Add…
-// copies a file or a folder beside config.toml and chooses it, Move to
-// Trash takes away the one in use, Open Folder shows where they live.
+// (a theme: the last swatch) copies a file or a folder beside config.toml
+// and chooses it; Move to Trash takes one away (a theme: from its swatch's
+// menu, on a right click), Open Folder (Show in Folder) shows where they
+// live.
 
 // customButton handles the buttons of the user's themes and icon sets.
 func (s *shellUI) customButton(name string) bool {
@@ -24,17 +29,7 @@ func (s *shellUI) customButton(name string) bool {
 		s.chooseCustom(false)
 	case "iconset_add":
 		s.chooseCustom(true)
-	case "theme_trash":
-		if !c.IsCustomTheme(c.Style.Theme) {
-			return true
-		}
-		if s.trash(c.ThemePath(c.Style.Theme)) {
-			if c.Style.AppTheme == c.Style.Theme {
-				c.Style.AppTheme = ""
-			}
-			c.Style.Theme = config.Default().Style.Theme
-			s.changeSettings(c)
-		}
+
 	case "iconset_trash":
 		if c.IconSetDir() == "" {
 			return true
@@ -43,14 +38,65 @@ func (s *shellUI) customButton(name string) bool {
 			c.Style.Icons = config.Default().Style.Icons
 			s.changeSettings(c)
 		}
-	case "theme_folder":
-		go revealFolder(filepath.Join(c.Dir, "themes"), c.ThemePath(c.Style.Theme))
 	case "iconset_folder":
 		go revealFolder(filepath.Join(c.Dir, "icons"), c.IconSetDir())
 	default:
 		return false
 	}
 	return true
+}
+
+// themeMenu opens the menu of a theme of the user's, at the right click
+// on its swatch.
+func (s *shellUI) themeMenu(btn *gtk.Widget, x, y float64) {
+	st := &s.settings
+	st.themeMenu = strings.TrimPrefix(btn.GetName(), "theme:")
+	group := gio.NewSimpleActionGroup()
+	for _, name := range []string{"trash", "folder"} {
+		a := gio.NewSimpleAction(name, nil)
+		a.ConnectActivate(&s.onThemeAction)
+		group.AddAction(a)
+		a.Unref()
+	}
+	btn.InsertActionGroup("theme", group)
+	group.Unref()
+	menu := gio.NewMenu()
+	menu.Append(i18n.T("Show in Folder"), "theme.folder")
+	menu.Append(i18n.T("Move to Trash"), "theme.trash")
+	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
+	menu.Unref()
+	uikit.Menu(&pop.Popover, uikit.AtPointer)
+	pop.SetHasArrow(false)
+	pop.SetParent(btn)
+	pop.SetPointingTo(&gdk.Rectangle{X: int32(x), Y: int32(y), Width: 1, Height: 1})
+	pop.ConnectClosed(&s.onThemeMenuClosed)
+	pop.Unref() // the swatch holds it
+	pop.Popup()
+}
+
+// themeAction does what a theme's menu chose: shows its file, or moves it
+// to the trash, the default taking its place where it was in use.
+func (s *shellUI) themeAction(action string) {
+	c := s.cfg
+	name := s.settings.themeMenu
+	if !c.IsCustomTheme(name) {
+		return
+	}
+	switch action {
+	case "folder":
+		go revealFolder(filepath.Join(c.Dir, "themes"), c.ThemePath(name))
+	case "trash":
+		if !s.trash(c.ThemePath(name)) {
+			return
+		}
+		if c.Style.AppTheme == name {
+			c.Style.AppTheme = ""
+		}
+		if c.Style.Theme == name {
+			c.Style.Theme = config.Default().Style.Theme
+		}
+		s.changeSettings(c)
+	}
 }
 
 // revealFolder shows a folder, made if missing, in the file manager, with

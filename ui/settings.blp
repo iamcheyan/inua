@@ -122,6 +122,9 @@ ApplicationWindow settings {
                   styles ["section-body"]
                   orientation: vertical;
 
+                  // Go fills the swatches: each theme, the user's with a menu
+                  // on a right click (Move to Trash, Show in Folder), then
+                  // a tile to add one.
                   FlowBox themes {
                     selection-mode: none;
                     homogeneous: true;
@@ -156,51 +159,6 @@ ApplicationWindow settings {
 
                     DropDown app_theme {
                       name: "app_theme";
-                      valign: center;
-                    }
-                  }
-
-                  Box {
-                    styles ["row"]
-                    spacing: 16;
-
-                    Box {
-                      orientation: vertical;
-                      hexpand: true;
-                      valign: center;
-
-                      Label {
-                        styles ["title"]
-                        label:  _("Your themes");
-                        xalign: 0;
-                      }
-                      Label {
-                        styles ["sub"]
-                        label:  _("A CSS file of @define-color lines, kept in themes beside config.toml");
-                        xalign: 0;
-                        wrap: true;
-                      }
-                    }
-
-                    Button theme_add {
-                      styles ["outlined"]
-                      name: "theme_add";
-                      label:  _("Add…");
-                      valign: center;
-                    }
-
-                    Button theme_trash {
-                      styles ["outlined", "danger"]
-                      name: "theme_trash";
-                      label:  _("Move to Trash");
-                      tooltip-text:  _("The theme in use, if it is one of yours");
-                      valign: center;
-                    }
-
-                    Button theme_folder {
-                      styles ["outlined"]
-                      name: "theme_folder";
-                      label:  _("Open Folder");
                       valign: center;
                     }
                   }

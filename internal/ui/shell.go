@@ -206,6 +206,9 @@ type shellUI struct {
 	onSearchFlash          glib.SourceFunc
 	onAboutLink            func(gtk.Button)
 	onSettingsButton       func(gtk.Button)
+	onThemeMenu            func(gtk.GestureClick, int32, float64, float64)
+	onThemeAction          func(gio.SimpleAction, uintptr)
+	onThemeMenuClosed      func(gtk.Popover)
 	onSettingsClose        func(gtk.Window) bool
 	onSettingsKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onSettingsScale        func(gtk.Range, gtk.ScrollType, float64) bool
