@@ -521,8 +521,8 @@ push_to_talk = %t
 
 # What turns speech into text: "voxtype", its daemon on this machine, or
 # "ai", the assistant's profile for voice input (assistant.transcription;
-# the recording goes to its provider), typed in with wtype when there is
-# one, else pasted.
+# the recording goes to its provider). Either way the words are pasted
+# where you are, by the clipboard and the paste shortcut.
 engine = %s
 
 # Where a card shows the dictation as it goes (listening, the waveform,

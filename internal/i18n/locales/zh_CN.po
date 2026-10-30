@@ -5050,7 +5050,7 @@ msgstr "卡牌商店"
 #: internal/gamesui/fortune_menu.go:172
 #: internal/lightui/clock.go:492
 #: internal/termui/guide.go:161
-#: internal/ui/voice_page.go:190
+#: internal/ui/voice_page.go:189
 #: ui/clock.ui:339
 #: ui/clock.ui:406
 #: ui/vm.ui:686
@@ -8462,7 +8462,7 @@ msgid "Pick a colour"
 msgstr "选择颜色"
 
 #: internal/hyprconf/keys.go:40
-#: internal/ui/voice_page.go:173
+#: internal/ui/voice_page.go:172
 #: ui/bar.ui:177
 #: ui/settings.ui:6292
 msgid "Dictation"
@@ -10027,7 +10027,7 @@ msgid "GRAPHICS"
 msgstr "显卡"
 
 #: internal/lightui/sysmon.go:1003
-#: internal/ui/voice_page.go:204
+#: internal/ui/voice_page.go:203
 msgid "Card"
 msgstr "显卡"
 
@@ -10341,7 +10341,7 @@ msgstr "使用中"
 #: internal/ui/settings_ai.go:272
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
-#: internal/ui/voice_page.go:314
+#: internal/ui/voice_page.go:313
 msgid "None"
 msgstr "无"
 
@@ -10693,7 +10693,7 @@ msgid "Replace the installed %s?"
 msgstr "替换已安装的 %s？"
 
 #: internal/lightui/workshop_manager.go:154
-#: internal/ui/voice_page.go:189
+#: internal/ui/voice_page.go:188
 #: ui/vm.ui:1283
 msgid "Install"
 msgstr "安装"
@@ -11975,8 +11975,8 @@ msgid "SMTP server"
 msgstr "SMTP 服务器"
 
 #: internal/mailui/welcome.go:589
-#: internal/ui/voice_page.go:201
-#: internal/ui/voice_page.go:230
+#: internal/ui/voice_page.go:200
+#: internal/ui/voice_page.go:229
 msgid "Change"
 msgstr "更改"
 
@@ -12049,7 +12049,7 @@ msgid "Fetching your mail"
 msgstr "正在获取你的邮件"
 
 #: internal/mailui/welcome.go:726
-#: internal/ui/voice_page.go:383
+#: internal/ui/voice_page.go:377
 msgid "Ready"
 msgstr "就绪"
 
@@ -13128,7 +13128,7 @@ msgstr "正在听… 点击停止"
 
 #: internal/shell/status.go:48
 #: internal/ui/dictation.go:156
-#: internal/ui/voice_page.go:381
+#: internal/ui/voice_page.go:375
 #: ui/assistant.ui:172
 msgid "Transcribing…"
 msgstr "正在转为文字…"
@@ -15991,7 +15991,7 @@ msgid "the dialog could not be shown"
 msgstr "无法显示对话框"
 
 #: internal/ui/settings_keyring.go:383
-#: internal/ui/voice_page.go:377
+#: internal/ui/voice_page.go:371
 msgid "Looking…"
 msgstr "正在查看…"
 
@@ -16250,7 +16250,7 @@ msgid "What apps record"
 msgstr "应用录音所用的设备"
 
 #: internal/ui/settings_sound.go:95
-#: internal/ui/voice_page.go:212
+#: internal/ui/voice_page.go:211
 msgid "Microphone"
 msgstr "麦克风"
 
@@ -16272,7 +16272,7 @@ msgid "Test plays a sound on the left, then on the right"
 msgstr "“测试”会先在左侧、再在右侧播放一个声音"
 
 #: internal/ui/settings_sound.go:167
-#: internal/ui/voice_page.go:458
+#: internal/ui/voice_page.go:452
 msgid "PipeWire has no microphone"
 msgstr "PipeWire 没有麦克风"
 
@@ -16474,15 +16474,15 @@ msgstr "inua无法升级"
 msgid "Could not upgrade: %s"
 msgstr "无法升级:%s"
 
-#: internal/ui/voice.go:206
+#: internal/ui/voice.go:209
 msgid "Dictation did not work"
 msgstr "听写没有成功"
 
-#: internal/ui/voice.go:252
-msgid "dictation types with wtype, which is not installed"
-msgstr "听写用 wtype 输入文字，但它没有安装"
+#: internal/ui/voice.go:271
+msgid "dictation pastes with Hyprland, which is not running"
+msgstr "听写通过 Hyprland 粘贴，而它没有运行"
 
-#: internal/ui/voice.go:262
+#: internal/ui/voice.go:281
 msgid "no window has the focus to type into"
 msgstr "没有获得焦点的窗口可供输入"
 
@@ -16570,7 +16570,7 @@ msgstr[0] "%d 种语言"
 
 #: internal/ui/voice_models.go:237
 #: internal/ui/voice_models.go:266
-#: internal/ui/voice_page.go:471
+#: internal/ui/voice_page.go:465
 msgid "Downloading…"
 msgstr "正在下载…"
 
@@ -16586,187 +16586,183 @@ msgstr "%s 没有启用：%s"
 msgid "voxtype's other engines did not come: %s"
 msgstr "没能获取 voxtype 的其他引擎：%s"
 
-#: internal/ui/voice_page.go:74
+#: internal/ui/voice_page.go:73
 msgid "At the top of your window"
 msgstr "在你窗口的顶部"
 
-#: internal/ui/voice_page.go:74
+#: internal/ui/voice_page.go:73
 msgid "In the screen's corner"
 msgstr "在屏幕角落"
 
-#: internal/ui/voice_page.go:74
+#: internal/ui/voice_page.go:73
 msgid "Off: the bar's microphone alone"
 msgstr "关闭：只用顶栏的麦克风"
 
-#: internal/ui/voice_page.go:172
+#: internal/ui/voice_page.go:171
 msgid "DICTATION"
 msgstr "听写"
 
-#: internal/ui/voice_page.go:172
+#: internal/ui/voice_page.go:171
 msgid "Talk, and the words are typed where you are"
 msgstr "说话，文字就会输入到你所在的位置"
 
-#: internal/ui/voice_page.go:173
+#: internal/ui/voice_page.go:172
 msgid "A microphone in the bar, and a shortcut to talk"
 msgstr "顶栏中的麦克风，以及用来说话的快捷键"
 
-#: internal/ui/voice_page.go:188
+#: internal/ui/voice_page.go:187
 msgid "voxtype.io"
 msgstr "voxtype.io"
 
-#: internal/ui/voice_page.go:191
+#: internal/ui/voice_page.go:190
 msgid "AI Settings"
 msgstr "AI 设置"
 
-#: internal/ui/voice_page.go:194
+#: internal/ui/voice_page.go:193
 msgid "Shortcut"
 msgstr "快捷键"
 
-#: internal/ui/voice_page.go:199
+#: internal/ui/voice_page.go:198
 msgid "Hold"
 msgstr "按住"
 
-#: internal/ui/voice_page.go:199
+#: internal/ui/voice_page.go:198
 msgid "Press"
 msgstr "按下"
 
-#: internal/ui/voice_page.go:204
+#: internal/ui/voice_page.go:203
 msgid "The waveform as you talk, then the words"
 msgstr "说话时显示波形，然后显示文字"
 
-#: internal/ui/voice_page.go:221
+#: internal/ui/voice_page.go:220
 msgid "ENGINE"
 msgstr "引擎"
 
-#: internal/ui/voice_page.go:221
+#: internal/ui/voice_page.go:220
 msgid "What turns your speech into text"
 msgstr "把你的语音转为文字的方式"
 
-#: internal/ui/voice_page.go:223
+#: internal/ui/voice_page.go:222
 msgid "Runs"
 msgstr "运行于"
 
-#: internal/ui/voice_page.go:225
+#: internal/ui/voice_page.go:224
 msgid "On this computer"
 msgstr "在这台电脑上"
 
-#: internal/ui/voice_page.go:225
+#: internal/ui/voice_page.go:224
 msgid "With an AI profile"
 msgstr "用 AI 配置文件"
 
-#: internal/ui/voice_page.go:228
+#: internal/ui/voice_page.go:227
 msgid "Profile"
 msgstr "配置文件"
 
-#: internal/ui/voice_page.go:233
+#: internal/ui/voice_page.go:232
 msgid "Typing"
 msgstr "输入方式"
 
-#: internal/ui/voice_page.go:323
+#: internal/ui/voice_page.go:322
 msgid "Hold it to talk; Escape drops what you said"
 msgstr "按住说话；按 Esc 放弃所说内容"
 
-#: internal/ui/voice_page.go:325
+#: internal/ui/voice_page.go:324
 msgid "Press it to start and again to end; Escape drops what you said"
 msgstr "按一次开始，再按一次结束；按 Esc 放弃所说内容"
 
-#: internal/ui/voice_page.go:332
+#: internal/ui/voice_page.go:331
 msgid "The recording goes to the AI profile's provider"
 msgstr "录音会发送给 AI 配置文件的服务商"
 
-#: internal/ui/voice_page.go:334
+#: internal/ui/voice_page.go:333
 msgid "voxtype turns it into text here; the recording stays on this computer"
 msgstr "voxtype 在本机把它转为文字；录音留在这台电脑上"
 
-#: internal/ui/voice_page.go:345
-msgid "The words are typed where you are"
-msgstr "文字会输入到你所在的位置"
+#: internal/ui/voice_page.go:343
+msgid "The words are pasted where you are, and your clipboard put back"
+msgstr "说的话会粘贴到当前所在之处，剪贴板随后还原"
 
-#: internal/ui/voice_page.go:348
-msgid "The words are pasted where you are, and your clipboard put back; to have them typed, install wtype:"
-msgstr "文字会粘贴到你所在的位置，剪贴板随后复原；若要直接输入，请安装 wtype："
-
-#: internal/ui/voice_page.go:364
+#: internal/ui/voice_page.go:358
 msgid "Installing voxtype…"
 msgstr "正在安装 voxtype…"
 
-#: internal/ui/voice_page.go:366
+#: internal/ui/voice_page.go:360
 msgid "No AI profile turns speech into text"
 msgstr "没有能把语音转为文字的 AI 配置文件"
 
-#: internal/ui/voice_page.go:367
+#: internal/ui/voice_page.go:361
 msgid "Turn on Voice for a profile in Settings → AI, and choose it for Voice input"
 msgstr "在“设置”→“AI”中为一个配置文件打开“语音”，并在“语音输入”中选择它"
 
-#: internal/ui/voice_page.go:369
+#: internal/ui/voice_page.go:363
 msgid "pw-cat is not installed"
 msgstr "pw-cat 没有安装"
 
-#: internal/ui/voice_page.go:370
+#: internal/ui/voice_page.go:364
 msgid "Dictation records with PipeWire's pw-cat: %s"
 msgstr "听写用 PipeWire 的 pw-cat 录音：%s"
 
-#: internal/ui/voice_page.go:372
+#: internal/ui/voice_page.go:366
 msgid "voxtype is not installed"
 msgstr "voxtype 没有安装"
 
-#: internal/ui/voice_page.go:373
+#: internal/ui/voice_page.go:367
 msgid "Install downloads voxtype %s and a speech model for your language from GitHub, about %d MB, and checks them before they run"
 msgstr "“安装”会从 GitHub 下载 voxtype %s 和适合你语言的语音模型，约 %d MB，并在运行前校验"
 
-#: internal/ui/voice_page.go:375
+#: internal/ui/voice_page.go:369
 msgid "voxtype is not running"
 msgstr "voxtype 没有运行"
 
-#: internal/ui/voice_page.go:375
+#: internal/ui/voice_page.go:369
 msgid "It is installed; its service is stopped"
 msgstr "它已安装；它的服务已停止"
 
-#: internal/ui/voice_page.go:379
+#: internal/ui/voice_page.go:373
 msgid "Listening…"
 msgstr "正在听…"
 
-#: internal/ui/voice_page.go:379
+#: internal/ui/voice_page.go:373
 msgid "Escape drops what you said"
 msgstr "按 Esc 放弃所说内容"
 
-#: internal/ui/voice_page.go:387
+#: internal/ui/voice_page.go:381
 msgid "Click the microphone in the bar, and talk"
 msgstr "点击顶栏中的麦克风，然后说话"
 
-#: internal/ui/voice_page.go:389
+#: internal/ui/voice_page.go:383
 msgid "Hold %s, or click the microphone in the bar, and talk"
 msgstr "按住 %s，或点击顶栏中的麦克风，然后说话"
 
-#: internal/ui/voice_page.go:391
+#: internal/ui/voice_page.go:385
 msgid "Press %s, or click the microphone in the bar, and talk"
 msgstr "按 %s，或点击顶栏中的麦克风，然后说话"
 
-#: internal/ui/voice_page.go:460
+#: internal/ui/voice_page.go:454
 msgid "The system's input, which dictation records from"
 msgstr "系统的输入设备，听写从这里录音"
 
-#: internal/ui/voice_page.go:480
+#: internal/ui/voice_page.go:474
 msgid "Downloading voxtype %s… %s"
 msgstr "正在下载 voxtype %s… %s"
 
-#: internal/ui/voice_page.go:482
+#: internal/ui/voice_page.go:476
 msgid "Downloading a speech model… %s"
 msgstr "正在下载语音模型… %s"
 
-#: internal/ui/voice_page.go:484
+#: internal/ui/voice_page.go:478
 msgid "Downloading a speech model…"
 msgstr "正在下载语音模型…"
 
-#: internal/ui/voice_page.go:486
+#: internal/ui/voice_page.go:480
 msgid "Starting its service…"
 msgstr "正在启动它的服务…"
 
-#: internal/ui/voice_page.go:496
+#: internal/ui/voice_page.go:490
 msgid "voxtype was not installed: %s"
 msgstr "voxtype 没有安装成功：%s"
 
-#: internal/ui/voice_page.go:514
+#: internal/ui/voice_page.go:508
 msgid "voxtype did not start: %s"
 msgstr "voxtype 没有启动：%s"
 
