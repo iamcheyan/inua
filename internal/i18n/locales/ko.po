@@ -385,9 +385,9 @@ msgstr "%s에서 온 파일"
 #: internal/vmui/window.go:2705
 #: internal/vmui/window.go:2706
 #: internal/vmui/window.go:2717
-#: ui/vm.ui:1734
-#: ui/vm.ui:2111
-#: ui/vm.ui:2842
+#: ui/vm.ui:1738
+#: ui/vm.ui:2115
+#: ui/vm.ui:2846
 msgid "Open"
 msgstr "열기"
 
@@ -767,7 +767,7 @@ msgstr "Aider의 설정과 캐시입니다."
 
 #: internal/apps/disk/rules.go:171
 #: internal/mailui/welcome.go:370
-#: ui/vm.ui:1824
+#: ui/vm.ui:1828
 msgid "Continue"
 msgstr "계속"
 
@@ -1554,7 +1554,7 @@ msgid "Receipt or booking"
 msgstr "영수증 또는 예약"
 
 #: internal/apps/mail/sort.go:61
-#: internal/ui/notify.go:454
+#: internal/ui/notify.go:455
 msgid "Notification"
 msgstr "통지"
 
@@ -1955,13 +1955,13 @@ msgstr "콘솔 끝점을 시작할 수 없습니다: %s"
 #: internal/ui/alarms.go:108
 #: ui/disk.ui:179
 #: ui/mail-compose.ui:375
-#: ui/vm.ui:694
-#: ui/vm.ui:1433
-#: ui/vm.ui:1779
-#: ui/vm.ui:2134
-#: ui/vm.ui:2156
-#: ui/vm.ui:2865
-#: ui/vm.ui:2887
+#: ui/vm.ui:697
+#: ui/vm.ui:1437
+#: ui/vm.ui:1783
+#: ui/vm.ui:2138
+#: ui/vm.ui:2160
+#: ui/vm.ui:2869
+#: ui/vm.ui:2891
 msgid "Stop"
 msgstr "중지"
 
@@ -2186,7 +2186,7 @@ msgstr "%s에서 페어링을 요청합니다. 이 키가 표시될 때만 페�
 #: ui/pass.ui:862
 #: ui/polkit.ui:741
 #: ui/remote.ui:1044
-#: ui/vm.ui:3264
+#: ui/vm.ui:3268
 msgid "Cancel"
 msgstr "취소"
 
@@ -3065,7 +3065,7 @@ msgstr "복사됨"
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
 #: ui/settings.ui:3178
-#: ui/vm.ui:638
+#: ui/vm.ui:639
 msgid "Copy"
 msgstr "복사"
 
@@ -3110,7 +3110,7 @@ msgstr "홈"
 #: internal/lightui/tailscale.go:526
 #: internal/lightui/tailscale.go:567
 #: internal/ui/settings.go:536
-#: ui/vm.ui:2977
+#: ui/vm.ui:2981
 msgid "System"
 msgstr "시스템"
 
@@ -3543,7 +3543,7 @@ msgstr[0] "… 그 외 %d개"
 #: ui/mail.ui:395
 #: ui/settings.ui:3327
 #: ui/settings.ui:4808
-#: ui/vm.ui:3499
+#: ui/vm.ui:3503
 msgid "Close"
 msgstr "닫기"
 
@@ -4117,7 +4117,7 @@ msgstr "%s에 연결하는 중…"
 #: internal/vmui/window.go:2707
 #: internal/vmui/window.go:2707
 #: ui/remote.ui:645
-#: ui/vm.ui:2797
+#: ui/vm.ui:2801
 msgid "Connect"
 msgstr "연결"
 
@@ -5047,9 +5047,9 @@ msgstr "카드 상점"
 #: internal/ui/voice_page.go:190
 #: ui/clock.ui:339
 #: ui/clock.ui:406
-#: ui/vm.ui:684
-#: ui/vm.ui:2261
-#: ui/vm.ui:2283
+#: ui/vm.ui:686
+#: ui/vm.ui:2265
+#: ui/vm.ui:2287
 msgid "Start"
 msgstr "시작"
 
@@ -7909,8 +7909,8 @@ msgstr "메뉴로 나가기"
 #: internal/termui/guide.go:111
 #: ui/gpg.ui:633
 #: ui/settings.ui:4508
-#: ui/vm.ui:509
-#: ui/vm.ui:3274
+#: ui/vm.ui:510
+#: ui/vm.ui:3278
 msgid "Back"
 msgstr "뒤로"
 
@@ -8877,11 +8877,11 @@ msgstr "2년 연장"
 #: internal/lightui/gpg.go:824
 #: ui/disk.ui:781
 #: ui/vm.ui:391
-#: ui/vm.ui:1536
-#: ui/vm.ui:1582
-#: ui/vm.ui:1960
-#: ui/vm.ui:2625
-#: ui/vm.ui:2671
+#: ui/vm.ui:1540
+#: ui/vm.ui:1586
+#: ui/vm.ui:1964
+#: ui/vm.ui:2629
+#: ui/vm.ui:2675
 msgid "Delete…"
 msgstr "삭제…"
 
@@ -9291,7 +9291,7 @@ msgstr "경로: 첫 부분이 카테고리입니다. 내용은 그다음에."
 
 #: internal/lightui/pass.go:945
 #: internal/termui/guide.go:163
-#: ui/vm.ui:3285
+#: ui/vm.ui:3289
 msgid "Next"
 msgstr "다음"
 
@@ -10480,7 +10480,7 @@ msgstr "사용: %s"
 
 #: internal/lightui/workshop_manager.go:64
 #: internal/mailui/settings.go:468
-#: ui/vm.ui:2579
+#: ui/vm.ui:2583
 msgid "Remove…"
 msgstr "제거…"
 
@@ -10563,7 +10563,7 @@ msgstr "설치된 %s을(를) 바꿀까요?"
 
 #: internal/lightui/workshop_manager.go:154
 #: internal/ui/voice_page.go:189
-#: ui/vm.ui:1279
+#: ui/vm.ui:1283
 msgid "Install"
 msgstr "설치"
 
@@ -12658,7 +12658,7 @@ msgid "All of them"
 msgstr "그들 모두"
 
 #: internal/shell/commands.go:40
-#: internal/ui/notify.go:859
+#: internal/ui/notify.go:860
 #: ui/center.ui:71
 #: ui/control.ui:473
 msgid "Focus"
@@ -12885,7 +12885,7 @@ msgid "%s · Enter copies"
 msgstr "%s · Enter로 복사"
 
 #: internal/shell/launcher.go:498
-#: ui/vm.ui:912
+#: ui/vm.ui:915
 msgid "Ask the assistant"
 msgstr "어시스턴트에게 물어보세요"
 
@@ -13328,7 +13328,7 @@ msgstr ""
 #: internal/term/web/strings.go:39
 #: internal/vmui/window.go:1108
 #: ui/gpg.ui:1488
-#: ui/vm.ui:3295
+#: ui/vm.ui:3299
 msgid "Create"
 msgstr "만들기"
 
@@ -14651,20 +14651,20 @@ msgstr "비밀번호를 확인할 수 없습니다."
 msgid "Notifications (Focus is on)"
 msgstr "알림(집중 모드 켜짐)"
 
-#: internal/ui/notify.go:645
-#: internal/ui/notify.go:837
+#: internal/ui/notify.go:646
+#: internal/ui/notify.go:838
 msgid "inua notifications"
 msgstr "이누아 알림"
 
-#: internal/ui/notify.go:859
+#: internal/ui/notify.go:860
 msgid "Focus is on"
 msgstr "집중 모드 켜짐"
 
-#: internal/ui/notify.go:902
+#: internal/ui/notify.go:903
 msgid "Show less"
 msgstr "간략히 표시"
 
-#: internal/ui/notify.go:904
+#: internal/ui/notify.go:905
 msgid "%d more"
 msgstr "%d 더 보기"
 
@@ -17259,7 +17259,7 @@ msgid "Remove the container?"
 msgstr "컨테이너를 제거할까요?"
 
 #: internal/vmui/window.go:1975
-#: ui/vm.ui:2566
+#: ui/vm.ui:2570
 msgid "Its container and settings go. The disk and its password stay, so installing again starts from them."
 msgstr "컨테이너와 설정은 사라집니다. 디스크와 암호는 남으므로 다시 설치하면 거기서 시작합니다."
 
@@ -17330,8 +17330,8 @@ msgid "Request sent to the assistant window."
 msgstr "어시스턴트 창으로 요청을 보냈습니다."
 
 #: internal/vmui/window.go:2077
-#: ui/vm.ui:935
-#: ui/vm.ui:957
+#: ui/vm.ui:938
+#: ui/vm.ui:960
 msgid "Check again"
 msgstr "다시 검사"
 
@@ -17507,8 +17507,8 @@ msgstr "실패했습니다: %s"
 #: internal/vmui/window.go:2705
 #: internal/vmui/window.go:2709
 #: internal/vmui/window.go:2713
-#: ui/vm.ui:1712
-#: ui/vm.ui:2089
+#: ui/vm.ui:1716
+#: ui/vm.ui:2093
 msgid "Watch the installation"
 msgstr "설치 과정 보기"
 
@@ -17517,7 +17517,7 @@ msgid "The installer's screen, in your browser."
 msgstr "설치 프로그램 화면을 브라우저에서 봅니다."
 
 #: internal/vmui/window.go:2706
-#: ui/vm.ui:2820
+#: ui/vm.ui:2824
 msgid "Web console"
 msgstr "웹 콘솔"
 
@@ -17570,7 +17570,7 @@ msgid "Deletes the unfinished disk; the machine stays, to install again."
 msgstr "설치가 끝나지 않은 디스크를 삭제합니다. 머신은 남아 다시 설치할 수 있습니다."
 
 #: internal/vmui/window.go:2746
-#: ui/vm.ui:1914
+#: ui/vm.ui:1918
 msgid "Start over…"
 msgstr "처음부터 다시…"
 
@@ -18112,7 +18112,7 @@ msgid "Paste a public key, or choose or drop a key file"
 msgstr "공개 키를 붙여 넣거나 키 파일을 고르거나 끌어다 놓으세요"
 
 #: ui/gpg.ui:1261
-#: ui/vm.ui:1381
+#: ui/vm.ui:1385
 msgid "Choose file…"
 msgstr "파일 고르기…"
 
@@ -19826,260 +19826,260 @@ msgstr "이 폴더는 머신으로 불러올 수 없습니다. 삭제하면 안�
 msgid "[CONSOLE]"
 msgstr "[콘솔]"
 
-#: ui/vm.ui:573
+#: ui/vm.ui:574
 msgid "Wait for a debugger"
 msgstr "디버거 기다리기"
 
-#: ui/vm.ui:582
+#: ui/vm.ui:583
 msgid "Holds the guest at its first instruction, for gdb on 127.0.0.1:1234."
 msgstr "게스트를 첫 명령에서 멈추고 127.0.0.1:1234의 gdb를 기다립니다."
 
-#: ui/vm.ui:614
+#: ui/vm.ui:615
 msgid "Debugger"
 msgstr "디버거"
 
-#: ui/vm.ui:673
+#: ui/vm.ui:674
 msgid "[SERIAL]"
 msgstr "[시리얼]"
 
-#: ui/vm.ui:787
+#: ui/vm.ui:790
 msgid "[HOST]"
 msgstr "[호스트]"
 
-#: ui/vm.ui:859
+#: ui/vm.ui:862
 msgid "[ASSISTANT]"
 msgstr "[어시스턴트]"
 
-#: ui/vm.ui:890
+#: ui/vm.ui:893
 msgid "Ask the assistant to fix this"
 msgstr "어시스턴트에게 수정 요청"
 
-#: ui/vm.ui:899
+#: ui/vm.ui:902
 msgid "It checks what is missing, says what it would change, and runs it with its own approval."
 msgstr "무엇이 없는지 확인하고, 무엇을 바꿀지 알린 뒤 자체 승인 아래 실행합니다."
 
-#: ui/vm.ui:944
+#: ui/vm.ui:947
 msgid "Reads the host again, after something has changed."
 msgstr "무언가 바뀐 뒤 호스트를 다시 읽습니다."
 
-#: ui/vm.ui:1023
-#: ui/vm.ui:2026
-#: ui/vm.ui:2222
-#: ui/vm.ui:2737
+#: ui/vm.ui:1026
+#: ui/vm.ui:2030
+#: ui/vm.ui:2226
+#: ui/vm.ui:2741
 msgid "[GUEST]"
 msgstr "[게스트]"
 
-#: ui/vm.ui:1034
+#: ui/vm.ui:1038
 msgid "Use recommended"
 msgstr "권장값 사용"
 
-#: ui/vm.ui:1065
-#: ui/vm.ui:2365
-#: ui/vm.ui:3098
+#: ui/vm.ui:1069
+#: ui/vm.ui:2369
+#: ui/vm.ui:3102
 msgid "Memory (GiB)"
 msgstr "메모리 (GiB)"
 
-#: ui/vm.ui:1115
-#: ui/vm.ui:2400
-#: ui/vm.ui:3147
+#: ui/vm.ui:1119
+#: ui/vm.ui:2404
+#: ui/vm.ui:3151
 msgid "CPU cores"
 msgstr "CPU 코어"
 
-#: ui/vm.ui:1165
-#: ui/vm.ui:3196
+#: ui/vm.ui:1169
+#: ui/vm.ui:3200
 msgid "Disk size (GiB)"
 msgstr "디스크 크기 (GiB)"
 
-#: ui/vm.ui:1227
-#: ui/vm.ui:1648
+#: ui/vm.ui:1231
+#: ui/vm.ui:1652
 msgid "[INSTALL]"
 msgstr "[설치]"
 
-#: ui/vm.ui:1258
+#: ui/vm.ui:1262
 msgid "Install the system"
 msgstr "시스템 설치"
 
-#: ui/vm.ui:1328
+#: ui/vm.ui:1332
 msgid "[IMAGE]"
 msgstr "[이미지]"
 
-#: ui/vm.ui:1359
+#: ui/vm.ui:1363
 msgid "Install image"
 msgstr ""
 
-#: ui/vm.ui:1391
+#: ui/vm.ui:1395
 msgid "Download…"
 msgstr ""
 
-#: ui/vm.ui:1481
-#: ui/vm.ui:2526
+#: ui/vm.ui:1485
+#: ui/vm.ui:2530
 msgid "[REMOVE]"
 msgstr "[제거]"
 
-#: ui/vm.ui:1513
+#: ui/vm.ui:1517
 msgid "Files from an earlier attempt"
 msgstr "이전 시도의 파일"
 
-#: ui/vm.ui:1522
+#: ui/vm.ui:1526
 msgid "Installing reuses them. Delete them to start over."
 msgstr "설치할 때 다시 사용합니다. 처음부터 다시 하려면 삭제하세요."
 
-#: ui/vm.ui:1559
-#: ui/vm.ui:1937
-#: ui/vm.ui:2648
+#: ui/vm.ui:1563
+#: ui/vm.ui:1941
+#: ui/vm.ui:2652
 msgid "Delete the machine"
 msgstr "머신 삭제"
 
-#: ui/vm.ui:1568
-#: ui/vm.ui:1946
-#: ui/vm.ui:2657
+#: ui/vm.ui:1572
+#: ui/vm.ui:1950
+#: ui/vm.ui:2661
 msgid "The machine and all its files, for good."
 msgstr "머신과 모든 파일을 완전히 삭제합니다."
 
-#: ui/vm.ui:1757
+#: ui/vm.ui:1761
 msgid "Pause the installation"
 msgstr "설치 일시 중지"
 
-#: ui/vm.ui:1766
+#: ui/vm.ui:1770
 msgid "Stops the guest; the disk is kept, and Continue picks up from there."
 msgstr "게스트를 중지합니다. 디스크는 남고, 계속을 누르면 거기서 이어집니다."
 
-#: ui/vm.ui:1802
+#: ui/vm.ui:1806
 msgid "Continue the installation"
 msgstr "설치 계속"
 
-#: ui/vm.ui:1811
+#: ui/vm.ui:1815
 msgid "Starts the guest again; the installation goes on from where it was."
 msgstr "게스트를 다시 시작하고, 설치를 멈춘 곳부터 이어 갑니다."
 
-#: ui/vm.ui:1848
+#: ui/vm.ui:1852
 msgid "Finish the installation"
 msgstr ""
 
-#: ui/vm.ui:1857
+#: ui/vm.ui:1861
 msgid "Takes the install image out, so the machine starts from its own disk."
 msgstr ""
 
-#: ui/vm.ui:1870
+#: ui/vm.ui:1874
 msgid "Finish"
 msgstr ""
 
-#: ui/vm.ui:2143
-#: ui/vm.ui:2874
+#: ui/vm.ui:2147
+#: ui/vm.ui:2878
 msgid "Stops the guest; the disk is kept."
 msgstr "게스트를 중지하고 디스크는 남깁니다."
 
-#: ui/vm.ui:2270
+#: ui/vm.ui:2274
 msgid "Ready in a minute or two."
 msgstr "1~2분 뒤 준비됩니다."
 
-#: ui/vm.ui:2331
+#: ui/vm.ui:2335
 msgid "[RESOURCES]"
 msgstr "[리소스]"
 
-#: ui/vm.ui:2341
+#: ui/vm.ui:2345
 msgid "From the next start"
 msgstr "다음 시작부터"
 
-#: ui/vm.ui:2441
+#: ui/vm.ui:2445
 msgid "Disk size"
 msgstr "디스크 크기"
 
-#: ui/vm.ui:2450
+#: ui/vm.ui:2454
 msgid "Set when the machine was made. A larger disk needs its partition enlarged inside the guest."
 msgstr "머신을 만들 때 정해집니다. 디스크를 키우려면 게스트 안에서 파티션을 늘려야 합니다."
 
-#: ui/vm.ui:2481
+#: ui/vm.ui:2485
 msgid "Apply"
 msgstr "적용"
 
-#: ui/vm.ui:2557
+#: ui/vm.ui:2561
 msgid "Remove the container"
 msgstr "컨테이너 제거"
 
-#: ui/vm.ui:2602
+#: ui/vm.ui:2606
 msgid "Delete the disk"
 msgstr "디스크 삭제"
 
-#: ui/vm.ui:2611
+#: ui/vm.ui:2615
 msgid "The installed system and its files, for good. The machine stays, to install again."
 msgstr "설치된 시스템과 파일을 완전히 삭제합니다. 머신은 남아 다시 설치할 수 있습니다."
 
-#: ui/vm.ui:2829
+#: ui/vm.ui:2833
 msgid "The guest's screen, in your browser."
 msgstr "게스트 화면을 브라우저에서 봅니다."
 
-#: ui/vm.ui:2929
-#: ui/vm.ui:2946
+#: ui/vm.ui:2933
+#: ui/vm.ui:2950
 msgid "New machine"
 msgstr "새 머신"
 
-#: ui/vm.ui:2967
+#: ui/vm.ui:2971
 msgid "Pick the system, how it runs, and a name."
 msgstr ""
 
-#: ui/vm.ui:2993
+#: ui/vm.ui:2997
 msgid "How it runs"
 msgstr ""
 
-#: ui/vm.ui:3020
+#: ui/vm.ui:3024
 msgid "Machine name"
 msgstr "머신 이름"
 
-#: ui/vm.ui:3026
+#: ui/vm.ui:3030
 msgid "windows"
 msgstr "Windows"
 
-#: ui/vm.ui:3034
+#: ui/vm.ui:3038
 msgid "Its folder is named after it."
 msgstr "폴더 이름이 이것을 따릅니다."
 
-#: ui/vm.ui:3069
+#: ui/vm.ui:3073
 msgid "What it gets from this computer. Memory and CPU cores can change later."
 msgstr ""
 
-#: ui/vm.ui:3245
+#: ui/vm.ui:3249
 msgid "Writes the machine's definition. Nothing is installed or started yet."
 msgstr "머신의 정의를 기록합니다. 아직 설치하거나 시작하지 않습니다."
 
-#: ui/vm.ui:3312
-#: ui/vm.ui:3332
+#: ui/vm.ui:3316
+#: ui/vm.ui:3336
 msgid "Download an install image"
 msgstr ""
 
-#: ui/vm.ui:3368
+#: ui/vm.ui:3372
 msgid "Search systems and images"
 msgstr "시스템과 이미지 검색"
 
-#: ui/vm.ui:3380
+#: ui/vm.ui:3384
 msgid "Which platform to show"
 msgstr "표시할 플랫폼"
 
-#: ui/vm.ui:3389
+#: ui/vm.ui:3393
 msgid "Which architecture to show"
 msgstr "표시할 아키텍처"
 
-#: ui/vm.ui:3402
+#: ui/vm.ui:3406
 msgid "Prerelease"
 msgstr "프리릴리스"
 
-#: ui/vm.ui:3409
+#: ui/vm.ui:3413
 msgid "Also show prerelease and development systems"
 msgstr "프리릴리스와 개발 중인 시스템도 표시"
 
-#: ui/vm.ui:3418
+#: ui/vm.ui:3422
 msgid "Ended"
 msgstr "지원 종료"
 
-#: ui/vm.ui:3425
+#: ui/vm.ui:3429
 msgid "Also show systems past their support date"
 msgstr "지원 종료일이 지난 시스템도 표시"
 
-#: ui/vm.ui:3454
+#: ui/vm.ui:3458
 msgid "RECOMMENDED"
 msgstr "추천"
 
-#: ui/vm.ui:3472
+#: ui/vm.ui:3476
 msgid "ALL SYSTEMS"
 msgstr "모든 시스템"
 

@@ -504,6 +504,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       <object class="GtkButton" id="vm_console_back">
                                         <style>
                                           <class name="outlined"/>
+                                          <class name="small"/>
                                         </style>
                                         <property name="name">console_back</property>
                                         <property name="label" translatable="yes">Back</property>
@@ -679,6 +680,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       <object class="GtkButton" id="vm_console_start">
                                         <style>
                                           <class name="outlined"/>
+                                          <class name="small"/>
                                         </style>
                                         <property name="name">console_start</property>
                                         <property name="label" translatable="yes">Start</property>
@@ -689,6 +691,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       <object class="GtkButton" id="vm_console_stop">
                                         <style>
                                           <class name="outlined"/>
+                                          <class name="small"/>
                                         </style>
                                         <property name="name">console_stop</property>
                                         <property name="label" translatable="yes">Stop</property>
@@ -1029,6 +1032,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       <object class="GtkButton" id="vm_accept">
                                         <style>
                                           <class name="outlined"/>
+                                          <class name="small"/>
                                         </style>
                                         <property name="name">accept</property>
                                         <property name="label" translatable="yes">Use recommended</property>

@@ -421,6 +421,7 @@ func (s *shellUI) buildNote(n notify.Notification, inBanner bool) *gtk.Box {
 		b.SetChild(&l.Widget)
 		l.Unref()
 		b.AddCssClass("outlined")
+		b.AddCssClass("small")
 		b.SetName(fmt.Sprintf("act:%s:%d", id, i))
 		b.ConnectClicked(&s.onNoteButton)
 		gtkx.Append(&actions, &b.Widget)

@@ -106,7 +106,48 @@ button.plain:hover { background: alpha(@accent, 0.09); color: @t0; }
 button.plain:disabled { color: alpha(@t2, 0.5); }
 /* An icon button is square: no side padding, as wide as it is tall. */
 button.image-button { padding-left: 0; padding-right: 0; }
-.settings button.outlined.image-button { min-width: 34px; }
+button.outlined.image-button { min-width: 34px; }
+
+/* The buttons with a frame (design/ui.md, Controls), the same in every
+   window and surface: 34 px where they sit in a row, 26 px with .small (in
+   a section's head, a tight bar); a hairline and 2 px corners. Outlined
+   for most; filled with the accent for the one main action, with danger
+   for what is lost for good, with primary for a light app's main action. */
+button.outlined, menubutton.outlined > button,
+button.suggested-action, button.destructive-action, button.primary {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid @line;
+  border-radius: 2px;
+  box-shadow: none;
+  background-image: none;
+  transition: background 120ms ease-out, border-color 120ms ease-out;
+}
+button.outlined, menubutton.outlined > button { background: @surface; color: @t0; }
+button.outlined:hover, menubutton.outlined > button:hover {
+  background: mix(@surface, @accent, 0.06);
+  border-color: alpha(@accent, 0.38);
+}
+button.outlined:disabled, menubutton.outlined > button:disabled { color: @t2; background: transparent; border-color: alpha(@line, 0.6); }
+button.outlined.danger { color: @danger; }
+button.outlined.danger:hover { border-color: alpha(@danger, 0.5); background: alpha(@danger, 0.06); }
+/* Filled, they stay filled when hovered (not the outlined buttons' tint,
+   which left the dark label on a dark ground) and while at work. */
+button.suggested-action { border-color: @accent; background: @accent; color: @app; }
+button.suggested-action:hover { border-color: mix(@accent, @t0, 0.14); background: mix(@accent, @t0, 0.14); }
+button.destructive-action { border-color: @danger; background: @danger; color: @app; }
+button.destructive-action:hover { border-color: mix(@danger, @t0, 0.14); background: mix(@danger, @t0, 0.14); }
+button.primary { border-color: @primary; background: @primary; color: @app; }
+button.primary:hover { border-color: mix(@primary, @app, 0.12); background: mix(@primary, @app, 0.12); }
+button.suggested-action label, button.destructive-action label, button.primary label { color: @app; }
+button.suggested-action:disabled, button.destructive-action:disabled, button.primary:disabled { opacity: 0.45; }
+button.outlined.small, menubutton.outlined.small > button,
+button.suggested-action.small, button.destructive-action.small, button.primary.small {
+  min-height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+button.outlined.small.image-button { min-width: 26px; padding: 0; }
 
 /* --- bar ------------------------------------------------------------- */
 
@@ -690,16 +731,6 @@ button.widget-pick { padding: 6px 8px; }
 .note button.note-close { min-width: 22px; min-height: 22px; opacity: 0; transition: opacity 120ms ease-out; }
 .note:hover button.note-close { opacity: 1; }
 .note-actions { margin-top: 4px; }
-.note-actions button.outlined {
-  min-height: 28px;
-  padding: 0 10px;
-  border: 1px solid @line;
-  border-radius: 2px;
-  box-shadow: none;
-  background: transparent;
-  color: @t0;
-}
-.note-actions button.outlined:hover { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); }
 
 .center .backdrop, .clipboard-panel .backdrop { background: alpha(@app, 0.18); }
 .center .card, .clipboard-panel .clipboard-card {
@@ -1086,7 +1117,7 @@ window.settings { background: @app; font-size: 14px; }
 .settings entry placeholder { color: @t2; }
 .settings .mono-entry { font-size: 12.5px; }
 
-.settings button.outlined, .settings menubutton.outlined > button, .settings dropdown > button {
+.settings dropdown > button {
   min-height: 34px;
   padding: 0 14px;
   background: @surface;
@@ -1096,11 +1127,10 @@ window.settings { background: @app; font-size: 14px; }
   box-shadow: none;
   transition: background 120ms ease-out, border-color 120ms ease-out;
 }
-.settings button.outlined:hover, .settings menubutton.outlined > button:hover, .settings dropdown > button:hover {
+.settings dropdown > button:hover {
   background: mix(@surface, @accent, 0.06);
   border-color: alpha(@accent, 0.38);
 }
-.settings button.outlined:disabled, .settings menubutton.outlined > button:disabled { color: @t2; background: transparent; border-color: alpha(@line, 0.6); }
 .settings dropdown > button { min-width: 150px; }
 /* A number: an entry's box with the digits in mono, and − and + as flat
    cells behind hairlines, the height of the buttons beside it. */
@@ -1489,16 +1519,6 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .polkit-password:focus-within { border-color: alpha(@accent, 0.6); }
 .polkit-info { font-size: 12px; color: @t2; }
 .polkit-info.error { color: @danger; }
-.polkit-card button {
-  min-height: 30px;
-  padding: 0 14px;
-  border-radius: 2px;
-  box-shadow: none;
-}
-.polkit-card button.outlined { border: 1px solid @line; background: transparent; color: @t0; }
-.polkit-card button.outlined:hover { background: alpha(@accent, 0.09); }
-.polkit-card button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-.polkit-card button.suggested-action:disabled { opacity: 0.45; }
 .polkit-card button.plain { min-height: 0; padding: 4px; border: none; background: transparent; color: @t1; }
 /* gpg's passphrase: the key it unlocks and who asks, in sections as
    Settings has (a mark, a [LABEL] on a hairline) of label and value rows. */
@@ -1594,20 +1614,6 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .settings .actions { padding: 12px 0 4px; }
 .settings .foot { padding: 4px 0 0; }
 
-/* A filled button for the one main action. */
-.settings button.primary {
-  min-height: 0;
-  padding: 7px 18px;
-  border: 1px solid @primary;
-  border-radius: 2px;
-  background: @primary;
-  box-shadow: none;
-  color: @app;
-}
-.settings button.primary:hover { background: mix(@primary, @app, 0.12); }
-.settings button.primary label { color: @app; }
-.settings button.outlined.danger { color: @danger; }
-.settings button.outlined.danger:hover { border-color: alpha(@danger, 0.5); background: alpha(@danger, 0.06); }
 /* Bluetooth: a device's icon; a pairing request under its device, the
    passkey a keycap a digit, those typed on the device lit. */
 .settings .bt-icon { color: @t1; }
@@ -1738,7 +1744,6 @@ stackswitcher.tabs { margin-top: 10px; }
 }
 .settings .days > button:checked { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); color: @accent; }
 
-.settings button.small { padding: 4px 10px; font-size: 12px; }
 .settings button.wide { min-width: 116px; }
 .settings button.text { min-height: 0; padding: 6px 4px; border: none; background: transparent; box-shadow: none; color: @t1; }
 .settings button.text.danger { color: @danger; }
@@ -2169,7 +2174,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .settings button.game-choice { min-height: 28px; padding: 0 12px; font-size: 12.5px; }
 .settings button.game-choice.on { border-color: @accent; color: @accent; background: alpha(@accent, 0.08); }
 
-.gamewin button.primary:disabled { opacity: 0.35; }
 
 .overview-scrim { background: alpha(@app, 0.78); padding: 28px 48px; }
 .overview-monitor-group { background: alpha(@surface, 0.9); border: 1px solid alpha(@accent, 0.65); padding: 10px 14px 14px; }
@@ -2293,7 +2297,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .as-answer.as-error, .as-error { color: @danger; }
 .as-tool { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 11.5px; color: @t2; }
 .as-card { padding: 12px 14px; border: 1px solid alpha(@accent, 0.38); border-radius: 2px; background: @surface; color: @t0; }
-.as-card button.suggested-action { min-height: 30px; padding: 0 14px; border: 1px solid @accent; border-radius: 2px; background: @accent; color: @app; box-shadow: none; }
 .as-card:disabled { opacity: 0.55; }
 .as-suggestions { margin-top: 6px; }
 .settings button.as-suggestion {
@@ -2307,8 +2310,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 }
 .settings button.as-suggestion:hover { border-color: alpha(@accent, 0.4); color: @t0; }
 .as-composer { padding: 12px 16px 16px; border-top: 1px solid alpha(@line, 0.55); }
-.as-composer button.suggested-action { min-height: 34px; padding: 0 16px; border: 1px solid @accent; border-radius: 2px; background: @accent; color: @app; box-shadow: none; }
-.as-composer button.suggested-action:disabled { opacity: 0.45; }
 /* Voice input: the microphone beside Ask, Stop (in danger) while it
    records; the recording in the question's place, as the bar's: a red
    mark, the time in mono, the waveform. */
@@ -2550,9 +2551,6 @@ window.pass .pass-otp {
 window.pass .pass-editor { border: 1px solid @line; border-radius: 2px; }
 window.pass .pass-text, window.pass .pass-text text { background: alpha(@surface, 0.6); color: @t0; font-size: 13px; }
 window.pass .pass-error { color: @danger; }
-window.pass button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
-window.pass button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.pass button.suggested-action:disabled { opacity: 0.45; }
 /* An entry in the list: the icon its name calls for, else its initial,
    in a hairline square; its name; and where it is, dim, in the monospace. */
 window.pass button.index-item.pass-entry { min-height: 48px; padding: 6px 12px 6px 10px; }
@@ -2700,16 +2698,11 @@ window.gpg .gpg-hint { color: @warn; }
 window.gpg-dialog { background: @app; }
 window.gpg-dialog .page { padding: 22px 24px 20px; }
 window.gpg-dialog .gpg-dialog-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; color: @t0; }
-window.gpg button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
 window.gpg button.gpg-act.danger { color: @danger; }
 window.gpg button.gpg-act.danger:hover { border-color: alpha(@danger, 0.35); background: alpha(@danger, 0.06); }
-/* The buttons in a section's head. */
-window.gpg button.gpg-small { min-height: 26px; padding: 0 10px; font-size: 12px; }
 window.gpg .gpg-acts { margin: 6px 0 0 -8px; }
 window.gpg button.gpg-act { min-height: 24px; padding: 1px 8px; border: 1px solid transparent; border-radius: 2px; background: transparent; color: @accent; font-size: 12px; }
 window.gpg button.gpg-act:hover { border-color: alpha(@accent, 0.35); background: alpha(@accent, 0.06); }
-window.gpg button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.gpg button.suggested-action:disabled { opacity: 0.45; }
 
 /* Workshop apps: the building blocks an app's program describes, in the
    light apps' look (internal/appui/workshop.go). */
@@ -2749,8 +2742,6 @@ window.workshop .ws-empty-title {
   color: @t0;
 }
 window.workshop .ws-log { border: 1px solid alpha(@line, 0.55); border-radius: 2px; padding: 8px 10px; }
-window.workshop button.suggested-action, .ws-dialog button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.workshop button.destructive-action, .ws-dialog button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
 .ws-dialog { padding: 22px 24px 18px; }
 /* The blocks from Settings and the light apps: tabs as the light apps'
    (text over a hairline, the current one underlined), joined choices,
@@ -3053,14 +3044,6 @@ window.files button.files-card-item .title { color: @t0; }
 window.files button.files-card-item .sub { font-size: 12px; color: @t2; }
 window.files button.files-card-item:hover { background: alpha(@accent, 0.06); }
 window.files button.files-card-item.selected { border-color: alpha(@accent, 0.3); background: alpha(@accent, 0.12); }
-window.files button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.files button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
-/* Filled, they stay filled when hovered (not the outlined buttons' tint,
-   which left the dark label on a dark ground) and while at work. */
-window.files button.suggested-action:hover { border-color: @accent; background: mix(@accent, @t0, 0.14); }
-window.files button.destructive-action:hover { border-color: @danger; background: mix(@danger, @t0, 0.14); }
-window.files button.suggested-action:disabled { border-color: @accent; background: @accent; color: @app; opacity: 0.6; }
-window.files button.destructive-action:disabled { border-color: @danger; background: @danger; color: @app; opacity: 0.6; }
 window.files .files-keys-head { margin: 14px 0 6px; }
 window.files .files-keys-row { min-height: 24px; }
 window.files .files-key { min-width: 190px; color: @accent; }
@@ -3228,7 +3211,6 @@ window.video.video-loaded .video-empty { opacity: 0; }
 .vmpage .vm-os-mark { color: @t2; transition: color 180ms ease-out; }
 
 /* A control in a section's head is smaller than a row's. */
-.vmpage .section-head button.outlined { min-height: 26px; padding: 0 10px; font-size: 12px; }
 .vmpage .section-head button + button { margin-left: 6px; }
 
 /* A library with no machine: a mark, a title, a line and what to do. */
@@ -3327,17 +3309,6 @@ window.video.video-loaded .video-empty { opacity: 0; }
 window.vm-dialog { background: @app; }
 window.vm-dialog .page { padding: 22px 24px 20px; }
 window.vm-dialog .vm-dialog-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; color: @t0; }
-window.vm-dialog button.destructive-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  box-shadow: none;
-  color: @app;
-}
-window.vm-dialog button.destructive-action:hover { background: mix(@danger, @t0, 0.14); }
 
 /* Remote Desktop (inua-remote): a library (with the index's, above) of
    This computer and the machines, the chosen one's page in its panel; a
@@ -3364,30 +3335,6 @@ window.connect .connect-error, window.connect-reply .connect-error { color: @dan
 window.connect .connect-key { padding: 14px 16px; border: 1px solid alpha(@accent, 0.4); border-radius: 3px; background: alpha(@accent, 0.06); }
 window.connect .connect-key-digits { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 34px; font-weight: 600; letter-spacing: 0.3em; color: @accent; }
 window.connect-reply .page { padding: 18px; }
-/* Their one action at a time (Connect, Pair, Save, Add, Scan): the outlined
-   buttons' shape, filled with the accent, as GPG's and Pass's are. */
-window.remote button.suggested-action, window.connect button.suggested-action, window.disk button.suggested-action,
-window.mail button.suggested-action,
-window.vmpage button.suggested-action, window.vm-dialog button.suggested-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @accent;
-  border-radius: 2px;
-  background: @accent;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-  transition: background 120ms ease-out, border-color 120ms ease-out;
-}
-window.remote button.suggested-action:hover, window.connect button.suggested-action:hover,
-window.disk button.suggested-action:hover, window.mail button.suggested-action:hover,
-window.vmpage button.suggested-action:hover, window.vm-dialog button.suggested-action:hover {
-  border-color: mix(@accent, @t0, 0.14);
-  background: mix(@accent, @t0, 0.14);
-}
-window.remote button.suggested-action:disabled, window.connect button.suggested-action:disabled,
-window.disk button.suggested-action:disabled, window.mail button.suggested-action:disabled,
-window.vmpage button.suggested-action:disabled { opacity: 0.45; }
 window.remote-stream { background: #000; }
 window.remote-stream .remote-note {
   margin-top: 14px;
@@ -3420,18 +3367,6 @@ window.term .term-sheet-text {
   font-size: 12px;
   color: @t0;
 }
-window.term .term-sheet button { min-height: 30px; padding: 0 14px; }
-window.term .term-sheet button.suggested-action {
-  border: 1px solid @accent;
-  border-radius: 2px;
-  background: @accent;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-  transition: background 120ms ease-out, border-color 120ms ease-out;
-}
-window.term .term-sheet button.suggested-action:hover { border-color: mix(@accent, @t0, 0.14); background: mix(@accent, @t0, 0.14); }
-window.term .term-sheet button.suggested-action:disabled { opacity: 0.45; }
 /* inua-term's find bar, over the pane's top right. */
 window.term .term-find {
   padding: 4px 4px 4px 6px;
@@ -3696,15 +3631,6 @@ window.term .term-copy-badge {
   font-size: 10.5px;
   letter-spacing: 0.08em;
 }
-window.term .term-sheet button.destructive-action {
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-}
-window.term .term-sheet button.destructive-action:hover { background: mix(@danger, @t0, 0.14); border-color: mix(@danger, @t0, 0.14); }
 /* inua-term's guide, on the first start: a step's choices beside their
    preview. */
 window.term-guide { background: @app; }
@@ -3738,16 +3664,6 @@ window.term-guide .term-guide-mock .g-tile { margin: 10px; border: 1px solid alp
 window.term-guide .term-guide-mock .g-head { min-height: 26px; padding: 0 10px; border-bottom: 1px solid alpha(@line, 0.55); }
 window.term-guide .term-guide-mock .g-text { min-height: 6px; border-radius: 3px; background: alpha(@t1, 0.6); }
 window.term-guide .term-guide-foot { padding: 12px 26px 20px; border-top: 1px solid alpha(@line, 0.55); }
-window.term-guide .term-guide-foot button { min-height: 32px; padding: 0 16px; }
-window.term-guide button.suggested-action {
-  border: 1px solid @accent;
-  border-radius: 2px;
-  background: @accent;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-}
-window.term-guide button.suggested-action:hover { border-color: mix(@accent, @t0, 0.14); background: mix(@accent, @t0, 0.14); }
 
 /* Disk Usage (inua-disk-usage): the settings look, its index holding the places
    and the kinds found; the map and the list of the folder in view; the
@@ -3834,7 +3750,6 @@ window.disk .disk-node:last-child .disk-node-body { padding-bottom: 0; }
 window.disk .disk-node .disk-verdict { padding-top: 1px; }
 window.disk .disk-step-check { font-size: 12.5px; color: @t1; }
 window.disk .disk-ai-text { font-size: 12.5px; color: @t1; }
-window.disk button.disk-ask-quiet { min-height: 26px; padding: 0 10px; font-size: 12px; }
 window.disk .disk-command {
   padding: 6px 8px;
   border: 1px solid @line;
@@ -3857,17 +3772,6 @@ window.disk .disk-done { color: @ok; }
 window.disk-dialog { background: @app; }
 window.disk-dialog .page { padding: 22px 24px 20px; }
 window.disk-dialog .disk-dialog-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; color: @t0; }
-window.disk button.destructive-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  box-shadow: none;
-  color: @app;
-}
-window.disk button.destructive-action:hover { background: mix(@danger, @t0, 0.14); }
 
 /* Mail (inua-mail): the settings look, quiet (docs/feat/inua-mail.md,
    section 5). The accent marks unread and the selection only; danger only
@@ -3875,8 +3779,6 @@ window.disk button.destructive-action:hover { background: mix(@danger, @t0, 0.14
    in a box. */
 /* The index's head: the sidebar's toggle, level with the search. */
 window.mail .mail-index-head { margin: 16px 14px 8px 16px; }
-window.mail button.mail-compose-button { border: 1px solid @accent; background: @accent; color: @app; }
-window.mail button.mail-compose-button:hover { background: mix(@accent, @t0, 0.14); }
 /* The foot: the sync in words, and the settings. */
 window.mail .mail-index-foot {
   padding: 10px 14px 12px 28px;
@@ -3887,7 +3789,6 @@ window.mail .mail-status-mark.on { background: @accent; border-color: @accent; }
 window.mail .mail-status-mark.busy { background: transparent; border-color: @accent; }
 /* Not "warn": the window is also .settings, whose .warn is a notice box. */
 window.mail .mark.down { background: @warn; border-color: @warn; border-radius: 1px; }
-window.mail button.outlined.mail-sign-in { min-height: 24px; padding: 0 10px; font-size: 12px; }
 window.mail .mail-status { font-size: 12px; color: @t2; }
 window.mail .mail-side { padding: 0 14px 12px; }
 window.mail button.index-item.mail-box { min-height: 34px; padding: 2px 10px 2px 13px; }
@@ -4030,7 +3931,6 @@ window.mail .mail-person-row { padding: 9px 16px; }
 window.mail .mail-person-row .mail-person-name { color: @t0; }
 window.mail .mail-person-head { margin-bottom: 18px; }
 window.mail .mail-person-addr { padding: 6px 0; border-bottom: 1px solid alpha(@line, 0.4); }
-window.mail .mail-person-addr button.outlined { min-height: 30px; padding: 0 14px; }
 window.mail .mail-person-section {
   margin: 28px 0 6px;
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
@@ -4170,8 +4070,6 @@ window.mail button.mail-tool:hover, window.mail menubutton.mail-tool > button:ho
 window.mail button.mail-tool.on { color: @accent; }
 /* Off while the messages they need load (reply, forward). */
 window.mail button.mail-tool:disabled { color: alpha(@t2, 0.5); border-color: alpha(@line, 0.35); }
-window.mail button.mail-bar-button { min-height: 30px; padding: 0 14px; }
-window.mail button.mail-bar-button:disabled { opacity: 0.45; }
 window.mail .mail-reader { padding: 26px 40px 48px; }
 window.mail .mail-reader-empty { margin: 32px; }
 window.mail .mail-read-subject {
@@ -4296,7 +4194,6 @@ window.mail popover.mail-card .mail-card-head { padding: 8px 10px 10px; margin-b
 /* A message's source, as it came. */
 window.mail-source { background: @app; }
 window.mail-source .mail-source-bar { padding: 10px 14px; border-bottom: 1px solid alpha(@line, 0.55); }
-window.mail-source .mail-source-bar button.outlined { min-height: 30px; padding: 0 14px; }
 window.mail-source .mail-source-note { padding: 6px 16px; font-size: 12px; color: @warn; }
 window.mail-source textview.mail-source-text, window.mail-source textview.mail-source-text text { background: @app; color: @t1; font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 12px; }
 window.mail .mail-loading { color: @t2; font-size: 13px; }
@@ -4416,11 +4313,9 @@ window.mail .mail-invite-where { font-size: 12.5px; color: @t1; }
 window.mail .mail-invite-who, window.mail .mail-invite-note { font-size: 12.5px; color: @t2; }
 window.mail .mail-invite-join link { color: @t0; }
 window.mail .mail-invite-actions { margin-top: 6px; }
-window.mail .mail-invite-actions button.outlined { min-height: 30px; padding: 0 14px; }
 window.mail .mail-invite-actions button.chosen.outlined { border-color: @accent; color: @accent; }
 window.mail .mail-invite-actions button.mail-plain.chosen { color: @accent; }
 window.mail .mail-actions { margin-top: 6px; }
-window.mail .mail-actions button.outlined { min-height: 32px; padding: 0 16px; }
 window.mail .mail-keys {
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 10.5px;
@@ -4550,7 +4445,6 @@ window.mail textview.mail-quick-text, window.mail textview.mail-quick-text text 
 window.mail textview.mail-quick-text:focus-within { border-color: @accent; }
 window.mail .mail-quick-hint { margin: 9px 13px; font-size: 14px; color: @t2; }
 window.mail .mail-quick-note { font-size: 13px; color: @t2; }
-window.mail .mail-quick-foot button.outlined { min-height: 30px; padding: 0 16px; }
 
 /* Move to, and the keys. */
 window.mail-dialog .mail-move-list { margin-top: 4px; }
@@ -4712,17 +4606,6 @@ window.mail-dialog .mail-dialog-item {
   font-size: 12px;
   color: @t0;
 }
-window.mail button.destructive-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  box-shadow: none;
-  color: @app;
-}
-window.mail button.destructive-action:hover { background: mix(@danger, @t0, 0.14); }
 
 /* Mail's settings: the settings look, a few things of Mail's own. */
 window.mail-settings .index row.mail-settings-heading,
@@ -4763,7 +4646,6 @@ window.mail .mail-assist-title { font-weight: 600; color: @t0; }
 window.mail .mail-assist-body { padding: 18px 18px 28px; }
 window.mail .mail-assist-note { font-size: 12.5px; color: @t2; }
 window.mail .mail-assist-text { font-size: 13.5px; line-height: 1.35; color: @t0; }
-window.mail button.mail-assist-button { min-height: 32px; }
 window.mail button.mail-assist-idea {
   min-height: 0;
   padding: 10px 12px;

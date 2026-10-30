@@ -643,7 +643,7 @@ func (w *window) drawSide() {
 			// anew, with a new sign-in when the old one ended.
 			b := gtk.NewButtonWithLabel(i18n.T("Sign in"))
 			b.AddCssClass("outlined")
-			b.AddCssClass("mail-sign-in")
+			b.AddCssClass("small")
 			b.SetValign(gtk.AlignCenterValue)
 			w.sideBtns = append(w.sideBtns, w.h.click(b, func() { acc := xx.s.Acc; w.showWelcome(acc.Provider, &acc) }))
 			gtkx.Append(st, &b.Widget)

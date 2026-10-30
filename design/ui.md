@@ -277,8 +277,9 @@ All controls are 34 px tall where they sit in a row, framed by a 1 px
 | --- | --- | --- |
 | Button | Outlined: `surface`, `line` border, `t0` text; hover: 6% accent, 38% accent border | `outlined` |
 | The main action | The outlined shape filled with the accent, text in `app`; hover: the accent mixed 14% toward `t0`; disabled at 45% | `suggested-action` |
-| A light app's main action | Filled with `primary`, text in `app` | `primary` |
-| Destructive | Outlined, text in `danger`; or filled with `danger` in a confirming dialog | `outlined danger`, `destructive-action` |
+| A light app's main action | Filled with `primary`, text in `app`; hover: mixed 12% toward `app` | `primary` |
+| Destructive | Outlined, text in `danger`; or filled with `danger` in a confirming dialog, hover as the main action's | `outlined danger`, `destructive-action` |
+| Small | Any of the four above at 26 px, 10 px inside, 12 px text: in a section's head, a notification, a tight bar | add `small` |
 | Icon button | Borderless, 28 px square (20 px in tight rows), `t1`; hover: 9% accent | `plain` |
 | Entry | `surface`, `line` border; focus: accent border and a 3 px ring at 14% | — |
 | Number | An entry's box with the digits in mono; − and + as flat 32 px cells behind hairlines | `spinbutton` (styled for every `.settings` window) |
@@ -290,9 +291,10 @@ All controls are 34 px tall where they sit in a row, framed by a 1 px
 One main action per page, at most: the accent fill is that page's one
 accent. The other buttons beside it are outlined.
 
-Every window that uses `suggested-action` gives it the full rule (shape,
-fill, hover, disabled); GTK's default is a rounded bright button that
-belongs to no theme of inua's.
+The buttons' rules are written once, for every window and surface, at
+the top of `ui/style.css`; a window does not restate them. A button of its
+own size is `small`, not a rule of the window's: the two sizes are 34 px
+and 26 px.
 
 ## Feedback
 
@@ -419,8 +421,5 @@ cannot see services on the session bus (Mobile Link shows "starting").
   inua-term's workspace rows) has no rule of its own yet.
 - The settings window and Mobile Link report errors in the index's
   status line, not where they happen.
-- `suggested-action` is styled per window (GPG, Pass, Files, Workshop,
-  Remote Desktop, Mobile Link, Disk Usage, Mail, the VM manager) with the same rule; one
-  shared `.settings button.suggested-action` would replace them.
 - Two fills for a main action exist: the accent (`suggested-action`) and
   `primary` (some light apps and games). New windows use the accent.
