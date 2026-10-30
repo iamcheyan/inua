@@ -515,6 +515,7 @@ func (a *gpgApp) showChips() {
 		id.AddCssClass("gpg-mono-sub")
 		gtkx.Append(chip, &id.Widget)
 		x := plainIcon("unto:"+fpr, "window-close-symbolic", i18n.T("Take off"), &a.onButton)
+		x.AddCssClass("tight")
 		gtkx.Append(chip, &x.Widget)
 		n := int32(len(a.chips))
 		a.toChips.Insert(&chip.Widget, n)

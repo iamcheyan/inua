@@ -311,6 +311,7 @@ func (w *window) panelSafety(c *mail.Conversation) {
 		again := gtk.NewButtonFromIconName("view-refresh-symbolic")
 		again.AddCssClass("mail-plain")
 		again.AddCssClass("mail-again")
+		again.AddCssClass("small")
 		again.SetValign(gtk.AlignCenterValue)
 		again.SetTooltipText(i18n.T("Ask again"))
 		w.panelBtns = append(w.panelBtns, w.h.click(again, func() { w.askJudge(k) }))

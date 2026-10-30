@@ -314,6 +314,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                   <object class="GtkButton" id="prev">
                     <style>
                       <class name="viewer-edge"/>
+                      <class name="large"/>
                     </style>
                     <property name="halign">1</property>
                     <property name="valign">3</property>
@@ -325,6 +326,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                   <object class="GtkButton" id="next">
                     <style>
                       <class name="viewer-edge"/>
+                      <class name="large"/>
                     </style>
                     <property name="halign">2</property>
                     <property name="valign">3</property>

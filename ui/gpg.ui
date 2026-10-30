@@ -124,6 +124,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                               <object class="GtkToggleButton" id="to_browse">
                                                 <style>
                                                   <class name="plain"/>
+                                                  <class name="small"/>
                                                 </style>
                                                 <property name="valign">1</property>
                                                 <property name="icon-name">pan-down-symbolic</property>

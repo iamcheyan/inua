@@ -263,7 +263,7 @@ func (w *window) drawReader() {
 // tool adds an icon button to the reader's bar.
 func (w *window) tool(box *gtk.Box, icon, tip string, f func()) *gtk.Button {
 	b := gtk.NewButtonFromIconName(icon)
-	b.AddCssClass("mail-tool")
+	b.AddCssClass("tool")
 	b.SetTooltipText(tip)
 	w.readerBtns = append(w.readerBtns, w.h.click(b, f))
 	gtkx.Append(box, &b.Widget)
@@ -338,7 +338,7 @@ func (w *window) drawBar(c *mail.Conversation) {
 
 	more := gtk.NewMenuButton()
 	more.SetIconName("view-more-symbolic")
-	more.AddCssClass("mail-tool")
+	more.AddCssClass("tool")
 	more.SetTooltipText(i18n.T("More"))
 	pop := gtk.NewPopover()
 	uikit.Menu(pop, uikit.Below)

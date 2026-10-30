@@ -128,6 +128,7 @@ func (p *pane) buildColumns() {
 	more := gtk.NewButtonFromIconName("view-more-symbolic")
 	more.AddCssClass("plain")
 	more.AddCssClass("files-col-more")
+	more.AddCssClass("tight")
 	more.SetValign(gtk.AlignCenterValue)
 	more.SetSizeRequest(trailing, -1)
 	more.SetTooltipText(i18n.T("Columns"))

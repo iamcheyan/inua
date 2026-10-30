@@ -86,8 +86,8 @@ msgstr "蛍光ペン"
 
 #: internal/annotui/toolbar.go:21
 #: internal/filesui/renamemany.go:158
-#: ui/gpg.ui:419
-#: ui/gpg.ui:783
+#: ui/gpg.ui:420
+#: ui/gpg.ui:784
 msgid "Text"
 msgstr "テキスト"
 
@@ -173,7 +173,7 @@ msgstr "日"
 #: internal/config/strftime.go:50
 #: internal/i18n/time.go:11
 #: internal/lightui/weather.go:358
-#: internal/mailui/window.go:1432
+#: internal/mailui/window.go:1434
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
 #: internal/ui/widgets.go:1009
@@ -1714,7 +1714,7 @@ msgid "online"
 msgstr "オンライン"
 
 #: internal/apps/tailscale/status.go:168
-#: internal/mailui/window.go:1791
+#: internal/mailui/window.go:1793
 msgid "just now"
 msgstr "たった今"
 
@@ -1736,7 +1736,7 @@ msgstr "%d か月前"
 
 #: internal/apps/tailscale/status.go:187
 #: internal/lightui/gpg.go:363
-#: internal/lightui/gpg.go:603
+#: internal/lightui/gpg.go:604
 msgid "expired %s"
 msgstr "期限切れ %s"
 
@@ -1864,7 +1864,7 @@ msgstr "パスワードが必要です"
 #: internal/filesui/remotesetup.go:67
 #: internal/mailui/welcome.go:571
 #: ui/lock.ui:76
-#: ui/polkit.ui:690
+#: ui/polkit.ui:691
 msgid "Password"
 msgstr "パスワード"
 
@@ -2178,13 +2178,13 @@ msgstr "%s がペアリングを求めています。このキーが表示され
 #: ui/connectreply.ui:49
 #: ui/files.ui:176
 #: ui/files.ui:274
-#: ui/gpg.ui:1252
-#: ui/gpg.ui:1469
-#: ui/gpg.ui:1563
+#: ui/gpg.ui:1253
+#: ui/gpg.ui:1470
+#: ui/gpg.ui:1564
 #: ui/pass.ui:495
 #: ui/pass.ui:631
 #: ui/pass.ui:862
-#: ui/polkit.ui:741
+#: ui/polkit.ui:742
 #: ui/remote.ui:1044
 #: ui/vm.ui:3268
 msgid "Cancel"
@@ -2223,9 +2223,9 @@ msgstr "%s に接続を依頼しました。"
 #: internal/lightui/tailscale.go:631
 #: internal/ui/settings_ai.go:486
 #: internal/viewerui/app.go:806
-#: ui/connect.ui:290
+#: ui/connect.ui:291
 #: ui/files.ui:229
-#: ui/gpg.ui:1342
+#: ui/gpg.ui:1343
 #: ui/settings.ui:5053
 #: ui/sysmon.ui:96
 msgid "Name"
@@ -2770,7 +2770,7 @@ msgid "Opens links"
 msgstr "リンクを開く"
 
 #: internal/desktop/defaults.go:35
-#: ui/gpg.ui:1366
+#: ui/gpg.ui:1367
 msgid "Email"
 msgstr "メール"
 
@@ -2940,7 +2940,7 @@ msgid "Ask AI"
 msgstr "AI に聞く"
 
 #: internal/diskui/details.go:259
-#: internal/mailui/panel.go:315
+#: internal/mailui/panel.go:316
 msgid "Ask again"
 msgstr "もう一度聞く"
 
@@ -3001,7 +3001,7 @@ msgstr "%s を完全に削除しますか?"
 #: internal/diskui/details.go:528
 #: internal/filesui/cards.go:435
 #: internal/lightui/calculator.go:53
-#: internal/lightui/gpg.go:1516
+#: internal/lightui/gpg.go:1517
 #: internal/lightui/pass.go:950
 #: internal/term/web/strings.go:43
 #: internal/ui/clipboard.go:503
@@ -3010,7 +3010,7 @@ msgstr "%s を完全に削除しますか?"
 #: internal/vmui/window.go:2015
 #: internal/vmui/window.go:2027
 #: ui/clock.ui:231
-#: ui/gpg.ui:1572
+#: ui/gpg.ui:1573
 #: ui/pass.ui:263
 msgid "Delete"
 msgstr "削除"
@@ -3039,7 +3039,7 @@ msgstr "%s で実行します。"
 #: internal/diskui/details.go:578
 #: internal/gamesui/checkers.go:731
 #: internal/gamesui/fortune_host.go:293
-#: internal/lightui/gpg.go:870
+#: internal/lightui/gpg.go:871
 #: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
 #: internal/term/web/strings.go:35
@@ -3062,8 +3062,8 @@ msgstr "コピーしました"
 #: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
 #: ui/disk.ui:697
-#: ui/gpg.ui:661
-#: ui/gpg.ui:907
+#: ui/gpg.ui:662
+#: ui/gpg.ui:908
 #: ui/settings.ui:3178
 #: ui/vm.ui:639
 msgid "Copy"
@@ -3234,8 +3234,8 @@ msgstr[0] "%s · %d 個のフォルダ · 安全に削除可能 %s"
 #: internal/filesui/remote.go:371
 #: internal/filesui/window.go:109
 #: internal/filesui/window.go:306
-#: ui/gpg.ui:445
-#: ui/gpg.ui:810
+#: ui/gpg.ui:446
+#: ui/gpg.ui:811
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
 msgid "Files"
 msgstr "ファイル"
@@ -3656,7 +3656,7 @@ msgstr "パスをコピー（未選択ならフォルダーのパス）"
 
 #: internal/filesui/cards.go:693
 #: internal/filesui/window.go:844
-#: internal/lightui/gpg.go:1524
+#: internal/lightui/gpg.go:1525
 #: internal/mailui/picker.go:143
 #: ui/disk.ui:771
 #: ui/settings.ui:254
@@ -3779,7 +3779,7 @@ msgid "MODIFIED"
 msgstr "更新日時"
 
 #: internal/filesui/columns.go:28
-#: ui/polkit.ui:333
+#: ui/polkit.ui:334
 msgid "CREATED"
 msgstr "作成日"
 
@@ -3800,7 +3800,7 @@ msgstr "アクセス権"
 
 #: internal/filesui/columns.go:32
 #: internal/filesui/details.go:125
-#: ui/polkit.ui:184
+#: ui/polkit.ui:185
 msgid "OWNER"
 msgstr "所有者"
 
@@ -3822,11 +3822,11 @@ msgstr "元の場所"
 msgid "FOLDER"
 msgstr "フォルダー"
 
-#: internal/filesui/columns.go:133
+#: internal/filesui/columns.go:134
 msgid "Columns"
 msgstr "列"
 
-#: internal/filesui/columns.go:175
+#: internal/filesui/columns.go:176
 #: internal/lightui/pass.go:1012
 msgid "NAME"
 msgstr "名前"
@@ -3848,7 +3848,7 @@ msgstr "ファイルのサイズ"
 
 #: internal/filesui/details.go:55
 #: internal/mailui/picker.go:137
-#: internal/mailui/window.go:1760
+#: internal/mailui/window.go:1762
 msgid "Search"
 msgstr "検索"
 
@@ -4592,7 +4592,7 @@ msgstr "新しいタブで開く"
 msgid "Open in a new window"
 msgstr "新しいウィンドウで開く"
 
-#: internal/filesui/tabs.go:139
+#: internal/filesui/tabs.go:140
 msgid "Close the tab (Ctrl+W)"
 msgstr "タブを閉じる（Ctrl+W）"
 
@@ -4885,7 +4885,7 @@ msgstr "チーム %s"
 
 #: internal/games/checkersnet/texts.go:37
 #: internal/games/fortunenet/texts.go:29
-#: internal/lightui/gpg.go:1185
+#: internal/lightui/gpg.go:1186
 msgid "you"
 msgstr "自分"
 
@@ -7907,7 +7907,7 @@ msgstr "メニューに戻る"
 #: internal/mailui/welcome.go:598
 #: internal/term/web/strings.go:24
 #: internal/termui/guide.go:111
-#: ui/gpg.ui:633
+#: ui/gpg.ui:634
 #: ui/settings.ui:4508
 #: ui/vm.ui:510
 #: ui/vm.ui:3278
@@ -8716,8 +8716,8 @@ msgstr "%s 作成"
 #: internal/lightui/gpg.go:360
 #: internal/lightui/gpg.go:363
 #: internal/lightui/gpg.go:365
-#: internal/lightui/gpg.go:603
-#: internal/lightui/gpg.go:625
+#: internal/lightui/gpg.go:604
+#: internal/lightui/gpg.go:626
 #: internal/shell/notify.go:32
 #: internal/ui/askpass.go:414
 #: internal/ui/askpass.go:482
@@ -8734,7 +8734,7 @@ msgid "expires %s"
 msgstr "%s に期限切れ"
 
 #: internal/lightui/gpg.go:379
-#: internal/lightui/gpg.go:762
+#: internal/lightui/gpg.go:763
 msgid "signs only"
 msgstr "署名専用"
 
@@ -8751,8 +8751,8 @@ msgid "disabled"
 msgstr "無効"
 
 #: internal/lightui/gpg.go:395
-#: internal/lightui/gpg.go:609
-#: internal/lightui/gpg.go:735
+#: internal/lightui/gpg.go:610
+#: internal/lightui/gpg.go:736
 msgid "yours"
 msgstr "あなたの鍵"
 
@@ -8769,7 +8769,7 @@ msgid "not verified"
 msgstr "未検証"
 
 #: internal/lightui/gpg.go:464
-#: ui/gpg.ui:305
+#: ui/gpg.ui:306
 msgid "Encrypt to your key as well, so you can open it later"
 msgstr "自分の鍵にも暗号化して、あとで開けるようにします"
 
@@ -8781,100 +8781,100 @@ msgstr "この鍵は署名専用で、宛先にはできません"
 msgid "Take off"
 msgstr "外す"
 
-#: internal/lightui/gpg.go:527
+#: internal/lightui/gpg.go:528
 msgid "%d recipient"
 msgid_plural "%d recipients"
 msgstr[0] "宛先 %d 人"
 
-#: internal/lightui/gpg.go:530
+#: internal/lightui/gpg.go:531
 #: ui/gpg.ui:118
 msgid "Name, address or key ID"
 msgstr "名前、アドレス、鍵 ID"
 
-#: internal/lightui/gpg.go:532
+#: internal/lightui/gpg.go:533
 msgid "Add another"
 msgstr "さらに追加"
 
-#: internal/lightui/gpg.go:581
+#: internal/lightui/gpg.go:582
 msgid "%d more: type to narrow them down"
 msgid_plural "%d more: type to narrow them down"
 msgstr[0] "ほか %d 件：入力して絞り込めます"
 
-#: internal/lightui/gpg.go:624
+#: internal/lightui/gpg.go:625
 msgid "This key expired on %s, so gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr "この鍵は %s に期限切れになったため、gpg は暗号化できません。%s に更新した鍵をもらい、取り込んでください。"
 
-#: internal/lightui/gpg.go:627
-#: internal/lightui/gpg.go:778
+#: internal/lightui/gpg.go:628
+#: internal/lightui/gpg.go:779
 msgid "%s revoked this key; ask for their new one."
 msgstr "%s はこの鍵を失効させました。新しい鍵をもらってください。"
 
-#: internal/lightui/gpg.go:629
+#: internal/lightui/gpg.go:630
 msgid "This key cannot encrypt."
 msgstr "この鍵では暗号化できません。"
 
-#: internal/lightui/gpg.go:639
+#: internal/lightui/gpg.go:640
 msgid "No key matches. Import theirs on the Keys tab."
 msgstr "一致する鍵がありません。鍵タブで相手の鍵を取り込んでください。"
 
-#: internal/lightui/gpg.go:641
+#: internal/lightui/gpg.go:642
 msgid "Already added."
 msgstr "追加済みです。"
 
-#: internal/lightui/gpg.go:644
+#: internal/lightui/gpg.go:645
 msgid "Your keyring is empty. Import their key on the Keys tab."
 msgstr "キーリングは空です。鍵タブで相手の鍵を取り込んでください。"
 
-#: internal/lightui/gpg.go:646
+#: internal/lightui/gpg.go:647
 msgid "Every key is chosen."
 msgstr "すべての鍵を選びました。"
 
-#: internal/lightui/gpg.go:701
+#: internal/lightui/gpg.go:702
 msgid "MY KEYS"
 msgstr "自分の鍵"
 
-#: internal/lightui/gpg.go:701
+#: internal/lightui/gpg.go:702
 msgid "OTHERS"
 msgstr "ほかの人"
 
-#: internal/lightui/gpg.go:701
+#: internal/lightui/gpg.go:702
 msgid "INVALID KEYS"
 msgstr "無効な鍵"
 
-#: internal/lightui/gpg.go:708
+#: internal/lightui/gpg.go:709
 msgid "%d key"
 msgid_plural "%d keys"
 msgstr[0] "鍵 %d 個"
 
-#: internal/lightui/gpg.go:772
+#: internal/lightui/gpg.go:773
 msgid "Extend it to use it again. Keep it either way: it opens what was encrypted to it."
 msgstr "延長すればまた使えます。いずれにせよ残してください。この鍵宛てに暗号化されたものを開けます。"
 
-#: internal/lightui/gpg.go:774
+#: internal/lightui/gpg.go:775
 msgid "Keep it: it opens what was encrypted to it."
 msgstr "残してください。この鍵宛てに暗号化されたものを開けます。"
 
-#: internal/lightui/gpg.go:776
+#: internal/lightui/gpg.go:777
 msgid "gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr "gpg はこの鍵で暗号化できません。%s に更新した鍵をもらい、取り込んでください。"
 
-#: internal/lightui/gpg.go:799
+#: internal/lightui/gpg.go:800
 msgid "Copy fingerprint"
 msgstr "フィンガープリントをコピー"
 
-#: internal/lightui/gpg.go:800
+#: internal/lightui/gpg.go:801
 msgid "Copy public key"
 msgstr "公開鍵をコピー"
 
-#: internal/lightui/gpg.go:802
+#: internal/lightui/gpg.go:803
 msgid "Encrypt to…"
 msgstr "この鍵へ暗号化…"
 
-#: internal/lightui/gpg.go:805
+#: internal/lightui/gpg.go:806
 msgid "Extend 2 years"
 msgstr "2年延長"
 
-#: internal/lightui/gpg.go:810
+#: internal/lightui/gpg.go:811
 #: ui/disk.ui:781
 #: ui/vm.ui:391
 #: ui/vm.ui:1540
@@ -8885,187 +8885,187 @@ msgstr "2年延長"
 msgid "Delete…"
 msgstr "削除…"
 
-#: internal/lightui/gpg.go:873
+#: internal/lightui/gpg.go:874
 msgid "Copied; taken off the clipboard in 45 seconds"
 msgstr "コピーしました。45秒後にクリップボードから消えます"
 
-#: internal/lightui/gpg.go:926
+#: internal/lightui/gpg.go:927
 msgid "Fingerprint copied"
 msgstr "フィンガープリントをコピーしました"
 
-#: internal/lightui/gpg.go:938
+#: internal/lightui/gpg.go:939
 msgid "Public key copied"
 msgstr "公開鍵をコピーしました"
 
-#: internal/lightui/gpg.go:1006
+#: internal/lightui/gpg.go:1007
 msgid "Files to encrypt"
 msgstr "暗号化するファイル"
 
-#: internal/lightui/gpg.go:1006
+#: internal/lightui/gpg.go:1007
 msgid "Files to decrypt"
 msgstr "復号するファイル"
 
-#: internal/lightui/gpg.go:1006
+#: internal/lightui/gpg.go:1007
 msgid "Key file to import"
 msgstr "取り込む鍵ファイル"
 
-#: internal/lightui/gpg.go:1072
+#: internal/lightui/gpg.go:1073
 msgid "Leave it out"
 msgstr "外す"
 
-#: internal/lightui/gpg.go:1107
+#: internal/lightui/gpg.go:1108
 msgid "Saved to %s"
 msgstr "%s に保存しました"
 
-#: internal/lightui/gpg.go:1123
+#: internal/lightui/gpg.go:1124
 msgid "Add someone to encrypt to."
 msgstr "暗号化する宛先を追加してください。"
 
-#: internal/lightui/gpg.go:1137
-#: internal/lightui/gpg.go:1263
+#: internal/lightui/gpg.go:1138
+#: internal/lightui/gpg.go:1264
 msgid "Choose or drop files first."
 msgstr "先にファイルを選ぶかドロップしてください。"
 
-#: internal/lightui/gpg.go:1148
+#: internal/lightui/gpg.go:1149
 msgid "Type a message first."
 msgstr "先にメッセージを入力してください。"
 
-#: internal/lightui/gpg.go:1153
+#: internal/lightui/gpg.go:1154
 msgid "Encrypting…"
 msgstr "暗号化しています…"
 
-#: internal/lightui/gpg.go:1190
+#: internal/lightui/gpg.go:1191
 msgid "For %s"
 msgstr "宛先：%s"
 
-#: internal/lightui/gpg.go:1192
+#: internal/lightui/gpg.go:1193
 msgid "signed"
 msgstr "署名あり"
 
-#: internal/lightui/gpg.go:1209
+#: internal/lightui/gpg.go:1210
 msgid "written in %s"
 msgstr "%s に書き出しました"
 
-#: internal/lightui/gpg.go:1213
+#: internal/lightui/gpg.go:1214
 msgid "Move to Trash…"
 msgstr "ゴミ箱に移動…"
 
-#: internal/lightui/gpg.go:1237
+#: internal/lightui/gpg.go:1238
 msgid "%s moved to the trash"
 msgstr "%s をゴミ箱に移動しました"
 
-#: internal/lightui/gpg.go:1272
+#: internal/lightui/gpg.go:1273
 msgid "Paste a message first."
 msgstr "先にメッセージを貼り付けてください。"
 
-#: internal/lightui/gpg.go:1279
+#: internal/lightui/gpg.go:1280
 msgid "Decrypting… gpg may ask for your passphrase."
 msgstr "復号しています… gpg がパスフレーズを尋ねることがあります。"
 
-#: internal/lightui/gpg.go:1328
+#: internal/lightui/gpg.go:1329
 msgid "Not signed: who sent it is not known"
 msgstr "署名なし：送り主はわかりません"
 
-#: internal/lightui/gpg.go:1336
+#: internal/lightui/gpg.go:1337
 msgid "Signed by %s"
 msgstr "%s が署名"
 
-#: internal/lightui/gpg.go:1339
+#: internal/lightui/gpg.go:1340
 msgid "Jan 2, 2006 15:04"
 msgstr "2006年1月2日 15:04"
 
-#: internal/lightui/gpg.go:1343
+#: internal/lightui/gpg.go:1344
 msgid "The signature by %s does not match: it was changed after signing"
 msgstr "%s の署名が一致しません：署名後に変更されています"
 
-#: internal/lightui/gpg.go:1347
+#: internal/lightui/gpg.go:1348
 msgid "Signed by a key not in your keyring, so it cannot be checked"
 msgstr "キーリングにない鍵で署名されているため、確かめられません"
 
-#: internal/lightui/gpg.go:1351
+#: internal/lightui/gpg.go:1352
 msgid "Signed by %s, with a key that is no longer valid"
 msgstr "%s が、もう有効でない鍵で署名"
 
-#: internal/lightui/gpg.go:1369
+#: internal/lightui/gpg.go:1370
 msgid "Encrypted to %s"
 msgstr "%s 宛てに暗号化"
 
-#: internal/lightui/gpg.go:1385
-#: ui/gpg.ui:1280
+#: internal/lightui/gpg.go:1386
+#: ui/gpg.ui:1281
 msgid "Import"
 msgstr "取り込む"
 
-#: internal/lightui/gpg.go:1395
+#: internal/lightui/gpg.go:1396
 msgid "No key found in it."
 msgstr "鍵が見つかりません。"
 
-#: internal/lightui/gpg.go:1400
+#: internal/lightui/gpg.go:1401
 msgid "Import %d key"
 msgid_plural "Import %d keys"
 msgstr[0] "鍵 %d 個を取り込む"
 
-#: internal/lightui/gpg.go:1412
+#: internal/lightui/gpg.go:1413
 msgid "new"
 msgstr "新規"
 
-#: internal/lightui/gpg.go:1415
+#: internal/lightui/gpg.go:1416
 msgid "holds a secret key"
 msgstr "秘密鍵を含む"
 
-#: internal/lightui/gpg.go:1417
+#: internal/lightui/gpg.go:1418
 msgid "updates one you have"
 msgstr "手持ちの鍵を更新"
 
-#: internal/lightui/gpg.go:1442
+#: internal/lightui/gpg.go:1443
 msgid "Importing…"
 msgstr "取り込んでいます…"
 
-#: internal/lightui/gpg.go:1453
+#: internal/lightui/gpg.go:1454
 msgid "%d key imported"
 msgid_plural "%d keys imported"
 msgstr[0] "鍵 %d 個を取り込みました"
 
-#: internal/lightui/gpg.go:1466
+#: internal/lightui/gpg.go:1467
 msgid "Give a name and an address."
 msgstr "名前とアドレスを入力してください。"
 
-#: internal/lightui/gpg.go:1470
+#: internal/lightui/gpg.go:1471
 msgid "That address has no @."
 msgstr "アドレスに @ がありません。"
 
-#: internal/lightui/gpg.go:1476
+#: internal/lightui/gpg.go:1477
 msgid "Creating… gpg asks for a passphrase for the new key."
 msgstr "作成しています… gpg が新しい鍵のパスフレーズを尋ねます。"
 
-#: internal/lightui/gpg.go:1490
+#: internal/lightui/gpg.go:1491
 msgid "Your key is created"
 msgstr "鍵を作成しました"
 
-#: internal/lightui/gpg.go:1513
+#: internal/lightui/gpg.go:1514
 msgid "Delete the key of %s?"
 msgstr "%s の鍵を削除しますか？"
 
-#: internal/lightui/gpg.go:1515
+#: internal/lightui/gpg.go:1516
 msgid "It goes from your keyring. Messages it signed then show as signed by a key not in your keyring; importing it again brings that back."
 msgstr "キーリングから外れます。この鍵で署名されたメッセージは、キーリングにない鍵の署名として表示されます。取り込み直せば元に戻ります。"
 
-#: internal/lightui/gpg.go:1522
+#: internal/lightui/gpg.go:1523
 msgid "Move %s to the trash?"
 msgstr "%s をゴミ箱に移動しますか？"
 
-#: internal/lightui/gpg.go:1523
+#: internal/lightui/gpg.go:1524
 msgid "The decrypted copy goes to the trash, where it can be restored from; the encrypted file stays."
 msgstr "復号したコピーはゴミ箱に移り、そこから戻せます。暗号化されたファイルは残ります。"
 
-#: internal/lightui/gpg.go:1540
+#: internal/lightui/gpg.go:1541
 msgid "Key deleted"
 msgstr "鍵を削除しました"
 
-#: internal/lightui/gpg.go:1550
+#: internal/lightui/gpg.go:1551
 msgid "Extending… gpg asks for your passphrase."
 msgstr "延長しています… gpg がパスフレーズを尋ねます。"
 
-#: internal/lightui/gpg.go:1559
+#: internal/lightui/gpg.go:1560
 msgid "Extended by 2 years"
 msgstr "2年延長しました"
 
@@ -9424,7 +9424,7 @@ msgstr "このアプリが読める画像（PNG または JPEG）ではありま
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
 #: internal/ui/widgets.go:909
-#: ui/connect.ui:966
+#: ui/connect.ui:967
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
 msgid "Add"
@@ -10127,7 +10127,7 @@ msgid "Copy Name"
 msgstr "名前のコピー"
 
 #: internal/lightui/tailscale.go:508
-#: ui/connect.ui:621
+#: ui/connect.ui:622
 msgid "Ping"
 msgstr "Ping"
 
@@ -10469,7 +10469,7 @@ msgstr "わかりました"
 #: internal/term/web/strings.go:93
 #: internal/ui/settings_ai.go:530
 #: ui/clock.ui:252
-#: ui/connect.ui:420
+#: ui/connect.ui:421
 #: ui/pass.ui:504
 msgid "Save"
 msgstr "保存"
@@ -10660,7 +10660,7 @@ msgstr "未送信"
 #: internal/mailui/details.go:190
 #: internal/mailui/people.go:301
 #: internal/mailui/reader.go:232
-#: internal/mailui/window.go:1331
+#: internal/mailui/window.go:1333
 msgid "(no subject)"
 msgstr "（件名なし）"
 
@@ -10692,7 +10692,7 @@ msgid_plural "%s and %d more messages"
 msgstr[0] "%s ほか %d 件"
 
 #: internal/mailui/app.go:23
-#: internal/mailui/window.go:1721
+#: internal/mailui/window.go:1723
 #: ui/mail.ui:14
 #: config/apps/io.github.lyricat.Inua.Mail.desktop:3
 msgid "Mail"
@@ -10732,7 +10732,7 @@ msgid "The assistant gave no search."
 msgstr "アシスタントから検索がありませんでした。"
 
 #: internal/mailui/assist.go:262
-#: internal/mailui/window.go:1558
+#: internal/mailui/window.go:1560
 msgid "Searched for %s"
 msgstr "%s を検索しました"
 
@@ -10807,7 +10807,7 @@ msgstr "送信中…"
 
 #: internal/mailui/compose.go:561
 #: internal/mailui/quick.go:137
-#: ui/connect.ui:663
+#: ui/connect.ui:664
 #: ui/connectreply.ui:58
 #: ui/mail-compose.ui:237
 msgid "Send"
@@ -10825,7 +10825,7 @@ msgstr "%s に翻訳"
 #: internal/mailui/details.go:98
 #: internal/mailui/formatted.go:192
 #: internal/mailui/settings.go:382
-#: internal/mailui/window.go:1750
+#: internal/mailui/window.go:1752
 msgid "Not saved: %v"
 msgstr "保存されていません：%v"
 
@@ -10937,8 +10937,8 @@ msgstr ""
 
 #: internal/mailui/details.go:226
 #: internal/mailui/reader.go:826
-#: ui/gpg.ui:652
-#: ui/gpg.ui:896
+#: ui/gpg.ui:653
+#: ui/gpg.ui:897
 #: ui/settings.ui:6549
 msgid "Save…"
 msgstr "保存…"
@@ -11016,7 +11016,7 @@ msgstr "確認するものはありません：ここで読んだメッセージ
 msgid "AI reads what the checks found, with the sender, subject, links and text, and says what it makes of it."
 msgstr "AI がチェックの結果と、送信者・件名・リンク・本文を読み、どう判断するかを伝えます。"
 
-#: internal/mailui/panel.go:444
+#: internal/mailui/panel.go:445
 msgid "The assistant could not write it"
 msgstr "アシスタントが書けませんでした"
 
@@ -11180,7 +11180,7 @@ msgid "Forward (F)"
 msgstr "転送 (F)"
 
 #: internal/mailui/reader.go:320
-#: internal/mailui/window.go:1247
+#: internal/mailui/window.go:1249
 msgid "Archive (E)"
 msgstr "アーカイブ (E)"
 
@@ -11197,17 +11197,17 @@ msgid "Move to a folder (V)"
 msgstr "フォルダへ移動 (V)"
 
 #: internal/mailui/reader.go:327
-#: internal/mailui/window.go:1376
+#: internal/mailui/window.go:1378
 msgid "Star (S)"
 msgstr "スターを付ける (S)"
 
 #: internal/mailui/reader.go:330
-#: internal/mailui/window.go:1373
+#: internal/mailui/window.go:1375
 msgid "Unstar (S)"
 msgstr "スターを外す (S)"
 
 #: internal/mailui/reader.go:332
-#: internal/mailui/window.go:1383
+#: internal/mailui/window.go:1385
 msgid "Mark as unread (U)"
 msgstr "未読にする (U)"
 
@@ -11266,7 +11266,7 @@ msgid "Fold"
 msgstr ""
 
 #: internal/mailui/reader.go:670
-#: internal/mailui/window.go:1325
+#: internal/mailui/window.go:1327
 msgid "me"
 msgstr "自分"
 
@@ -11691,8 +11691,8 @@ msgstr "インデックスと開いたメッセージ：サーバーのコピー
 #: internal/mailui/settings.go:655
 #: internal/ui/notify.go:412
 #: ui/colorpicker.ui:93
-#: ui/gpg.ui:508
-#: ui/gpg.ui:1011
+#: ui/gpg.ui:509
+#: ui/gpg.ui:1012
 #: ui/group.ui:52
 msgid "Clear"
 msgstr "消去"
@@ -11951,7 +11951,7 @@ msgid "With messages not read"
 msgstr "未読のメッセージがある"
 
 #: internal/mailui/window.go:252
-#: internal/mailui/window.go:1368
+#: internal/mailui/window.go:1370
 msgid "With files attached"
 msgstr "ファイルが添付されている"
 
@@ -12013,7 +12013,7 @@ msgid "Offline"
 msgstr "オフライン"
 
 #: internal/mailui/window.go:567
-#: internal/mailui/window.go:1696
+#: internal/mailui/window.go:1698
 msgid "No account yet"
 msgstr "アカウントはまだありません"
 
@@ -12071,7 +12071,7 @@ msgid "Search contacts"
 msgstr ""
 
 #: internal/mailui/window.go:814
-#: internal/mailui/window.go:1758
+#: internal/mailui/window.go:1760
 #: ui/mail.ui:148
 msgid "Search, or ask in a sentence"
 msgstr "検索、または文章で尋ねる"
@@ -12116,69 +12116,69 @@ msgstr "メールはありません"
 msgid "Could not load older mail: %v"
 msgstr "古いメールを読み込めません：%v"
 
-#: internal/mailui/window.go:1248
+#: internal/mailui/window.go:1250
 msgid "Delete (D)"
 msgstr "削除 (D)"
 
-#: internal/mailui/window.go:1272
+#: internal/mailui/window.go:1274
 msgid "SUSPICIOUS"
 msgstr "疑わしい"
 
-#: internal/mailui/window.go:1340
+#: internal/mailui/window.go:1342
 msgid "EMPTY PREVIEW"
 msgstr ""
 
-#: internal/mailui/window.go:1380
+#: internal/mailui/window.go:1382
 msgid "Mark as read"
 msgstr "既読にする"
 
-#: internal/mailui/window.go:1434
+#: internal/mailui/window.go:1436
 #: internal/shell/notify.go:30
 msgid "Jan 2"
 msgstr "1月2日"
 
-#: internal/mailui/window.go:1492
+#: internal/mailui/window.go:1494
 msgid "Press Enter to ask the assistant to search for this."
 msgstr "Enter でアシスタントにこの内容の検索を頼みます。"
 
-#: internal/mailui/window.go:1537
+#: internal/mailui/window.go:1539
 msgid "Searching the server…"
 msgstr "サーバーを検索しています…"
 
-#: internal/mailui/window.go:1561
+#: internal/mailui/window.go:1563
 msgid "The server's search failed: %s"
 msgstr "サーバーの検索に失敗しました：%s"
 
-#: internal/mailui/window.go:1693
+#: internal/mailui/window.go:1695
 msgid "Up to date"
 msgstr "最新です"
 
-#: internal/mailui/window.go:1698
+#: internal/mailui/window.go:1700
 msgid "Checking for mail…"
 msgstr "メールを確認しています…"
 
-#: internal/mailui/window.go:1702
+#: internal/mailui/window.go:1704
 msgid "Offline: trying again soon"
 msgstr "オフライン：まもなく再試行します"
 
-#: internal/mailui/window.go:1704
+#: internal/mailui/window.go:1706
 msgid "%d account cannot connect"
 msgid_plural "%d accounts cannot connect"
 msgstr[0] "%d 件のアカウントに接続できません"
 
-#: internal/mailui/window.go:1706
+#: internal/mailui/window.go:1708
 msgid "Checked %s"
 msgstr "%sに確認"
 
-#: internal/mailui/window.go:1711
+#: internal/mailui/window.go:1713
 msgid "Last checked at %s"
 msgstr "最終確認 %s"
 
-#: internal/mailui/window.go:1719
+#: internal/mailui/window.go:1721
 msgid "Mail · %d unread"
 msgstr "メール · 未読 %d"
 
-#: internal/mailui/window.go:1794
+#: internal/mailui/window.go:1796
 msgid "%d minute ago"
 msgid_plural "%d minutes ago"
 msgstr[0] "%d 分前"
@@ -13080,7 +13080,7 @@ msgid "%s is not a folder."
 msgstr ""
 
 #: internal/term/host/sessions.go:303
-#: ui/connect.ui:850
+#: ui/connect.ui:851
 msgid "Commands"
 msgstr "コマンド"
 
@@ -13327,7 +13327,7 @@ msgstr ""
 
 #: internal/term/web/strings.go:39
 #: internal/vmui/window.go:1108
-#: ui/gpg.ui:1488
+#: ui/gpg.ui:1489
 #: ui/vm.ui:3299
 msgid "Create"
 msgstr "作成"
@@ -13406,7 +13406,7 @@ msgstr "情報"
 
 #: internal/term/web/strings.go:61
 #: internal/termui/prefs.go:204
-#: ui/gpg.ui:1042
+#: ui/gpg.ui:1043
 msgid "KEYS"
 msgstr "鍵"
 
@@ -14340,7 +14340,7 @@ msgid "%s · expires %s"
 msgstr "%s · %s に期限切れ予定"
 
 #: internal/ui/askpass.go:503
-#: ui/polkit.ui:566
+#: ui/polkit.ui:567
 msgid "FOR"
 msgstr "対象"
 
@@ -14422,7 +14422,7 @@ msgid "Search clipboard history"
 msgstr "クリップボード履歴を検索"
 
 #: internal/ui/clipboard.go:359
-#: ui/connect.ui:727
+#: ui/connect.ui:728
 #: ui/settings.ui:3622
 msgid "Clipboard"
 msgstr "クリップボード"
@@ -14836,7 +14836,7 @@ msgid "Colour picked"
 msgstr "色が選ばれました"
 
 #: internal/ui/polkit.go:178
-#: ui/polkit.ui:89
+#: ui/polkit.ui:90
 msgid "Authentication Required"
 msgstr "認証が必要です"
 
@@ -16723,13 +16723,13 @@ msgstr "テキストをコピー (Ctrl+C)"
 
 #: internal/viewerui/app.go:688
 #: internal/viewerui/app.go:692
-#: ui/viewer.ui:321
+#: ui/viewer.ui:322
 msgid "Previous (←)"
 msgstr "前へ (←)"
 
 #: internal/viewerui/app.go:689
 #: internal/viewerui/app.go:693
-#: ui/viewer.ui:332
+#: ui/viewer.ui:334
 msgid "Next (→)"
 msgstr "次へ（→）"
 
@@ -17750,95 +17750,95 @@ msgstr "選択した色がここに表示されます。"
 msgid "THIS COMPUTER"
 msgstr "このコンピューター"
 
-#: ui/connect.ui:125
+#: ui/connect.ui:126
 msgid "Look for devices again"
 msgstr "デバイスを再検索"
 
-#: ui/connect.ui:159
+#: ui/connect.ui:160
 msgid "Add a device by address…"
 msgstr "アドレスでデバイスを追加…"
 
-#: ui/connect.ui:226
+#: ui/connect.ui:227
 msgid "[THIS COMPUTER]"
 msgstr "[このコンピューター]"
 
-#: ui/connect.ui:256
+#: ui/connect.ui:257
 msgid "Connect with your devices"
 msgstr "デバイスと連携"
 
-#: ui/connect.ui:317
+#: ui/connect.ui:318
 msgid "To pair a phone"
 msgstr "スマートフォンをペアリングするには"
 
-#: ui/connect.ui:326
+#: ui/connect.ui:327
 msgid "Install KDE Connect on it (from F-Droid, Google Play or the App Store), open it on the same network or the tailnet, and choose this computer. Pair once the key shown there matches the one here."
 msgstr "スマートフォンに KDE Connect をインストールし(F-Droid、Google Play、App Store から)、同じネットワークか tailnet で開いて、このコンピューターを選びます。表示されたキーがここのキーと一致したらペアリングしてください。"
 
-#: ui/connect.ui:362
+#: ui/connect.ui:363
 msgid "[COMMANDS]"
 msgstr "[コマンド]"
 
-#: ui/connect.ui:372
+#: ui/connect.ui:373
 msgid "devices run these here"
 msgstr "デバイスがここで実行します"
 
-#: ui/connect.ui:410
+#: ui/connect.ui:411
 msgid "Add a command"
 msgstr "コマンドを追加"
 
-#: ui/connect.ui:596
+#: ui/connect.ui:597
 msgid "[SEND]"
 msgstr "[送信]"
 
-#: ui/connect.ui:630
+#: ui/connect.ui:631
 msgid "Ring"
 msgstr "鳴らす"
 
-#: ui/connect.ui:631
+#: ui/connect.ui:632
 msgid "Rings the device, to find it"
 msgstr "デバイスを鳴らして見つけます"
 
-#: ui/connect.ui:640
+#: ui/connect.ui:641
 msgid "Send files…"
 msgstr "ファイルを送信…"
 
-#: ui/connect.ui:654
+#: ui/connect.ui:655
 msgid "Text, or a link it opens"
 msgstr "テキスト、または開くリンク"
 
-#: ui/connect.ui:697
+#: ui/connect.ui:698
 msgid "[SHARED WITH IT]"
 msgstr "[共有するもの]"
 
-#: ui/connect.ui:736
+#: ui/connect.ui:737
 msgid "Text copied on one is there to paste on the other. Passwords stay here."
 msgstr "片方でコピーしたテキストをもう片方で貼り付けられます。パスワードはここに残ります。"
 
-#: ui/connect.ui:768
+#: ui/connect.ui:769
 msgid "This computer's notifications"
 msgstr "このコンピューターの通知"
 
-#: ui/connect.ui:777
+#: ui/connect.ui:778
 msgid "They show on the device too. Its own show here when it sends them."
 msgstr "デバイスにも表示されます。デバイスの通知は、送られてくるとここに表示されます。"
 
-#: ui/connect.ui:809
+#: ui/connect.ui:810
 msgid "Pointer and keyboard"
 msgstr "ポインターとキーボード"
 
-#: ui/connect.ui:818
+#: ui/connect.ui:819
 msgid "The device works as a touchpad and keyboard here."
 msgstr "デバイスをここのタッチパッドとキーボードとして使えます。"
 
-#: ui/connect.ui:859
+#: ui/connect.ui:860
 msgid "It runs the commands set up on This computer."
 msgstr "「このコンピューター」で設定したコマンドを実行します。"
 
-#: ui/connect.ui:921
+#: ui/connect.ui:922
 msgid "[ADD A DEVICE]"
 msgstr "[デバイスを追加]"
 
-#: ui/connect.ui:946
+#: ui/connect.ui:947
 msgid "A device the network's broadcast does not reach: its name or IP address. It is asked to connect here; it shows in the list once it has."
 msgstr "ネットワークのブロードキャストが届かないデバイスの名前または IP アドレス。ここへの接続を依頼し、接続されると一覧に表示されます。"
 
@@ -17889,7 +17889,7 @@ msgstr "音"
 msgid "Now playing"
 msgstr "再生中"
 
-#: ui/dictation.ui:69
+#: ui/dictation.ui:70
 msgid "Drop the recording"
 msgstr "録音を取り消す"
 
@@ -17983,15 +17983,15 @@ msgstr "グリッド（Ctrl+2）"
 msgid "Columns (Ctrl+3)"
 msgstr "カラム（Ctrl+3）"
 
-#: ui/filespane.ui:311
+#: ui/filespane.ui:312
 msgid "Smaller (Ctrl+−)"
 msgstr "小さく（Ctrl+−）"
 
-#: ui/filespane.ui:320
+#: ui/filespane.ui:321
 msgid "Normal size (Ctrl+0)"
 msgstr "標準サイズ（Ctrl+0）"
 
-#: ui/filespane.ui:330
+#: ui/filespane.ui:332
 msgid "Bigger (Ctrl++)"
 msgstr "大きく（Ctrl++）"
 
@@ -18007,132 +18007,132 @@ msgstr "暗号化"
 msgid "<span alpha='55%'>[</span>TO<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>宛先<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:130
+#: ui/gpg.ui:131
 msgid "All keys"
 msgstr "すべての鍵"
 
-#: ui/gpg.ui:172
+#: ui/gpg.ui:173
 msgid "<span alpha='55%'>[</span>FROM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>差出人<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:255
+#: ui/gpg.ui:256
 msgid "Sign"
 msgstr "署名"
 
-#: ui/gpg.ui:264
+#: ui/gpg.ui:265
 msgid "So they know it is from you and unchanged"
 msgstr "あなたからで、改変されていないと分かるように"
 
-#: ui/gpg.ui:296
+#: ui/gpg.ui:297
 msgid "Let me read it too"
 msgstr "自分も読めるようにする"
 
-#: ui/gpg.ui:339
+#: ui/gpg.ui:340
 msgid "You have no key of your own"
 msgstr "自分の鍵がありません"
 
-#: ui/gpg.ui:348
+#: ui/gpg.ui:349
 msgid "Without one you cannot sign, or read what you encrypt"
 msgstr "鍵がないと署名も、自分で暗号化したものを読むこともできません"
 
-#: ui/gpg.ui:361
-#: ui/gpg.ui:1102
+#: ui/gpg.ui:362
+#: ui/gpg.ui:1103
 msgid "Create your key"
 msgstr "鍵を作成"
 
-#: ui/gpg.ui:395
-#: ui/gpg.ui:750
+#: ui/gpg.ui:396
+#: ui/gpg.ui:751
 msgid "<span alpha='55%'>[</span>MESSAGE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>メッセージ<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:469
-#: ui/gpg.ui:834
+#: ui/gpg.ui:470
+#: ui/gpg.ui:835
 msgid "Drop files here, or"
 msgstr "ここにファイルをドロップ、または"
 
-#: ui/gpg.ui:478
-#: ui/gpg.ui:843
+#: ui/gpg.ui:479
+#: ui/gpg.ui:844
 msgid "Choose files…"
 msgstr "ファイルを選ぶ…"
 
-#: ui/gpg.ui:527
+#: ui/gpg.ui:528
 msgid "Encrypt"
 msgstr "暗号化"
 
-#: ui/gpg.ui:572
+#: ui/gpg.ui:573
 msgid "<span alpha='55%'>[</span>ENCRYPTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>暗号文<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:677
+#: ui/gpg.ui:678
 msgid "DECRYPT"
 msgstr "復号"
 
-#: ui/gpg.ui:706
+#: ui/gpg.ui:707
 msgid "The clipboard holds an encrypted message"
 msgstr "クリップボードに暗号化されたメッセージがあります"
 
-#: ui/gpg.ui:718
+#: ui/gpg.ui:719
 msgid "Decrypt it"
 msgstr "復号する"
 
-#: ui/gpg.ui:758
+#: ui/gpg.ui:759
 msgid "Decrypted as soon as it is pasted or dropped"
 msgstr "貼り付けやドロップですぐに復号します"
 
-#: ui/gpg.ui:884
+#: ui/gpg.ui:885
 msgid "<span alpha='55%'>[</span>DECRYPTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>復号結果<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:1030
+#: ui/gpg.ui:1031
 msgid "Decrypt"
 msgstr "復号"
 
-#: ui/gpg.ui:1080
+#: ui/gpg.ui:1081
 msgid "You have no key of your own yet"
 msgstr "まだ自分の鍵がありません"
 
-#: ui/gpg.ui:1089
+#: ui/gpg.ui:1090
 msgid "You need one to sign, and for others to send you messages only you can read"
 msgstr "署名にも、あなただけが読めるメッセージを受け取るにも必要です"
 
-#: ui/gpg.ui:1129
+#: ui/gpg.ui:1130
 msgid "Import…"
 msgstr "取り込む…"
 
-#: ui/gpg.ui:1148
+#: ui/gpg.ui:1149
 msgid "Create key"
 msgstr "鍵を作成"
 
-#: ui/gpg.ui:1193
+#: ui/gpg.ui:1194
 msgid "<span alpha='55%'>[</span>IMPORT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>取り込み<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:1201
+#: ui/gpg.ui:1202
 msgid "Paste a public key, or choose or drop a key file"
 msgstr "公開鍵を貼り付けるか、鍵ファイルを選ぶかドロップしてください"
 
-#: ui/gpg.ui:1261
+#: ui/gpg.ui:1262
 #: ui/vm.ui:1385
 msgid "Choose file…"
 msgstr "ファイルを選ぶ…"
 
-#: ui/gpg.ui:1326
+#: ui/gpg.ui:1327
 msgid "<span alpha='55%'>[</span>NEW KEY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>新しい鍵<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:1396
+#: ui/gpg.ui:1397
 msgid "Expires"
 msgstr "有効期限"
 
-#: ui/gpg.ui:1405
+#: ui/gpg.ui:1406
 msgid "You can extend it before then; an expired key still decrypts"
 msgstr "それまでに延長できます。期限切れの鍵でも復号はできます"
 
-#: ui/gpg.ui:1424
+#: ui/gpg.ui:1425
 msgid "gpg asks for a passphrase to protect the new key. Remember it: without it the key cannot be used."
 msgstr "gpg が新しい鍵を守るパスフレーズを尋ねます。忘れないでください。なければ鍵は使えません。"
 
-#: ui/gpg.ui:1439
+#: ui/gpg.ui:1440
 msgid "Or in a terminal:"
 msgstr "またはターミナルで："
 
@@ -18373,55 +18373,55 @@ msgstr "発行元（例：GitHub）"
 msgid "Account, e.g. you@example.org"
 msgstr "アカウント（例：you@example.org）"
 
-#: ui/polkit.ui:156
+#: ui/polkit.ui:157
 msgid "<span alpha='55%'>[</span>KEY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>鍵<span alpha='55%'>]</span>"
 
-#: ui/polkit.ui:233
+#: ui/polkit.ui:234
 msgid "TYPE"
 msgstr "種類"
 
-#: ui/polkit.ui:266
+#: ui/polkit.ui:267
 msgid "FINGERPRINT"
 msgstr "フィンガープリント"
 
-#: ui/polkit.ui:300
+#: ui/polkit.ui:301
 msgid "PRIMARY"
 msgstr "主鍵"
 
-#: ui/polkit.ui:382
+#: ui/polkit.ui:383
 msgid "<span alpha='55%'>[</span>APP<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>アプリ<span alpha='55%'>]</span>"
 
-#: ui/polkit.ui:410
+#: ui/polkit.ui:411
 msgid "PROGRAM"
 msgstr "プログラム"
 
-#: ui/polkit.ui:464
+#: ui/polkit.ui:465
 msgid "PACKAGE"
 msgstr "パッケージ"
 
-#: ui/polkit.ui:498
+#: ui/polkit.ui:499
 msgid "ALLOWED"
 msgstr "許可"
 
-#: ui/polkit.ui:547
+#: ui/polkit.ui:548
 msgid "<span alpha='55%'>[</span>REQUEST<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>要求<span alpha='55%'>]</span>"
 
-#: ui/polkit.ui:602
+#: ui/polkit.ui:603
 msgid "ASKED BY"
 msgstr "要求元"
 
-#: ui/polkit.ui:651
+#: ui/polkit.ui:652
 msgid "AS"
 msgstr "AS"
 
-#: ui/polkit.ui:670
+#: ui/polkit.ui:671
 msgid "Another user"
 msgstr "別のユーザー"
 
-#: ui/polkit.ui:749
+#: ui/polkit.ui:750
 msgid "Authenticate"
 msgstr "認証する"
 
@@ -19785,7 +19785,7 @@ msgstr "ゴミ箱に移動しますか？"
 msgid "Details (I)"
 msgstr "詳細 (I)"
 
-#: ui/viewer.ui:366
+#: ui/viewer.ui:368
 msgid "Open a File…"
 msgstr "ファイルを開く…"
 

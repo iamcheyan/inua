@@ -86,8 +86,8 @@ msgstr "형광펜"
 
 #: internal/annotui/toolbar.go:21
 #: internal/filesui/renamemany.go:158
-#: ui/gpg.ui:419
-#: ui/gpg.ui:783
+#: ui/gpg.ui:420
+#: ui/gpg.ui:784
 msgid "Text"
 msgstr "텍스트"
 
@@ -173,7 +173,7 @@ msgstr "일"
 #: internal/config/strftime.go:50
 #: internal/i18n/time.go:11
 #: internal/lightui/weather.go:358
-#: internal/mailui/window.go:1432
+#: internal/mailui/window.go:1434
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
 #: internal/ui/widgets.go:1009
@@ -1714,7 +1714,7 @@ msgid "online"
 msgstr "온라인"
 
 #: internal/apps/tailscale/status.go:168
-#: internal/mailui/window.go:1791
+#: internal/mailui/window.go:1793
 msgid "just now"
 msgstr "지금 막"
 
@@ -1736,7 +1736,7 @@ msgstr "%d개월 전"
 
 #: internal/apps/tailscale/status.go:187
 #: internal/lightui/gpg.go:363
-#: internal/lightui/gpg.go:603
+#: internal/lightui/gpg.go:604
 msgid "expired %s"
 msgstr "만료된 %s"
 
@@ -1864,7 +1864,7 @@ msgstr "암호 필요"
 #: internal/filesui/remotesetup.go:67
 #: internal/mailui/welcome.go:571
 #: ui/lock.ui:76
-#: ui/polkit.ui:690
+#: ui/polkit.ui:691
 msgid "Password"
 msgstr "비밀번호"
 
@@ -2178,13 +2178,13 @@ msgstr "%s에서 페어링을 요청합니다. 이 키가 표시될 때만 페�
 #: ui/connectreply.ui:49
 #: ui/files.ui:176
 #: ui/files.ui:274
-#: ui/gpg.ui:1252
-#: ui/gpg.ui:1469
-#: ui/gpg.ui:1563
+#: ui/gpg.ui:1253
+#: ui/gpg.ui:1470
+#: ui/gpg.ui:1564
 #: ui/pass.ui:495
 #: ui/pass.ui:631
 #: ui/pass.ui:862
-#: ui/polkit.ui:741
+#: ui/polkit.ui:742
 #: ui/remote.ui:1044
 #: ui/vm.ui:3268
 msgid "Cancel"
@@ -2223,9 +2223,9 @@ msgstr "%s에 연결을 요청했습니다."
 #: internal/lightui/tailscale.go:631
 #: internal/ui/settings_ai.go:486
 #: internal/viewerui/app.go:806
-#: ui/connect.ui:290
+#: ui/connect.ui:291
 #: ui/files.ui:229
-#: ui/gpg.ui:1342
+#: ui/gpg.ui:1343
 #: ui/settings.ui:5053
 #: ui/sysmon.ui:96
 msgid "Name"
@@ -2770,7 +2770,7 @@ msgid "Opens links"
 msgstr "링크 열기"
 
 #: internal/desktop/defaults.go:35
-#: ui/gpg.ui:1366
+#: ui/gpg.ui:1367
 msgid "Email"
 msgstr "이메일"
 
@@ -2940,7 +2940,7 @@ msgid "Ask AI"
 msgstr "AI에게 묻기"
 
 #: internal/diskui/details.go:259
-#: internal/mailui/panel.go:315
+#: internal/mailui/panel.go:316
 msgid "Ask again"
 msgstr "다시 묻기"
 
@@ -3001,7 +3001,7 @@ msgstr "%s을(를) 영구히 삭제할까요?"
 #: internal/diskui/details.go:528
 #: internal/filesui/cards.go:435
 #: internal/lightui/calculator.go:53
-#: internal/lightui/gpg.go:1516
+#: internal/lightui/gpg.go:1517
 #: internal/lightui/pass.go:950
 #: internal/term/web/strings.go:43
 #: internal/ui/clipboard.go:503
@@ -3010,7 +3010,7 @@ msgstr "%s을(를) 영구히 삭제할까요?"
 #: internal/vmui/window.go:2015
 #: internal/vmui/window.go:2027
 #: ui/clock.ui:231
-#: ui/gpg.ui:1572
+#: ui/gpg.ui:1573
 #: ui/pass.ui:263
 msgid "Delete"
 msgstr "삭제"
@@ -3039,7 +3039,7 @@ msgstr "%s에서 실행됩니다."
 #: internal/diskui/details.go:578
 #: internal/gamesui/checkers.go:731
 #: internal/gamesui/fortune_host.go:293
-#: internal/lightui/gpg.go:870
+#: internal/lightui/gpg.go:871
 #: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
 #: internal/term/web/strings.go:35
@@ -3062,8 +3062,8 @@ msgstr "복사됨"
 #: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
 #: ui/disk.ui:697
-#: ui/gpg.ui:661
-#: ui/gpg.ui:907
+#: ui/gpg.ui:662
+#: ui/gpg.ui:908
 #: ui/settings.ui:3178
 #: ui/vm.ui:639
 msgid "Copy"
@@ -3234,8 +3234,8 @@ msgstr[0] "%s · 폴더 %d개 · %s 안전하게 삭제 가능"
 #: internal/filesui/remote.go:371
 #: internal/filesui/window.go:109
 #: internal/filesui/window.go:306
-#: ui/gpg.ui:445
-#: ui/gpg.ui:810
+#: ui/gpg.ui:446
+#: ui/gpg.ui:811
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
 msgid "Files"
 msgstr "파일"
@@ -3656,7 +3656,7 @@ msgstr "경로 복사(선택 없으면 폴더 경로)"
 
 #: internal/filesui/cards.go:693
 #: internal/filesui/window.go:844
-#: internal/lightui/gpg.go:1524
+#: internal/lightui/gpg.go:1525
 #: internal/mailui/picker.go:143
 #: ui/disk.ui:771
 #: ui/settings.ui:254
@@ -3779,7 +3779,7 @@ msgid "MODIFIED"
 msgstr "수정한 때"
 
 #: internal/filesui/columns.go:28
-#: ui/polkit.ui:333
+#: ui/polkit.ui:334
 msgid "CREATED"
 msgstr "생성일"
 
@@ -3800,7 +3800,7 @@ msgstr "권한"
 
 #: internal/filesui/columns.go:32
 #: internal/filesui/details.go:125
-#: ui/polkit.ui:184
+#: ui/polkit.ui:185
 msgid "OWNER"
 msgstr "소유자"
 
@@ -3822,11 +3822,11 @@ msgstr "원래 위치"
 msgid "FOLDER"
 msgstr "폴더"
 
-#: internal/filesui/columns.go:133
+#: internal/filesui/columns.go:134
 msgid "Columns"
 msgstr "열"
 
-#: internal/filesui/columns.go:175
+#: internal/filesui/columns.go:176
 #: internal/lightui/pass.go:1012
 msgid "NAME"
 msgstr "이름"
@@ -3848,7 +3848,7 @@ msgstr "파일 크기"
 
 #: internal/filesui/details.go:55
 #: internal/mailui/picker.go:137
-#: internal/mailui/window.go:1760
+#: internal/mailui/window.go:1762
 msgid "Search"
 msgstr "검색"
 
@@ -4592,7 +4592,7 @@ msgstr "새 탭에서 열기"
 msgid "Open in a new window"
 msgstr "새 창에서 열기"
 
-#: internal/filesui/tabs.go:139
+#: internal/filesui/tabs.go:140
 msgid "Close the tab (Ctrl+W)"
 msgstr "탭 닫기(Ctrl+W)"
 
@@ -4885,7 +4885,7 @@ msgstr "%s팀"
 
 #: internal/games/checkersnet/texts.go:37
 #: internal/games/fortunenet/texts.go:29
-#: internal/lightui/gpg.go:1185
+#: internal/lightui/gpg.go:1186
 msgid "you"
 msgstr "나"
 
@@ -7907,7 +7907,7 @@ msgstr "메뉴로 나가기"
 #: internal/mailui/welcome.go:598
 #: internal/term/web/strings.go:24
 #: internal/termui/guide.go:111
-#: ui/gpg.ui:633
+#: ui/gpg.ui:634
 #: ui/settings.ui:4508
 #: ui/vm.ui:510
 #: ui/vm.ui:3278
@@ -8716,8 +8716,8 @@ msgstr "%s 생성"
 #: internal/lightui/gpg.go:360
 #: internal/lightui/gpg.go:363
 #: internal/lightui/gpg.go:365
-#: internal/lightui/gpg.go:603
-#: internal/lightui/gpg.go:625
+#: internal/lightui/gpg.go:604
+#: internal/lightui/gpg.go:626
 #: internal/shell/notify.go:32
 #: internal/ui/askpass.go:414
 #: internal/ui/askpass.go:482
@@ -8734,7 +8734,7 @@ msgid "expires %s"
 msgstr "%s 만료"
 
 #: internal/lightui/gpg.go:379
-#: internal/lightui/gpg.go:762
+#: internal/lightui/gpg.go:763
 msgid "signs only"
 msgstr "서명 전용"
 
@@ -8751,8 +8751,8 @@ msgid "disabled"
 msgstr "비활성"
 
 #: internal/lightui/gpg.go:395
-#: internal/lightui/gpg.go:609
-#: internal/lightui/gpg.go:735
+#: internal/lightui/gpg.go:610
+#: internal/lightui/gpg.go:736
 msgid "yours"
 msgstr "내 키"
 
@@ -8769,7 +8769,7 @@ msgid "not verified"
 msgstr "검증 안 됨"
 
 #: internal/lightui/gpg.go:464
-#: ui/gpg.ui:305
+#: ui/gpg.ui:306
 msgid "Encrypt to your key as well, so you can open it later"
 msgstr "내 키로도 암호화해 나중에 열 수 있게 합니다"
 
@@ -8781,100 +8781,100 @@ msgstr "이 키는 서명 전용이라 암호화 대상이 될 수 없습니다"
 msgid "Take off"
 msgstr "빼기"
 
-#: internal/lightui/gpg.go:527
+#: internal/lightui/gpg.go:528
 msgid "%d recipient"
 msgid_plural "%d recipients"
 msgstr[0] "받는 사람 %d명"
 
-#: internal/lightui/gpg.go:530
+#: internal/lightui/gpg.go:531
 #: ui/gpg.ui:118
 msgid "Name, address or key ID"
 msgstr "이름, 주소 또는 키 ID"
 
-#: internal/lightui/gpg.go:532
+#: internal/lightui/gpg.go:533
 msgid "Add another"
 msgstr "더 추가"
 
-#: internal/lightui/gpg.go:581
+#: internal/lightui/gpg.go:582
 msgid "%d more: type to narrow them down"
 msgid_plural "%d more: type to narrow them down"
 msgstr[0] "%d개 더: 입력해 좁히세요"
 
-#: internal/lightui/gpg.go:624
+#: internal/lightui/gpg.go:625
 msgid "This key expired on %s, so gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr "이 키는 %s에 만료되어 gpg가 암호화할 수 없습니다. %s에게 갱신된 키를 받아 가져오세요."
 
-#: internal/lightui/gpg.go:627
-#: internal/lightui/gpg.go:778
+#: internal/lightui/gpg.go:628
+#: internal/lightui/gpg.go:779
 msgid "%s revoked this key; ask for their new one."
 msgstr "%s이(가) 이 키를 폐기했습니다. 새 키를 받으세요."
 
-#: internal/lightui/gpg.go:629
+#: internal/lightui/gpg.go:630
 msgid "This key cannot encrypt."
 msgstr "이 키로는 암호화할 수 없습니다."
 
-#: internal/lightui/gpg.go:639
+#: internal/lightui/gpg.go:640
 msgid "No key matches. Import theirs on the Keys tab."
 msgstr "맞는 키가 없습니다. 키 탭에서 상대의 키를 가져오세요."
 
-#: internal/lightui/gpg.go:641
+#: internal/lightui/gpg.go:642
 msgid "Already added."
 msgstr "이미 추가했습니다."
 
-#: internal/lightui/gpg.go:644
+#: internal/lightui/gpg.go:645
 msgid "Your keyring is empty. Import their key on the Keys tab."
 msgstr "키링이 비어 있습니다. 키 탭에서 상대의 키를 가져오세요."
 
-#: internal/lightui/gpg.go:646
+#: internal/lightui/gpg.go:647
 msgid "Every key is chosen."
 msgstr "모든 키를 골랐습니다."
 
-#: internal/lightui/gpg.go:701
+#: internal/lightui/gpg.go:702
 msgid "MY KEYS"
 msgstr "내 키"
 
-#: internal/lightui/gpg.go:701
+#: internal/lightui/gpg.go:702
 msgid "OTHERS"
 msgstr "다른 사람"
 
-#: internal/lightui/gpg.go:701
+#: internal/lightui/gpg.go:702
 msgid "INVALID KEYS"
 msgstr "유효하지 않은 키"
 
-#: internal/lightui/gpg.go:708
+#: internal/lightui/gpg.go:709
 msgid "%d key"
 msgid_plural "%d keys"
 msgstr[0] "키 %d개"
 
-#: internal/lightui/gpg.go:772
+#: internal/lightui/gpg.go:773
 msgid "Extend it to use it again. Keep it either way: it opens what was encrypted to it."
 msgstr "연장하면 다시 쓸 수 있습니다. 어떤 경우든 보관하세요. 이 키로 암호화된 것을 엽니다."
 
-#: internal/lightui/gpg.go:774
+#: internal/lightui/gpg.go:775
 msgid "Keep it: it opens what was encrypted to it."
 msgstr "보관하세요. 이 키로 암호화된 것을 엽니다."
 
-#: internal/lightui/gpg.go:776
+#: internal/lightui/gpg.go:777
 msgid "gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr "gpg가 이 키로 암호화할 수 없습니다. %s에게 갱신된 키를 받아 가져오세요."
 
-#: internal/lightui/gpg.go:799
+#: internal/lightui/gpg.go:800
 msgid "Copy fingerprint"
 msgstr "지문 복사"
 
-#: internal/lightui/gpg.go:800
+#: internal/lightui/gpg.go:801
 msgid "Copy public key"
 msgstr "공개 키 복사"
 
-#: internal/lightui/gpg.go:802
+#: internal/lightui/gpg.go:803
 msgid "Encrypt to…"
 msgstr "이 키로 암호화…"
 
-#: internal/lightui/gpg.go:805
+#: internal/lightui/gpg.go:806
 msgid "Extend 2 years"
 msgstr "2년 연장"
 
-#: internal/lightui/gpg.go:810
+#: internal/lightui/gpg.go:811
 #: ui/disk.ui:781
 #: ui/vm.ui:391
 #: ui/vm.ui:1540
@@ -8885,187 +8885,187 @@ msgstr "2년 연장"
 msgid "Delete…"
 msgstr "삭제…"
 
-#: internal/lightui/gpg.go:873
+#: internal/lightui/gpg.go:874
 msgid "Copied; taken off the clipboard in 45 seconds"
 msgstr "복사했습니다. 45초 뒤 클립보드에서 지워집니다"
 
-#: internal/lightui/gpg.go:926
+#: internal/lightui/gpg.go:927
 msgid "Fingerprint copied"
 msgstr "지문을 복사했습니다"
 
-#: internal/lightui/gpg.go:938
+#: internal/lightui/gpg.go:939
 msgid "Public key copied"
 msgstr "공개 키를 복사했습니다"
 
-#: internal/lightui/gpg.go:1006
+#: internal/lightui/gpg.go:1007
 msgid "Files to encrypt"
 msgstr "암호화할 파일"
 
-#: internal/lightui/gpg.go:1006
+#: internal/lightui/gpg.go:1007
 msgid "Files to decrypt"
 msgstr "복호화할 파일"
 
-#: internal/lightui/gpg.go:1006
+#: internal/lightui/gpg.go:1007
 msgid "Key file to import"
 msgstr "가져올 키 파일"
 
-#: internal/lightui/gpg.go:1072
+#: internal/lightui/gpg.go:1073
 msgid "Leave it out"
 msgstr "빼기"
 
-#: internal/lightui/gpg.go:1107
+#: internal/lightui/gpg.go:1108
 msgid "Saved to %s"
 msgstr "%s에 저장했습니다"
 
-#: internal/lightui/gpg.go:1123
+#: internal/lightui/gpg.go:1124
 msgid "Add someone to encrypt to."
 msgstr "암호화할 받는 사람을 추가하세요."
 
-#: internal/lightui/gpg.go:1137
-#: internal/lightui/gpg.go:1263
+#: internal/lightui/gpg.go:1138
+#: internal/lightui/gpg.go:1264
 msgid "Choose or drop files first."
 msgstr "먼저 파일을 고르거나 끌어다 놓으세요."
 
-#: internal/lightui/gpg.go:1148
+#: internal/lightui/gpg.go:1149
 msgid "Type a message first."
 msgstr "먼저 메시지를 입력하세요."
 
-#: internal/lightui/gpg.go:1153
+#: internal/lightui/gpg.go:1154
 msgid "Encrypting…"
 msgstr "암호화하는 중…"
 
-#: internal/lightui/gpg.go:1190
+#: internal/lightui/gpg.go:1191
 msgid "For %s"
 msgstr "받는 사람: %s"
 
-#: internal/lightui/gpg.go:1192
+#: internal/lightui/gpg.go:1193
 msgid "signed"
 msgstr "서명됨"
 
-#: internal/lightui/gpg.go:1209
+#: internal/lightui/gpg.go:1210
 msgid "written in %s"
 msgstr "%s에 저장됨"
 
-#: internal/lightui/gpg.go:1213
+#: internal/lightui/gpg.go:1214
 msgid "Move to Trash…"
 msgstr "휴지통으로 이동…"
 
-#: internal/lightui/gpg.go:1237
+#: internal/lightui/gpg.go:1238
 msgid "%s moved to the trash"
 msgstr "%s을(를) 휴지통으로 옮겼습니다"
 
-#: internal/lightui/gpg.go:1272
+#: internal/lightui/gpg.go:1273
 msgid "Paste a message first."
 msgstr "먼저 메시지를 붙여 넣으세요."
 
-#: internal/lightui/gpg.go:1279
+#: internal/lightui/gpg.go:1280
 msgid "Decrypting… gpg may ask for your passphrase."
 msgstr "복호화하는 중… gpg가 암호 문구를 물을 수 있습니다."
 
-#: internal/lightui/gpg.go:1328
+#: internal/lightui/gpg.go:1329
 msgid "Not signed: who sent it is not known"
 msgstr "서명 없음: 누가 보냈는지 알 수 없습니다"
 
-#: internal/lightui/gpg.go:1336
+#: internal/lightui/gpg.go:1337
 msgid "Signed by %s"
 msgstr "%s 서명"
 
-#: internal/lightui/gpg.go:1339
+#: internal/lightui/gpg.go:1340
 msgid "Jan 2, 2006 15:04"
 msgstr "2006년 1월 2일 15:04"
 
-#: internal/lightui/gpg.go:1343
+#: internal/lightui/gpg.go:1344
 msgid "The signature by %s does not match: it was changed after signing"
 msgstr "%s의 서명이 맞지 않습니다: 서명 후 바뀌었습니다"
 
-#: internal/lightui/gpg.go:1347
+#: internal/lightui/gpg.go:1348
 msgid "Signed by a key not in your keyring, so it cannot be checked"
 msgstr "키링에 없는 키로 서명되어 확인할 수 없습니다"
 
-#: internal/lightui/gpg.go:1351
+#: internal/lightui/gpg.go:1352
 msgid "Signed by %s, with a key that is no longer valid"
 msgstr "%s 서명, 더 이상 유효하지 않은 키"
 
-#: internal/lightui/gpg.go:1369
+#: internal/lightui/gpg.go:1370
 msgid "Encrypted to %s"
 msgstr "%s에게 암호화됨"
 
-#: internal/lightui/gpg.go:1385
-#: ui/gpg.ui:1280
+#: internal/lightui/gpg.go:1386
+#: ui/gpg.ui:1281
 msgid "Import"
 msgstr "가져오기"
 
-#: internal/lightui/gpg.go:1395
+#: internal/lightui/gpg.go:1396
 msgid "No key found in it."
 msgstr "키를 찾지 못했습니다."
 
-#: internal/lightui/gpg.go:1400
+#: internal/lightui/gpg.go:1401
 msgid "Import %d key"
 msgid_plural "Import %d keys"
 msgstr[0] "키 %d개 가져오기"
 
-#: internal/lightui/gpg.go:1412
+#: internal/lightui/gpg.go:1413
 msgid "new"
 msgstr "새 키"
 
-#: internal/lightui/gpg.go:1415
+#: internal/lightui/gpg.go:1416
 msgid "holds a secret key"
 msgstr "비밀 키 포함"
 
-#: internal/lightui/gpg.go:1417
+#: internal/lightui/gpg.go:1418
 msgid "updates one you have"
 msgstr "가진 키를 갱신"
 
-#: internal/lightui/gpg.go:1442
+#: internal/lightui/gpg.go:1443
 msgid "Importing…"
 msgstr "가져오는 중…"
 
-#: internal/lightui/gpg.go:1453
+#: internal/lightui/gpg.go:1454
 msgid "%d key imported"
 msgid_plural "%d keys imported"
 msgstr[0] "키 %d개를 가져왔습니다"
 
-#: internal/lightui/gpg.go:1466
+#: internal/lightui/gpg.go:1467
 msgid "Give a name and an address."
 msgstr "이름과 주소를 입력하세요."
 
-#: internal/lightui/gpg.go:1470
+#: internal/lightui/gpg.go:1471
 msgid "That address has no @."
 msgstr "주소에 @가 없습니다."
 
-#: internal/lightui/gpg.go:1476
+#: internal/lightui/gpg.go:1477
 msgid "Creating… gpg asks for a passphrase for the new key."
 msgstr "만드는 중… gpg가 새 키의 암호 문구를 묻습니다."
 
-#: internal/lightui/gpg.go:1490
+#: internal/lightui/gpg.go:1491
 msgid "Your key is created"
 msgstr "키를 만들었습니다"
 
-#: internal/lightui/gpg.go:1513
+#: internal/lightui/gpg.go:1514
 msgid "Delete the key of %s?"
 msgstr "%s의 키를 삭제할까요?"
 
-#: internal/lightui/gpg.go:1515
+#: internal/lightui/gpg.go:1516
 msgid "It goes from your keyring. Messages it signed then show as signed by a key not in your keyring; importing it again brings that back."
 msgstr "키링에서 빠집니다. 이 키로 서명된 메시지는 키링에 없는 키의 서명으로 표시되며, 다시 가져오면 돌아옵니다."
 
-#: internal/lightui/gpg.go:1522
+#: internal/lightui/gpg.go:1523
 msgid "Move %s to the trash?"
 msgstr "%s을(를) 휴지통으로 옮길까요?"
 
-#: internal/lightui/gpg.go:1523
+#: internal/lightui/gpg.go:1524
 msgid "The decrypted copy goes to the trash, where it can be restored from; the encrypted file stays."
 msgstr "복호화한 사본은 휴지통으로 가며 거기서 복원할 수 있습니다. 암호화된 파일은 남습니다."
 
-#: internal/lightui/gpg.go:1540
+#: internal/lightui/gpg.go:1541
 msgid "Key deleted"
 msgstr "키를 삭제했습니다"
 
-#: internal/lightui/gpg.go:1550
+#: internal/lightui/gpg.go:1551
 msgid "Extending… gpg asks for your passphrase."
 msgstr "연장하는 중… gpg가 암호 문구를 묻습니다."
 
-#: internal/lightui/gpg.go:1559
+#: internal/lightui/gpg.go:1560
 msgid "Extended by 2 years"
 msgstr "2년 연장했습니다"
 
@@ -9424,7 +9424,7 @@ msgstr "이 앱이 읽는 이미지(PNG 또는 JPEG)가 아닙니다."
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
 #: internal/ui/widgets.go:909
-#: ui/connect.ui:966
+#: ui/connect.ui:967
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
 msgid "Add"
@@ -10127,7 +10127,7 @@ msgid "Copy Name"
 msgstr "이름 복사"
 
 #: internal/lightui/tailscale.go:508
-#: ui/connect.ui:621
+#: ui/connect.ui:622
 msgid "Ping"
 msgstr "Ping"
 
@@ -10469,7 +10469,7 @@ msgstr "OK"
 #: internal/term/web/strings.go:93
 #: internal/ui/settings_ai.go:530
 #: ui/clock.ui:252
-#: ui/connect.ui:420
+#: ui/connect.ui:421
 #: ui/pass.ui:504
 msgid "Save"
 msgstr "저장"
@@ -10660,7 +10660,7 @@ msgstr "보내지 않음"
 #: internal/mailui/details.go:190
 #: internal/mailui/people.go:301
 #: internal/mailui/reader.go:232
-#: internal/mailui/window.go:1331
+#: internal/mailui/window.go:1333
 msgid "(no subject)"
 msgstr "(제목 없음)"
 
@@ -10692,7 +10692,7 @@ msgid_plural "%s and %d more messages"
 msgstr[0] "%s 외 %d개"
 
 #: internal/mailui/app.go:23
-#: internal/mailui/window.go:1721
+#: internal/mailui/window.go:1723
 #: ui/mail.ui:14
 #: config/apps/io.github.lyricat.Inua.Mail.desktop:3
 msgid "Mail"
@@ -10732,7 +10732,7 @@ msgid "The assistant gave no search."
 msgstr "어시스턴트가 검색어를 주지 않았습니다."
 
 #: internal/mailui/assist.go:262
-#: internal/mailui/window.go:1558
+#: internal/mailui/window.go:1560
 msgid "Searched for %s"
 msgstr "%s 검색함"
 
@@ -10807,7 +10807,7 @@ msgstr "보내는 중…"
 
 #: internal/mailui/compose.go:561
 #: internal/mailui/quick.go:137
-#: ui/connect.ui:663
+#: ui/connect.ui:664
 #: ui/connectreply.ui:58
 #: ui/mail-compose.ui:237
 msgid "Send"
@@ -10825,7 +10825,7 @@ msgstr "%s(으)로 번역"
 #: internal/mailui/details.go:98
 #: internal/mailui/formatted.go:192
 #: internal/mailui/settings.go:382
-#: internal/mailui/window.go:1750
+#: internal/mailui/window.go:1752
 msgid "Not saved: %v"
 msgstr "저장하지 못함: %v"
 
@@ -10937,8 +10937,8 @@ msgstr ""
 
 #: internal/mailui/details.go:226
 #: internal/mailui/reader.go:826
-#: ui/gpg.ui:652
-#: ui/gpg.ui:896
+#: ui/gpg.ui:653
+#: ui/gpg.ui:897
 #: ui/settings.ui:6549
 msgid "Save…"
 msgstr "저장…"
@@ -11016,7 +11016,7 @@ msgstr "확인할 것이 없습니다: 여기서 읽은 메시지는 내 것입�
 msgid "AI reads what the checks found, with the sender, subject, links and text, and says what it makes of it."
 msgstr "AI가 검사 결과와 보낸 사람, 제목, 링크, 본문을 읽고 판단을 알려 줍니다."
 
-#: internal/mailui/panel.go:444
+#: internal/mailui/panel.go:445
 msgid "The assistant could not write it"
 msgstr "어시스턴트가 쓰지 못했습니다"
 
@@ -11180,7 +11180,7 @@ msgid "Forward (F)"
 msgstr "전달 (F)"
 
 #: internal/mailui/reader.go:320
-#: internal/mailui/window.go:1247
+#: internal/mailui/window.go:1249
 msgid "Archive (E)"
 msgstr "보관 (E)"
 
@@ -11197,17 +11197,17 @@ msgid "Move to a folder (V)"
 msgstr "폴더로 이동 (V)"
 
 #: internal/mailui/reader.go:327
-#: internal/mailui/window.go:1376
+#: internal/mailui/window.go:1378
 msgid "Star (S)"
 msgstr "별표 달기 (S)"
 
 #: internal/mailui/reader.go:330
-#: internal/mailui/window.go:1373
+#: internal/mailui/window.go:1375
 msgid "Unstar (S)"
 msgstr "별표 빼기 (S)"
 
 #: internal/mailui/reader.go:332
-#: internal/mailui/window.go:1383
+#: internal/mailui/window.go:1385
 msgid "Mark as unread (U)"
 msgstr "안 읽음으로 표시 (U)"
 
@@ -11266,7 +11266,7 @@ msgid "Fold"
 msgstr ""
 
 #: internal/mailui/reader.go:670
-#: internal/mailui/window.go:1325
+#: internal/mailui/window.go:1327
 msgid "me"
 msgstr "나"
 
@@ -11691,8 +11691,8 @@ msgstr "색인과 열어 본 메시지: 서버의 사본이므로 지워도 잃�
 #: internal/mailui/settings.go:655
 #: internal/ui/notify.go:412
 #: ui/colorpicker.ui:93
-#: ui/gpg.ui:508
-#: ui/gpg.ui:1011
+#: ui/gpg.ui:509
+#: ui/gpg.ui:1012
 #: ui/group.ui:52
 msgid "Clear"
 msgstr "지우기"
@@ -11951,7 +11951,7 @@ msgid "With messages not read"
 msgstr "안 읽은 메시지가 있는"
 
 #: internal/mailui/window.go:252
-#: internal/mailui/window.go:1368
+#: internal/mailui/window.go:1370
 msgid "With files attached"
 msgstr "파일이 첨부된"
 
@@ -12013,7 +12013,7 @@ msgid "Offline"
 msgstr "오프라인"
 
 #: internal/mailui/window.go:567
-#: internal/mailui/window.go:1696
+#: internal/mailui/window.go:1698
 msgid "No account yet"
 msgstr "아직 계정이 없습니다"
 
@@ -12071,7 +12071,7 @@ msgid "Search contacts"
 msgstr ""
 
 #: internal/mailui/window.go:814
-#: internal/mailui/window.go:1758
+#: internal/mailui/window.go:1760
 #: ui/mail.ui:148
 msgid "Search, or ask in a sentence"
 msgstr "검색하거나 문장으로 묻기"
@@ -12116,69 +12116,69 @@ msgstr "메일이 없습니다"
 msgid "Could not load older mail: %v"
 msgstr "이전 메일을 불러올 수 없습니다: %v"
 
-#: internal/mailui/window.go:1248
+#: internal/mailui/window.go:1250
 msgid "Delete (D)"
 msgstr "삭제 (D)"
 
-#: internal/mailui/window.go:1272
+#: internal/mailui/window.go:1274
 msgid "SUSPICIOUS"
 msgstr "의심스러움"
 
-#: internal/mailui/window.go:1340
+#: internal/mailui/window.go:1342
 msgid "EMPTY PREVIEW"
 msgstr ""
 
-#: internal/mailui/window.go:1380
+#: internal/mailui/window.go:1382
 msgid "Mark as read"
 msgstr "읽음으로 표시"
 
-#: internal/mailui/window.go:1434
+#: internal/mailui/window.go:1436
 #: internal/shell/notify.go:30
 msgid "Jan 2"
 msgstr "1월 2일"
 
-#: internal/mailui/window.go:1492
+#: internal/mailui/window.go:1494
 msgid "Press Enter to ask the assistant to search for this."
 msgstr "Enter를 누르면 어시스턴트에게 이것을 검색해 달라고 합니다."
 
-#: internal/mailui/window.go:1537
+#: internal/mailui/window.go:1539
 msgid "Searching the server…"
 msgstr "서버를 검색하는 중…"
 
-#: internal/mailui/window.go:1561
+#: internal/mailui/window.go:1563
 msgid "The server's search failed: %s"
 msgstr "서버 검색에 실패했습니다: %s"
 
-#: internal/mailui/window.go:1693
+#: internal/mailui/window.go:1695
 msgid "Up to date"
 msgstr "최신 상태"
 
-#: internal/mailui/window.go:1698
+#: internal/mailui/window.go:1700
 msgid "Checking for mail…"
 msgstr "메일 확인 중…"
 
-#: internal/mailui/window.go:1702
+#: internal/mailui/window.go:1704
 msgid "Offline: trying again soon"
 msgstr "오프라인: 곧 다시 시도합니다"
 
-#: internal/mailui/window.go:1704
+#: internal/mailui/window.go:1706
 msgid "%d account cannot connect"
 msgid_plural "%d accounts cannot connect"
 msgstr[0] "계정 %d개에 연결할 수 없습니다"
 
-#: internal/mailui/window.go:1706
+#: internal/mailui/window.go:1708
 msgid "Checked %s"
 msgstr "%s 확인함"
 
-#: internal/mailui/window.go:1711
+#: internal/mailui/window.go:1713
 msgid "Last checked at %s"
 msgstr "마지막 확인 %s"
 
-#: internal/mailui/window.go:1719
+#: internal/mailui/window.go:1721
 msgid "Mail · %d unread"
 msgstr "메일 · 안 읽음 %d"
 
-#: internal/mailui/window.go:1794
+#: internal/mailui/window.go:1796
 msgid "%d minute ago"
 msgid_plural "%d minutes ago"
 msgstr[0] "%d분 전"
@@ -13080,7 +13080,7 @@ msgid "%s is not a folder."
 msgstr ""
 
 #: internal/term/host/sessions.go:303
-#: ui/connect.ui:850
+#: ui/connect.ui:851
 msgid "Commands"
 msgstr "명령"
 
@@ -13327,7 +13327,7 @@ msgstr ""
 
 #: internal/term/web/strings.go:39
 #: internal/vmui/window.go:1108
-#: ui/gpg.ui:1488
+#: ui/gpg.ui:1489
 #: ui/vm.ui:3299
 msgid "Create"
 msgstr "만들기"
@@ -13406,7 +13406,7 @@ msgstr "정보"
 
 #: internal/term/web/strings.go:61
 #: internal/termui/prefs.go:204
-#: ui/gpg.ui:1042
+#: ui/gpg.ui:1043
 msgid "KEYS"
 msgstr "키"
 
@@ -14340,7 +14340,7 @@ msgid "%s · expires %s"
 msgstr "%s · %s 만료"
 
 #: internal/ui/askpass.go:503
-#: ui/polkit.ui:566
+#: ui/polkit.ui:567
 msgid "FOR"
 msgstr "대상"
 
@@ -14422,7 +14422,7 @@ msgid "Search clipboard history"
 msgstr "클립보드 기록 검색"
 
 #: internal/ui/clipboard.go:359
-#: ui/connect.ui:727
+#: ui/connect.ui:728
 #: ui/settings.ui:3622
 msgid "Clipboard"
 msgstr "클립보드"
@@ -14836,7 +14836,7 @@ msgid "Colour picked"
 msgstr "색상 선택"
 
 #: internal/ui/polkit.go:178
-#: ui/polkit.ui:89
+#: ui/polkit.ui:90
 msgid "Authentication Required"
 msgstr "인증이 필요함"
 
@@ -16723,13 +16723,13 @@ msgstr "텍스트 복사 (Ctrl+C)"
 
 #: internal/viewerui/app.go:688
 #: internal/viewerui/app.go:692
-#: ui/viewer.ui:321
+#: ui/viewer.ui:322
 msgid "Previous (←)"
 msgstr "이전(←)"
 
 #: internal/viewerui/app.go:689
 #: internal/viewerui/app.go:693
-#: ui/viewer.ui:332
+#: ui/viewer.ui:334
 msgid "Next (→)"
 msgstr "다음(→)"
 
@@ -17750,95 +17750,95 @@ msgstr "선택한 색상이 여기에 표시됩니다."
 msgid "THIS COMPUTER"
 msgstr "이 컴퓨터"
 
-#: ui/connect.ui:125
+#: ui/connect.ui:126
 msgid "Look for devices again"
 msgstr "기기 다시 찾기"
 
-#: ui/connect.ui:159
+#: ui/connect.ui:160
 msgid "Add a device by address…"
 msgstr "주소로 기기 추가…"
 
-#: ui/connect.ui:226
+#: ui/connect.ui:227
 msgid "[THIS COMPUTER]"
 msgstr "[이 컴퓨터]"
 
-#: ui/connect.ui:256
+#: ui/connect.ui:257
 msgid "Connect with your devices"
 msgstr "기기와 연결"
 
-#: ui/connect.ui:317
+#: ui/connect.ui:318
 msgid "To pair a phone"
 msgstr "휴대폰을 페어링하려면"
 
-#: ui/connect.ui:326
+#: ui/connect.ui:327
 msgid "Install KDE Connect on it (from F-Droid, Google Play or the App Store), open it on the same network or the tailnet, and choose this computer. Pair once the key shown there matches the one here."
 msgstr "휴대폰에 KDE Connect를 설치하고(F-Droid, Google Play 또는 App Store), 같은 네트워크나 tailnet에서 연 다음 이 컴퓨터를 선택하세요. 그쪽에 표시된 키가 여기의 키와 같으면 페어링하세요."
 
-#: ui/connect.ui:362
+#: ui/connect.ui:363
 msgid "[COMMANDS]"
 msgstr "[명령]"
 
-#: ui/connect.ui:372
+#: ui/connect.ui:373
 msgid "devices run these here"
 msgstr "기기가 여기서 실행합니다"
 
-#: ui/connect.ui:410
+#: ui/connect.ui:411
 msgid "Add a command"
 msgstr "명령 추가"
 
-#: ui/connect.ui:596
+#: ui/connect.ui:597
 msgid "[SEND]"
 msgstr "[보내기]"
 
-#: ui/connect.ui:630
+#: ui/connect.ui:631
 msgid "Ring"
 msgstr "울리기"
 
-#: ui/connect.ui:631
+#: ui/connect.ui:632
 msgid "Rings the device, to find it"
 msgstr "기기를 울려서 찾습니다"
 
-#: ui/connect.ui:640
+#: ui/connect.ui:641
 msgid "Send files…"
 msgstr "파일 보내기…"
 
-#: ui/connect.ui:654
+#: ui/connect.ui:655
 msgid "Text, or a link it opens"
 msgstr "텍스트 또는 열 링크"
 
-#: ui/connect.ui:697
+#: ui/connect.ui:698
 msgid "[SHARED WITH IT]"
 msgstr "[공유 항목]"
 
-#: ui/connect.ui:736
+#: ui/connect.ui:737
 msgid "Text copied on one is there to paste on the other. Passwords stay here."
 msgstr "한쪽에서 복사한 텍스트를 다른 쪽에서 붙여넣을 수 있습니다. 비밀번호는 여기에 남습니다."
 
-#: ui/connect.ui:768
+#: ui/connect.ui:769
 msgid "This computer's notifications"
 msgstr "이 컴퓨터의 알림"
 
-#: ui/connect.ui:777
+#: ui/connect.ui:778
 msgid "They show on the device too. Its own show here when it sends them."
 msgstr "기기에도 표시됩니다. 기기의 알림은 보내오면 여기에 표시됩니다."
 
-#: ui/connect.ui:809
+#: ui/connect.ui:810
 msgid "Pointer and keyboard"
 msgstr "포인터와 키보드"
 
-#: ui/connect.ui:818
+#: ui/connect.ui:819
 msgid "The device works as a touchpad and keyboard here."
 msgstr "기기를 여기서 터치패드와 키보드로 사용합니다."
 
-#: ui/connect.ui:859
+#: ui/connect.ui:860
 msgid "It runs the commands set up on This computer."
 msgstr "'이 컴퓨터'에서 설정한 명령을 실행합니다."
 
-#: ui/connect.ui:921
+#: ui/connect.ui:922
 msgid "[ADD A DEVICE]"
 msgstr "[기기 추가]"
 
-#: ui/connect.ui:946
+#: ui/connect.ui:947
 msgid "A device the network's broadcast does not reach: its name or IP address. It is asked to connect here; it shows in the list once it has."
 msgstr "네트워크 브로드캐스트가 닿지 않는 기기의 이름 또는 IP 주소. 여기로 연결하도록 요청하며, 연결되면 목록에 표시됩니다."
 
@@ -17889,7 +17889,7 @@ msgstr "소리"
 msgid "Now playing"
 msgstr "지금 재생 중"
 
-#: ui/dictation.ui:69
+#: ui/dictation.ui:70
 msgid "Drop the recording"
 msgstr "녹음 버리기"
 
@@ -17983,15 +17983,15 @@ msgstr "격자(Ctrl+2)"
 msgid "Columns (Ctrl+3)"
 msgstr "열(Ctrl+3)"
 
-#: ui/filespane.ui:311
+#: ui/filespane.ui:312
 msgid "Smaller (Ctrl+−)"
 msgstr "작게(Ctrl+−)"
 
-#: ui/filespane.ui:320
+#: ui/filespane.ui:321
 msgid "Normal size (Ctrl+0)"
 msgstr "보통 크기(Ctrl+0)"
 
-#: ui/filespane.ui:330
+#: ui/filespane.ui:332
 msgid "Bigger (Ctrl++)"
 msgstr "크게(Ctrl++)"
 
@@ -18007,132 +18007,132 @@ msgstr "암호화"
 msgid "<span alpha='55%'>[</span>TO<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>받는 사람<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:130
+#: ui/gpg.ui:131
 msgid "All keys"
 msgstr "모든 키"
 
-#: ui/gpg.ui:172
+#: ui/gpg.ui:173
 msgid "<span alpha='55%'>[</span>FROM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>보내는 사람<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:255
+#: ui/gpg.ui:256
 msgid "Sign"
 msgstr "서명"
 
-#: ui/gpg.ui:264
+#: ui/gpg.ui:265
 msgid "So they know it is from you and unchanged"
 msgstr "내가 보냈고 바뀌지 않았음을 알 수 있게"
 
-#: ui/gpg.ui:296
+#: ui/gpg.ui:297
 msgid "Let me read it too"
 msgstr "나도 읽을 수 있게"
 
-#: ui/gpg.ui:339
+#: ui/gpg.ui:340
 msgid "You have no key of your own"
 msgstr "내 키가 없습니다"
 
-#: ui/gpg.ui:348
+#: ui/gpg.ui:349
 msgid "Without one you cannot sign, or read what you encrypt"
 msgstr "키가 없으면 서명할 수도, 암호화한 것을 읽을 수도 없습니다"
 
-#: ui/gpg.ui:361
-#: ui/gpg.ui:1102
+#: ui/gpg.ui:362
+#: ui/gpg.ui:1103
 msgid "Create your key"
 msgstr "내 키 만들기"
 
-#: ui/gpg.ui:395
-#: ui/gpg.ui:750
+#: ui/gpg.ui:396
+#: ui/gpg.ui:751
 msgid "<span alpha='55%'>[</span>MESSAGE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>메시지<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:469
-#: ui/gpg.ui:834
+#: ui/gpg.ui:470
+#: ui/gpg.ui:835
 msgid "Drop files here, or"
 msgstr "여기에 파일을 끌어다 놓거나"
 
-#: ui/gpg.ui:478
-#: ui/gpg.ui:843
+#: ui/gpg.ui:479
+#: ui/gpg.ui:844
 msgid "Choose files…"
 msgstr "파일 고르기…"
 
-#: ui/gpg.ui:527
+#: ui/gpg.ui:528
 msgid "Encrypt"
 msgstr "암호화"
 
-#: ui/gpg.ui:572
+#: ui/gpg.ui:573
 msgid "<span alpha='55%'>[</span>ENCRYPTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>암호문<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:677
+#: ui/gpg.ui:678
 msgid "DECRYPT"
 msgstr "복호화"
 
-#: ui/gpg.ui:706
+#: ui/gpg.ui:707
 msgid "The clipboard holds an encrypted message"
 msgstr "클립보드에 암호화된 메시지가 있습니다"
 
-#: ui/gpg.ui:718
+#: ui/gpg.ui:719
 msgid "Decrypt it"
 msgstr "복호화"
 
-#: ui/gpg.ui:758
+#: ui/gpg.ui:759
 msgid "Decrypted as soon as it is pasted or dropped"
 msgstr "붙여 넣거나 끌어다 놓으면 바로 복호화합니다"
 
-#: ui/gpg.ui:884
+#: ui/gpg.ui:885
 msgid "<span alpha='55%'>[</span>DECRYPTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>복호문<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:1030
+#: ui/gpg.ui:1031
 msgid "Decrypt"
 msgstr "복호화"
 
-#: ui/gpg.ui:1080
+#: ui/gpg.ui:1081
 msgid "You have no key of your own yet"
 msgstr "아직 내 키가 없습니다"
 
-#: ui/gpg.ui:1089
+#: ui/gpg.ui:1090
 msgid "You need one to sign, and for others to send you messages only you can read"
 msgstr "서명하려면, 그리고 나만 읽을 수 있는 메시지를 받으려면 필요합니다"
 
-#: ui/gpg.ui:1129
+#: ui/gpg.ui:1130
 msgid "Import…"
 msgstr "가져오기…"
 
-#: ui/gpg.ui:1148
+#: ui/gpg.ui:1149
 msgid "Create key"
 msgstr "키 만들기"
 
-#: ui/gpg.ui:1193
+#: ui/gpg.ui:1194
 msgid "<span alpha='55%'>[</span>IMPORT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>가져오기<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:1201
+#: ui/gpg.ui:1202
 msgid "Paste a public key, or choose or drop a key file"
 msgstr "공개 키를 붙여 넣거나 키 파일을 고르거나 끌어다 놓으세요"
 
-#: ui/gpg.ui:1261
+#: ui/gpg.ui:1262
 #: ui/vm.ui:1385
 msgid "Choose file…"
 msgstr "파일 고르기…"
 
-#: ui/gpg.ui:1326
+#: ui/gpg.ui:1327
 msgid "<span alpha='55%'>[</span>NEW KEY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>새 키<span alpha='55%'>]</span>"
 
-#: ui/gpg.ui:1396
+#: ui/gpg.ui:1397
 msgid "Expires"
 msgstr "만료"
 
-#: ui/gpg.ui:1405
+#: ui/gpg.ui:1406
 msgid "You can extend it before then; an expired key still decrypts"
 msgstr "그 전에 연장할 수 있고, 만료된 키도 복호화는 됩니다"
 
-#: ui/gpg.ui:1424
+#: ui/gpg.ui:1425
 msgid "gpg asks for a passphrase to protect the new key. Remember it: without it the key cannot be used."
 msgstr "gpg가 새 키를 보호할 암호 문구를 묻습니다. 꼭 기억하세요. 없으면 키를 쓸 수 없습니다."
 
-#: ui/gpg.ui:1439
+#: ui/gpg.ui:1440
 msgid "Or in a terminal:"
 msgstr "또는 터미널에서:"
 
@@ -18373,55 +18373,55 @@ msgstr "발급자(예: GitHub)"
 msgid "Account, e.g. you@example.org"
 msgstr "계정(예: you@example.org)"
 
-#: ui/polkit.ui:156
+#: ui/polkit.ui:157
 msgid "<span alpha='55%'>[</span>KEY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>키<span alpha='55%'>]</span>"
 
-#: ui/polkit.ui:233
+#: ui/polkit.ui:234
 msgid "TYPE"
 msgstr "유형"
 
-#: ui/polkit.ui:266
+#: ui/polkit.ui:267
 msgid "FINGERPRINT"
 msgstr "지문"
 
-#: ui/polkit.ui:300
+#: ui/polkit.ui:301
 msgid "PRIMARY"
 msgstr "기본 키"
 
-#: ui/polkit.ui:382
+#: ui/polkit.ui:383
 msgid "<span alpha='55%'>[</span>APP<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>앱<span alpha='55%'>]</span>"
 
-#: ui/polkit.ui:410
+#: ui/polkit.ui:411
 msgid "PROGRAM"
 msgstr "프로그램"
 
-#: ui/polkit.ui:464
+#: ui/polkit.ui:465
 msgid "PACKAGE"
 msgstr "패키지"
 
-#: ui/polkit.ui:498
+#: ui/polkit.ui:499
 msgid "ALLOWED"
 msgstr "허용"
 
-#: ui/polkit.ui:547
+#: ui/polkit.ui:548
 msgid "<span alpha='55%'>[</span>REQUEST<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>요청<span alpha='55%'>]</span>"
 
-#: ui/polkit.ui:602
+#: ui/polkit.ui:603
 msgid "ASKED BY"
 msgstr "요청자"
 
-#: ui/polkit.ui:651
+#: ui/polkit.ui:652
 msgid "AS"
 msgstr "그대로"
 
-#: ui/polkit.ui:670
+#: ui/polkit.ui:671
 msgid "Another user"
 msgstr "다른 사용자"
 
-#: ui/polkit.ui:749
+#: ui/polkit.ui:750
 msgid "Authenticate"
 msgstr "인증하다"
 
@@ -19785,7 +19785,7 @@ msgstr "휴지통으로 이동할까요?"
 msgid "Details (I)"
 msgstr "세부 정보 (I)"
 
-#: ui/viewer.ui:366
+#: ui/viewer.ui:368
 msgid "Open a File…"
 msgstr "파일 열기…"
 

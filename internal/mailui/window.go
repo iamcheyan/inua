@@ -1183,6 +1183,7 @@ func (w *window) setupRow(item uintptr) {
 	gtkx.Append(gutter, &r.mark.Widget)
 	r.star = *gtk.NewButtonFromIconName("mail-starred-symbolic")
 	r.star.AddCssClass("mail-row-star")
+	r.star.AddCssClass("tight")
 	r.star.SetFocusOnClick(false)
 	r.ptrs = append(r.ptrs, w.h.click(&r.star, func() {
 		if c := w.rowConv(r); c != nil {
@@ -1234,6 +1235,7 @@ func (w *window) setupRow(item uintptr) {
 	act := func(icon, tip string, f func(c *mail.Conversation)) *gtk.Button {
 		b := gtk.NewButtonFromIconName(icon)
 		b.AddCssClass("mail-row-act")
+		b.AddCssClass("small")
 		b.SetTooltipText(tip)
 		b.SetFocusOnClick(false)
 		r.ptrs = append(r.ptrs, w.h.click(b, func() {

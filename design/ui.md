@@ -298,8 +298,11 @@ All controls are 34 px tall where they sit in a row, framed by a 1 px
 | The main action | The outlined shape filled with the accent, text in `app`; hover: the accent mixed 14% toward `t0`; disabled at 45% | `suggested-action` |
 | A light app's main action | Filled with `primary`, text in `app`; hover: mixed 12% toward `app` | `primary` |
 | Destructive | Outlined, text in `danger`; or filled with `danger` in a confirming dialog, hover as the main action's | `outlined danger`, `destructive-action` |
+| Large | Any of the four above at 44 px, 18 px inside, 14 px text | add `large` |
 | Small | Any of the four above at 26 px, 10 px inside, 12 px text: in a section's head, a notification, a tight bar | add `small` |
-| Icon button | Borderless, 28 px square (20 px in tight rows), `t1`; hover: 9% accent | `plain` |
+| Icon button | Borderless, 34 px square, `t1`; hover: 9% accent | `plain` |
+| Tool | An icon button in a bar of tools, framed: a 55% hairline, clear; hover as the outlined one's, turned on (`:checked`) in a 9% tint, `.on` in the accent | `tool` |
+| Icon sizes | 44 px (`large`), 34 px, 26 px (`small`), 20 px in a tight row (`tight`), for `plain`, `tool` and any `image-button` | add the size |
 | Entry | `surface`, `line` border; focus: accent border and a 3 px ring at 14% | — |
 | Number | An entry's box with the digits in mono; − and + as flat 32 px cells behind hairlines | `spinbutton` (styled for every `.settings` window) |
 | Drop-down | The outlined button's shape, at least 150 px; its list on `app` without GTK's padding | `dropdown` |
@@ -311,9 +314,9 @@ One main action per page, at most: the accent fill is that page's one
 accent. The other buttons beside it are outlined.
 
 The buttons' rules are written once, for every window and surface, at
-the top of `ui/style.css`; a window does not restate them. A button of its
-own size is `small`, not a rule of the window's: the two sizes are 34 px
-and 26 px.
+the top of `ui/style.css`; a window does not restate them. A button of
+another size takes a size class, not a rule of the window's: 34 px is the
+default, `large` 44 px, `small` 26 px and, for icons only, `tight` 20 px.
 
 ## Feedback
 

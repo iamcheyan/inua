@@ -45,7 +45,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkButton" id="sidebar_hide">
                                 <style>
-                                  <class name="mail-tool"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="icon-name">sidebar-show-symbolic</property>
                                 <property name="tooltip-text" translatable="yes">Hide the sidebar (F9)</property>
@@ -132,7 +132,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                         <child>
                           <object class="GtkButton" id="sidebar_show">
                             <style>
-                              <class name="mail-tool"/>
+                              <class name="tool"/>
                             </style>
                             <property name="icon-name">sidebar-show-symbolic</property>
                             <property name="tooltip-text" translatable="yes">Show the sidebar (F9)</property>
@@ -389,7 +389,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkButton" id="assist_close">
                                 <style>
-                                  <class name="mail-tool"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="icon-name">window-close-symbolic</property>
                                 <property name="tooltip-text" translatable="yes">Close</property>

@@ -68,6 +68,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                   <object class="GtkButton" id="mask">
                     <style>
                       <class name="plain"/>
+                      <class name="small"/>
                       <class name="pass-mask"/>
                     </style>
                     <property name="icon-name">view-conceal-symbolic</property>

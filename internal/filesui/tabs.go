@@ -135,6 +135,7 @@ func (p *pane) buildTabs() {
 		closer := gtk.NewButtonFromIconName("window-close-symbolic")
 		closer.AddCssClass("plain")
 		closer.AddCssClass("files-tab-close")
+		closer.AddCssClass("tight")
 		closer.SetValign(gtk.AlignCenterValue)
 		closer.SetTooltipText(i18n.T("Close the tab (Ctrl+W)"))
 		i := i

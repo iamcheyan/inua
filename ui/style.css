@@ -109,8 +109,8 @@ scrolledwindow > overshoot.right {
 
 /* A borderless icon button. */
 button.plain {
-  min-width: 28px;
-  min-height: 28px;
+  min-width: 34px;
+  min-height: 34px;
   padding: 0;
   border: none;
   border-radius: 2px;
@@ -121,6 +121,22 @@ button.plain {
 }
 button.plain:hover { background: alpha(@accent, 0.09); color: @t0; }
 button.plain:disabled { color: alpha(@t2, 0.5); }
+/* A framed icon button in a bar of tools (Files', Mail's, inua-term's):
+   a faint hairline, clear, 34 px; turned on, in the accent's tint. */
+button.tool, menubutton.tool > button {
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid alpha(@line, 0.55);
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: @t1;
+}
+button.tool:hover, menubutton.tool > button:hover { border-color: alpha(@accent, 0.2); background: alpha(@accent, 0.07); color: @t0; }
+button.tool:checked, menubutton.tool > button:checked { border-color: alpha(@accent, 0.38); background: alpha(@accent, 0.09); color: @t0; }
+button.tool.on { color: @accent; }
+button.tool:disabled { color: alpha(@t2, 0.5); border-color: alpha(@line, 0.35); }
 /* An icon button is square: no side padding, as wide as it is tall. */
 button.image-button { padding-left: 0; padding-right: 0; }
 button.outlined.image-button { min-width: 34px; }
@@ -165,6 +181,17 @@ button.suggested-action.small, button.destructive-action.small, button.primary.s
   font-size: 12px;
 }
 button.outlined.small.image-button { min-width: 26px; padding: 0; }
+/* The other sizes, for every button: large (44 px), small (26 px) and,
+   for an icon in a tight row, tight (20 px). */
+button.outlined.large, menubutton.outlined.large > button,
+button.suggested-action.large, button.destructive-action.large, button.primary.large {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+button.plain.large, button.image-button.large, button.tool.large { min-width: 44px; min-height: 44px; }
+button.plain.small, button.image-button.small, button.tool.small { min-width: 26px; min-height: 26px; }
+button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20px; }
 
 /* --- bar ------------------------------------------------------------- */
 
@@ -371,8 +398,6 @@ button.outlined.small.image-button { min-width: 26px; padding: 0; }
 .viewer button.viewer-trash label { color: @danger; }
 .viewer-stage { background: mix(@app, black, 0.22); }
 .viewer button.viewer-edge {
-  min-width: 44px;
-  min-height: 44px;
   margin: 0 12px;
   padding: 0;
   border: 1px solid alpha(@line, 0.7);
@@ -716,7 +741,6 @@ button.widget-pick { padding: 6px 8px; }
 .dictation-state.failed { color: @danger; }
 .dictation-state.working { animation: rec-pulse 1.2s ease-in-out infinite; }
 .dictation-wave.settled { opacity: 0.35; }
-.dictation-card button.plain { min-width: 24px; min-height: 24px; }
 .osd-card levelbar trough { min-height: 2px; padding: 0; border: none; border-radius: 0; background: @line; }
 .osd-card levelbar block { min-height: 2px; border: none; border-radius: 0; }
 .osd-card levelbar block.filled { background: @accent; }
@@ -741,7 +765,7 @@ button.widget-pick { padding: 6px 8px; }
 .note-body { color: @t1; }
 .note-body link { color: @accent; }
 .note image { color: @t1; }
-.note button.note-close { min-width: 22px; min-height: 22px; opacity: 0; transition: opacity 120ms ease-out; }
+.note button.note-close { opacity: 0; transition: opacity 120ms ease-out; }
 .note:hover button.note-close { opacity: 1; }
 .note-actions { margin-top: 4px; }
 
@@ -1400,8 +1424,8 @@ button.shot-pick-card:active { transform: translateY(-2px) scale(0.99); }
 }
 .annot-bar separator { margin: 4px 6px; background: alpha(@line, 0.9); }
 .annot-bar button.annot-tool {
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 34px;
+  min-height: 34px;
   padding: 0;
   border: 1px solid transparent;
   border-radius: 2px;
@@ -1546,7 +1570,7 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .polkit-password:focus-within { border-color: alpha(@accent, 0.6); }
 .polkit-info { font-size: 12px; color: @t2; }
 .polkit-info.error { color: @danger; }
-.polkit-card button.plain { min-height: 0; padding: 4px; border: none; background: transparent; color: @t1; }
+.polkit-card button.plain { border: none; background: transparent; color: @t1; }
 /* gpg's passphrase: the key it unlocks and who asks, in sections as
    Settings has (a mark, a [LABEL] on a hairline) of label and value rows. */
 .polkit-card button.pass-mask { padding: 5px; border: 1px solid transparent; border-radius: 2px; color: @t2; }
@@ -1686,7 +1710,6 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
   font-feature-settings: "tnum";
   color: @t0;
 }
-.settings .picker-unit button.plain { min-width: 22px; min-height: 22px; padding: 0; }
 .settings .picker-colon { margin: 0 2px; font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 22px; color: @t2; }
 
 /* Clock and Weather: one column. Mono small capitals for labels, light
@@ -2059,7 +2082,7 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
   font-feature-settings: "tnum";
   font-size: 17px; font-weight: 500; color: @t0;
 }
-.settings menubutton.game-help > button { min-width: 30px; min-height: 30px; padding: 0; background: transparent; border: none; box-shadow: none; color: @t2; }
+.settings menubutton.game-help > button { min-width: 34px; min-height: 34px; padding: 0; background: transparent; border: none; box-shadow: none; color: @t2; }
 .settings menubutton.game-help > button:hover { color: @t0; background: alpha(@t0, 0.06); }
 .game-rules { padding: 6px 4px; font-size: 13px; line-height: 1.4; color: @t1; }
 .game-body { padding: 10px 14px; }
@@ -2647,7 +2670,6 @@ window.gpg .gpg-to:focus-within { border-color: alpha(@accent, 0.6); }
 window.gpg .gpg-to flowboxchild { padding: 0; }
 window.gpg .gpg-to entry.gpg-to-entry { min-height: 28px; border: none; box-shadow: none; background: transparent; padding: 0 4px; }
 window.gpg .gpg-chip { padding: 1px 2px 1px 10px; border: 1px solid alpha(@accent, 0.35); border-radius: 2px; background: alpha(@accent, 0.08); color: @t0; font-size: 12.5px; }
-window.gpg .gpg-chip button { min-height: 22px; min-width: 22px; padding: 0; }
 window.gpg .gpg-chip button image { -gtk-icon-size: 12px; }
 window.gpg .gpg-suggest-frame { margin-top: 4px; border: 1px solid alpha(@line, 0.8); border-radius: 2px; background: @app; }
 window.gpg button.gpg-suggest { padding: 8px 12px; border: none; border-bottom: 1px solid alpha(@line, 0.4); border-radius: 0; background: transparent; }
@@ -2835,13 +2857,7 @@ window.files .files-sidebar-foot { border-spacing: 6px; }
 /* Every icon button is square: as wide as tall, and centred in its row
    (valign in the layouts) so the row cannot stretch it; 28 px, or 20 px
    where the row is small. A framed one keeps its frame all round. */
-window.files button.image-button { min-width: 28px; min-height: 28px; padding: 0; }
 /* The sidebar's toggle, framed as Mail's. */
-window.files button.files-tool { border: 1px solid alpha(@line, 0.55); background: transparent; color: @t1; }
-window.files button.files-tool:hover { border-color: alpha(@accent, 0.2); background: alpha(@accent, 0.07); color: @t0; }
-window.files .files-zoom button.image-button,
-window.files button.files-col-more,
-window.files button.files-tab-close { min-width: 20px; min-height: 20px; padding: 0; }
 
 window.files paned > separator { min-width: 1px; background: alpha(@line, 0.7); }
 window.files .files-pane { background: @app; }
@@ -3313,7 +3329,7 @@ window.connect .connect-index { padding: 0 14px; }
 window.connect .connect-kicker { margin: 14px 8px 6px; }
 window.connect .connect-none { margin: 2px 8px 6px; }
 window.connect .connect-away { opacity: 0.45; }
-window.connect button.connect-find { min-height: 24px; min-width: 24px; padding: 0; margin-top: 8px; color: @t2; }
+window.connect button.connect-find { margin-top: 8px; color: @t2; }
 window.connect button.connect-find:hover { color: @t0; }
 window.connect .connect-command { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 12px; }
 window.connect .connect-error, window.connect-reply .connect-error { color: @danger; }
@@ -3367,7 +3383,7 @@ window.term .term-find-count {
   color: @t2;
   margin: 0 4px;
 }
-window.term .term-find button.plain { min-height: 28px; min-width: 28px; padding: 0; color: @t1; background: transparent; border: none; }
+window.term .term-find button.plain { color: @t1; background: transparent; border: none; }
 window.term .term-find button.plain:hover { background: alpha(@accent, 0.09); }
 /* inua-term's window: the two index columns, then the tiles. */
 window.term .term-col1, window.term .term-col2 { background: @panel; }
@@ -3397,7 +3413,7 @@ window.term .term-ws-dir {
    workspace's name over its sessions; the buttons at the right. */
 window.term .term-col-head { min-height: 40px; padding: 12px 14px 10px; }
 window.term .term-col-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 15px; color: @t0; }
-window.term button.term-head-button { min-width: 34px; min-height: 34px; padding: 0; color: @t1; background: transparent; border: none; }
+window.term button.term-head-button { color: @t1; background: transparent; border: none; }
 window.term button.term-head-button:hover { background: alpha(@accent, 0.09); color: @t0; }
 /* Column 1's menu (a uikit.Menu): a group's title, a kicker, over a
    hairline, its state at the end. */
@@ -3414,8 +3430,6 @@ popover.term-menu .term-menu-state.s-warn { color: @warn; }
 window.term-prefs .index list { padding-top: 26px; }
 window.term .term-prefs-note { padding: 0 16px 16px; }
 /* Column 1's toggle, framed as Files' and Mail's. */
-window.term button.term-tool { min-width: 30px; min-height: 30px; padding: 0; border: 1px solid alpha(@line, 0.55); background: transparent; color: @t1; }
-window.term button.term-tool:hover { border-color: alpha(@accent, 0.2); background: alpha(@accent, 0.07); color: @t0; }
 window.term .term-sessions { padding: 12px 14px 0; }
 /* After the last session, a new one: a dashed placeholder, quiet until
    hovered. */
@@ -3631,7 +3645,6 @@ window.disk .disk-more { padding: 10px 0; }
 window.disk .disk-details { background: @panel; border-left: 1px solid alpha(@line, 0.7); }
 window.disk .disk-details-body { padding: 18px 22px 24px; }
 window.disk .disk-item { padding: 4px 0 26px; }
-window.disk .disk-item button.image-button { min-width: 30px; min-height: 30px; padding: 0; }
 window.disk .disk-item > .tag { margin-bottom: 6px; }
 window.disk .disk-facts { margin: 14px 0 2px; padding: 10px 0; border-top: 1px solid alpha(@line, 0.55); border-bottom: 1px solid alpha(@line, 0.55); }
 window.disk .disk-fact { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 13px; color: @t0; }
@@ -3876,9 +3889,6 @@ window.mail .mail-row-gutter { min-width: 20px; }
 window.mail .mail-row .mark { border-color: transparent; }
 window.mail .mail-row .mark.on { border-color: @accent; }
 window.mail button.image-button.mail-row-star {
-  min-height: 20px;
-  min-width: 20px;
-  padding: 0;
   border: none;
   border-radius: 2px;
   background: transparent;
@@ -3934,9 +3944,6 @@ window.mail .mail-row-acts { opacity: 0; transition: opacity 90ms ease-out; }
 window.mail listview.mail-conversations > row:hover .mail-row-acts { opacity: 1; }
 window.mail listview.mail-conversations > row:hover .mail-when { opacity: 0; }
 window.mail button.image-button.mail-row-act {
-  min-height: 26px;
-  min-width: 26px;
-  padding: 0;
   border: none;
   border-radius: 2px;
   background: transparent;
@@ -3965,28 +3972,15 @@ window.mail .mail-reader-bar {
   padding: 16px 16px 8px 28px;
   border-bottom: 1px solid alpha(@line, 0.55);
 }
-/* Every button that is only an icon is a square of the same size. */
-window.mail button.image-button,
+/* Every button that is only an icon is a square of the same size, but
+   for those given another (small, tight, large). */
+window.mail button.image-button:not(.small):not(.tight):not(.large),
 window.mail menubutton > button.image-button {
   min-width: 34px;
   min-height: 34px;
   padding: 0;
-  border-radius: 3px;
   box-shadow: none;
 }
-window.mail button.mail-tool, window.mail menubutton.mail-tool > button {
-  border: 1px solid alpha(@line, 0.55);
-  background: transparent;
-  color: @t1;
-}
-window.mail button.mail-tool:hover, window.mail menubutton.mail-tool > button:hover {
-  border-color: alpha(@accent, 0.2);
-  background: alpha(@accent, 0.07);
-  color: @t0;
-}
-window.mail button.mail-tool.on { color: @accent; }
-/* Off while the messages they need load (reply, forward). */
-window.mail button.mail-tool:disabled { color: alpha(@t2, 0.5); border-color: alpha(@line, 0.35); }
 window.mail .mail-reader { padding: 26px 40px 48px; }
 window.mail .mail-reader-empty { margin: 32px; }
 window.mail .mail-read-subject {
@@ -4432,7 +4426,6 @@ window.mail-compose button.mail-chip-remove {
 }
 window.mail-compose button.mail-chip-remove:hover { color: @t0; }
 window.mail-compose .error { color: @danger; }
-window.mail-compose button.mail-tool.image-button { min-width: 30px; min-height: 30px; }
 /* AI's panel: quiet, on the window's own ground behind a hairline; a line
    to type in, actions as text, the accent only for Keep. */
 window.mail-compose .mail-compose-ai { background: @app; border-left: 1px solid alpha(@line, 0.8); }
@@ -4608,7 +4601,7 @@ window.mail .mail-check-q { font-size: 13px; color: @t0; }
 window.mail .mail-check-found { font-size: 12.5px; color: @t2; }
 window.mail .mail-warning .mail-checks { margin-left: 26px; }
 window.mail .mail-safety-ai { margin-top: 6px; padding-top: 12px; border-top: 1px solid alpha(@line, 0.7); }
-window.mail button.mail-plain.mail-again { min-width: 24px; min-height: 24px; padding: 0; margin-left: 4px; border-radius: 2px; color: @t2; }
+window.mail button.mail-plain.mail-again { margin-left: 4px; border-radius: 2px; color: @t2; }
 window.mail button.mail-plain.mail-again:hover { background: alpha(@accent, 0.09); color: @t0; }
 window.mail .mail-safety-reason { font-size: 13px; color: @t0; }
 window.mail .mail-safety-dot { min-width: 8px; color: @t2; font-weight: 700; }

@@ -118,6 +118,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                           <object class="GtkButton" id="side_find">
                             <style>
                               <class name="plain"/>
+                              <class name="small"/>
                               <class name="connect-find"/>
                             </style>
                             <property name="name">side_find</property>
