@@ -14449,11 +14449,11 @@ msgstr "Masqué pour la capture d’écran."
 msgid "The passphrases do not match."
 msgstr "Les phrases secrètes ne correspondent pas."
 
-#: internal/ui/bar.go:478
+#: internal/ui/bar.go:484
 msgid "Workspace %s"
 msgstr "Espace de travail %s"
 
-#: internal/ui/bar.go:491
+#: internal/ui/bar.go:497
 msgid "WORKSPACE"
 msgstr "ESPACE DE TRAVAIL"
 
