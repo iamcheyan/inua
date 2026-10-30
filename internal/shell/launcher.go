@@ -109,6 +109,9 @@ type Launcher struct {
 	Query    string
 	Results  []Result
 	Selected int
+	// Version counts the searches: it changes whenever Results may have,
+	// and only then, so a view rebuilds its results only when it does.
+	Version int
 
 	apps      []*desktop.Entry
 	appsReady bool
@@ -210,6 +213,89 @@ func (l *Launcher) Move(delta int) {
 	if l.armed != "" {
 		l.armed, l.notice = "", ""
 	}
+}
+
+// Line is a line of the launcher's results: one result as a row, or, in
+// apps mode, apps side by side as a line of a grid. Results Start to End,
+// End excluded.
+type Line struct {
+	Start, End int
+	Grid       bool
+}
+
+// Lines lays the results out: in apps mode, apps that follow each other
+// go side by side, cols to a grid line; anything else (an answer, a
+// command, the web search, a window) is a row of its own, so the results
+// keep their order.
+func (l *Launcher) Lines(cols int) []Line {
+	var lines []Line
+	for i := 0; i < len(l.Results); {
+		if l.Mode != Apps || l.Results[i].Entry == nil || cols < 2 {
+			lines = append(lines, Line{Start: i, End: i + 1})
+			i++
+			continue
+		}
+		end := i
+		for end < len(l.Results) && end-i < cols && l.Results[end].Entry != nil {
+			end++
+		}
+		lines = append(lines, Line{Start: i, End: end, Grid: true})
+		i = end
+	}
+	return lines
+}
+
+// Pinned is where the rows after the apps begin, in apps mode with apps
+// found: answers, commands, the web search and the assistant (appsFirst
+// puts them there), which a view keeps in sight below the apps;
+// len(Results) for none.
+func (l *Launcher) Pinned() int {
+	i := len(l.Results)
+	if l.Mode != Apps {
+		return i
+	}
+	for i > 0 && l.Results[i-1].Entry == nil {
+		i--
+	}
+	if i == 0 {
+		return len(l.Results)
+	}
+	return i
+}
+
+// lineOf is the index of the line holding result i, -1 for none.
+func lineOf(lines []Line, i int) int {
+	for n, ln := range lines {
+		if i >= ln.Start && i < ln.End {
+			return n
+		}
+	}
+	return -1
+}
+
+// Step moves the selection on the laid-out results: dy lines down (up
+// when negative), keeping the column in a grid, or dx along a grid line.
+// It reports whether it moved or could: dx is not taken on a row, where
+// the arrows edit the search instead.
+func (l *Launcher) Step(lines []Line, dx, dy int) bool {
+	cur := lineOf(lines, l.Selected)
+	if cur < 0 {
+		return false
+	}
+	if dx != 0 {
+		if !lines[cur].Grid {
+			return false
+		}
+		l.Move(dx)
+		return true
+	}
+	next := max(0, min(cur+dy, len(lines)-1))
+	to := lines[next].Start
+	if lines[next].Grid && lines[cur].Grid {
+		to = min(lines[next].Start+l.Selected-lines[cur].Start, lines[next].End-1)
+	}
+	l.Move(to - l.Selected)
+	return true
 }
 
 // Cancel closes the launcher. Focus goes back to the window that had it
@@ -322,11 +408,13 @@ func (l *Launcher) windowExists(addr string) bool {
 // search rebuilds the results. keep holds on to the selected window across
 // a refresh; otherwise the best match is selected.
 func (l *Launcher) search(keep bool) {
+	l.Version++
 	var keepAddr string
 	if keep && l.Selected < len(l.Results) {
 		keepAddr = l.Results[l.Selected].Address
 	}
 	q := strings.ToLower(strings.TrimSpace(l.Query))
+	best := 0 // the result selected: the best match
 	if l.Mode == Apps {
 		if e, ok := strings.CutPrefix(q, ":"); ok { // emoji and symbols only
 			l.Results = emojiResults(e)
@@ -351,10 +439,11 @@ func (l *Launcher) search(keep bool) {
 		if a, ok := convert.Evaluate(l.Query, l.rates); ok {
 			l.Results = append([]Result{{Title: a.Text, Detail: i18n.Tf("%s · Enter copies", a.Detail), Icon: "accessories-calculator-symbolic", Copy: a.Copy}}, l.Results...)
 		}
+		l.Results, best = appsFirst(l.Results)
 	} else {
 		l.Results = searchWindows(l.snap, q)
 	}
-	l.Selected = 0
+	l.Selected = best
 	if keepAddr != "" {
 		if i := slices.IndexFunc(l.Results, func(r Result) bool { return r.Address == keepAddr }); i >= 0 {
 			l.Selected = i
@@ -366,6 +455,28 @@ func (l *Launcher) search(keep bool) {
 	if l.Mode == Windows && q == "" && len(l.Results) > 1 && l.Results[0].Address == l.snap.ActiveToplevel {
 		l.Selected = 1
 	}
+}
+
+// appsFirst puts the apps together first, for a view's grid, and the rest
+// (answers, commands, the web search, the assistant) after them in their
+// order; best is where the best match, the first before, went.
+func appsFirst(rs []Result) (out []Result, best int) {
+	out = make([]Result, 0, len(rs))
+	for _, r := range rs {
+		if r.Entry != nil {
+			out = append(out, r)
+		}
+	}
+	apps := len(out)
+	for _, r := range rs {
+		if r.Entry == nil {
+			out = append(out, r)
+		}
+	}
+	if len(rs) > 0 && rs[0].Entry == nil {
+		best = apps // the first of the rest: they keep their order
+	}
+	return out, best
 }
 
 // AssistantIcon is the assistant's app icon (config/apps).

@@ -240,7 +240,22 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .launcher entry.query:focus-within { border-bottom-color: alpha(@accent, 0.6); }
 .launcher entry.query placeholder { color: @t2; }
 
-.launcher .results { padding: 8px 10px 4px; }
+/* The results line up with the query's edges, and scroll. */
+.launcher .results-scroll { margin: 0 18px; }
+.launcher .results { padding: 8px 0 12px; }
+/* Under the results, the ones just below the view: strips of them blurred
+   more the lower (blur1 to blur8, Go's blurSteps), under a fade into the
+   window. */
+.launcher .results-foot { margin: 0 18px; }
+.launcher .results-foot .blur1 { filter: blur(0.75px); }
+.launcher .results-foot .blur2 { filter: blur(1.5px); }
+.launcher .results-foot .blur3 { filter: blur(2.25px); }
+.launcher .results-foot .blur4 { filter: blur(3px); }
+.launcher .results-foot .blur5 { filter: blur(3.75px); }
+.launcher .results-foot .blur6 { filter: blur(4.5px); }
+.launcher .results-foot .blur7 { filter: blur(5.25px); }
+.launcher .results-foot .blur8 { filter: blur(6px); }
+.launcher .results-fade { background: linear-gradient(to bottom, alpha(@app, 0), alpha(@app, 0.35)); }
 .launcher .row {
   padding: 7px 10px;
   border: 1px solid transparent;
@@ -249,7 +264,17 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .launcher .row .title { font-size: 14px; }
 .launcher .row .detail { font-size: 11.5px; color: @t2; }
 .launcher .row .glyph { font-size: 20px; color: @t0; }
-.launcher .row.selected { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); }
+/* The selection: one box over the results, gliding between them; a
+   pinned row (the web search, the assistant) is marked itself. */
+.launcher .highlight, .launcher .pinned .row.selected { background: alpha(@accent, 0.09); border: 1px solid alpha(@accent, 0.38); border-radius: 2px; }
+.launcher .pinned { margin: 0 18px; padding-bottom: 4px; }
+/* Apps in a grid (appcell.blp): six to a line. */
+.launcher .cell {
+  padding: 8px 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+.launcher .cell .title { font-size: 12.5px; }
 
 .launcher .notice {
   margin: 4px 20px 0;

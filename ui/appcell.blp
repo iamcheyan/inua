@@ -1,0 +1,23 @@
+// One app in the launcher's grid: its icon over its name. The `selected`
+// style class is toggled from Go.
+using Gtk 4.0;
+
+Box cell {
+  styles ["cell"]
+  orientation: vertical;
+  spacing: 6;
+  width-request: 124;
+
+  Image icon {
+    pixel-size: 64;
+    halign: center;
+  }
+
+  Label title {
+    styles ["title"]
+    justify: center;
+    ellipsize: end;
+    max-width-chars: 1;
+    hexpand: true;
+  }
+}

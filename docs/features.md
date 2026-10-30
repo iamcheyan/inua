@@ -29,6 +29,14 @@ units (`10 km to mi`, `32 f in c`) and currencies (`100 usd to jpy`, ECB
 rates) and crypto (`1 eth to usd`, `100 usd to btc`, Coinbase's prices);
 Enter copies the answer.
 
+Apps show as a grid of their icons, six to a line, which scrolls, the next
+apps showing at the foot, blurred more the lower. Answers, commands, the
+web search and the assistant are rows below the grid, in the order they
+rank, always in sight; the best match is selected, so Enter on "lock"
+still locks. Windows are rows. The selection glides
+from one result to the next, the arrows moving on the grid (left and right
+along a line), and a click opens any result.
+
 Commands rank with the apps: Lock Screen, Sleep, Restart, Shut Down, Log
 Out and Empty Trash (the last four ask for Enter again), Settings,
 screenshots and recording, Pick a Colour, Clear Notifications, Focus, Wi-Fi

@@ -485,3 +485,90 @@ func TestAssistant(t *testing.T) {
 		t.Errorf("? alone: %q %q", titles(l.Results), l.Message())
 	}
 }
+
+// gridResults is an answer, seven apps and the web search, in apps mode.
+func gridResults() *Launcher {
+	l := &Launcher{Open: true, Mode: Apps}
+	l.Results = append(l.Results, Result{Title: "answer", Copy: "42"})
+	for _, a := range []string{"a", "b", "c", "d", "e", "f", "g"} {
+		l.Results = append(l.Results, Result{Title: a, Entry: &desktop.Entry{ID: a}})
+	}
+	l.Results = append(l.Results, Result{Title: "web", URL: "https://example.org"})
+	return l
+}
+
+func TestLauncherLines(t *testing.T) {
+	l := gridResults()
+	want := []Line{{0, 1, false}, {1, 4, true}, {4, 7, true}, {7, 8, true}, {8, 9, false}}
+	if got := l.Lines(3); !slices.Equal(got, want) {
+		t.Errorf("apps: %v, want %v", got, want)
+	}
+	l.Mode = Windows
+	if got := l.Lines(3); len(got) != len(l.Results) || got[1].Grid {
+		t.Errorf("windows are rows: %v", got)
+	}
+}
+
+func TestLauncherStep(t *testing.T) {
+	l := gridResults()
+	lines := l.Lines(3)
+	if l.Step(lines, 1, 0) {
+		t.Error("right on a row moved; it edits the search")
+	}
+	for _, c := range []struct{ dx, dy, want int }{
+		{0, 1, 1},  // into the grid, its first app
+		{1, 0, 2},  // along the line
+		{0, 1, 5},  // down keeps the column
+		{0, 1, 7},  // a shorter line: its last app
+		{0, 1, 8},  // out of the grid, to the web search
+		{0, -2, 4}, // back up two lines: the first column of 4..6
+		{-1, 0, 3}, // left wraps to the line above
+		{0, -9, 0}, // stops at the top
+	} {
+		if !l.Step(lines, c.dx, c.dy) || l.Selected != c.want {
+			t.Fatalf("step %d,%d: selected %d, want %d", c.dx, c.dy, l.Selected, c.want)
+		}
+	}
+}
+
+func TestLauncherPinned(t *testing.T) {
+	l := gridResults()
+	if got := l.Pinned(); got != 8 {
+		t.Errorf("apps then the web search: %d, want 8", got)
+	}
+	l.Results = l.Results[:1] // an answer, no apps
+	if got := l.Pinned(); got != 1 {
+		t.Errorf("no apps: %d, want 1 (none pinned)", got)
+	}
+	l = gridResults()
+	l.Mode = Windows
+	if got := l.Pinned(); got != len(l.Results) {
+		t.Errorf("windows: %d", got)
+	}
+}
+
+// Apps go first, together, for the grid; commands, answers and the web
+// search after them in their order; the best match stays selected.
+func TestAppsFirst(t *testing.T) {
+	app := func(id string) Result { return Result{Title: id, Entry: &desktop.Entry{ID: id}} }
+	got, best := appsFirst([]Result{{Title: "Lock Screen", Command: "lock"}, app("a"), {Title: "Log Out", Command: "logout"}, app("b")})
+	if want := []string{"a", "b", "Lock Screen", "Log Out"}; !slices.Equal(titles(got), want) || best != 2 {
+		t.Errorf("command first: %q best %d, want %q best 2", titles(got), best, want)
+	}
+	if _, best := appsFirst([]Result{app("a"), {Title: "Lock Screen"}}); best != 0 {
+		t.Errorf("app first: best %d", best)
+	}
+
+	var l Launcher
+	l.SetApps(testApps())
+	l.Show(Apps)
+	l.SetQuery("o") // apps and commands both match
+	seenRest := false
+	for _, r := range l.Results {
+		if r.Entry == nil {
+			seenRest = true
+		} else if seenRest {
+			t.Fatalf("an app after the rest: %q", titles(l.Results))
+		}
+	}
+}

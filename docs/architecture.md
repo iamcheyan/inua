@@ -374,10 +374,24 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   it loads (`style.ScaleText`), in the shell and in inua's apps; icons,
   spacing and the user's `style.css` keep their sizes.
 - Launcher: a head with the mark, the mode and the switch hint; the entry
-  has only a bottom hairline; the selected row is the accent at 9% with a
-  38% hairline; notices (why the list is empty, or `[ERROR]` and the reason)
-  follow the list; key hints at the bottom. Its height is fixed: a notice
-  takes a result row, so the window never resizes.
+  has only a bottom hairline; in apps mode, apps that rank together show as
+  a grid, six 64 px icons to a line (`appcell.blp`), the rest as rows
+  (`row.blp`), laid out by `shell.Launcher.Lines`, lined up with the
+  query's edges. All results are built, again only when they change
+  (`Version`), in a scroll area that follows the selection. Below it,
+  under apps, a foot shows the apps that come next, blurred more the
+  lower: strips, each holding copies of the lines just below the view,
+  scrolled to line up and blurred one step more (GTK's CSS has no
+  backdrop filter, and a `GtkWidgetPaintable` of the results is empty
+  below the view: GTK does not draw what is scrolled out of sight),
+  under a fade. Answers, commands, the web search and the assistant
+  follow the apps (`appsFirst`, the best match still selected) and stay
+  below the foot, sharp (`Launcher.Pinned`). The selection is one box over the results (`highlight`)
+  gliding to the selected one as the view scrolls to it, each frame
+  closing the distance (`stepLauncher`): the accent at 9% with a 38%
+  hairline. A short grid line starts at the left. Notices (why
+  the list is empty, or `[ERROR]` and the reason) follow the results; key
+  hints at the bottom. Its size is fixed, so the window never resizes.
 - Control center: four tiles with status marks; display and sound sections
   of "label + hairline + percentage"; hairline sliders with small square
   knobs; mute left of the volume slider; screenshot, lock and settings in

@@ -1,4 +1,5 @@
-// Launcher. Result rows come from row.blp; Go fills `results`.
+// Launcher. Results come from row.blp and, apps in a grid, appcell.blp;
+// Go fills `results`, which scrolls.
 using Gtk 4.0;
 
 ApplicationWindow launcher {
@@ -7,8 +8,8 @@ ApplicationWindow launcher {
   Box {
     orientation: vertical;
     // Fixed size, so the surface does not resize (and move) with the results.
-    width-request: 640;
-    height-request: 520;
+    width-request: 800;
+    height-request: 620;
 
     // The head reads like a section head: the square mark, the mode as a
     // mono label in brackets, its name, and the key that switches modes.
@@ -42,8 +43,51 @@ ApplicationWindow launcher {
       placeholder-text:  _("Search, or ask: 10 km to mi");
     }
 
-    Box results {
-      styles ["results"]
+    // The results scroll above a blurred foot, shown under apps: Go fills
+    // `blur` with strips, each a copy of the results just below the view,
+    // blurred more the lower, under a fade into the window. The web search
+    // and the assistant stay in sight below it (`pinned`).
+    ScrolledWindow scroll {
+      styles ["results-scroll"]
+      hscrollbar-policy: never;
+      vexpand: true;
+
+      // The selection is one box over the results, gliding from one to
+      // the next (Go places it).
+      Overlay {
+        Box results {
+          styles ["results"]
+          orientation: vertical;
+        }
+
+        [overlay]
+        Box highlight {
+          styles ["highlight"]
+          halign: start;
+          valign: start;
+          can-target: false;
+          visible: false;
+        }
+      }
+    }
+
+    Overlay foot {
+      styles ["results-foot"]
+
+      Box blur {
+        orientation: vertical;
+        can-target: false;
+      }
+
+      [overlay]
+      Box fade {
+        styles ["results-fade"]
+        can-target: false;
+      }
+    }
+
+    Box pinned {
+      styles ["pinned"]
       orientation: vertical;
     }
 
@@ -65,11 +109,6 @@ ApplicationWindow launcher {
         xalign: 0;
         ellipsize: end;
       }
-    }
-
-    // The rest of the fixed height, so the notice follows the list.
-    Box {
-      vexpand: true;
     }
 
     Box {

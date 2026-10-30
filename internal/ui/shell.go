@@ -118,7 +118,11 @@ type shellUI struct {
 	onWorkspaceSettle      glib.SourceFunc
 	onClock                glib.SourceFunc
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onLauncherScroll       func(gtk.EventControllerScroll, float64, float64) bool
+	onLauncherPick         func(gtk.GestureClick, int32, float64, float64)
+	onLauncherScrolled     func(gtk.Adjustment)
+	onLauncherLaidOut      func(gtk.Adjustment)
+	onLauncherFootLaidOut  func(gtk.Adjustment)
+	onLauncherTick         gtk.TickCallback
 	onOverviewKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onOverviewButton       func(gtk.Button)
 	onWorkspaceOverview    func(gtk.GestureClick, int32, float64, float64)
