@@ -495,6 +495,7 @@ func (s *shellUI) start() {
 		s.startPolkit()
 	}
 	s.startPortals()
+	s.startAppMenu() // no-op unless [bar] menu is on
 	if s.cfg.Bar.Tray {
 		s.startTray()
 	}
