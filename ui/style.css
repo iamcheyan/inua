@@ -469,6 +469,9 @@ button.widget-plain:hover { background: alpha(@accent, 0.05); border-color: alph
   color: @t0;
 }
 .widget-zone { padding: 8px 0; border-top: 1px solid alpha(@line, 0.6); }
+/* The days' room is kept while the forecast is read, so the card does not
+   grow by a row when it comes. */
+.widget-days { min-height: 46px; }
 .widget-zone-time { font-size: 15px; color: @t0; }
 .widget-art { min-width: 64px; min-height: 64px; border-radius: 3px; background: @surface2; color: @t2; }
 .widget-media button.flat { min-width: 34px; min-height: 30px; }

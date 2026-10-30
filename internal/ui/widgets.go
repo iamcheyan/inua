@@ -53,8 +53,11 @@ type widgetPage struct {
 
 	cards map[string]*gtk.Box // by kind, owned by the board
 	heads map[string]*gtk.Box // the cards' heads, to drag them by
-	lines *gtk.Box            // the grid, shown while a card is dragged
-	spot  *gtk.Box            // where the dragged card lands
+	rows  map[string]int      // how many rows each card is tall (sizeWidget)
+	// columns is how many columns the monitor it opened on shows.
+	columns int
+	lines   *gtk.Box // the grid, shown while a card is dragged
+	spot    *gtk.Box // where the dragged card lands
 
 	// The card dragged: its kind, where it was, and where it would land.
 	dragKind string
@@ -232,7 +235,8 @@ func (s *shellUI) bindWidgetsHandlers() {
 		card.AddCssClass("lifted")
 		p.lines.SetSizeRequest(p.board.GetWidth(), p.board.GetHeight())
 		p.lines.SetVisible(true)
-		p.spot.SetSizeRequest(card.GetWidth(), card.GetHeight())
+		r := s.widgetRect(kind, 0, 0)
+		p.spot.SetSizeRequest(int32(r.Columns*shell.WidgetCell), int32(r.Rows*shell.WidgetCell))
 		p.spot.SetVisible(true)
 		s.dragWidget(0, 0)
 	}
@@ -289,43 +293,93 @@ func (s *shellUI) dragWidget(dx, dy float64) {
 	if card == nil {
 		return
 	}
-	w, h := int(card.GetWidth()), int(card.GetHeight())
-	x := max(0, min(p.dragFrom[0]+dx, float64(int(p.board.GetWidth())-w)))
+	to := s.widgetRect(p.dragKind, 0, 0)
+	x := max(0, min(p.dragFrom[0]+dx, float64((s.boardColumns()-to.Columns)*shell.WidgetCell)))
 	y := max(0, p.dragFrom[1]+dy)
 	p.board.Move(&card.Widget, x, y)
-	to := shell.GridRect{Column: shell.Cell(x), Row: shell.Cell(y), Columns: shell.Span(w), Rows: shell.Span(h)}
+	to.Column, to.Row = shell.Cell(x), shell.Cell(y)
 	to.Column = min(to.Column, max(0, s.boardColumns()-to.Columns)) // the cell nearest stays on the page
-	p.dragTo, p.dragFits = to, to.Fits(s.widgetRects(p.dragKind))
+	p.dragTo, p.dragFits = to, to.Apart(s.widgetRects(p.dragKind))
 	p.board.Move(&p.spot.Widget, float64(to.Column*shell.WidgetCell), float64(to.Row*shell.WidgetCell))
 	toggle(&p.spot.Widget, "blocked", !p.dragFits)
 }
 
-// widgetRects are the cells the cards take, but the one of kind but; the
-// cells of WidgetSpan for one not built yet.
+// widgetRect is the cells a card of kind takes at column, row: WidgetSpan
+// columns, and the rows sizeWidget found (WidgetSpan before it has).
+func (s *shellUI) widgetRect(kind string, column, row int) shell.GridRect {
+	rows := s.widgets.rows[kind]
+	if rows == 0 {
+		rows = config.WidgetSpan
+	}
+	return shell.GridRect{Column: column, Row: row, Columns: config.WidgetSpan, Rows: rows}
+}
+
+// widgetRects are the cells the cards take, but the one of kind but.
 func (s *shellUI) widgetRects(but string) []shell.GridRect {
-	p := &s.widgets
 	var out []shell.GridRect
 	for _, w := range s.cfg.Widgets.Places {
-		if w.Kind == but {
-			continue
+		if w.Kind != but {
+			out = append(out, s.widgetRect(w.Kind, w.Column, w.Row))
 		}
-		r := shell.GridRect{Column: w.Column, Row: w.Row, Columns: config.WidgetSpan, Rows: config.WidgetSpan}
-		if card := p.cards[w.Kind]; p.open && card != nil && card.GetWidth() > 0 {
-			r.Columns, r.Rows = shell.Span(int(card.GetWidth())), shell.Span(int(card.GetHeight()))
-		}
-		out = append(out, r)
 	}
 	return out
 }
 
-// boardColumns is how many columns the page shows; three widgets' worth
-// while it is closed.
+// boardColumns is how many columns the page shows: the board's, else
+// those of the monitor it opened on, else three widgets' worth.
 func (s *shellUI) boardColumns() int {
 	p := &s.widgets
-	if p.open && p.board.GetWidth() > 0 {
+	switch {
+	case p.open && p.board.GetWidth() > 0:
 		return int(p.board.GetWidth()) / shell.WidgetCell
+	case p.columns > 0:
+		return p.columns
 	}
-	return 3 * config.WidgetSpan
+	return 3*config.WidgetSpan + 2
+}
+
+// sizeWidget makes a card a whole number of cells, so that its edges are
+// on the grid: WidgetSpan columns wide, and as many rows tall as its
+// content needs.
+func (s *shellUI) sizeWidget(kind string) {
+	p := &s.widgets
+	card := p.cards[kind]
+	if card == nil {
+		return
+	}
+	w := int32(config.WidgetSpan * shell.WidgetCell)
+	card.SetSizeRequest(w, -1) // measured without the rows it had
+	var min, nat, minBase, natBase int32
+	card.Measure(gtk.OrientationVerticalValue, w, &min, &nat, &minBase, &natBase)
+	rows := shell.Span(int(nat))
+	card.SetSizeRequest(w, int32(rows*shell.WidgetCell))
+	p.rows[kind] = rows
+}
+
+// settleWidgets moves a card that touches one placed before it to the
+// first free place, as one moved by hand could not be (a file written by
+// hand, or by the grid's first version); it saves where they went.
+func (s *shellUI) settleWidgets() {
+	p := &s.widgets
+	c := s.cfg
+	c.Widgets.Places = slices.Clone(c.Widgets.Places)
+	var placed []shell.GridRect
+	moved := false
+	for i, w := range c.Widgets.Places {
+		r := s.widgetRect(w.Kind, w.Column, w.Row)
+		if !r.Apart(placed) {
+			r = shell.FreeSpot(placed, r.Columns, r.Rows, s.boardColumns())
+			c.Widgets.Places[i].Column, c.Widgets.Places[i].Row = r.Column, r.Row
+			if card := p.cards[w.Kind]; card != nil {
+				p.board.Move(&card.Widget, float64(r.Column*shell.WidgetCell), float64(r.Row*shell.WidgetCell))
+			}
+			moved = true
+		}
+		placed = append(placed, r)
+	}
+	if moved {
+		gtkx.Post(func() { s.changeSettings(c) })
+	}
 }
 
 // following is what comes after item in items, "" at the end.
@@ -436,7 +490,7 @@ func (s *shellUI) dropWidgets() {
 	p.refs.Release()
 	p.open, p.closing, p.picker = false, false, nil
 	p.time, p.zones, p.grid, p.wxDays, p.art = nil, nil, nil, nil, nil
-	p.cards, p.heads, p.lines, p.spot, p.dragKind = nil, nil, nil, nil, ""
+	p.cards, p.heads, p.rows, p.lines, p.spot, p.dragKind = nil, nil, nil, nil, nil, ""
 	s.markWidgets()
 }
 
@@ -496,6 +550,12 @@ func (s *shellUI) buildWidgets(b *bar) {
 	}
 	p.page.InsertActionGroup("widgets", group)
 	group.Unref()
+
+	// The columns its monitor shows, for the places found before the board
+	// is laid out: less the page's sides (style.css, .widget-page).
+	var geo gdk.Rectangle
+	b.mon.GetGeometry(&geo)
+	p.columns = (int(geo.Width) - 2*32) / shell.WidgetCell
 
 	p.win.SetApplication(s.app)
 	w := p.win.GoPointer()
@@ -557,9 +617,6 @@ func (s *shellUI) placeWidgets() {
 	}
 }
 
-// widgetWidth is a card's width: its span less the gap between cards.
-const widgetWidth = config.WidgetSpan*shell.WidgetCell - 24
-
 // fillWidgets builds the cards at their places, over the grid drawn while
 // one is dragged, and the menu of those left out.
 func (s *shellUI) fillWidgets() {
@@ -572,7 +629,7 @@ func (s *shellUI) fillWidgets() {
 		ch.Unref()         // and GetFirstChild's
 	}
 	p.time, p.zones, p.grid, p.wxDays, p.art, p.artURL = nil, nil, nil, nil, nil, ""
-	p.cards, p.heads, p.dragKind = map[string]*gtk.Box{}, map[string]*gtk.Box{}, ""
+	p.cards, p.heads, p.rows, p.dragKind = map[string]*gtk.Box{}, map[string]*gtk.Box{}, map[string]int{}, ""
 	p.lines = gtk.NewBox(gtk.OrientationHorizontalValue, 0)
 	p.lines.AddCssClass("widget-grid")
 	p.lines.SetCanTarget(false)
@@ -588,7 +645,7 @@ func (s *shellUI) fillWidgets() {
 	for _, place := range s.cfg.Widgets.Places {
 		kind := place.Kind
 		card, body := s.widgetCard(kind)
-		card.SetSizeRequest(widgetWidth, -1)
+		card.SetSizeRequest(config.WidgetSpan*shell.WidgetCell, -1)
 		switch kind {
 		case "clock":
 			s.buildClockWidget(body)
@@ -617,6 +674,10 @@ func (s *shellUI) fillWidgets() {
 	s.tickWidgets(time.Now())
 	s.showWidgetWeather()
 	s.showWidgetMedia()
+	for kind := range p.cards {
+		s.sizeWidget(kind) // filled: as tall as it is
+	}
+	s.settleWidgets()
 }
 
 // widgetCard is a card: its head (the mark and the tag, by which it is
@@ -775,6 +836,7 @@ func (s *shellUI) buildWeatherWidget(body *gtk.Box) {
 	gtkx.Append(now, &side.Widget)
 	gtkx.Append(box, &now.Widget)
 	p.wxDays = gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+	p.wxDays.AddCssClass("widget-days")
 	p.wxDays.SetHomogeneous(true)
 	gtkx.Append(box, &p.wxDays.Widget)
 	open := s.widgetButton("open-weather", &box.Widget, "widget-plain")
@@ -874,6 +936,8 @@ func (s *shellUI) tickWidgets(now time.Time) {
 	if !p.open || p.closing {
 		return
 	}
+	defer s.sizeWidget("clock") // the zones may change
+	defer s.sizeWidget("calendar")
 	if p.time != nil {
 		layout := "15:04"
 		if c := s.cfg.Bar.Clock; strings.Contains(c, "%I") || strings.Contains(c, "%l") || strings.Contains(c, "%p") {
@@ -952,9 +1016,9 @@ func (s *shellUI) showWidgetWeather() {
 	if !p.open || p.wxDays == nil {
 		return
 	}
+	defer s.sizeWidget("weather")
 	a := &s.agenda
 	gtkx.Clear(p.wxDays)
-	p.wxDays.SetVisible(false)
 	p.wxPlace.SetText(strings.ToUpper(a.wxFor.Name))
 	p.wxHL.SetText("")
 	switch {
@@ -978,7 +1042,7 @@ func (s *shellUI) showWidgetWeather() {
 		if len(f.Days) > 0 {
 			p.wxHL.SetText(i18n.Tf("H %s  L %s", weather.Temp(f.Days[0].Max), weather.Temp(f.Days[0].Min)))
 		}
-		p.wxDays.SetVisible(weatherDays(p.wxDays, f))
+		weatherDays(p.wxDays, f) // in the room kept for them (.widget-days)
 	}
 }
 
@@ -988,6 +1052,7 @@ func (s *shellUI) showWidgetMedia() {
 	if !p.open || p.art == nil {
 		return
 	}
+	defer s.sizeWidget("media")
 	m := s.sys.Media
 	if !m.Available {
 		p.title.SetText(i18n.T("Nothing playing"))

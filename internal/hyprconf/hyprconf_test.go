@@ -251,6 +251,19 @@ func TestRenderWidgetGestures(t *testing.T) {
 			t.Errorf("a swipe while off:\n%s", got)
 		}
 	}
+	// The page's blur, while it is on, swipe or not.
+	c = config.Default()
+	c.Widgets.Swipe = 0
+	if got := Render(c, Devices{}); !strings.Contains(got, "match:namespace = ^inua-widgets$\n    blur = on") {
+		t.Errorf("no blur:\n%s", got)
+	}
+	if got := RenderLua(c, Devices{}); !strings.Contains(got, `match = { namespace = "^inua-widgets$" },`) {
+		t.Errorf("no blur in Lua:\n%s", got)
+	}
+	c.Widgets.Enable = false
+	if got := Render(c, Devices{}); strings.Contains(got, "inua-widgets") {
+		t.Errorf("a blur while the page is off:\n%s", got)
+	}
 	if _, err := exec.LookPath("Hyprland"); err == nil {
 		path := filepath.Join(t.TempDir(), "hyprland.conf")
 		for _, file := range []string{

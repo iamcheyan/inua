@@ -135,7 +135,7 @@ msgstr "Negro"
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
-#: internal/ui/widgets.go:884
+#: internal/ui/widgets.go:948
 msgid "Monday, January 2"
 msgstr "Monday, 2 de January"
 
@@ -176,7 +176,7 @@ msgstr "dom"
 #: internal/mailui/window.go:1432
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
-#: internal/ui/widgets.go:942
+#: internal/ui/widgets.go:1006
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr "lun"
@@ -224,7 +224,7 @@ msgstr "Fines de semana"
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:360
-#: internal/ui/widgets.go:944
+#: internal/ui/widgets.go:1008
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -3167,7 +3167,7 @@ msgstr "%s en %s archivos · %s"
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
-#: internal/ui/widgets.go:946
+#: internal/ui/widgets.go:1010
 msgid "15:04"
 msgstr "15:04"
 
@@ -8490,7 +8490,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: internal/ui/widgets.go:531
+#: internal/ui/widgets.go:591
 #: ui/settings.ui:1264
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8499,8 +8499,8 @@ msgstr "Reloj"
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:224
 #: internal/ui/agenda.go:334
-#: internal/ui/widgets.go:533
-#: internal/ui/widgets.go:963
+#: internal/ui/widgets.go:593
+#: internal/ui/widgets.go:1027
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr "Tiempo"
@@ -8517,7 +8517,7 @@ msgid "Calculator"
 msgstr "Calculadora"
 
 #: internal/lightui/apps.go:20
-#: internal/ui/widgets.go:532
+#: internal/ui/widgets.go:592
 #: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
@@ -8574,7 +8574,7 @@ msgstr "Utilice %s"
 
 #: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
-#: internal/ui/widgets.go:916
+#: internal/ui/widgets.go:980
 msgid "January 2006"
 msgstr "January de 2006"
 
@@ -9125,7 +9125,7 @@ msgid "Cannot play %s: %s"
 msgstr "No se puede reproducir %s: %s"
 
 #: internal/lightui/music.go:560
-#: internal/ui/widgets.go:993
+#: internal/ui/widgets.go:1058
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr "Nada en reproducción"
@@ -9472,7 +9472,7 @@ msgstr "No es una imagen que esta app lea (PNG o JPEG)."
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
-#: internal/ui/widgets.go:844
+#: internal/ui/widgets.go:906
 #: ui/connect.ui:966
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -12903,7 +12903,7 @@ msgid "[WINDOWS]"
 msgstr "[VENTANAS]"
 
 #: internal/shell/launcher.go:50
-#: internal/ui/widgets.go:544
+#: internal/ui/widgets.go:604
 msgid "[APPS]"
 msgstr "[APLICACIONES]"
 
@@ -14238,32 +14238,32 @@ msgid "inua calendar"
 msgstr "calendario inua"
 
 #: internal/ui/agenda.go:227
-#: internal/ui/widgets.go:884
+#: internal/ui/widgets.go:948
 msgid "%s · WK %d"
 msgstr "%s · SEM %d"
 
 #: internal/ui/agenda.go:335
-#: internal/ui/widgets.go:964
+#: internal/ui/widgets.go:1028
 msgid "Add a place in Weather to see it here"
 msgstr "Agregue un lugar en Weather para verlo aquí"
 
 #: internal/ui/agenda.go:346
-#: internal/ui/widgets.go:970
+#: internal/ui/widgets.go:1034
 msgid "No forecast: offline?"
 msgstr "Sin previsión: ¿fuera de línea?"
 
 #: internal/ui/agenda.go:348
-#: internal/ui/widgets.go:968
+#: internal/ui/widgets.go:1032
 msgid "Reading the forecast…"
 msgstr "Leyendo el pronóstico…"
 
 #: internal/ui/agenda.go:356
-#: internal/ui/widgets.go:977
+#: internal/ui/widgets.go:1041
 msgid "%s · feels %s"
 msgstr "%[1]s · siente %[2]s"
 
 #: internal/ui/agenda.go:359
-#: internal/ui/widgets.go:979
+#: internal/ui/widgets.go:1043
 msgid "H %s  L %s"
 msgstr "H %[1]s L %[2]s"
 
@@ -14649,7 +14649,7 @@ msgstr "Salir (ventanas %d)"
 
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:535
-#: internal/ui/widgets.go:535
+#: internal/ui/widgets.go:595
 #: ui/settings.ui:181
 #: ui/settings.ui:2087
 msgid "Apps"
@@ -16700,69 +16700,69 @@ msgstr "voxtype no se instaló: %s"
 msgid "voxtype did not start: %s"
 msgstr "voxtype no arrancó: %s"
 
-#: internal/ui/widgets.go:152
+#: internal/ui/widgets.go:155
 msgid "Remove Widget"
 msgstr "Quitar widget"
 
-#: internal/ui/widgets.go:154
+#: internal/ui/widgets.go:157
 msgid "Remove from the Page"
 msgstr "Quitar de la página"
 
-#: internal/ui/widgets.go:515
+#: internal/ui/widgets.go:575
 msgid "inua widgets"
 msgstr "Widgets de inua"
 
-#: internal/ui/widgets.go:534
+#: internal/ui/widgets.go:594
 msgid "Now Playing"
 msgstr "Reproduciendo"
 
-#: internal/ui/widgets.go:540
+#: internal/ui/widgets.go:600
 msgid "[CLOCK]"
 msgstr "[RELOJ]"
 
-#: internal/ui/widgets.go:541
+#: internal/ui/widgets.go:601
 #: ui/agenda.ui:46
 msgid "[CALENDAR]"
 msgstr "[CALENDARIO]"
 
-#: internal/ui/widgets.go:542
+#: internal/ui/widgets.go:602
 msgid "[WEATHER]"
 msgstr "[TIEMPO]"
 
-#: internal/ui/widgets.go:543
+#: internal/ui/widgets.go:603
 msgid "[NOW PLAYING]"
 msgstr "[REPRODUCIENDO]"
 
-#: internal/ui/widgets.go:729
+#: internal/ui/widgets.go:790
 msgid "Open Clock"
 msgstr "Abrir Reloj"
 
-#: internal/ui/widgets.go:747
+#: internal/ui/widgets.go:808
 msgid "Open Calendar"
 msgstr "Abrir Calendario"
 
-#: internal/ui/widgets.go:781
+#: internal/ui/widgets.go:843
 #: ui/agenda.ui:116
 msgid "Open Weather"
 msgstr "Abrir Tiempo"
 
-#: internal/ui/widgets.go:846
+#: internal/ui/widgets.go:908
 msgid "Add an app, or drag one here from the dock"
 msgstr "Añade una aplicación o arrastra una aquí desde el dock"
 
-#: internal/ui/widgets.go:946
+#: internal/ui/widgets.go:1010
 msgid "Alarm %s %s · %s"
 msgstr "Alarma %s %s · %s"
 
-#: internal/ui/widgets.go:994
+#: internal/ui/widgets.go:1059
 msgid "A player that plays shows here"
 msgstr "Aquí aparece el reproductor que suene"
 
-#: internal/ui/widgets.go:1028
+#: internal/ui/widgets.go:1093
 msgid "Search apps"
 msgstr "Buscar aplicaciones"
 
-#: internal/ui/widgets.go:1077
+#: internal/ui/widgets.go:1142
 msgid "No app by that name"
 msgstr "Ninguna aplicación con ese nombre"
 

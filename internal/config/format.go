@@ -503,8 +503,8 @@ swipe = %d
 apps = %s
 
 # The widgets on it (clock, calendar, weather, media, apps), each with the
-# column and row of the page's grid its top left corner is at, a column
-# and a row 60 pixels apart.
+# column and row of the page's grid its top left corner is at (a column
+# and a row 60 pixels apart), a clear cell between any two widgets.
 %s
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)

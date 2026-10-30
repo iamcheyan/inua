@@ -347,8 +347,8 @@ swipe = 3
 apps = ["io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"]
 
 # The widgets on it (clock, calendar, weather, media, apps), each with the
-# column and row of the page's grid its top left corner is at, a column
-# and a row 60 pixels apart.
+# column and row of the page's grid its top left corner is at (a column
+# and a row 60 pixels apart), a clear cell between any two widgets.
 [[widgets.widget]]
 kind = "clock"
 column = 0
@@ -356,23 +356,23 @@ row = 0
 
 [[widgets.widget]]
 kind = "calendar"
-column = 6
+column = 7
 row = 0
 
 [[widgets.widget]]
 kind = "weather"
-column = 12
+column = 14
 row = 0
 
 [[widgets.widget]]
 kind = "media"
 column = 0
-row = 6
+row = 7
 
 [[widgets.widget]]
 kind = "apps"
-column = 6
-row = 6
+column = 7
+row = 7
 
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)

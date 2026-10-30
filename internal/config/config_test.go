@@ -462,7 +462,8 @@ func TestWidgets(t *testing.T) {
 	}
 	// The first version's list: its widgets in rows of three, in order.
 	c, w, _ = Load(write(t, "[widgets]\nitems = [\"media\", \"apps\", \"clock\", \"weather\"]\n"))
-	want = []WidgetPlace{{"media", 0, 0}, {"apps", WidgetSpan, 0}, {"clock", 2 * WidgetSpan, 0}, {"weather", 0, WidgetSpan}}
+	step := WidgetSpan + 1
+	want = []WidgetPlace{{"media", 0, 0}, {"apps", step, 0}, {"clock", 2 * step, 0}, {"weather", 0, step}}
 	if len(w) != 0 || !slices.Equal(c.Widgets.Places, want) {
 		t.Errorf("items: %+v %v", c.Widgets.Places, w)
 	}

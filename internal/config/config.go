@@ -695,15 +695,16 @@ var WidgetKinds = []string{"clock", "calendar", "weather", "media", "apps"}
 // or none.
 var WidgetSwipes = []int{0, 3, 4}
 
-// WidgetSpan is the columns and rows a widget takes when placed for it:
-// a card is a little smaller, so that a gap stays between them.
+// WidgetSpan is how many columns of the page's grid a widget is wide, and
+// how many rows it is taken to be tall before it is measured.
 const WidgetSpan = 6
 
-// AutoPlaces places kinds in rows of three, WidgetSpan apart.
+// AutoPlaces places kinds in rows of three, with a column and a row clear
+// between them, as the page keeps.
 func AutoPlaces(kinds []string) []WidgetPlace {
 	out := make([]WidgetPlace, len(kinds))
 	for i, k := range kinds {
-		out[i] = WidgetPlace{Kind: k, Column: i % 3 * WidgetSpan, Row: i / 3 * WidgetSpan}
+		out[i] = WidgetPlace{Kind: k, Column: i % 3 * (WidgetSpan + 1), Row: i / 3 * (WidgetSpan + 1)}
 	}
 	return out
 }

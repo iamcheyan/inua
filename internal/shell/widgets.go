@@ -22,10 +22,11 @@ func (a GridRect) Overlaps(b GridRect) bool {
 		a.Row < b.Row+b.Rows && b.Row < a.Row+a.Rows
 }
 
-// Fits reports whether r overlaps none of others.
-func (r GridRect) Fits(others []GridRect) bool {
+// Apart reports whether r keeps a clear cell from each of others, across
+// and corner to corner: no two widgets touch.
+func (r GridRect) Apart(others []GridRect) bool {
 	for _, o := range others {
-		if r.Overlaps(o) {
+		if r.Overlaps(GridRect{o.Column - 1, o.Row - 1, o.Columns + 2, o.Rows + 2}) {
 			return false
 		}
 	}
@@ -33,21 +34,24 @@ func (r GridRect) Fits(others []GridRect) bool {
 }
 
 // FreeSpot is the first place, row by row, for a widget of columns ×
-// rows within the page's first width columns that overlaps none of
-// taken; below them all when the rows above are full.
+// rows within the page's first width columns apart from all of taken;
+// below them all when the rows above are full.
 func FreeSpot(taken []GridRect, columns, rows, width int) GridRect {
 	r := GridRect{Columns: columns, Rows: rows}
 	bottom := 0
 	for _, t := range taken {
 		bottom = max(bottom, t.Row+t.Rows)
 	}
-	for r.Row = 0; r.Row <= bottom; r.Row++ {
+	for r.Row = 0; r.Row < bottom; r.Row++ {
 		for r.Column = 0; r.Column+columns <= max(width, columns); r.Column++ {
-			if r.Fits(taken) {
+			if r.Apart(taken) {
 				return r
 			}
 		}
 	}
-	r.Column = 0
+	r.Column, r.Row = 0, bottom
+	if len(taken) > 0 {
+		r.Row++ // a row clear under them
+	}
 	return r
 }

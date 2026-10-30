@@ -18,7 +18,8 @@ notch a step, stopping at the ends. One per monitor.
 ## Widget page
 
 A place before the first workspace: a page of widgets over the windows,
-between the bar and the dock, that slides in from the left. The hollow
+between the bar and the dock, that slides in from the left and blurs
+what is behind it (a layer rule inua.conf has while the page is on). The hollow
 dot before the workspaces opens it (it stretches into the accent pill
 while the page shows), and so do the wheel up past the first workspace,
 a swipe right from the first workspace, the Widget page shortcut and
@@ -37,12 +38,15 @@ the workspace swipe stays as it was; `swipe = 0` turns it off.
 
 The widgets: the clock with Clock's world clocks, the month with the next
 alarm, the weather where Weather is set, the player playing, and apps
-to open. They sit on a grid of 60 px: drag one by its head and it
-follows the pointer over the grid, whose joints show while it moves, with the
-cells it would land on marked, in red where another widget is. Released,
-it snaps there, or goes back if it would cover another. Right-click a
-head to remove the widget, and bring it back with Add widget, in the
-first free place. Drag apps in from the dock or add them with +; drag
+to open. They sit on a grid of 60 px, each a whole number of cells: six
+columns wide and as many rows tall as it needs, so that its edges are on
+the grid; and a clear cell stays between any two. Drag one by its head
+and it follows the pointer over the grid, whose joints show while it
+moves, with the cells it would land on marked, in red where it would
+touch another. Released, it snaps there, or goes back. A widget placed
+touching another (by hand in config.toml) moves to the first free place
+when the page opens. Right-click a head to remove the widget, and bring
+it back with Add widget, in the first free place. Drag apps in from the dock or add them with +; drag
 them to reorder, right-click to remove. The places and the apps are
 `[widgets]` in config.toml; `enable = false` takes the page, its dot and
 its swipe away.

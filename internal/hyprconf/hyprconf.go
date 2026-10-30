@@ -168,6 +168,30 @@ type Devices struct {
 	WorkspaceSwipe bool
 }
 
+// widgetsLayerRule blurs what is behind the widget page, but where it is
+// clear (the part not slid in yet), and leaves its slide to itself.
+const widgetsLayerRule = `
+# The widget page blurs what is behind it, and slides in by itself.
+layerrule {
+    name = inua-widgets
+    match:namespace = ^inua-widgets$
+    blur = on
+    ignore_alpha = 0.3
+    no_anim = on
+}
+`
+
+const widgetsLayerRuleLua = `
+-- The widget page blurs what is behind it, and slides in by itself.
+hl.layer_rule({
+    name = "inua-widgets",
+    match = { namespace = "^inua-widgets$" },
+    blur = true,
+    ignore_alpha = 0.3,
+    no_anim = true,
+})
+`
+
 // gesture is a swipe that runs a command.
 type gesture struct {
 	fingers  int
@@ -243,11 +267,14 @@ func Render(c config.Config, d Devices) string {
 		}
 	}
 	gestures := widgetGestures(c)
-	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) && len(gestures) == 0 {
+	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) && !c.Widgets.Enable {
 		b.WriteString("\n# Nothing set in inua; hyprland.conf decides.\n")
 	}
 	renderDisplays(&b, c, d)
 	renderShortcuts(&b, c)
+	if c.Widgets.Enable {
+		b.WriteString(widgetsLayerRule)
+	}
 	if len(gestures) > 0 {
 		b.WriteString("\n# A swipe right goes to the widget page, before the first workspace; left, back.\n")
 		if gestures[0].fingers == 3 && d.WorkspaceSwipe {
@@ -364,11 +391,14 @@ func RenderLua(c config.Config, d Devices) string {
 		}
 	}
 	gestures := widgetGestures(c)
-	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) && len(gestures) == 0 {
+	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) && !c.Widgets.Enable {
 		b.WriteString("\n-- Nothing set in inua; hyprland.lua decides.\n")
 	}
 	renderDisplaysLua(&b, c, d)
 	renderShortcutsLua(&b, c)
+	if c.Widgets.Enable {
+		b.WriteString(widgetsLayerRuleLua)
+	}
 	if len(gestures) > 0 {
 		b.WriteString("\n-- A swipe right goes to the widget page, before the first workspace; left, back.\n")
 		if gestures[0].fingers == 3 && d.WorkspaceSwipe {
