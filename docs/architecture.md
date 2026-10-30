@@ -76,6 +76,7 @@ the view uses the tricky parts of puregotk only through `gtkx`.
 | `internal/dbustest` | A private dbus-daemon for tests | Done |
 | `internal/layershell` | purego binding of gtk4-layer-shell and the `LD_PRELOAD` re-exec | Done |
 | `internal/gtkx` | Wrappers for puregotk's ownership, callbacks, main thread and `.ui` loading | Done |
+| `internal/uikit` | design/ui.md's pieces of several widgets, for the shell and the apps alike: a section and its head (`NewSection`, `NewHead`, `Bracketed`), a menu's look and motion (`Menu`) | Done |
 | `internal/shell` | Shell state: the launcher (modes, ranking, selection, focus rules for cancel and execute), each monitor's workspaces and title, the dock (apps and windows, order, click target), screenshot geometry (selections, window stacking, pixels), status icons and text, merging slider values, relative times | Done, tested |
 | `internal/config` | `~/.config/inua/config.toml` (TOML): defaults, validation (bad values fall back with a warning), strftime clocks, the commented writer | Done, tested |
 | `internal/bootstrap` | `inua init`: writes the embedded samples without overwriting (`-force` keeps a `.bak`); checks that Hyprland starts the shell and loads `inua.conf` (or requires `inua.lua`) | Done, tested |

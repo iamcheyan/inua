@@ -9,7 +9,7 @@ inua is a Hyprland desktop shell written in Go and GTK4. Read `README.md` and `d
 - `internal/hypr`, `internal/system` and others: Hyprland IPC, D-Bus and system services.
 - `ui/`: Blueprint layouts, the generated `.ui` files, CSS, themes and icons.
 - `config/`: sample configuration and desktop entries; `scripts/`: build and session tools; `website/`: the static website.
-- `design/ui.md`: the look and the interaction rules (tokens, type, marks, controls, where errors show); follow it for UI changes.
+- `design/ui.md`: the look and the interaction rules (tokens, type, marks, controls, where errors show); follow it for UI changes. Controls are shared CSS classes (`outlined`, `suggested-action`, `plain`, `tool`, `segmented`, `menu-item`, `mark`, `kicker`) sized by `small`, `tight` or `large`, and pieces of several widgets (sections, menus) come from `internal/uikit`: use them, never restate a control's look or size in a window's rules.
 - Tests live next to the Go sources, named `*_test.go`.
 
 ## Build and Development Commands
