@@ -2,7 +2,7 @@
 Konsole, WezTerm, Ghostty, foot, XTerm, btop++, htop. The objects of
 drawings/apps_terminals.py with about half the detail, no text."""
 
-from lib import bar, soft, soft_shadow, tile, two
+from lib import bar, mark, soft, soft_shadow, tile, two
 
 
 def _prompt(ic, x, y, s, color, width=None):
@@ -160,8 +160,8 @@ def foot(ic):
         ic.rect(188, 189, 7, 3.5, rx=1.5, fill="#A04A34")
 
 
-@soft("xterm")
-def xterm(ic):
+@soft("Term")  # the cream terminal: XTerm took the dark screen
+def term(ic):
     tile(ic, "#4F4A3E", "#211E17")
     soft_shadow(ic, 128, 214, 104, 11)
     cream = two(ic, "#F1EAD6", "#C9BFA4")
@@ -173,7 +173,7 @@ def xterm(ic):
         bar(ic, 72, y, w, 7, fill=a, opacity=0.7)
     _prompt(ic, 72, 118, 14, "#FFC75E")
     ic.rect(56, 151, 26, 10, rx=3, fill="#3A352C")
-    ic.path("M62 153l4 3-4 3h3.5l2.5-2 2.5 2h3.5l-4-3 4-3h-3.5l-2.5 2-2.5-2z", fill="#E8DFC8")
+    mark(ic, 64.5, 151.5, 9, fill="#E8DFC8")
     ic.circle(200, 156, 3, fill=a)
     ic.path("M44 172h168l14 28a6 6 0 0 1-5 8H35a6 6 0 0 1-5-8z", fill=cream)
     for r, (y, x0, x1, n) in enumerate(((177, 50, 206, 10), (188, 44, 212, 11))):

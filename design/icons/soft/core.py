@@ -37,8 +37,8 @@ def mail(ic):
     mark(ic, 114, 134, 28, fill="#F7D9D2")
 
 
-@soft("Term")
-def term(ic):
+@soft("xterm")  # the dark screen: inua's Terminal is the cream terminal
+def xterm(ic):
     tile(ic, "#22282D", "#0B0E10")
     soft_shadow(ic, 128, 212, 96, 11)
     with ic.g(transform="translate(0 15)"):  # the screen alone, no stand

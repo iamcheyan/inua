@@ -3,7 +3,7 @@ terminal), Konsole, WezTerm, Ghostty, foot, XTerm, btop++, htop
 (docs/feat/object-icons.md, Part 2). Each a different object, so none
 looks like inua's own Term (a black-glass screen on a stand)."""
 
-from lib import (brass, glare, graphite, icon, paper, shadow, small, steel, tile, wood)
+from lib import (brass, glare, graphite, icon, mark, paper, shadow, small, steel, tile, wood)
 
 
 def _scan(ic, x, y, w, h, rx, opacity=0.45):
@@ -375,12 +375,11 @@ def foot16(ic):
     ic.circle(10.1, 4.8, 0.55, fill="#6E624E")
 
 
-# --- XTerm: a cream video terminal and its keyboard, amber on the tube ---------
+# --- Terminal (inua's, drawings/core.py had it before XTerm took the screen):
+# a cream video terminal and its keyboard, amber on the tube ----------------
 
-@icon("xterm", kind="app", title="XTerm", names=[
-    "xterm", "utilities-x-terminal", "xterm-color", "xterm-color_48x48", "gnome-xterm", "mini.xterm", "urxvt",
-    "urxvt_48x48"])
-def xterm(ic):
+@icon("Term")
+def term(ic):
     tile(ic, "#4F4A3E", "#211E17")
     shadow(ic, 128, 214, 104, 11)
     cream = ic.lin([(0, "#F1EAD6"), (0.5, "#DCD2B8"), (1, "#ADA38A")], 0, 0, 0.4, 1)
@@ -398,10 +397,10 @@ def xterm(ic):
     ic.rect(79, 116, 6.5, 10, fill="#FFC75E")
     _scan(ic, 60, 50, 136, 92, 12, 0.5)
     ic.path("M60 62a12 12 0 0 1 12-12h70L84 142H72a12 12 0 0 1-12-12z", fill=glare(ic))
-    # the X, its thick and thin strokes, a badge on the chin
+    # inua's mark, pressed into a badge on the chin
     ic.rect(56, 151, 24, 9, rx=2, fill="#3A352C")
-    ic.path("M61 152.5l4 3-4 3h3l2.5-1.9 2.5 1.9h3.4l-4.4-3 4.4-3h-3.2l-2.3 1.7-2.3-1.7z", fill="#E8DFC8")
-    ic.text("VIDEO TERMINAL", 86, 158.5, 5.6, font="mono-semibold", spacing=0.8, fill="#7A715C")
+    mark(ic, 64, 151.5, 8, fill="#E8DFC8")
+    ic.text("INUA TERM", 86, 158.5, 5.6, font="mono-semibold", spacing=0.8, fill="#7A715C")
     ic.circle(200, 155.5, 2.2, fill="#FFB43C")
     # the keyboard, a low wedge
     ic.path("M44 172h168l14 28a6 6 0 0 1-5 8H35a6 6 0 0 1-5-8z", fill=cream)
@@ -415,8 +414,8 @@ def xterm(ic):
     ic.rect(92, 200, 72, 5, rx=1.5, fill="#5A5446")
 
 
-@small("xterm")
-def xterm16(ic):
+@small("Term")
+def term16(ic):
     tile(ic, "#4F4A3E", "#211E17")
     ic.rect(2.5, 1.8, 11, 9, rx=1, fill="#E4DBC3")
     ic.rect(3.6, 2.9, 8.8, 6.4, rx=0.8, fill="#1E1406")
