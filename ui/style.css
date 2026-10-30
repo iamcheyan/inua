@@ -22,28 +22,30 @@ window.bar, window.widgets, window.launcher, window.control, window.agenda, wind
 
 /* Shared pieces. */
 
-.tag, .kicker, .readout, .bar .island .clock, .bar .island .numeric, .mono-entry,
+.tag, .kicker, .section-label, .readout, .bar .island .clock, .bar .island .numeric, .mono-entry,
 .swatch label {
   font-family: "Geist Mono", "IBM Plex Mono", "JetBrains Mono", monospace;
   font-feature-settings: "tnum";
 }
 
-/* Labels and kickers: small capitals, tracked wide, tertiary. */
+/* A kicker: a group's name over its items (an index's, a drawer's, a
+   menu's), small capitals, tracked wide, tertiary. */
 .kicker {
   font-size: 10.5px;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: @t2;
 }
 
-/* A section or mode name in brackets: [APPS]. */
-.tag {
+/* A section's name in brackets after its mark, [STREAM]; a mode's (a tag),
+   [APPS], in the accent. */
+.section-label, .tag {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: @accent;
 }
+.tag { text-transform: uppercase; color: @accent; }
 .tag.error { color: @danger; }
 
 .readout { font-size: 11.5px; letter-spacing: 0.04em; color: @t1; }
@@ -844,14 +846,7 @@ button.link:hover { color: @t0; }
 .dock button.dock-item.dock-drawer:hover image { color: @accent; transform: none; }
 /* Its glass, border, arrow and shadow are drawn round it (bubble.go). */
 .drawer-overlay .drawer { padding: 8px 12px 12px; }
-.drawer-title {
-  margin: 10px 4px 6px;
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: @t2;
-}
+.drawer-title { margin: 10px 4px 6px; }
 .drawer-grid + .drawer-title { margin-top: 14px; padding-top: 12px; border-top: 1px solid alpha(@line, 0.6); }
 button.drawer-app {
   min-width: 88px;
@@ -1019,12 +1014,6 @@ window.settings { background: @app; font-size: 14px; }
 /* The copy of the current section's head held at the top of the page. */
 .settings .section-head.sticky { margin: 0 32px; background: @app; }
 .settings .section-head { min-height: 44px; border-bottom: 1px solid alpha(@line, 0.55); }
-.settings .section-label {
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
 .settings .section-meta { font-size: 12px; color: @t2; }
 .settings .section-body { padding: 4px 0; }
 .settings .section-body > separator { background: alpha(@line, 0.55); }
@@ -1664,13 +1653,6 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 /* Clock and Weather: one column. Mono small capitals for labels, light
    figures for times and temperatures, hairlines between things, the
    accent for what is current. */
-.settings .kicker {
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: @t2;
-}
 .hero-time, .row-time, .alarm-time, .hero-temp, .detail-value {
   font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif;
   font-weight: 300;
@@ -3463,13 +3445,8 @@ popover.term-menu .term-menu-title {
   margin: 8px 4px 4px;
   padding: 10px 6px 2px;
   border-top: 1px solid alpha(@line, 0.6);
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: @t2;
 }
-popover.term-menu .term-menu-state { font-weight: 400; letter-spacing: 0.04em; font-size: 11px; color: @t2; }
+popover.term-menu .term-menu-state { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-weight: 400; letter-spacing: 0.04em; font-size: 11px; color: @t2; }
 popover.term-menu .term-menu-state.s-on { color: @accent; }
 popover.term-menu .term-menu-state.s-warn { color: @warn; }
 popover.term-menu separator { margin: 6px 10px; background: alpha(@line, 0.6); }

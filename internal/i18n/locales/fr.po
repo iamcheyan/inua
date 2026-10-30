@@ -2092,7 +2092,7 @@ msgstr "Les appareils avec KDE Connect, GSConnect ou Valent trouvent cet ordinat
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/headmenu.go:154
+#: internal/termui/headmenu.go:155
 #: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
@@ -2115,7 +2115,7 @@ msgstr "Le service démarre."
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/headmenu.go:162
+#: internal/termui/headmenu.go:163
 #: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
@@ -8535,7 +8535,7 @@ msgid "System Monitor"
 msgstr "Moniteur système"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:150
+#: internal/termui/headmenu.go:151
 #: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
@@ -13824,23 +13824,23 @@ msgstr "Palette de commandes"
 msgid "WEB TERMINAL"
 msgstr "TERMINAL WEB"
 
-#: internal/termui/headmenu.go:133
+#: internal/termui/headmenu.go:134
 msgid "Turn on the Web Terminal"
 msgstr "Activer le terminal web"
 
-#: internal/termui/headmenu.go:135
+#: internal/termui/headmenu.go:136
 msgid "Turn off the Web Terminal"
 msgstr "Désactiver le terminal web"
 
-#: internal/termui/headmenu.go:140
+#: internal/termui/headmenu.go:141
 msgid "Restart the terminal host…"
 msgstr "Redémarrer l'hôte du terminal…"
 
-#: internal/termui/headmenu.go:148
+#: internal/termui/headmenu.go:149
 msgid "this computer only"
 msgstr "cet ordinateur seulement"
 
-#: internal/termui/headmenu.go:156
+#: internal/termui/headmenu.go:157
 #: internal/vmui/window.go:1820
 #: internal/vmui/window.go:1885
 #: internal/vmui/window.go:1966
@@ -13850,11 +13850,11 @@ msgstr "cet ordinateur seulement"
 msgid "Stopping…"
 msgstr "Arrêt…"
 
-#: internal/termui/headmenu.go:158
+#: internal/termui/headmenu.go:159
 msgid "On, %s"
 msgstr "Activé, %s"
 
-#: internal/termui/headmenu.go:160
+#: internal/termui/headmenu.go:161
 msgid "On, but not running"
 msgstr "Activé, mais arrêté"
 
@@ -14659,7 +14659,7 @@ msgstr "Applications"
 msgid "Workshop apps"
 msgstr "Apps de l’atelier"
 
-#: internal/ui/drawer.go:320
+#: internal/ui/drawer.go:321
 msgid "The light apps are not installed (make install)."
 msgstr "Les applications légères ne sont pas installées (make install)."
 

@@ -69,12 +69,16 @@ Tints of the accent, used the same way everywhere:
 
 Recurring sizes and treatments:
 
-- **Kicker** (`.kicker`): 10.5 px, upper case, tracked 0.16 em, `t2`.
-  Group names in an index: THIS COMPUTER, MACHINES.
+- **Kicker** (`.kicker`): mono 10.5 px, weight 600, upper case, tracked
+  0.14 em, `t2`. A group's name over its items: an index's (THIS
+  COMPUTER, MACHINES), the dock drawer's, a menu's (WEB TERMINAL).
 - **Section label** (`.section-label`): mono 11 px, weight 600, tracked
   0.12 em, in brackets: `[STREAM]`.
-- **Tag** (`.tag`): a mode name, mono 11 px, upper case, in the accent:
-  `[APPS]`.
+- **Tag** (`.tag`): a mode name, the section label's type, upper case, in
+  the accent: `[APPS]`.
+
+These are the only small-capital voices; a surface uses the class, not a
+copy of its numbers.
 - **Label / sub** (`.label`, `.sub`): a row's text, 13 px `t1`, and the
   line under it, 12 px `t2`.
 - **Readout** (`.readout`): mono 11.5–12 px, `t1`.
@@ -261,8 +265,7 @@ of column 1 (`internal/termui/headmenu.go`, `popover.term-menu` in
 - **Keys**: an item with keys shows them at its end, as a keycap in the
   menu's voice: mono 11 px, `t1`, a hairline box with no fill.
 - **Groups**: a hairline between groups. A group about one thing has a
-  title in the drawer's voice (mono 10.5 px, weight 600, upper case,
-  tracked 0.14 em, `t2`) on the hairline, and the thing's state at the
+  title, a kicker (`.kicker`), on the hairline, and the thing's state at the
   title's end: its status square and a few words in mono 11 px, in the
   accent while it is on and running, `warn` when it is on but not, `t2`
   otherwise. A state is never a greyed item: it would read as an action

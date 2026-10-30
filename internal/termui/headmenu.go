@@ -114,6 +114,7 @@ func (a *App) dropHeadMenu(running bool) {
 	head := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
 	head.AddCssClass("term-menu-title")
 	title := gtk.NewLabel(i18n.T("WEB TERMINAL"))
+	title.AddCssClass("kicker")
 	title.SetXalign(0)
 	title.SetHexpand(true)
 	head.Append(&title.Widget)

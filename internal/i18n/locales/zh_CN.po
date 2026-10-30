@@ -2087,7 +2087,7 @@ msgstr "运行 KDE Connect、GSConnect 或 Valent 的设备可在此网络和 ta
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/headmenu.go:154
+#: internal/termui/headmenu.go:155
 #: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
@@ -2110,7 +2110,7 @@ msgstr "服务正在启动。"
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/headmenu.go:162
+#: internal/termui/headmenu.go:163
 #: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
@@ -8498,7 +8498,7 @@ msgid "System Monitor"
 msgstr "系统监视器"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:150
+#: internal/termui/headmenu.go:151
 #: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
@@ -13751,23 +13751,23 @@ msgstr "命令面板"
 msgid "WEB TERMINAL"
 msgstr "网页终端"
 
-#: internal/termui/headmenu.go:133
+#: internal/termui/headmenu.go:134
 msgid "Turn on the Web Terminal"
 msgstr "打开网页终端"
 
-#: internal/termui/headmenu.go:135
+#: internal/termui/headmenu.go:136
 msgid "Turn off the Web Terminal"
 msgstr "关闭网页终端"
 
-#: internal/termui/headmenu.go:140
+#: internal/termui/headmenu.go:141
 msgid "Restart the terminal host…"
 msgstr "重启终端主机…"
 
-#: internal/termui/headmenu.go:148
+#: internal/termui/headmenu.go:149
 msgid "this computer only"
 msgstr "仅限这台电脑"
 
-#: internal/termui/headmenu.go:156
+#: internal/termui/headmenu.go:157
 #: internal/vmui/window.go:1820
 #: internal/vmui/window.go:1885
 #: internal/vmui/window.go:1966
@@ -13777,11 +13777,11 @@ msgstr "仅限这台电脑"
 msgid "Stopping…"
 msgstr "正在停止…"
 
-#: internal/termui/headmenu.go:158
+#: internal/termui/headmenu.go:159
 msgid "On, %s"
 msgstr "已打开，%s"
 
-#: internal/termui/headmenu.go:160
+#: internal/termui/headmenu.go:161
 msgid "On, but not running"
 msgstr "已打开，但未运行"
 
@@ -14578,7 +14578,7 @@ msgstr "应用程序"
 msgid "Workshop apps"
 msgstr "工坊应用"
 
-#: internal/ui/drawer.go:320
+#: internal/ui/drawer.go:321
 msgid "The light apps are not installed (make install)."
 msgstr "轻型应用程序未安装(make install)。"
 
