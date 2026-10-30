@@ -12,6 +12,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/lyricat/inua/internal/apps/tailscale"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/term/host"
@@ -37,7 +38,7 @@ func serve(args []string) int {
 	}
 	listen := *addr
 	if *tailnet {
-		ip, err := webterm.TailscaleIP()
+		ip, err := tailscale.LocalIP()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "inua-termd serve: %v\n", err)
 			return 1

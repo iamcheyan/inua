@@ -35,6 +35,7 @@ import (
 	"github.com/lyricat/inua/internal/portalconf"
 	"github.com/lyricat/inua/internal/rundir"
 	"github.com/lyricat/inua/internal/style"
+	"github.com/lyricat/inua/internal/uikit"
 	layouts "github.com/lyricat/inua/ui"
 )
 
@@ -297,6 +298,7 @@ func (c *Ctx) loadStyle() {
 		css = style.SystemFonts(css) // a Mac has none of the styles' fonts
 	}
 	c.css.LoadFromString(css)
+	uikit.Radius = cfg.Style.Radius // the menus' corners
 	if p := cfg.CSSPath(); p != "" {
 		if b, err := os.ReadFile(p); err == nil {
 			c.userCSS.LoadFromString(string(b))

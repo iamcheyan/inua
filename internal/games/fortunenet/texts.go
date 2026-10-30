@@ -96,6 +96,9 @@ func webTexts() texts {
 		"twoDice":     i18n.T("Two dice"),
 		"buildOnBuy":  i18n.T("Build the day you buy"),
 		"rivalsN":     i18n.T("Computer players"),
+		"aisN":        i18n.T("AI players"),
+		"openSeat":    i18n.T("Open seat"),
+		"aiSeat":      i18n.T("AI"),
 		"start":       i18n.T("Start the game"),
 		"restart":     i18n.T("New game"),
 	}

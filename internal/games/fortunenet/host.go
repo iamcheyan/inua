@@ -21,6 +21,7 @@ import (
 
 	"github.com/lyricat/inua/internal/games"
 	"github.com/lyricat/inua/internal/games/fortuneai"
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/games/gameweb"
 	"github.com/lyricat/inua/internal/i18n"
 )
@@ -78,8 +79,12 @@ type Options struct {
 	// has it: landmarks, trees, the fountain.
 	Pieces func(city int) []Piece
 	// AI plays the AI players, with the host's AI; nil when none play.
-	AI   *fortuneai.Driver
-	Seed uint64
+	AI *fortuneai.Driver
+	// LeadAI lets the lead visitor have AI players, asking its default
+	// profile, when no one plays at the host's screen (SetAI); nil, they
+	// choose computer players only.
+	LeadAI gameai.AI
+	Seed   uint64
 }
 
 // Picture is a picture of the game's, a PNG. A piece that stands on the
@@ -118,6 +123,8 @@ type Host struct {
 	srv      *server
 	print    []byte              // the board's print, once asked for
 	art      map[string]*Picture // the pictures, each once asked for
+	ai       *fortuneai.Driver   // plays the AI players: Options.AI, or one for LeadAI
+	leadAI   gameai.AI
 }
 
 // paceScale speeds the computer's pace up, for tests.
@@ -129,7 +136,8 @@ var AwayAfter = 15 * time.Second
 
 // NewHost opens a lobby with the people at the host's screen.
 func NewHost(opt Options) *Host {
-	h := &Host{opt: opt, Code: newCode(), Settings: opt.Settings, clients: map[*gameweb.Client]bool{}}
+	h := &Host{opt: opt, Code: newCode(), Settings: opt.Settings, clients: map[*gameweb.Client]bool{}, ai: opt.AI}
+	h.setAI(opt.LeadAI)
 	for _, name := range opt.Local[:min(len(opt.Local), MaxPlayers)] {
 		h.Seats = append(h.Seats, &Seat{Name: name, Kind: Local, Here: true})
 	}
@@ -162,6 +170,35 @@ func (h *Host) HostLeads() bool {
 	return slices.ContainsFunc(h.Seats, func(s *Seat) bool { return s.Kind == Local })
 }
 
+// SetAI lets the lead visitor have AI players, asking ai's default
+// profile; nil, they may not. The AI players already asked for stay.
+func (h *Host) SetAI(ai gameai.AI) {
+	h.setAI(ai)
+	h.lobby()
+}
+
+func (h *Host) setAI(ai gameai.AI) {
+	h.leadAI = ai
+	if ai != nil && h.ai == nil {
+		h.ai = fortuneai.New(ai.Choose, h.opt.Run)
+	}
+}
+
+// offersAI reports whether the lead visitor may ask for AI players: the
+// host offers an AI that answers (SetAI), and no one leads at its screen.
+func (h *Host) offersAI() bool {
+	return h.leadAI != nil && !h.HostLeads() && len(h.leadAI.Profiles()) > 0
+}
+
+// MaxAIs is how many AI players the lead visitor may ask for, with the
+// computer players asked for; none when the host offers no AI.
+func (h *Host) MaxAIs() int {
+	if !h.offersAI() {
+		return 0
+	}
+	return max(0, MaxPlayers-len(h.Seats)-h.Settings.Rivals)
+}
+
 // Lead is the visitor's seat that sets the game up when the host only
 // hosts: the first of those here; -1 for none, or when the host's screen
 // leads.
@@ -180,19 +217,39 @@ type Setup struct {
 	Dice       int  `json:"dice"` // 1 or 2
 	BuildOnBuy bool `json:"buildOnBuy"`
 	Rivals     int  `json:"rivals"` // computer players
+	// AIs is how many AI players, when the host offers its AI (MaxAIs);
+	// otherwise it stays as the host set it.
+	AIs int `json:"ais"`
+	// RivalNames are which computer players sit, by their names in
+	// English (games.Rival.Name), as many as Rivals, each once; none, the
+	// first of games.Rivals that are not seated yet.
+	RivalNames []string `json:"rivalNames,omitempty"`
 }
 
 // SetUp changes the game's settings before it starts; false for a
 // setting the game does not offer, or more players than seats.
 func (h *Host) SetUp(u Setup) bool {
+	ais := len(h.Settings.AIs)
+	if h.offersAI() || h.leadAI != nil && u.AIs < ais { // fewer may be asked for while the AI is away
+		ais = u.AIs
+	}
 	if h.Game != nil || u.City < 0 || u.City >= len(games.FortuneCities) || !slices.Contains(games.FortuneRounds, u.Rounds) ||
 		!slices.Contains(games.FortuneCash, u.Cash) || u.Dice != 1 && u.Dice != 2 ||
-		u.Rivals < 0 || u.Rivals > len(games.Rivals) || len(h.Seats)+len(h.Settings.AIs)+u.Rivals > MaxPlayers {
+		u.Rivals < 0 || u.Rivals > len(games.Rivals) || ais < 0 || len(h.Seats)+ais+u.Rivals > MaxPlayers {
 		return false
 	}
 	s := &h.Settings
-	s.City, s.Rounds, s.Cash, s.Dice, s.BuildOnBuy = u.City, u.Rounds, u.Cash, u.Dice, u.BuildOnBuy
+	if ais != len(s.AIs) {
+		s.AIs = aiNames(s.AIs, ais)
+	}
 	names := s.RivalNames[:min(len(s.RivalNames), u.Rivals)]
+	if u.RivalNames != nil {
+		if !rivalsKnown(u.RivalNames, u.Rivals) {
+			return false
+		}
+		names = slices.Clone(u.RivalNames)
+	}
+	s.City, s.Rounds, s.Cash, s.Dice, s.BuildOnBuy = u.City, u.Rounds, u.Cash, u.Dice, u.BuildOnBuy
 	for _, r := range games.Rivals {
 		if len(names) < u.Rivals && !slices.Contains(names, r.Name) {
 			names = append(names, r.Name)
@@ -201,6 +258,35 @@ func (h *Host) SetUp(u Setup) bool {
 	s.Rivals, s.RivalNames = u.Rivals, names
 	h.lobby()
 	return true
+}
+
+// rivalsKnown reports whether names are n of games.Rivals, none twice.
+func rivalsKnown(names []string, n int) bool {
+	if len(names) != n {
+		return false
+	}
+	for i, name := range names {
+		if !slices.ContainsFunc(games.Rivals, func(r games.Rival) bool { return r.Name == name }) || slices.Contains(names[:i], name) {
+			return false
+		}
+	}
+	return true
+}
+
+// aiNames are n AI players' names: as gameai.Names has them, unless the
+// host named those of had otherwise (for their profiles), which stay
+// first, then "AI 2" …, none twice.
+func aiNames(had []string, n int) []string {
+	if len(had) == 0 || slices.Equal(had, gameai.Names(len(had))) {
+		return gameai.Names(n)
+	}
+	names := slices.Clone(had[:min(len(had), n)])
+	for k := 2; len(names) < n; k++ {
+		if name := i18n.Tf("AI %d", k); !slices.Contains(names, name) {
+			names = append(names, name)
+		}
+	}
+	return names
 }
 
 // fromLead does what the lead visitor asked: set the game up, start it,
@@ -380,8 +466,8 @@ func (h *Host) Flush() {
 		c.Send(h.stateMsg(c))
 	}
 	h.changed()
-	if h.opt.AI != nil {
-		h.opt.AI.Next(h.Game, time.Duration(float64(pace(events))*paceScale), h.Flush)
+	if h.ai != nil {
+		h.ai.Next(h.Game, time.Duration(float64(pace(events))*paceScale), h.Flush)
 	}
 	if h.Game.Phase == games.PhaseCPU && h.cpu == nil {
 		h.cpu = time.AfterFunc(time.Duration(float64(pace(events))*paceScale), func() {

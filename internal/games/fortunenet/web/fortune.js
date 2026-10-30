@@ -146,6 +146,7 @@ function showLobby(m) {
     li.append(dot(i), who, el('span', 'note', s.kind === 'local' ? T.local : T.visitor));
     ul.append(li);
   });
+  showSlots(m, ul);
   let note = m.lead ? T.youLead : m.hostLeads || !m.leadName ? T.waiting : fmt(T.waitingLead, m.leadName);
   if (m.you < 0 && m.room === 0) note = T.full;
   if (m.room > 0) note += ' ' + fmt(T.seatsOpen, m.room);
@@ -174,18 +175,58 @@ function showSetup(m) {
   fill('setup-rounds', m.roundsOf.map((r) => [r, String(r)]), u.rounds);
   fill('setup-cash', m.cashOf.map((c) => [c, '$' + money(c)]), u.cash);
   fill('setup-dice', [[1, T.oneDie], [2, T.twoDice]], u.dice);
-  fill('setup-rivals', Array.from({ length: Math.max(m.maxRivals, u.rivals) + 1 }, (_, n) => [n, String(n)]), u.rivals);
   $('setup-build').checked = u.buildOnBuy;
+}
+
+// showSlots adds the seats no person has, a row each after the people's, as
+// the app's setup has them: each open, one of the computer players (each
+// once) or the AI, when the host offers its AI. The lead chooses; the
+// others see who will play.
+function showSlots(m, ul) {
+  const u = m.setup;
+  document.querySelectorAll('.setup-only').forEach((e) => { e.hidden = !m.lead; });
+  const people = m.seats.length;
+  const slots = (u.ais || 0) + (u.rivals || 0) + Math.max(0, m.room);
+  const now = [...Array(u.ais || 0).fill('ai'), ...(u.rivalNames || []).map((id) => 'r:' + id)];
+  while (now.length < slots) now.push('open');
+  const rivals = m.rivalsOf || [];
+  const nameOf = (v) => v === 'ai' ? T.aiSeat : v === 'open' ? T.openSeat :
+    (rivals.find((r) => 'r:' + r.id === v) || { name: v.slice(2) }).name;
+  now.forEach((v, k) => {
+    const i = people + k;
+    const li = el('li', v === 'open' ? 'slot open' : 'slot');
+    if (!m.lead) {
+      li.append(dot(i), el('span', 'who', nameOf(v)), el('span', 'note', v === 'ai' ? T.ai.replace(/^\s*·\s*/, '') : ''));
+      ul.append(li);
+      return;
+    }
+    const sel = el('select', 'seat-choice');
+    const choices = [['open', T.openSeat], ...rivals.map((r) => ['r:' + r.id, r.name])];
+    if (m.maxAIs > 0 || u.ais > 0) choices.push(['ai', T.aiSeat]);
+    for (const [value, text] of choices) {
+      const o = el('option', '', text);
+      o.value = value;
+      // A computer player sits once: taken in another seat, it is not offered here.
+      o.disabled = value.startsWith('r:') && value !== v && now.includes(value);
+      sel.append(o);
+    }
+    sel.value = v;
+    sel.addEventListener('change', sendSetup);
+    li.append(dot(i), sel);
+    ul.append(li);
+  });
 }
 
 let lead = false;
 function sendSetup() {
   const n = (id) => Number($(id).value);
+  const seats = [...document.querySelectorAll('#seats select.seat-choice')].map((s) => s.value);
+  const rivalNames = seats.filter((v) => v.startsWith('r:')).map((v) => v.slice(2));
   tell({ t: 'setup', setup: { city: n('setup-city'), rounds: n('setup-rounds'), cash: n('setup-cash'), dice: n('setup-dice'),
-    rivals: n('setup-rivals'), buildOnBuy: $('setup-build').checked } });
+    rivals: rivalNames.length, rivalNames, ais: seats.filter((v) => v === 'ai').length, buildOnBuy: $('setup-build').checked } });
 }
 const tell = (m) => ws?.readyState === WebSocket.OPEN && ws.send(JSON.stringify(m));
-for (const id of ['setup-city', 'setup-rounds', 'setup-cash', 'setup-dice', 'setup-rivals', 'setup-build']) {
+for (const id of ['setup-city', 'setup-rounds', 'setup-cash', 'setup-dice', 'setup-build']) {
   $(id).addEventListener('change', sendSetup);
 }
 $('setup-start').addEventListener('click', () => tell({ t: 'start' }));

@@ -689,9 +689,9 @@ Settings and inua's apps: Phosphor's, your own set or a theme's. Each
 style and set has Preview All, every icon of it in a window.
 
 The apps can take another theme than the bar and dock (*Apps* under the
-theme swatches, `style.app_theme`): inua's own apps follow it, and other
-apps are asked to be light or dark by it. The launcher, control center
-and settings stay with the bar.
+theme swatches, `style.app_theme`): inua's own apps and the settings
+window follow it, and other apps are asked to be light or dark by it. The
+launcher and control center stay with the bar.
 
 ## Wallpaper
 

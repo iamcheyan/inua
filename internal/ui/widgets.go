@@ -10,7 +10,6 @@ import (
 	"unsafe"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gobject/types"
 	"codeberg.org/puregotk/puregotk/v4/graphene"
@@ -112,6 +111,9 @@ func (s *shellUI) bindWidgetsHandlers() {
 		}
 		return false
 	}
+	s.onWidgetsAddActive = func(uintptr, uintptr, uintptr) {
+		s.widgetsKeyboard(!p.add.GetActive())
+	}
 	s.onWidgetsRevealed = func(uintptr, uintptr, uintptr) {
 		if p.closing && !p.reveal.GetChildRevealed() {
 			s.dropWidgets()
@@ -159,30 +161,12 @@ func (s *shellUI) bindWidgetsHandlers() {
 		default:
 			return
 		}
-		menu := gio.NewMenu()
-		menu.Append(label, "widgets.remove")
-		pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-		uikit.Menu(&pop.Popover, uikit.AtPointer)
-		s.widgetPopover(pop.Popover, w, x, y)
-		menu.Unref()
+		pop := uikit.NewMenu([]uikit.Item{{Label: label, Run: func() { s.widgetAction("remove") }}}, uikit.AtPointer)
+		s.widgetPopover(*pop, w, x, y)
 	}
-	s.onWidgetAction = func(a gio.SimpleAction, _ uintptr) {
-		name := a.GetName()
-		c := s.cfg
-		switch {
-		case name == "remove" && p.menuKind != "":
-			c.Widgets.Places = slices.DeleteFunc(slices.Clone(c.Widgets.Places), func(w config.WidgetPlace) bool { return w.Kind == p.menuKind })
-		case name == "remove" && p.menuApp != "":
-			c.Widgets.Apps = slices.DeleteFunc(slices.Clone(c.Widgets.Apps), func(k string) bool { return k == p.menuApp })
-		case strings.HasPrefix(name, "add-"):
-			r := shell.FreeSpot(s.widgetRects(""), config.WidgetSpan, config.WidgetSpan, s.boardColumns())
-			c.Widgets.Places = append(slices.Clone(c.Widgets.Places), config.WidgetPlace{Kind: strings.TrimPrefix(name, "add-"), Column: r.Column, Row: r.Row})
-		default:
-			return
-		}
-		gtkx.Post(func() { s.changeSettings(c) }) // the menu goes first
-	}
+
 	s.onWidgetMenuClosed = func(pop gtk.Popover) {
+		s.widgetsKeyboard(true)
 		gtkx.Post(func() { pop.Unparent() })
 		if p.picker != nil && p.picker.pop.GoPointer() == pop.GoPointer() {
 			p.picker = nil
@@ -537,6 +521,7 @@ func (s *shellUI) buildWidgets(b *bar) {
 	ui.Get("add", &p.add)
 	ui.Close()
 	gtkx.ConnectNotify(&p.reveal, "child-revealed", &s.onWidgetsRevealed)
+	gtkx.ConnectNotify(&p.add, "active", &s.onWidgetsAddActive)
 	drag := gtk.NewGestureDrag()
 	drag.ConnectDragBegin(&s.onWidgetDragBegin)
 	drag.ConnectDragUpdate(&s.onWidgetDragUpdate)
@@ -546,16 +531,6 @@ func (s *shellUI) buildWidgets(b *bar) {
 	keys.SetPropagationPhase(gtk.PhaseCaptureValue)
 	keys.ConnectKeyPressed(&s.onWidgetsKey)
 	p.win.AddController(&keys.EventController)
-
-	group := gio.NewSimpleActionGroup()
-	for _, name := range append([]string{"remove"}, addActions()...) {
-		a := gio.NewSimpleAction(name, nil)
-		a.ConnectActivate(&s.onWidgetAction)
-		group.AddAction(a)
-		a.Unref()
-	}
-	p.page.InsertActionGroup("widgets", group)
-	group.Unref()
 
 	// The page's sides are the bar's, and its gaps above and below the
 	// bar's gap from the screen's top.
@@ -605,14 +580,6 @@ func snapshotGrid(w *gtk.Widget, sn *gtk.Snapshot) {
 			sn.AppendColor(&c, rect(float32(x), float32(y-arm), 1, 2*arm+1))
 		}
 	}
-}
-
-func addActions() []string {
-	var out []string
-	for _, k := range config.WidgetKinds {
-		out = append(out, "add-"+k)
-	}
-	return out
 }
 
 // widgetNames are the widgets' names in the page's menus.
@@ -692,15 +659,19 @@ func (s *shellUI) fillWidgets() {
 		card.Unref()
 		p.cards[kind] = card
 	}
-	menu := gio.NewMenu()
+	var adds []uikit.Item
 	for _, k := range config.WidgetKinds {
 		if p.cards[k] == nil {
-			menu.Append(i18n.T(widgetNames[k]), "widgets.add-"+k)
+			name := "add-" + k
+			adds = append(adds, uikit.Item{Label: i18n.T(widgetNames[k]), Run: func() { s.widgetAction(name) }})
 		}
 	}
-	p.add.SetVisible(menu.GetNItems() > 0)
-	p.add.SetMenuModel(&menu.MenuModel)
-	menu.Unref()
+	p.add.SetVisible(len(adds) > 0)
+	if len(adds) > 0 {
+		pop := uikit.NewMenu(adds, uikit.Below)
+		p.add.SetPopover(pop) // the button takes it
+		pop.Unref()
+	}
 	s.tickWidgets(time.Now())
 	s.showWidgetWeather()
 	s.showWidgetMedia()
@@ -776,7 +747,50 @@ func (s *shellUI) widgetPopover(pop gtk.Popover, w *gtk.Widget, x, y float64) {
 	pop.SetPointingTo(&gdk.Rectangle{X: int32(float64(f[0]) + x), Y: int32(float64(f[1]) + y), Width: 1, Height: 1})
 	pop.ConnectClosed(&s.onWidgetMenuClosed)
 	pop.Unref() // the page holds it
+	s.widgetsKeyboard(false)
 	pop.Popup()
+}
+
+// widgetAction does what a page's menu chose: removes the widget or the
+// app it opened on, or adds a widget at a free place.
+func (s *shellUI) widgetAction(name string) {
+	p := &s.widgets
+	c := s.cfg
+	switch {
+	case name == "remove" && p.menuKind != "":
+		c.Widgets.Places = slices.DeleteFunc(slices.Clone(c.Widgets.Places), func(w config.WidgetPlace) bool { return w.Kind == p.menuKind })
+	case name == "remove" && p.menuApp != "":
+		c.Widgets.Apps = slices.DeleteFunc(slices.Clone(c.Widgets.Apps), func(k string) bool { return k == p.menuApp })
+	case strings.HasPrefix(name, "add-"):
+		r := shell.FreeSpot(s.widgetRects(""), config.WidgetSpan, config.WidgetSpan, s.boardColumns())
+		c.Widgets.Places = append(slices.Clone(c.Widgets.Places), config.WidgetPlace{Kind: strings.TrimPrefix(name, "add-"), Column: r.Column, Row: r.Row})
+	default:
+		return
+	}
+	s.changeSettings(c)
+}
+
+// widgetsKeyboard gives the page the keyboard alone, or lets go of it while
+// one of its popovers is open: Hyprland gives no clicks to the popups of a
+// layer surface that holds the keyboard exclusively. Taken back, the
+// keyboard goes through none first, as the launcher's does after its menu.
+func (s *shellUI) widgetsKeyboard(exclusive bool) {
+	p := &s.widgets
+	if !s.layer || !p.open {
+		return
+	}
+	w := p.win.GoPointer()
+	if !exclusive {
+		layershell.SetKeyboardMode(w, layershell.KeyboardOnDemand)
+		return
+	}
+	layershell.SetKeyboardMode(w, layershell.KeyboardNone)
+	win := p.win
+	s.runAfter(30, func() {
+		if p.open && p.win.GoPointer() == win.GoPointer() {
+			layershell.SetKeyboardMode(w, layershell.KeyboardExclusive)
+		}
+	})
 }
 
 func label(text string, classes ...string) *gtk.Label {
@@ -1126,8 +1140,10 @@ func (s *shellUI) pickWidgetApp(at *gtk.Widget) {
 	gtkx.Append(box, &query.Widget)
 	list := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	gtkx.Append(box, &list.Widget)
+	box.SetSizeRequest(240, -1)
 	pop.SetChild(&box.Widget)
 	box.Unref()
+	uikit.Menu(pop, uikit.Below)
 	p.picker = &widgetPicker{pop: pop, query: query, list: list}
 	s.fillWidgetPicker()
 	s.widgetPopover(*pop, at, float64(at.GetWidth())/2, float64(at.GetHeight()))
@@ -1165,7 +1181,7 @@ func (s *shellUI) fillWidgetPicker() {
 		img.SetPixelSize(20)
 		gtkx.Append(row, &img.Widget)
 		gtkx.Append(row, &label(e.Name, "label").Widget)
-		b := s.widgetButton("pick:"+e.ID, &row.Widget, "flat", "widget-pick")
+		b := s.widgetButton("pick:"+e.ID, &row.Widget, "menu-item", "widget-pick")
 		gtkx.Append(pk.list, &b.Widget)
 	}
 	if len(found) == 0 {

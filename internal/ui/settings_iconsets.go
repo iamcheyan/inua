@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
@@ -175,19 +174,10 @@ func (f iconFill) start() {
 func (s *shellUI) styleMenu(btn *gtk.Widget, x, y float64) {
 	st := &s.settings
 	st.iconSetMenu = strings.TrimPrefix(btn.GetName(), "appstyle:")
-	group := gio.NewSimpleActionGroup()
-	a := gio.NewSimpleAction("preview", nil)
-	a.ConnectActivate(&s.onIconSetAction)
-	group.AddAction(a)
-	a.Unref()
-	btn.InsertActionGroup("appstyle", group)
-	group.Unref()
-	menu := gio.NewMenu()
-	menu.Append(i18n.T("Preview All…"), "appstyle.preview")
-	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-	menu.Unref()
-	uikit.Menu(&pop.Popover, uikit.AtPointer)
-	pop.SetHasArrow(false)
+	style := st.iconSetMenu
+	pop := uikit.NewMenu([]uikit.Item{
+		{Label: i18n.T("Preview All…"), Run: func() { s.previewAppStyle(style) }},
+	}, uikit.AtPointer)
 	pop.SetParent(btn)
 	pop.SetPointingTo(&gdk.Rectangle{X: int32(x), Y: int32(y), Width: 1, Height: 1})
 	pop.ConnectClosed(&s.onThemeMenuClosed)

@@ -7,6 +7,7 @@ import (
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"github.com/lyricat/inua/internal/apps/tailscale"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/term/settings"
@@ -57,7 +58,7 @@ func (pr *prefs) webSection(page *gtk.Box, s *settings.Settings, save func()) {
 	// Each place with its address: the loopback, and this computer's on
 	// the tailnet.
 	tailnet := i18n.T("no address: is Tailscale up?")
-	if ip, err := webterm.TailscaleIP(); err == nil {
+	if ip, err := tailscale.LocalIP(); err == nil {
 		tailnet = ip
 	}
 	w.where = gtk.NewDropDownFromStrings([]string{
@@ -147,7 +148,7 @@ func webError(err error) string {
 		return ""
 	case errors.Is(err, webterm.ErrNoKeyring):
 		return i18n.T("The link's token could be kept neither in the keyring nor in a file.")
-	case errors.Is(err, webterm.ErrNoTailscale):
+	case errors.Is(err, tailscale.ErrNoAddress):
 		return i18n.T("This computer has no Tailscale address: is Tailscale up? (tailscale up)")
 	case errors.Is(err, context.DeadlineExceeded):
 		return i18n.T("The Web Terminal did not start in time.")

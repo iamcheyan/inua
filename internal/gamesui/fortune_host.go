@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html"
 	goimage "image"
-	"image/color"
 	"image/jpeg"
 	"image/png"
 	"math/rand/v2"
@@ -16,12 +15,11 @@ import (
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"codeberg.org/puregotk/puregotk/v4/pango"
-	"github.com/makiuchi-d/gozxing"
-	"github.com/makiuchi-d/gozxing/qrcode"
 
 	"github.com/lyricat/inua/internal/games"
 	"github.com/lyricat/inua/internal/games/fortuneai"
 	"github.com/lyricat/inua/internal/games/fortunenet"
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 )
@@ -59,6 +57,13 @@ func (p *fortune) hostLobby() {
 		AI:       p.netAI(),
 		Seed:     uint64(time.Now().UnixNano()),
 	})
+	if len(local) == 0 { // the visitor who sets the game up may have AI players
+		if p.aiState == aiReady {
+			p.net.SetAI(gameai.Of(p.aiClient))
+		} else {
+			p.checkAI()
+		}
+	}
 	p.serveErr = ""
 	if p.hostOn {
 		if err := p.net.Serve(fortunenet.DefaultAddr); err != nil {
@@ -119,12 +124,7 @@ func (p *fortune) showLinks() {
 	p.lobbyNote.SetText(strings.TrimSpace(note + "\n" + p.serveErr))
 	p.lobbyNote.SetVisible(p.lobbyNote.GetText() != "")
 	if first := strings.Join(urls[:min(1, len(urls))], ""); first != p.qrFor {
-		p.qrFor, p.qr = first, nil
-		if first != "" {
-			if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(first, gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
-				p.qr = m
-			}
-		}
+		p.qrFor, p.qr = first, qrOf(first)
 		p.qrCanvas.redraw()
 	}
 	p.lobbyCode.SelectRegion(0, 0)
@@ -340,28 +340,8 @@ func (p *fortune) setupLobby() *gtk.Box {
 
 const qrSide = 220
 
-// paintQR draws the link's QR code, dark modules on white with its quiet
-// zone.
-func (p *fortune) paintQR(pn pen) {
-	pn.Color(white)
-	pn.Rect(0, 0, qrSide, qrSide)
-	pn.Fill()
-	m := p.qr
-	if m == nil {
-		return
-	}
-	n := float64(m.GetWidth())
-	k := qrSide / n
-	pn.Color(color.NRGBA{0x1F, 0x1B, 0x17, 255})
-	for y := range m.GetHeight() {
-		for x := range m.GetWidth() {
-			if m.Get(x, y) {
-				pn.Rect(float64(x)*k, float64(y)*k, k+0.3, k+0.3) // a little over, no seams
-			}
-		}
-	}
-	pn.Fill()
-}
+// paintQR draws the link's QR code.
+func (p *fortune) paintQR(pn pen) { drawQR(pn, p.qr, qrSide) }
 
 // artScale is how many pixels a unit of the cards and signs is drawn at,
 // for the browsers' screens.

@@ -120,7 +120,7 @@ type shellUI struct {
 	onClock                glib.SourceFunc
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onLauncherPick         func(gtk.GestureClick, int32, float64, float64)
-	onLauncherAction       func(gio.SimpleAction, uintptr)
+	onLauncherCatch        func(gtk.GestureClick, int32, float64, float64)
 	onLauncherMenuClosed   func(gtk.Popover)
 	onLauncherGone         glib.SourceFunc
 	onLauncherScrolled     func(gtk.Adjustment)
@@ -160,7 +160,6 @@ type shellUI struct {
 	onPowerDisarm          glib.SourceFunc
 	onTrayClicked          func(gtk.Button)
 	onTrayPressed          func(gtk.GestureClick, int32, float64, float64)
-	onTrayMenuAction       func(gio.SimpleAction, uintptr)
 	onTrayMenuClosed       func(gtk.Popover)
 	onSettingsEntry        func(uintptr, uintptr)
 	onSettingsSwitch       func(gtk.Switch, bool) bool
@@ -210,10 +209,8 @@ type shellUI struct {
 	onAboutLink            func(gtk.Button)
 	onSettingsButton       func(gtk.Button)
 	onThemeMenu            func(gtk.GestureClick, int32, float64, float64)
-	onThemeAction          func(gio.SimpleAction, uintptr)
 	onThemeMenuClosed      func(gtk.Popover)
 	onIconSetMenu          func(gtk.GestureClick, int32, float64, float64)
-	onIconSetAction        func(gio.SimpleAction, uintptr)
 	onPreviewKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onSettingsClose        func(gtk.Window) bool
 	onSettingsKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
@@ -253,8 +250,8 @@ type shellUI struct {
 	onWidgetsRevealed      func(uintptr, uintptr, uintptr)
 	onWidgetButton         func(gtk.Button)
 	onWidgetMenu           func(gtk.GestureClick, int32, float64, float64)
-	onWidgetAction         func(gio.SimpleAction, uintptr)
 	onWidgetMenuClosed     func(gtk.Popover)
+	onWidgetsAddActive     func(uintptr, uintptr, uintptr)
 	onWidgetDrop           func(gtk.DropTarget, uintptr, float64, float64) bool
 	onWidgetQuery          func(gtk.SearchEntry)
 	onWidgetQueryActivate  func(gtk.SearchEntry)
@@ -324,8 +321,7 @@ type shellUI struct {
 	onDrawerGone           glib.SourceFunc
 	onWorkshopTick         glib.SourceFunc
 	onDockMenu             func(gtk.GestureClick, int32, float64, float64)
-	onDockAction           func(gio.SimpleAction, uintptr)
-	onDockMenuClosed       func(gtk.Popover)
+	onDockMenuItem         func(gtk.Button)
 	onDockEnter            func(gtk.EventControllerMotion, float64, float64)
 	onDockLeave            func(gtk.EventControllerMotion)
 	onDockHide             glib.SourceFunc

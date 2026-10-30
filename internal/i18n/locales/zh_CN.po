@@ -135,7 +135,7 @@ msgstr "黑"
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
-#: internal/ui/widgets.go:978
+#: internal/ui/widgets.go:992
 msgid "Monday, January 2"
 msgstr "1月2日 Monday"
 
@@ -176,7 +176,7 @@ msgstr "周日"
 #: internal/mailui/window.go:1434
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
-#: internal/ui/widgets.go:1036
+#: internal/ui/widgets.go:1050
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr "周一"
@@ -224,7 +224,7 @@ msgstr "周末"
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:360
-#: internal/ui/widgets.go:1038
+#: internal/ui/widgets.go:1052
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -347,9 +347,9 @@ msgid "%d%%, charging"
 msgstr "%d%%，正在充电"
 
 #: internal/apps/connect/service.go:519
-#: internal/ui/settings.go:344
-#: internal/ui/settings.go:779
-#: internal/ui/settings.go:883
+#: internal/ui/settings.go:336
+#: internal/ui/settings.go:773
+#: internal/ui/settings.go:877
 #: internal/ui/settings_displays.go:418
 msgid "%d%%"
 msgstr "%d%%"
@@ -396,7 +396,7 @@ msgstr "打开"
 #: internal/apps/connect/share.go:129
 #: internal/ui/record.go:157
 #: internal/ui/screenshot.go:1140
-#: internal/ui/settings_custom.go:50
+#: internal/ui/settings_custom.go:41
 msgid "Show in Folder"
 msgstr "在文件夹中显示"
 
@@ -573,12 +573,13 @@ msgstr "开发"
 #: internal/apps/disk/rules.go:43
 #: internal/games/checkersnet/host.go:326
 #: internal/games/checkersnet/texts.go:31
-#: internal/games/lobby/texts.go:27
-#: internal/gamesui/checkers.go:463
-#: internal/gamesui/checkers.go:558
+#: internal/games/fortunenet/texts.go:101
+#: internal/games/gameai/gameai.go:51
+#: internal/games/lobby/texts.go:30
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:559
 #: internal/gamesui/fortune.go:427
-#: internal/gamesui/fortune_ai.go:199
-#: internal/gamesui/lobbywin.go:257
+#: internal/gamesui/lobbywin.go:263
 #: internal/mailui/panel.go:51
 #: internal/mailui/panel.go:309
 #: internal/mailui/settings.go:203
@@ -2091,7 +2092,7 @@ msgstr "运行 KDE Connect、GSConnect 或 Valent 的设备可在此网络和 ta
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
 #: internal/termui/headmenu.go:156
-#: internal/termui/prefsweb.go:165
+#: internal/termui/prefsweb.go:166
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
 #: internal/vmui/window.go:1927
@@ -2114,7 +2115,7 @@ msgstr "服务正在启动。"
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
 #: internal/termui/headmenu.go:164
-#: internal/termui/prefsweb.go:129
+#: internal/termui/prefsweb.go:130
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
 #: internal/ui/settings_displays.go:389
@@ -2166,7 +2167,7 @@ msgstr "%s 请求配对。仅当它显示此密钥时才配对："
 #: internal/termui/keys.go:396
 #: internal/termui/paste.go:337
 #: internal/termui/restart.go:42
-#: internal/termui/wsmenu.go:150
+#: internal/termui/wsmenu.go:127
 #: internal/ui/askpass.go:301
 #: internal/ui/askpass.go:446
 #: internal/ui/askpass.go:450
@@ -2179,8 +2180,8 @@ msgstr "%s 请求配对。仅当它显示此密钥时才配对："
 #: ui/clock.ui:244
 #: ui/clock.ui:454
 #: ui/connectreply.ui:49
-#: ui/files.ui:176
-#: ui/files.ui:274
+#: ui/files.ui:180
+#: ui/files.ui:278
 #: ui/gpg.ui:1253
 #: ui/gpg.ui:1470
 #: ui/gpg.ui:1564
@@ -2227,7 +2228,7 @@ msgstr "已请求 %s 连接。"
 #: internal/ui/settings_ai.go:486
 #: internal/viewerui/app.go:806
 #: ui/connect.ui:291
-#: ui/files.ui:229
+#: ui/files.ui:233
 #: ui/gpg.ui:1343
 #: ui/settings.ui:4977
 #: ui/sysmon.ui:96
@@ -2836,7 +2837,7 @@ msgstr "打开视频文件"
 
 #: internal/desktop/defaults.go:48
 #: internal/lightui/pass_otp.go:340
-#: internal/ui/settings.go:1045
+#: internal/ui/settings.go:1039
 msgid "Images"
 msgstr "图像"
 
@@ -3040,7 +3041,7 @@ msgid "Runs in %s."
 msgstr "在 %s 中运行。"
 
 #: internal/diskui/details.go:578
-#: internal/gamesui/checkers.go:731
+#: internal/gamesui/checkers.go:738
 #: internal/gamesui/fortune_host.go:293
 #: internal/lightui/gpg.go:871
 #: internal/lightui/tailscale.go:470
@@ -3055,13 +3056,14 @@ msgstr "已复制"
 
 #: internal/diskui/details.go:581
 #: internal/filesui/window.go:819
+#: internal/gamesui/lobbyhost.go:169
 #: internal/lightui/pass.go:748
 #: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
 #: internal/shell/launcher_actions.go:59
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
-#: internal/termui/prefsweb.go:91
+#: internal/termui/prefsweb.go:92
 #: internal/ui/askpass.go:232
 #: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
@@ -3113,7 +3115,7 @@ msgstr "主文件夹"
 #: internal/lightui/sysmon.go:967
 #: internal/lightui/tailscale.go:526
 #: internal/lightui/tailscale.go:567
-#: internal/ui/settings.go:580
+#: internal/ui/settings.go:573
 #: ui/vm.ui:2981
 msgid "System"
 msgstr "系统"
@@ -3164,7 +3166,7 @@ msgstr "%s，%s 个文件 · %s"
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
-#: internal/ui/widgets.go:1040
+#: internal/ui/widgets.go:1054
 msgid "15:04"
 msgstr "15:04"
 
@@ -3319,7 +3321,7 @@ msgstr "快速"
 
 #: internal/filesui/archive.go:131
 #: internal/games/checkersnet/texts.go:34
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
 msgid "Normal"
 msgstr "标准"
 
@@ -3526,7 +3528,7 @@ msgid "A folder “%s” is already in %s"
 msgstr "文件夹“%s”已在 %s 中"
 
 #: internal/filesui/cards.go:505
-#: ui/files.ui:372
+#: ui/files.ui:376
 msgid "Do the same for the rest"
 msgstr "其余的也这样处理"
 
@@ -3541,7 +3543,7 @@ msgstr[0] "……还有 %d 项"
 #: internal/shell/launcher_actions.go:53
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
-#: internal/termui/wsmenu.go:152
+#: internal/termui/wsmenu.go:129
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -3663,7 +3665,7 @@ msgstr "复制路径（未选择时复制文件夹路径）"
 #: internal/filesui/window.go:844
 #: internal/lightui/gpg.go:1525
 #: internal/mailui/picker.go:143
-#: internal/ui/settings_custom.go:51
+#: internal/ui/settings_custom.go:42
 #: ui/disk.ui:771
 msgid "Move to Trash"
 msgstr "移到回收站"
@@ -4098,7 +4100,7 @@ msgstr ""
 
 #: internal/filesui/picker.go:494
 #: internal/filesui/window.go:839
-#: internal/termui/wsmenu.go:81
+#: internal/termui/wsmenu.go:69
 msgid "Rename…"
 msgstr "重命名……"
 
@@ -4114,7 +4116,7 @@ msgstr "正在连接 %s……"
 
 #: internal/filesui/remote.go:160
 #: internal/filesui/remotesetup.go:132
-#: internal/gamesui/lobbywin.go:55
+#: internal/gamesui/lobbywin.go:58
 #: internal/ui/settings_bluetooth.go:340
 #: internal/ui/settings_wifi.go:414
 #: internal/ui/settings_wifi.go:439
@@ -4475,7 +4477,7 @@ msgid "A regular expression ($1 in the replacement)"
 msgstr "正则表达式（替换中可用 $1）"
 
 #: internal/filesui/renamemany.go:161
-#: internal/termui/prefsweb.go:80
+#: internal/termui/prefsweb.go:81
 msgid "Where"
 msgstr "位置"
 
@@ -4733,29 +4735,29 @@ msgid "Everyone is in one team: make two at least."
 msgstr "所有人都在同一队：至少要分成两队。"
 
 #: internal/games/checkersnet/host.go:385
-#: internal/games/fortunenet/host.go:302
+#: internal/games/fortunenet/host.go:388
 msgid "The host sent you away."
 msgstr "主机已将你移出游戏。"
 
 #: internal/games/checkersnet/host.go:507
-#: internal/games/fortunenet/host.go:442
+#: internal/games/fortunenet/host.go:528
 msgid "That is not this game's code."
 msgstr "这不是本局游戏的代码。"
 
 #: internal/games/checkersnet/host.go:514
-#: internal/games/fortunenet/host.go:449
+#: internal/games/fortunenet/host.go:535
 msgid "Your seat was taken up in another window."
 msgstr "你的座位已在另一个窗口中打开。"
 
-#: internal/games/checkersnet/server.go:82
+#: internal/games/checkersnet/server.go:84
 msgid "The host closed the game to the network."
 msgstr "主机已关闭网络游戏。"
 
 #: internal/games/checkersnet/texts.go:12
-#: internal/games/lobby/texts.go:31
+#: internal/games/lobby/texts.go:34
 #: internal/gamesui/catalog.go:30
-#: internal/gamesui/lobbywin.go:173
-#: internal/gamesui/lobbywin.go:235
+#: internal/gamesui/lobbywin.go:179
+#: internal/gamesui/lobbywin.go:241
 #: config/apps/io.github.lyricat.Inua.ChineseCheckers.desktop:3
 msgid "Chinese Checkers"
 msgstr "跳棋"
@@ -4769,16 +4771,16 @@ msgstr "你的名字"
 
 #: internal/games/checkersnet/texts.go:14
 #: internal/games/fortunenet/texts.go:19
-#: internal/games/lobby/texts.go:20
-#: internal/gamesui/lobbywin.go:292
+#: internal/games/lobby/texts.go:23
+#: internal/gamesui/lobbywin.go:298
 #: internal/mailui/reader.go:1037
 msgid "Join"
 msgstr "加入"
 
 #: internal/games/checkersnet/texts.go:15
 #: internal/games/fortunenet/texts.go:20
-#: internal/games/lobby/texts.go:21
-#: internal/gamesui/lobbywin.go:294
+#: internal/games/lobby/texts.go:24
+#: internal/gamesui/lobbywin.go:300
 msgid "Watch"
 msgstr "观战"
 
@@ -4808,14 +4810,14 @@ msgstr "观战中"
 
 #: internal/games/checkersnet/texts.go:21
 #: internal/games/fortunenet/texts.go:24
-#: internal/games/lobby/texts.go:28
+#: internal/games/lobby/texts.go:31
 msgid "Connection lost: trying again…"
 msgstr "连接中断：正在重试…"
 
 #: internal/games/checkersnet/texts.go:22
 #: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/checkers.go:178
-#: internal/gamesui/checkers.go:251
+#: internal/gamesui/checkers.go:174
+#: internal/gamesui/checkers.go:247
 #: internal/gamesui/fortune.go:263
 #: internal/gamesui/fortune.go:419
 #: internal/gamesui/fortune_host.go:308
@@ -4824,26 +4826,26 @@ msgstr "玩家"
 
 #: internal/games/checkersnet/texts.go:23
 #: internal/games/fortunenet/texts.go:87
-#: internal/gamesui/checkers.go:320
+#: internal/gamesui/checkers.go:316
 msgid "THE GAME"
 msgstr "游戏"
 
 #: internal/games/checkersnet/texts.go:24
 #: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/checkers.go:208
+#: internal/gamesui/checkers.go:204
 #: internal/gamesui/fortune.go:287
 msgid "WHAT HAPPENED"
 msgstr "发生了什么"
 
 #: internal/games/checkersnet/texts.go:25
 #: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/checkers.go:139
+#: internal/gamesui/checkers.go:135
 #: internal/gamesui/fortune.go:219
 msgid "ROUND"
 msgstr "回合"
 
 #: internal/games/checkersnet/texts.go:26
-#: internal/gamesui/checkers.go:265
+#: internal/gamesui/checkers.go:261
 msgid "%d players"
 msgstr "%d 人"
 
@@ -4853,17 +4855,17 @@ msgstr "空位：等待有人加入"
 
 #: internal/games/checkersnet/texts.go:28
 #: internal/games/fortunenet/texts.go:27
-#: internal/games/lobby/texts.go:24
-#: internal/gamesui/lobbywin.go:256
+#: internal/games/lobby/texts.go:27
+#: internal/gamesui/lobbywin.go:262
 msgid "at the host's screen"
 msgstr "在主机屏幕前"
 
 #: internal/games/checkersnet/texts.go:29
 #: internal/games/fortunenet/texts.go:28
-#: internal/games/lobby/texts.go:25
-#: internal/gamesui/checkers.go:488
+#: internal/games/lobby/texts.go:28
+#: internal/gamesui/checkers.go:484
 #: internal/gamesui/fortune_host.go:188
-#: internal/gamesui/lobbywin.go:256
+#: internal/gamesui/lobbywin.go:262
 msgid "in a browser"
 msgstr "在浏览器中"
 
@@ -4872,18 +4874,18 @@ msgid "the default profile"
 msgstr "默认配置"
 
 #: internal/games/checkersnet/texts.go:33
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
 msgid "Easy"
 msgstr "简单"
 
 #: internal/games/checkersnet/texts.go:35
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
 msgid "Hard"
 msgstr "困难"
 
 #: internal/games/checkersnet/texts.go:36
-#: internal/gamesui/checkers.go:466
-#: internal/gamesui/checkers.go:1040
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:1027
 msgid "Team %s"
 msgstr "%s 队"
 
@@ -4899,31 +4901,31 @@ msgid "sets up the game"
 msgstr "负责设置游戏"
 
 #: internal/games/checkersnet/texts.go:39
-#: internal/gamesui/checkers.go:1049
+#: internal/gamesui/checkers.go:1036
 msgid "away, the computer plays"
 msgstr "已离开，由电脑代玩"
 
 #: internal/games/checkersnet/texts.go:40
-#: internal/gamesui/checkers.go:350
+#: internal/gamesui/checkers.go:346
 msgid "Stay out of other points"
 msgstr "不停在别人的角"
 
 #: internal/games/checkersnet/texts.go:41
-#: internal/gamesui/checkers.go:350
+#: internal/gamesui/checkers.go:346
 msgid "A marble may cross another player's point, but not stop in it."
 msgstr "弹珠可以穿过别人的角，但不能停在那里。"
 
 #: internal/games/checkersnet/texts.go:42
-#: internal/games/fortunenet/texts.go:99
-#: internal/gamesui/checkers.go:383
+#: internal/games/fortunenet/texts.go:102
+#: internal/gamesui/checkers.go:379
 #: internal/gamesui/fortune_host.go:329
 msgid "Start the game"
 msgstr "开始游戏"
 
 #: internal/games/checkersnet/texts.go:43
-#: internal/games/fortunenet/texts.go:100
-#: internal/gamesui/checkers.go:194
-#: internal/gamesui/checkers.go:234
+#: internal/games/fortunenet/texts.go:103
+#: internal/gamesui/checkers.go:190
+#: internal/gamesui/checkers.go:230
 #: internal/gamesui/fortune.go:333
 #: internal/gamesui/fortune.go:1180
 #: ui/game.ui:76
@@ -4931,25 +4933,25 @@ msgid "New game"
 msgstr "新游戏"
 
 #: internal/games/checkersnet/texts.go:44
-#: internal/gamesui/checkers.go:196
+#: internal/gamesui/checkers.go:192
 msgid "Set up again"
 msgstr "重新设置"
 
 #: internal/games/checkersnet/texts.go:45
 #: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/checkers.go:1013
-#: internal/gamesui/checkers.go:1020
+#: internal/gamesui/checkers.go:1000
+#: internal/gamesui/checkers.go:1007
 #: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr "轮到%s"
 
 #: internal/games/checkersnet/texts.go:46
-#: internal/gamesui/checkers.go:1011
+#: internal/gamesui/checkers.go:998
 msgid "Your turn: pick one of your marbles."
 msgstr "轮到你了：选一颗你的弹珠。"
 
 #: internal/games/checkersnet/texts.go:47
-#: internal/gamesui/checkers.go:1016
+#: internal/gamesui/checkers.go:1003
 msgid "You are home: move %s's marbles."
 msgstr "你已到家：替 %s 走弹珠。"
 
@@ -4962,12 +4964,12 @@ msgid "home"
 msgstr "已到家"
 
 #: internal/games/checkersnet/texts.go:50
-#: internal/gamesui/checkers.go:1047
+#: internal/gamesui/checkers.go:1034
 msgid "#%d home"
 msgstr "第 %d 个到家"
 
 #: internal/games/checkersnet/texts.go:51
-#: internal/gamesui/checkers.go:1044
+#: internal/gamesui/checkers.go:1031
 msgid "%d to go"
 msgstr "还差 %d 步"
 
@@ -4976,49 +4978,49 @@ msgid "%d hops"
 msgstr "跳了 %d 次"
 
 #: internal/games/checkersnet/texts.go:53
-#: internal/gamesui/checkers.go:946
+#: internal/gamesui/checkers.go:933
 msgid "%s moved"
 msgstr "%s 走了一步"
 
 #: internal/games/checkersnet/texts.go:54
-#: internal/gamesui/checkers.go:944
+#: internal/gamesui/checkers.go:931
 msgid "%s hopped %d times"
 msgstr "%s 连跳 %d 次"
 
 #: internal/games/checkersnet/texts.go:55
-#: internal/gamesui/checkers.go:942
+#: internal/gamesui/checkers.go:929
 msgid "%s moved %s's marble"
 msgstr "%s 替 %s 走了一颗弹珠"
 
 #: internal/games/checkersnet/texts.go:56
-#: internal/gamesui/checkers.go:949
+#: internal/gamesui/checkers.go:936
 msgid "%s could not move"
 msgstr "%s 无路可走"
 
 #: internal/games/checkersnet/texts.go:57
-#: internal/gamesui/checkers.go:951
+#: internal/gamesui/checkers.go:938
 msgid "%s is home"
 msgstr "%s 全部到家"
 
 #: internal/games/checkersnet/texts.go:58
-#: internal/gamesui/checkers.go:976
+#: internal/gamesui/checkers.go:963
 msgid "%s wins"
 msgstr "%s 获胜"
 
 #: internal/games/checkersnet/texts.go:59
-#: internal/gamesui/checkers.go:982
+#: internal/gamesui/checkers.go:969
 msgid "%s win"
 msgstr "%s 获胜"
 
 #: internal/games/checkersnet/texts.go:60
-#: internal/gamesui/checkers.go:980
+#: internal/gamesui/checkers.go:967
 #: internal/gamesui/fortune.go:595
 msgid "%s and %s"
 msgstr "%[1]s和%[2]s"
 
 #: internal/games/checkersnet/texts.go:61
-#: internal/gamesui/checkers.go:955
-#: internal/gamesui/checkers.go:1009
+#: internal/gamesui/checkers.go:942
+#: internal/gamesui/checkers.go:996
 msgid "No one got home in time: a draw."
 msgstr "没人按时全部到家：平局。"
 
@@ -5087,9 +5089,9 @@ msgid "You"
 msgstr "你"
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/checkers.go:593
+#: internal/gamesui/checkers.go:594
 #: internal/gamesui/fortune.go:677
-#: internal/gamesui/fortune_host.go:46
+#: internal/gamesui/fortune_host.go:44
 msgid "Player %d"
 msgstr "玩家 %d"
 
@@ -5119,14 +5121,14 @@ msgid "%s bought %s for $%d."
 msgstr "%[1]s以$%[3]d购买了%[2]s。"
 
 #: internal/games/fortune.go:605
-#: internal/games/fortunenet/texts.go:103
+#: internal/games/fortunenet/texts.go:106
 #: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr "双"
 
 #: internal/games/fortune.go:607
-#: internal/games/fortunenet/texts.go:104
+#: internal/games/fortunenet/texts.go:107
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr "一六"
@@ -6765,11 +6767,16 @@ msgstr "AI 一直没有回应：此后由电脑替 %s 操作。"
 msgid "No answer from the AI: the computer plays this turn for %s."
 msgstr "AI 没有回应：本回合由电脑替 %s 操作。"
 
+#: internal/games/fortunenet/host.go:285
+#: internal/games/gameai/gameai.go:55
+msgid "AI %d"
+msgstr "AI %d"
+
 #: internal/games/fortunenet/texts.go:17
-#: internal/games/lobby/texts.go:30
+#: internal/games/lobby/texts.go:33
 #: internal/gamesui/catalog.go:26
-#: internal/gamesui/lobbywin.go:173
-#: internal/gamesui/lobbywin.go:234
+#: internal/gamesui/lobbywin.go:179
+#: internal/gamesui/lobbywin.go:240
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:3
 msgid "Small Fortune"
 msgstr "小小富翁"
@@ -7078,97 +7085,129 @@ msgstr "构建您购买的那天"
 msgid "Computer players"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:102
+#: internal/games/fortunenet/texts.go:99
+msgid "AI players"
+msgstr "AI 玩家"
+
+#: internal/games/fortunenet/texts.go:100
+#: internal/games/lobby/texts.go:26
+#: internal/gamesui/checkers.go:561
+#: internal/gamesui/fortune.go:427
+#: internal/gamesui/fortune.go:686
+#: internal/gamesui/lobbywin.go:274
+msgid "Open seat"
+msgstr "空座位"
+
+#: internal/games/fortunenet/texts.go:105
 #: internal/gamesui/fortune_menu.go:172
 #: internal/gamesui/fortune_panel.go:273
 msgid "Collect $%d every time you pass."
 msgstr "每次经过领取 $%d。"
 
-#: internal/games/fortunenet/texts.go:103
-#: internal/games/fortunenet/texts.go:104
+#: internal/games/fortunenet/texts.go:106
+#: internal/games/fortunenet/texts.go:107
 #: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:275
 msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
 msgstr "仅限访问，除非发送至此处。在监狱里，滚动 %s 即可离开，或者在滚动前支付 50 美元；尝试三次后你就付钱然后走。"
 
-#: internal/games/fortunenet/texts.go:105
+#: internal/games/fortunenet/texts.go:108
 #: internal/gamesui/fortune_panel.go:278
 msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
 msgstr "税收和罚款进入喷泉；下一个登陆这里的玩家将获得一切：现在$%d。"
 
-#: internal/games/fortunenet/texts.go:106
+#: internal/games/fortunenet/texts.go:109
 #: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:280
 msgid "Straight to jail, without passing Start."
 msgstr "没有通过Start就直接入狱。"
 
-#: internal/games/fortunenet/texts.go:107
+#: internal/games/fortunenet/texts.go:110
 #: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:282
 msgid "Draw a card: money, a fine, a trip, or a card for your hand."
 msgstr "抽一张卡：金钱、罚款、一次移动，或一张手牌。"
 
-#: internal/games/fortunenet/texts.go:108
+#: internal/games/fortunenet/texts.go:111
 #: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:284
 msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
 msgstr "三张卡牌待售：可以任意购买，也可以不买。手牌最多 %d 张。"
 
-#: internal/games/fortunenet/texts.go:109
+#: internal/games/fortunenet/texts.go:112
 #: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:286
 msgid "Pay $%d into the fountain."
 msgstr "向喷泉支付$%d。"
 
-#: internal/games/fortunenet/texts.go:110
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:244
 msgid "The whole group: bare rent doubled, built rents half again."
 msgstr "整组：空地租金翻倍，有建筑的租金增加一半。"
 
-#: internal/games/fortunenet/texts.go:111
+#: internal/games/fortunenet/texts.go:114
 #: internal/gamesui/fortune_menu.go:176
 #: internal/gamesui/fortune_panel.go:246
 msgid "With the whole group: bare rent doubled, built rents half again."
 msgstr "拥有整组时：空地租金翻倍，有建筑的租金增加一半。"
 
-#: internal/games/fortunenet/texts.go:112
+#: internal/games/fortunenet/texts.go:115
 #: internal/gamesui/fortune_panel.go:259
 msgid "Group:"
 msgstr "组："
 
-#: internal/games/fortunenet/texts.go:113
+#: internal/games/fortunenet/texts.go:116
 #: internal/gamesui/fortune_panel.go:269
 msgid "× %d"
 msgstr "× %d"
 
-#: internal/games/fortunenet/texts.go:115
+#: internal/games/fortunenet/texts.go:118
 #: internal/gamesui/fortune_panel.go:263
 msgid "%d pier"
 msgid_plural "%d piers"
 msgstr[0] "%d 个码头"
 
-#: internal/games/fortunenet/texts.go:118
+#: internal/games/fortunenet/texts.go:121
 #: internal/gamesui/fortune_panel.go:269
 msgid "%d utility"
 msgid_plural "%d utilities"
 msgstr[0] "%d 个公用事业"
 
-#: internal/games/fortunenet/texts.go:121
+#: internal/games/fortunenet/texts.go:124
 #: internal/gamesui/fortune.go:1134
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] " · %d 张卡牌"
 
-#: internal/games/fortunenet/texts.go:124
+#: internal/games/fortunenet/texts.go:127
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] "和 %d 个电脑玩家"
 
-#: internal/games/fortunenet/texts.go:127
+#: internal/games/fortunenet/texts.go:130
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
 msgstr[0] "%d 栋房屋"
+
+#: internal/games/gameai/gameai.go:34
+#: internal/ui/settings_bench.go:227
+#: internal/vmui/assistant.go:109
+msgid "inua-assistant is not installed"
+msgstr "未安装 inua-assistant"
+
+#: internal/games/gameai/gameai.go:43
+msgid "the AI did not answer in time"
+msgstr "AI 未能及时回答"
+
+#: internal/games/gameai/gameai.go:133
+#: internal/gamesui/checkers.go:629
+msgid "no profile of Settings → AI makes decisions"
+msgstr "“设置 → AI”中没有能做决策的配置"
+
+#: internal/games/gameai/gameai.go:177
+msgid "the AI is not running"
+msgstr "AI 未在运行"
 
 #: internal/games/gamerelay/publish.go:131
 msgid "Give the lobby's address."
@@ -7199,11 +7238,28 @@ msgstr ""
 msgid "The lobby turned the game away."
 msgstr ""
 
-#: internal/games/lobby/lobby.go:118
+#: internal/games/lobby/hosted.go:55
+msgid "Only a host opens games at this lobby."
+msgstr "在这个大厅，只有主机能开局。"
+
+#: internal/games/lobby/hosted.go:66
+msgid "A page elsewhere may not open games here."
+msgstr "其他网站的页面不能在这里开局。"
+
+#: internal/games/lobby/hosted.go:75
+#: internal/games/lobby/hosted.go:85
+msgid "The lobby does not host that game."
+msgstr "这个大厅不提供该游戏。"
+
+#: internal/games/lobby/hosted.go:90
+msgid "Someone took this table first."
+msgstr "有人先占了这张桌子。"
+
+#: internal/games/lobby/lobby.go:145
 msgid "No game is at this table now."
 msgstr ""
 
-#: internal/games/lobby/lobby.go:139
+#: internal/games/lobby/lobby.go:166
 msgid "The table's host does not answer."
 msgstr ""
 
@@ -7218,12 +7274,12 @@ msgid "Join a game at a table, or watch one. A host opens a game here from Small
 msgstr ""
 
 #: internal/games/lobby/texts.go:11
-#: internal/gamesui/lobbywin.go:181
+#: internal/gamesui/lobbywin.go:187
 msgid "TABLE %d"
 msgstr ""
 
 #: internal/games/lobby/texts.go:12
-#: internal/gamesui/lobbywin.go:230
+#: internal/gamesui/lobbywin.go:236
 #: internal/lightui/sysmon.go:995
 msgid "Free"
 msgstr "可用"
@@ -7233,53 +7289,69 @@ msgid "A host can open a game here."
 msgstr ""
 
 #: internal/games/lobby/texts.go:14
-#: internal/gamesui/lobbywin.go:225
-#: internal/gamesui/lobbywin.go:241
+msgid "Join a game at a table, watch one, or open one at a free table. A host can also open a game here from Small Fortune or Chinese Checkers in inua."
+msgstr "加入或观看一张桌上的游戏，或在空桌开一局。主机也可以从 inua 的小小富翁或跳棋在这里开局。"
+
+#: internal/games/lobby/texts.go:15
+msgid "Open a game here for others to join."
+msgstr "在这里开一局，等别人加入。"
+
+#: internal/games/lobby/texts.go:16
+msgid "The game could not open: %s"
+msgstr "无法开局：%s"
+
+#: internal/games/lobby/texts.go:17
+#: internal/gamesui/lobbywin.go:231
+#: internal/gamesui/lobbywin.go:247
 msgid "The host’s connection dropped: waiting for it to come back…"
 msgstr ""
 
-#: internal/games/lobby/texts.go:15
-#: internal/gamesui/lobbywin.go:220
+#: internal/games/lobby/texts.go:18
+#: internal/gamesui/lobbywin.go:226
 msgid "Reconnecting…"
 msgstr ""
 
-#: internal/games/lobby/texts.go:16
-#: internal/gamesui/lobbywin.go:245
+#: internal/games/lobby/texts.go:19
+#: internal/gamesui/lobbywin.go:251
 msgid "Waiting to start"
 msgstr ""
 
-#: internal/games/lobby/texts.go:17
-#: internal/gamesui/lobbywin.go:247
+#: internal/games/lobby/texts.go:20
+#: internal/gamesui/lobbywin.go:253
 msgid "Open seats: %d"
 msgstr ""
 
-#: internal/games/lobby/texts.go:18
-#: internal/gamesui/lobbywin.go:251
+#: internal/games/lobby/texts.go:21
+#: internal/gamesui/lobbywin.go:257
 msgid "Playing"
 msgstr ""
 
-#: internal/games/lobby/texts.go:19
-#: internal/gamesui/lobbywin.go:253
+#: internal/games/lobby/texts.go:22
+#: internal/gamesui/lobbywin.go:259
 msgid "Over"
 msgstr ""
 
-#: internal/games/lobby/texts.go:22
-#: internal/gamesui/lobbywin.go:287
+#: internal/games/lobby/texts.go:25
+#: internal/gamesui/lobbywin.go:293
 msgid "%s sets up the game"
 msgstr ""
 
-#: internal/games/lobby/texts.go:23
-#: internal/gamesui/checkers.go:560
-#: internal/gamesui/fortune.go:427
-#: internal/gamesui/fortune.go:686
-#: internal/gamesui/lobbywin.go:268
-msgid "Open seat"
-msgstr "空座位"
-
-#: internal/games/lobby/texts.go:26
-#: internal/gamesui/lobbywin.go:257
+#: internal/games/lobby/texts.go:29
+#: internal/gamesui/lobbywin.go:263
 msgid "computer"
 msgstr ""
+
+#: internal/games/lobbyservice/service_linux.go:49
+msgid "inua-game-lobby is not installed"
+msgstr "未安装 inua-game-lobby"
+
+#: internal/games/lobbyservice/service_linux.go:76
+msgid "inua-game-lobby stopped: %s says why"
+msgstr "inua-game-lobby 已停止：原因见 %s"
+
+#: internal/games/lobbyservice/service_other.go:18
+msgid "A lobby runs as a service only with systemd."
+msgstr "只有在 systemd 下，大厅才能作为服务运行。"
 
 #: internal/games/pinball_rules.go:63
 msgid "Cadet"
@@ -7631,109 +7703,106 @@ msgstr ""
 msgid "Enter connects  ·  N connects again"
 msgstr ""
 
-#: internal/gamesui/checkers.go:351
+#: internal/gamesui/checkers.go:347
 #: internal/gamesui/fortune.go:479
 msgid "On the network"
 msgstr "局域网"
 
-#: internal/gamesui/checkers.go:351
+#: internal/gamesui/checkers.go:347
 msgid "Others join from a browser on this network, with the link or the QR code."
 msgstr "其他人可以在同一网络的浏览器中，通过链接或二维码加入。"
 
-#: internal/gamesui/checkers.go:365
+#: internal/gamesui/checkers.go:361
 #: internal/gamesui/fortune.go:500
 msgid "At a lobby"
 msgstr ""
 
-#: internal/gamesui/checkers.go:365
+#: internal/gamesui/checkers.go:361
 msgid "Others join from a game lobby on the internet, where the game takes a table."
 msgstr ""
 
-#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:458
 msgid "At this screen"
 msgstr "在这台电脑上"
 
-#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:458
 msgid "Open: someone in a browser"
 msgstr "空位：浏览器中的人"
 
-#: internal/gamesui/checkers.go:463
-#: internal/gamesui/checkers.go:463
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
 msgid "Computer · %s"
 msgstr "电脑 · %s"
 
-#: internal/gamesui/checkers.go:490
+#: internal/gamesui/checkers.go:486
 msgid "in a browser · sets up the game"
 msgstr "在浏览器中 · 负责设置游戏"
 
-#: internal/gamesui/checkers.go:492
+#: internal/gamesui/checkers.go:488
 #: internal/gamesui/fortune_host.go:192
 msgid "Send away"
 msgstr "移出"
 
-#: internal/gamesui/checkers.go:526
+#: internal/gamesui/checkers.go:523
 msgid "No one plays at this screen: the first to join from a browser sets the game up, and may start it."
 msgstr "没有人在这台电脑上玩：第一个从浏览器加入的人设置游戏，并可以开始。"
 
-#: internal/gamesui/checkers.go:568
+#: internal/gamesui/checkers.go:569
 #: internal/gamesui/fortune.go:674
 #: internal/gamesui/fortune_host.go:188
 msgid "at this screen"
 msgstr "在这台屏幕前"
 
-#: internal/gamesui/checkers.go:570
+#: internal/gamesui/checkers.go:571
 msgid "the computer"
 msgstr "电脑"
 
-#: internal/gamesui/checkers.go:574
+#: internal/gamesui/checkers.go:575
 msgid "Asking the AI…"
 msgstr "正在询问 AI…"
 
-#: internal/gamesui/checkers.go:578
+#: internal/gamesui/checkers.go:579
 msgid "the AI of Settings → AI"
 msgstr "“设置 → AI”中的 AI"
 
-#: internal/gamesui/checkers.go:581
+#: internal/gamesui/checkers.go:582
 msgid "the computer, unless the game is on the network"
 msgstr "电脑，除非游戏在网络上"
 
-#: internal/gamesui/checkers.go:583
+#: internal/gamesui/checkers.go:584
 msgid "waiting for someone to join"
 msgstr "等待有人加入"
 
-#: internal/gamesui/checkers.go:622
-msgid "no profile of Settings → AI makes decisions"
-msgstr "“设置 → AI”中没有能做决策的配置"
-
-#: internal/gamesui/checkers.go:702
+#: internal/gamesui/checkers.go:709
 #: internal/gamesui/fortune.go:221
 #: internal/gamesui/fortune_host.go:281
 msgid "JOIN CODE"
 msgstr "加入代码"
 
-#: internal/gamesui/checkers.go:732
-#: internal/gamesui/checkers.go:735
+#: internal/gamesui/checkers.go:739
+#: internal/gamesui/checkers.go:742
 #: internal/gamesui/fortune_host.go:294
 #: internal/gamesui/fortune_host.go:297
 msgid "Copy link"
 msgstr "复制链接"
 
-#: internal/gamesui/checkers.go:774
+#: internal/gamesui/checkers.go:781
+#: internal/gamesui/lobbyhost.go:327
 msgid "This computer is on no network a browser could reach it from."
 msgstr "这台电脑不在任何浏览器能访问到的网络上。"
 
-#: internal/gamesui/checkers.go:783
-#: internal/gamesui/fortune_host.go:110
+#: internal/gamesui/checkers.go:790
+#: internal/gamesui/fortune_host.go:115
 msgid "Scan the code, or open the link in a browser."
 msgstr ""
 
-#: internal/gamesui/checkers.go:785
-#: internal/gamesui/fortune_host.go:112
+#: internal/gamesui/checkers.go:792
+#: internal/gamesui/fortune_host.go:117
 msgid "Scan the code, or open the link in a browser on this network."
 msgstr "扫描二维码，或在同一网络的浏览器中打开链接。"
 
-#: internal/gamesui/checkers.go:1058
+#: internal/gamesui/checkers.go:1045
 msgid "Join code %s"
 msgstr "加入码 %s"
 
@@ -7773,38 +7842,24 @@ msgstr "%s 正在思考…"
 msgid "Pay $50 bail"
 msgstr "缴纳50美元保释金"
 
-#: internal/gamesui/fortune_ai.go:80
-#: internal/ui/settings_bench.go:227
-#: internal/vmui/assistant.go:109
-msgid "inua-assistant is not installed"
-msgstr "未安装 inua-assistant"
-
-#: internal/gamesui/fortune_ai.go:113
+#: internal/gamesui/fortune_ai.go:106
 msgid "the AI picked the wrong option"
 msgstr "AI 选错了选项"
 
-#: internal/gamesui/fortune_ai.go:143
-msgid "the AI did not answer in time"
-msgstr "AI 未能及时回答"
-
-#: internal/gamesui/fortune_ai.go:156
-#: internal/gamesui/fortune_ai.go:162
+#: internal/gamesui/fortune_ai.go:142
+#: internal/gamesui/fortune_ai.go:148
 msgid "checking the AI…"
 msgstr "正在检查 AI…"
 
-#: internal/gamesui/fortune_ai.go:164
+#: internal/gamesui/fortune_ai.go:150
 msgid "this profile did not answer"
 msgstr "此配置没有回应"
 
-#: internal/gamesui/fortune_ai.go:172
+#: internal/gamesui/fortune_ai.go:158
 msgid "the AI: %s"
 msgstr "AI：%s"
 
-#: internal/gamesui/fortune_ai.go:202
-msgid "AI %d"
-msgstr "AI %d"
-
-#: internal/gamesui/fortune_ai.go:216
+#: internal/gamesui/fortune_ai.go:198
 msgid "The profile of Settings → AI this player asks"
 msgstr "此玩家使用的“设置”→“AI”中的配置"
 
@@ -7864,7 +7919,7 @@ msgstr "别墅"
 msgid "palazzi"
 msgstr "宫殿"
 
-#: internal/gamesui/fortune_host.go:65
+#: internal/gamesui/fortune_host.go:70
 msgid "The game could not open to the network: %v"
 msgstr "无法向网络开放游戏：%v"
 
@@ -7962,48 +8017,128 @@ msgstr "%s 的卡牌 · %d / %d"
 msgid "Plays on the square in focus: %s."
 msgstr "作用于选中的格子：%s。"
 
-#: internal/gamesui/lobby.go:61
+#: internal/gamesui/lobby.go:69
 msgid "The lobby's address"
 msgstr ""
 
-#: internal/gamesui/lobby.go:62
+#: internal/gamesui/lobby.go:70
 msgid "As the lobby's host gave it: lobby.example.org, with ?key=… when it asks for a key."
 msgstr ""
 
-#: internal/gamesui/lobby.go:92
+#: internal/gamesui/lobby.go:100
 msgid "At table %d of the lobby."
 msgstr ""
 
-#: internal/gamesui/lobby.go:94
+#: internal/gamesui/lobby.go:102
 msgid "Not at the lobby: %v"
 msgstr ""
 
-#: internal/gamesui/lobby.go:96
-#: internal/gamesui/lobbywin.go:105
+#: internal/gamesui/lobby.go:104
+#: internal/gamesui/lobbywin.go:108
 msgid "Connecting to the lobby…"
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:62
+#: internal/gamesui/lobbyhost.go:70
+msgid "Run a lobby on this computer"
+msgstr "在这台电脑上运行大厅"
+
+#: internal/gamesui/lobbyhost.go:74
+msgid "Its games go on when this window closes, and the AI may play in them."
+msgstr "关闭此窗口后对局仍会继续，AI 也可以参与。"
+
+#: internal/gamesui/lobbyhost.go:89
+#: internal/termui/prefsweb.go:60
+msgid "no address: is Tailscale up?"
+msgstr "无地址：Tailscale 是否已启动？"
+
+#: internal/gamesui/lobbyhost.go:97
+msgid "This network"
+msgstr "本网络"
+
+#: internal/gamesui/lobbyhost.go:97
+msgid "Every address of this computer: anyone on its networks can open the lobby"
+msgstr "这台电脑的所有地址：同一网络上的任何人都能打开大厅"
+
+#: internal/gamesui/lobbyhost.go:98
+#: internal/gamesui/lobbyhost.go:98
+#: internal/lightui/apps.go:23
+#: internal/termui/headmenu.go:152
+#: internal/termui/prefsweb.go:66
+#: ui/control.ui:536
+#: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
+msgid "Tailscale"
+msgstr "Tailscale"
+
+#: internal/gamesui/lobbyhost.go:98
+msgid "only the devices on the tailnet can open the lobby"
+msgstr "只有 tailnet 中的设备能打开大厅"
+
+#: internal/gamesui/lobbyhost.go:123
+msgid "Run the lobby, or stop it and the games at it"
+msgstr "运行大厅，或停止大厅及其中的对局"
+
+#: internal/gamesui/lobbyhost.go:148
+msgid "OTHERS OPEN"
+msgstr "他人打开的地址"
+
+#: internal/gamesui/lobbyhost.go:207
+msgid "The lobby stopped with an error and is started again: %s says why."
+msgstr "大厅因错误停止，正在重新启动：原因见 %s。"
+
+#: internal/gamesui/lobbyhost.go:283
+msgid "off"
+msgstr "关闭"
+
+#: internal/gamesui/lobbyhost.go:283
+msgid "starting…"
+msgstr "正在启动…"
+
+#: internal/gamesui/lobbyhost.go:284
+msgid "listening"
+msgstr "监听中"
+
+#: internal/gamesui/lobbyhost.go:284
+msgid "failed"
+msgstr "失败"
+
+#: internal/gamesui/lobbyhost.go:305
+#: internal/termui/prefsweb.go:152
+msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
+msgstr "这台电脑没有 Tailscale 地址：Tailscale 是否已启动？（tailscale up）"
+
+#: internal/gamesui/lobbyhost.go:307
+msgid "The lobby did not start in time: %s says why."
+msgstr "大厅未能及时启动：原因见 %s。"
+
+#: internal/gamesui/lobbyhost.go:333
+msgid "Open it on a device on the tailnet."
+msgstr "在 tailnet 中的设备上打开。"
+
+#: internal/gamesui/lobbyhost.go:336
+msgid "Open it in a browser on this network."
+msgstr "在同一网络的浏览器中打开。"
+
+#: internal/gamesui/lobbywin.go:65
 msgid "Open in the browser"
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:97
+#: internal/gamesui/lobbywin.go:100
 msgid "Give the address of a game lobby to see its tables."
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:128
+#: internal/gamesui/lobbywin.go:131
 msgid "The lobby cannot be reached: %v. Trying again…"
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:159
+#: internal/gamesui/lobbywin.go:165
 msgid "Games at %d of %d tables; %d free."
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:231
+#: internal/gamesui/lobbywin.go:237
 msgid "Host a game here: it opens set to this table."
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:324
+#: internal/gamesui/lobbywin.go:330
 msgid "The browser could not be opened: %v"
 msgstr ""
 
@@ -8456,7 +8591,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: internal/ui/widgets.go:620
+#: internal/ui/widgets.go:587
 #: ui/settings.ui:1188
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8465,8 +8600,8 @@ msgstr "时钟"
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:224
 #: internal/ui/agenda.go:334
-#: internal/ui/widgets.go:622
-#: internal/ui/widgets.go:1057
+#: internal/ui/widgets.go:589
+#: internal/ui/widgets.go:1071
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr "天气"
@@ -8483,7 +8618,7 @@ msgid "Calculator"
 msgstr "计算器"
 
 #: internal/lightui/apps.go:20
-#: internal/ui/widgets.go:621
+#: internal/ui/widgets.go:588
 #: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
@@ -8499,14 +8634,6 @@ msgstr "取色器"
 #: config/apps/io.github.lyricat.Inua.SystemMonitor.desktop:3
 msgid "System Monitor"
 msgstr "系统监视器"
-
-#: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:152
-#: internal/termui/prefsweb.go:65
-#: ui/control.ui:536
-#: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
-msgid "Tailscale"
-msgstr "Tailscale"
 
 #: internal/lightui/apps.go:24
 #: internal/lightui/pass.go:266
@@ -8540,7 +8667,7 @@ msgstr "使用%s"
 
 #: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
-#: internal/ui/widgets.go:1010
+#: internal/ui/widgets.go:1024
 msgid "January 2006"
 msgstr "2006年1月"
 
@@ -9086,7 +9213,7 @@ msgid "Cannot play %s: %s"
 msgstr "无法播放 %s：%s"
 
 #: internal/lightui/music.go:560
-#: internal/ui/widgets.go:1088
+#: internal/ui/widgets.go:1102
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr "未在播放"
@@ -9180,8 +9307,8 @@ msgid "Top level"
 msgstr "顶层"
 
 #: internal/lightui/pass.go:419
-#: internal/ui/settings.go:908
-#: internal/ui/settings.go:935
+#: internal/ui/settings.go:902
+#: internal/ui/settings.go:929
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d 条"
@@ -9426,7 +9553,7 @@ msgstr "这不是本应用能读取的图片（PNG 或 JPEG）。"
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
-#: internal/ui/widgets.go:936
+#: internal/ui/widgets.go:950
 #: ui/connect.ui:967
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -9510,7 +9637,7 @@ msgstr "无法搜索:%s"
 #: internal/lightui/sysmon.go:54
 #: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
-#: internal/ui/dock.go:487
+#: internal/ui/dock.go:496
 #: internal/ui/portal_ask.go:80
 msgid "Quit"
 msgstr "退出"
@@ -12539,7 +12666,7 @@ msgid "%d thr"
 msgstr "%d 线程"
 
 #: internal/shell/cardterm.go:136
-#: internal/ui/settings.go:578
+#: internal/ui/settings.go:571
 msgid "Desktop"
 msgstr "桌面"
 
@@ -12838,7 +12965,7 @@ msgid "[WINDOWS]"
 msgstr "[窗口]"
 
 #: internal/shell/launcher.go:50
-#: internal/ui/widgets.go:633
+#: internal/ui/widgets.go:600
 msgid "[APPS]"
 msgstr "[应用]"
 
@@ -12896,22 +13023,22 @@ msgid "%s · workspace %s"
 msgstr "%[1]s·工作空间%[2]s"
 
 #: internal/shell/launcher_actions.go:33
-#: internal/ui/dock.go:478
+#: internal/ui/dock.go:487
 msgid "New Window"
 msgstr "新窗口"
 
 #: internal/shell/launcher_actions.go:39
-#: internal/ui/dock.go:481
+#: internal/ui/dock.go:490
 msgid "Remove from Dock"
 msgstr "从扩展坞中移除"
 
 #: internal/shell/launcher_actions.go:41
-#: internal/ui/dock.go:483
+#: internal/ui/dock.go:492
 msgid "Keep in Dock"
 msgstr "固定到程序坞"
 
 #: internal/shell/launcher_actions.go:47
-#: internal/ui/dock.go:489
+#: internal/ui/dock.go:498
 msgid "Quit (%d windows)"
 msgstr "退出(%d窗口)"
 
@@ -13781,7 +13908,7 @@ msgid "Command palette"
 msgstr "命令面板"
 
 #: internal/termui/headmenu.go:117
-#: internal/termui/prefsweb.go:41
+#: internal/termui/prefsweb.go:42
 msgid "WEB TERMINAL"
 msgstr "网页终端"
 
@@ -13820,7 +13947,7 @@ msgid "On, but not running"
 msgstr "已打开，但未运行"
 
 #: internal/termui/keys.go:257
-#: internal/termui/wsmenu.go:136
+#: internal/termui/wsmenu.go:113
 msgid "Close %s?"
 msgstr "关闭 %s？"
 
@@ -14083,51 +14210,43 @@ msgstr "按键需要搭配 Ctrl、Alt 或 Super：其余按键属于程序。"
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s 原属于 %s；该操作现在没有按键。"
 
-#: internal/termui/prefsweb.go:41
+#: internal/termui/prefsweb.go:42
 msgid "The terminals in a browser, a phone's over Tailscale"
 msgstr "在浏览器中使用终端，手机可通过 Tailscale 访问"
 
-#: internal/termui/prefsweb.go:55
+#: internal/termui/prefsweb.go:56
 msgid "Web Terminal"
 msgstr "网页终端"
 
-#: internal/termui/prefsweb.go:55
+#: internal/termui/prefsweb.go:56
 msgid "Serve the terminals to a browser; it starts again at login while on"
 msgstr "向浏览器提供终端；开启时会在登录时再次启动"
 
-#: internal/termui/prefsweb.go:59
-msgid "no address: is Tailscale up?"
-msgstr "无地址：Tailscale 是否已启动？"
-
-#: internal/termui/prefsweb.go:64
+#: internal/termui/prefsweb.go:65
 msgid "This computer only"
 msgstr "仅限这台电脑"
 
-#: internal/termui/prefsweb.go:80
+#: internal/termui/prefsweb.go:81
 msgid "Tailscale: on this computer's Tailscale address, for a phone on the tailnet"
 msgstr "Tailscale：使用这台电脑的 Tailscale 地址，供 tailnet 上的手机访问"
 
-#: internal/termui/prefsweb.go:98
+#: internal/termui/prefsweb.go:99
 msgid "New link"
 msgstr "新链接"
 
-#: internal/termui/prefsweb.go:104
+#: internal/termui/prefsweb.go:105
 msgid "Link"
 msgstr "链接"
 
-#: internal/termui/prefsweb.go:104
+#: internal/termui/prefsweb.go:105
 msgid "Open it on the phone; New link stops the old one working"
 msgstr "在手机上打开；新建链接后旧链接将失效"
 
-#: internal/termui/prefsweb.go:149
+#: internal/termui/prefsweb.go:150
 msgid "The link's token could be kept neither in the keyring nor in a file."
 msgstr ""
 
-#: internal/termui/prefsweb.go:151
-msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
-msgstr "这台电脑没有 Tailscale 地址：Tailscale 是否已启动？（tailscale up）"
-
-#: internal/termui/prefsweb.go:153
+#: internal/termui/prefsweb.go:154
 msgid "The Web Terminal did not start in time."
 msgstr "网页终端未能及时启动。"
 
@@ -14140,7 +14259,7 @@ msgid "Every program in the panes ends. The sessions come back, each pane's last
 msgstr "窗格中的所有程序都会结束。会话会回来，每个窗格的最后一条命令放回提示符处，不会运行；智能体以其恢复命令回来。"
 
 #: internal/termui/restart.go:34
-#: internal/termui/wsmenu.go:141
+#: internal/termui/wsmenu.go:118
 msgid "%d agent is working or waiting for you."
 msgid_plural "%d agents are working or waiting for you."
 msgstr[0] "%d 个智能体正在工作或等待你。"
@@ -14167,24 +14286,24 @@ msgstr "%s\n分支 %s"
 msgid "%s, a worktree of %s\nBranch %s"
 msgstr "%s（%s 的 worktree）\n分支 %s"
 
-#: internal/termui/wsmenu.go:82
+#: internal/termui/wsmenu.go:70
 msgid "Close…"
 msgstr "关闭…"
 
-#: internal/termui/wsmenu.go:114
+#: internal/termui/wsmenu.go:91
 msgid "Rename the workspace"
 msgstr "重命名工作区"
 
-#: internal/termui/wsmenu.go:137
+#: internal/termui/wsmenu.go:114
 msgid "Its %s and %s end, and every program running in them quits."
 msgstr "其中的 %s和 %s都会结束，在其中运行的所有程序都会退出。"
 
-#: internal/termui/wsmenu.go:138
+#: internal/termui/wsmenu.go:115
 msgid "%d session"
 msgid_plural "%d sessions"
 msgstr[0] "%d 个会话"
 
-#: internal/termui/wsmenu.go:139
+#: internal/termui/wsmenu.go:116
 msgid "%d pane"
 msgid_plural "%d panes"
 msgstr[0] "%d 个窗格"
@@ -14194,32 +14313,32 @@ msgid "inua calendar"
 msgstr "inua日历"
 
 #: internal/ui/agenda.go:227
-#: internal/ui/widgets.go:978
+#: internal/ui/widgets.go:992
 msgid "%s · WK %d"
 msgstr "%s · 第 %d 周"
 
 #: internal/ui/agenda.go:335
-#: internal/ui/widgets.go:1058
+#: internal/ui/widgets.go:1072
 msgid "Add a place in Weather to see it here"
 msgstr "在天气中添加地点即可在此处查看"
 
 #: internal/ui/agenda.go:346
-#: internal/ui/widgets.go:1064
+#: internal/ui/widgets.go:1078
 msgid "No forecast: offline?"
 msgstr "无预测：离线？"
 
 #: internal/ui/agenda.go:348
-#: internal/ui/widgets.go:1062
+#: internal/ui/widgets.go:1076
 msgid "Reading the forecast…"
 msgstr "阅读预测……"
 
 #: internal/ui/agenda.go:356
-#: internal/ui/widgets.go:1071
+#: internal/ui/widgets.go:1085
 msgid "%s · feels %s"
 msgstr "%[1]s·感觉%[2]s"
 
 #: internal/ui/agenda.go:359
-#: internal/ui/widgets.go:1073
+#: internal/ui/widgets.go:1087
 msgid "H %s  L %s"
 msgstr "H %[1]s L %[2]s"
 
@@ -14566,7 +14685,7 @@ msgid "Searching…"
 msgstr "正在搜索…"
 
 #: internal/ui/control_detail.go:214
-#: internal/ui/settings.go:577
+#: internal/ui/settings.go:570
 msgid "Devices"
 msgstr "设备"
 
@@ -14584,19 +14703,19 @@ msgstr "蓝牙已关闭。"
 msgid "No devices paired yet"
 msgstr "还没有配对的设备"
 
-#: internal/ui/drawer.go:215
-#: internal/ui/settings.go:579
-#: internal/ui/widgets.go:624
+#: internal/ui/drawer.go:217
+#: internal/ui/settings.go:572
+#: internal/ui/widgets.go:591
 #: ui/settings.ui:181
 #: ui/settings.ui:2011
 msgid "Apps"
 msgstr "应用程序"
 
-#: internal/ui/drawer.go:218
+#: internal/ui/drawer.go:220
 msgid "Workshop apps"
 msgstr "工坊应用"
 
-#: internal/ui/drawer.go:321
+#: internal/ui/drawer.go:338
 msgid "The light apps are not installed (make install)."
 msgstr "轻型应用程序未安装(make install)。"
 
@@ -14640,7 +14759,7 @@ msgstr "hyprland.lua 在加载 inua.lua 之后又设置了这些,会盖过 inua 
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf 在加载 inua.conf 后再次设置这些,这赢得了 inua: %s。将源代码行移到它们下方。"
 
-#: internal/ui/launcher.go:471
+#: internal/ui/launcher.go:516
 msgid "inua launcher"
 msgstr "inua发射器"
 
@@ -14962,119 +15081,119 @@ msgstr "截图已复制"
 msgid "Screenshot taken"
 msgstr "截图"
 
-#: internal/ui/settings.go:326
+#: internal/ui/settings.go:318
 msgid "Not restarted: %s"
 msgstr "未重新启动：%s"
 
-#: internal/ui/settings.go:351
-#: internal/ui/settings.go:781
+#: internal/ui/settings.go:343
+#: internal/ui/settings.go:775
 msgid "%d px"
 msgstr "%d 像素"
 
-#: internal/ui/settings.go:576
+#: internal/ui/settings.go:569
 msgid "Connections"
 msgstr "连接"
 
-#: internal/ui/settings.go:687
+#: internal/ui/settings.go:681
 msgid "%s · yours: right-click for more"
 msgstr "%s · 你的主题：右键查看更多"
 
-#: internal/ui/settings.go:704
+#: internal/ui/settings.go:698
 msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
 msgstr "由 @define-color 行组成的 CSS 文件，放在 config.toml 旁的 themes 中"
 
-#: internal/ui/settings.go:713
+#: internal/ui/settings.go:707
 msgid "Add Theme…"
 msgstr "添加主题…"
 
-#: internal/ui/settings.go:813
+#: internal/ui/settings.go:807
 msgid "As the bar (%s)"
 msgstr "同栏（%s）"
 
-#: internal/ui/settings.go:830
+#: internal/ui/settings.go:824
 msgid "inua objects"
 msgstr "inua objects"
 
-#: internal/ui/settings.go:831
+#: internal/ui/settings.go:825
 msgid "inua objects soft"
 msgstr "inua objects soft"
 
-#: internal/ui/settings.go:832
+#: internal/ui/settings.go:826
 msgid "inua objects flat"
 msgstr "inua objects flat"
 
-#: internal/ui/settings.go:840
+#: internal/ui/settings.go:834
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:840
-#: internal/ui/settings.go:841
+#: internal/ui/settings.go:834
+#: internal/ui/settings.go:835
 msgid "System theme"
 msgstr "系统主题"
 
-#: internal/ui/settings.go:841
+#: internal/ui/settings.go:835
 #: ui/settings.ui:545
 msgid "As the app style"
 msgstr "跟随应用风格"
 
-#: internal/ui/settings.go:934
+#: internal/ui/settings.go:928
 msgid "%s (%s, %s) · %s"
 msgstr "%s(%s,%s)· %s"
 
-#: internal/ui/settings.go:936
+#: internal/ui/settings.go:930
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "%d 段文字"
 
-#: internal/ui/settings.go:937
+#: internal/ui/settings.go:931
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "%d 张图片"
 
-#: internal/ui/settings.go:938
+#: internal/ui/settings.go:932
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:1017
+#: internal/ui/settings.go:1011
 #: internal/ui/settings_apps.go:168
 #: internal/ui/settings_card.go:288
 #: internal/ui/settings_portals.go:177
 msgid "Not saved: %s"
 msgstr "未保存：%s"
 
-#: internal/ui/settings.go:1043
+#: internal/ui/settings.go:1037
 msgid "Choose a wallpaper"
 msgstr "选择壁纸"
 
-#: internal/ui/settings.go:1085
+#: internal/ui/settings.go:1079
 msgid "Off: another notification daemon can show them"
 msgstr "关闭：另一个通知守护进程可以显示它们"
 
-#: internal/ui/settings.go:1087
+#: internal/ui/settings.go:1081
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "先显示横幅，再收进通知中心（顶栏铃铛或 Super+N）"
 
-#: internal/ui/settings.go:1089
+#: internal/ui/settings.go:1083
 msgid "Waiting: another notification daemon is running"
 msgstr "等待：另一个通知守护进程正在运行"
 
-#: internal/ui/settings.go:1107
+#: internal/ui/settings.go:1101
 msgid "Nothing pinned"
 msgstr "尚未固定应用"
 
-#: internal/ui/settings.go:1123
+#: internal/ui/settings.go:1117
 msgid "%s (not installed)"
 msgstr "%s(未安装)"
 
-#: internal/ui/settings.go:1136
+#: internal/ui/settings.go:1130
 msgid "Move earlier"
 msgstr "向前移动"
 
-#: internal/ui/settings.go:1137
+#: internal/ui/settings.go:1131
 msgid "Move later"
 msgstr "向后移动"
 
-#: internal/ui/settings.go:1138
+#: internal/ui/settings.go:1132
 msgid "Remove from the dock"
 msgstr "从程序坞移除"
 
@@ -15611,27 +15730,27 @@ msgstr "需检查"
 msgid "Hyprland, with inua on top."
 msgstr "Hyprland，上面是 inua。"
 
-#: internal/ui/settings_custom.go:109
+#: internal/ui/settings_custom.go:97
 msgid "Not moved to the trash: %s"
 msgstr "未移到回收站：%s"
 
-#: internal/ui/settings_custom.go:132
+#: internal/ui/settings_custom.go:120
 msgid "Choose a theme"
 msgstr "选择主题"
 
-#: internal/ui/settings_custom.go:134
+#: internal/ui/settings_custom.go:122
 msgid "Themes (CSS)"
 msgstr "主题（CSS）"
 
-#: internal/ui/settings_custom.go:173
+#: internal/ui/settings_custom.go:161
 msgid "Not added: the name %s is taken; rename the file or folder"
 msgstr "未添加：名称 %s 已被占用；请重命名文件或文件夹"
 
-#: internal/ui/settings_custom.go:175
+#: internal/ui/settings_custom.go:163
 msgid "Not added: a theme has @define-color lines with #rrggbb colours"
 msgstr "未添加：主题须包含使用 #rrggbb 颜色的 @define-color 行"
 
-#: internal/ui/settings_custom.go:177
+#: internal/ui/settings_custom.go:165
 #: internal/ui/settings_keyring.go:181
 msgid "Not added: %s"
 msgstr "未添加：%s"
@@ -15747,23 +15866,23 @@ msgstr "%d × %d"
 msgid "%d × %d, %s Hz"
 msgstr "%d × %d,%s Hz"
 
-#: internal/ui/settings_iconsets.go:54
+#: internal/ui/settings_iconsets.go:53
 msgid "%s · right-click to preview every icon"
 msgstr "%s · 右键预览全部图标"
 
-#: internal/ui/settings_iconsets.go:186
+#: internal/ui/settings_iconsets.go:179
 msgid "Preview All…"
 msgstr "预览全部…"
 
-#: internal/ui/settings_iconsets.go:253
+#: internal/ui/settings_iconsets.go:243
 msgid "inua's apps"
 msgstr "inua 的应用"
 
-#: internal/ui/settings_iconsets.go:262
+#: internal/ui/settings_iconsets.go:252
 msgid "Other apps · %d"
 msgstr "其他应用 · %d"
 
-#: internal/ui/settings_iconsets.go:289
+#: internal/ui/settings_iconsets.go:279
 msgid "%s: every icon"
 msgstr "%s：全部图标"
 
@@ -16651,70 +16770,70 @@ msgstr "voxtype 没有安装成功：%s"
 msgid "voxtype did not start: %s"
 msgstr "voxtype 没有启动：%s"
 
-#: internal/ui/widgets.go:156
+#: internal/ui/widgets.go:158
 msgid "Remove Widget"
 msgstr "移除小组件"
 
-#: internal/ui/widgets.go:158
+#: internal/ui/widgets.go:160
 msgid "Remove from the Page"
 msgstr "从页面移除"
 
-#: internal/ui/widgets.go:589
+#: internal/ui/widgets.go:564
 #: ui/bar.ui:40
 msgid "Engawa"
 msgstr "缘侧"
 
-#: internal/ui/widgets.go:623
+#: internal/ui/widgets.go:590
 msgid "Now Playing"
 msgstr "正在播放"
 
-#: internal/ui/widgets.go:629
+#: internal/ui/widgets.go:596
 msgid "[CLOCK]"
 msgstr "[时钟]"
 
-#: internal/ui/widgets.go:630
+#: internal/ui/widgets.go:597
 #: ui/agenda.ui:46
 msgid "[CALENDAR]"
 msgstr "[日历]"
 
-#: internal/ui/widgets.go:631
+#: internal/ui/widgets.go:598
 msgid "[WEATHER]"
 msgstr "[天气]"
 
-#: internal/ui/widgets.go:632
+#: internal/ui/widgets.go:599
 msgid "[NOW PLAYING]"
 msgstr "[正在播放]"
 
-#: internal/ui/widgets.go:820
+#: internal/ui/widgets.go:834
 msgid "Open Clock"
 msgstr "打开时钟"
 
-#: internal/ui/widgets.go:838
+#: internal/ui/widgets.go:852
 msgid "Open Calendar"
 msgstr "打开日历"
 
-#: internal/ui/widgets.go:873
+#: internal/ui/widgets.go:887
 #: ui/agenda.ui:116
 msgid "Open Weather"
 msgstr "打开天气"
 
-#: internal/ui/widgets.go:938
+#: internal/ui/widgets.go:952
 msgid "Add an app, or drag one here from the dock"
 msgstr "添加应用，或从程序坞拖到这里"
 
-#: internal/ui/widgets.go:1040
+#: internal/ui/widgets.go:1054
 msgid "Alarm %s %s · %s"
 msgstr "闹钟 %s %s · %s"
 
-#: internal/ui/widgets.go:1089
+#: internal/ui/widgets.go:1103
 msgid "A player that plays shows here"
 msgstr "正在播放的播放器会显示在这里"
 
-#: internal/ui/widgets.go:1123
+#: internal/ui/widgets.go:1137
 msgid "Search apps"
 msgstr "搜索应用"
 
-#: internal/ui/widgets.go:1172
+#: internal/ui/widgets.go:1188
 msgid "No app by that name"
 msgstr "没有这个名字的应用"
 
@@ -17965,19 +18084,19 @@ msgstr "清理命令："
 msgid "Hide the sidebar (F9)"
 msgstr "隐藏侧边栏 (F9)"
 
-#: ui/files.ui:78
+#: ui/files.ui:79
 msgid "Hidden files (Ctrl+H)"
 msgstr "隐藏文件（Ctrl+H）"
 
-#: ui/files.ui:88
+#: ui/files.ui:90
 msgid "Two panes (F3)"
 msgstr "双窗格（F3）"
 
-#: ui/files.ui:98
+#: ui/files.ui:101
 msgid "Details (Space)"
 msgstr "详细信息（空格）"
 
-#: ui/files.ui:113
+#: ui/files.ui:117
 msgid "Keys (Ctrl+?)"
 msgstr "快捷键（Ctrl+?）"
 
@@ -18603,12 +18722,12 @@ msgid "<span alpha='55%'>[</span>THEME<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>主题<span alpha='55%'>]</span>"
 
 #: ui/settings.ui:141
-msgid "The bar, launcher, control center and this window"
-msgstr "栏、启动器、控制中心和此窗口"
+msgid "The bar, the dock, the launcher and the control center"
+msgstr "栏、程序坞、启动器和控制中心"
 
 #: ui/settings.ui:190
-msgid "Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above"
-msgstr "文件、终端、查看器和其他应用；程序坞和栏保持上方的主题"
+msgid "This window, Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above"
+msgstr "此窗口、文件、终端、查看器和其他应用；程序坞和栏保持上方的主题"
 
 #: ui/settings.ui:235
 msgid "<span alpha='55%'>[</span>TEXT<span alpha='55%'>]</span>"

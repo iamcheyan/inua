@@ -259,10 +259,6 @@ func (s *shellUI) bindSettingsHandlers() {
 			s.themeMenu(w, x, y)
 		}
 	}
-	s.onThemeAction = func(a gio.SimpleAction, _ uintptr) {
-		name := a.GetName()
-		gtkx.Post(func() { s.themeAction(name) }) // the menu goes first
-	}
 	s.onThemeMenuClosed = func(pop gtk.Popover) {
 		gtkx.Post(func() { pop.Unparent() })
 	}
@@ -270,10 +266,6 @@ func (s *shellUI) bindSettingsHandlers() {
 		if w := g.GetWidget(); w != nil {
 			s.styleMenu(w, x, y)
 		}
-	}
-	s.onIconSetAction = func(gio.SimpleAction, uintptr) {
-		style := s.settings.iconSetMenu
-		gtkx.Post(func() { s.previewAppStyle(style) }) // the menu goes first
 	}
 	s.onPreviewKey = func(k gtk.EventControllerKey, keyval, _ uint32, _ gdk.ModifierType) bool {
 		if keyval != keyEscape {
@@ -427,6 +419,7 @@ func (s *shellUI) openSettings() {
 	st.win = &gtk.ApplicationWindow{}
 	ui := s.load("settings.ui", &st.refs)
 	ui.Get("settings", st.win)
+	s.loadSettingsStyle() // an app's, in the apps' theme
 	ui.Get("status", &st.status)
 	ui.Get("pages", &st.pages)
 	ui.Get("index", &st.index)
@@ -629,6 +622,7 @@ func (s *shellUI) closeSettings() {
 	st.win.Destroy()
 	st.refs.Release()
 	st.win, st.swatches, st.entries, st.drops, st.sticky, st.overlay = nil, nil, nil, nil, nil, nil
+	s.loadSettingsStyle() // gone with it
 	st.styleTiles = nil
 	for _, t := range st.setThemes {
 		t.Unref()

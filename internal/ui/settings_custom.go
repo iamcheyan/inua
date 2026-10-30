@@ -37,22 +37,10 @@ func (s *shellUI) customButton(name string) bool {
 func (s *shellUI) themeMenu(btn *gtk.Widget, x, y float64) {
 	st := &s.settings
 	st.themeMenu = strings.TrimPrefix(btn.GetName(), "theme:")
-	group := gio.NewSimpleActionGroup()
-	for _, name := range []string{"trash", "folder"} {
-		a := gio.NewSimpleAction(name, nil)
-		a.ConnectActivate(&s.onThemeAction)
-		group.AddAction(a)
-		a.Unref()
-	}
-	btn.InsertActionGroup("theme", group)
-	group.Unref()
-	menu := gio.NewMenu()
-	menu.Append(i18n.T("Show in Folder"), "theme.folder")
-	menu.Append(i18n.T("Move to Trash"), "theme.trash")
-	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-	menu.Unref()
-	uikit.Menu(&pop.Popover, uikit.AtPointer)
-	pop.SetHasArrow(false)
+	pop := uikit.NewMenu([]uikit.Item{
+		{Label: i18n.T("Show in Folder"), Run: func() { s.themeAction("folder") }},
+		{Label: i18n.T("Move to Trash"), Run: func() { s.themeAction("trash") }},
+	}, uikit.AtPointer)
 	pop.SetParent(btn)
 	pop.SetPointingTo(&gdk.Rectangle{X: int32(x), Y: int32(y), Width: 1, Height: 1})
 	pop.ConnectClosed(&s.onThemeMenuClosed)
