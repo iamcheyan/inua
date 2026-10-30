@@ -13,3 +13,6 @@ __pycache__/
 # The symlink `nix build` leaves at the tree's top.
 /result
 config/skills/
+
+# Screenshots and scratch files taken while working.
+/dump/
