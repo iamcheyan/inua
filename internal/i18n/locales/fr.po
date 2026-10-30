@@ -135,7 +135,7 @@ msgstr "Noir"
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
-#: internal/ui/widgets.go:948
+#: internal/ui/widgets.go:951
 msgid "Monday, January 2"
 msgstr "Monday 2 January"
 
@@ -176,7 +176,7 @@ msgstr "dim."
 #: internal/mailui/window.go:1432
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
-#: internal/ui/widgets.go:1006
+#: internal/ui/widgets.go:1009
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr "lun."
@@ -224,7 +224,7 @@ msgstr "Week-ends"
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:360
-#: internal/ui/widgets.go:1008
+#: internal/ui/widgets.go:1011
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -2092,7 +2092,7 @@ msgstr "Les appareils avec KDE Connect, GSConnect ou Valent trouvent cet ordinat
 
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
-#: internal/termui/headmenu.go:155
+#: internal/termui/headmenu.go:156
 #: internal/termui/prefsweb.go:165
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
@@ -2115,7 +2115,7 @@ msgstr "Le service démarre."
 #: internal/shell/status.go:118
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
-#: internal/termui/headmenu.go:163
+#: internal/termui/headmenu.go:164
 #: internal/termui/prefsweb.go:129
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
@@ -2168,7 +2168,7 @@ msgstr "%s demande à s'appairer. N'appairez que s'il affiche cette clé :"
 #: internal/termui/keys.go:396
 #: internal/termui/paste.go:337
 #: internal/termui/restart.go:42
-#: internal/termui/wsmenu.go:149
+#: internal/termui/wsmenu.go:150
 #: internal/ui/askpass.go:301
 #: internal/ui/askpass.go:446
 #: internal/ui/askpass.go:450
@@ -3167,7 +3167,7 @@ msgstr "%s dans %s fichiers · %s"
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
-#: internal/ui/widgets.go:1010
+#: internal/ui/widgets.go:1013
 msgid "15:04"
 msgstr "15:04"
 
@@ -3550,7 +3550,7 @@ msgstr[1] "… et %d de plus"
 #: internal/mailui/welcome.go:156
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
-#: internal/termui/wsmenu.go:151
+#: internal/termui/wsmenu.go:152
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -3840,7 +3840,7 @@ msgstr "DOSSIER"
 msgid "Columns"
 msgstr "Colonnes"
 
-#: internal/filesui/columns.go:181
+#: internal/filesui/columns.go:175
 #: internal/lightui/pass.go:1012
 msgid "NAME"
 msgstr "NOM"
@@ -4118,7 +4118,7 @@ msgstr ""
 
 #: internal/filesui/picker.go:494
 #: internal/filesui/window.go:839
-#: internal/termui/wsmenu.go:80
+#: internal/termui/wsmenu.go:81
 msgid "Rename…"
 msgstr "Renommer…"
 
@@ -8319,7 +8319,7 @@ msgstr "Mise au point activée ou désactivée"
 #: internal/shell/dock.go:311
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
-#: internal/termui/headmenu.go:109
+#: internal/termui/headmenu.go:110
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -8490,7 +8490,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: internal/ui/widgets.go:591
+#: internal/ui/widgets.go:594
 #: ui/settings.ui:1264
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8499,8 +8499,8 @@ msgstr "Horloge"
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:224
 #: internal/ui/agenda.go:334
-#: internal/ui/widgets.go:593
-#: internal/ui/widgets.go:1027
+#: internal/ui/widgets.go:596
+#: internal/ui/widgets.go:1030
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr "Météo"
@@ -8517,7 +8517,7 @@ msgid "Calculator"
 msgstr "Calculatrice"
 
 #: internal/lightui/apps.go:20
-#: internal/ui/widgets.go:592
+#: internal/ui/widgets.go:595
 #: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
@@ -8535,7 +8535,7 @@ msgid "System Monitor"
 msgstr "Moniteur système"
 
 #: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:151
+#: internal/termui/headmenu.go:152
 #: internal/termui/prefsweb.go:65
 #: ui/control.ui:536
 #: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
@@ -8574,7 +8574,7 @@ msgstr "Utiliser %s"
 
 #: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
-#: internal/ui/widgets.go:980
+#: internal/ui/widgets.go:983
 msgid "January 2006"
 msgstr "January 2006"
 
@@ -9125,7 +9125,7 @@ msgid "Cannot play %s: %s"
 msgstr "Impossible de lire %s : %s"
 
 #: internal/lightui/music.go:560
-#: internal/ui/widgets.go:1058
+#: internal/ui/widgets.go:1061
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr "Rien en lecture"
@@ -9472,7 +9472,7 @@ msgstr "Ce n’est pas une image que cette app lit (PNG ou JPEG)."
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
-#: internal/ui/widgets.go:906
+#: internal/ui/widgets.go:909
 #: ui/connect.ui:966
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -9555,7 +9555,7 @@ msgstr "Impossible de rechercher : %s"
 #: internal/lightui/sysmon.go:54
 #: internal/lightui/sysmon.go:54
 #: internal/termui/menubar.go:34
-#: internal/ui/dock.go:486
+#: internal/ui/dock.go:487
 #: internal/ui/portal_ask.go:80
 msgid "Quit"
 msgstr "Quitter"
@@ -10713,7 +10713,7 @@ msgstr "Non envoyés"
 #: internal/mailui/actions.go:537
 #: internal/mailui/details.go:190
 #: internal/mailui/people.go:301
-#: internal/mailui/reader.go:231
+#: internal/mailui/reader.go:232
 #: internal/mailui/window.go:1331
 msgid "(no subject)"
 msgstr "(sans objet)"
@@ -11209,67 +11209,67 @@ msgstr "Relisez avant d’envoyer : l’assistant peut se tromper."
 msgid "Open in a window"
 msgstr "Ouvrir dans une fenêtre"
 
-#: internal/mailui/reader.go:94
+#: internal/mailui/reader.go:95
 msgid "Could not read this message: %v"
 msgstr "Impossible de lire ce message : %v"
 
-#: internal/mailui/reader.go:173
+#: internal/mailui/reader.go:174
 msgid "Could not mark it read: %v"
 msgstr "Impossible de le marquer comme lu : %v"
 
-#: internal/mailui/reader.go:293
+#: internal/mailui/reader.go:294
 msgid "Continue writing"
 msgstr "Continuer à écrire"
 
-#: internal/mailui/reader.go:303
+#: internal/mailui/reader.go:304
 msgid "Discard the draft"
 msgstr "Jeter le brouillon"
 
-#: internal/mailui/reader.go:311
+#: internal/mailui/reader.go:312
 msgid "Reply (R)"
 msgstr "Répondre (R)"
 
-#: internal/mailui/reader.go:312
+#: internal/mailui/reader.go:313
 msgid "Reply all (A)"
 msgstr "Répondre à tous (A)"
 
-#: internal/mailui/reader.go:313
+#: internal/mailui/reader.go:314
 msgid "Forward (F)"
 msgstr "Transférer (F)"
 
-#: internal/mailui/reader.go:319
+#: internal/mailui/reader.go:320
 #: internal/mailui/window.go:1247
 msgid "Archive (E)"
 msgstr "Archiver (E)"
 
-#: internal/mailui/reader.go:320
+#: internal/mailui/reader.go:321
 msgid "Move to Trash (D)"
 msgstr "Mettre à la corbeille (D)"
 
-#: internal/mailui/reader.go:322
+#: internal/mailui/reader.go:323
 msgid "Move to Spam (!)"
 msgstr "Déplacer vers Spam (!)"
 
-#: internal/mailui/reader.go:324
+#: internal/mailui/reader.go:325
 msgid "Move to a folder (V)"
 msgstr "Déplacer vers un dossier (V)"
 
-#: internal/mailui/reader.go:326
+#: internal/mailui/reader.go:327
 #: internal/mailui/window.go:1376
 msgid "Star (S)"
 msgstr "Suivre (S)"
 
-#: internal/mailui/reader.go:329
+#: internal/mailui/reader.go:330
 #: internal/mailui/window.go:1373
 msgid "Unstar (S)"
 msgstr "Ne plus suivre (S)"
 
-#: internal/mailui/reader.go:331
+#: internal/mailui/reader.go:332
 #: internal/mailui/window.go:1383
 msgid "Mark as unread (U)"
 msgstr "Marquer comme non lu (U)"
 
-#: internal/mailui/reader.go:341
+#: internal/mailui/reader.go:342
 msgid "More"
 msgstr "Plus"
 
@@ -12903,7 +12903,7 @@ msgid "[WINDOWS]"
 msgstr "[FENÊTRES]"
 
 #: internal/shell/launcher.go:50
-#: internal/ui/widgets.go:604
+#: internal/ui/widgets.go:607
 msgid "[APPS]"
 msgstr "[APPLICATIONS]"
 
@@ -13815,32 +13815,32 @@ msgstr "L'apparence de la fenêtre autour des terminaux. Elle suit le thème d'i
 msgid "Keep these choices; the settings change them later"
 msgstr "Garder ces choix ; les réglages les changent ensuite"
 
-#: internal/termui/headmenu.go:102
+#: internal/termui/headmenu.go:103
 msgid "Command palette"
 msgstr "Palette de commandes"
 
-#: internal/termui/headmenu.go:116
+#: internal/termui/headmenu.go:117
 #: internal/termui/prefsweb.go:41
 msgid "WEB TERMINAL"
 msgstr "TERMINAL WEB"
 
-#: internal/termui/headmenu.go:134
+#: internal/termui/headmenu.go:135
 msgid "Turn on the Web Terminal"
 msgstr "Activer le terminal web"
 
-#: internal/termui/headmenu.go:136
+#: internal/termui/headmenu.go:137
 msgid "Turn off the Web Terminal"
 msgstr "Désactiver le terminal web"
 
-#: internal/termui/headmenu.go:141
+#: internal/termui/headmenu.go:142
 msgid "Restart the terminal host…"
 msgstr "Redémarrer l'hôte du terminal…"
 
-#: internal/termui/headmenu.go:149
+#: internal/termui/headmenu.go:150
 msgid "this computer only"
 msgstr "cet ordinateur seulement"
 
-#: internal/termui/headmenu.go:157
+#: internal/termui/headmenu.go:158
 #: internal/vmui/window.go:1820
 #: internal/vmui/window.go:1885
 #: internal/vmui/window.go:1966
@@ -13850,16 +13850,16 @@ msgstr "cet ordinateur seulement"
 msgid "Stopping…"
 msgstr "Arrêt…"
 
-#: internal/termui/headmenu.go:159
+#: internal/termui/headmenu.go:160
 msgid "On, %s"
 msgstr "Activé, %s"
 
-#: internal/termui/headmenu.go:161
+#: internal/termui/headmenu.go:162
 msgid "On, but not running"
 msgstr "Activé, mais arrêté"
 
 #: internal/termui/keys.go:257
-#: internal/termui/wsmenu.go:135
+#: internal/termui/wsmenu.go:136
 msgid "Close %s?"
 msgstr "Fermer %s ?"
 
@@ -14181,7 +14181,7 @@ msgid "Every program in the panes ends. The sessions come back, each pane's last
 msgstr "Tous les programmes des panneaux se terminent. Les sessions reviennent, la dernière commande de chaque panneau à son invite, non lancée ; les agents reviennent en leur commande de reprise."
 
 #: internal/termui/restart.go:34
-#: internal/termui/wsmenu.go:140
+#: internal/termui/wsmenu.go:141
 msgid "%d agent is working or waiting for you."
 msgid_plural "%d agents are working or waiting for you."
 msgstr[0] "%d agent travaille ou vous attend."
@@ -14209,25 +14209,25 @@ msgstr "%s\nBranche %s"
 msgid "%s, a worktree of %s\nBranch %s"
 msgstr "%s, un worktree de %s\nBranche %s"
 
-#: internal/termui/wsmenu.go:81
+#: internal/termui/wsmenu.go:82
 msgid "Close…"
 msgstr "Fermer…"
 
-#: internal/termui/wsmenu.go:113
+#: internal/termui/wsmenu.go:114
 msgid "Rename the workspace"
 msgstr "Renommer l’espace de travail"
 
-#: internal/termui/wsmenu.go:136
+#: internal/termui/wsmenu.go:137
 msgid "Its %s and %s end, and every program running in them quits."
 msgstr "Ses %s et ses %s se terminent, et tous les programmes qui s’y exécutent quittent."
 
-#: internal/termui/wsmenu.go:137
+#: internal/termui/wsmenu.go:138
 msgid "%d session"
 msgid_plural "%d sessions"
 msgstr[0] "%d session"
 msgstr[1] "%d sessions"
 
-#: internal/termui/wsmenu.go:138
+#: internal/termui/wsmenu.go:139
 msgid "%d pane"
 msgid_plural "%d panes"
 msgstr[0] "%d panneau"
@@ -14238,32 +14238,32 @@ msgid "inua calendar"
 msgstr "Calendrier Inua"
 
 #: internal/ui/agenda.go:227
-#: internal/ui/widgets.go:948
+#: internal/ui/widgets.go:951
 msgid "%s · WK %d"
 msgstr "%s · SEM %d"
 
 #: internal/ui/agenda.go:335
-#: internal/ui/widgets.go:1028
+#: internal/ui/widgets.go:1031
 msgid "Add a place in Weather to see it here"
 msgstr "Ajoutez un lieu dans Météo pour le voir ici"
 
 #: internal/ui/agenda.go:346
-#: internal/ui/widgets.go:1034
+#: internal/ui/widgets.go:1037
 msgid "No forecast: offline?"
 msgstr "Pas de prévision : hors ligne ?"
 
 #: internal/ui/agenda.go:348
-#: internal/ui/widgets.go:1032
+#: internal/ui/widgets.go:1035
 msgid "Reading the forecast…"
 msgstr "Lecture des prévisions…"
 
 #: internal/ui/agenda.go:356
-#: internal/ui/widgets.go:1041
+#: internal/ui/widgets.go:1044
 msgid "%s · feels %s"
 msgstr "%[1]s · se sent %[2]s"
 
 #: internal/ui/agenda.go:359
-#: internal/ui/widgets.go:1043
+#: internal/ui/widgets.go:1046
 msgid "H %s  L %s"
 msgstr "H %[1]s L %[2]s"
 
@@ -14631,25 +14631,25 @@ msgstr "Le Bluetooth est désactivé."
 msgid "No devices paired yet"
 msgstr "Aucun appareil associé pour l’instant"
 
-#: internal/ui/dock.go:477
+#: internal/ui/dock.go:478
 msgid "New Window"
 msgstr "Nouvelle fenêtre"
 
-#: internal/ui/dock.go:480
+#: internal/ui/dock.go:481
 msgid "Remove from Dock"
 msgstr "Supprimer du Dock"
 
-#: internal/ui/dock.go:482
+#: internal/ui/dock.go:483
 msgid "Keep in Dock"
 msgstr "Épingler au dock"
 
-#: internal/ui/dock.go:488
+#: internal/ui/dock.go:489
 msgid "Quit (%d windows)"
 msgstr "Quitter (fenêtres %d)"
 
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:535
-#: internal/ui/widgets.go:595
+#: internal/ui/widgets.go:598
 #: ui/settings.ui:181
 #: ui/settings.ui:2087
 msgid "Apps"
@@ -16700,69 +16700,69 @@ msgstr "voxtype n'a pas été installé : %s"
 msgid "voxtype did not start: %s"
 msgstr "voxtype n'a pas démarré : %s"
 
-#: internal/ui/widgets.go:155
+#: internal/ui/widgets.go:156
 msgid "Remove Widget"
 msgstr "Retirer le widget"
 
-#: internal/ui/widgets.go:157
+#: internal/ui/widgets.go:158
 msgid "Remove from the Page"
 msgstr "Retirer de la page"
 
-#: internal/ui/widgets.go:575
+#: internal/ui/widgets.go:578
 msgid "inua widgets"
 msgstr "Widgets d’inua"
 
-#: internal/ui/widgets.go:594
+#: internal/ui/widgets.go:597
 msgid "Now Playing"
 msgstr "En cours de lecture"
 
-#: internal/ui/widgets.go:600
+#: internal/ui/widgets.go:603
 msgid "[CLOCK]"
 msgstr "[HORLOGE]"
 
-#: internal/ui/widgets.go:601
+#: internal/ui/widgets.go:604
 #: ui/agenda.ui:46
 msgid "[CALENDAR]"
 msgstr "[CALENDRIER]"
 
-#: internal/ui/widgets.go:602
+#: internal/ui/widgets.go:605
 msgid "[WEATHER]"
 msgstr "[MÉTÉO]"
 
-#: internal/ui/widgets.go:603
+#: internal/ui/widgets.go:606
 msgid "[NOW PLAYING]"
 msgstr "[EN COURS]"
 
-#: internal/ui/widgets.go:790
+#: internal/ui/widgets.go:793
 msgid "Open Clock"
 msgstr "Ouvrir Horloge"
 
-#: internal/ui/widgets.go:808
+#: internal/ui/widgets.go:811
 msgid "Open Calendar"
 msgstr "Ouvrir Calendrier"
 
-#: internal/ui/widgets.go:843
+#: internal/ui/widgets.go:846
 #: ui/agenda.ui:116
 msgid "Open Weather"
 msgstr "Ouvrir Météo"
 
-#: internal/ui/widgets.go:908
+#: internal/ui/widgets.go:911
 msgid "Add an app, or drag one here from the dock"
 msgstr "Ajoutez une application, ou glissez-en une ici depuis le dock"
 
-#: internal/ui/widgets.go:1010
+#: internal/ui/widgets.go:1013
 msgid "Alarm %s %s · %s"
 msgstr "Alarme %s %s · %s"
 
-#: internal/ui/widgets.go:1059
+#: internal/ui/widgets.go:1062
 msgid "A player that plays shows here"
 msgstr "Le lecteur en cours s’affiche ici"
 
-#: internal/ui/widgets.go:1093
+#: internal/ui/widgets.go:1096
 msgid "Search apps"
 msgstr "Rechercher des applications"
 
-#: internal/ui/widgets.go:1142
+#: internal/ui/widgets.go:1145
 msgid "No app by that name"
 msgstr "Aucune application de ce nom"
 

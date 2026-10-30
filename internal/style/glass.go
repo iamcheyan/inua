@@ -15,5 +15,5 @@ func Glass(transparency int) string {
 // dock half as much again. It goes after style.css, whose rules it
 // overrides with the same selectors, so the user's stylesheet still wins.
 func Corners(radius int) string {
-	return fmt.Sprintf(".bar .island, .launcher, .agenda .card, .control .card, .note, .osd-card, .center .card, .clipboard-panel .clipboard-card, popover.menu > contents, popover.term-menu > contents { border-radius: %dpx; }\n.dock { border-radius: %dpx; }\n", radius, radius*3/2)
+	return fmt.Sprintf(".bar .island, .launcher, .agenda .card, .control .card, .note, .osd-card, .center .card, .clipboard-panel .clipboard-card, popover.glass-menu > contents { border-radius: %dpx; }\n.dock { border-radius: %dpx; }\n", radius, radius*3/2)
 }

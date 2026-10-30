@@ -10,6 +10,7 @@ import (
 	"github.com/lyricat/inua/internal/apps/mail"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // A message's people and its details: a click on who wrote (the face or
@@ -33,9 +34,8 @@ func (w *window) personButton(a mail.Address, child *gtk.Widget, verified bool) 
 // is done with them at once.
 func (w *window) personCard(a mail.Address, verified bool) *gtk.Popover {
 	pop := gtk.NewPopover()
-	pop.AddCssClass("mail-menu")
 	pop.AddCssClass("mail-card")
-	pop.SetHasArrow(false)
+	uikit.Menu(pop, uikit.Below)
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	head := gtk.NewBox(gtk.OrientationHorizontalValue, 12)
 	head.AddCssClass("mail-card-head")

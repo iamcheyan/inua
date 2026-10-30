@@ -15,6 +15,7 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/sni"
 	"github.com/lyricat/inua/internal/system"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 const trayIconSize = 16
@@ -219,7 +220,7 @@ func (s *shellUI) showTrayMenu(key string, w *gtk.Widget) {
 
 			pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
 			menu.Unref()
-			pop.SetHasArrow(false)
+			uikit.Menu(&pop.Popover, uikit.Below)
 			pop.SetParent(w)
 			pop.ConnectClosed(&s.onTrayMenuClosed)
 			pop.Unref() // the parent holds it now

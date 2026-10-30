@@ -27,6 +27,7 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // widgetPage is the place before the first workspace (widgets.blp): a page
@@ -160,7 +161,9 @@ func (s *shellUI) bindWidgetsHandlers() {
 		}
 		menu := gio.NewMenu()
 		menu.Append(label, "widgets.remove")
-		s.widgetPopover(gtk.NewPopoverMenuFromModel(&menu.MenuModel).Popover, w, x, y)
+		pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
+		uikit.Menu(&pop.Popover, uikit.AtPointer)
+		s.widgetPopover(pop.Popover, w, x, y)
 		menu.Unref()
 	}
 	s.onWidgetAction = func(a gio.SimpleAction, _ uintptr) {

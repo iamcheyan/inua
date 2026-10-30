@@ -22,6 +22,7 @@ import (
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // openConversation shows a conversation: what is kept at once, the rest
@@ -340,8 +341,7 @@ func (w *window) drawBar(c *mail.Conversation) {
 	more.AddCssClass("mail-tool")
 	more.SetTooltipText(i18n.T("More"))
 	pop := gtk.NewPopover()
-	pop.AddCssClass("mail-menu")
-	pop.SetHasArrow(false)
+	uikit.Menu(pop, uikit.Below)
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	item := func(label string, f func()) {
 		b := gtk.NewButtonWithLabel(label)

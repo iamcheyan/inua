@@ -869,17 +869,49 @@ separator.dock-sep { margin: 6px 4px 8px; background: alpha(@line, 0.9); min-wid
    autohidden dock that is only its edge would never be shown. */
 .dock-edge { background: alpha(@line, 0.01); }
 
-/* --- tray menus ------------------------------------------------------ */
+/* --- menus (design/ui.md, Menus) ------------------------------------- */
 
-popover.menu > contents {
-  background: alpha(@app, 0.97);
-  border: 1px solid @line;
-  border-radius: 4px;
-  padding: 4px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+/* Every menu, the shell's and the apps' (uikit.Menu): the glass in a
+   hairline, the floating cards' shadow, an arrow at its trigger in the
+   same glass. It grows out of where it opens as it fades in, at each open
+   (grow-a and grow-b are twins, traded at each show so GTK starts the
+   animation again). Hyprland blurs what is behind (inua.conf's popups).
+   A popover is a surface of its own, so its type is given here whole. */
+popover.glass-menu {
+  font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
+  font-size: 13.5px;
+  color: @t0;
 }
-/* A menu's arrow: the same as its body, not GTK's white. */
-popover.menu > arrow { background-color: alpha(@app, 0.97); border: 1px solid @line; }
+popover.glass-menu > contents {
+  padding: 6px;
+  border: 1px solid alpha(@line, 0.9);
+  border-radius: 4px;
+  background: @glass;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
+  transform-origin: 50% 0;
+}
+popover.glass-menu.above > contents { transform-origin: 50% 100%; }
+popover.glass-menu.at-pointer > contents { transform-origin: 0 0; }
+popover.glass-menu > arrow { background: @glass; border: 1px solid alpha(@line, 0.9); }
+popover.glass-menu.grow-a > contents { animation: menu-grow-a 200ms cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+popover.glass-menu.grow-b > contents { animation: menu-grow-b 200ms cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+popover.glass-menu.grow-a > arrow { animation: menu-fade-a 140ms ease-out; }
+popover.glass-menu.grow-b > arrow { animation: menu-fade-b 140ms ease-out; }
+@keyframes menu-grow-a { from { opacity: 0; transform: scale(0.55); } to { opacity: 1; transform: none; } }
+@keyframes menu-grow-b { from { opacity: 0; transform: scale(0.55); } to { opacity: 1; transform: none; } }
+@keyframes menu-fade-a { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menu-fade-b { from { opacity: 0; } to { opacity: 1; } }
+popover.glass-menu button.menu-item, popover.glass-menu modelbutton { min-width: 240px; }
+/* An item's keys at its end: a keycap in the menu's voice. */
+popover.glass-menu .menu-key {
+  padding: 1px 6px;
+  border: 1px solid alpha(@line, 0.9);
+  border-radius: 2px;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: @t1;
+}
+popover.glass-menu separator { margin: 6px 10px; background: alpha(@line, 0.6); }
 /* A menu's item (design/ui.md, Menus), in every menu: GTK's own
    (modelbutton) and the ones built of buttons (.menu-item). */
 popover.menu modelbutton, button.menu-item {
@@ -891,6 +923,7 @@ popover.menu modelbutton, button.menu-item {
   box-shadow: none;
   color: @t0;
   font-weight: normal;
+  outline: none;
 }
 button.menu-item label { font-weight: 400; }
 popover.menu modelbutton:hover, popover.menu modelbutton:selected,
@@ -899,7 +932,6 @@ button.menu-item:hover, button.menu-item:focus-visible {
   background: alpha(@accent, 0.07);
 }
 popover.menu modelbutton:disabled, button.menu-item:disabled { color: @t2; }
-popover.menu separator { margin: 4px 6px; }
 
 /* --- settings -------------------------------------------------------- */
 
@@ -3028,23 +3060,9 @@ window.files .files-keys-head { margin: 14px 0 6px; }
 window.files .files-keys-row { min-height: 24px; }
 window.files .files-key { min-width: 190px; color: @accent; }
 
-popover.files-menu {
-  font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
-  font-size: 14px;
-}
-popover.files-menu > contents {
-  padding: 4px;
-  border: 1px solid @line;
-  border-radius: 4px;
-  background: alpha(@app, 0.97);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
-}
-popover.files-menu button.menu-item { min-width: 220px; }
-popover.files-menu .files-menu-key { color: @t2; font-size: 11.5px; }
 popover.files-menu .files-menu-check { color: @accent; }
 window.files checkbutton check { border: 1px solid @line; border-radius: 2px; background: @surface; box-shadow: none; }
 window.files checkbutton check:checked { border-color: @accent; background: @accent; color: @app; }
-popover.files-menu separator { margin: 4px 6px; background: alpha(@line, 0.9); }
 /* Music: Winamp's panels in inua's look. The display is a dark well
    with the time in the accent, mono figures and the analyser; the
    equalizer's sliders stand in a row; the playlist is a plain list, the
@@ -3381,47 +3399,8 @@ window.term .term-col-head { min-height: 40px; padding: 12px 14px 10px; }
 window.term .term-col-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 15px; color: @t0; }
 window.term button.term-head-button { min-width: 34px; min-height: 34px; padding: 0; color: @t1; background: transparent; border: none; }
 window.term button.term-head-button:hover { background: alpha(@accent, 0.09); color: @t0; }
-/* Column 1's menu, as the dock's drawer looks (bubble.go): on the glass,
-   a hairline round it and an arrow at the button, the floating card's
-   shadow; titles in the drawer's mono small capitals over a hairline;
-   items clear until hovered. It grows out of the arrow as it fades in.
-   A popover is a surface of its own, so its look is given here whole. */
-popover.term-menu {
-  font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
-  font-size: 13.5px;
-  color: @t0;
-}
-popover.term-menu > contents {
-  padding: 6px;
-  border: 1px solid alpha(@line, 0.9);
-  border-radius: 4px;
-  background: @glass;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
-  transform-origin: 50% 0;
-  animation: term-menu-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1.15);
-}
-popover.term-menu > arrow {
-  background: @glass;
-  border: 1px solid alpha(@line, 0.9);
-  animation: term-menu-fade 140ms ease-out;
-}
-@keyframes term-menu-in {
-  from { opacity: 0; transform: scale(0.55); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes term-menu-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-popover.term-menu button.menu-item { min-width: 240px; }
-popover.term-menu .term-menu-keycap {
-  padding: 1px 6px;
-  border: 1px solid alpha(@line, 0.9);
-  border-radius: 2px;
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 11px;
-  color: @t1;
-}
+/* Column 1's menu (a uikit.Menu): a group's title, a kicker, over a
+   hairline, its state at the end. */
 popover.term-menu .term-menu-title {
   margin: 8px 4px 4px;
   padding: 10px 6px 2px;
@@ -3430,7 +3409,6 @@ popover.term-menu .term-menu-title {
 popover.term-menu .term-menu-state { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-weight: 400; letter-spacing: 0.04em; font-size: 11px; color: @t2; }
 popover.term-menu .term-menu-state.s-on { color: @accent; }
 popover.term-menu .term-menu-state.s-warn { color: @warn; }
-popover.term-menu separator { margin: 6px 10px; background: alpha(@line, 0.6); }
 /* The settings' index, its first row level with the page's first
    section, and its note under it. */
 window.term-prefs .index list { padding-top: 26px; }
@@ -4501,22 +4479,12 @@ window.mail-compose button.mail-compose-ai-lang {
 window.mail-compose button.mail-compose-ai-lang:hover { color: @t0; }
 window.mail-compose .mail-compose-ai-what { font-size: 13px; color: @t1; }
 window.mail-compose .mail-compose-foot { padding: 12px 28px 16px; }
-/* Mail's menus (More, Polish), as Files' are: on the theme's panel, a
-   hairline round them, the accent's tint under the pointer. */
 /* A popover is a surface of its own: the window's type is not passed on. */
-popover.mail-menu, .settings dropdown popover {
+.settings dropdown popover {
   font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
   font-size: 14px;
   color: @t0;
 }
-window.mail popover.mail-menu > contents {
-  padding: 4px;
-  border: 1px solid @line;
-  border-radius: 4px;
-  background: @panel;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
-}
-window.mail button.menu-item { min-width: 180px; }
 
 /* The questions: before deleting or removing. */
 window.mail-dialog { background: @app; }

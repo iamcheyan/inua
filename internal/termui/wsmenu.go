@@ -9,6 +9,7 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/term/agent"
 	"github.com/lyricat/inua/internal/term/host"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // A workspace's row has a menu: a right click on it, or the Menu key
@@ -90,7 +91,7 @@ func (c *columns) showMenu(a *App, w *gtk.Widget, i int, at *gdk.Rectangle) {
 	group.Unref()
 	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
 	menu.Unref()
-	pop.SetHasArrow(false)
+	uikit.Menu(&pop.Popover, uikit.AtPointer)
 	pop.SetPosition(gtk.PosBottomValue)
 	if at != nil {
 		pop.SetPointingTo(at)
