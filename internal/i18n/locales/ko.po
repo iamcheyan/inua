@@ -378,6 +378,8 @@ msgstr "%s에서 온 파일"
 #: internal/lightui/workshop_manager.go:63
 #: internal/mailui/actions.go:533
 #: internal/mailui/people.go:297
+#: internal/shell/launcher_actions.go:20
+#: internal/shell/launcher_actions.go:44
 #: internal/shell/wifi.go:62
 #: internal/term/web/web.go:140
 #: internal/ui/record.go:157
@@ -3056,6 +3058,7 @@ msgstr "복사됨"
 #: internal/lightui/pass.go:748
 #: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
+#: internal/shell/launcher_actions.go:42
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:91
@@ -3535,6 +3538,7 @@ msgstr[0] "… 그 외 %d개"
 #: internal/filesui/cards.go:516
 #: internal/filesui/cards.go:716
 #: internal/mailui/welcome.go:156
+#: internal/shell/launcher_actions.go:36
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
@@ -8247,7 +8251,6 @@ msgid "Launcher"
 msgstr "실행기"
 
 #: internal/hyprconf/keys.go:24
-#: internal/shell/launcher.go:56
 msgid "Switch windows"
 msgstr "창 전환"
 
@@ -9505,6 +9508,7 @@ msgstr "검색할 수 없습니다: %s"
 
 #: internal/lightui/sysmon.go:54
 #: internal/lightui/sysmon.go:54
+#: internal/shell/launcher_actions.go:28
 #: internal/termui/menubar.go:34
 #: internal/ui/dock.go:487
 #: internal/ui/portal_ask.go:80
@@ -12713,10 +12717,12 @@ msgid "Close Window"
 msgstr "창 닫기"
 
 #: internal/shell/commands.go:47
+#: internal/shell/launcher_actions.go:37
 msgid "Toggle Floating"
 msgstr "플로팅 토글"
 
 #: internal/shell/commands.go:48
+#: internal/shell/launcher_actions.go:38
 msgid "Toggle Fullscreen"
 msgstr "전체 화면 전환"
 
@@ -12836,62 +12842,85 @@ msgstr "[창]"
 msgid "[APPS]"
 msgstr "[앱]"
 
-#: internal/shell/launcher.go:58
-msgid "Launch apps"
-msgstr "앱 실행"
-
-#: internal/shell/launcher.go:356
+#: internal/shell/launcher.go:337
 msgid "That window has closed"
 msgstr "해당 창이 닫혔습니다."
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:364
 msgid "Ask the assistant anything"
 msgstr "어시스턴트에게 무엇이든 물어보세요"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:366
 msgid "No emoji or symbol matches"
 msgstr "이모티콘이나 기호가 일치하지 않습니다."
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:368
 msgid "Reading apps…"
 msgstr "앱 읽기..."
 
-#: internal/shell/launcher.go:389
+#: internal/shell/launcher.go:370
 msgid "No app matches"
 msgstr "일치하는 앱이 없습니다."
 
-#: internal/shell/launcher.go:391
+#: internal/shell/launcher.go:372
 msgid "Not connected to Hyprland"
 msgstr "하이프랜드와 연결되지 않음"
 
-#: internal/shell/launcher.go:393
+#: internal/shell/launcher.go:374
 msgid "No windows open"
 msgstr "열린 창 없음"
 
-#: internal/shell/launcher.go:395
+#: internal/shell/launcher.go:376
 msgid "No window matches"
 msgstr "일치하는 창이 없습니다."
 
-#: internal/shell/launcher.go:433
+#: internal/shell/launcher.go:414
 msgid "Enter asks"
 msgstr "Enter로 질문"
 
-#: internal/shell/launcher.go:445
+#: internal/shell/launcher.go:426
 msgid "or start with ?"
 msgstr "아니면 ?로 시작합니까?"
 
-#: internal/shell/launcher.go:448
+#: internal/shell/launcher.go:429
 msgid "%s · Enter copies"
 msgstr "%s · Enter로 복사"
 
-#: internal/shell/launcher.go:498
+#: internal/shell/launcher.go:479
 #: ui/vm.ui:915
 msgid "Ask the assistant"
 msgstr "어시스턴트에게 물어보세요"
 
-#: internal/shell/launcher.go:535
+#: internal/shell/launcher.go:516
 msgid "%s · workspace %s"
 msgstr "%[1]s · 작업 공간 %[2]s"
+
+#: internal/shell/launcher_actions.go:22
+#: internal/ui/dock.go:481
+msgid "Remove from Dock"
+msgstr "도크에서 제거"
+
+#: internal/shell/launcher_actions.go:24
+#: internal/ui/dock.go:483
+msgid "Keep in Dock"
+msgstr "독에 고정"
+
+#: internal/shell/launcher_actions.go:30
+#: internal/ui/dock.go:489
+msgid "Quit (%d windows)"
+msgstr "종료(%d 창)"
+
+#: internal/shell/launcher_actions.go:35
+msgid "Switch to"
+msgstr "전환"
+
+#: internal/shell/launcher_actions.go:39
+msgid "Center"
+msgstr "가운데로"
+
+#: internal/shell/launcher_actions.go:44
+msgid "Copy Address"
+msgstr "주소 복사"
 
 #: internal/shell/notify.go:16
 #: internal/term/web/strings.go:125
@@ -14554,18 +14583,6 @@ msgstr "아직 페어링된 기기가 없습니다"
 msgid "New Window"
 msgstr "새 창"
 
-#: internal/ui/dock.go:481
-msgid "Remove from Dock"
-msgstr "도크에서 제거"
-
-#: internal/ui/dock.go:483
-msgid "Keep in Dock"
-msgstr "독에 고정"
-
-#: internal/ui/dock.go:489
-msgid "Quit (%d windows)"
-msgstr "종료(%d 창)"
-
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:579
 #: internal/ui/widgets.go:598
@@ -14622,7 +14639,7 @@ msgstr "hyprland.lua가 inua.lua를 불러온 뒤 이 항목을 다시 설정하
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyporland.conf는 inua.conf를 로드한 후 이를 다시 설정하며, 이는 inua: %s를 이깁니다. 소스 줄을 그 아래로 이동하세요."
 
-#: internal/ui/launcher.go:410
+#: internal/ui/launcher.go:425
 msgid "inua launcher"
 msgstr "이누아 런처"
 
@@ -18164,29 +18181,13 @@ msgstr "gpg가 새 키를 보호할 암호 문구를 묻습니다. 꼭 기억하
 msgid "Or in a terminal:"
 msgstr "또는 터미널에서:"
 
-#: ui/launcher.ui:53
-msgid "Tab  switch"
-msgstr "탭 스위치"
-
-#: ui/launcher.ui:63
+#: ui/launcher.ui:46
 msgid "Search, or ask: 10 km to mi"
 msgstr "검색 또는 질문: 10km to mi"
 
-#: ui/launcher.ui:147
+#: ui/launcher.ui:130
 msgid "[ERROR]"
 msgstr "[오류]"
-
-#: ui/launcher.ui:173
-msgid "↑↓  choose"
-msgstr "↑↓ 선택"
-
-#: ui/launcher.ui:181
-msgid "↵  open"
-msgstr "↵ 열림"
-
-#: ui/launcher.ui:189
-msgid "Esc  close"
-msgstr "Esc 닫기"
 
 #: ui/mail-compose.ui:63
 msgid "AI (Ctrl+J)"
@@ -18936,8 +18937,8 @@ msgid "Opens with"
 msgstr "다음과 같이 열립니다."
 
 #: ui/settings.ui:1997
-msgid "What Super+Space shows first; Tab switches"
-msgstr "Super+Space로 처음 표시할 내용이며 Tab으로 전환"
+msgid "What Super+Space shows"
+msgstr "Super+Space로 표시할 항목"
 
 #: ui/settings.ui:2045
 msgid "$TERMINAL, then xdg-terminal-exec"

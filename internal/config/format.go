@@ -236,7 +236,7 @@ pass = %t
 
 [launcher]
 # What `+"`inua call launcher toggle`"+` opens: "apps" or "windows".
-# (`+"`launcher apps`"+` and `+"`launcher windows`"+` open a mode directly; Tab switches.)
+# (`+"`launcher apps`"+` and `+"`launcher windows`"+` open a mode directly.)
 mode = %s
 
 # The default terminal (Settings, Default Apps): `+"`inua terminal`"+` opens it, and

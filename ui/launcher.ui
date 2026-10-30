@@ -36,23 +36,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 </style>
               </object>
             </child>
-            <child>
-              <object class="GtkLabel" id="mode_desc">
-                <style>
-                  <class name="dim"/>
-                </style>
-                <property name="hexpand">true</property>
-                <property name="xalign">0</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">Tab  switch</property>
-              </object>
-            </child>
           </object>
         </child>
         <child>
@@ -155,38 +138,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 <property name="hexpand">true</property>
                 <property name="xalign">0</property>
                 <property name="ellipsize">3</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <style>
-              <class name="foot"/>
-            </style>
-            <property name="spacing">18</property>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">↑↓  choose</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">↵  open</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">Esc  close</property>
               </object>
             </child>
           </object>

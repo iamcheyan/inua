@@ -129,6 +129,15 @@ layerrule {
     blur_popups = on
     ignore_alpha = 0.4
 }
+
+# The launcher grows into place as it opens and shrinks away as it closes,
+# fading with the layers' animation; its menus blur what is behind them.
+layerrule {
+    name = inua-launcher-pop
+    match:namespace = ^inua-launcher$
+    animation = popin 94%
+    blur_popups = on
+}
 `
 
 // Path is inua.conf for the settings file at configPath: both live under
@@ -398,6 +407,15 @@ hl.layer_rule({
     match = { namespace = "^inua-(bar|dock)$" },
     blur_popups = true,
     ignore_alpha = 0.4,
+})
+
+-- The launcher grows into place as it opens and shrinks away as it closes,
+-- fading with the layers' animation; its menus blur what is behind them.
+hl.layer_rule({
+    name = "inua-launcher-pop",
+    match = { namespace = "^inua-launcher$" },
+    animation = "popin 94%",
+    blur_popups = true,
 })
 `
 

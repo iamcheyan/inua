@@ -378,6 +378,8 @@ msgstr "来自 %s 的文件"
 #: internal/lightui/workshop_manager.go:63
 #: internal/mailui/actions.go:533
 #: internal/mailui/people.go:297
+#: internal/shell/launcher_actions.go:20
+#: internal/shell/launcher_actions.go:44
 #: internal/shell/wifi.go:62
 #: internal/term/web/web.go:140
 #: internal/ui/record.go:157
@@ -3056,6 +3058,7 @@ msgstr "已复制"
 #: internal/lightui/pass.go:748
 #: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
+#: internal/shell/launcher_actions.go:42
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:91
@@ -3535,6 +3538,7 @@ msgstr[0] "……还有 %d 项"
 #: internal/filesui/cards.go:516
 #: internal/filesui/cards.go:716
 #: internal/mailui/welcome.go:156
+#: internal/shell/launcher_actions.go:36
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
@@ -8247,7 +8251,6 @@ msgid "Launcher"
 msgstr "启动器"
 
 #: internal/hyprconf/keys.go:24
-#: internal/shell/launcher.go:56
 msgid "Switch windows"
 msgstr "切换窗口"
 
@@ -9505,6 +9508,7 @@ msgstr "无法搜索:%s"
 
 #: internal/lightui/sysmon.go:54
 #: internal/lightui/sysmon.go:54
+#: internal/shell/launcher_actions.go:28
 #: internal/termui/menubar.go:34
 #: internal/ui/dock.go:487
 #: internal/ui/portal_ask.go:80
@@ -12713,10 +12717,12 @@ msgid "Close Window"
 msgstr "关闭窗口"
 
 #: internal/shell/commands.go:47
+#: internal/shell/launcher_actions.go:37
 msgid "Toggle Floating"
 msgstr "切换浮动"
 
 #: internal/shell/commands.go:48
+#: internal/shell/launcher_actions.go:38
 msgid "Toggle Fullscreen"
 msgstr "切换全屏"
 
@@ -12836,62 +12842,85 @@ msgstr "[窗口]"
 msgid "[APPS]"
 msgstr "[应用]"
 
-#: internal/shell/launcher.go:58
-msgid "Launch apps"
-msgstr "启动应用程序"
-
-#: internal/shell/launcher.go:356
+#: internal/shell/launcher.go:337
 msgid "That window has closed"
 msgstr "该窗口已关闭"
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:364
 msgid "Ask the assistant anything"
 msgstr "有什么事情都可以向助理询问"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:366
 msgid "No emoji or symbol matches"
 msgstr "没有表情符号或符号匹配"
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:368
 msgid "Reading apps…"
 msgstr "阅读应用程序……"
 
-#: internal/shell/launcher.go:389
+#: internal/shell/launcher.go:370
 msgid "No app matches"
 msgstr "没有应用匹配"
 
-#: internal/shell/launcher.go:391
+#: internal/shell/launcher.go:372
 msgid "Not connected to Hyprland"
 msgstr "未连接到 Hyprland"
 
-#: internal/shell/launcher.go:393
+#: internal/shell/launcher.go:374
 msgid "No windows open"
 msgstr "没有打开的窗口"
 
-#: internal/shell/launcher.go:395
+#: internal/shell/launcher.go:376
 msgid "No window matches"
 msgstr "没有窗口匹配"
 
-#: internal/shell/launcher.go:433
+#: internal/shell/launcher.go:414
 msgid "Enter asks"
 msgstr "按 Enter 提问"
 
-#: internal/shell/launcher.go:445
+#: internal/shell/launcher.go:426
 msgid "or start with ?"
 msgstr "或者开始于？"
 
-#: internal/shell/launcher.go:448
+#: internal/shell/launcher.go:429
 msgid "%s · Enter copies"
 msgstr "%s · 按 Enter 复制"
 
-#: internal/shell/launcher.go:498
+#: internal/shell/launcher.go:479
 #: ui/vm.ui:915
 msgid "Ask the assistant"
 msgstr "询问助理"
 
-#: internal/shell/launcher.go:535
+#: internal/shell/launcher.go:516
 msgid "%s · workspace %s"
 msgstr "%[1]s·工作空间%[2]s"
+
+#: internal/shell/launcher_actions.go:22
+#: internal/ui/dock.go:481
+msgid "Remove from Dock"
+msgstr "从扩展坞中移除"
+
+#: internal/shell/launcher_actions.go:24
+#: internal/ui/dock.go:483
+msgid "Keep in Dock"
+msgstr "固定到程序坞"
+
+#: internal/shell/launcher_actions.go:30
+#: internal/ui/dock.go:489
+msgid "Quit (%d windows)"
+msgstr "退出(%d窗口)"
+
+#: internal/shell/launcher_actions.go:35
+msgid "Switch to"
+msgstr "切换到"
+
+#: internal/shell/launcher_actions.go:39
+msgid "Center"
+msgstr "居中"
+
+#: internal/shell/launcher_actions.go:44
+msgid "Copy Address"
+msgstr "复制地址"
 
 #: internal/shell/notify.go:16
 #: internal/term/web/strings.go:125
@@ -14554,18 +14583,6 @@ msgstr "还没有配对的设备"
 msgid "New Window"
 msgstr "新窗口"
 
-#: internal/ui/dock.go:481
-msgid "Remove from Dock"
-msgstr "从扩展坞中移除"
-
-#: internal/ui/dock.go:483
-msgid "Keep in Dock"
-msgstr "固定到程序坞"
-
-#: internal/ui/dock.go:489
-msgid "Quit (%d windows)"
-msgstr "退出(%d窗口)"
-
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:579
 #: internal/ui/widgets.go:598
@@ -14622,7 +14639,7 @@ msgstr "hyprland.lua 在加载 inua.lua 之后又设置了这些,会盖过 inua 
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf 在加载 inua.conf 后再次设置这些,这赢得了 inua: %s。将源代码行移到它们下方。"
 
-#: internal/ui/launcher.go:410
+#: internal/ui/launcher.go:425
 msgid "inua launcher"
 msgstr "inua发射器"
 
@@ -18164,29 +18181,13 @@ msgstr "gpg 会询问用来保护新密钥的密码短语。请记住它：没�
 msgid "Or in a terminal:"
 msgstr "或在终端里："
 
-#: ui/launcher.ui:53
-msgid "Tab  switch"
-msgstr "选项卡开关"
-
-#: ui/launcher.ui:63
+#: ui/launcher.ui:46
 msgid "Search, or ask: 10 km to mi"
 msgstr "搜索或询问：10 公里 换算为 英里"
 
-#: ui/launcher.ui:147
+#: ui/launcher.ui:130
 msgid "[ERROR]"
 msgstr "[错误]"
-
-#: ui/launcher.ui:173
-msgid "↑↓  choose"
-msgstr "↑↓选择"
-
-#: ui/launcher.ui:181
-msgid "↵  open"
-msgstr "↵打开"
-
-#: ui/launcher.ui:189
-msgid "Esc  close"
-msgstr "Esc 关闭"
 
 #: ui/mail-compose.ui:63
 msgid "AI (Ctrl+J)"
@@ -18936,8 +18937,8 @@ msgid "Opens with"
 msgstr "开头为"
 
 #: ui/settings.ui:1997
-msgid "What Super+Space shows first; Tab switches"
-msgstr "Super+Space 默认显示的内容；按 Tab 切换"
+msgid "What Super+Space shows"
+msgstr "Super+Space 显示的内容"
 
 #: ui/settings.ui:2045
 msgid "$TERMINAL, then xdg-terminal-exec"

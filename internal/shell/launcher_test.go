@@ -185,23 +185,6 @@ func TestMove(t *testing.T) {
 	}
 }
 
-func TestToggleModeKeepsQuery(t *testing.T) {
-	var l Launcher
-	l.SetConnected(true)
-	l.SetApps(testApps())
-	l.SetSnapshot(testSnap())
-	l.Show(Apps)
-	l.SetQuery("fire")
-	l.ToggleMode()
-	if l.Mode != Windows || l.Query != "fire" || !slices.Equal(titles(l.Results), []string{"Mozilla Firefox"}) {
-		t.Errorf("mode %v query %q results %q", l.Mode, l.Query, titles(l.Results))
-	}
-	l.ToggleMode()
-	if l.Mode != Apps || !slices.Equal(titles(l.Results), []string{"Firefox"}) {
-		t.Errorf("back: mode %v results %q", l.Mode, titles(l.Results))
-	}
-}
-
 func TestCancelReturnsFocus(t *testing.T) {
 	var l Launcher
 	snap := testSnap()
@@ -572,6 +555,36 @@ func TestAppsFirst(t *testing.T) {
 			seenRest = true
 		} else if seenRest {
 			t.Fatalf("an app after the rest: %q", titles(l.Results))
+		}
+	}
+}
+
+// Tab's actions: an app's follow the dock and its windows; a window's are
+// the window commands; a result with nothing more has none.
+func TestItemActions(t *testing.T) {
+	ids := func(acts []ItemAction) []string {
+		var out []string
+		for _, a := range acts {
+			out = append(out, a.ID)
+		}
+		return out
+	}
+	app := Result{Title: "a", Entry: &desktop.Entry{ID: "a"}}
+	for _, c := range []struct {
+		r       Result
+		pinned  bool
+		windows int
+		want    []string
+	}{
+		{app, false, 0, []string{"open", "pin"}},
+		{app, true, 2, []string{"open", "unpin", "quit"}},
+		{Result{Address: "0x1"}, false, 0, []string{"focus", "close-window", "float", "fullscreen", "center"}},
+		{Result{Copy: "42"}, false, 0, []string{"copy"}},
+		{Result{URL: "https://example.org"}, false, 0, []string{"open-url", "copy-url"}},
+		{Result{Command: "lock"}, false, 0, nil},
+	} {
+		if got := ids(ItemActions(c.r, c.pinned, c.windows)); !slices.Equal(got, c.want) {
+			t.Errorf("%+v pinned=%v windows=%d: %q, want %q", c.r, c.pinned, c.windows, got, c.want)
 		}
 	}
 }

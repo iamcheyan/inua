@@ -58,9 +58,11 @@ control center is open.
 
 ## Launcher
 
-One search for apps and open windows (Super+Space; Tab switches modes), ranked by
-prefix, word starts and subsequences; Enter launches or focuses, Esc
-returns focus where it was. It also answers: arithmetic (`2^10 + 3`),
+One search for apps and open windows (Super+Space), ranked by
+prefix, word starts and subsequences; Enter launches or focuses, Tab
+opens the selected result's other actions (keep an app in the dock,
+quit it; close, float or centre a window), Esc returns focus where it
+was. It also answers: arithmetic (`2^10 + 3`),
 units (`10 km to mi`, `32 f in c`) and currencies (`100 usd to jpy`, ECB
 rates) and crypto (`1 eth to usd`, `100 usd to btc`, Coinbase's prices);
 Enter copies the answer.

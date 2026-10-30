@@ -120,6 +120,8 @@ type shellUI struct {
 	onClock                glib.SourceFunc
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onLauncherPick         func(gtk.GestureClick, int32, float64, float64)
+	onLauncherAction       func(gio.SimpleAction, uintptr)
+	onLauncherMenuClosed   func(gtk.Popover)
 	onLauncherScrolled     func(gtk.Adjustment)
 	onLauncherLaidOut      func(gtk.Adjustment)
 	onLauncherFootLaidOut  func(gtk.Adjustment)

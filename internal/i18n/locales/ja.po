@@ -378,6 +378,8 @@ msgstr "%s からのファイル"
 #: internal/lightui/workshop_manager.go:63
 #: internal/mailui/actions.go:533
 #: internal/mailui/people.go:297
+#: internal/shell/launcher_actions.go:20
+#: internal/shell/launcher_actions.go:44
 #: internal/shell/wifi.go:62
 #: internal/term/web/web.go:140
 #: internal/ui/record.go:157
@@ -3056,6 +3058,7 @@ msgstr "コピーしました"
 #: internal/lightui/pass.go:748
 #: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
+#: internal/shell/launcher_actions.go:42
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:91
@@ -3535,6 +3538,7 @@ msgstr[0] "…ほか %d 件"
 #: internal/filesui/cards.go:516
 #: internal/filesui/cards.go:716
 #: internal/mailui/welcome.go:156
+#: internal/shell/launcher_actions.go:36
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
@@ -8247,7 +8251,6 @@ msgid "Launcher"
 msgstr "ランチャー"
 
 #: internal/hyprconf/keys.go:24
-#: internal/shell/launcher.go:56
 msgid "Switch windows"
 msgstr "ウィンドウの切り替え"
 
@@ -9505,6 +9508,7 @@ msgstr "検索できませんでした: %s"
 
 #: internal/lightui/sysmon.go:54
 #: internal/lightui/sysmon.go:54
+#: internal/shell/launcher_actions.go:28
 #: internal/termui/menubar.go:34
 #: internal/ui/dock.go:487
 #: internal/ui/portal_ask.go:80
@@ -12713,10 +12717,12 @@ msgid "Close Window"
 msgstr "ウィンドウを閉じる"
 
 #: internal/shell/commands.go:47
+#: internal/shell/launcher_actions.go:37
 msgid "Toggle Floating"
 msgstr "トグルフローティング"
 
 #: internal/shell/commands.go:48
+#: internal/shell/launcher_actions.go:38
 msgid "Toggle Fullscreen"
 msgstr "フルスクリーンの切り替え"
 
@@ -12836,62 +12842,85 @@ msgstr "[ウィンドウ]"
 msgid "[APPS]"
 msgstr "[アプリ]"
 
-#: internal/shell/launcher.go:58
-msgid "Launch apps"
-msgstr "アプリの起動"
-
-#: internal/shell/launcher.go:356
+#: internal/shell/launcher.go:337
 msgid "That window has closed"
 msgstr "その窓は閉まりました"
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:364
 msgid "Ask the assistant anything"
 msgstr "アシスタントに何でも質問してください"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:366
 msgid "No emoji or symbol matches"
 msgstr "一致する絵文字も記号もありません"
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:368
 msgid "Reading apps…"
 msgstr "読書アプリ…"
 
-#: internal/shell/launcher.go:389
+#: internal/shell/launcher.go:370
 msgid "No app matches"
 msgstr "一致するアプリはありません"
 
-#: internal/shell/launcher.go:391
+#: internal/shell/launcher.go:372
 msgid "Not connected to Hyprland"
 msgstr "ハイプラランドに接続されていません"
 
-#: internal/shell/launcher.go:393
+#: internal/shell/launcher.go:374
 msgid "No windows open"
 msgstr "開いているウィンドウはありません"
 
-#: internal/shell/launcher.go:395
+#: internal/shell/launcher.go:376
 msgid "No window matches"
 msgstr "ウィンドウが一致しない"
 
-#: internal/shell/launcher.go:433
+#: internal/shell/launcher.go:414
 msgid "Enter asks"
 msgstr "Enter で質問"
 
-#: internal/shell/launcher.go:445
+#: internal/shell/launcher.go:426
 msgid "or start with ?"
 msgstr "または ? で始まる"
 
-#: internal/shell/launcher.go:448
+#: internal/shell/launcher.go:429
 msgid "%s · Enter copies"
 msgstr "%s · Enter でコピー"
 
-#: internal/shell/launcher.go:498
+#: internal/shell/launcher.go:479
 #: ui/vm.ui:915
 msgid "Ask the assistant"
 msgstr "アシスタントに尋ねる"
 
-#: internal/shell/launcher.go:535
+#: internal/shell/launcher.go:516
 msgid "%s · workspace %s"
 msgstr "%[1]s · ワークスペース %[2]s"
+
+#: internal/shell/launcher_actions.go:22
+#: internal/ui/dock.go:481
+msgid "Remove from Dock"
+msgstr "ドックから取り外す"
+
+#: internal/shell/launcher_actions.go:24
+#: internal/ui/dock.go:483
+msgid "Keep in Dock"
+msgstr "ドックに固定"
+
+#: internal/shell/launcher_actions.go:30
+#: internal/ui/dock.go:489
+msgid "Quit (%d windows)"
+msgstr "終了 (%d Windows)"
+
+#: internal/shell/launcher_actions.go:35
+msgid "Switch to"
+msgstr "切り替え"
+
+#: internal/shell/launcher_actions.go:39
+msgid "Center"
+msgstr "中央に配置"
+
+#: internal/shell/launcher_actions.go:44
+msgid "Copy Address"
+msgstr "アドレスをコピー"
 
 #: internal/shell/notify.go:16
 #: internal/term/web/strings.go:125
@@ -14554,18 +14583,6 @@ msgstr "ペアリング済みのデバイスはまだありません"
 msgid "New Window"
 msgstr "新しい窓"
 
-#: internal/ui/dock.go:481
-msgid "Remove from Dock"
-msgstr "ドックから取り外す"
-
-#: internal/ui/dock.go:483
-msgid "Keep in Dock"
-msgstr "ドックに固定"
-
-#: internal/ui/dock.go:489
-msgid "Quit (%d windows)"
-msgstr "終了 (%d Windows)"
-
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:579
 #: internal/ui/widgets.go:598
@@ -14622,7 +14639,7 @@ msgstr "hyprland.lua は inua.lua を読み込んだ後にこれらを再設定�
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf は、inua.conf をロードした後にこれらを再度設定します。これは、inua: %s よりも優先されます。ソース行をそれらの下に移動します。"
 
-#: internal/ui/launcher.go:410
+#: internal/ui/launcher.go:425
 msgid "inua launcher"
 msgstr "イヌアランチャー"
 
@@ -18164,29 +18181,13 @@ msgstr "gpg が新しい鍵を守るパスフレーズを尋ねます。忘れ�
 msgid "Or in a terminal:"
 msgstr "またはターミナルで："
 
-#: ui/launcher.ui:53
-msgid "Tab  switch"
-msgstr "タブスイッチ"
-
-#: ui/launcher.ui:63
+#: ui/launcher.ui:46
 msgid "Search, or ask: 10 km to mi"
 msgstr "検索、または質問: 10 km to mi"
 
-#: ui/launcher.ui:147
+#: ui/launcher.ui:130
 msgid "[ERROR]"
 msgstr "[エラー]"
-
-#: ui/launcher.ui:173
-msgid "↑↓  choose"
-msgstr "↑↓選択してください"
-
-#: ui/launcher.ui:181
-msgid "↵  open"
-msgstr "↵ 開く"
-
-#: ui/launcher.ui:189
-msgid "Esc  close"
-msgstr "Esc 閉じる"
 
 #: ui/mail-compose.ui:63
 msgid "AI (Ctrl+J)"
@@ -18936,8 +18937,8 @@ msgid "Opens with"
 msgstr "で始まります"
 
 #: ui/settings.ui:1997
-msgid "What Super+Space shows first; Tab switches"
-msgstr "Super+Space で最初に表示する内容。Tab で切り替え"
+msgid "What Super+Space shows"
+msgstr "Super+Space で表示するもの"
 
 #: ui/settings.ui:2045
 msgid "$TERMINAL, then xdg-terminal-exec"

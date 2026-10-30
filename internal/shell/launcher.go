@@ -50,14 +50,6 @@ func (m Mode) Tag() string {
 	return i18n.T("[APPS]")
 }
 
-// Label is the mode's name beside its tag.
-func (m Mode) Label() string {
-	if m == Windows {
-		return i18n.T("Switch windows")
-	}
-	return i18n.T("Launch apps")
-}
-
 // Result is one launcher row: an app to launch, a window to focus, an
 // answer or emoji to copy, a command to run, a web address to open, or a
 // question for the assistant.
@@ -193,17 +185,6 @@ func (l *Launcher) SetQuery(q string) {
 		return
 	}
 	l.Query, l.notice, l.armed = q, "", ""
-	l.search(false)
-}
-
-// ToggleMode switches between apps and windows, keeping the query.
-func (l *Launcher) ToggleMode() {
-	if l.Mode == Apps {
-		l.Mode = Windows
-	} else {
-		l.Mode = Apps
-	}
-	l.notice = ""
 	l.search(false)
 }
 

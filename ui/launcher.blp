@@ -11,8 +11,8 @@ ApplicationWindow launcher {
     width-request: 800;
     height-request: 620;
 
-    // The head reads like a section head: the square mark, the mode as a
-    // mono label in brackets, its name, and the key that switches modes.
+    // The head reads like a section head: the square mark and the mode as
+    // a mono label in brackets.
     Box {
       styles ["head"]
       spacing: 10;
@@ -24,17 +24,6 @@ ApplicationWindow launcher {
 
       Label mode {
         styles ["tag"]
-      }
-
-      Label mode_desc {
-        styles ["dim"]
-        hexpand: true;
-        xalign: 0;
-      }
-
-      Label {
-        styles ["kicker"]
-        label:  _("Tab  switch");
       }
     }
 
@@ -116,26 +105,6 @@ ApplicationWindow launcher {
         hexpand: true;
         xalign: 0;
         ellipsize: end;
-      }
-    }
-
-    Box {
-      styles ["foot"]
-      spacing: 18;
-
-      Label {
-        styles ["kicker"]
-        label:  _("↑↓  choose");
-      }
-
-      Label {
-        styles ["kicker"]
-        label:  _("↵  open");
-      }
-
-      Label {
-        styles ["kicker"]
-        label:  _("Esc  close");
       }
     }
   }

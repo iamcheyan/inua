@@ -336,14 +336,16 @@ button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20p
 }
 .launcher entry.query:focus-within { border-bottom-color: alpha(@accent, 0.6); }
 .launcher entry.query placeholder { color: @t2; }
+.launcher entry.query text selection { background: alpha(@accent, 0.3); color: @t0; }
 
-/* The results line up with the query's edges, and scroll. */
-.launcher .results-scroll { margin: 0 18px; }
-.launcher .results { padding: 8px 0 12px; }
+/* The results scroll edge to edge, their scrollbar at the window's edge;
+   inside, they line up with the query's edges. */
+.launcher .results-scroll { margin: 0; }
+.launcher .results { padding: 8px 18px 12px; }
 /* Under the results, the ones just below the view: strips of them blurred
    more the lower (blur1 to blur8, Go's blurSteps), under a fade into the
    window. */
-.launcher .results-foot { margin: 0 18px; }
+.launcher .results-foot { margin: 0; padding: 0 18px; }
 .launcher .results-foot .blur1 { filter: blur(0.75px); }
 .launcher .results-foot .blur2 { filter: blur(1.5px); }
 .launcher .results-foot .blur3 { filter: blur(2.25px); }
@@ -378,10 +380,7 @@ button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20p
   padding: 6px 0;
 }
 
-.launcher .foot {
-  padding: 10px 18px 12px;
-  border-top: 1px solid @line;
-}
+.launcher > box { padding-bottom: 8px; }
 
 /* Viewer: a thin toolbar, the picture on a quiet ground, the
    details on the panel colour at the right. */

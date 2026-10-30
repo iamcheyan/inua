@@ -28,6 +28,7 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // gridCols is how many apps a line of the grid holds (appcell.ui's width,
@@ -66,7 +67,6 @@ type launcher struct {
 
 	win       *gtk.ApplicationWindow // nil while closed
 	mode      gtk.Label
-	modeDesc  gtk.Label
 	query     gtk.Entry
 	scroll    gtk.ScrolledWindow
 	results   gtk.Box
@@ -90,6 +90,8 @@ type launcher struct {
 	refs       gtkx.Scope
 	hasFocus   bool
 	opens      int
+	actionsOf  int          // the result Tab's menu is for
+	menu       *gtk.Popover // that menu, while it is open
 
 	// The results shown: all of them, built again only when they change
 	// (shell.Launcher.Version); a move marks another one selected.
@@ -174,6 +176,16 @@ func (s *shellUI) bindLauncherHandlers() {
 		}
 	}
 	s.onQueryActivate = func(gtk.Entry) { s.executeLauncher() }
+	s.onLauncherAction = func(a gio.SimpleAction, _ uintptr) {
+		s.launcherAction(a.GetName())
+	}
+	s.onLauncherMenuClosed = func(gtk.Popover) {
+		l := &s.launcher
+		l.menu = nil
+		if l.win != nil {
+			l.query.GrabFocus()
+		}
+	}
 	s.onQueryFocus = func(gtk.EventControllerFocus) {
 		s.launcher.hasFocus = true
 	}
@@ -319,6 +331,9 @@ func (s *shellUI) applyLauncherWeb() {
 
 func (s *shellUI) launcherKey(keyval uint32) bool {
 	l := &s.launcher
+	if l.menu != nil { // the keys are the menu's: Esc closes it alone
+		return false
+	}
 	switch keyval {
 	case keyEscape:
 		s.cancelLauncher()
@@ -344,7 +359,8 @@ func (s *shellUI) launcherKey(keyval uint32) bool {
 	case keyPageUp:
 		l.st.Step(l.st.Lines(gridCols), 0, -pageLines)
 	case keyTab, keyISOLeftTab:
-		l.st.ToggleMode()
+		s.showLauncherActions()
+		return true
 	default:
 		return false
 	}
@@ -365,7 +381,7 @@ func (s *shellUI) syncLauncher() {
 	case !l.st.Open && l.win != nil:
 		l.win.Destroy()
 		l.refs.Release()
-		l.win, l.hasFocus = nil, false
+		l.win, l.hasFocus, l.menu = nil, false, nil
 	case l.st.Open:
 		s.renderLauncher()
 	}
@@ -380,7 +396,6 @@ func (s *shellUI) buildLauncher() {
 	ui := s.load("launcher.ui", &l.refs)
 	ui.Get("launcher", l.win)
 	ui.Get("mode", &l.mode)
-	ui.Get("mode_desc", &l.modeDesc)
 	ui.Get("query", &l.query)
 	ui.Get("scroll", &l.scroll)
 	ui.Get("results", &l.results)
@@ -467,7 +482,6 @@ func (s *shellUI) renderLauncher() {
 		l.query.SetText(l.st.Query)
 	}
 	l.mode.SetText(l.st.Mode.Tag())
-	l.modeDesc.SetText(l.st.Mode.Label())
 	msg := l.st.Message()
 	l.message.SetText(msg)
 	l.messageTag.SetVisible(l.st.Failed())
@@ -1024,4 +1038,87 @@ func (s *shellUI) freshenRates() {
 			}
 		})
 	}()
+}
+
+// showLauncherActions opens the selected result's actions
+// (shell.ItemActions) in a menu under it, at Tab.
+func (s *shellUI) showLauncherActions() {
+	l := &s.launcher
+	i := l.st.Selected
+	if l.win == nil || i >= len(l.st.Results) || i >= len(l.items) {
+		return
+	}
+	r := l.st.Results[i]
+	var pinned bool
+	var windows int
+	if r.Entry != nil {
+		pinned = slices.Contains(s.cfg.Dock.Pinned, r.Entry.ID)
+		if it, ok := s.dockItem(r.Entry.ID); ok {
+			windows = len(it.Windows)
+		}
+	}
+	acts := shell.ItemActions(r, pinned, windows)
+	if len(acts) == 0 {
+		return
+	}
+	group := gio.NewSimpleActionGroup()
+	menu := gio.NewMenu()
+	for _, act := range acts {
+		a := gio.NewSimpleAction(act.ID, nil)
+		a.ConnectActivate(&s.onLauncherAction)
+		group.AddAction(a)
+		a.Unref()
+		menu.Append(act.Title, "item."+act.ID)
+	}
+	w := &l.items[i]
+	w.InsertActionGroup("item", group)
+	group.Unref()
+	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
+	menu.Unref()
+	uikit.Menu(&pop.Popover, uikit.Below)
+	pop.SetParent(w)
+	pop.ConnectClosed(&s.onLauncherMenuClosed)
+	pop.Unref() // the result holds it
+	l.actionsOf, l.menu = i, &pop.Popover
+	pop.Popup()
+}
+
+// launcherAction carries out one of a result's actions: the one Enter
+// does through executeLauncher, the others here, the launcher closing
+// first where they act on a window.
+func (s *shellUI) launcherAction(id string) {
+	l := &s.launcher
+	i := l.actionsOf
+	if !l.st.Open || i >= len(l.st.Results) {
+		return
+	}
+	r := l.st.Results[i]
+	l.st.Move(i - l.st.Selected)
+	switch id {
+	case "open", "focus", "copy", "open-url":
+		s.executeLauncher()
+		return
+	case "pin", "unpin":
+		c := s.cfg
+		c.Dock.Pinned = shell.Pin(c.Dock.Pinned, r.Entry.ID, id == "pin")
+		s.changeSettings(c)
+		l.st.Done(nil)
+	case "quit":
+		if it, ok := s.dockItem(r.Entry.ID); ok {
+			for _, w := range it.Windows {
+				s.dispatch("closewindow address:" + w.Address)
+			}
+		}
+		l.st.Done(nil)
+	case "copy-url":
+		if err := copyText(r.URL); err != nil {
+			l.st.Done(fmt.Errorf("could not copy: %v", err))
+		} else {
+			l.st.Done(nil)
+		}
+	default: // a window's: close-window, float, fullscreen, center
+		l.st.Done(nil)
+		s.runAfter(120, func() { s.runCommand(id, "", r.Address) })
+	}
+	s.syncLauncher()
 }
