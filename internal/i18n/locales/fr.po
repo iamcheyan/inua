@@ -52,7 +52,7 @@ msgstr "La bonne méthode :"
 
 #: cmd/inua-keyring/main.go:117
 #: internal/ui/settings_keyring.go:324
-#: ui/settings.ui:3973
+#: ui/settings.ui:3975
 msgid "Keyring"
 msgstr "Trousseau"
 
@@ -346,7 +346,7 @@ msgstr "%d %%, en charge"
 #: internal/apps/connect/service.go:519
 #: internal/ui/settings.go:298
 #: internal/ui/settings.go:698
-#: internal/ui/settings.go:786
+#: internal/ui/settings.go:801
 #: internal/ui/settings_displays.go:441
 msgid "%d%%"
 msgstr "%d %%"
@@ -582,7 +582,7 @@ msgstr "DEV"
 #: internal/mailui/settings.go:581
 #: ui/mail-compose.ui:269
 #: ui/mail.ui:384
-#: ui/settings.ui:2298
+#: ui/settings.ui:2300
 msgid "AI"
 msgstr "IA"
 
@@ -1919,7 +1919,7 @@ msgstr "Exécution d’un script avec les outils"
 
 #: internal/assistantui/assistantui.go:38
 #: ui/assistant.ui:35
-#: ui/settings.ui:2377
+#: ui/settings.ui:2379
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:3
 msgid "Assistant"
 msgstr "Assistant"
@@ -2033,7 +2033,7 @@ msgid "Canceled"
 msgstr "Annulé"
 
 #: internal/assistantui/assistantui.go:713
-#: ui/settings.ui:4220
+#: ui/settings.ui:4222
 msgid "Allowed"
 msgstr "Autorisé"
 
@@ -2119,7 +2119,7 @@ msgstr "Le service démarre."
 #: internal/ui/settings_displays.go:412
 #: internal/ui/settings_wifi.go:285
 #: ui/remote.ui:359
-#: ui/settings.ui:5916
+#: ui/settings.ui:5918
 msgid "Off"
 msgstr "Désactivé"
 
@@ -2228,7 +2228,7 @@ msgstr "%s a été invité à se connecter."
 #: ui/connect.ui:290
 #: ui/files.ui:229
 #: ui/gpg.ui:1342
-#: ui/settings.ui:5051
+#: ui/settings.ui:5053
 #: ui/sysmon.ui:96
 msgid "Name"
 msgstr "Nom"
@@ -2800,7 +2800,7 @@ msgstr "Ouvre les dossiers"
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
 #: internal/termui/tiles.go:704
-#: ui/settings.ui:2109
+#: ui/settings.ui:2111
 #: config/apps/io.github.lyricat.Inua.Term.desktop:3
 msgid "Terminal"
 msgstr "Terminal"
@@ -2835,7 +2835,7 @@ msgstr "Ouvre les fichiers vidéo"
 
 #: internal/desktop/defaults.go:48
 #: internal/lightui/pass_otp.go:340
-#: internal/ui/settings.go:948
+#: internal/ui/settings.go:963
 msgid "Images"
 msgstr "Images"
 
@@ -3068,7 +3068,7 @@ msgstr "Copié"
 #: ui/disk.ui:697
 #: ui/gpg.ui:661
 #: ui/gpg.ui:907
-#: ui/settings.ui:3176
+#: ui/settings.ui:3178
 #: ui/vm.ui:638
 msgid "Copy"
 msgstr "Copier"
@@ -3551,8 +3551,8 @@ msgstr[1] "… et %d de plus"
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
 #: ui/mail.ui:395
-#: ui/settings.ui:3325
-#: ui/settings.ui:4806
+#: ui/settings.ui:3327
+#: ui/settings.ui:4808
 #: ui/vm.ui:3499
 msgid "Close"
 msgstr "Fermer"
@@ -3670,7 +3670,7 @@ msgstr "Copier les chemins (sans sélection : celui du dossier)"
 #: internal/mailui/picker.go:143
 #: ui/disk.ui:771
 #: ui/settings.ui:254
-#: ui/settings.ui:661
+#: ui/settings.ui:663
 msgid "Move to Trash"
 msgstr "Mettre à la corbeille"
 
@@ -7940,7 +7940,7 @@ msgstr "Quitter vers le menu"
 #: internal/term/web/strings.go:24
 #: internal/termui/guide.go:111
 #: ui/gpg.ui:633
-#: ui/settings.ui:4506
+#: ui/settings.ui:4508
 #: ui/vm.ui:509
 #: ui/vm.ui:3274
 msgid "Back"
@@ -8225,7 +8225,7 @@ msgstr "multibilles"
 
 #: internal/gamesui/pinball.go:776
 #: ui/control.ui:78
-#: ui/settings.ui:1917
+#: ui/settings.ui:1919
 msgid "Lock"
 msgstr "Verrouillage"
 
@@ -8275,7 +8275,7 @@ msgstr "FLIPPER SPATIAL"
 
 #: internal/hyprconf/keys.go:23
 #: internal/shell/dock.go:312
-#: ui/settings.ui:1986
+#: ui/settings.ui:1988
 msgid "Launcher"
 msgstr "Lanceur"
 
@@ -8322,7 +8322,7 @@ msgid "Settings"
 msgstr "Paramètres"
 
 #: internal/hyprconf/keys.go:32
-#: ui/settings.ui:808
+#: ui/settings.ui:810
 msgid "Restart the shell"
 msgstr "Redémarrez le shell"
 
@@ -8359,7 +8359,7 @@ msgstr "Choisissez une couleur"
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:173
 #: ui/bar.ui:167
-#: ui/settings.ui:6366
+#: ui/settings.ui:6368
 msgid "Dictation"
 msgstr "Dictée"
 
@@ -8482,7 +8482,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: ui/settings.ui:1262
+#: ui/settings.ui:1264
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
 msgstr "Horloge"
@@ -8725,7 +8725,7 @@ msgstr "5 ans"
 #: internal/lightui/gpg.go:145
 #: internal/mailui/settings.go:530
 #: internal/shell/idle.go:162
-#: ui/settings.ui:4165
+#: ui/settings.ui:4167
 msgid "Never"
 msgstr "Jamais"
 
@@ -9206,8 +9206,8 @@ msgid "Top level"
 msgstr "Niveau supérieur"
 
 #: internal/lightui/pass.go:418
-#: internal/ui/settings.go:811
-#: internal/ui/settings.go:838
+#: internal/ui/settings.go:826
+#: internal/ui/settings.go:853
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d entrée"
@@ -9960,8 +9960,8 @@ msgstr "filaire"
 
 #: internal/lightui/sysmon.go:1043
 #: ui/control.ui:273
-#: ui/settings.ui:5159
-#: ui/settings.ui:5235
+#: ui/settings.ui:5161
+#: ui/settings.ui:5237
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
@@ -10547,7 +10547,7 @@ msgid "A folder with an app.toml; it is copied."
 msgstr "Un dossier avec un app.toml ; il est copié."
 
 #: internal/lightui/workshop_manager.go:90
-#: ui/settings.ui:955
+#: ui/settings.ui:957
 msgid "Choose…"
 msgstr "Choisissez…"
 
@@ -10980,7 +10980,7 @@ msgstr ""
 #: internal/mailui/reader.go:826
 #: ui/gpg.ui:652
 #: ui/gpg.ui:896
-#: ui/settings.ui:6547
+#: ui/settings.ui:6549
 msgid "Save…"
 msgstr "Enregistrer…"
 
@@ -12265,8 +12265,8 @@ msgstr "Cet ordinateur n'a pas d'identité pour s'appairer : %v"
 
 #: internal/remoteui/window.go:173
 #: internal/shell/card.go:80
-#: ui/settings.ui:5205
-#: ui/settings.ui:5486
+#: ui/settings.ui:5207
+#: ui/settings.ui:5488
 msgid "This computer"
 msgstr "Cet ordinateur"
 
@@ -12598,7 +12598,7 @@ msgid "Lock Screen"
 msgstr "Verrouiller l’écran"
 
 #: internal/shell/commands.go:27
-#: ui/settings.ui:4117
+#: ui/settings.ui:4119
 msgid "Lock now"
 msgstr "Verrouiller maintenant"
 
@@ -12839,7 +12839,7 @@ msgstr "Rechercher des applications, des fenêtres et des réponses"
 
 #: internal/shell/dock.go:313
 #: internal/ui/screenshot.go:1134
-#: ui/settings.ui:1946
+#: ui/settings.ui:1948
 msgid "Screenshot"
 msgstr "Capture d’écran"
 
@@ -12895,56 +12895,56 @@ msgstr "[APPLICATIONS]"
 msgid "Launch apps"
 msgstr "Lancer des applications"
 
-#: internal/shell/launcher.go:262
+#: internal/shell/launcher.go:348
 msgid "That window has closed"
 msgstr "Cette fenêtre s'est fermée"
 
-#: internal/shell/launcher.go:289
+#: internal/shell/launcher.go:375
 msgid "Ask the assistant anything"
 msgstr "Demandez n'importe quoi à l'assistant"
 
-#: internal/shell/launcher.go:291
+#: internal/shell/launcher.go:377
 msgid "No emoji or symbol matches"
 msgstr "Aucune correspondance d'emoji ou de symbole"
 
-#: internal/shell/launcher.go:293
+#: internal/shell/launcher.go:379
 msgid "Reading apps…"
 msgstr "Lecture d’applications…"
 
-#: internal/shell/launcher.go:295
+#: internal/shell/launcher.go:381
 msgid "No app matches"
 msgstr "Aucune application ne correspond"
 
-#: internal/shell/launcher.go:297
+#: internal/shell/launcher.go:383
 msgid "Not connected to Hyprland"
 msgstr "Non connecté à Hyprland"
 
-#: internal/shell/launcher.go:299
+#: internal/shell/launcher.go:385
 msgid "No windows open"
 msgstr "Aucune fenêtre ouverte"
 
-#: internal/shell/launcher.go:301
+#: internal/shell/launcher.go:387
 msgid "No window matches"
 msgstr "Aucune fenêtre ne correspond"
 
-#: internal/shell/launcher.go:337
+#: internal/shell/launcher.go:425
 msgid "Enter asks"
 msgstr "Entrée pour demander"
 
-#: internal/shell/launcher.go:349
+#: internal/shell/launcher.go:437
 msgid "or start with ?"
 msgstr "ou commencer par ?"
 
-#: internal/shell/launcher.go:352
+#: internal/shell/launcher.go:440
 msgid "%s · Enter copies"
 msgstr "%s · Entrée pour copier"
 
-#: internal/shell/launcher.go:379
+#: internal/shell/launcher.go:490
 #: ui/vm.ui:912
 msgid "Ask the assistant"
 msgstr "Demandez à l'assistant"
 
-#: internal/shell/launcher.go:416
+#: internal/shell/launcher.go:527
 msgid "%s · workspace %s"
 msgstr "%[1]s · espace de travail %[2]s"
 
@@ -13470,7 +13470,7 @@ msgid "Key panel"
 msgstr "Panneau de touches"
 
 #: internal/term/web/strings.go:63
-#: ui/settings.ui:5807
+#: ui/settings.ui:5809
 msgid "Keyboard"
 msgstr "Clavier"
 
@@ -13664,7 +13664,7 @@ msgid "Wait, let me think."
 msgstr ""
 
 #: internal/term/web/strings.go:122
-#: ui/settings.ui:1321
+#: ui/settings.ui:1323
 msgid "Workspaces"
 msgstr "Espaces de travail"
 
@@ -14059,7 +14059,7 @@ msgstr "bash, zsh et fish marquent leurs invites, pour retenir les commandes"
 #: internal/termui/prefs.go:181
 #: internal/ui/notify.go:324
 #: ui/bar.ui:137
-#: ui/settings.ui:3356
+#: ui/settings.ui:3358
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -14480,7 +14480,7 @@ msgstr "Rechercher dans l’historique"
 
 #: internal/ui/clipboard.go:359
 #: ui/connect.ui:727
-#: ui/settings.ui:3620
+#: ui/settings.ui:3622
 msgid "Clipboard"
 msgstr "Presse-papiers"
 
@@ -14585,8 +14585,8 @@ msgstr "Aucun réseau à portée."
 #: internal/ui/control_detail.go:182
 #: internal/ui/settings_bluetooth.go:224
 #: internal/ui/settings_wifi.go:305
-#: ui/settings.ui:5400
-#: ui/settings.ui:5629
+#: ui/settings.ui:5402
+#: ui/settings.ui:5631
 msgid "Searching…"
 msgstr "Recherche…"
 
@@ -14628,7 +14628,7 @@ msgstr "Quitter (fenêtres %d)"
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:535
 #: ui/settings.ui:181
-#: ui/settings.ui:2085
+#: ui/settings.ui:2087
 msgid "Apps"
 msgstr "Applications"
 
@@ -14680,7 +14680,7 @@ msgstr "hyprland.lua redéfinit ces réglages après avoir chargé inua.lua, ce 
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf les définit à nouveau après le chargement d'inua.conf, qui l'emporte sur inua : %s. Déplacez la ligne source en dessous d’eux."
 
-#: internal/ui/launcher.go:311
+#: internal/ui/launcher.go:406
 msgid "inua launcher"
 msgstr "lanceur inua"
 
@@ -14843,7 +14843,7 @@ msgstr "Chercher dans toutes les entrées"
 
 #: internal/ui/passwords.go:282
 #: ui/bar.ui:116
-#: ui/settings.ui:1458
+#: ui/settings.ui:1460
 msgid "Passwords"
 msgstr "Mots de passe"
 
@@ -15023,78 +15023,88 @@ msgstr "Connexions"
 msgid "As the bar (%s)"
 msgstr "Comme la barre (%s)"
 
-#: internal/ui/settings.go:751
+#: internal/ui/settings.go:750
 #: ui/settings.ui:556
-msgid "Phosphor"
-msgstr "Phosphor"
+msgid "inua Objects"
+msgstr "inua Objects"
 
 #: internal/ui/settings.go:751
-#: internal/ui/settings.go:752
 #: ui/settings.ui:557
-#: ui/settings.ui:604
+msgid "inua Objects Soft"
+msgstr "inua Objects Soft"
+
+#: internal/ui/settings.go:752
+#: ui/settings.ui:558
+msgid "inua Objects Flat"
+msgstr "inua Objects Flat"
+
+#: internal/ui/settings.go:759
+#: internal/ui/settings.go:760
+#: ui/settings.ui:559
+#: ui/settings.ui:606
 msgid "System theme"
 msgstr "Thème système"
 
-#: internal/ui/settings.go:837
+#: internal/ui/settings.go:852
 msgid "%s (%s, %s) · %s"
 msgstr "%s (%s, %s) · %s"
 
-#: internal/ui/settings.go:839
+#: internal/ui/settings.go:854
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "%d texte"
 msgstr[1] "%d textes"
 
-#: internal/ui/settings.go:840
+#: internal/ui/settings.go:855
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "%d image"
 msgstr[1] "%d images"
 
-#: internal/ui/settings.go:841
+#: internal/ui/settings.go:856
 msgid "%.1f KB"
 msgstr "%.1f Ko"
 
-#: internal/ui/settings.go:920
+#: internal/ui/settings.go:935
 #: internal/ui/settings_apps.go:168
 #: internal/ui/settings_card.go:288
 #: internal/ui/settings_portals.go:177
 msgid "Not saved: %s"
 msgstr "Non sauvegardé : %s"
 
-#: internal/ui/settings.go:946
+#: internal/ui/settings.go:961
 msgid "Choose a wallpaper"
 msgstr "Choisir un fond d'écran"
 
-#: internal/ui/settings.go:988
+#: internal/ui/settings.go:1003
 msgid "Off: another notification daemon can show them"
 msgstr "Désactivé : un autre démon de notification peut les afficher"
 
-#: internal/ui/settings.go:990
+#: internal/ui/settings.go:1005
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "Bannières puis centre de notifications (cloche de la barre ou Super+N)"
 
-#: internal/ui/settings.go:992
+#: internal/ui/settings.go:1007
 msgid "Waiting: another notification daemon is running"
 msgstr "En attente : un autre démon de notification est en cours d'exécution"
 
-#: internal/ui/settings.go:1010
+#: internal/ui/settings.go:1025
 msgid "Nothing pinned"
 msgstr "Aucune application épinglée"
 
-#: internal/ui/settings.go:1026
+#: internal/ui/settings.go:1041
 msgid "%s (not installed)"
 msgstr "%s (non installé)"
 
-#: internal/ui/settings.go:1039
+#: internal/ui/settings.go:1054
 msgid "Move earlier"
 msgstr "Déplacer avant"
 
-#: internal/ui/settings.go:1040
+#: internal/ui/settings.go:1055
 msgid "Move later"
 msgstr "Déplacer après"
 
-#: internal/ui/settings.go:1041
+#: internal/ui/settings.go:1056
 msgid "Remove from the dock"
 msgstr "Retirer du dock"
 
@@ -15164,7 +15174,7 @@ msgid "Minimal"
 msgstr "Minime"
 
 #: internal/ui/settings_ai.go:99
-#: ui/settings.ui:1744
+#: ui/settings.ui:1746
 msgid "Medium"
 msgstr "Moyen"
 
@@ -15197,7 +15207,7 @@ msgid "Hide token"
 msgstr "Masquer le jeton"
 
 #: internal/ui/settings_ai.go:247
-#: ui/settings.ui:2970
+#: ui/settings.ui:2972
 msgid "Create token"
 msgstr "Créer un jeton"
 
@@ -15727,7 +15737,7 @@ msgid "Where it is (%s, %s)"
 msgstr "Là où il est (%s, %s)"
 
 #: internal/ui/settings_displays.go:286
-#: ui/settings.ui:1636
+#: ui/settings.ui:1638
 msgid "Position"
 msgstr "Poste"
 
@@ -15741,8 +15751,8 @@ msgid "Mirror"
 msgstr "Recopie"
 
 #: internal/ui/settings_displays.go:313
-#: ui/settings.ui:6067
-#: ui/settings.ui:6334
+#: ui/settings.ui:6069
+#: ui/settings.ui:6336
 msgid "Use hyprland.conf"
 msgstr "Utilisez hyprland.conf"
 
@@ -15788,7 +15798,7 @@ msgid "Added %s."
 msgstr "%s ajouté."
 
 #: internal/ui/settings_keyring.go:270
-#: ui/settings.ui:4794
+#: ui/settings.ui:4796
 msgid "<span alpha='55%'>[</span>READ<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>LECTURE<span alpha='55%'>]</span>"
 
@@ -15918,7 +15928,7 @@ msgid "The record of reads cannot be read: %s"
 msgstr "Impossible de lire le journal des lectures : %s"
 
 #: internal/ui/settings_keyring.go:424
-#: ui/settings.ui:4433
+#: ui/settings.ui:4435
 msgid "No app has read a secret yet."
 msgstr "Aucune application n’a encore lu de secret."
 
@@ -16349,7 +16359,7 @@ msgid "%s Upgrade with: inua upgrade"
 msgstr "Mise à niveau %s avec : mise à niveau inua"
 
 #: internal/ui/updates.go:99
-#: ui/settings.ui:6693
+#: ui/settings.ui:6695
 msgid "Upgrade"
 msgstr "Mise à niveau"
 
@@ -17115,7 +17125,7 @@ msgid "Network device (TUN)"
 msgstr "Périphérique réseau (TUN)"
 
 #: internal/vmui/window.go:1241
-#: ui/settings.ui:4060
+#: ui/settings.ui:4062
 msgid "Secret Service"
 msgstr "Secret Service"
 
@@ -17192,7 +17202,7 @@ msgid "BSD"
 msgstr "BSD"
 
 #: internal/vmui/window.go:1510
-#: ui/settings.ui:2086
+#: ui/settings.ui:2088
 msgid "Windows"
 msgstr "Fenêtres"
 
@@ -17864,8 +17874,8 @@ msgid "Wi-Fi networks"
 msgstr "Réseaux Wi-Fi"
 
 #: ui/control.ui:346
-#: ui/settings.ui:5440
-#: ui/settings.ui:5516
+#: ui/settings.ui:5442
+#: ui/settings.ui:5518
 msgid "Bluetooth"
 msgstr "Bluetooth"
 
@@ -17886,7 +17896,7 @@ msgid "Display"
 msgstr "Affichage"
 
 #: ui/control.ui:666
-#: ui/settings.ui:6400
+#: ui/settings.ui:6402
 msgid "Sound"
 msgstr "Son"
 
@@ -18149,19 +18159,19 @@ msgstr "Commutateur à onglets"
 msgid "Search, or ask: 10 km to mi"
 msgstr "Recherchez ou demandez : 10 km à mi"
 
-#: ui/launcher.ui:87
+#: ui/launcher.ui:140
 msgid "[ERROR]"
 msgstr "[ERREUR]"
 
-#: ui/launcher.ui:118
+#: ui/launcher.ui:166
 msgid "↑↓  choose"
 msgstr "↑↓ choisir"
 
-#: ui/launcher.ui:126
+#: ui/launcher.ui:174
 msgid "↵  open"
 msgstr "↵ ouvert"
 
-#: ui/launcher.ui:134
+#: ui/launcher.ui:182
 msgid "Esc  close"
 msgstr "Echap fermer"
 
@@ -18500,7 +18510,7 @@ msgid "The machine shows its desktop at this size."
 msgstr "La machine affiche son bureau à cette taille."
 
 #: ui/remote.ui:782
-#: ui/settings.ui:1344
+#: ui/settings.ui:1346
 msgid "This monitor's"
 msgstr "Ce moniteur"
 
@@ -18597,8 +18607,8 @@ msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
 msgstr "Un fichier CSS de lignes @define-color, rangé dans themes à côté de config.toml"
 
 #: ui/settings.ui:243
-#: ui/settings.ui:650
-#: ui/settings.ui:5070
+#: ui/settings.ui:652
+#: ui/settings.ui:5072
 msgid "Add…"
 msgstr "Ajouter…"
 
@@ -18607,7 +18617,7 @@ msgid "The theme in use, if it is one of yours"
 msgstr "Le thème utilisé, si c'est l'un des vôtres"
 
 #: ui/settings.ui:265
-#: ui/settings.ui:672
+#: ui/settings.ui:674
 msgid "Open Folder"
 msgstr "Ouvrir le dossier"
 
@@ -18640,999 +18650,999 @@ msgid "The shell's own, and those of apps and files"
 msgstr "Ceux du shell, et ceux des applications et des fichiers"
 
 #: ui/settings.ui:533
-msgid "Icon set"
-msgstr "Jeu d'icônes"
+msgid "inua icons"
+msgstr "Icônes d’inua"
 
 #: ui/settings.ui:542
-msgid "Built in, the system's, an installed theme or one of yours"
-msgstr "Intégré, celui du système, un thème installé ou l'un des vôtres"
+msgid "inua's apps and the icons in them: inua's, the system's, an installed theme or one of yours"
+msgstr "Les apps d’inua et leurs icônes : celles d’inua, du système, d’un thème installé ou les vôtres"
 
-#: ui/settings.ui:581
+#: ui/settings.ui:583
 msgid "App icons"
 msgstr "Icônes des applications"
 
-#: ui/settings.ui:590
-msgid "The dock, launcher, notifications and files"
-msgstr "Le dock, le lanceur, les notifications et les fichiers"
+#: ui/settings.ui:592
+msgid "Other apps in the dock, launcher and notifications, and files"
+msgstr "Les autres apps dans le dock, le lanceur et les notifications, et les fichiers"
 
-#: ui/settings.ui:628
+#: ui/settings.ui:630
 msgid "Your icon sets"
 msgstr "Vos jeux d'icônes"
 
-#: ui/settings.ui:637
+#: ui/settings.ui:639
 msgid "A folder of SVG icons named like inua's, kept in icons beside config.toml"
 msgstr "Un dossier d'icônes SVG nommées comme celles d'inua, rangé dans icons à côté de config.toml"
 
-#: ui/settings.ui:662
+#: ui/settings.ui:664
 msgid "The icon set in use, if it is one of yours"
 msgstr "Le jeu d'icônes utilisé, si c'est l'un des vôtres"
 
-#: ui/settings.ui:708
+#: ui/settings.ui:710
 msgid "<span alpha='55%'>[</span>LANGUAGE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>LANGUE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:716
+#: ui/settings.ui:718
 msgid "The shell, settings and light apps"
 msgstr "Le shell, les réglages et les applications légères"
 
-#: ui/settings.ui:746
+#: ui/settings.ui:748
 msgid "Language"
 msgstr "Langue"
 
-#: ui/settings.ui:755
+#: ui/settings.ui:757
 msgid "Programs use it when they start"
 msgstr "Les programmes l’utilisent à leur démarrage"
 
-#: ui/settings.ui:769
+#: ui/settings.ui:771
 msgid "Same as the system"
 msgstr "Celle du système"
 
-#: ui/settings.ui:796
+#: ui/settings.ui:798
 msgid "Restart the shell to use it now; open apps change when you open them again."
 msgstr "Redémarrez le shell pour l’utiliser tout de suite ; les applications ouvertes changent quand vous les rouvrez."
 
-#: ui/settings.ui:844
+#: ui/settings.ui:846
 msgid "<span alpha='55%'>[</span>PICTURE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>IMAGE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:852
+#: ui/settings.ui:854
 msgid "Behind your windows, on every monitor"
 msgstr "Derrière les fenêtres, sur chaque écran"
 
-#: ui/settings.ui:882
+#: ui/settings.ui:884
 msgid "inua draws the wallpaper"
 msgstr ""
 
-#: ui/settings.ui:891
+#: ui/settings.ui:893
 msgid "A new picture each day, drawn for your theme: a sunset, the cosmos, a cat watching the moon …"
 msgstr ""
 
-#: ui/settings.ui:906
+#: ui/settings.ui:908
 msgid "Draw another"
 msgstr ""
 
-#: ui/settings.ui:935
+#: ui/settings.ui:937
 msgid "Image"
 msgstr "Images"
 
-#: ui/settings.ui:946
+#: ui/settings.ui:948
 msgid "none: a fine texture"
 msgstr "Sans image : texture fine"
 
-#: ui/settings.ui:965
+#: ui/settings.ui:967
 msgid "No image"
 msgstr "Aucune image"
 
-#: ui/settings.ui:991
+#: ui/settings.ui:993
 msgid "Fit"
 msgstr "Ajuster"
 
-#: ui/settings.ui:1000
+#: ui/settings.ui:1002
 msgid "How the picture fills each monitor"
 msgstr "Comment l'image remplit chaque moniteur"
 
-#: ui/settings.ui:1014
+#: ui/settings.ui:1016
 msgid "Cover: fill, cropping"
 msgstr "Remplir et recadrer"
 
-#: ui/settings.ui:1015
+#: ui/settings.ui:1017
 msgid "Contain: show it all"
 msgstr "Afficher en entier"
 
-#: ui/settings.ui:1016
+#: ui/settings.ui:1018
 msgid "Tile: repeat"
 msgstr "Tuile : répéter"
 
-#: ui/settings.ui:1017
+#: ui/settings.ui:1019
 msgid "Center: actual size"
 msgstr "Centrer à taille réelle"
 
-#: ui/settings.ui:1040
+#: ui/settings.ui:1042
 msgid "Colour"
 msgstr "Couleur"
 
-#: ui/settings.ui:1053
+#: ui/settings.ui:1055
 msgid "theme"
 msgstr "thème"
 
-#: ui/settings.ui:1061
+#: ui/settings.ui:1063
 msgid "#rrggbb, shown around the image. Empty: the theme's ground"
 msgstr "#rrggbb, affiché autour de l'image. Vide : le fondement du thème"
 
-#: ui/settings.ui:1096
+#: ui/settings.ui:1098
 msgid "Bar & Dock"
 msgstr "Barre et dock"
 
-#: ui/settings.ui:1134
+#: ui/settings.ui:1136
 msgid "<span alpha='55%'>[</span>BAR<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>BARRE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:1142
+#: ui/settings.ui:1144
 msgid "The bar along the top of each monitor"
 msgstr "La barre située en haut de chaque moniteur"
 
-#: ui/settings.ui:1172
+#: ui/settings.ui:1174
 msgid "Show the bar"
 msgstr "Afficher la barre"
 
-#: ui/settings.ui:1181
+#: ui/settings.ui:1183
 msgid "Off: Super+Space, Super+A and Super+N still open the launcher, control center and notifications"
 msgstr "Désactivé : Super+Space, Super+A et Super+N ouvrent toujours le lanceur, le centre de contrôle et les notifications"
 
-#: ui/settings.ui:1215
+#: ui/settings.ui:1217
 msgid "Bar spacing"
 msgstr "Espacement de la barre"
 
-#: ui/settings.ui:1224
+#: ui/settings.ui:1226
 msgid "Choose the standard or compact bar layout"
 msgstr "Choisir la disposition standard ou compacte de la barre"
 
-#: ui/settings.ui:1238
+#: ui/settings.ui:1240
 msgid "Default"
 msgstr "Par défaut"
 
-#: ui/settings.ui:1239
+#: ui/settings.ui:1241
 msgid "Compact"
 msgstr "Compacte"
 
-#: ui/settings.ui:1295
+#: ui/settings.ui:1297
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"
 msgstr "strftime : jour de la semaine %a, mois %b, jour %-d, heure %H : %M"
 
-#: ui/settings.ui:1330
+#: ui/settings.ui:1332
 msgid "Which workspaces each bar shows"
 msgstr "Quels espaces de travail chaque barre affiche"
 
-#: ui/settings.ui:1345
+#: ui/settings.ui:1347
 msgid "All monitors'"
 msgstr "Tous les moniteurs"
 
-#: ui/settings.ui:1372
+#: ui/settings.ui:1374
 msgid "Window title"
 msgstr "Titre de la fenêtre"
 
-#: ui/settings.ui:1381
+#: ui/settings.ui:1383
 msgid "The focused window's title"
 msgstr "Le titre de la fenêtre ciblée"
 
-#: ui/settings.ui:1415
+#: ui/settings.ui:1417
 msgid "Tray icons"
 msgstr "Icônes de la barre d'état"
 
-#: ui/settings.ui:1424
+#: ui/settings.ui:1426
 msgid "Status icons from apps"
 msgstr "Icônes d'état des applications"
 
-#: ui/settings.ui:1467
+#: ui/settings.ui:1469
 msgid "Search the password store and copy from it, when there is one"
 msgstr "Chercher dans le magasin de mots de passe et en copier, s'il y en a un"
 
-#: ui/settings.ui:1512
+#: ui/settings.ui:1514
 msgid "<span alpha='55%'>[</span>DOCK<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>DOCK<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:1520
+#: ui/settings.ui:1522
 msgid "Apps along the chosen screen edge on each monitor"
 msgstr "Applications le long du bord d'écran choisi sur chaque moniteur"
 
-#: ui/settings.ui:1550
+#: ui/settings.ui:1552
 msgid "Show the dock"
 msgstr "Afficher le quai"
 
-#: ui/settings.ui:1559
+#: ui/settings.ui:1561
 msgid "Pinned apps, then the others with open windows"
 msgstr "Applications épinglées, puis les autres avec fenêtres ouvertes"
 
-#: ui/settings.ui:1593
+#: ui/settings.ui:1595
 msgid "Hide automatically"
 msgstr "Masquer automatiquement"
 
-#: ui/settings.ui:1602
+#: ui/settings.ui:1604
 msgid "Comes back when the pointer reaches the dock's screen edge"
 msgstr "Revient lorsque le pointeur atteint le bord de l'écran du dock"
 
-#: ui/settings.ui:1645
+#: ui/settings.ui:1647
 msgid "Choose a screen edge for the dock"
 msgstr "Choisir un bord d'écran pour le dock"
 
-#: ui/settings.ui:1659
+#: ui/settings.ui:1661
 msgid "Bottom"
 msgstr "Fond"
 
-#: ui/settings.ui:1660
+#: ui/settings.ui:1662
 msgid "Top"
 msgstr "Haut"
 
-#: ui/settings.ui:1661
+#: ui/settings.ui:1663
 msgid "Left"
 msgstr "Gauche"
 
-#: ui/settings.ui:1662
+#: ui/settings.ui:1664
 msgid "Right"
 msgstr "Droite"
 
-#: ui/settings.ui:1686
+#: ui/settings.ui:1688
 msgid "Remove screen edge gaps"
 msgstr "Supprimer les espaces entre les bords de l'écran"
 
-#: ui/settings.ui:1695
+#: ui/settings.ui:1697
 msgid "Remove the screen-edge margins around the dock and top bar"
 msgstr "Supprimez les marges du bord de l'écran autour du dock et de la barre supérieure."
 
-#: ui/settings.ui:1729
+#: ui/settings.ui:1731
 msgid "Icon size"
 msgstr "Taille de l'icône"
 
-#: ui/settings.ui:1742
+#: ui/settings.ui:1744
 msgid "Smaller"
 msgstr "Plus petit"
 
-#: ui/settings.ui:1743
+#: ui/settings.ui:1745
 msgid "Small"
 msgstr "Petit"
 
-#: ui/settings.ui:1745
+#: ui/settings.ui:1747
 msgid "Large"
 msgstr "Grand"
 
-#: ui/settings.ui:1772
+#: ui/settings.ui:1774
 msgid "Apps drawer"
 msgstr "Tiroir d'applications"
 
-#: ui/settings.ui:1781
+#: ui/settings.ui:1783
 msgid "A button at the end for Clock, Weather, Stocks and Calculator"
 msgstr "Un bouton à la fin pour l'horloge, la météo, les actions et la calculatrice."
 
-#: ui/settings.ui:1826
+#: ui/settings.ui:1828
 msgid "<span alpha='55%'>[</span>PINNED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ÉPINGLÉES<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:1834
+#: ui/settings.ui:1836
 msgid "Right-click an app on the dock to keep it there"
 msgstr "Cliquez avec le bouton droit sur une application sur le dock pour la conserver là"
 
-#: ui/settings.ui:1883
+#: ui/settings.ui:1885
 msgid "<span alpha='55%'>[</span>CONTROL CENTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CENTRE DE CONTRÔLE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:1891
+#: ui/settings.ui:1893
 msgid "Shell commands behind the control center's buttons"
 msgstr "Commandes Shell derrière les boutons du centre de contrôle"
 
-#: ui/settings.ui:2024
+#: ui/settings.ui:2026
 msgid "<span alpha='55%'>[</span>LAUNCHER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>LANCEUR<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2032
+#: ui/settings.ui:2034
 msgid "Super+Space finds apps and open windows"
 msgstr "Super+Space trouve des applications et ouvre des fenêtres"
 
-#: ui/settings.ui:2062
+#: ui/settings.ui:2064
 msgid "Opens with"
 msgstr "S'ouvre avec"
 
-#: ui/settings.ui:2071
+#: ui/settings.ui:2073
 msgid "What Super+Space shows first; Tab switches"
 msgstr "Contenu initial de Super+Espace ; Tab change de mode"
 
-#: ui/settings.ui:2119
+#: ui/settings.ui:2121
 msgid "$TERMINAL, then xdg-terminal-exec"
 msgstr "$TERMINAL, puis xdg-terminal-exec"
 
-#: ui/settings.ui:2127
+#: ui/settings.ui:2129
 msgid "Runs apps marked Terminal=true"
 msgstr "Exécute les applications marquées Terminal=true"
 
-#: ui/settings.ui:2160
+#: ui/settings.ui:2162
 msgid "Default Apps"
 msgstr "Applications par défaut"
 
-#: ui/settings.ui:2198
+#: ui/settings.ui:2200
 msgid "<span alpha='55%'>[</span>DEFAULT APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>APPLICATIONS PAR DÉFAUT<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2206
+#: ui/settings.ui:2208
 msgid "What opens links, folders and files"
 msgstr "Ce qui ouvre les liens, dossiers et fichiers"
 
-#: ui/settings.ui:2250
+#: ui/settings.ui:2252
 msgid "<span alpha='55%'>[</span>DIALOGS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:2258
+#: ui/settings.ui:2260
 msgid "What apps show when they ask the desktop"
 msgstr ""
 
-#: ui/settings.ui:2339
+#: ui/settings.ui:2341
 msgid "<span alpha='55%'>[</span>ASSISTANT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ASSISTANT<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2347
+#: ui/settings.ui:2349
 msgid "An agent with inua's tools, run by Mister Morph"
 msgstr "Un agent utilisant les outils d’inua, exécuté par Mister Morph"
 
-#: ui/settings.ui:2386
+#: ui/settings.ui:2388
 msgid "Ask it from the launcher (the last row, or ? first) or open Assistant"
 msgstr "Demandez-le depuis le lanceur (la dernière ligne, ou ? en premier) ou ouvrez l'Assistant"
 
-#: ui/settings.ui:2420
+#: ui/settings.ui:2422
 msgid "Answers with"
 msgstr "Profil de réponse"
 
-#: ui/settings.ui:2429
+#: ui/settings.ui:2431
 msgid "The profile asked first; the assistant's window can switch for a conversation"
 msgstr "Profil initial ; changez-le pour une conversation dans l’assistant"
 
-#: ui/settings.ui:2463
+#: ui/settings.ui:2465
 msgid "Quick choices with"
 msgstr "Profil des choix rapides"
 
-#: ui/settings.ui:2472
+#: ui/settings.ui:2474
 msgid "The profile that picks from a fixed list, as an AI player in the games does"
 msgstr "Le profil qui choisit dans une liste fixe, comme un joueur IA dans les jeux"
 
-#: ui/settings.ui:2506
+#: ui/settings.ui:2508
 msgid "Voice input with"
 msgstr "Saisie vocale avec"
 
-#: ui/settings.ui:2548
-#: ui/settings.ui:3132
+#: ui/settings.ui:2550
+#: ui/settings.ui:3134
 msgid "Ask before changes"
 msgstr "Demander avant les modifications"
 
-#: ui/settings.ui:2557
+#: ui/settings.ui:2559
 msgid "Wi-Fi, volume, windows, the clipboard …; power, ending processes and closing windows always ask"
 msgstr "Wi-Fi, volume, fenêtres, presse-papiers… ; le pouvoir, la fin des processus et la fermeture des fenêtres demandent toujours"
 
-#: ui/settings.ui:2591
+#: ui/settings.ui:2593
 msgid "Search the web"
 msgstr "Rechercher sur le Web"
 
-#: ui/settings.ui:2600
+#: ui/settings.ui:2602
 msgid "Mister Morph's web search and page reading"
 msgstr "Recherche web et lecture de pages de Mister Morph"
 
-#: ui/settings.ui:2634
+#: ui/settings.ui:2636
 msgid "Read files"
 msgstr "Lire des fichiers"
 
-#: ui/settings.ui:2643
+#: ui/settings.ui:2645
 msgid "Any file you can read; asks each time"
 msgstr "N'importe quel fichier que vous pouvez lire ; demande à chaque fois"
 
-#: ui/settings.ui:2677
+#: ui/settings.ui:2679
 msgid "Run commands"
 msgstr "Exécuter des commandes"
 
-#: ui/settings.ui:2686
+#: ui/settings.ui:2688
 msgid "A shell, as you; asks each time"
 msgstr "Exécute un shell avec vos droits ; demande à chaque fois"
 
-#: ui/settings.ui:2720
+#: ui/settings.ui:2722
 msgid "As administrator"
 msgstr "En administrateur"
 
-#: ui/settings.ui:2729
+#: ui/settings.ui:2731
 msgid "A command as root, once you approve it in a dialog that shows it, with your password"
 msgstr "Une commande en root, une fois approuvée dans une fenêtre qui la montre, avec votre mot de passe"
 
-#: ui/settings.ui:2774
+#: ui/settings.ui:2776
 msgid "<span alpha='55%'>[</span>CONSOLE ENDPOINT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>POINT DE FIN DE LA CONSOLE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2782
+#: ui/settings.ui:2784
 msgid "Connect other Consoles to this desktop"
 msgstr "Connectez d'autres consoles à ce bureau"
 
-#: ui/settings.ui:2812
-#: ui/settings.ui:2831
+#: ui/settings.ui:2814
+#: ui/settings.ui:2833
 msgid "Serve endpoint"
 msgstr "Servir le point final"
 
-#: ui/settings.ui:2821
+#: ui/settings.ui:2823
 msgid "Allow Console connections; the assistant keeps running when this is off"
 msgstr "Autoriser les connexions à la console ; l'assistant continue de fonctionner quand il est éteint"
 
-#: ui/settings.ui:2856
+#: ui/settings.ui:2858
 msgid "Listen address"
 msgstr "Adresse d'écoute"
 
-#: ui/settings.ui:2865
+#: ui/settings.ui:2867
 msgid "Host:port; kept when serving is off"
 msgstr "Hôte : port ; conservé lorsque le service est arrêté"
 
-#: ui/settings.ui:2876
+#: ui/settings.ui:2878
 msgid "Use host:port, with a port from 1 to 65535. For IPv6, use [address]:port."
 msgstr "Utilisez host:port, avec un port de 1 à 65535. Pour IPv6, utilisez [address]:port."
 
-#: ui/settings.ui:2898
+#: ui/settings.ui:2900
 msgid "Endpoint URL"
 msgstr "URL du point de terminaison"
 
-#: ui/settings.ui:2909
+#: ui/settings.ui:2911
 msgid "Set a listen address first"
 msgstr "Définir d'abord une adresse d'écoute"
 
-#: ui/settings.ui:2918
+#: ui/settings.ui:2920
 msgid "Copy URL"
 msgstr "Copier l'URL"
 
-#: ui/settings.ui:2949
+#: ui/settings.ui:2951
 msgid "Access token"
 msgstr "Jeton d'accès"
 
-#: ui/settings.ui:2961
+#: ui/settings.ui:2963
 msgid "Token hidden"
 msgstr "Jeton caché"
 
-#: ui/settings.ui:2979
+#: ui/settings.ui:2981
 msgid "Copy token"
 msgstr "Copier le jeton"
 
-#: ui/settings.ui:2989
+#: ui/settings.ui:2991
 msgid "Kept in the keyring (pass with inua-keyring). Creating or reading it may ask for your passphrase."
 msgstr "Conservé dans le porte-clés (pass avec inua-keyring). Le créer ou le lire peut vous demander votre phrase secrète."
 
-#: ui/settings.ui:3026
+#: ui/settings.ui:3028
 msgid "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3034
+#: ui/settings.ui:3036
 msgid "Let AI agents on this computer use inua's tools"
 msgstr "Laissez les agents d’IA de cet ordinateur utiliser les outils d’inua"
 
-#: ui/settings.ui:3064
-#: ui/settings.ui:3083
+#: ui/settings.ui:3066
+#: ui/settings.ui:3085
 msgid "MCP server"
 msgstr "Serveur MCP"
 
-#: ui/settings.ui:3073
+#: ui/settings.ui:3075
 msgid "Agents such as Claude Code or Codex see the windows, open apps, change settings and more, through inua mcp. The assistant uses these tools either way."
 msgstr "Des agents comme Claude Code ou Codex voient les fenêtres, ouvrent des apps, changent des réglages et plus, via inua mcp. L’assistant utilise ces outils dans tous les cas."
 
-#: ui/settings.ui:3108
+#: ui/settings.ui:3110
 msgid "What agents may do"
 msgstr "Ce que les agents peuvent faire"
 
-#: ui/settings.ui:3117
+#: ui/settings.ui:3119
 msgid "Closing windows, ending processes, power, the clipboard and notifications always ask"
 msgstr "Fermer des fenêtres, arrêter des processus, l’alimentation, le presse-papiers et les notifications demandent toujours"
 
-#: ui/settings.ui:3131
+#: ui/settings.ui:3133
 msgid "Look only"
 msgstr "Regarder seulement"
 
-#: ui/settings.ui:3133
+#: ui/settings.ui:3135
 msgid "Change without asking"
 msgstr "Modifier sans demander"
 
-#: ui/settings.ui:3156
+#: ui/settings.ui:3158
 msgid "Connect an agent"
 msgstr "Connecter un agent"
 
-#: ui/settings.ui:3186
+#: ui/settings.ui:3188
 msgid "Other agents: a stdio server that runs inua mcp. Each call is recorded; asking happens in inua's dialog."
 msgstr "Autres agents : un serveur stdio qui lance inua mcp. Chaque appel est consigné ; les demandes s’affichent dans la boîte de dialogue d’inua."
 
-#: ui/settings.ui:3223
+#: ui/settings.ui:3225
 msgid "<span alpha='55%'>[</span>PROFILES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>PROFILS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3231
+#: ui/settings.ui:3233
 msgid "The models it can use; fallbacks answer when the first fails"
 msgstr "Modèles disponibles ; les modèles de secours répondent si le premier échoue"
 
-#: ui/settings.ui:3261
+#: ui/settings.ui:3263
 msgid "Add Profile"
 msgstr "Ajouter un profil"
 
-#: ui/settings.ui:3394
+#: ui/settings.ui:3396
 msgid "<span alpha='55%'>[</span>NOTIFICATIONS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>NOTIFICATIONS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3402
+#: ui/settings.ui:3404
 msgid "Banners, then the notification center"
 msgstr "Des bannières, puis le centre de notifications"
 
-#: ui/settings.ui:3432
+#: ui/settings.ui:3434
 msgid "Show notifications"
 msgstr "Afficher les notifications"
 
-#: ui/settings.ui:3474
+#: ui/settings.ui:3476
 msgid "Banner duration"
 msgstr "Durée de la bannière"
 
-#: ui/settings.ui:3483
+#: ui/settings.ui:3485
 msgid "How long a banner shows; critical ones stay"
 msgstr "Combien de temps une bannière s'affiche ; les plus critiques restent"
 
-#: ui/settings.ui:3497
+#: ui/settings.ui:3499
 msgid "3 seconds"
 msgstr "3 secondes"
 
-#: ui/settings.ui:3498
+#: ui/settings.ui:3500
 msgid "5 seconds"
 msgstr "5 secondes"
 
-#: ui/settings.ui:3499
+#: ui/settings.ui:3501
 msgid "8 seconds"
 msgstr "8 secondes"
 
-#: ui/settings.ui:3500
+#: ui/settings.ui:3502
 msgid "12 seconds"
 msgstr "12 secondes"
 
-#: ui/settings.ui:3527
+#: ui/settings.ui:3529
 msgid "Critical during Focus"
 msgstr "Alertes urgentes en mode Ne pas déranger"
 
-#: ui/settings.ui:3536
+#: ui/settings.ui:3538
 msgid "Critical notifications still show banners"
 msgstr "Les notifications critiques affichent toujours des bannières"
 
-#: ui/settings.ui:3570
+#: ui/settings.ui:3572
 msgid "Keep a history"
 msgstr "Garder un historique"
 
-#: ui/settings.ui:3579
+#: ui/settings.ui:3581
 msgid "The last 500 notifications, dismissed ones too, for the assistant, agents and workshop apps allowed to read them. Off clears it."
 msgstr "Les 500 dernières notifications, même rejetées, pour l’assistant, les agents et les apps de l’atelier autorisés à les lire. Désactiver l’efface."
 
-#: ui/settings.ui:3658
+#: ui/settings.ui:3660
 msgid "<span alpha='55%'>[</span>CLIPBOARD<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>PRESSE-PAPIERS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3666
+#: ui/settings.ui:3668
 msgid "History, panel appearance and pasting"
 msgstr "Historique, apparence du panneau et collage"
 
-#: ui/settings.ui:3696
+#: ui/settings.ui:3698
 msgid "Keep a clipboard history"
 msgstr "Conserver un historique du presse-papiers"
 
-#: ui/settings.ui:3705
+#: ui/settings.ui:3707
 msgid "Text and images you copy, kept on this computer; a password manager's copies are left out"
 msgstr "Le texte et les images que vous copiez, conservés sur cet ordinateur ; les copies d’un gestionnaire de mots de passe sont exclues"
 
-#: ui/settings.ui:3735
+#: ui/settings.ui:3737
 msgid "Never record copies from"
 msgstr "Ne jamais enregistrer les copies de"
 
-#: ui/settings.ui:3745
+#: ui/settings.ui:3747
 msgid "pass, keepassxc, …"
 msgstr "pass, keepassxc, …"
 
-#: ui/settings.ui:3753
+#: ui/settings.ui:3755
 msgid "Programs or window classes, separated by commas. The program that ran wl-copy and the focused window are checked; hover over an entry in the history to see where it came from"
 msgstr "Programmes ou classes de fenêtre, séparés par des virgules. Le programme qui a lancé wl-copy et la fenêtre active sont vérifiés ; survolez une entrée de l’historique pour voir sa provenance"
 
-#: ui/settings.ui:3779
+#: ui/settings.ui:3781
 msgid "Show in top bar"
 msgstr "Afficher dans la barre du haut"
 
-#: ui/settings.ui:3788
+#: ui/settings.ui:3790
 msgid "A button in the status area opens the clipboard history"
 msgstr "Un bouton dans la zone d’état ouvre l’historique du presse-papiers"
 
-#: ui/settings.ui:3822
+#: ui/settings.ui:3824
 msgid "Paste on click"
 msgstr "Coller au clic"
 
-#: ui/settings.ui:3831
+#: ui/settings.ui:3833
 msgid "Clicking an entry pastes it into the window you were in; off only copies it"
 msgstr "Cliquer sur une entrée la colle dans la fenêtre où vous étiez ; désactivé, elle est seulement copiée"
 
-#: ui/settings.ui:3865
+#: ui/settings.ui:3867
 msgid "History limit"
 msgstr "Limite de l’historique"
 
-#: ui/settings.ui:3874
+#: ui/settings.ui:3876
 msgid "How many entries it keeps; the oldest go first"
 msgstr "Combien d’entrées il garde ; les plus anciennes partent d’abord"
 
-#: ui/settings.ui:3908
+#: ui/settings.ui:3910
 msgid "History storage"
 msgstr "Stockage de l’historique"
 
-#: ui/settings.ui:3917
+#: ui/settings.ui:3919
 msgid "Loading history…"
 msgstr "Chargement de l’historique…"
 
-#: ui/settings.ui:3930
+#: ui/settings.ui:3932
 msgid "Reveal"
 msgstr "Afficher"
 
-#: ui/settings.ui:3941
+#: ui/settings.ui:3943
 msgid "Clear the history"
 msgstr "Effacer l’historique"
 
-#: ui/settings.ui:4022
+#: ui/settings.ui:4024
 msgid "<span alpha='55%'>[</span>KEYRING<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>TROUSSEAU<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4030
+#: ui/settings.ui:4032
 msgid "Apps' secrets: browsers' keys, Wi-Fi passwords, API keys"
 msgstr "Les secrets des applications : clés des navigateurs, mots de passe Wi-Fi, clés d’API"
 
-#: ui/settings.ui:4096
+#: ui/settings.ui:4098
 msgid "Unlocked secrets"
 msgstr "Secrets déverrouillés"
 
-#: ui/settings.ui:4142
+#: ui/settings.ui:4144
 msgid "Lock when unused"
 msgstr "Verrouiller sans usage"
 
-#: ui/settings.ui:4151
+#: ui/settings.ui:4153
 msgid "It locks with the screen and before suspend, and after this long without a read"
 msgstr "Il se verrouille avec l’écran et avant la mise en veille, et après ce délai sans lecture"
 
-#: ui/settings.ui:4166
+#: ui/settings.ui:4168
 msgid "5 minutes"
 msgstr "5 minutes"
 
-#: ui/settings.ui:4167
+#: ui/settings.ui:4169
 msgid "15 minutes"
 msgstr "15 minutes"
 
-#: ui/settings.ui:4168
+#: ui/settings.ui:4170
 msgid "30 minutes"
 msgstr "30 minutes"
 
-#: ui/settings.ui:4169
+#: ui/settings.ui:4171
 msgid "1 hour"
 msgstr "1 heure"
 
-#: ui/settings.ui:4170
+#: ui/settings.ui:4172
 msgid "4 hours"
 msgstr "4 heures"
 
-#: ui/settings.ui:4197
+#: ui/settings.ui:4199
 msgid "With no one to ask"
 msgstr "Sans personne à qui demander"
 
-#: ui/settings.ui:4206
+#: ui/settings.ui:4208
 msgid "A read by an app not trusted with the secret, while the inua shell is not running"
 msgstr "Une lecture par une app sans confiance pour le secret, quand le shell inua ne tourne pas"
 
-#: ui/settings.ui:4221
+#: ui/settings.ui:4223
 msgid "Denied"
 msgstr "Refusée"
 
-#: ui/settings.ui:4248
+#: ui/settings.ui:4250
 msgid "Tell when an app reads a secret"
 msgstr "Prévenir quand une application lit un secret"
 
-#: ui/settings.ui:4257
+#: ui/settings.ui:4259
 msgid "A notification for each app's first read since inua-keyring started"
 msgstr "Une notification pour la première lecture de chaque application depuis le démarrage d’inua-keyring"
 
-#: ui/settings.ui:4302
-#: ui/settings.ui:4516
+#: ui/settings.ui:4304
+#: ui/settings.ui:4518
 msgid "<span alpha='55%'>[</span>TRUSTED APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>APPS DE CONFIANCE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4310
+#: ui/settings.ui:4312
 msgid "Apps that read a secret without asking; any other app is asked about first"
 msgstr "Apps qui lisent un secret sans demander ; toute autre fait d’abord l’objet d’une question"
 
-#: ui/settings.ui:4346
+#: ui/settings.ui:4348
 msgid "Trusted apps"
 msgstr "Apps de confiance"
 
-#: ui/settings.ui:4401
+#: ui/settings.ui:4403
 msgid "<span alpha='55%'>[</span>READS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>LECTURES<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4409
+#: ui/settings.ui:4411
 msgid "Every secret inua-keyring handed out and passphrase asked for, newest first"
 msgstr "Chaque secret remis par inua-keyring et chaque phrase secrète demandée, du plus récent au plus ancien"
 
-#: ui/settings.ui:4455
+#: ui/settings.ui:4457
 msgid "Refresh"
 msgstr "Actualiser"
 
-#: ui/settings.ui:4549
+#: ui/settings.ui:4551
 msgid "The list is not trusted"
 msgstr "La liste n’est pas de confiance"
 
-#: ui/settings.ui:4570
+#: ui/settings.ui:4572
 msgid "Trust this list again"
 msgstr "Refaire confiance à cette liste"
 
-#: ui/settings.ui:4610
+#: ui/settings.ui:4612
 msgid "<span alpha='55%'>[</span>ALLOWED PATHS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CHEMINS AUTORISÉS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4637
+#: ui/settings.ui:4639
 msgid "Any program at one of these paths reads every secret without asking, even after it changes: for an app that updates every day. inua-keyring asks you before a path is added."
 msgstr "Tout programme de l'un de ces chemins lit tous les secrets sans demander, même après avoir changé : pour une app mise à jour chaque jour. inua-keyring vous demande avant d'ajouter un chemin."
 
-#: ui/settings.ui:4657
+#: ui/settings.ui:4659
 msgid "A path; * within a folder: ~/.local/share/app/versions/*"
 msgstr "Un chemin ; * dans un dossier : ~/.local/share/app/versions/*"
 
-#: ui/settings.ui:4666
+#: ui/settings.ui:4668
 msgid "Allow path"
 msgstr "Autoriser le chemin"
 
-#: ui/settings.ui:4711
+#: ui/settings.ui:4713
 msgid "<span alpha='55%'>[</span>APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>APPS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4726
+#: ui/settings.ui:4728
 msgid "Filter by app, program or secret"
 msgstr "Filtrer par app, programme ou secret"
 
-#: ui/settings.ui:4838
+#: ui/settings.ui:4840
 msgid "Shortcuts"
 msgstr "Raccourcis clavier"
 
-#: ui/settings.ui:4868
+#: ui/settings.ui:4870
 msgid "Press the new shortcut. Esc cancels; Backspace turns it off."
 msgstr "Appuyez sur le nouveau raccourci. Esc annule ; Retour arrière le désactive."
 
-#: ui/settings.ui:4897
-#: ui/settings.ui:6592
+#: ui/settings.ui:4899
+#: ui/settings.ui:6594
 msgid "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4905
+#: ui/settings.ui:4907
 msgid "The shell's own actions"
 msgstr "Les propres actions de l'obus"
 
-#: ui/settings.ui:4954
+#: ui/settings.ui:4956
 msgid "<span alpha='55%'>[</span>SCREENSHOTS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>Captures d'écran<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4962
+#: ui/settings.ui:4964
 msgid "With grim and slurp"
 msgstr "Avec grim et slurp"
 
-#: ui/settings.ui:5011
+#: ui/settings.ui:5013
 msgid "<span alpha='55%'>[</span>CUSTOM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>PERSONNALISÉ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5019
+#: ui/settings.ui:5021
 msgid "Your own commands"
 msgstr "Vos propres commandes"
 
-#: ui/settings.ui:5061
+#: ui/settings.ui:5063
 msgid "Command, e.g. kitty"
 msgstr "Commande, par exemple kitty"
 
-#: ui/settings.ui:5071
+#: ui/settings.ui:5073
 msgid "Add, then press its shortcut"
 msgstr "Ajouter, puis appuyer sur son raccourci"
 
-#: ui/settings.ui:5106
+#: ui/settings.ui:5108
 msgid "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5114
+#: ui/settings.ui:5116
 msgid "Other shortcuts, from hyprland.conf"
 msgstr "Autres raccourcis, depuis hyprland.conf"
 
-#: ui/settings.ui:5197
+#: ui/settings.ui:5199
 msgid "<span alpha='55%'>[</span>WI-FI<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>WI-FI<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5288
+#: ui/settings.ui:5290
 msgid "<span alpha='55%'>[</span>CONNECTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CONNECTÉ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5296
+#: ui/settings.ui:5298
 msgid "The network in use"
 msgstr "Le réseau utilisé"
 
-#: ui/settings.ui:5340
+#: ui/settings.ui:5342
 msgid "<span alpha='55%'>[</span>KNOWN NETWORKS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>RÉSEAUX CONNUS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5348
+#: ui/settings.ui:5350
 msgid "Saved on this computer; joined again by themselves"
 msgstr "Enregistrés sur cet ordinateur ; rejoints d’eux-mêmes"
 
-#: ui/settings.ui:5392
-#: ui/settings.ui:5621
+#: ui/settings.ui:5394
+#: ui/settings.ui:5623
 msgid "<span alpha='55%'>[</span>NEARBY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>À PROXIMITÉ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5478
+#: ui/settings.ui:5480
 msgid "<span alpha='55%'>[</span>BLUETOOTH<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>BLUETOOTH<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5569
+#: ui/settings.ui:5571
 msgid "<span alpha='55%'>[</span>MY DEVICES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>MES APPAREILS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5577
+#: ui/settings.ui:5579
 msgid "Paired with this computer"
 msgstr "Associés à cet ordinateur"
 
-#: ui/settings.ui:5669
+#: ui/settings.ui:5671
 msgid "Displays"
 msgstr "Écrans"
 
-#: ui/settings.ui:5718
+#: ui/settings.ui:5720
 msgid "<span alpha='55%'>[</span>LID<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CAPOT<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5726
+#: ui/settings.ui:5728
 msgid "With another display connected"
 msgstr "Avec un autre écran branché"
 
-#: ui/settings.ui:5756
+#: ui/settings.ui:5758
 msgid "Closing the lid turns off the built-in display"
 msgstr "Rabattre l’écran éteint l’écran intégré"
 
-#: ui/settings.ui:5766
+#: ui/settings.ui:5768
 msgid "Its windows move to the other display. Open the lid to use both."
 msgstr "Ses fenêtres passent sur l’autre écran. Relevez-le pour utiliser les deux."
 
-#: ui/settings.ui:5855
+#: ui/settings.ui:5857
 msgid "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5863
+#: ui/settings.ui:5865
 msgid "Every keyboard"
 msgstr "Chaque clavier"
 
-#: ui/settings.ui:5893
+#: ui/settings.ui:5895
 msgid "Swap Ctrl and Alt"
 msgstr "Permuter Ctrl et Alt"
 
-#: ui/settings.ui:5902
+#: ui/settings.ui:5904
 msgid "Alt acts as Ctrl, and Ctrl as Alt"
 msgstr "Alt agit comme Ctrl et Ctrl comme Alt"
 
-#: ui/settings.ui:5917
+#: ui/settings.ui:5919
 msgid "Left side"
 msgstr "Côté gauche"
 
-#: ui/settings.ui:5918
+#: ui/settings.ui:5920
 msgid "Both sides"
 msgstr "Les deux côtés"
 
-#: ui/settings.ui:5945
-#: ui/settings.ui:5968
+#: ui/settings.ui:5947
+#: ui/settings.ui:5970
 msgid "Caps Lock"
 msgstr "Verrouillage des majuscules"
 
-#: ui/settings.ui:5954
+#: ui/settings.ui:5956
 msgid "What the Caps Lock key does"
 msgstr "Ce que fait la touche Caps Lock"
 
-#: ui/settings.ui:5969
+#: ui/settings.ui:5971
 msgid "Escape"
 msgstr "Esc"
 
-#: ui/settings.ui:5970
+#: ui/settings.ui:5972
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ui/settings.ui:6008
-#: ui/settings.ui:6290
+#: ui/settings.ui:6010
+#: ui/settings.ui:6292
 msgid "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6016
-#: ui/settings.ui:6298
+#: ui/settings.ui:6018
+#: ui/settings.ui:6300
 msgid "inua writes these to Hyprland's inua.conf"
 msgstr "inua les écrit dans le fichier inua.conf d'Hyprland"
 
-#: ui/settings.ui:6068
+#: ui/settings.ui:6070
 msgid "Stop setting keyboard options in inua"
 msgstr "Arrêtez de définir les options du clavier dans Inua"
 
-#: ui/settings.ui:6099
+#: ui/settings.ui:6101
 msgid "Mouse & Touch"
 msgstr "Souris et pavé tactile"
 
-#: ui/settings.ui:6147
+#: ui/settings.ui:6149
 msgid "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6155
+#: ui/settings.ui:6157
 msgid "Every touchpad"
 msgstr "Chaque pavé tactile"
 
-#: ui/settings.ui:6185
+#: ui/settings.ui:6187
 msgid "Pointer speed"
 msgstr "Vitesse du pointeur"
 
-#: ui/settings.ui:6236
+#: ui/settings.ui:6238
 msgid "Acceleration"
 msgstr "Accélération"
 
-#: ui/settings.ui:6245
+#: ui/settings.ui:6247
 msgid "Faster swipes move the pointer further"
 msgstr "Des balayages plus rapides déplacent le pointeur plus loin"
 
-#: ui/settings.ui:6335
+#: ui/settings.ui:6337
 msgid "Stop setting the touchpad in inua"
 msgstr "Arrêtez de configurer le pavé tactile dans Inua"
 
-#: ui/settings.ui:6434
+#: ui/settings.ui:6436
 msgid "Power"
 msgstr "Alimentation"
 
-#: ui/settings.ui:6468
+#: ui/settings.ui:6470
 msgid "About"
 msgstr "À propos"
 
-#: ui/settings.ui:6506
+#: ui/settings.ui:6508
 msgid "<span alpha='55%'>[</span>SYSTEM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>SYSTÈME<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6514
+#: ui/settings.ui:6516
 msgid "This computer, as a card to share"
 msgstr "Cet ordinateur, en carte à partager"
 
-#: ui/settings.ui:6526
+#: ui/settings.ui:6528
 msgid "Copy image"
 msgstr "Copier l’image"
 
-#: ui/settings.ui:6536
+#: ui/settings.ui:6538
 msgid "Copy text"
 msgstr "Copier le texte"
 
-#: ui/settings.ui:6538
+#: ui/settings.ui:6540
 msgid "As Markdown"
 msgstr "En Markdown"
 
-#: ui/settings.ui:6549
+#: ui/settings.ui:6551
 msgid "As a PNG image"
 msgstr "En image PNG"
 
-#: ui/settings.ui:6600
+#: ui/settings.ui:6602
 msgid "The version, and new releases"
 msgstr "La version, et les nouveautés"
 
-#: ui/settings.ui:6630
+#: ui/settings.ui:6632
 msgid "Version"
 msgstr "Version"
 
-#: ui/settings.ui:6666
+#: ui/settings.ui:6668
 msgid "Updates"
 msgstr "Mises à jour"
 
-#: ui/settings.ui:6702
+#: ui/settings.ui:6704
 msgid "Check for updates"
 msgstr "Vérifier les mises à jour"
 
-#: ui/settings.ui:6728
+#: ui/settings.ui:6730
 msgid "Check every day"
 msgstr "Vérifier tous les jours"
 
-#: ui/settings.ui:6737
+#: ui/settings.ui:6739
 msgid "A notification says when a new release is out, with a button to upgrade"
 msgstr "Une notification indique la sortie d'une nouvelle version, avec un bouton pour mettre à niveau"
 
-#: ui/settings.ui:6782
+#: ui/settings.ui:6784
 msgid "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6790
+#: ui/settings.ui:6792
 msgid "What the latest release changed"
 msgstr "Ce que la dernière version a changé"
 

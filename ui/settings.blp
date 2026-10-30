@@ -388,12 +388,12 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
-                        label:  _("Icon set");
+                        label:  _("inua icons");
                         xalign: 0;
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("Built in, the system's, an installed theme or one of yours");
+                        label:  _("inua's apps and the icons in them: inua's, the system's, an installed theme or one of yours");
                         xalign: 0;
                         wrap: true;
                       }
@@ -405,7 +405,9 @@ ApplicationWindow settings {
 
                       model: StringList {
                         strings [
-                          _("Phosphor"),
+                          _("inua Objects"),
+                          _("inua Objects Soft"),
+                          _("inua Objects Flat"),
                           _("System theme"),
                         ]
                       };
@@ -429,7 +431,7 @@ ApplicationWindow settings {
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("The dock, launcher, notifications and files");
+                        label:  _("Other apps in the dock, launcher and notifications, and files");
                         xalign: 0;
                         wrap: true;
                       }

@@ -10,6 +10,7 @@
 //	inua init [-force] [-pinentry ask|replace|keep] [-dir dir]  write the sample configuration
 //	inua keyring status|import|enable|disable|replace|lock|paths|allow|disallow  the Secret Service kept in pass
 //	inua portals status|enable|disable [interface...]  inua's backends of xdg-desktop-portal
+//	inua icons missing                                 the apps inua-objects does not draw yet
 //	inua workshop list|new|install|remove|run|dev    the light apps users write
 //	inua mcp                                         inua as an MCP server on stdio, for an AI agent
 //	inua upgrade [-check] [-force] [-version vX.Y.Z] install the latest release
@@ -71,6 +72,8 @@ func main() {
 		err = cmdKeyring(os.Args[2:])
 	case "portals":
 		err = cmdPortals(os.Args[2:])
+	case "icons":
+		err = cmdIcons(os.Args[2:])
 	case "vm":
 		err = cmdVM(os.Args[2:])
 	case "workshop":
@@ -106,6 +109,7 @@ func usage() {
   inua keyring status|import [-n]|enable|disable|replace|lock
   inua keyring paths | allow PATTERN | disallow PATTERN
   inua portals status | enable|disable [INTERFACE...]
+  inua icons missing                                         apps inua-objects does not draw yet
   inua workshop list|new [--js] DIR [NAME]|install [-y] URL|DIR|remove ID|run ID|DIR|dev DIR
   inua vm list|doctor|status [--json]
   inua mcp

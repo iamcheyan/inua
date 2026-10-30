@@ -741,20 +741,35 @@ func (s *shellUI) showAppTheme() {
 
 // showTextScale offers the usual text sizes, and the one in the file if it
 // is another.
-// showIconSets offers the built-in icon sets, the user's and the
-// installed icon themes for the shell's icons, and the installed themes
-// for app icons.
+// showIconSets offers inua's icon sets, the user's and the installed icon
+// themes for inua's icons, and the installed themes, inua's first, for
+// app icons.
 func (s *shellUI) showIconSets() {
 	st := &s.settings
+	inua := map[string]string{
+		config.ObjectsTheme: i18n.T("inua Objects"),
+		config.SoftTheme:    i18n.T("inua Objects Soft"),
+		config.FlatTheme:    i18n.T("inua Objects Flat"),
+	}
 	sets := s.cfg.IconSetNames()
 	names := slices.Clone(sets)
-	names[0], names[1] = i18n.T("Phosphor"), i18n.T("System theme") // config.IconSets
+	for i, name := range config.InuaThemes { // config.IconSets: inua's, then "system"
+		names[i] = inua[name]
+	}
+	names[len(config.InuaThemes)] = i18n.T("System theme")
 	apps, appNames := []string{"system"}, []string{i18n.T("System theme")}
+	for _, name := range config.InuaThemes {
+		if config.IsIconTheme(name) {
+			apps, appNames = append(apps, name), append(appNames, inua[name])
+		}
+	}
 	for _, t := range config.IconThemes() {
 		if !slices.Contains(sets, t.Name) { // a set of the user's of its name wins
 			sets, names = append(sets, t.Name), append(names, t.Title)
 		}
-		apps, appNames = append(apps, t.Name), append(appNames, t.Title)
+		if !slices.Contains(config.InuaThemes, t.Name) {
+			apps, appNames = append(apps, t.Name), append(appNames, t.Title)
+		}
 	}
 	if !slices.Equal(sets, st.iconSets) {
 		list := gtk.NewStringList(names)

@@ -348,16 +348,25 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   A user's theme, `themes/<name>.css` beside `config.toml`, is loaded over
   `yoru` (or over the built-in theme of its name), so it needs only the
   tokens it changes (`config.ThemeCSS`).
-- Icons: Phosphor's regular icons (`ui/icons`, MIT), written as an icon
-  theme for the shell's process that inherits the system's; app and tray
-  icons stay the system's. inua's apps write one that inherits Adwaita,
-  set before they start (docs/performance.md). `style.icons = "system"`
+- Icons: `style.icons` (Settings, "inua icons") picks inua's icon set:
+  `inua-objects` (the default), `inua-objects-soft` or `inua-objects-flat`,
+  which differ in inua's apps' own icons, drawn by `design/icons` (the
+  objects, or the same objects drawn more simply or flat) and installed as
+  icon themes of those names;
+  both have Phosphor's regular icons (`ui/icons`, MIT) for the rest,
+  written as an icon theme for the shell's process that inherits the
+  system's. The shell looks inua's apps' icons up in the chosen set's
+  theme (`inuaIcons`, `Style.InuaIconTheme`) before app_icons'; elsewhere
+  they are hicolor's, the objects. inua's apps write a theme of the
+  Phosphor icons that inherits Adwaita, set before they start
+  (docs/performance.md). `"phosphor"`, the set's old name, means
+  `inua-objects`. `style.icons = "system"`
   uses the system theme in the shell, and an installed theme's name
   (`config.IconThemes`) that theme; the apps keep Phosphor for both. A
   user's set, `icons/<name>/` beside `config.toml`, is copied over the
   Phosphor icons into an icon theme of its own name (`style.IconTheme`),
   in the shell and in inua's apps. `style.app_icons` naming an installed
-  theme takes app icons from it: in the shell from a `GtkIconTheme` of
+  theme (inua's three among them) takes app icons from it: in the shell from a `GtkIconTheme` of
   its own (`appIcons`, apart from the shell's icons), in Files with the
   files' icons (`DesktopIcons`); the tray's stay each app's.
 - Text size: `style.text_scale` (80 to 150 percent, the Appearance page's

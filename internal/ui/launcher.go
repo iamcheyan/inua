@@ -395,29 +395,11 @@ func setIcon(img *gtk.Image, name string) {
 		img.SetFromFile(name)
 		return
 	}
-	if appIcons != nil {
-		// The chosen theme's file for it, which the image draws at its
-		// own size and scale; the largest, so that one drawn of a fixed
-		// size is only ever scaled down.
-		for _, n := range []string{name, strings.ToLower(name)} {
-			if n == "" || !appIcons.HasIcon(n) {
-				continue
-			}
-			p := appIcons.LookupIcon(n, nil, 256, 1, gtk.TextDirLtrValue, 0)
-			if p == nil {
-				continue
-			}
-			file := p.GetFile()
-			p.Unref()
-			if file == nil {
-				continue
-			}
-			icon := gio.NewFileIcon(file)
-			(&gobject.Object{Ptr: file.Ptr}).Unref() // GetFile gave a reference
-			img.SetFromGicon(icon)
-			icon.Unref()
-			return
-		}
+	if strings.HasPrefix(name, "io.github.lyricat.Inua.") && setFromTheme(img, inuaIcons, name) {
+		return
+	}
+	if setFromTheme(img, appIcons, name) {
+		return
 	}
 	theme := gtk.IconThemeGetForDisplay(gdk.DisplayGetDefault())
 	defer theme.Unref()
@@ -428,6 +410,35 @@ func setIcon(img *gtk.Image, name string) {
 		}
 	}
 	img.SetFromIconName("application-x-executable")
+}
+
+// setFromTheme shows the theme's file for the icon name, which the image
+// draws at its own size and scale; the largest, so that one drawn of a
+// fixed size is only ever scaled down. It reports whether the theme has it.
+func setFromTheme(img *gtk.Image, theme *gtk.IconTheme, name string) bool {
+	if theme == nil {
+		return false
+	}
+	for _, n := range []string{name, strings.ToLower(name)} {
+		if n == "" || !theme.HasIcon(n) {
+			continue
+		}
+		p := theme.LookupIcon(n, nil, 256, 1, gtk.TextDirLtrValue, 0)
+		if p == nil {
+			continue
+		}
+		file := p.GetFile()
+		p.Unref()
+		if file == nil {
+			continue
+		}
+		icon := gio.NewFileIcon(file)
+		(&gobject.Object{Ptr: file.Ptr}).Unref() // GetFile gave a reference
+		img.SetFromGicon(icon)
+		icon.Unref()
+		return true
+	}
+	return false
 }
 
 // freshenRates gives the launcher's answers exchange rates: the cached

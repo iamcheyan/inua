@@ -43,7 +43,7 @@ func (c Config) IconSetNames() []string {
 	for _, name := range c.custom("icons", func(e os.DirEntry) (string, bool) {
 		return e.Name(), e.IsDir() || e.Type()&os.ModeSymlink != 0
 	}) {
-		if !slices.Contains(names, name) {
+		if !slices.Contains(names, name) && name != oldPhosphor {
 			names = append(names, name)
 		}
 	}
@@ -169,7 +169,7 @@ func (c Config) ThemePath(name string) string {
 // IconSetPath is the folder of the user's icon set name, "" for a name
 // that cannot be one.
 func (c Config) IconSetPath(name string) string {
-	if c.Dir == "" || !customName.MatchString(name) || slices.Contains(IconSets, name) {
+	if c.Dir == "" || !customName.MatchString(name) || slices.Contains(IconSets, name) || name == oldPhosphor {
 		return ""
 	}
 	return filepath.Join(c.Dir, "icons", name)

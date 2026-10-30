@@ -287,9 +287,14 @@ theme = %s
 # center and settings keep theme.
 app_theme = %s
 
-# Icons of the bar, control center, launcher and settings:
-#   "phosphor"  Phosphor's line icons, built in (the default)
-#   "system"    the system's icon theme
+# inua's icons: its apps' own icons, and the icons of the bar, control
+# center, launcher, settings and inua's apps:
+#   "inua-objects"       apps drawn as objects, Phosphor's line icons
+#                        (the default)
+#   "inua-objects-soft"  the same objects drawn more simply, Phosphor's
+#                        line icons
+#   "inua-objects-flat"  the same objects drawn flat, Phosphor's line icons
+#   "system"             the system's icon theme
 # or an installed icon theme, by its folder's name ("Papirus", in
 # /usr/share/icons or ~/.local/share/icons), or a set of your own: a folder
 # icons/NAME/ next to this file, with SVGs named like the built-in ones
@@ -297,9 +302,12 @@ app_theme = %s
 # from inua init, is one). Draw them in one colour: it follows the theme.
 icons = %s
 
-# Icons of apps (dock, launcher, drawer, notifications) and of files in
-# Files: "system", the system's icon theme (the default), or an installed
-# icon theme, by its folder's name. The tray's come from each app.
+# Icons of other apps (dock, launcher, drawer, notifications) and of files
+# in Files: "inua-objects", inua's own (the default; an app it has not drawn
+# keeps its icon), "inua-objects-soft" and "inua-objects-flat", the same
+# drawn more simply or flat, "system", the system's icon theme, or an
+# installed icon theme, by its folder's name. inua's apps keep the icons of
+# icons above; the tray's come from each app.
 app_icons = %s
 
 # A small gap between the screen edges and the bar and dock. false puts

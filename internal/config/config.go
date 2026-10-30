@@ -149,12 +149,15 @@ type Style struct {
 	// CSS is a stylesheet loaded after the built-in style, relative to the
 	// config directory. Ignored if the file does not exist.
 	CSS string `toml:"css"`
-	// Icons is the icon set of the shell's own icons, one of IconSets, a
-	// set of the user's (IconSetNames) or an installed icon theme
-	// (IconThemes); a set of the user's wins over a theme of its name.
+	// Icons is the icon set of inua's apps, their own icons and the icons
+	// in them: one of IconSets, a set of the user's (IconSetNames) or an
+	// installed icon theme (IconThemes); a set of the user's wins over a
+	// theme of its name. "phosphor", its old name, means ObjectsTheme.
 	Icons string `toml:"icons"`
 	// AppIcons is where the icons of apps and files come from: "system",
 	// the system's icon theme, or an installed icon theme (IconThemes).
+	// The default is inua's own (ObjectsTheme), the system's while it is
+	// not installed; inua's apps keep the icons of Icons.
 	AppIcons string `toml:"app_icons"`
 	// EdgeGaps leaves a small gap between the screen edges and the bar and
 	// dock; off puts them flush against the edges.
@@ -169,6 +172,25 @@ type Style struct {
 	// Radius is the corner radius of the same surfaces and the menus, 0
 	// (square) to 20 pixels; the dock's is half as much again.
 	Radius int `toml:"radius"`
+}
+
+// AppIconTheme is the icon theme apps' icons come from: AppIcons, or
+// "system" while it names one of inua's own that is not installed.
+func (s Style) AppIconTheme() string {
+	if slices.Contains(InuaThemes, s.AppIcons) && !IsIconTheme(s.AppIcons) {
+		return "system"
+	}
+	return s.AppIcons
+}
+
+// InuaIconTheme is the icon theme inua's apps' own icons come from: Icons
+// when it names one of inua's sets and that is installed, else "", the
+// icons installed with the apps (hicolor).
+func (s Style) InuaIconTheme() string {
+	if slices.Contains(InuaThemes, s.Icons) && IsIconTheme(s.Icons) {
+		return s.Icons
+	}
+	return ""
 }
 
 // ForApps is the colour theme of the apps: AppTheme, else Theme.
@@ -791,10 +813,15 @@ func (d Displays) WithoutMonitor(output string) []Monitor {
 // center (its own size, centred).
 var Fits = []string{"cover", "contain", "tile", "center"}
 
-// IconSets are the shell's icon sets: "phosphor", Phosphor's regular icons
-// (ui/icons), or "system", the system's icon theme. Sets of the user's
+// IconSets are the icon sets of inua's apps: inua's own, its apps' icons
+// drawn as objects (InuaThemes) with Phosphor's regular icons (ui/icons)
+// for the rest, or "system", the system's icon theme. Sets of the user's
 // follow them (IconSetNames); an installed icon theme can be named too.
-var IconSets = []string{"phosphor", "system"}
+var IconSets = []string{ObjectsTheme, SoftTheme, FlatTheme, "system"}
+
+// oldPhosphor is what style.icons called inua's set before its apps'
+// icons came with it: it means ObjectsTheme.
+const oldPhosphor = "phosphor"
 
 // TextScales are the text sizes, in percent, the settings window offers.
 var TextScales = []int{90, 100, 110, 125, 150}
@@ -826,7 +853,7 @@ func Default() Config {
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: ObjectsTheme, AppIcons: ObjectsTheme, EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4},
 		Background: Background{Enable: true, Fit: "cover", Generate: true},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
@@ -951,13 +978,18 @@ func (c *Config) validate() []string {
 	oneOf("language", &c.Language, d.Language, Languages...)
 	oneOf("style.theme", &c.Style.Theme, d.Style.Theme, c.ThemeNames()...)
 	oneOf("style.app_theme", &c.Style.AppTheme, d.Style.AppTheme, append([]string{""}, c.ThemeNames()...)...)
+	if c.Style.Icons == oldPhosphor {
+		c.Style.Icons = ObjectsTheme
+	}
 	if sets := c.IconSetNames(); !slices.Contains(sets, c.Style.Icons) && !IsIconTheme(c.Style.Icons) {
 		w = append(w, fmt.Sprintf("style.icons = %q: want %s or an installed icon theme; using %q", c.Style.Icons, strings.Join(sets, " or "), d.Style.Icons))
 		c.Style.Icons = d.Style.Icons
 	}
-	if c.Style.AppIcons != "system" && !IsIconTheme(c.Style.AppIcons) {
-		w = append(w, fmt.Sprintf("style.app_icons = %q: want \"system\" or an installed icon theme; using %q", c.Style.AppIcons, d.Style.AppIcons))
-		c.Style.AppIcons = d.Style.AppIcons
+	// inua's own are kept while not installed: AppIconTheme answers the
+	// system's until they are.
+	if c.Style.AppIcons != "system" && !slices.Contains(InuaThemes, c.Style.AppIcons) && !IsIconTheme(c.Style.AppIcons) {
+		w = append(w, fmt.Sprintf("style.app_icons = %q: want \"system\" or an installed icon theme; using \"system\"", c.Style.AppIcons))
+		c.Style.AppIcons = "system"
 	}
 	if c.Style.TextScale < 80 || c.Style.TextScale > 150 {
 		w = append(w, fmt.Sprintf("style.text_scale = %d: want 80 to 150; using %d", c.Style.TextScale, d.Style.TextScale))

@@ -63,7 +63,7 @@ func IconThemes() []IconTheme {
 		entries, _ := os.ReadDir(d)
 		for _, e := range entries {
 			name := e.Name()
-			if seen[name] || name == "hicolor" || name == "default" || strings.HasPrefix(name, "inua-") {
+			if seen[name] || name == "hicolor" || name == "default" || strings.HasPrefix(name, "inua-") && !slices.Contains(InuaThemes, name) {
 				continue
 			}
 			title, ok := readIconTheme(filepath.Join(d, name, "index.theme"))
@@ -80,6 +80,19 @@ func IconThemes() []IconTheme {
 	t.stamp, t.list = stamp.String(), list
 	return list
 }
+
+// inua's icon themes for apps (design/icons), installed with inua, unlike
+// the themes it writes for itself: ObjectsTheme draws each app as the
+// object it stands for, SoftTheme the same objects more simply, FlatTheme
+// them flat. Each has inua's apps' icons too.
+const (
+	ObjectsTheme = "inua-objects"
+	SoftTheme    = "inua-objects-soft"
+	FlatTheme    = "inua-objects-flat"
+)
+
+// InuaThemes are inua's icon themes.
+var InuaThemes = []string{ObjectsTheme, SoftTheme, FlatTheme}
 
 // IsIconTheme reports whether name is an installed icon theme.
 func IsIconTheme(name string) bool {

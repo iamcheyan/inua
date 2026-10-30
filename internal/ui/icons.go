@@ -13,9 +13,9 @@ import (
 	layouts "github.com/lyricat/inua/ui"
 )
 
-// The shell's icon set. style.icons = "phosphor" puts the icons in
-// ui/icons in an icon theme of inua's own, which inherits the system's,
-// so app icons (and any icon the set lacks) still come from it. A user's
+// The shell's icon set. style.icons naming one of inua's sets puts the
+// icons in ui/icons in an icon theme of inua's own, which inherits the
+// system's, so app icons (and any icon the set lacks) still come from it. A user's
 // set goes over the Phosphor icons in a theme named after it, so changing
 // sets changes the theme's name and GTK loads it afresh; an installed
 // theme is used as it is. The icon theme in GtkSettings belongs to this
@@ -24,6 +24,8 @@ import (
 // style.app_icons naming a theme gives app icons a GtkIconTheme of their
 // own (appIcons), whatever the shell's icons are: a theme inheriting it
 // could not keep the two apart, the first theme in the chain having both.
+// inua's apps' icons come from the set style.icons names (inuaIcons),
+// before app_icons' theme.
 
 // iconThemeName names inua's icon theme.
 const iconThemeName = "inua-phosphor"
@@ -34,8 +36,10 @@ type icons struct {
 }
 
 // appIcons is the theme app icons come from when style.app_icons names
-// one, nil for the system's (the default theme's chain). Main thread only.
-var appIcons *gtk.IconTheme
+// one, nil for the system's (the default theme's chain); inuaIcons the
+// theme of inua's apps' icons when style.icons is one of inua's sets.
+// Main thread only.
+var appIcons, inuaIcons *gtk.IconTheme
 
 // loadIcons switches the icon theme to follow style.icons. GTK redraws
 // every icon on its own when the theme changes.
@@ -70,27 +74,29 @@ func (s *shellUI) loadIcons() {
 		setStringProperty(settings, "gtk-icon-theme-name", want)
 		log.Printf("icons: %s", want)
 	}
-	loadAppIcons(s.cfg.Style.AppIcons)
+	loadIconTheme(&appIcons, s.cfg.Style.AppIconTheme(), "apps")
+	loadIconTheme(&inuaIcons, s.cfg.Style.InuaIconTheme(), "inua's apps")
 }
 
-// loadAppIcons makes app icons follow style.app_icons.
-func loadAppIcons(name string) {
+// loadIconTheme makes *theme a GtkIconTheme of the theme name, nil for
+// "system" or "".
+func loadIconTheme(theme **gtk.IconTheme, name, what string) {
 	if name == "system" || name == "" {
-		if appIcons != nil {
-			appIcons.Unref()
-			appIcons = nil
+		if *theme != nil {
+			(*theme).Unref()
+			*theme = nil
 		}
 		return
 	}
-	if appIcons != nil {
-		if appIcons.GetThemeName() == name {
+	if *theme != nil {
+		if (*theme).GetThemeName() == name {
 			return
 		}
-		appIcons.Unref()
+		(*theme).Unref()
 	}
-	appIcons = gtk.NewIconTheme()
-	appIcons.SetThemeName(name)
-	log.Printf("icons: apps from %s", name)
+	*theme = gtk.NewIconTheme()
+	(*theme).SetThemeName(name)
+	log.Printf("icons: %s from %s", what, name)
 }
 
 // writeIconTheme writes an icon theme of the built-in icons, with the

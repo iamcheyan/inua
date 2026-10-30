@@ -48,6 +48,15 @@ func TestCustomNames(t *testing.T) {
 	}
 }
 
+// style.icons = "phosphor", the set's old name, is inua's own set now,
+// without a warning, and a folder of the user's of that name is not a set.
+func TestOldPhosphorSet(t *testing.T) {
+	c, w, err := Load(userFiles(t, "[style]\nicons = \"phosphor\"\n"))
+	if err != nil || len(w) != 0 || c.Style.Icons != ObjectsTheme || c.IconSetDir() != "" {
+		t.Errorf("err=%v warnings=%v icons %q set %q", err, w, c.Style.Icons, c.IconSetDir())
+	}
+}
+
 func TestCustomChoices(t *testing.T) {
 	c, w, err := Load(userFiles(t, "[style]\ntheme = \"mine\"\nicons = \"line\"\n"))
 	if err != nil || len(w) != 0 {
@@ -62,7 +71,7 @@ func TestCustomChoices(t *testing.T) {
 
 	for _, style := range []string{`theme = "gone"`, `theme = "../mine"`, `icons = "gone"`, `icons = ".hidden"`} {
 		c, w, _ := Load(userFiles(t, "[style]\n"+style+"\n"))
-		if len(w) != 1 || c.Style.Theme != "yoru" || c.Style.Icons != "phosphor" {
+		if len(w) != 1 || c.Style.Theme != "yoru" || c.Style.Icons != ObjectsTheme {
 			t.Errorf("%s: style = %+v, warnings %v", style, c.Style, w)
 		}
 		if c.IconSetDir() != "" {
@@ -178,7 +187,7 @@ func TestInstallIconSet(t *testing.T) {
 	if err != nil || name != "lucide-icons" || n != 2 {
 		t.Fatalf("InstallIconSet = %q, %d, %v", name, n, err)
 	}
-	if got := c.IconSetNames(); !slices.Equal(got, []string{"phosphor", "system", "line", "lucide-icons"}) {
+	if got := c.IconSetNames(); !slices.Equal(got, []string{ObjectsTheme, SoftTheme, FlatTheme, "system", "line", "lucide-icons"}) {
 		t.Errorf("icon sets = %v", got)
 	}
 	entries, _ := os.ReadDir(c.IconSetPath("lucide-icons"))

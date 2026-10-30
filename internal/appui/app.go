@@ -369,7 +369,7 @@ func (c *Ctx) loadIcons() {
 // it names one, else the desktop's, the XDG settings portal's, else
 // GTK's, else Adwaita.
 func (c *Ctx) DesktopIcons() string {
-	if name := c.Config().Style.AppIcons; name != "system" && name != "" {
+	if name := c.Config().Style.AppIconTheme(); name != "system" && name != "" {
 		return name
 	}
 	if c.desktop == "" {

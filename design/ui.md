@@ -347,8 +347,19 @@ Phosphor's regular icons (MIT), copied by `scripts/phosphor-icons.sh` into
 only when Phosphor has nothing fitting. Files and other apps' icons come
 from the desktop's icon theme; everything else from the Phosphor set.
 
-The inua logo, its app icons and the favicons are in `design/logo/`,
-drawn by `design/logo/build.py`; see `design/logo/README.md`.
+The inua logo and the favicons are in `design/logo/`, drawn by
+`design/logo/build.py`; see `design/logo/README.md`.
+
+App icons are objects on the desk, unlike the flat interface icons: inua's
+own apps and games (`config/apps/`) and the `inua-objects` theme for other
+apps (`config/icons/inua-objects/`, the default `app_icons`), all drawn by
+`design/icons/build.py`; see `design/icons/README.md`. `inua-objects-soft`
+draws the same objects more simply, `inua-objects-flat` flat; "inua icons" in Settings picks the set
+for inua's apps, "App icons" for other apps. They may use
+gradients, a light from the top left and one shadow; no filters, no live
+text, under 80 KB each, with a simpler drawing for 16 px. Apps the theme
+does not draw fall back to the desktop's theme; `inua icons missing` lists
+them.
 
 ## Words
 
