@@ -49,8 +49,9 @@ Enter copies the answer.
 
 Apps show as a grid of their icons, six to a line, which scrolls, the next
 apps showing at the foot, blurred more the lower. Answers, commands, the
-web search and the assistant are rows below the grid, in the order they
-rank, always in sight; the best match is selected, so Enter on "lock"
+web search and the assistant sit two to a line below the grid, in the
+order they rank, always in sight and in at most half the space (all of
+it when no app matches); the best match is selected, so Enter on "lock"
 still locks. Windows are rows. The selection glides
 from one result to the next, the arrows moving on the grid (left and right
 along a line), and a click opens any result.

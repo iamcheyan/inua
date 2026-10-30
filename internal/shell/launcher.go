@@ -223,20 +223,28 @@ type Line struct {
 	Grid       bool
 }
 
-// Lines lays the results out: in apps mode, apps that follow each other
-// go side by side, cols to a grid line; anything else (an answer, a
-// command, the web search, a window) is a row of its own, so the results
-// keep their order.
+// RowCols is how many quick actions (answers, commands, the web search,
+// the assistant) go side by side in apps mode.
+const RowCols = 2
+
+// Lines lays the results out. In apps mode results of a kind go side by
+// side, apps cols to a line and the quick actions RowCols to a line, so
+// the results keep their order; in windows mode each is a row of its own.
 func (l *Launcher) Lines(cols int) []Line {
 	var lines []Line
 	for i := 0; i < len(l.Results); {
-		if l.Mode != Apps || l.Results[i].Entry == nil || cols < 2 {
+		if l.Mode != Apps || cols < 2 {
 			lines = append(lines, Line{Start: i, End: i + 1})
 			i++
 			continue
 		}
+		app := l.Results[i].Entry != nil
+		per := RowCols
+		if app {
+			per = cols
+		}
 		end := i
-		for end < len(l.Results) && end-i < cols && l.Results[end].Entry != nil {
+		for end < len(l.Results) && end-i < per && (l.Results[end].Entry != nil) == app {
 			end++
 		}
 		lines = append(lines, Line{Start: i, End: end, Grid: true})
@@ -275,8 +283,8 @@ func lineOf(lines []Line, i int) int {
 
 // Step moves the selection on the laid-out results: dy lines down (up
 // when negative), keeping the column in a grid, or dx along a grid line.
-// It reports whether it moved or could: dx is not taken on a row, where
-// the arrows edit the search instead.
+// It reports whether it moved or could: dx is not taken on a row of its
+// own (windows mode), where the arrows edit the search instead.
 func (l *Launcher) Step(lines []Line, dx, dy int) bool {
 	cur := lineOf(lines, l.Selected)
 	if cur < 0 {

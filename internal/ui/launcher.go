@@ -83,6 +83,7 @@ type launcher struct {
 	// launcher is open and shared by every copy of its cell.
 	footIcons  map[string]*gtk.IconPaintable
 	pinned     gtk.Box
+	pinScroll  gtk.ScrolledWindow
 	messageBox gtk.Box
 	messageTag gtk.Label
 	message    gtk.Label
@@ -388,6 +389,7 @@ func (s *shellUI) buildLauncher() {
 	ui.Get("blur", &l.blur)
 	ui.Get("fade", &l.fade)
 	ui.Get("pinned", &l.pinned)
+	ui.Get("pinned_scroll", &l.pinScroll)
 	ui.Get("message_box", &l.messageBox)
 	ui.Get("message_tag", &l.messageTag)
 	ui.Get("message", &l.message)
@@ -484,8 +486,9 @@ func (s *shellUI) renderLauncher() {
 	s.placeFoot()
 }
 
-// fillLauncher builds every result, from the top: the pinned rows below
-// the foot, the rest to scroll.
+// fillLauncher builds every result, from the top: apps to scroll, and the
+// quick actions after them pinned below the foot (with no apps, they
+// scroll themselves).
 func (s *shellUI) fillLauncher() {
 	l := &s.launcher
 	gtkx.Clear(&l.results)
@@ -495,12 +498,11 @@ func (s *shellUI) fillLauncher() {
 	rowUI, cellUI := s.readUI("row.ui"), s.readUI("appcell.ui")
 	grid := false
 	for _, ln := range l.st.Lines(gridCols) {
-		if ln.Start >= l.pin {
-			gtkx.Append(&l.pinned, s.launcherRow(rowUI, ln.Start))
-			continue
-		}
 		var w gtk.Widget
-		if ln.Grid {
+		switch apps := l.st.Results[ln.Start].Entry != nil; {
+		case !ln.Grid: // windows mode: a row the window's width
+			w = *s.launcherRow(rowUI, ln.Start)
+		case apps:
 			line := gtk.NewBox(gtk.OrientationHorizontalValue, 4)
 			line.AddCssClass("grid-line")
 			line.SetHalign(gtk.AlignStartValue) // a short line from the left
@@ -508,13 +510,26 @@ func (s *shellUI) fillLauncher() {
 				gtkx.Append(line, s.launcherCell(cellUI, i))
 			}
 			w, grid = line.Widget, true
-		} else {
-			w = *s.launcherRow(rowUI, ln.Start)
+		default: // quick actions, two to a line, a lone one half wide
+			line := gtk.NewBox(gtk.OrientationHorizontalValue, 4)
+			line.SetHomogeneous(true)
+			for i := ln.Start; i < ln.End; i++ {
+				gtkx.Append(line, s.launcherRow(rowUI, i))
+			}
+			for range shell.RowCols - (ln.End - ln.Start) {
+				gtkx.Append(line, &gtk.NewBox(gtk.OrientationHorizontalValue, 0).Widget)
+			}
+			w = line.Widget
+		}
+		if ln.Start >= l.pin {
+			gtkx.Append(&l.pinned, &w)
+			continue
 		}
 		l.lines = append(l.lines, shownLine{w: w, ln: ln})
 		gtkx.Append(&l.results, &w)
 	}
-	l.pinned.SetVisible(l.pin < len(l.items))
+	l.pinScroll.SetVisible(l.pin < len(l.items))
+	l.pinScroll.GetVadjustment().SetValue(0)
 	l.foot.SetVisible(grid) // only apps blur
 	l.shown = l.st.Version
 	l.scroll.GetVadjustment().SetValue(0)
@@ -533,6 +548,27 @@ func (s *shellUI) bounds(w *gtk.Widget) ([4]float64, bool) {
 	}
 	f := *(*[4]float32)(unsafe.Pointer(&r))
 	return [4]float64{float64(f[0]), float64(f[1]), float64(f[2]), float64(f[3])}, f[3] > 0
+}
+
+// showPinned scrolls the pinned quick actions so that result i is in
+// sight.
+func (s *shellUI) showPinned(i int) {
+	l := &s.launcher
+	var r graphene.Rect
+	if !l.items[i].ComputeBounds(&l.pinned.Widget, &r) {
+		return
+	}
+	f := *(*[4]float32)(unsafe.Pointer(&r))
+	y, h := float64(f[1]), float64(f[3])
+	adj := l.pinScroll.GetVadjustment()
+	v, page := adj.GetValue(), adj.GetPageSize()
+	switch {
+	case page <= 0:
+	case y < v:
+		adj.SetValue(y)
+	case y+h > v+page:
+		adj.SetValue(y + h - page)
+	}
 }
 
 // animateLauncher starts the frames that bring the view and the highlight
@@ -629,6 +665,9 @@ func (s *shellUI) stepLauncher() bool {
 		l.highlight.SetVisible(true)
 		l.hlShown = true
 	}
+	if sel >= l.pin && sel < len(l.items) {
+		s.showPinned(sel)
+	}
 	// The foot's strips take their places once laid out, which no
 	// signal the bindings have tells.
 	if !s.placeFoot() {
@@ -714,7 +753,7 @@ func (s *shellUI) copyFoot(from, to int) {
 			if b, ok := s.bounds(&ln.w); ok {
 				line.SetSizeRequest(-1, int32(math.Round(b[3])))
 			}
-			for i := ln.ln.Start; ln.ln.Grid && i < ln.ln.End; i++ {
+			for i := ln.ln.Start; ln.ln.Grid && i < ln.ln.End && l.st.Results[i].Entry != nil; i++ {
 				gtkx.Append(line, s.ghostCell(i))
 			}
 			gtkx.Append(&st.ghost, &line.Widget)

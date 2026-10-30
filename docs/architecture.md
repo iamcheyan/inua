@@ -387,8 +387,9 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   backdrop filter, and a `GtkWidgetPaintable` of the results is empty
   below the view: GTK does not draw what is scrolled out of sight),
   under a fade. Answers, commands, the web search and the assistant
-  follow the apps (`appsFirst`, the best match still selected) and stay
-  below the foot, sharp (`Launcher.Pinned`). The selection is one box over the results (`highlight`)
+  follow the apps (`appsFirst`, the best match still selected), two to a
+  line (`RowCols`), and stay below the foot, sharp, in at most half the
+  results' height (`Launcher.Pinned`); with no apps they fill the results. The selection is one box over the results (`highlight`)
   gliding to the selected one as the view scrolls to it, each frame
   closing the distance (`stepLauncher`): the accent at 9% with a 38%
   hairline. A short grid line starts at the left. Notices (why

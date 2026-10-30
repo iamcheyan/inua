@@ -117,11 +117,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="pinned">
+          <object class="GtkScrolledWindow" id="pinned_scroll">
             <style>
               <class name="pinned"/>
             </style>
-            <property name="orientation">1</property>
+            <property name="hscrollbar-policy">2</property>
+            <property name="propagate-natural-height">true</property>
+            <property name="max-content-height">230</property>
+            <child>
+              <object class="GtkBox" id="pinned">
+                <property name="orientation">1</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>

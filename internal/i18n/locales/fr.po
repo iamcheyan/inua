@@ -12911,56 +12911,56 @@ msgstr "[APPLICATIONS]"
 msgid "Launch apps"
 msgstr "Lancer des applications"
 
-#: internal/shell/launcher.go:348
+#: internal/shell/launcher.go:356
 msgid "That window has closed"
 msgstr "Cette fenêtre s'est fermée"
 
-#: internal/shell/launcher.go:375
+#: internal/shell/launcher.go:383
 msgid "Ask the assistant anything"
 msgstr "Demandez n'importe quoi à l'assistant"
 
-#: internal/shell/launcher.go:377
+#: internal/shell/launcher.go:385
 msgid "No emoji or symbol matches"
 msgstr "Aucune correspondance d'emoji ou de symbole"
 
-#: internal/shell/launcher.go:379
+#: internal/shell/launcher.go:387
 msgid "Reading apps…"
 msgstr "Lecture d’applications…"
 
-#: internal/shell/launcher.go:381
+#: internal/shell/launcher.go:389
 msgid "No app matches"
 msgstr "Aucune application ne correspond"
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:391
 msgid "Not connected to Hyprland"
 msgstr "Non connecté à Hyprland"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:393
 msgid "No windows open"
 msgstr "Aucune fenêtre ouverte"
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:395
 msgid "No window matches"
 msgstr "Aucune fenêtre ne correspond"
 
-#: internal/shell/launcher.go:425
+#: internal/shell/launcher.go:433
 msgid "Enter asks"
 msgstr "Entrée pour demander"
 
-#: internal/shell/launcher.go:437
+#: internal/shell/launcher.go:445
 msgid "or start with ?"
 msgstr "ou commencer par ?"
 
-#: internal/shell/launcher.go:440
+#: internal/shell/launcher.go:448
 msgid "%s · Enter copies"
 msgstr "%s · Entrée pour copier"
 
-#: internal/shell/launcher.go:490
+#: internal/shell/launcher.go:498
 #: ui/vm.ui:912
 msgid "Ask the assistant"
 msgstr "Demandez à l'assistant"
 
-#: internal/shell/launcher.go:527
+#: internal/shell/launcher.go:535
 msgid "%s · workspace %s"
 msgstr "%[1]s · espace de travail %[2]s"
 
@@ -14703,7 +14703,7 @@ msgstr "hyprland.lua redéfinit ces réglages après avoir chargé inua.lua, ce 
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf les définit à nouveau après le chargement d'inua.conf, qui l'emporte sur inua : %s. Déplacez la ligne source en dessous d’eux."
 
-#: internal/ui/launcher.go:406
+#: internal/ui/launcher.go:410
 msgid "inua launcher"
 msgstr "lanceur inua"
 
@@ -18244,19 +18244,19 @@ msgstr "Commutateur à onglets"
 msgid "Search, or ask: 10 km to mi"
 msgstr "Recherchez ou demandez : 10 km à mi"
 
-#: ui/launcher.ui:140
+#: ui/launcher.ui:147
 msgid "[ERROR]"
 msgstr "[ERREUR]"
 
-#: ui/launcher.ui:166
+#: ui/launcher.ui:173
 msgid "↑↓  choose"
 msgstr "↑↓ choisir"
 
-#: ui/launcher.ui:174
+#: ui/launcher.ui:181
 msgid "↵  open"
 msgstr "↵ ouvert"
 
-#: ui/launcher.ui:182
+#: ui/launcher.ui:189
 msgid "Esc  close"
 msgstr "Echap fermer"
 

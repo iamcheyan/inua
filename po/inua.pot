@@ -12909,56 +12909,56 @@ msgstr ""
 msgid "Launch apps"
 msgstr ""
 
-#: internal/shell/launcher.go:348
+#: internal/shell/launcher.go:356
 msgid "That window has closed"
 msgstr ""
 
-#: internal/shell/launcher.go:375
+#: internal/shell/launcher.go:383
 msgid "Ask the assistant anything"
 msgstr ""
 
-#: internal/shell/launcher.go:377
+#: internal/shell/launcher.go:385
 msgid "No emoji or symbol matches"
 msgstr ""
 
-#: internal/shell/launcher.go:379
+#: internal/shell/launcher.go:387
 msgid "Reading apps…"
 msgstr ""
 
-#: internal/shell/launcher.go:381
+#: internal/shell/launcher.go:389
 msgid "No app matches"
 msgstr ""
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:391
 msgid "Not connected to Hyprland"
 msgstr ""
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:393
 msgid "No windows open"
 msgstr ""
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:395
 msgid "No window matches"
 msgstr ""
 
-#: internal/shell/launcher.go:425
+#: internal/shell/launcher.go:433
 msgid "Enter asks"
 msgstr ""
 
-#: internal/shell/launcher.go:437
+#: internal/shell/launcher.go:445
 msgid "or start with ?"
 msgstr ""
 
-#: internal/shell/launcher.go:440
+#: internal/shell/launcher.go:448
 msgid "%s · Enter copies"
 msgstr ""
 
-#: internal/shell/launcher.go:490
+#: internal/shell/launcher.go:498
 #: ui/vm.ui:912
 msgid "Ask the assistant"
 msgstr ""
 
-#: internal/shell/launcher.go:527
+#: internal/shell/launcher.go:535
 msgid "%s · workspace %s"
 msgstr ""
 
@@ -14701,7 +14701,7 @@ msgstr ""
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr ""
 
-#: internal/ui/launcher.go:406
+#: internal/ui/launcher.go:410
 msgid "inua launcher"
 msgstr ""
 
@@ -18242,19 +18242,19 @@ msgstr ""
 msgid "Search, or ask: 10 km to mi"
 msgstr ""
 
-#: ui/launcher.ui:140
+#: ui/launcher.ui:147
 msgid "[ERROR]"
 msgstr ""
 
-#: ui/launcher.ui:166
+#: ui/launcher.ui:173
 msgid "↑↓  choose"
 msgstr ""
 
-#: ui/launcher.ui:174
+#: ui/launcher.ui:181
 msgid "↵  open"
 msgstr ""
 
-#: ui/launcher.ui:182
+#: ui/launcher.ui:189
 msgid "Esc  close"
 msgstr ""
 

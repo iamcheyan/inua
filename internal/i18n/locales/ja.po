@@ -12840,56 +12840,56 @@ msgstr "[アプリ]"
 msgid "Launch apps"
 msgstr "アプリの起動"
 
-#: internal/shell/launcher.go:348
+#: internal/shell/launcher.go:356
 msgid "That window has closed"
 msgstr "その窓は閉まりました"
 
-#: internal/shell/launcher.go:375
+#: internal/shell/launcher.go:383
 msgid "Ask the assistant anything"
 msgstr "アシスタントに何でも質問してください"
 
-#: internal/shell/launcher.go:377
+#: internal/shell/launcher.go:385
 msgid "No emoji or symbol matches"
 msgstr "一致する絵文字も記号もありません"
 
-#: internal/shell/launcher.go:379
+#: internal/shell/launcher.go:387
 msgid "Reading apps…"
 msgstr "読書アプリ…"
 
-#: internal/shell/launcher.go:381
+#: internal/shell/launcher.go:389
 msgid "No app matches"
 msgstr "一致するアプリはありません"
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:391
 msgid "Not connected to Hyprland"
 msgstr "ハイプラランドに接続されていません"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:393
 msgid "No windows open"
 msgstr "開いているウィンドウはありません"
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:395
 msgid "No window matches"
 msgstr "ウィンドウが一致しない"
 
-#: internal/shell/launcher.go:425
+#: internal/shell/launcher.go:433
 msgid "Enter asks"
 msgstr "Enter で質問"
 
-#: internal/shell/launcher.go:437
+#: internal/shell/launcher.go:445
 msgid "or start with ?"
 msgstr "または ? で始まる"
 
-#: internal/shell/launcher.go:440
+#: internal/shell/launcher.go:448
 msgid "%s · Enter copies"
 msgstr "%s · Enter でコピー"
 
-#: internal/shell/launcher.go:490
+#: internal/shell/launcher.go:498
 #: ui/vm.ui:912
 msgid "Ask the assistant"
 msgstr "アシスタントに尋ねる"
 
-#: internal/shell/launcher.go:527
+#: internal/shell/launcher.go:535
 msgid "%s · workspace %s"
 msgstr "%[1]s · ワークスペース %[2]s"
 
@@ -14622,7 +14622,7 @@ msgstr "hyprland.lua は inua.lua を読み込んだ後にこれらを再設定�
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf は、inua.conf をロードした後にこれらを再度設定します。これは、inua: %s よりも優先されます。ソース行をそれらの下に移動します。"
 
-#: internal/ui/launcher.go:406
+#: internal/ui/launcher.go:410
 msgid "inua launcher"
 msgstr "イヌアランチャー"
 
@@ -18144,19 +18144,19 @@ msgstr "タブスイッチ"
 msgid "Search, or ask: 10 km to mi"
 msgstr "検索、または質問: 10 km to mi"
 
-#: ui/launcher.ui:140
+#: ui/launcher.ui:147
 msgid "[ERROR]"
 msgstr "[エラー]"
 
-#: ui/launcher.ui:166
+#: ui/launcher.ui:173
 msgid "↑↓  choose"
 msgstr "↑↓選択してください"
 
-#: ui/launcher.ui:174
+#: ui/launcher.ui:181
 msgid "↵  open"
 msgstr "↵ 開く"
 
-#: ui/launcher.ui:182
+#: ui/launcher.ui:189
 msgid "Esc  close"
 msgstr "Esc 閉じる"
 

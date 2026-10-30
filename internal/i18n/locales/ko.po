@@ -12840,56 +12840,56 @@ msgstr "[앱]"
 msgid "Launch apps"
 msgstr "앱 실행"
 
-#: internal/shell/launcher.go:348
+#: internal/shell/launcher.go:356
 msgid "That window has closed"
 msgstr "해당 창이 닫혔습니다."
 
-#: internal/shell/launcher.go:375
+#: internal/shell/launcher.go:383
 msgid "Ask the assistant anything"
 msgstr "어시스턴트에게 무엇이든 물어보세요"
 
-#: internal/shell/launcher.go:377
+#: internal/shell/launcher.go:385
 msgid "No emoji or symbol matches"
 msgstr "이모티콘이나 기호가 일치하지 않습니다."
 
-#: internal/shell/launcher.go:379
+#: internal/shell/launcher.go:387
 msgid "Reading apps…"
 msgstr "앱 읽기..."
 
-#: internal/shell/launcher.go:381
+#: internal/shell/launcher.go:389
 msgid "No app matches"
 msgstr "일치하는 앱이 없습니다."
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:391
 msgid "Not connected to Hyprland"
 msgstr "하이프랜드와 연결되지 않음"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:393
 msgid "No windows open"
 msgstr "열린 창 없음"
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:395
 msgid "No window matches"
 msgstr "일치하는 창이 없습니다."
 
-#: internal/shell/launcher.go:425
+#: internal/shell/launcher.go:433
 msgid "Enter asks"
 msgstr "Enter로 질문"
 
-#: internal/shell/launcher.go:437
+#: internal/shell/launcher.go:445
 msgid "or start with ?"
 msgstr "아니면 ?로 시작합니까?"
 
-#: internal/shell/launcher.go:440
+#: internal/shell/launcher.go:448
 msgid "%s · Enter copies"
 msgstr "%s · Enter로 복사"
 
-#: internal/shell/launcher.go:490
+#: internal/shell/launcher.go:498
 #: ui/vm.ui:912
 msgid "Ask the assistant"
 msgstr "어시스턴트에게 물어보세요"
 
-#: internal/shell/launcher.go:527
+#: internal/shell/launcher.go:535
 msgid "%s · workspace %s"
 msgstr "%[1]s · 작업 공간 %[2]s"
 
@@ -14622,7 +14622,7 @@ msgstr "hyprland.lua가 inua.lua를 불러온 뒤 이 항목을 다시 설정하
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyporland.conf는 inua.conf를 로드한 후 이를 다시 설정하며, 이는 inua: %s를 이깁니다. 소스 줄을 그 아래로 이동하세요."
 
-#: internal/ui/launcher.go:406
+#: internal/ui/launcher.go:410
 msgid "inua launcher"
 msgstr "이누아 런처"
 
@@ -18144,19 +18144,19 @@ msgstr "탭 스위치"
 msgid "Search, or ask: 10 km to mi"
 msgstr "검색 또는 질문: 10km to mi"
 
-#: ui/launcher.ui:140
+#: ui/launcher.ui:147
 msgid "[ERROR]"
 msgstr "[오류]"
 
-#: ui/launcher.ui:166
+#: ui/launcher.ui:173
 msgid "↑↓  choose"
 msgstr "↑↓ 선택"
 
-#: ui/launcher.ui:174
+#: ui/launcher.ui:181
 msgid "↵  open"
 msgstr "↵ 열림"
 
-#: ui/launcher.ui:182
+#: ui/launcher.ui:189
 msgid "Esc  close"
 msgstr "Esc 닫기"
 

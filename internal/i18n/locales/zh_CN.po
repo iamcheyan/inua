@@ -12840,56 +12840,56 @@ msgstr "[应用]"
 msgid "Launch apps"
 msgstr "启动应用程序"
 
-#: internal/shell/launcher.go:348
+#: internal/shell/launcher.go:356
 msgid "That window has closed"
 msgstr "该窗口已关闭"
 
-#: internal/shell/launcher.go:375
+#: internal/shell/launcher.go:383
 msgid "Ask the assistant anything"
 msgstr "有什么事情都可以向助理询问"
 
-#: internal/shell/launcher.go:377
+#: internal/shell/launcher.go:385
 msgid "No emoji or symbol matches"
 msgstr "没有表情符号或符号匹配"
 
-#: internal/shell/launcher.go:379
+#: internal/shell/launcher.go:387
 msgid "Reading apps…"
 msgstr "阅读应用程序……"
 
-#: internal/shell/launcher.go:381
+#: internal/shell/launcher.go:389
 msgid "No app matches"
 msgstr "没有应用匹配"
 
-#: internal/shell/launcher.go:383
+#: internal/shell/launcher.go:391
 msgid "Not connected to Hyprland"
 msgstr "未连接到 Hyprland"
 
-#: internal/shell/launcher.go:385
+#: internal/shell/launcher.go:393
 msgid "No windows open"
 msgstr "没有打开的窗口"
 
-#: internal/shell/launcher.go:387
+#: internal/shell/launcher.go:395
 msgid "No window matches"
 msgstr "没有窗口匹配"
 
-#: internal/shell/launcher.go:425
+#: internal/shell/launcher.go:433
 msgid "Enter asks"
 msgstr "按 Enter 提问"
 
-#: internal/shell/launcher.go:437
+#: internal/shell/launcher.go:445
 msgid "or start with ?"
 msgstr "或者开始于？"
 
-#: internal/shell/launcher.go:440
+#: internal/shell/launcher.go:448
 msgid "%s · Enter copies"
 msgstr "%s · 按 Enter 复制"
 
-#: internal/shell/launcher.go:490
+#: internal/shell/launcher.go:498
 #: ui/vm.ui:912
 msgid "Ask the assistant"
 msgstr "询问助理"
 
-#: internal/shell/launcher.go:527
+#: internal/shell/launcher.go:535
 msgid "%s · workspace %s"
 msgstr "%[1]s·工作空间%[2]s"
 
@@ -14622,7 +14622,7 @@ msgstr "hyprland.lua 在加载 inua.lua 之后又设置了这些,会盖过 inua 
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf 在加载 inua.conf 后再次设置这些,这赢得了 inua: %s。将源代码行移到它们下方。"
 
-#: internal/ui/launcher.go:406
+#: internal/ui/launcher.go:410
 msgid "inua launcher"
 msgstr "inua发射器"
 
@@ -18144,19 +18144,19 @@ msgstr "选项卡开关"
 msgid "Search, or ask: 10 km to mi"
 msgstr "搜索或询问：10 公里 换算为 英里"
 
-#: ui/launcher.ui:140
+#: ui/launcher.ui:147
 msgid "[ERROR]"
 msgstr "[错误]"
 
-#: ui/launcher.ui:166
+#: ui/launcher.ui:173
 msgid "↑↓  choose"
 msgstr "↑↓选择"
 
-#: ui/launcher.ui:174
+#: ui/launcher.ui:181
 msgid "↵  open"
 msgstr "↵打开"
 
-#: ui/launcher.ui:182
+#: ui/launcher.ui:189
 msgid "Esc  close"
 msgstr "Esc 关闭"
 

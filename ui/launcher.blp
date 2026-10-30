@@ -45,8 +45,10 @@ ApplicationWindow launcher {
 
     // The results scroll above a blurred foot, shown under apps: Go fills
     // `blur` with strips, each a copy of the results just below the view,
-    // blurred more the lower, under a fade into the window. The web search
-    // and the assistant stay in sight below it (`pinned`).
+    // blurred more the lower, under a fade into the window. Under apps the
+    // quick actions (answers, commands, the web search, the assistant)
+    // stay in sight below it, two to a line, in at most half the results'
+    // height (`pinned`); with no apps they fill the results themselves.
     ScrolledWindow scroll {
       styles ["results-scroll"]
       hscrollbar-policy: never;
@@ -86,9 +88,15 @@ ApplicationWindow launcher {
       }
     }
 
-    Box pinned {
+    ScrolledWindow pinned_scroll {
       styles ["pinned"]
-      orientation: vertical;
+      hscrollbar-policy: never;
+      propagate-natural-height: true;
+      max-content-height: 230;
+
+      Box pinned {
+        orientation: vertical;
+      }
     }
 
     // Why the list is empty, or what went wrong with the last action. The

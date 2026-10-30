@@ -486,20 +486,22 @@ func TestAssistant(t *testing.T) {
 	}
 }
 
-// gridResults is an answer, seven apps and the web search, in apps mode.
+// gridResults is an answer, seven apps, the web search and the assistant,
+// in apps mode.
 func gridResults() *Launcher {
 	l := &Launcher{Open: true, Mode: Apps}
 	l.Results = append(l.Results, Result{Title: "answer", Copy: "42"})
 	for _, a := range []string{"a", "b", "c", "d", "e", "f", "g"} {
 		l.Results = append(l.Results, Result{Title: a, Entry: &desktop.Entry{ID: a}})
 	}
-	l.Results = append(l.Results, Result{Title: "web", URL: "https://example.org"})
+	l.Results = append(l.Results, Result{Title: "web", URL: "https://example.org"}, Result{Title: "ask", Ask: "?"})
 	return l
 }
 
 func TestLauncherLines(t *testing.T) {
 	l := gridResults()
-	want := []Line{{0, 1, false}, {1, 4, true}, {4, 7, true}, {7, 8, true}, {8, 9, false}}
+	// The quick actions two to a line, apart from the apps.
+	want := []Line{{0, 1, true}, {1, 4, true}, {4, 7, true}, {7, 8, true}, {8, 10, true}}
 	if got := l.Lines(3); !slices.Equal(got, want) {
 		t.Errorf("apps: %v, want %v", got, want)
 	}
@@ -512,9 +514,10 @@ func TestLauncherLines(t *testing.T) {
 func TestLauncherStep(t *testing.T) {
 	l := gridResults()
 	lines := l.Lines(3)
-	if l.Step(lines, 1, 0) {
-		t.Error("right on a row moved; it edits the search")
+	if !l.Step(lines, 1, 0) || l.Selected != 1 {
+		t.Errorf("right on a quick action: selected %d, want 1", l.Selected)
 	}
+	l.Selected = 0
 	for _, c := range []struct{ dx, dy, want int }{
 		{0, 1, 1},  // into the grid, its first app
 		{1, 0, 2},  // along the line
