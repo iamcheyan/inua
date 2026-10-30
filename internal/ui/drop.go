@@ -106,19 +106,25 @@ func (d *drop) detach() {
 		d.bar.RemoveCssClass("joined-end")
 	}
 	if d.canvas != nil {
+		// Both go: the card back into the backdrop it was built in, the
+		// canvas out of the backdrop entirely. A canvas left there keeps
+		// expanding, and the next open adds another beside it, the two
+		// splitting the window's height between them - the card then lays
+		// itself out in the lower half, off the bar.
 		d.card.Unparent()
+		d.backdrop.Remove(d.canvas)
+		d.backdrop.Append(d.card)
 		gtkx.ForgetCanvas(d.canvas)
 	}
 	if b := d.host; b != nil {
 		// The keys' controller goes back to the panel's window, which then
-		// holds the only reference again. It is held across the move: the
-		// bar's window dropping the last reference frees it, and the next
-		// open would move a freed object into the bar (a SIGSEGV inside
-		// g_object_ref).
+		// holds the only reference again. RemoveController drops the ref the
+		// bar held, so the controller is held across it, and AddController
+		// takes that ref as its own: unref it as well and the widget keeps a
+		// controller that is already freed (Gtk-CRITICAL on the next event).
 		d.keys.Ref()
 		b.win.RemoveController(d.keys)
 		d.win.AddController(d.keys)
-		d.keys.Unref()
 		d.backdrop.Ref()
 		b.frame.RemoveOverlay(&d.backdrop.Widget)
 		for _, c := range d.win.GetCssClasses() {
@@ -161,10 +167,9 @@ func (d *drop) moveTo(b *bar) {
 	b.hold(d.layer, d.keyboard)
 	b.frame.AddOverlay(&d.backdrop.Widget)
 	d.backdrop.Unref()
-	d.keys.Ref() // held across the move: its old window drops its own
+	d.keys.Ref() // RemoveController drops the ref the panel's window held; AddController takes this one
 	d.win.RemoveController(d.keys)
 	b.win.AddController(d.keys)
-	d.keys.Unref()
 	d.host = b
 }
 

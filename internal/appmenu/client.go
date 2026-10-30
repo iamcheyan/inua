@@ -2,6 +2,7 @@ package appmenu
 
 import (
 	"context"
+	"encoding/xml"
 	"fmt"
 	"strings"
 	"time"
@@ -40,7 +41,10 @@ func (c *Client) Menu(pid int) ([]Entry, error) {
 	}
 	// AT-SPI last: plain GTK4 apps answer it with a skeleton (a menubar whose
 	// items have no labels), which must not shadow a real menu nor put blank
-	// buttons in the bar.
+	// buttons in the bar. A browser's sections come through with no items at
+	// all - it builds them when its own menu opens - and the shell cannot
+	// fill them without pressing them, which crashes Firefox. So a tree of
+	// empty sections is no menu either.
 	if c.A11y != nil {
 		if e, err := c.A11y.Menu(pid); err == nil && labelled(e) {
 			return e, nil
@@ -230,31 +234,32 @@ func (c *Client) kdeMenu(pid int) ([]Entry, bool, error) {
 func kdeMenuPath(conn *dbus.Conn, service string) (dbus.ObjectPath, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), callTimeout)
 	defer cancel()
-	var xml string
+	var decoded string
 	call := conn.Object(service, kdeMenuRoot).CallWithContext(ctx, "org.freedesktop.DBus.Introspectable.Introspect", 0)
 	if call.Err != nil {
 		return "", call.Err
 	}
-	if err := call.Store(&xml); err != nil {
+	if err := call.Store(&decoded); err != nil {
 		return "", err
 	}
-	// The reply opens with the object's own node, then its children as
-	// <node name="2"/>: the first child after that is the menu's, when the
-	// application hangs one off /MenuBar at all.
-	const open = `<node name="`
-	_, xml, ok := strings.Cut(xml, open)
-	if !ok {
-		return "", nil
+	// The reply is the object's own node, with its children inside it. The
+	// root carries no name of its own (the bus answers "<node>" there, only
+	// the test's fixture has a name), so the first child named is the menu's.
+	var node struct {
+		Children []struct {
+			Name string `xml:"name,attr"`
+		} `xml:"node"`
 	}
-	_, rest, ok := strings.Cut(xml, open)
-	if !ok {
-		return "", nil
+	if err := xml.Unmarshal([]byte(decoded), &node); err != nil {
+		return "", err
 	}
-	name, _, ok := strings.Cut(rest, `"`)
-	if !ok || name == "" || strings.ContainsAny(name, "/<>") {
-		return "", nil
+	for _, child := range node.Children {
+		if child.Name == "" || strings.ContainsAny(child.Name, "/<>") {
+			continue
+		}
+		return kdeMenuRoot + "/" + dbus.ObjectPath(child.Name), nil
 	}
-	return kdeMenuRoot + "/" + dbus.ObjectPath(name), nil
+	return "", nil
 }
 
 // direct marks entries the shell read itself: their clicks go to the

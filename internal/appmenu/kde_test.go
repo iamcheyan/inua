@@ -31,6 +31,34 @@ func TestKDEMenuPathFromIntrospection(t *testing.T) {
 	}
 }
 
+// The bus answers with a root node that has no name of its own; the fixture
+// above names it, so this is the shape that actually reaches the reader
+// (Kate's /MenuBar was read as having no menu at all).
+func TestKDEMenuPathFromBusShape(t *testing.T) {
+	addr := startBus(t)
+	conn := connTo(t, addr)
+	const xml = `<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.freedesktop.DBus.Introspectable">
+    <method name="Introspect">
+      <arg name="xml_data" type="s" direction="out"/>
+    </method>
+  </interface>
+  <node name="1"/>
+</node>`
+	if err := conn.Export(introspectable{xml: xml}, "/MenuBar", "org.freedesktop.DBus.Introspectable"); err != nil {
+		t.Fatal(err)
+	}
+	path, err := kdeMenuPath(conn, uniqueName(t, conn))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if path != "/MenuBar/1" {
+		t.Fatalf("path = %q, want /MenuBar/1", path)
+	}
+}
+
 // An object with no children of its own is no menu.
 func TestKDEMenuPathEmpty(t *testing.T) {
 	addr := startBus(t)

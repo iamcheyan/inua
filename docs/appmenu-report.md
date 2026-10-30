@@ -27,7 +27,7 @@ from the same `[]MenuGroup`, so the two cannot drift.
 1. **`com.canonical.AppMenu.Registrar`** — the de-facto protocol (Unity,
    Mavernix). Its association key is an **X11 window ID**, so it covers Qt and
    XWayland applications that register with it.
-2. **KDE's own export** — a KDE application (Dolphin, Kate, Konsole) publishes
+2. **KDE's own export** — a KDE application (Dolphin, Konsole) publishes
    `com.canonical.dbusmenu` at `/MenuBar/N` **on its own well-known name**
    (`org.kde.dolphin-280254`), one child of `/MenuBar` per window. KDE does not
    use the Canonical registrar, and its applications are native Wayland, so
@@ -36,11 +36,12 @@ from the same `[]MenuGroup`, so the two cannot drift.
 3. **inua's own names** — the shell asks the bus which of those names belong to
    the focused process, by the owner's Unix PID. This is how a native Wayland
    GTK4 window gets a global menu without pretending a PID is an XID.
-4. **AT-SPI** — last. It is what browsers offer: Firefox and Chromium expose a
-   menubar of labelled sections (`File`, `Edit`, …), while plain GTK4 answers
-   with a skeleton (a menu bar with unnamed items). A menu counts only when it
-   has a section with items under it, so the skeleton and a browser's
-   not-yet-filled sections never put empty buttons in the bar.
+4. **AT-SPI** — last. Plain GTK4 and Qt answer with a skeleton (a menubar of
+   unnamed items), and Firefox and Chromium answer with labelled sections
+   (`File`, `Edit`, …) that have no items until the application opens them
+   itself. A menu counts only when a section already has items under it, so
+   neither the skeleton nor the browsers' unfilled sections put empty buttons
+   in the bar (see "Why the browsers' sections stay off the bar").
 
 A process that owns **more than one** menu name (several windows) shows no
 global menu: without a per-window identity the shell cannot tell which window
@@ -55,9 +56,10 @@ the overview, where the window is what matters.
 | Application | Where its menu comes from |
 | --- | --- |
 | inua's own apps (Files, Mail, Terminal, the light apps, the games) | dbusmenu, published by `internal/appui` (below) |
-| Dolphin, Kate, Konsole (KDE, native Wayland) | `com.canonical.dbusmenu` at `/MenuBar/N` on `org.kde.<app>-<pid>` |
-| Firefox | AT-SPI: a menubar of sections; the items appear when a section opens |
-| Chromium, Chrome | AT-SPI, the same shape as Firefox |
+| Dolphin, Konsole (KDE, native Wayland) | `com.canonical.dbusmenu` at `/MenuBar/N` on `org.kde.<app>-<pid>` |
+| Kate | nothing: it publishes `/MenuBar` only when it has a menu bar to give, and exports none here |
+| Firefox | nothing usable: AT-SPI has its sections, but empty (it fills one only when the user opens it, and pressing it over AT-SPI crashes it) |
+| Chromium, Chrome | the Canonical registrar when it runs on XWayland (whole menu, items included); AT-SPI is empty as above |
 | VS Code | AT-SPI exposes one menu ("その他"), not the bar's sections: no global menu |
 | other GTK4 apps | nothing to publish; their menu bar is inside the window |
 
@@ -137,27 +139,51 @@ switched generation, and every application above was started from it.
 
 ## Desktop applications read on the real session
 
-Read from the live session, through the client the bar uses, with each
-application focused. These are the trees the bar renders.
+Read from the live session with the client the bar uses, each application
+focused, on 2026-10-31 (Hyprland, one 1280x1024 output).
 
 | Application | Source | What the bar showed |
 | --- | --- | --- |
-| Dolphin | KDE `/MenuBar/2` | ファイル / 編集 / 表示 / 移動 / ツール / 設定 / ヘルプ, each with its items (20, 19, 23, 7, 5, 8, 10) |
-| Kate | AT-SPI | ファイル / 編集 / Selection / 表示 / 移動 / Projects / LSP Client / セッション / ツール / 設定 / ヘルプ |
-| Chrome | AT-SPI | ファイル / 編集 / 表示 / 履歴 / ツール / プロファイル / ヘルプ |
-| Firefox | AT-SPI | File / Edit / View / History / Bookmarks / Profiles / Tools / Help |
-| VS Code | AT-SPI | none: one "その他" menu, not the bar's sections |
+| Dolphin | KDE, `/MenuBar/2` on `org.kde.dolphin-<pid>` | ファイル / 編集 / 表示 / 移動 / ツール / 設定 / ヘルプ, with 20 / 19 / 23 / 7 / 5 / 8 / 10 items; clicking 新しいタブ in ファイル opened a Dolphin window |
+| Chrome (XWayland) | Canonical registrar, `/com/canonical/menu/A00004` | ファイル / 編集 / 表示 / 履歴 / ツール / プロファイル / ヘルプ, with their items |
+| Kate | none | nothing: it exports no `/MenuBar` (only per-object `/kate/MainWindow_1/actions/...`) and is not on the accessibility bus |
+| Firefox | none usable | AT-SPI has the eight sections, but each has no items until Firefox opens it, and it builds them only in its own window |
+
+Chrome reaches the registrar because it runs on XWayland, which is what that
+protocol keys on (`xdotool search --class Google-chrome` finds the window, and
+`GetMenuForWindow` answers for it). Firefox publishes nothing on the registrar
+and nothing at `/MenuBar`, so its AT-SPI menubar is its only source — see
+below for why the bar does not use it.
+
+### Why the browsers' sections stay off the bar
+
+Firefox's and Chrome's AT-SPI menubar has the right shape and the right
+labels; what it lacks is the items. `File` has zero children until the
+application's own File menu has been opened once, and then it keeps them
+(measured: pressing `Edit` over AT-SPI gave 14 children, and they were still
+there after it closed).
+
+The shell can press a section over AT-SPI to make the application build it,
+but **that crashes Firefox**: pressing `Edit` on its own, or `File`, brought
+the process down (`MozCrashReason: Redirecting call to abort() to
+mozalloc_abort`, crash reports at 04:47 and 04:49), with accessibility both
+on and off. So the bar does not do it. A menu is accepted only when a section
+already has items, which rules the browsers out — an empty row of section
+titles would offer menus that open nothing.
 
 ## Fixed in this pass
 
 | Symptom | Cause |
 | --- | --- |
-| A KDE application (Dolphin, Kate) showed no menu | Inua only asked the Canonical registrar; KDE publishes at `/MenuBar/N` on its own name, which was never read |
+| A KDE application (Dolphin) showed no menu | Inua only asked the Canonical registrar; KDE publishes at `/MenuBar/N` on its own name, which was never read. The introspected reply was scanned for `<node name=` twice — the real bus answers a root node with no name, so only the test's fixture matched — and `/MenuBar` read as empty. The reply is parsed as XML now |
 | A browser showed no menu | AT-SPI's name and role are *properties* there, and inua read only the legacy methods; and `DoAction` sent a `uint32` index where the bus's signature is `i` (`int32`), so every call failed |
 | A browser's sections came out empty, or as blank buttons | Labelled `role=33` sections were spliced in as if they were Qt's unnamed popup nodes; and a menu was accepted with no items under it |
 | The bar jumped to the dock's edge while a menu was open, and the menu drew over the window instead of under the bar | The menu raised the bar to the **overlay** layer while the dock stayed on **top**; Hyprland reserves space in layer order, so the dock took its width first and the bar was laid out after it. The menu now hangs in the bar's own layer (`top`) |
 | The bar showed the window's title, not the application | It now shows the application: its icon, its name, then its menus, the same format for every application |
 | Reopening a menu crashed the shell (SIGSEGV in `g_object_ref`) | Closing a panel moved its key controller out of the bar without holding a reference; the controller was freed and the next open moved a dead object |
+| Reopening a menu drew it half a screen lower, over the window instead of under the bar | Closing only took the card out of the canvas; the canvas stayed in the backdrop, expanding. The next open added a second one, and the two split the grown bar window's height between them, so the card laid itself out in the lower half. Both the card and the canvas now leave on close |
+| Opening a menu logged `gtk_box_remove: assertion 'gtk_widget_get_parent (child) == box' failed` | The card came back from the canvas unparented but not re-attached to the backdrop, so the next open's `backdrop.Remove(card)` had nothing to remove |
+| Opening a menu logged Gtk-CRITICALs from the event controller and could crash later | `AddController` takes ownership of the reference, and `detach`/`moveTo` unref'd it again after the move: the window kept a freed controller. The reference is now held across `RemoveController` and handed to `AddController` |
 
 ## Not claimed
 
