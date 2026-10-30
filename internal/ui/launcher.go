@@ -502,6 +502,7 @@ func (s *shellUI) buildFoot() {
 	l.footIcons = map[string]*gtk.IconPaintable{}
 	for i := range blurSteps {
 		ghost := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+		ghost.AddCssClass("ghost")
 		ghost.AddCssClass(fmt.Sprintf("blur%d", i+1))
 		view := gtk.NewScrolledWindow()
 		view.SetPolicy(gtk.PolicyExternalValue, gtk.PolicyExternalValue)
