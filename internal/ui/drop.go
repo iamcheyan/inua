@@ -124,6 +124,22 @@ func (d *drop) detach() {
 	d.win, d.keys = nil, nil
 }
 
+// destroyPanel drops a panel's window. A panel that hung from the bar keeps
+// its card in the bar's window instead, so its own window was never realized
+// and has no GdkSurface; Destroy on such a window reaches a null surface and
+// takes the shell down with a SIGSEGV (gdk_surface_get_display),
+// so that one is only hidden.
+func destroyPanel(w *gtk.Window) {
+	if w == nil {
+		return
+	}
+	if w.GetSurface() == nil {
+		w.SetVisible(false)
+		return
+	}
+	w.Destroy()
+}
+
 // moveTo moves the backdrop into the bar b's window, with the panel's
 // classes for its style, and the keys with it.
 func (d *drop) moveTo(b *bar) {

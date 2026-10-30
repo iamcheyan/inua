@@ -313,7 +313,7 @@ func (s *shellUI) closePasswords() {
 	win := p.win
 	p.drop.close(func() {
 		p.drop.detach()
-		win.Destroy()
+		destroyPanel(&win.Window)
 		win.Unref()
 	})
 	p.win, p.search, p.list, p.scroll, p.status, p.backdrop = nil, nil, nil, nil, nil, nil
