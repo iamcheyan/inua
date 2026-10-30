@@ -208,6 +208,35 @@ func TestRenderShortcuts(t *testing.T) {
 	}
 }
 
+// The widget page's swipe is there while the page is on, in both kinds of
+// file, and Hyprland accepts it.
+func TestRenderWidgetGestures(t *testing.T) {
+	c := config.Default()
+	got := Render(c, Devices{})
+	for _, want := range []string{
+		"gesture = 4, right, dispatcher, exec, inua call widgets open\n",
+		"gesture = 4, left, dispatcher, exec, inua call widgets close\n",
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("missing %q in\n%s", want, got)
+		}
+	}
+	if lua := RenderLua(c, Devices{}); !strings.Contains(lua, `hl.gesture({ fingers = 4, direction = "right", action = function() hl.dispatch(hl.dsp.exec_cmd("inua call widgets open")) end })`) {
+		t.Errorf("no swipe in\n%s", lua)
+	}
+	c.Widgets.Enable = false
+	if got := Render(c, Devices{}) + RenderLua(c, Devices{}); strings.Contains(got, "gesture") {
+		t.Errorf("a swipe while the page is off:\n%s", got)
+	}
+	if _, err := exec.LookPath("Hyprland"); err == nil {
+		path := filepath.Join(t.TempDir(), "hyprland.conf")
+		os.WriteFile(path, []byte(Render(config.Default(), Devices{})), 0o644)
+		if out, _ := exec.Command("Hyprland", "--verify-config", "-c", path).CombinedOutput(); !strings.Contains(string(out), "config ok") {
+			t.Errorf("Hyprland rejects:\n%s", out)
+		}
+	}
+}
+
 // Dictation's keys are bound only while it is on: held to talk, or
 // pressed to start and stop.
 func TestRenderDictation(t *testing.T) {

@@ -34,6 +34,7 @@ type Config struct {
 	Displays   Displays   `toml:"displays"`
 	Notify     Notify     `toml:"notifications"`
 	Dock       Dock       `toml:"dock"`
+	Widgets    Widgets    `toml:"widgets"`
 	Voice      Voice      `toml:"voice"`
 	Assistant  Assistant  `toml:"assistant"`
 	Keyring    Keyring    `toml:"keyring"`
@@ -231,7 +232,7 @@ type Shortcut struct {
 // commands behind them are in internal/hyprconf.
 var ShortcutActions = []string{
 	"launcher", "windows", "overview", "control", "notifications", "clipboard", "pass", "focus", "settings", "restart", "lock",
-	"shot-area", "shot-area-silent", "shot-screen", "shot-window", "shot-record", "color", "voice",
+	"shot-area", "shot-area-silent", "shot-screen", "shot-window", "shot-record", "color", "voice", "widgets",
 }
 
 // Voice is dictation, on top of the voxtype daemon: a shortcut holds to
@@ -660,6 +661,21 @@ type Dock struct {
 	Pinned []string `toml:"pinned"`
 }
 
+// Widgets is the widget page: a place before the first workspace, with
+// widgets and apps on it.
+type Widgets struct {
+	// Enable gives the bar a mark before the workspaces that opens the
+	// page, and the wheel and a four-finger swipe a way to it.
+	Enable bool `toml:"enable"`
+	// Items are the widgets shown, in order: WidgetKinds.
+	Items []string `toml:"items"`
+	// Apps are the apps on the page's apps widget, by desktop ID.
+	Apps []string `toml:"apps"`
+}
+
+// WidgetKinds are the widgets the page can show.
+var WidgetKinds = []string{"clock", "calendar", "weather", "media", "apps"}
+
 // DockSizes are the icon sizes the settings window offers.
 var DockSizes = []int{28, 36, 44, 56}
 
@@ -861,6 +877,7 @@ func Default() Config {
 		OSD:        OSD{Enable: true, Position: "bottom-center"},
 		Clipboard:  Clipboard{Enable: true, Bar: true, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
+		Widgets:    Widgets{Enable: true, Items: slices.Clone(WidgetKinds), Apps: []string{"io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"}},
 		Voice:      Voice{Enable: false, PushToTalk: true, Engine: "voxtype", Show: "window"},
 		Shortcuts: []Shortcut{
 			{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
@@ -1085,6 +1102,16 @@ func (c *Config) validate() []string {
 		w = append(w, fmt.Sprintf("osd.position = %q: want top-center, top-left, top-right, bottom-center, bottom-left or bottom-right; using %q", c.OSD.Position, d.OSD.Position))
 		c.OSD.Position = d.OSD.Position
 	}
+	kinds := map[string]bool{}
+	c.Widgets.Items = slices.DeleteFunc(c.Widgets.Items, func(k string) bool {
+		known := slices.Contains(WidgetKinds, k)
+		if !known {
+			w = append(w, fmt.Sprintf("widgets.items %q: want one of %s; leaving it out", k, strings.Join(WidgetKinds, ", ")))
+		}
+		twice := kinds[k]
+		kinds[k] = true
+		return !known || twice
+	})
 	if !slices.Contains(DockPositions, c.Dock.Position) {
 		w = append(w, fmt.Sprintf("dock.position = %q: want bottom, top, left or right; using %q", c.Dock.Position, d.Dock.Position))
 		c.Dock.Position = d.Dock.Position

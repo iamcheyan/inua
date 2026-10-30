@@ -28,6 +28,7 @@ func Format(c Config) string {
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
+		c.Widgets.Enable, list(c.Widgets.Items), list(c.Widgets.Apps),
 		c.Voice.Enable, c.Voice.PushToTalk, q(c.Voice.Engine), q(c.Voice.Show),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision), q(c.Assistant.Transcription),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges, c.Assistant.ElevatedCommands,
@@ -470,6 +471,20 @@ drawer = %t
 # Apps always on the dock, by desktop ID (the .desktop file's name without
 # .desktop), in order. Missing ones are skipped.
 pinned = %s
+
+[widgets]
+# The widget page, a place before the first workspace: a mark before the
+# workspaces on the bar opens it, so do the wheel up past the first
+# workspace and a four-finger swipe right; Escape, a workspace or a swipe
+# left goes back. Drag a widget by its head to move it.
+enable = %t
+
+# The widgets on it, in order: clock, calendar, weather, media, apps.
+items = %s
+
+# The apps on its apps widget, by desktop ID. Drag one in from the dock,
+# or add it with the widget's +.
+apps = %s
 
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)

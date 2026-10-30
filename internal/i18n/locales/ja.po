@@ -134,7 +134,8 @@ msgstr "黒"
 #: internal/apps/calendar/calendar.go:69
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
-#: internal/ui/lock.go:247
+#: internal/ui/lock.go:248
+#: internal/ui/widgets.go:727
 msgid "Monday, January 2"
 msgstr "1月2日 Monday"
 
@@ -174,7 +175,8 @@ msgstr "日"
 #: internal/lightui/weather.go:358
 #: internal/mailui/window.go:1432
 #: internal/shell/notify.go:28
-#: internal/ui/agenda.go:353
+#: internal/ui/agenda.go:371
+#: internal/ui/widgets.go:785
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr "月"
@@ -222,6 +224,7 @@ msgstr "週末"
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:360
+#: internal/ui/widgets.go:787
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -2889,7 +2892,7 @@ msgid "Some of it could not be read."
 msgstr "一部を読めませんでした。"
 
 #: internal/diskui/details.go:76
-#: internal/ui/lock.go:278
+#: internal/ui/lock.go:279
 #: internal/ui/polkit.go:294
 #: internal/ui/settings_about.go:191
 #: internal/vmui/window.go:2071
@@ -3157,6 +3160,7 @@ msgstr "%s · %s 個のファイル · %s"
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
+#: internal/ui/widgets.go:789
 msgid "15:04"
 msgstr "15:04"
 
@@ -8260,7 +8264,7 @@ msgid "Notification center"
 msgstr "通知センター"
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:126
+#: ui/bar.ui:136
 msgid "Clipboard history"
 msgstr "クリップボード履歴"
 
@@ -8321,10 +8325,14 @@ msgstr "色を選ぶ"
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:173
-#: ui/bar.ui:167
+#: ui/bar.ui:177
 #: ui/settings.ui:6368
 msgid "Dictation"
 msgstr "ディクテーション"
+
+#: internal/hyprconf/keys.go:41
+msgid "Widget page"
+msgstr "ウィジェットページ"
 
 #: internal/i18n/time.go:8
 msgid "February"
@@ -8445,6 +8453,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
+#: internal/ui/widgets.go:411
 #: ui/settings.ui:1264
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8452,7 +8461,9 @@ msgstr "時計"
 
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:224
-#: internal/ui/agenda.go:323
+#: internal/ui/agenda.go:334
+#: internal/ui/widgets.go:413
+#: internal/ui/widgets.go:806
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr "天気"
@@ -8469,7 +8480,8 @@ msgid "Calculator"
 msgstr "電卓"
 
 #: internal/lightui/apps.go:20
-#: ui/bar.ui:55
+#: internal/ui/widgets.go:412
+#: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr "カレンダー"
@@ -8525,53 +8537,54 @@ msgstr "%sを使用する"
 
 #: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
+#: internal/ui/widgets.go:759
 msgid "January 2006"
 msgstr "2006年1月"
 
 #: internal/lightui/calendar.go:134
-#: internal/ui/agenda.go:241
+#: internal/ui/agenda.go:246
 msgid "WK"
 msgstr "週"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Su"
 msgstr "日"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Mo"
 msgstr "月"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Tu"
 msgstr "火"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "We"
 msgstr "水"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Th"
 msgstr "木"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Fr"
 msgstr "金"
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Sa"
 msgstr "土"
 
@@ -9070,6 +9083,7 @@ msgid "Cannot play %s: %s"
 msgstr "%s を再生できません: %s"
 
 #: internal/lightui/music.go:560
+#: internal/ui/widgets.go:836
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr "再生していません"
@@ -9409,6 +9423,7 @@ msgstr "このアプリが読める画像（PNG または JPEG）ではありま
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
+#: internal/ui/widgets.go:687
 #: ui/connect.ui:966
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -12817,6 +12832,7 @@ msgid "[WINDOWS]"
 msgstr "[ウィンドウ]"
 
 #: internal/shell/launcher.go:50
+#: internal/ui/widgets.go:424
 msgid "[APPS]"
 msgstr "[アプリ]"
 
@@ -13983,7 +13999,7 @@ msgstr "bash、zsh、fish がプロンプトに印を付け、コマンドを記
 
 #: internal/termui/prefs.go:181
 #: internal/ui/notify.go:324
-#: ui/bar.ui:137
+#: ui/bar.ui:147
 #: ui/settings.ui:3358
 msgid "Notifications"
 msgstr "通知"
@@ -14144,26 +14160,32 @@ msgid "inua calendar"
 msgstr "イヌアカレンダー"
 
 #: internal/ui/agenda.go:227
+#: internal/ui/widgets.go:727
 msgid "%s · WK %d"
 msgstr "%s · 第 %d 週"
 
-#: internal/ui/agenda.go:324
+#: internal/ui/agenda.go:335
+#: internal/ui/widgets.go:807
 msgid "Add a place in Weather to see it here"
 msgstr "天気に場所を追加してここに表示します"
 
-#: internal/ui/agenda.go:335
+#: internal/ui/agenda.go:346
+#: internal/ui/widgets.go:813
 msgid "No forecast: offline?"
 msgstr "予測がありません: オフラインですか?"
 
-#: internal/ui/agenda.go:337
+#: internal/ui/agenda.go:348
+#: internal/ui/widgets.go:811
 msgid "Reading the forecast…"
 msgstr "予測を読んでいると…"
 
-#: internal/ui/agenda.go:345
+#: internal/ui/agenda.go:356
+#: internal/ui/widgets.go:820
 msgid "%s · feels %s"
 msgstr "%[1]s・%[2]sを感じる"
 
-#: internal/ui/agenda.go:348
+#: internal/ui/agenda.go:359
+#: internal/ui/widgets.go:822
 msgid "H %s  L %s"
 msgstr "H %[1]s L %[2]s"
 
@@ -14370,11 +14392,11 @@ msgstr "スクリーンショットのため隠しています。"
 msgid "The passphrases do not match."
 msgstr "パスフレーズが一致しません。"
 
-#: internal/ui/bar.go:446
+#: internal/ui/bar.go:471
 msgid "Workspace %s"
 msgstr "ワークスペース%s"
 
-#: internal/ui/bar.go:459
+#: internal/ui/bar.go:484
 msgid "WORKSPACE"
 msgstr "ワークスペース"
 
@@ -14546,6 +14568,7 @@ msgstr "終了 (%d Windows)"
 
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:535
+#: internal/ui/widgets.go:415
 #: ui/settings.ui:181
 #: ui/settings.ui:2087
 msgid "Apps"
@@ -14607,20 +14630,20 @@ msgstr "イヌアランチャー"
 msgid "the compositor does not support session locks"
 msgstr "コンポジタはセッションロックをサポートしていません"
 
-#: internal/ui/lock.go:140
+#: internal/ui/lock.go:141
 msgid "could not take the session lock"
 msgstr "セッションロックを取得できませんでした"
 
-#: internal/ui/lock.go:252
+#: internal/ui/lock.go:253
 msgid "Wrong password. Try again in %d s"
 msgstr "パスワードが間違っています。 %d 秒以内に再試行してください"
 
-#: internal/ui/lock.go:255
-#: internal/ui/lock.go:306
+#: internal/ui/lock.go:256
+#: internal/ui/lock.go:307
 msgid "Wrong password"
 msgstr "パスワードが間違っています"
 
-#: internal/ui/lock.go:310
+#: internal/ui/lock.go:311
 msgid "The password could not be checked"
 msgstr "パスワードが確認できませんでした"
 
@@ -14760,7 +14783,7 @@ msgid "Search every entry"
 msgstr "すべてのエントリーを検索"
 
 #: internal/ui/passwords.go:282
-#: ui/bar.ui:116
+#: ui/bar.ui:126
 #: ui/settings.ui:1460
 msgid "Passwords"
 msgstr "パスワード"
@@ -16582,6 +16605,72 @@ msgstr "voxtype をインストールできませんでした: %s"
 msgid "voxtype did not start: %s"
 msgstr "voxtype が起動しませんでした: %s"
 
+#: internal/ui/widgets.go:139
+msgid "Remove Widget"
+msgstr "ウィジェットを削除"
+
+#: internal/ui/widgets.go:141
+msgid "Remove from the Page"
+msgstr "ページから削除"
+
+#: internal/ui/widgets.go:395
+msgid "inua widgets"
+msgstr "inua ウィジェット"
+
+#: internal/ui/widgets.go:414
+msgid "Now Playing"
+msgstr "再生中"
+
+#: internal/ui/widgets.go:420
+msgid "[CLOCK]"
+msgstr "[時計]"
+
+#: internal/ui/widgets.go:421
+#: ui/agenda.ui:46
+msgid "[CALENDAR]"
+msgstr "[カレンダー]"
+
+#: internal/ui/widgets.go:422
+msgid "[WEATHER]"
+msgstr "[天気]"
+
+#: internal/ui/widgets.go:423
+msgid "[NOW PLAYING]"
+msgstr "[再生中]"
+
+#: internal/ui/widgets.go:572
+msgid "Open Clock"
+msgstr "時計を開く"
+
+#: internal/ui/widgets.go:590
+msgid "Open Calendar"
+msgstr "カレンダーを開く"
+
+#: internal/ui/widgets.go:624
+#: ui/agenda.ui:116
+msgid "Open Weather"
+msgstr "天気を開く"
+
+#: internal/ui/widgets.go:689
+msgid "Add an app, or drag one here from the dock"
+msgstr "アプリを追加するか、ドックからここへドラッグします"
+
+#: internal/ui/widgets.go:789
+msgid "Alarm %s %s · %s"
+msgstr "アラーム %s %s · %s"
+
+#: internal/ui/widgets.go:837
+msgid "A player that plays shows here"
+msgstr "再生中のプレーヤーがここに表示されます"
+
+#: internal/ui/widgets.go:871
+msgid "Search apps"
+msgstr "アプリを検索"
+
+#: internal/ui/widgets.go:920
+msgid "No app by that name"
+msgstr "その名前のアプリはありません"
+
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:715
 #: internal/viewerui/app.go:716
@@ -17518,10 +17607,6 @@ msgstr "応答がありませんでした"
 msgid "It speaks version %d of the workshop protocol; this inua speaks %d."
 msgstr "ワークショップ・プロトコルのバージョン %d を話します。この inua は %d です。"
 
-#: ui/agenda.ui:46
-msgid "[CALENDAR]"
-msgstr "[カレンダー]"
-
 #: ui/agenda.ui:89
 #: ui/calendar.ui:50
 msgid "Previous month"
@@ -17531,10 +17616,6 @@ msgstr "前月"
 #: ui/calendar.ui:61
 msgid "Next month"
 msgstr "来月"
-
-#: ui/agenda.ui:116
-msgid "Open Weather"
-msgstr "オープンウェザー"
 
 #: ui/assistant.ui:54
 msgid "Who answers"
@@ -17560,11 +17641,15 @@ msgstr "何をすべきかを尋ねるか、教えてください"
 msgid "Discard the recording"
 msgstr "録音を破棄"
 
-#: ui/bar.ui:85
+#: ui/bar.ui:40
+msgid "Widgets"
+msgstr "ウィジェット"
+
+#: ui/bar.ui:95
 msgid "Stop recording"
 msgstr "録画を停止"
 
-#: ui/bar.ui:182
+#: ui/bar.ui:192
 msgid "Control Center"
 msgstr "コントロールセンター"
 
@@ -20033,6 +20118,18 @@ msgstr "7日間"
 #: ui/weather.ui:272
 msgid "DETAILS"
 msgstr "詳細"
+
+#: ui/widgets.ui:45
+msgid "[WIDGETS]"
+msgstr "[ウィジェット]"
+
+#: ui/widgets.ui:57
+msgid "Drag a head to move it · Right-click to remove · Esc · back"
+msgstr "見出しをドラッグで移動 · 右クリックで削除 · Esc · 戻る"
+
+#: ui/widgets.ui:65
+msgid "Add widget"
+msgstr "ウィジェットを追加"
 
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:10
 msgid "Ask questions and get things done on this computer"

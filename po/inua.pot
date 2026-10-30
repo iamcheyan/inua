@@ -132,7 +132,8 @@ msgstr ""
 #: internal/apps/calendar/calendar.go:69
 #: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
-#: internal/ui/lock.go:247
+#: internal/ui/lock.go:248
+#: internal/ui/widgets.go:727
 msgid "Monday, January 2"
 msgstr ""
 
@@ -172,7 +173,8 @@ msgstr ""
 #: internal/lightui/weather.go:358
 #: internal/mailui/window.go:1432
 #: internal/shell/notify.go:28
-#: internal/ui/agenda.go:353
+#: internal/ui/agenda.go:371
+#: internal/ui/widgets.go:785
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr ""
@@ -220,6 +222,7 @@ msgstr ""
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:360
+#: internal/ui/widgets.go:787
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -2893,7 +2896,7 @@ msgid "Some of it could not be read."
 msgstr ""
 
 #: internal/diskui/details.go:76
-#: internal/ui/lock.go:278
+#: internal/ui/lock.go:279
 #: internal/ui/polkit.go:294
 #: internal/ui/settings_about.go:191
 #: internal/vmui/window.go:2071
@@ -3162,6 +3165,7 @@ msgstr ""
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
+#: internal/ui/widgets.go:789
 msgid "15:04"
 msgstr ""
 
@@ -8295,7 +8299,7 @@ msgid "Notification center"
 msgstr ""
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:126
+#: ui/bar.ui:136
 msgid "Clipboard history"
 msgstr ""
 
@@ -8356,9 +8360,13 @@ msgstr ""
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:173
-#: ui/bar.ui:167
+#: ui/bar.ui:177
 #: ui/settings.ui:6368
 msgid "Dictation"
+msgstr ""
+
+#: internal/hyprconf/keys.go:41
+msgid "Widget page"
 msgstr ""
 
 #: internal/i18n/time.go:8
@@ -8480,6 +8488,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
+#: internal/ui/widgets.go:411
 #: ui/settings.ui:1264
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8487,7 +8496,9 @@ msgstr ""
 
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:224
-#: internal/ui/agenda.go:323
+#: internal/ui/agenda.go:334
+#: internal/ui/widgets.go:413
+#: internal/ui/widgets.go:806
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr ""
@@ -8504,7 +8515,8 @@ msgid "Calculator"
 msgstr ""
 
 #: internal/lightui/apps.go:20
-#: ui/bar.ui:55
+#: internal/ui/widgets.go:412
+#: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr ""
@@ -8560,53 +8572,54 @@ msgstr ""
 
 #: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
+#: internal/ui/widgets.go:759
 msgid "January 2006"
 msgstr ""
 
 #: internal/lightui/calendar.go:134
-#: internal/ui/agenda.go:241
+#: internal/ui/agenda.go:246
 msgid "WK"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Su"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Mo"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Tu"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "We"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Th"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Fr"
 msgstr ""
 
 #: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
-#: internal/ui/agenda.go:242
+#: internal/ui/agenda.go:247
 msgid "Sa"
 msgstr ""
 
@@ -9110,6 +9123,7 @@ msgid "Cannot play %s: %s"
 msgstr ""
 
 #: internal/lightui/music.go:560
+#: internal/ui/widgets.go:836
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr ""
@@ -9456,6 +9470,7 @@ msgstr ""
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
+#: internal/ui/widgets.go:687
 #: ui/connect.ui:966
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -12886,6 +12901,7 @@ msgid "[WINDOWS]"
 msgstr ""
 
 #: internal/shell/launcher.go:50
+#: internal/ui/widgets.go:424
 msgid "[APPS]"
 msgstr ""
 
@@ -14056,7 +14072,7 @@ msgstr ""
 
 #: internal/termui/prefs.go:181
 #: internal/ui/notify.go:324
-#: ui/bar.ui:137
+#: ui/bar.ui:147
 #: ui/settings.ui:3358
 msgid "Notifications"
 msgstr ""
@@ -14220,26 +14236,32 @@ msgid "inua calendar"
 msgstr ""
 
 #: internal/ui/agenda.go:227
+#: internal/ui/widgets.go:727
 msgid "%s · WK %d"
 msgstr ""
 
-#: internal/ui/agenda.go:324
+#: internal/ui/agenda.go:335
+#: internal/ui/widgets.go:807
 msgid "Add a place in Weather to see it here"
 msgstr ""
 
-#: internal/ui/agenda.go:335
+#: internal/ui/agenda.go:346
+#: internal/ui/widgets.go:813
 msgid "No forecast: offline?"
 msgstr ""
 
-#: internal/ui/agenda.go:337
+#: internal/ui/agenda.go:348
+#: internal/ui/widgets.go:811
 msgid "Reading the forecast…"
 msgstr ""
 
-#: internal/ui/agenda.go:345
+#: internal/ui/agenda.go:356
+#: internal/ui/widgets.go:820
 msgid "%s · feels %s"
 msgstr ""
 
-#: internal/ui/agenda.go:348
+#: internal/ui/agenda.go:359
+#: internal/ui/widgets.go:822
 msgid "H %s  L %s"
 msgstr ""
 
@@ -14447,11 +14469,11 @@ msgstr ""
 msgid "The passphrases do not match."
 msgstr ""
 
-#: internal/ui/bar.go:446
+#: internal/ui/bar.go:471
 msgid "Workspace %s"
 msgstr ""
 
-#: internal/ui/bar.go:459
+#: internal/ui/bar.go:484
 msgid "WORKSPACE"
 msgstr ""
 
@@ -14625,6 +14647,7 @@ msgstr ""
 
 #: internal/ui/drawer.go:215
 #: internal/ui/settings.go:535
+#: internal/ui/widgets.go:415
 #: ui/settings.ui:181
 #: ui/settings.ui:2087
 msgid "Apps"
@@ -14686,20 +14709,20 @@ msgstr ""
 msgid "the compositor does not support session locks"
 msgstr ""
 
-#: internal/ui/lock.go:140
+#: internal/ui/lock.go:141
 msgid "could not take the session lock"
 msgstr ""
 
-#: internal/ui/lock.go:252
+#: internal/ui/lock.go:253
 msgid "Wrong password. Try again in %d s"
 msgstr ""
 
-#: internal/ui/lock.go:255
-#: internal/ui/lock.go:306
+#: internal/ui/lock.go:256
+#: internal/ui/lock.go:307
 msgid "Wrong password"
 msgstr ""
 
-#: internal/ui/lock.go:310
+#: internal/ui/lock.go:311
 msgid "The password could not be checked"
 msgstr ""
 
@@ -14840,7 +14863,7 @@ msgid "Search every entry"
 msgstr ""
 
 #: internal/ui/passwords.go:282
-#: ui/bar.ui:116
+#: ui/bar.ui:126
 #: ui/settings.ui:1460
 msgid "Passwords"
 msgstr ""
@@ -16675,6 +16698,72 @@ msgstr ""
 msgid "voxtype did not start: %s"
 msgstr ""
 
+#: internal/ui/widgets.go:139
+msgid "Remove Widget"
+msgstr ""
+
+#: internal/ui/widgets.go:141
+msgid "Remove from the Page"
+msgstr ""
+
+#: internal/ui/widgets.go:395
+msgid "inua widgets"
+msgstr ""
+
+#: internal/ui/widgets.go:414
+msgid "Now Playing"
+msgstr ""
+
+#: internal/ui/widgets.go:420
+msgid "[CLOCK]"
+msgstr ""
+
+#: internal/ui/widgets.go:421
+#: ui/agenda.ui:46
+msgid "[CALENDAR]"
+msgstr ""
+
+#: internal/ui/widgets.go:422
+msgid "[WEATHER]"
+msgstr ""
+
+#: internal/ui/widgets.go:423
+msgid "[NOW PLAYING]"
+msgstr ""
+
+#: internal/ui/widgets.go:572
+msgid "Open Clock"
+msgstr ""
+
+#: internal/ui/widgets.go:590
+msgid "Open Calendar"
+msgstr ""
+
+#: internal/ui/widgets.go:624
+#: ui/agenda.ui:116
+msgid "Open Weather"
+msgstr ""
+
+#: internal/ui/widgets.go:689
+msgid "Add an app, or drag one here from the dock"
+msgstr ""
+
+#: internal/ui/widgets.go:789
+msgid "Alarm %s %s · %s"
+msgstr ""
+
+#: internal/ui/widgets.go:837
+msgid "A player that plays shows here"
+msgstr ""
+
+#: internal/ui/widgets.go:871
+msgid "Search apps"
+msgstr ""
+
+#: internal/ui/widgets.go:920
+msgid "No app by that name"
+msgstr ""
+
 #: internal/viewerui/app.go:36
 #: internal/viewerui/app.go:715
 #: internal/viewerui/app.go:716
@@ -17616,10 +17705,6 @@ msgstr ""
 msgid "It speaks version %d of the workshop protocol; this inua speaks %d."
 msgstr ""
 
-#: ui/agenda.ui:46
-msgid "[CALENDAR]"
-msgstr ""
-
 #: ui/agenda.ui:89
 #: ui/calendar.ui:50
 msgid "Previous month"
@@ -17628,10 +17713,6 @@ msgstr ""
 #: ui/agenda.ui:98
 #: ui/calendar.ui:61
 msgid "Next month"
-msgstr ""
-
-#: ui/agenda.ui:116
-msgid "Open Weather"
 msgstr ""
 
 #: ui/assistant.ui:54
@@ -17658,11 +17739,15 @@ msgstr ""
 msgid "Discard the recording"
 msgstr ""
 
-#: ui/bar.ui:85
+#: ui/bar.ui:40
+msgid "Widgets"
+msgstr ""
+
+#: ui/bar.ui:95
 msgid "Stop recording"
 msgstr ""
 
-#: ui/bar.ui:182
+#: ui/bar.ui:192
 msgid "Control Center"
 msgstr ""
 
@@ -20130,6 +20215,18 @@ msgstr ""
 
 #: ui/weather.ui:272
 msgid "DETAILS"
+msgstr ""
+
+#: ui/widgets.ui:45
+msgid "[WIDGETS]"
+msgstr ""
+
+#: ui/widgets.ui:57
+msgid "Drag a head to move it · Right-click to remove · Esc · back"
+msgstr ""
+
+#: ui/widgets.ui:65
+msgid "Add widget"
 msgstr ""
 
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:10

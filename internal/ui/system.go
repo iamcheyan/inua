@@ -86,6 +86,7 @@ func (s *shellUI) update(f func(*shell.System)) {
 		if s.control.open {
 			s.applyControl()
 		}
+		s.showWidgetMedia()
 		s.showBluetooth()
 		s.showWifi()
 		s.showPower() // the battery, the power mode

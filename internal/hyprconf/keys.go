@@ -38,6 +38,7 @@ var Actions = []Action{
 	{ID: "shot-record", Label: i18n.M("Record the screen (again: stop)"), Shot: true},
 	{ID: "color", Label: i18n.M("Pick a colour"), Shot: true},
 	{ID: "voice", Label: i18n.M("Dictation")},
+	{ID: "widgets", Label: i18n.M("Widget page")},
 }
 
 // Command is the shell command behind an action.
@@ -79,6 +80,8 @@ func Command(c config.Config, action string) string {
 		return "inua call voice toggle"
 	case "color":
 		return "inua call screenshot color"
+	case "widgets":
+		return "inua call widgets toggle"
 	}
 	return ""
 }

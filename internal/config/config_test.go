@@ -440,6 +440,23 @@ url = "https://example.com/"
 	}
 }
 
+func TestWidgets(t *testing.T) {
+	c, w, err := Load(write(t, "[widgets]\nitems = [\"apps\", \"clock\"]\napps = [\"firefox\"]\n"))
+	if err != nil || len(w) != 0 || !slices.Equal(c.Widgets.Items, []string{"apps", "clock"}) || !slices.Equal(c.Widgets.Apps, []string{"firefox"}) || !c.Widgets.Enable {
+		t.Fatalf("got %+v %v %v", c.Widgets, w, err)
+	}
+	// One not known is left out, with a warning; one twice once, silently.
+	c, w, _ = Load(write(t, "[widgets]\nitems = [\"clock\", \"stocks\", \"clock\", \"media\"]\n"))
+	if len(w) != 1 || !slices.Equal(c.Widgets.Items, []string{"clock", "media"}) {
+		t.Errorf("got %q %v", c.Widgets.Items, w)
+	}
+	// None is a page with nothing on it, not the defaults.
+	c, _, _ = Load(write(t, "[widgets]\nitems = []\n"))
+	if len(c.Widgets.Items) != 0 {
+		t.Errorf("empty: %q", c.Widgets.Items)
+	}
+}
+
 func TestDockPosition(t *testing.T) {
 	c, w, err := Load(write(t, "[dock]\nposition = \"left\"\n[style]\nedge_gaps = false\n"))
 	if err != nil || len(w) != 0 || c.Dock.Position != "left" || c.Style.EdgeGaps {

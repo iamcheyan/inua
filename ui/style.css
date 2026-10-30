@@ -12,9 +12,9 @@
    inua-bar, inua-control, inua-launcher). */
 
 window.bar, window.control, window.agenda, window.banners, window.osd, window.center, window.dock-window, window.shot-drawer-win, window.drawer-overlay, window.clipboard-panel { background: transparent; }
-window.overview { background: transparent; }
+window.overview, window.widgets { background: transparent; }
 
-window.bar, window.launcher, window.control, window.agenda, window.banners, window.osd, window.center, window.settings, window.screenshot, window.shot-drawer-win, window.lock, window.polkit, window.drawer-overlay, window.clipboard-panel, popover.menu {
+window.bar, window.widgets, window.launcher, window.control, window.agenda, window.banners, window.osd, window.center, window.settings, window.screenshot, window.shot-drawer-win, window.lock, window.polkit, window.drawer-overlay, window.clipboard-panel, popover.menu {
   font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
   font-size: 13px;
   color: @t0;
@@ -183,6 +183,19 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .bar .island .workspaces button.active { background: @t1; }
 .bar .island .workspaces button.focused { min-width: 18px; background: @accent; }
 .bar .island .workspaces button.urgent { background: @danger; }
+/* The widget page's place before them: a hollow square, filled while the
+   page shows, when the workspace under it is only active. */
+.bar .island .workspaces button.widgets-mark {
+  min-width: 5px;
+  min-height: 5px;
+  margin-right: 3px;
+  border: 1px solid @t2;
+  border-radius: 1px;
+  background: transparent;
+}
+.bar .island .workspaces button.widgets-mark:hover { border-color: @t1; }
+.bar .island .workspaces button.widgets-mark.open { background: @accent; border-color: @accent; }
+.bar .island .workspaces.under-page button.focused { min-width: 6px; background: @t1; }
 
 /* min-width: 0 too, else GTK's icon buttons are wider than the bell. */
 .bar .island button.status, .bar .island button.passwords, .bar .island button.clipboard, .bar .island button.notes, .bar .island button.voice, .bar .island button.clock-button, .bar .island .tray button {
@@ -398,6 +411,69 @@ button.agenda-weather .agenda-weather-day image { color: @t1; }
   padding: 14px 16px 16px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
 }
+/* The widget page (widgets.blp): glass over the windows between the bar
+   and the dock, its cards as a library's tiles. */
+.widget-page { background: @glass; padding: 18px 32px 24px; }
+.widget-page-head { min-height: 32px; padding-bottom: 12px; border-bottom: 1px solid alpha(@line, 0.7); }
+.widget-page-head .mark { background: @accent; border-color: @accent; }
+.widget-page-hint { color: @t2; }
+.widget-page-head menubutton.link > button {
+  min-height: 24px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: @t1;
+}
+.widget-page-head menubutton.link > button:hover { color: @t0; background: alpha(@accent, 0.06); }
+.widget-cards { padding-top: 6px; }
+.widget-cards > flowboxchild { padding: 0; background: none; }
+.widget-card {
+  min-width: 300px;
+  padding: 12px 16px 16px;
+  background: alpha(@surface, 0.72);
+  border: 1px solid @line;
+  border-radius: 4px;
+}
+.widget-head { min-height: 22px; }
+.widget-head .mark { border: none; border-radius: 1px; background: mix(@t0, @accent, 0.68); }
+button.widget-app .sub { color: @t1; }
+button.widget-plain {
+  padding: 4px 6px;
+  margin: -4px -6px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-shadow: none;
+}
+button.widget-plain:hover { background: alpha(@accent, 0.05); border-color: alpha(@accent, 0.2); }
+.widget-time {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 46px;
+  font-weight: 300;
+  font-feature-settings: "tnum";
+  color: @t0;
+}
+.widget-zone { padding: 8px 0; border-top: 1px solid alpha(@line, 0.6); }
+.widget-zone-time { font-size: 15px; color: @t0; }
+.widget-art { min-width: 64px; min-height: 64px; border-radius: 3px; background: @surface2; color: @t2; }
+.widget-media button.flat { min-width: 34px; min-height: 30px; }
+button.widget-app {
+  padding: 8px 2px 6px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-shadow: none;
+}
+button.widget-app:hover { background: alpha(@accent, 0.06); border-color: alpha(@accent, 0.2); }
+button.widget-app.widget-add image { color: @t2; }
+.widget-apps > flowboxchild { padding: 0; background: none; }
+popover.widget-picker > contents { padding: 8px; min-width: 260px; }
+button.widget-pick { padding: 6px 8px; }
+
 /* Hanging from the bar (drop.go): the drop draws the card's glass and
    border as one with the bar's, and the bar's own lower border while it
    hangs; nothing dims behind it, so it is the bar's glass to the eye too. */

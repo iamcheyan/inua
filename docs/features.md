@@ -15,6 +15,24 @@ reach as well, adjusts the volume 5% a notch; on the workspaces, it goes
 to the next workspace the bar shows (down) or the previous one (up), a
 notch a step, stopping at the ends. One per monitor.
 
+## Widget page
+
+A place before the first workspace: a page of widgets over the windows,
+between the bar and the dock, that slides in from the left. The hollow
+square before the workspaces opens it (filled while it shows), and so do
+the wheel up past the first workspace, a four-finger swipe right, the
+Widget page shortcut and `inua call widgets toggle|open|close`. Escape,
+the wheel down, a workspace, a swipe left or another workspace shown on
+its monitor go back.
+
+The widgets: the clock with Clock's world clocks, the month with the next
+alarm, the weather where Weather is set, the player playing, and apps
+to open. Drag a widget by its head to move it, right-click the head to
+remove it, and bring one back with Add widget. Drag apps in from the dock
+or add them with +; drag them to reorder, right-click to remove. The
+order and the apps are `[widgets]` in config.toml; `enable = false`
+takes the page, its mark and its swipe away.
+
 When the volume or the screen's brightness changes, by the keys, the
 wheel or `inua system`, a card at the foot of the screen shows the level
 for a moment, as phones do. It takes no clicks, and stays away while the

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -200,8 +201,13 @@ func (s *shellUI) applyConfig(c config.Config) {
 		b.tray.SetVisible(c.Bar.Tray)
 		b.clipboard.SetVisible(c.Clipboard.Enable && c.Clipboard.Bar)
 		b.passwords.SetVisible(c.Bar.Pass && s.passwords.hasStore)
+		b.widgetsMark.SetVisible(c.Widgets.Enable)
 		b.setHypr(s, s.snap)
 		s.syncWallpaper(b)
+	}
+	s.followWidgets() // turned off
+	if !slices.Equal(old.Widgets.Items, c.Widgets.Items) || !slices.Equal(old.Widgets.Apps, c.Widgets.Apps) {
+		s.fillWidgets()
 	}
 	if c.Bar.Pass && !old.Bar.Pass {
 		s.checkPasswordsStore() // one may have been made since

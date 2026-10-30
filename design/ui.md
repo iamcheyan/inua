@@ -192,6 +192,20 @@ bar, over a full-screen backdrop that closes it on a click.
   bar draws it back up (`drop.go`, `shell.DropAt`). Nothing dims behind
   it.
 
+### The widget page
+
+The place before the first workspace (`widgets.blp`). It is glass over the
+windows between the bar and the dock, never over them, so apps can be
+dragged in from the dock. It slides in from the left edge and back out
+(`GtkRevealer`, 260 ms), and Hyprland does not animate it as well. Its
+head is a page's: the filled mark, `[WIDGETS]`, the keys as a hint and
+Add widget as a link. The widgets are cards like a library's tiles
+(`surface`, a `line` border, 4 px corners). Each card's head is a
+section's mark and `[LABEL]`: drag it to move the card, right-click it for
+its menu. The bar's mark for the page is a hollow 5 px square before the
+workspace dots, filled with the accent while the page shows. Meanwhile
+the workspace under the page is drawn as active, not focused.
+
 ## Menus
 
 A menu that a button opens (the trigger) looks and moves as the dock's
