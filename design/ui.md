@@ -252,7 +252,9 @@ trigger, above it (the dock's), or at the pointer.
   (`alpha(@line, 0.9)`), corners of `style.radius` (`style.Corners` lists
   it), 6 px inside, and the floating card's shadow (`0 8px 28px` at 32%
   black). Hyprland blurs what is behind it, as behind the shell's glass:
-  `inua.conf` turns on `decoration:blur:popups`, ignoring the shadow.
+  `inua.conf` turns on `decoration:blur:popups`, ignoring the shadow, and
+  `blur_popups` for the bar's and the dock's layer surfaces, whose menus
+  are their popups.
 - **An arrow at the trigger**, in the menu's glass and hairline, its tip
   at the trigger's middle. The menu is centred under the trigger: GTK
   counts the shadow in a popover's alignment, so one aligned to the

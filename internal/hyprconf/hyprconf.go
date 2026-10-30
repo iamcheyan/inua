@@ -119,6 +119,16 @@ layerrule {
     match:namespace = ^inua-bar$
     no_anim = on
 }
+
+# The menus the bar and the dock open (the tray's, an app's in the dock)
+# are their surfaces' popups, which decoration:blur:popups leaves alone:
+# blur behind them too, but their shadows.
+layerrule {
+    name = inua-shell-menus
+    match:namespace = ^inua-(bar|dock)$
+    blur_popups = on
+    ignore_alpha = 0.4
+}
 `
 
 // Path is inua.conf for the settings file at configPath: both live under
@@ -378,6 +388,16 @@ hl.layer_rule({
     name = "inua-bar-still",
     match = { namespace = "^inua-bar$" },
     no_anim = true,
+})
+
+-- The menus the bar and the dock open (the tray's, an app's in the dock)
+-- are their surfaces' popups, which decoration.blur.popups leaves alone:
+-- blur behind them too, but their shadows.
+hl.layer_rule({
+    name = "inua-shell-menus",
+    match = { namespace = "^inua-(bar|dock)$" },
+    blur_popups = true,
+    ignore_alpha = 0.4,
 })
 `
 

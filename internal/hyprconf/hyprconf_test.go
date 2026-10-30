@@ -361,6 +361,14 @@ func TestRenderPopupBlur(t *testing.T) {
 	if got := RenderLua(config.Default(), Devices{}); !strings.Contains(got, "blur = { popups = true, popups_ignorealpha = 0.4 }") {
 		t.Errorf("inua.lua does not blur popups:\n%s", got)
 	}
+	// The dock's and the bar's menus are their layer surfaces' popups.
+	for _, out := range []string{got, RenderLua(config.Default(), Devices{})} {
+		for _, want := range []string{"^inua-(bar|dock)$", "blur_popups"} {
+			if !strings.Contains(out, want) {
+				t.Errorf("no %q for the shell's menus:\n%s", want, out)
+			}
+		}
+	}
 }
 
 // inua.lua for a Lua config sets the same as inua.conf, in Hyprland
