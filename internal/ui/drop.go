@@ -38,6 +38,7 @@ type drop struct {
 	win      *gtk.Window
 	keys     *gtk.EventController // the panel's, on the window it shows in
 	layer    layershell.Layer     // the bar's while it hangs from it
+	app      *gtk.Application     // for a window that has to show itself
 	canvas   *gtk.Widget
 	backdrop *gtk.Box
 	card     *gtk.Widget
@@ -536,6 +537,15 @@ func (s *shellUI) dropFromBar(d *drop, mon *gdk.Monitor, button func(*bar) *gtk.
 			d.open()
 			return
 		}
+	}
+	// A panel's own window only joins the application when it has to show
+	// itself. A window that hangs from the bar never presents its own, and
+	// GTK 4.22 segfaults destroying one that joined an application without
+	// ever being realized: gtk_window_destroy -> the application's "remove"
+	// -> gdk_wayland_toplevel_remove_from_session on a surface that was
+	// never made.
+	if d.app != nil {
+		d.win.SetApplication(d.app)
 	}
 	d.win.Present()
 }

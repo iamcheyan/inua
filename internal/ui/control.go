@@ -281,7 +281,7 @@ func (s *shellUI) buildControl() {
 	c.win.AddController(&keys.EventController)
 	c.drop.attach(&c.win.Window, &keys.EventController, &c.backdrop, &c.card.Widget, layershell.LayerOverlay, true)
 
-	c.win.SetApplication(s.app)
+	c.drop.app = s.app // it joins the application only if it has to show
 	w := c.win.GoPointer()
 	if s.layer {
 		layershell.InitForWindow(w)
