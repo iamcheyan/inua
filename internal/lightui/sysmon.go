@@ -21,6 +21,7 @@ import (
 	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // history is how many seconds the meters draw.
@@ -683,13 +684,10 @@ func (a *sysmonApp) readDetail() bool {
 	return true
 }
 
-// section adds a heading to box, translated.
+// section adds a section's head to box, its name translated.
 func section(box *gtk.Box, name string) {
-	k := gtk.NewLabel(i18n.T(name))
-	k.AddCssClass("kicker")
-	k.AddCssClass("section-head")
-	k.SetXalign(0)
-	gtkx.Append(box, &k.Widget)
+	head := uikit.NewHead(i18n.T(name), "")
+	gtkx.Append(box, &head.Box.Widget)
 }
 
 // fact adds a name, translated, and its value to box, returning the

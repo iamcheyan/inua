@@ -15,6 +15,7 @@ import (
 	"github.com/lyricat/inua/internal/apps/mail"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // settingsWin is Mail's settings, in the look of inua's Settings: an
@@ -136,25 +137,12 @@ func (w *window) showSettings(account string) {
 	s.page.AddCssClass("page")
 	s.scroll.SetChild(&s.page.Widget)
 	over.SetChild(&s.scroll.Widget)
-	s.sticky = gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-	s.sticky.AddCssClass("section-head")
+	sticky := uikit.NewHead("", "")
+	s.sticky, s.stickyLabel, s.stickyMeta = sticky.Box, sticky.Label, sticky.Meta
 	s.sticky.AddCssClass("sticky")
 	s.sticky.SetValign(gtk.AlignStartValue)
 	s.sticky.SetVisible(false)
-	mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	mark.AddCssClass("mark")
-	mark.SetValign(gtk.AlignCenterValue)
-	gtkx.Append(s.sticky, &mark.Widget)
-	s.stickyLabel = gtk.NewLabel("")
-	s.stickyLabel.AddCssClass("section-label")
-	s.stickyLabel.SetUseMarkup(true)
-	gtkx.Append(s.sticky, &s.stickyLabel.Widget)
-	s.stickyMeta = gtk.NewLabel("")
-	s.stickyMeta.AddCssClass("section-meta")
-	s.stickyMeta.SetHexpand(true)
-	s.stickyMeta.SetXalign(0)
-	s.stickyMeta.SetEllipsize(3)
-	gtkx.Append(s.sticky, &s.stickyMeta.Widget)
+	s.stickyLabel.SetVisible(true)
 	over.AddOverlay(&s.sticky.Widget)
 	s.ptrs = append(s.ptrs, w.h.notify(s.scroll.GetVadjustment(), "value", s.updateSticky))
 	gtkx.Append(root, &over.Widget)
@@ -290,30 +278,9 @@ func (s *settingsWin) updateSticky() {
 // section adds a section to the page: its head ([LABEL] and what it is
 // about) on a hairline, and the body its rows go in.
 func (s *settingsWin) section(label, meta string) *gtk.Box {
-	sec := gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	sec.AddCssClass("section")
-	head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-	head.AddCssClass("section-head")
-	mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	mark.AddCssClass("mark")
-	mark.SetValign(gtk.AlignCenterValue)
-	gtkx.Append(head, &mark.Widget)
-	l := gtk.NewLabel("")
-	l.AddCssClass("section-label")
-	l.SetMarkup("<span alpha='55%'>[</span>" + gtkEscape(label) + "<span alpha='55%'>]</span>")
-	gtkx.Append(head, &l.Widget)
-	m := gtk.NewLabel(meta)
-	m.AddCssClass("section-meta")
-	m.SetHexpand(true)
-	m.SetXalign(0)
-	m.SetEllipsize(3)
-	gtkx.Append(head, &m.Widget)
-	gtkx.Append(sec, &head.Widget)
-	body := gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	body.AddCssClass("section-body")
-	gtkx.Append(sec, &body.Widget)
-	gtkx.Append(s.page, &sec.Widget)
-	return body
+	sec := uikit.NewSection(label, meta)
+	gtkx.Append(s.page, &sec.Box.Widget)
+	return sec.Body
 }
 
 // line puts a hairline between a section's rows.

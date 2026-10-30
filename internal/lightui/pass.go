@@ -21,6 +21,7 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/keyring"
 	"github.com/lyricat/inua/internal/system"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // masked stands for a hidden value.
@@ -1241,23 +1242,9 @@ func passReadWhat(r keyring.Reads) string {
 // passSection is a section head, as the other light apps have: [TITLE]
 // and a dim note.
 func passSection(title, meta string) *gtk.Box {
-	head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-	head.AddCssClass("section-head")
-	head.AddCssClass("pass-keyring-head")
-	mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	mark.AddCssClass("mark")
-	mark.SetValign(gtk.AlignCenterValue)
-	gtkx.Append(head, &mark.Widget)
-	t := gtk.NewLabel("")
-	t.AddCssClass("section-label")
-	t.SetMarkup("<span alpha='55%'>[</span>" + glib.MarkupEscapeText(title, -1) + "<span alpha='55%'>]</span>")
-	gtkx.Append(head, &t.Widget)
-	m := gtk.NewLabel(meta)
-	m.AddCssClass("section-meta")
-	m.SetHexpand(true)
-	m.SetXalign(0)
-	gtkx.Append(head, &m.Widget)
-	return head
+	head := uikit.NewHead(title, meta)
+	head.Box.AddCssClass("pass-keyring-head")
+	return head.Box
 }
 
 // passInfoRow is a row of a keyring entry's sections: a name over a dim

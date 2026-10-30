@@ -144,7 +144,9 @@ carry `.settings`):
 - **Page** (right, `app`, padding 18 px 32 px): sections of rows.
 - **Section**: a head (44 px; the mark, the `[LABEL]`, an optional meta
   text or control at the end) on a hairline, then the body. No frame, no
-  fill. 22 px between sections.
+  fill. 22 px between sections. Built in Go, a section is
+  `uikit.NewSection` (or `uikit.NewHead` for the head alone), the shell's
+  and the apps' alike; `uikit.Bracketed` is the `[LABEL]`'s markup.
 - **Row** (`.row`, at least 44 px, 12 px above and below): the text on the
   left (label, sub line), the control at the end, centred. A **field**
   (`.field`) puts its label above a wide control.

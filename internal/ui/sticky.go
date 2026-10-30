@@ -7,6 +7,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // stickyHead keeps the head of the section being read at the top of a
@@ -29,20 +30,9 @@ func (s *shellUI) buildStickyHeads(ui *gtkx.Builder) {
 		h := &stickyHead{}
 		ui.Get("scroll_"+name, &h.scroll)
 		ui.Get("sticky_"+name, &h.box)
-		mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-		mark.AddCssClass("mark")
-		mark.SetValign(gtk.AlignCenterValue)
-		gtkx.Append(&h.box, &mark.Widget)
-		h.label = gtk.NewLabel("")
-		h.label.AddCssClass("section-label")
-		h.label.SetUseMarkup(true)
-		gtkx.Append(&h.box, &h.label.Widget)
-		h.meta = gtk.NewLabel("")
-		h.meta.AddCssClass("section-meta")
-		h.meta.SetHexpand(true)
-		h.meta.SetXalign(0)
-		h.meta.SetEllipsize(3)
-		gtkx.Append(&h.box, &h.meta.Widget)
+		head := uikit.FillHead(&h.box, "", "")
+		h.label, h.meta = head.Label, head.Meta
+		h.label.SetVisible(true)
 		adj := h.scroll.GetVadjustment()
 		st.sticky[adj.Ptr] = h
 		adj.ConnectValueChanged(&s.onSettingsScroll)

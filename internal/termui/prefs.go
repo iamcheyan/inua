@@ -11,6 +11,7 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/term/settings"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // The settings (Ctrl+,) edit term.toml in the settings window's
@@ -261,29 +262,9 @@ func (pr *prefs) page(name, title, icon string) *gtk.Box {
 // section is a section head (mark, [LABEL], a note) over a body; its
 // body comes back.
 func (pr *prefs) section(page *gtk.Box, label, meta string) *gtk.Box {
-	sec := gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	sec.AddCssClass("section")
-	head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-	head.AddCssClass("section-head")
-	mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	mark.AddCssClass("mark")
-	mark.SetValign(gtk.AlignCenterValue)
-	head.Append(&mark.Widget)
-	l := gtk.NewLabel("")
-	l.SetMarkup("<span alpha='55%'>[</span>" + escape(label) + "<span alpha='55%'>]</span>")
-	l.AddCssClass("section-label")
-	head.Append(&l.Widget)
-	m := gtk.NewLabel(meta)
-	m.AddCssClass("section-meta")
-	m.SetHexpand(true)
-	m.SetXalign(0)
-	head.Append(&m.Widget)
-	sec.Append(&head.Widget)
-	body := gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	body.AddCssClass("section-body")
-	sec.Append(&body.Widget)
-	page.Append(&sec.Widget)
-	return body
+	sec := uikit.NewSection(label, meta)
+	page.Append(&sec.Box.Widget)
+	return sec.Body
 }
 
 // row is a title and sub line with a control at the end.

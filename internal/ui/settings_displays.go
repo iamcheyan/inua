@@ -11,13 +11,13 @@ import (
 	"strings"
 	"time"
 
-	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/display"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // displaysSettings is the Displays page: the lid's switch on a laptop,
@@ -339,31 +339,8 @@ func (s *shellUI) displayDrop(body *gtk.Box, title, sub string, o display.Output
 // displaySection is a section headed [name] and meta, as the page's own,
 // and its body, which it owns.
 func displaySection(name, meta string) (sec, body *gtk.Box) {
-	sec = gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	sec.AddCssClass("section")
-	head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-	head.AddCssClass("section-head")
-	mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	mark.AddCssClass("mark")
-	mark.SetValign(gtk.AlignCenterValue)
-	gtkx.Append(head, &mark.Widget)
-	if name != "" {
-		label := gtk.NewLabel("")
-		label.AddCssClass("section-label")
-		label.SetMarkup("<span alpha='55%'>[</span>" + glib.MarkupEscapeText(name, -1) + "<span alpha='55%'>]</span>")
-		gtkx.Append(head, &label.Widget)
-	}
-	m := gtk.NewLabel(meta)
-	m.AddCssClass("section-meta")
-	m.SetHexpand(true)
-	m.SetXalign(0)
-	m.SetEllipsize(3) // end
-	gtkx.Append(head, &m.Widget)
-	gtkx.Append(sec, &head.Widget)
-	body = gtk.NewBox(gtk.OrientationVerticalValue, 0)
-	body.AddCssClass("section-body")
-	gtkx.Append(sec, &body.Widget)
-	return sec, body
+	s := uikit.NewSection(name, meta)
+	return s.Box, s.Body
 }
 
 // displayRow is a row with a title and a line under it; controls go at
