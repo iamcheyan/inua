@@ -27,6 +27,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
+
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
@@ -627,9 +628,14 @@ func (s *shellUI) bindHandlers() {
 		// A press below the bar that misses the menu card dismisses the menu:
 		// the bar covers the screen while one hangs, so nothing else sees it.
 		m := &s.menu
-		if m.open && !m.closing && !b.overIsland(y) {
-			inside := x >= m.drop.x && x <= m.drop.x+m.drop.w && y >= m.drop.y && y <= m.drop.y+m.drop.h
-			if !inside {
+		if m.open && !m.closing {
+			inCard := x >= m.drop.x && x <= m.drop.x+m.drop.w && y >= m.drop.y && y <= m.drop.y+m.drop.h
+			inTitles := x < float64(b.win.GetHeight()) && b.appMenu.GetVisible()
+			if hit := b.appMenu.Pick(x, y, gtk.PickDefaultValue); hit != nil {
+				inTitles = true
+				hit.Unref()
+			}
+			if !inCard && !inTitles {
 				s.closeMenu()
 			}
 		}
