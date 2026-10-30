@@ -618,9 +618,20 @@ func (s *shellUI) bindHandlers() {
 	}
 	// While a panel hangs from the bar, its window's clicks are the
 	// panel's (barClick for those on the bar).
-	s.onBarPressed = func(g gtk.GestureClick, _ int32, _, _ float64) {
-		if b := s.barOf(g.GetWidget()); b != nil {
-			b.pressHeld = b.held > 0
+	s.onBarPressed = func(g gtk.GestureClick, _ int32, x, y float64) {
+		b := s.barOf(g.GetWidget())
+		if b == nil {
+			return
+		}
+		b.pressHeld = b.held > 0
+		// A press below the bar that misses the menu card dismisses the menu:
+		// the bar covers the screen while one hangs, so nothing else sees it.
+		m := &s.menu
+		if m.open && !m.closing && !b.overIsland(y) {
+			inside := x >= m.drop.x && x <= m.drop.x+m.drop.w && y >= m.drop.y && y <= m.drop.y+m.drop.h
+			if !inside {
+				s.closeMenu()
+			}
 		}
 	}
 	s.onBarReleased = func(g gtk.GestureClick, _ int32, x, y float64) {

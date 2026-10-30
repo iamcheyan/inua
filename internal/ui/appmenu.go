@@ -34,8 +34,6 @@ type appMenuState struct {
 }
 
 func (s *shellUI) startAppMenu() {
-	// Keep global menus off until their real desktop interaction is verified.
-	return
 	conn, err := system.SessionBus()
 	if err != nil {
 		log.Printf("appmenu: %v", err)

@@ -10,7 +10,6 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/appmenu"
-	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/layershell"
 )
 
@@ -70,8 +69,6 @@ func (s *shellUI) buildMenuPanel() {
 	m.backdrop.Append(&m.card.Widget)
 	m.backdrop.SetVexpand(true)
 	m.backdrop.SetHexpand(true)
-	m.backdrop.SetVexpand(true)
-	m.backdrop.SetHexpand(true)
 	m.win.SetChild(&m.backdrop.Widget)
 
 	keys := gtk.NewEventControllerKey()
@@ -86,8 +83,7 @@ func (s *shellUI) buildMenuPanel() {
 	m.backdrop.AddController(&click.EventController)
 
 	m.drop.attach(m.win, &keys.EventController, m.backdrop, &m.card.Widget, layershell.LayerOverlay, false)
-	m.drop.keyboard = layershell.KeyboardNone
-	m.drop.keyboard = layershell.KeyboardNone // preserve the focused app keyboard
+	m.drop.keyboard = layershell.KeyboardNone // the menu never takes the keyboard from the app
 	m.win.SetApplication(s.app)
 	w := m.win.GoPointer()
 	if s.layer {
@@ -115,6 +111,10 @@ func (s *shellUI) showMenu(button *gtk.Widget, target appMenuTarget) {
 	m := &s.menu
 	if m.win == nil {
 		s.buildMenuPanel()
+	} else if m.drop.card == nil {
+		// Closed since: the card went back into the panel's window.
+		m.drop.attach(m.win, m.keys, m.backdrop, &m.card.Widget, layershell.LayerOverlay, false)
+		m.drop.keyboard = layershell.KeyboardNone
 	}
 	m.pid = target.pid
 	m.section = target.entry.Label
@@ -140,6 +140,11 @@ func (s *shellUI) onMenuGone(uintptr) {
 	m := &s.menu
 	m.open = false
 	m.closing = false
+	// Take the card out of the bar, or it stays drawn where it hung.
+	m.drop.detach()
+	if m.win != nil {
+		m.win.SetVisible(false)
+	}
 	if g := m.gone; g != nil {
 		m.gone = nil
 		g()
@@ -343,9 +348,6 @@ func (s *shellUI) layoutMenu() bool {
 		}
 		box := *(*[4]float32)(unsafe.Pointer(&r))
 		pair.col.SetMarginTop(int32(box[1]))
-	}
-	if m.open && m.drop.hanging && m.drop.host != nil && m.drop.canvas != nil {
-		gtkx.PassInputBut(&m.drop.host.win.Window, int(m.drop.x), int(m.drop.y), int(m.drop.w), int(m.drop.h))
 	}
 	return false
 }
