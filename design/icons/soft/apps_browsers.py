@@ -3,7 +3,7 @@ about half the detail, no text and no glare."""
 
 import math
 
-from lib import bar, polar, soft, soft_shadow, tile, two
+from lib import bar, brand, brand_shape, polar, soft, soft_shadow, tile, two
 
 BRASS = ("#E2B45E", "#B88433")
 STEEL = ("#AEB4BB", "#8D949C")
@@ -13,138 +13,57 @@ def _d(pts, close=True):
     return "M" + "L".join(f"{x:.1f} {y:.1f}" for x, y in pts) + ("Z" if close else "")
 
 
-def _interp(keys, a):
-    for (a0, v0), (a1, v1) in zip(keys, keys[1:]):
-        if a1 <= a <= a0:
-            t = (a0 - a) / (a0 - a1) if a0 != a1 else 0
-            return v0 + (v1 - v0) * t
-    return keys[-1][1]
+# --- Firefox: Firefox's own mark (brands/firefox-2019.svg, MPL 2.0), each
+# shape in two tones of its colours, the shading over it left out -----------
 
-
-def _pinwheel(ic, cx, cy, R, r1, fills):
-    """Chrome's three segments, each bounded by a line tangent to the ring."""
-    ex = []
-    s = math.sqrt(R * R - r1 * r1)
-    for th in (0, 120, 240):
-        tx, ty = polar(cx, cy, r1, th)
-        dx, dy = math.sin(math.radians(th + 90)), -math.cos(math.radians(th + 90))
-        ex.append(((tx, ty), (tx + dx * s, ty + dy * s)))
-    for i in range(3):
-        (t0, e0), (t1, e1) = ex[i - 1], ex[i]
-        ic.path(f"M{t0[0]:.1f} {t0[1]:.1f}L{e0[0]:.1f} {e0[1]:.1f}A{R} {R} 0 0 1 {e1[0]:.1f} {e1[1]:.1f}"
-                f"L{t1[0]:.1f} {t1[1]:.1f}L{cx} {cy}Z", fill=fills[i])
-
-
-# --- Firefox: a desk globe, a fox curled round it ----------------------------
-
-FOX_T = [(40, 26), (10, 19), (-40, 21), (-100, 30), (-160, 34), (-200, 27), (-224, 18), (-238, 4)]
-
-
-def _fox_band(gx, gy, m, step=4):
-    out, inn = [], []
-    a = 40.0
-    while a >= -238:
-        t = _interp(FOX_T, a)
-        mm = m + (a < -200) * (a + 200) * 0.25
-        out.append(polar(gx, gy, mm + t / 2, a))
-        inn.append(polar(gx, gy, mm - t / 2, a))
-        a -= step
-    return out, inn
-
-def _sleeping_head(gx, gy, m):
-    """The fox's head lying along the ring past the band's start, asleep:
-    its inner edge, the snout's tip and its outer edge back, as points."""
-    inner, outer = [], []
-    a = 40.0
-    while a <= 72:
-        t = 22 + 8 * math.sin(math.radians((a - 40) / 32 * 180))  # the skull, rounder
-        inner.append(polar(gx, gy, m - t / 2, a))
-        outer.append(polar(gx, gy, m + t / 2, a))
-        a += 2
-    snout = [polar(gx, gy, m - 6, 78), polar(gx, gy, m - 2, 84), polar(gx, gy, m + 2, 88),
-             polar(gx, gy, m + 6, 84), polar(gx, gy, m + 9, 78)]
-    return inner + snout + outer[::-1]
-
-
-def _sleeping_face(ic, gx, gy, m, fur, ear_in, eye):
-    """Its ear laid back, the cheek, the shut eye and the nose."""
-    ic.path(_d([polar(gx, gy, m + 11, 47), polar(gx, gy, m + 19, 34), polar(gx, gy, m + 13, 58)]),
-            fill=fur, stroke=fur, stroke_width=2, stroke_linejoin="round")
-    ic.path(_d([polar(gx, gy, m + 13, 47), polar(gx, gy, m + 18, 38), polar(gx, gy, m + 14, 54)]), fill=ear_in)
-    cheek = [polar(gx, gy, m - 13, a) for a in range(56, 73, 4)] + \
-        [polar(gx, gy, m - 6, 78), polar(gx, gy, m - 2, 84), polar(gx, gy, m + 2, 88)] + \
-        [polar(gx, gy, m - 1, a) for a in range(80, 55, -5)]
-    ic.path(_d(cheek), fill="#FFF3D6", stroke="#FFF3D6", stroke_width=2, stroke_linejoin="round")
-    (x1, y1), (x2, y2), (cx, cy) = polar(gx, gy, m + 4, 58), polar(gx, gy, m + 4, 70), polar(gx, gy, m + 9, 64)
-    ic.path(f"M{x1:.1f} {y1:.1f}Q{cx:.1f} {cy:.1f} {x2:.1f} {y2:.1f}", fill="none", stroke=eye,
-            stroke_width=3, stroke_linecap="round")
-    x, y = polar(gx, gy, m + 2, 87)
-    ic.circle(x, y, 3.6, fill=eye)
-
+FOX_TONES = {
+    "a": ("#FF6A3D", "#E31587"), "b": ("#FFA02E", "#E8205E"), "d": ("#FFE24A", "#FF980E"),
+    "e": ("#9A6BFF", "#5B2DD1"), "g": ("#FFE226", "#FF7139"), "h": ("#FFC23A", "#FF3647"),
+    "i": ("#FF980E", "#FF3647"), "j": ("#FFB02E", "#FF3647"), "k": ("#FFE24A", "#FF980E"),
+}
 
 
 @soft("firefox")
 def firefox(ic):
     tile(ic, "#3B3F86", "#17183D")
-    gx, gy, rg = 122, 110, 60
-    soft_shadow(ic, 124, 214, 86, 11)
-    ic.rect(78, 194, 92, 16, rx=8, fill=two(ic, "#B97E4A", "#7A4A22"))
-    ic.rect(117, 176, 14, 22, rx=3, fill=two(ic, *BRASS))
-    ic.circle(gx, gy, 69, fill="none", stroke=two(ic, *BRASS), stroke_width=7)
-    ic.circle(gx, gy, rg, fill=two(ic, "#8F78F5", "#3A23A0"))
-    clip = ic.clip(f'<circle cx="{gx}" cy="{gy}" r="{rg}"/>')
-    with ic.g(clip_path=clip, fill="#C7BBFF", opacity=0.3):
-        ic.path("M80 76c12-10 30-6 34 4s-4 14-2 22-10 16-18 10-8-14-14-16-10-14 0-20z")
-        ic.path("M138 112c12 0 20 10 18 20s-12 22-20 20-6-16-4-24-6-16 6-16z")
-    out, inn = _fox_band(gx, gy, 68)
-    head = _sleeping_head(gx, gy, 68)
-    fur = ic.lin([(0, "#FFB63A"), (1, "#E8344E")], 204, 30, 40, 196, units="userSpaceOnUse")
-    ic.path(_d([inn[0]] + head + out + inn[::-1]), fill=fur, stroke=fur, stroke_width=3, stroke_linejoin="round")
-    _sleeping_face(ic, gx, gy, 68, fur, "#B33A22", "#2A0E06")
+    soft_shadow(ic, 128, 226, 88, 10)
+    with ic.g(transform="translate(30 24) scale(0.383)"):
+        for tag, geom, fill in brand("firefox-2019")[1]:
+            if fill[5:-1] in FOX_TONES:
+                light, dark = FOX_TONES[fill[5:-1]]
+                brand_shape(ic, tag, geom, fill=ic.lin([(0, light), (1, dark)], 0.87, 0.15, 0.09, 0.93))
 
 
-# --- Google Chrome: a camera lens, its glass in the three enamels -------------
+# --- Google Chrome and Chromium: each one's own mark (brands/), each shape in
+# two tones of its colours, a soft gleam over it --------------------------
 
-def _lens(ic, cx, cy, colours, centre):
-    soft_shadow(ic, cx, 214, 92, 11)
-    ic.circle(cx, cy + 12, 92, fill="#1E2023")
-    ic.circle(cx, cy, 92, fill=two(ic, *STEEL))
-    ic.circle(cx, cy, 84, fill=two(ic, "#2E3136", "#0E0F11"))
-    ic.circle(cx, cy, 70, fill="#0B0C0E")
-    _pinwheel(ic, cx, cy, 68, 29, colours)
-    ic.circle(cx, cy, 31, fill="#FFFFFF")
-    ic.circle(cx, cy, 23, fill=centre)
+CHROME_TONES = {"url(#a)": ("#EF5B4C", "#D33426"), "url(#b)": ("#FFD24A", "#F4A900"),
+                "url(#c)": ("#43B866", "#1E8E3E"), "#1a73e8": ("#4A90F0", "#1765CC")}
+CHROMIUM_TONES = {"#91b0e8": ("#A9C2F0", "#7E9FDE"), "#396bd7": ("#4E7FE0", "#2B58BE"),
+                  "#6199f6": ("#79AAF8", "#4C86EC"), "#4688f4": ("#5E98F6", "#2F6FDE")}
 
 
-CHROME = [("#EA4335", "#C5281C"), ("#FBC02D", "#E39A10"), ("#34A853", "#1E7E3A")]
+def _toned_mark(ic, name, scale, tones):
+    with ic.g(transform=f"translate(30 22) scale({scale:.5f})"):
+        for tag, geom, fill in brand(name)[1]:
+            if fill in tones:
+                light, dark = tones[fill]
+                fill = ic.lin([(0, light), (1, dark)], 0.2, 0, 0.8, 1)
+            brand_shape(ic, tag, geom, fill=fill)
 
 
 @soft("google-chrome")
 def chrome(ic):
     tile(ic, "#5A6774", "#262E37")
-    _lens(ic, 128, 112, [two(ic, a, b) for a, b in CHROME], two(ic, "#5A97FA", "#1F5FD0"))
-
-
-# --- Chromium: a glass paperweight, the mark in three blues inside -------------
-
-CHROMIUM = [("#5E97F6", "#3F7BE0"), ("#A9C8FF", "#7FA8F0"), ("#2A5DC0", "#1A438E")]
+    soft_shadow(ic, 128, 224, 86, 10)
+    _toned_mark(ic, "chrome-2022", 196 / 48, CHROME_TONES)
 
 
 @soft("chromium")
 def chromium(ic):
-    tile(ic, "#2B4766", "#101E30")
-    cx = 128
-    soft_shadow(ic, cx, 206, 100, 14)
-    dome = f"M{cx - 92} 186C{cx - 92} 92 {cx - 50} 34 {cx} 34S{cx + 92} 92 {cx + 92} 186" \
-           f"A92 18 0 0 1 {cx - 92} 186Z"
-    ic.path(dome, fill="#8FB6F0", opacity=0.28)
-    ic.ellipse(cx, 184, 80, 13, fill="#C8DEFF", opacity=0.35)
-    _pinwheel(ic, cx, 118, 60, 26, [two(ic, a, b) for a, b in CHROMIUM])
-    ic.circle(cx, 118, 28, fill="#FFFFFF")
-    ic.circle(cx, 118, 20, fill=two(ic, "#5E97F6", "#2456B8"))
-    ic.path(dome, fill="none", stroke="#E4F0FF", stroke_opacity=0.6, stroke_width=4)
-    ic.path(f"M{cx - 76} 140C{cx - 76} 96 {cx - 50} 56 {cx - 14} 46", fill="none", stroke="#fff",
-            stroke_opacity=0.45, stroke_width=8, stroke_linecap="round")
+    tile(ic, "#3D5A8A", "#1A2A4A")
+    soft_shadow(ic, 128, 224, 86, 10)
+    _toned_mark(ic, "chromium", 196 / 512, CHROMIUM_TONES)
 
 
 # --- Brave: a copper shield, a lion's face in relief --------------------------

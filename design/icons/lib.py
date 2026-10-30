@@ -369,6 +369,48 @@ def mark_path():
         return re.search(r'<path d="([^"]+)"', f.read()).group(1)
 
 
+def brand(name):
+    """A brand's own mark, brands/NAME.svg (where its licence allows a
+    remix, noted in the file): its gradients (tag, attributes, stops, by
+    id) and its shapes (tag, geometry, fill: url(#id) or a colour), the
+    ones filled with nothing left out."""
+    import re
+    import xml.etree.ElementTree as ET
+    root = ET.parse(os.path.join(HERE, "brands", name + ".svg")).getroot()
+    grads, shapes = {}, []
+    for el in root.iter():
+        tag = el.tag.split("}")[1]
+        if tag.endswith("Gradient"):
+            grads[el.get("id")] = (tag, {k: v for k, v in el.attrib.items() if k != "id"},
+                                   [dict(s.attrib) for s in el])
+        elif tag in ("path", "circle"):
+            m = re.search(r"fill:([^;]+)", el.get("style", ""))
+            fill = el.get("fill") or (m and m.group(1))
+            if fill and fill != "none":
+                geom = {k: el.get(k) for k in ("d", "cx", "cy", "r") if el.get(k) is not None}
+                shapes.append((tag, geom, fill))
+    return grads, shapes
+
+
+def brand_gradients(ic, grads):
+    """Defines a brand's gradients in ic, as they are: their new ids, by
+    their own."""
+    ids = {}
+    for gid, (tag, attrs, stops) in grads.items():
+        a = "".join(f' {k}="{v}"' for k, v in attrs.items())
+        st = "".join("<stop" + "".join(f' {k}="{v}"' for k, v in s.items()) + "/>" for s in stops)
+        ids[gid] = ic.define(f'<{tag} id="{{id}}"{a}>{st}</{tag}>', "m")
+    return ids
+
+
+def brand_shape(ic, tag, geom, **kw):
+    """Draws one of a brand's shapes."""
+    if tag == "circle":
+        ic.circle(float(geom["cx"]), float(geom["cy"]), float(geom["r"]), **kw)
+    else:
+        ic.path(geom["d"], **kw)
+
+
 def mark(ic, x, y, size, **kw):
     """inua's mark, size px square, its top left at (x, y)."""
     k = size / 1024

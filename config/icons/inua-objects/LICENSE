@@ -3,6 +3,17 @@ under the same licence as inua. The apps' names and marks shown in them
 remain their owners' trademarks; they are drawn here, simplified, only to
 name the apps on a desktop, as icon themes do.
 
+The Firefox icons are drawn from Firefox's own logo, under the Mozilla
+Public License 2.0 (https://mozilla.org/MPL/2.0/), as their source is,
+design/icons/brands/firefox-2019.svg; Firefox is a trademark of the Mozilla
+Foundation. The Google Chrome icons are drawn from Chrome's icon, in the
+public domain (design/icons/brands/chrome-2022.svg); Google Chrome is a
+trademark of Google LLC. The Chromium icons are drawn from Chromium's icon
+(design/icons/brands/chromium.svg): Copyright (c) The Chromium Projects,
+redistributed with or without modification under the BSD 3-clause licence
+(https://chromium.googlesource.com/chromium/src/+/main/LICENSE), provided
+"as is", without warranty of any kind.
+
 The text in the drawings is set in IBM Plex (Copyright 2017 IBM Corp.) and
 Caveat (Copyright 2014 The Caveat Project Authors), both under the SIL Open
 Font License 1.1, and turned into outlines.

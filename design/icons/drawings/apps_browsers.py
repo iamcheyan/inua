@@ -1,23 +1,16 @@
 """The theme's browsers: Firefox, Chrome, Chromium, Brave, Edge, Vivaldi,
 Opera, Tor Browser (docs/feat/object-icons.md, Part 2). Each mark is
-redrawn, simplified, as an object of its own: no two browsers share one."""
+redrawn, simplified, as an object of its own: no two browsers share one.
+Firefox's, Chrome's and Chromium's are their own marks (brands/, each with
+its licence), lit as objects."""
 
 import math
 
-from lib import (brass, glare, icon, paper, polar, shadow, small, steel, text_path, tile, wood)
+from lib import (brand, brand_gradients, brand_shape, brass, glare, icon, paper, polar, shadow, small, steel, text_path, tile, wood)
 
 
 def _d(pts, close=True):
     return "M" + "L".join(f"{x:.1f} {y:.1f}" for x, y in pts) + ("Z" if close else "")
-
-
-def _interp(keys, a):
-    """Piecewise linear: keys (angle, value), angles falling."""
-    for (a0, v0), (a1, v1) in zip(keys, keys[1:]):
-        if a1 <= a <= a0:
-            t = (a0 - a) / (a0 - a1) if a0 != a1 else 0
-            return v0 + (v1 - v0) * t
-    return keys[-1][1]
 
 
 def _arc_text(ic, s, cx, cy, r, deg, size, font="mono-semibold", spacing=0.6, below=False, **kw):
@@ -39,69 +32,12 @@ def _arc_text(ic, s, cx, cy, r, deg, size, font="mono-semibold", spacing=0.6, be
         a += (-1 if below else 1) * step
 
 
-def _pinwheel(ic, cx, cy, R, r1, fills):
-    """Three segments around a ring of radius r1, each bounded by a line
-    tangent to it (the Chrome and Chromium construction, redrawn)."""
-    ex = []
-    for th in (0, 120, 240):
-        tx, ty = polar(cx, cy, r1, th)
-        dx, dy = math.sin(math.radians(th + 90)), -math.cos(math.radians(th + 90))
-        # how far along the tangent the line meets the outer circle
-        s = math.sqrt(R * R - r1 * r1)
-        ex.append(((tx, ty), (tx + dx * s, ty + dy * s)))
-    for i in range(3):
-        (t0, e0), (t1, e1) = ex[i - 1], ex[i]
-        ic.path(f"M{t0[0]:.1f} {t0[1]:.1f}L{e0[0]:.1f} {e0[1]:.1f}A{R} {R} 0 0 1 {e1[0]:.1f} {e1[1]:.1f}"
-                f"L{t1[0]:.1f} {t1[1]:.1f}L{cx} {cy}Z", fill=fills[i])
-    return ex
+# --- Firefox: Firefox's own mark (brands/firefox-2019.svg, MPL 2.0, its
+# notice there), on inua's tile, a shadow under it and the glass of a globe
+# over its globe: faint lines and the light from the top left -------------
 
-
-# --- Firefox: a desk globe, a fox curled round it ----------------------------
-
-FOX_T = [(40, 22), (10, 15), (-40, 17), (-100, 27), (-160, 31), (-200, 24), (-224, 15), (-238, 3)]
-
-
-def _fox_band(gx, gy, m, step=2.5):
-    out, inn = [], []
-    a = 40.0
-    while a >= -238:
-        t = _interp(FOX_T, a)
-        mm = m + (a < -200) * (a + 200) * 0.25
-        out.append(polar(gx, gy, mm + t / 2, a))
-        inn.append(polar(gx, gy, mm - t / 2, a))
-        a -= step
-    return out, inn
-
-def _sleeping_head(gx, gy, m):
-    """The fox's head lying along the ring past the band's start, asleep:
-    its inner edge, the snout's tip and its outer edge back, as points."""
-    inner, outer = [], []
-    a = 40.0
-    while a <= 72:
-        t = 22 + 8 * math.sin(math.radians((a - 40) / 32 * 180))  # the skull, rounder
-        inner.append(polar(gx, gy, m - t / 2, a))
-        outer.append(polar(gx, gy, m + t / 2, a))
-        a += 2
-    snout = [polar(gx, gy, m - 6, 78), polar(gx, gy, m - 2, 84), polar(gx, gy, m + 2, 88),
-             polar(gx, gy, m + 6, 84), polar(gx, gy, m + 9, 78)]
-    return inner + snout + outer[::-1]
-
-
-def _sleeping_face(ic, gx, gy, m, fur, ear_in, eye):
-    """Its ear laid back, the cheek, the shut eye and the nose."""
-    ic.path(_d([polar(gx, gy, m + 11, 47), polar(gx, gy, m + 19, 34), polar(gx, gy, m + 13, 58)]),
-            fill=fur, stroke=fur, stroke_width=2, stroke_linejoin="round")
-    ic.path(_d([polar(gx, gy, m + 13, 47), polar(gx, gy, m + 18, 38), polar(gx, gy, m + 14, 54)]), fill=ear_in)
-    cheek = [polar(gx, gy, m - 13, a) for a in range(56, 73, 4)] + \
-        [polar(gx, gy, m - 6, 78), polar(gx, gy, m - 2, 84), polar(gx, gy, m + 2, 88)] + \
-        [polar(gx, gy, m - 1, a) for a in range(80, 55, -5)]
-    ic.path(_d(cheek), fill="#FFF3D6", stroke="#FFF3D6", stroke_width=2, stroke_linejoin="round")
-    (x1, y1), (x2, y2), (cx, cy) = polar(gx, gy, m + 4, 58), polar(gx, gy, m + 4, 70), polar(gx, gy, m + 9, 64)
-    ic.path(f"M{x1:.1f} {y1:.1f}Q{cx:.1f} {cy:.1f} {x2:.1f} {y2:.1f}", fill="none", stroke=eye,
-            stroke_width=3, stroke_linecap="round")
-    x, y = polar(gx, gy, m + 2, 87)
-    ic.circle(x, y, 3.6, fill=eye)
-
+# Where the mark sits on the tile, 196 of its 256.
+MARK = "translate(30 24) scale(0.383)"
 
 
 @icon("firefox", kind="app", title="Firefox",
@@ -109,191 +45,170 @@ def _sleeping_face(ic, gx, gy, m, fur, ear_in, eye):
              "org.mozilla.Firefox", "org.mozilla.firefox"])
 def firefox(ic):
     tile(ic, "#3B3F86", "#17183D")
-    gx, gy, rg = 122, 110, 60
-    shadow(ic, 124, 214, 86, 11)
-    # the foot, turned wood with a brass plate
-    ic.rect(80, 196, 88, 12, rx=6, fill=ic.lin([(0, "#6A3E1E"), (1, "#3A200C")]))
-    ic.ellipse(124, 197, 44, 8, fill=wood(ic, "#B97E4A", "#7A4A22"))
-    ic.ellipse(124, 196.2, 41, 6.5, fill="none", stroke="#fff", stroke_opacity=0.18)
-    ic.rect(119, 178, 10, 20, rx=2, fill=brass(ic, 0, 0, 1, 0))
-    # the meridian ring, brass, behind the globe
-    ic.circle(gx, gy, 68, fill="none", stroke="#3A2A10", stroke_width=6, stroke_opacity=0.5,
-              transform="translate(1.5 2)")
-    ic.circle(gx, gy, 68, fill="none", stroke=brass(ic), stroke_width=5)
-    for a in (55, 70, 85, 100, 115):
-        x1, y1 = polar(gx, gy, 66, a)
-        x2, y2 = polar(gx, gy, 70.5, a)
-        ic.line(x1, y1, x2, y2, stroke="#5A3E12", stroke_width=1)
-    # the globe, violet glass
-    ic.circle(gx, gy, rg, fill=ic.rad([(0, "#A795FF"), (0.45, "#6544E0"), (0.85, "#33208F"), (1, "#22156A")],
-                                      cx=0.36, cy=0.3, r=0.75))
-    clip = ic.clip(f'<circle cx="{gx}" cy="{gy}" r="{rg}"/>')
-    with ic.g(clip_path=clip, fill="none", stroke="#D9D0FF", stroke_opacity=0.28, stroke_width=1.2):
-        for ry in (14, 32, 48):
-            ic.ellipse(gx, gy, rg, ry)
-        for rx in (20, 42):
-            ic.ellipse(gx, gy, rx, rg)
-        ic.line(gx, gy - rg, gx, gy + rg)
-    with ic.g(clip_path=clip, fill="#C7BBFF", opacity=0.22):
-        ic.path("M84 76c10-8 26-6 30 2s-4 12-2 20-8 14-16 10-6-12-12-14-8-12 0-18z")
-        ic.path("M132 72c8-4 22 0 26 8s-2 10-10 10-6 6-12 4-12-16-4-22z")
-        ic.path("M140 112c10 0 18 8 16 18s-10 20-18 18-6-14-4-22-4-14 6-14z")
-    ic.circle(gx, gy, rg, fill=glare(ic, 1.6))
-    ic.ellipse(100, 78, 18, 9, fill="#fff", opacity=0.3, transform="rotate(-35 100 78)")
-    # the fox's shadow on the glass
-    out, inn = _fox_band(gx + 2, gy + 3, 68)
-    ic.path(_d(out + inn[::-1]), fill="#120A40", opacity=0.35)
-    # the fox, curled round it asleep: its head laid along the ring at the
-    # top right, its tail round the bottom
-    out, inn = _fox_band(gx, gy, 68)
-    head = _sleeping_head(gx, gy, 68)
-    fur = ic.lin([(0, "#FFE65C"), (0.28, "#FFA733"), (0.62, "#FF5A2C"), (1, "#E0205E")], 204, 30, 40, 196,
-                 units="userSpaceOnUse")
-    ic.path(_d([inn[0]] + head + out + inn[::-1]), fill=fur, stroke=fur, stroke_width=2, stroke_linejoin="round")
-    _sleeping_face(ic, gx, gy, 68, fur, "#9A2A16", "#2A0E06")
-    # the tail's pale tip
-    tip_o, tip_i = _fox_band(gx, gy, 68, 1.5)
-    k = next(i for i, p in enumerate(tip_o) if _angle(gx, gy, p) < -218)
-    ic.path(_d(tip_o[k:] + tip_i[k:][::-1]), fill="#FFE6B0", opacity=0.9)
-    # light along its back, shade along its belly
-    lo = [p for p in out[4:60]]
-    ic.path(_d(lo, close=False), fill="none", stroke="#FFF6C4", stroke_width=2, stroke_opacity=0.7,
-            stroke_linecap="round")
-    ic.path(_d(inn[50:100], close=False), fill="none", stroke="#7A0A2E", stroke_width=2, stroke_opacity=0.4)
-    for a in (-60, -95, -130, -165):
-        x1, y1 = polar(gx, gy, 72 + _interp(FOX_T, a) * 0.2, a)
-        x2, y2 = polar(gx, gy, 66, a - 9)
-        ic.line(x1, y1, x2, y2, stroke="#9A1A2A", stroke_opacity=0.35, stroke_width=1.4, stroke_linecap="round")
-    # the plate on the foot
-    ic.rect(104, 199, 40, 7, rx=1.5, fill=brass(ic))
-    ic.text("FIREFOX", 124, 204.6, 5, font="mono-semibold", anchor="middle", spacing=0.8, fill="#4A3210")
+    shadow(ic, 128, 226, 88, 10)
+    grads, shapes = brand("firefox-2019")
+    ids = brand_gradients(ic, grads)
+    paths = _fox_paths(shapes)
+    d_of = {g: d for d, g in paths}
+    with ic.g(transform=MARK):
+        for d, g in paths:
+            if g == "g":
+                _firefox_glass(ic, d_of)  # over its globe (e, f), under the fox
+            ic.path(d, fill=f"url(#{ids[g]})")
+        _firefox_fur(ic, d_of)
 
 
-def _angle(cx, cy, p):
-    a = math.degrees(math.atan2(p[0] - cx, cy - p[1]))
-    return a if a <= 45 else a - 360
+def _fox_paths(shapes):
+    """Firefox's paths: each one's d and the id of its gradient."""
+    return [(geom["d"], fill[5:-1]) for _, geom, fill in shapes]
+
+
+def _firefox_glass(ic, d_of):
+    """The globe as glass, on the 512 grid: its lit rim and darker limb,
+    faint lands and lines, the fox's shadow on it, a gleam."""
+    clip = ic.clip(f'<path d="{d_of["e"]}"/>')
+    with ic.g(clip_path=clip):
+        ic.circle(254, 250, 116, fill=ic.rad([(0.55, "#000", 0), (1, "#14063F", 0.55)], cx=0.42, cy=0.38, r=0.62))
+        with ic.g(fill="#D9C8FF", opacity=0.2):
+            ic.path("M182 212c22-16 52-12 60 6s-8 26-4 42-16 30-34 22-14-26-26-30-18-26 4-40z")
+            ic.path("M274 262c22 0 38 18 34 38s-22 42-38 38-12-30-8-46-12-30 12-30z")
+            ic.path("M292 176c14-6 34 0 38 12s-6 16-18 16-24-18-20-28z")
+        with ic.g(fill="none", stroke="#EDE4FF", stroke_opacity=0.2, stroke_width=2.5):
+            for ry in (38, 76, 112):
+                ic.ellipse(254, 250, 116, ry)
+            for rx in (46, 92):
+                ic.ellipse(254, 250, rx, 116)
+            ic.line(254, 134, 254, 366)
+        # the fox's shadow on the glass, down and to the right of it
+        with ic.g(transform="translate(10 12)", fill="#12053A", opacity=0.4):
+            for g in ("h", "j", "k"):
+                ic.path(d_of[g])
+        ic.path(d_of["e"], fill=glare(ic, 1.5))
+        ic.path("M152 224a104 104 0 0 1 70-78", fill="none", stroke="#F3ECFF", stroke_opacity=0.55, stroke_width=7,
+                stroke_linecap="round")
+        ic.ellipse(196, 186, 22, 11, fill="#fff", opacity=0.35, transform="rotate(-40 196 186)")
+
+
+def _firefox_fur(ic, d_of):
+    """Over the fox, on the 512 grid: a rim of light along its top edges, a
+    gleam up the tail's flame, and fine strokes of fur round its body."""
+    clip = ic.clip(f'<path d="{d_of["a"]}"/>')
+    with ic.g(clip_path=clip):
+        rim = ic.lin([(0, "#FFFBE0", 0.7), (0.45, "#FFFBE0", 0), (1, "#FFFBE0", 0)], 0.15, 0.1, 0.75, 0.9)
+        ic.path(d_of["a"], fill="none", stroke=rim, stroke_width=10)
+    ic.path(d_of["i"], fill=ic.lin([(0, "#FFFDE8", 0.65), (1, "#FFFDE8", 0)], 0.6, 0, 0.4, 1))
+    body = ic.clip(f'<path d="{d_of["h"]}"/>')
+    with ic.g(clip_path=body, fill="none", stroke="#B0104F", stroke_opacity=0.18, stroke_width=2.5,
+              stroke_linecap="round"):
+        for a in range(-110, 115, 16):
+            x1, y1 = polar(256, 262, 200, a + 180)
+            x2, y2 = polar(256, 262, 184, a + 184)
+            ic.line(x1, y1, x2, y2)
 
 
 @small("firefox")
 def firefox16(ic):
     tile(ic, "#3B3F86", "#17183D")
-    ic.circle(8.6, 7.4, 4.4, fill="#6544E0")
-    ic.circle(7.4, 6.2, 1.8, fill="#A795FF", opacity=0.6)
-    ic.path("M13.4 5.4A6 6 0 1 1 6.2 2.2 4.6 4.6 0 1 0 13.4 5.4Z", fill="#FF8A2C")
-    ic.path("M2 9A6 6 0 0 0 9.6 13.8 6.2 6.2 0 0 1 2 9Z", fill="#E0205E")
-    ic.path("M10.4 3.6l1.4-2.4.6 2.2 1.6-.6-.4 2.2 1 .8-2.4.4z", fill="#FFB43A")
-    ic.rect(6, 14, 4, 1, rx=0.5, fill="#B97E4A")
+    with ic.g(transform="translate(1.6 1.4) scale(0.025)"):
+        for d, g in _fox_paths(brand("firefox-2019")[1]):
+            if g in MARK_FILLS:
+                ic.path(d, fill=MARK_FILLS[g][0])
 
 
-# --- Google Chrome: a camera lens, its glass in the three enamels -------------
-
-def _lens(ic, cx, cy, name, colours, centre):
-    shadow(ic, cx, 214, 92, 11)
-    # the barrel's side, seen from a little above
-    ic.circle(cx, cy + 12, 92, fill=ic.lin([(0, "#3A3E44"), (1, "#16181B")]))
-    ic.rect(cx - 92, cy, 184, 12, fill=ic.lin([(0, "#2A2D31"), (0.5, "#5A5F66"), (1, "#1E2023")], 0, 0, 1, 0))
-    # the focus grip, knurled
-    ic.circle(cx, cy, 92, fill=steel(ic, False))
-    ic.circle(cx, cy, 89, fill="none", stroke="#2A2D31", stroke_width=6, stroke_dasharray="1.6 2.2",
-              stroke_opacity=0.55)
-    ic.circle(cx, cy, 91.2, fill="none", stroke="#fff", stroke_opacity=0.35, stroke_width=1.2)
-    # the front ring, black, its legend in white
-    ic.circle(cx, cy, 85, fill=ic.lin([(0, "#2E3136"), (1, "#0E0F11")], 0, 0, 1, 1))
-    ic.circle(cx, cy, 84.2, fill="none", stroke="#fff", stroke_opacity=0.16, stroke_width=1.2)
-    _arc_text(ic, name, cx, cy, 77, 0, 7.2, fill="#ECEDEE")
-    _arc_text(ic, "1:1.4  f=50mm  Ø52", cx, cy, 77, 180, 6.2, font="mono", below=True, fill="#B9BCC0")
-    ic.circle(cx + 52, cy - 52, 2.2, fill="#E8463A")
-    # the glass: the three segments, the white ring, the blue eye
-    ic.circle(cx, cy, 70, fill="#0B0C0E")
-    _pinwheel(ic, cx, cy, 68, 29, colours)
-    ic.circle(cx, cy, 68, fill="none", stroke="#000", stroke_opacity=0.3, stroke_width=2)
-    ic.circle(cx + 1.5, cy + 2.5, 30, fill="#000", opacity=0.3)
-    ic.circle(cx, cy, 30, fill=ic.lin([(0, "#FFFFFF"), (1, "#D9DCE0")], 0, 0, 1, 1))
-    ic.circle(cx, cy, 23, fill=centre)
-    ic.circle(cx, cy, 23, fill="none", stroke="#000", stroke_opacity=0.2, stroke_width=1.5)
-    # coating reflections and glare, light from the top left
-    ic.path(f"M{cx - 52} {cy - 30}a60 60 0 0 1 40-34", fill="none", stroke="#C9A8FF", stroke_width=3,
-            stroke_opacity=0.5, stroke_linecap="round")
-    ic.path(f"M{cx + 30} {cy + 50}a58 58 0 0 0 26-24", fill="none", stroke="#9CFFC8", stroke_width=2.2,
-            stroke_opacity=0.4, stroke_linecap="round")
-    ic.ellipse(cx - 8, cy - 9, 7, 4.5, fill="#fff", opacity=0.75, transform=f"rotate(-35 {cx - 8} {cy - 9})")
-    ic.circle(cx, cy, 68, fill=glare(ic, 1.4))
+# The mark's colours without its gradients, for the soft drawing and the
+# 16 px one: each path's two tones, light then dark; the shading over it
+# (c, f, l) left out.
+MARK_FILLS = {
+    "a": ("#FF6A3D", "#E31587"), "b": ("#FFA02E", "#E8205E"), "d": ("#FFE24A", "#FF980E"),
+    "e": ("#9A6BFF", "#5B2DD1"), "g": ("#FFE226", "#FF7139"), "h": ("#FFC23A", "#FF3647"),
+    "i": ("#FF980E", "#FF3647"), "j": ("#FFB02E", "#FF3647"), "k": ("#FFE24A", "#FF980E"),
+}
 
 
-CHROME = [("#EA4335", "#C5281C"), ("#FBC02D", "#E39A10"), ("#34A853", "#1E7E3A")]
+# --- Google Chrome and Chromium: each one's own mark (brands/chrome-2022.svg,
+# public domain; brands/chromium.svg, BSD, its notice there) as a domed
+# button on inua's tile: lit from the top left, its ring raised, its centre
+# a glass jewel -------------------------------------------------------------
+
+def _domed_mark(ic, name, scale, centre, ring, jewel, ring_tones, fill_of=None):
+    """A round mark on a 196 px disc: its shapes (their own gradients, or
+    fill_of's colours), then on its grid the dome's light and shade, the
+    ring raised with its shadow and the centre a jewel. centre is the
+    mark's centre, ring and jewel the ring's outer and inner radius."""
+    grads, shapes = brand(name)
+    ids = brand_gradients(ic, grads)
+    cx, cy = centre
+    with ic.g(transform=f"translate(30 22) scale({scale:.5f})"):
+        u = 1 / scale  # a tile pixel, on the mark's grid
+        R = 98 * u
+        for tag, geom, fill in shapes:
+            if fill.startswith("url("):
+                fill = f"url(#{ids[fill[5:-1]]})"
+            brand_shape(ic, tag, geom, fill=(fill_of or {}).get(fill, fill))
+        # the dome: light from the top left, shade down the far edge
+        ic.circle(cx, cy, R, fill=ic.rad([(0, "#fff", 0.28), (0.5, "#fff", 0.04), (1, "#fff", 0)],
+                                         cx=0.3, cy=0.25, r=0.7))
+        ic.circle(cx, cy, R, fill=ic.rad([(0.75, "#000", 0), (1, "#0A0F1E", 0.2)], cx=0.42, cy=0.38, r=0.62))
+        ic.circle(cx, cy, R - 0.8 * u, fill="none", stroke="#fff", stroke_opacity=0.25, stroke_width=1.6 * u)
+        # the ring, raised: its shadow on the colours, then white metal
+        def round_(x, y, r):
+            return f"M{x - r:.2f} {y:.2f}a{r:.2f} {r:.2f} 0 1 0 {2 * r:.2f} 0a{r:.2f} {r:.2f} 0 1 0 {-2 * r:.2f} 0z"
+        ic.path(round_(cx + 1.5 * u, cy + 2.5 * u, ring + 0.6 * u) + round_(cx, cy, ring), fill="#0A0F1E",
+                opacity=0.25, fill_rule="evenodd")
+        light, dark = ring_tones
+        ic.path(round_(cx, cy, ring) + round_(cx, cy, jewel), fill=ic.lin([(0, light), (1, dark)], 0.2, 0, 0.8, 1),
+                fill_rule="evenodd")
+        ic.circle(cx, cy, ring - 0.6 * u, fill="none", stroke="#fff", stroke_opacity=0.8, stroke_width=1.2 * u,
+                  stroke_dasharray=f"{ring * 1.6:.2f} {ring * 9:.2f}", transform=f"rotate(-150 {cx} {cy})")
+        # the centre, a glass jewel: deeper at its rim, a gleam at the top
+        ic.circle(cx, cy, jewel, fill=ic.rad([(0.65, "#000", 0), (1, "#06102E", 0.22)], cx=0.45, cy=0.4, r=0.6))
+        ic.circle(cx, cy, jewel, fill=ic.rad([(0, "#fff", 0.35), (0.6, "#fff", 0)], cx=0.35, cy=0.28, r=0.55))
+        ic.ellipse(cx - jewel * 0.32, cy - jewel * 0.42, jewel * 0.34, jewel * 0.16, fill="#fff", opacity=0.55,
+                   transform=f"rotate(-30 {cx - jewel * 0.32:.2f} {cy - jewel * 0.42:.2f})")
 
 
 @icon("google-chrome", kind="app", title="Google Chrome",
       names=["com.google.Chrome", "google-chrome", "google-chrome2", "googlechrome"])
 def chrome(ic):
     tile(ic, "#5A6774", "#262E37")
-    fills = [ic.lin([(0, a), (1, b)], 0, 0, 1, 1) for a, b in CHROME]
-    _lens(ic, 128, 112, "GOOGLE CHROME", fills,
-          ic.rad([(0, "#7FB0FF"), (0.6, "#2F74E8"), (1, "#1A4FB0")], cx=0.38, cy=0.35, r=0.7))
+    shadow(ic, 128, 224, 86, 10)
+    _domed_mark(ic, "chrome-2022", 196 / 48, (24, 24), 12, 9.5, ("#FFFFFF", "#C9D0D8"))
 
 
 @small("google-chrome")
 def chrome16(ic):
     tile(ic, "#5A6774", "#262E37")
-    ic.circle(8, 8, 6.4, fill="#1A1C1F")
-    _pinwheel(ic, 8, 8, 5.2, 2.3, [c[0] for c in CHROME])
-    ic.circle(8, 8, 2.4, fill="#fff")
-    ic.circle(8, 8, 1.7, fill="#2F74E8")
+    with ic.g(transform="translate(1.5 1.5) scale(0.2708)"):
+        for tag, geom, fill in brand("chrome-2022")[1]:
+            brand_shape(ic, tag, geom, fill=CHROME_FILLS.get(fill, fill))
 
 
-# --- Chromium: a glass paperweight, the mark in three blues inside -------------
-
-CHROMIUM = [("#5E97F6", "#3F7BE0"), ("#A9C8FF", "#7FA8F0"), ("#2A5DC0", "#1A438E")]
+# Chrome's colours without its gradients, for the soft and 16 px drawings:
+# each shape's light and dark tones, by its fill in the mark.
+CHROME_FILLS = {"url(#a)": "#EA4335", "url(#b)": "#FBBC04", "url(#c)": "#34A853"}
+CHROME_TONES = {"url(#a)": ("#EF5B4C", "#D33426"), "url(#b)": ("#FFD24A", "#F4A900"),
+                "url(#c)": ("#43B866", "#1E8E3E"), "#1a73e8": ("#4A90F0", "#1765CC")}
 
 
 @icon("chromium", kind="app", title="Chromium",
       names=["chromium", "chromium-browser", "chromium-browser-privacy", "chromium-freeworld",
              "com.github.Eloston.UngoogledChromium", "org.chromium.Chromium"])
 def chromium(ic):
-    tile(ic, "#2B4766", "#101E30")
-    cx = 128
-    shadow(ic, cx, 206, 100, 14)
-    # light through the glass, falling on the desk
-    ic.ellipse(cx + 10, 206, 60, 7, fill=ic.rad([(0, "#9CC4FF", 0.55), (1, "#9CC4FF", 0)]))
-    dome = f"M{cx - 92} 186C{cx - 92} 92 {cx - 50} 34 {cx} 34S{cx + 92} 92 {cx + 92} 186" \
-           f"A92 18 0 0 1 {cx - 92} 186Z"
-    # the glass body, faintly blue, darker at its edges
-    ic.path(dome, fill=ic.rad([(0, "#DCEBFF", 0.12), (0.7, "#8FB6F0", 0.22), (1, "#1C3A66", 0.65)],
-                              cx=0.45, cy=0.5, r=0.6))
-    # the base, seen through the glass
-    ic.ellipse(cx, 186, 86, 15, fill="#0E1B2C", opacity=0.45)
-    ic.ellipse(cx, 184, 78, 12, fill=ic.lin([(0, "#E8F2FF", 0.35), (1, "#9CC4FF", 0.15)]))
-    ic.ellipse(cx, 184, 78, 12, fill="none", stroke="#E8F2FF", stroke_opacity=0.5)
-    ic.text("chromium", cx, 188, 7, font="sans-semibold", anchor="middle", spacing=1.2, fill="#DCEBFF",
-            opacity=0.55)
-    # the mark inside, enlarged by the dome
-    ic.circle(cx + 2, 124, 62, fill="#0A1A33", opacity=0.35)
-    fills = [ic.lin([(0, a), (1, b)], 0, 0, 1, 1) for a, b in CHROMIUM]
-    _pinwheel(ic, cx, 120, 60, 26, fills)
-    ic.circle(cx, 120, 60, fill="none", stroke="#0A1A33", stroke_opacity=0.35, stroke_width=1.5)
-    ic.circle(cx + 1, 122, 27, fill="#000", opacity=0.25)
-    ic.circle(cx, 120, 27, fill=ic.lin([(0, "#FFFFFF"), (1, "#DCE6F5")], 0, 0, 1, 1))
-    ic.circle(cx, 120, 20, fill=ic.rad([(0, "#5E97F6"), (1, "#1C4793")], cx=0.38, cy=0.35, r=0.7))
-    ic.ellipse(cx - 7, 112, 5.5, 3.2, fill="#fff", opacity=0.7, transform=f"rotate(-35 {cx - 7} 112)")
-    # the dome's surface: edge light, glare from the top left, a bright rim below
-    ic.path(dome, fill="none", stroke="#E4F0FF", stroke_opacity=0.45, stroke_width=2)
-    ic.path(f"M{cx - 80} 150C{cx - 82} 96 {cx - 50} 46 {cx - 4} 42C{cx - 46} 56 {cx - 68} 100 {cx - 70} 150Z",
-            fill="#fff", opacity=0.42)
-    ic.path(f"M{cx + 50} 58C{cx + 70} 74 {cx + 82} 100 {cx + 84} 130", fill="none", stroke="#fff",
-            stroke_opacity=0.3, stroke_width=3, stroke_linecap="round")
-    ic.path(f"M{cx - 88} 190A92 18 0 0 0 {cx + 88} 190", fill="none", stroke="#CFE3FF", stroke_opacity=0.7,
-            stroke_width=2)
-    ic.ellipse(cx - 38, 66, 9, 5, fill="#fff", opacity=0.8, transform=f"rotate(-40 {cx - 38} 66)")
+    tile(ic, "#3D5A8A", "#1A2A4A")
+    shadow(ic, 128, 224, 86, 10)
+    _domed_mark(ic, "chromium", 196 / 512, (256, 256), 120.2, 99.2, ("#FFFFFF", "#C9D6EA"))
 
 
 @small("chromium")
 def chromium16(ic):
-    tile(ic, "#2B4766", "#101E30")
-    ic.path("M2 12.5C2 6 4.6 2.4 8 2.4S14 6 14 12.5A6 1.4 0 0 1 2 12.5Z", fill="#9CC4FF", opacity=0.35)
-    _pinwheel(ic, 8, 8.4, 4.6, 2, [c[0] for c in CHROMIUM])
-    ic.circle(8, 8.4, 2.1, fill="#fff")
-    ic.circle(8, 8.4, 1.5, fill="#2E63C4")
-    ic.path("M3.6 10C3.6 6.4 5 4 7 3.4 5.2 4.8 4.6 7 4.6 10z", fill="#fff", opacity=0.6)
+    tile(ic, "#3D5A8A", "#1A2A4A")
+    with ic.g(transform="translate(1.5 1.5) scale(0.0254)"):
+        for tag, geom, fill in brand("chromium")[1]:
+            brand_shape(ic, tag, geom, fill=fill)
+
+
+CHROMIUM_TONES = {"#91b0e8": ("#A9C2F0", "#7E9FDE"), "#396bd7": ("#4E7FE0", "#2B58BE"),
+                  "#6199f6": ("#79AAF8", "#4C86EC"), "#4688f4": ("#5E98F6", "#2F6FDE")}
 
 
 # --- Brave: a copper shield, a lion's face in relief --------------------------

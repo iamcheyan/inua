@@ -97,4 +97,7 @@ an object (VLC's cone, Telegram's paper plane, Obsidian's crystal), draw
 that object in the house style. Otherwise draw the app's job as an object
 in the brand's colours, with a simplified mark on it, as a stamp, print or
 engraving (as inua's mark is pressed into Mail's seal). Never copy a logo's
-artwork: redraw it, simplified.
+artwork: redraw it, simplified. The exception is a mark whose licence
+allows a remix, kept in `brands/` with its notice and drawn with
+`brand(name)`: Firefox's (MPL 2.0), Chrome's (public domain) and
+Chromium's (BSD), each on the tile as it is with inua's light over it.
