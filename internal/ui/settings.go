@@ -410,6 +410,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("radius_val", &st.radiusVal)
 	st.textScales = nil // a new dropdown, without its choices
 	st.iconSets, st.appIconSets = nil, nil
+	st.appThemes, st.appThemeLabels = nil, nil
 	ui.Get("lang_restart_row", &st.langRestartRow)
 	ui.Get("lang_restart", &st.langRestart)
 	ui.Get("banner", &st.banner)
