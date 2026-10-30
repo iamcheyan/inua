@@ -1,0 +1,17 @@
+[Icon Theme]
+Name=inua objects
+Comment=Apps drawn as the objects they stand for, in inua's style
+Inherits=Papirus,Numix-Circle,Adwaita,hicolor
+Directories=scalable/apps,16/apps
+
+[scalable/apps]
+Size=256
+MinSize=17
+MaxSize=512
+Type=Scalable
+Context=Applications
+
+[16/apps]
+Size=16
+Type=Fixed
+Context=Applications

@@ -48,6 +48,21 @@ func TestCustomNames(t *testing.T) {
 	}
 }
 
+// style.icons naming one of inua's sets (it held the app style for a
+// while) becomes the app style, the line icons Phosphor's, without a
+// warning; app_icons naming the app style is the same as "". A folder of
+// the user's named phosphor is not a set.
+func TestIconsMigration(t *testing.T) {
+	c, w, err := Load(userFiles(t, "[style]\nicons = \"inua-objects-soft\"\napp_icons = \"inua-objects-soft\"\n"))
+	if err != nil || len(w) != 0 || c.Style.Icons != "phosphor" || c.Style.AppStyle != SoftTheme || c.Style.AppIcons != "" {
+		t.Errorf("err=%v warnings=%v style %+v", err, w, c.Style)
+	}
+	c, w, err = Load(userFiles(t, "[style]\nicons = \"phosphor\"\n"))
+	if err != nil || len(w) != 0 || c.Style.Icons != "phosphor" || c.Style.AppStyle != ObjectsTheme || c.IconSetDir() != "" {
+		t.Errorf("phosphor: err=%v warnings=%v style %+v set %q", err, w, c.Style, c.IconSetDir())
+	}
+}
+
 func TestCustomChoices(t *testing.T) {
 	c, w, err := Load(userFiles(t, "[style]\ntheme = \"mine\"\nicons = \"line\"\n"))
 	if err != nil || len(w) != 0 {

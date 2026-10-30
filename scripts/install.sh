@@ -152,6 +152,20 @@ if [ -f "$src/lib/inua/libinua-vt.so" ]; then
 fi
 install -Dm644 -t "$data/applications" "$src"/config/apps/*.desktop
 install -Dm644 -t "$data/icons/hicolor/scalable/apps" "$src"/config/apps/*.svg
+# their 16 px drawings, and inua's icon theme for other apps (after v0.1.16)
+[ -d "$src/config/apps/small" ] && install -Dm644 -t "$data/icons/hicolor/16x16/apps" "$src"/config/apps/small/*.svg
+# inua's icon themes: the objects, with inua's apps' icons copied in, and
+# the soft and flat sets (after v0.1.16)
+for t in inua-objects inua-objects-soft inua-objects-flat; do
+    if [ -d "$src/config/icons/$t" ]; then
+        rm -rf "${data:?}/icons/$t"
+        mkdir -p "$data/icons" && cp -a "$src/config/icons/$t" "$data/icons/$t"
+    fi
+done
+if [ -d "$data/icons/inua-objects" ]; then
+    install -m644 -t "$data/icons/inua-objects/scalable/apps" "$src"/config/apps/*.svg
+    [ -d "$src/config/apps/small" ] && install -m644 -t "$data/icons/inua-objects/16/apps" "$src"/config/apps/small/*.svg
+fi
 have update-desktop-database && update-desktop-database -q "$data/applications" 2>/dev/null || true
 after=$(version_of)
 if [ -z "$before" ]; then

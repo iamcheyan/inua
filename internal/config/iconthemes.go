@@ -63,7 +63,7 @@ func IconThemes() []IconTheme {
 		entries, _ := os.ReadDir(d)
 		for _, e := range entries {
 			name := e.Name()
-			if seen[name] || name == "hicolor" || name == "default" || strings.HasPrefix(name, "inua-") {
+			if seen[name] || name == "hicolor" || name == "default" || strings.HasPrefix(name, "inua-") && !slices.Contains(InuaThemes, name) {
 				continue
 			}
 			title, ok := readIconTheme(filepath.Join(d, name, "index.theme"))
@@ -80,6 +80,19 @@ func IconThemes() []IconTheme {
 	t.stamp, t.list = stamp.String(), list
 	return list
 }
+
+// inua's icon themes for apps (design/icons), installed with inua, unlike
+// the themes it writes for itself: ObjectsTheme draws each app as the
+// object it stands for, SoftTheme the same objects more simply, FlatTheme
+// them flat. Each has inua's apps' icons too.
+const (
+	ObjectsTheme = "inua-objects"
+	SoftTheme    = "inua-objects-soft"
+	FlatTheme    = "inua-objects-flat"
+)
+
+// InuaThemes are inua's icon themes.
+var InuaThemes = []string{ObjectsTheme, SoftTheme, FlatTheme}
 
 // IsIconTheme reports whether name is an installed icon theme.
 func IsIconTheme(name string) bool {
@@ -121,4 +134,25 @@ func readIconTheme(path string) (string, bool) {
 		}
 	}
 	return name, dirs && !hidden
+}
+
+// DrawnApps are the apps' icons an installed theme draws itself, by name,
+// sorted: the files (not the links naming one under another name) in its
+// scalable/apps folder, inua's own apps left out.
+func DrawnApps(theme string) []string {
+	for _, d := range iconThemeDirs() {
+		entries, err := os.ReadDir(filepath.Join(d, theme, "scalable", "apps"))
+		if err != nil {
+			continue
+		}
+		var names []string
+		for _, e := range entries {
+			name, ok := strings.CutSuffix(e.Name(), ".svg")
+			if ok && e.Type().IsRegular() && !strings.HasPrefix(name, "io.github.lyricat.Inua.") {
+				names = append(names, name)
+			}
+		}
+		return names // os.ReadDir sorts
+	}
+	return nil
 }

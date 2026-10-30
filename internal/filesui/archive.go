@@ -85,7 +85,7 @@ func (k *compressor) build() {
 
 	label(grid, row, i18n.T("Format"))
 	formats := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	formats.AddCssClass("files-kinds")
+	formats.AddCssClass("segmented")
 	formats.SetHalign(gtk.AlignStartValue)
 	var first *gtk.ToggleButton
 	for _, f := range files.Formats {
@@ -122,7 +122,7 @@ func (k *compressor) build() {
 	row = 0
 	label(adv, row, i18n.T("Compression"))
 	levels := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	levels.AddCssClass("files-kinds")
+	levels.AddCssClass("segmented")
 	levels.SetHalign(gtk.AlignStartValue)
 	first = nil
 	for _, l := range []struct {

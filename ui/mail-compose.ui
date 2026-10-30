@@ -57,7 +57,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                     <child>
                       <object class="GtkButton" id="ai_toggle">
                         <style>
-                          <class name="mail-tool"/>
+                          <class name="tool"/>
                         </style>
                         <property name="icon-name">applications-science-symbolic</property>
                         <property name="tooltip-text" translatable="yes">AI (Ctrl+J)</property>

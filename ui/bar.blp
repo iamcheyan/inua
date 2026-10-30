@@ -19,10 +19,20 @@ ApplicationWindow bar {
       start-widget: Box {
         spacing: 14;
 
+        // Go puts the workspaces' dots after the widget page's mark, the
+        // place before the first workspace: hollow, filled while the page
+        // shows; hidden with widgets.enable off.
         Box workspaces {
           styles ["workspaces"]
           spacing: 5;
           valign: center;
+
+          Button widgets {
+            styles ["widgets-mark"]
+            tooltip-text: _("Engawa");
+            focusable: false;
+            valign: center;
+          }
         }
 
         Label title {

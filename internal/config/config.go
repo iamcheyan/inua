@@ -34,6 +34,7 @@ type Config struct {
 	Displays   Displays   `toml:"displays"`
 	Notify     Notify     `toml:"notifications"`
 	Dock       Dock       `toml:"dock"`
+	Widgets    Widgets    `toml:"widgets"`
 	Voice      Voice      `toml:"voice"`
 	Assistant  Assistant  `toml:"assistant"`
 	Keyring    Keyring    `toml:"keyring"`
@@ -153,12 +154,17 @@ type Style struct {
 	// CSS is a stylesheet loaded after the built-in style, relative to the
 	// config directory. Ignored if the file does not exist.
 	CSS string `toml:"css"`
-	// Icons is the icon set of the shell's own icons, one of IconSets, a
-	// set of the user's (IconSetNames) or an installed icon theme
-	// (IconThemes); a set of the user's wins over a theme of its name.
+	// Icons is the line icons of the bar, the settings and inua's apps:
+	// one of IconSets, a set of the user's (IconSetNames) or an installed
+	// icon theme (IconThemes); a set of the user's wins over a theme of
+	// its name.
 	Icons string `toml:"icons"`
-	// AppIcons is where the icons of apps and files come from: "system",
-	// the system's icon theme, or an installed icon theme (IconThemes).
+	// AppStyle is how inua draws apps, one of InuaThemes: inua's own apps
+	// and the others it draws (the system's while it is not installed).
+	AppStyle string `toml:"app_style"`
+	// AppIcons is where the other apps' icons and files' come from: "",
+	// the app style; "system", the system's icon theme; or an installed
+	// icon theme (IconThemes). inua's apps keep the app style.
 	AppIcons string `toml:"app_icons"`
 	// EdgeGaps leaves a small gap between the screen edges and the bar and
 	// dock; off puts them flush against the edges.
@@ -175,6 +181,26 @@ type Style struct {
 	Radius int `toml:"radius"`
 }
 
+// AppIconTheme is the icon theme the other apps' icons come from:
+// AppIcons, else the app style; "system" while that names one of inua's
+// own that is not installed.
+func (s Style) AppIconTheme() string {
+	t := cmp.Or(s.AppIcons, s.AppStyle)
+	if slices.Contains(InuaThemes, t) && !IsIconTheme(t) {
+		return "system"
+	}
+	return t
+}
+
+// InuaIconTheme is the icon theme inua's apps' own icons come from: the
+// app style once installed, else "", the icons installed with the apps
+// (hicolor).
+func (s Style) InuaIconTheme() string {
+	if slices.Contains(InuaThemes, s.AppStyle) && IsIconTheme(s.AppStyle) {
+		return s.AppStyle
+	}
+	return ""
+}
 // ForApps is the colour theme of the apps: AppTheme, else Theme.
 func (s Style) ForApps() string { return cmp.Or(s.AppTheme, s.Theme, "yoru") }
 
@@ -213,7 +239,7 @@ type Shortcut struct {
 // commands behind them are in internal/hyprconf.
 var ShortcutActions = []string{
 	"launcher", "windows", "overview", "control", "notifications", "clipboard", "pass", "focus", "settings", "restart", "lock",
-	"shot-area", "shot-area-silent", "shot-screen", "shot-window", "shot-record", "color", "voice",
+	"shot-area", "shot-area-silent", "shot-screen", "shot-window", "shot-record", "color", "voice", "widgets",
 }
 
 // Voice is dictation, on top of the voxtype daemon: a shortcut holds to
@@ -642,6 +668,54 @@ type Dock struct {
 	Pinned []string `toml:"pinned"`
 }
 
+// Widgets is the widget page: a place before the first workspace, with
+// widgets and apps on it.
+type Widgets struct {
+	// Enable gives the bar a mark before the workspaces that opens the
+	// page, and the wheel and a swipe a way to it.
+	Enable bool `toml:"enable"`
+	// Swipe is how many fingers swipe right to the page and left back:
+	// one of WidgetSwipes, 0 for none. Three fingers take the place of
+	// a three-finger workspace swipe, going through the workspaces too.
+	Swipe int `toml:"swipe"`
+	// Apps are the apps on the page's apps widget, by desktop ID.
+	Apps []string `toml:"apps"`
+	// Places are the widgets shown, and where on the page's grid.
+	Places []WidgetPlace `toml:"widget"`
+	// Items is the first version's list of widgets, in order; a file
+	// with it and no places gets places in that order (AutoPlaces).
+	Items []string `toml:"items"`
+}
+
+// WidgetPlace is a widget on the page: its top left corner at a column
+// and a row of the page's grid.
+type WidgetPlace struct {
+	Kind   string `toml:"kind"`
+	Column int    `toml:"column"`
+	Row    int    `toml:"row"`
+}
+
+// WidgetKinds are the widgets the page can show.
+var WidgetKinds = []string{"clock", "calendar", "weather", "media", "apps"}
+
+// WidgetSwipes are the swipes to the page offered: three or four fingers,
+// or none.
+var WidgetSwipes = []int{0, 3, 4}
+
+// WidgetSpan is how many columns of the page's grid a widget is wide, and
+// how many rows it is taken to be tall before it is measured.
+const WidgetSpan = 6
+
+// AutoPlaces places kinds in rows of three, with a column and a row clear
+// between them, as the page keeps.
+func AutoPlaces(kinds []string) []WidgetPlace {
+	out := make([]WidgetPlace, len(kinds))
+	for i, k := range kinds {
+		out[i] = WidgetPlace{Kind: k, Column: i % 3 * (WidgetSpan + 1), Row: i / 3 * (WidgetSpan + 1)}
+	}
+	return out
+}
+
 // DockSizes are the icon sizes the settings window offers.
 var DockSizes = []int{28, 36, 44, 56}
 
@@ -795,7 +869,7 @@ func (d Displays) WithoutMonitor(output string) []Monitor {
 // center (its own size, centred).
 var Fits = []string{"cover", "contain", "tile", "center"}
 
-// IconSets are the shell's icon sets: "phosphor", Phosphor's regular icons
+// IconSets are the line icons' sets: "phosphor", Phosphor's regular icons
 // (ui/icons), or "system", the system's icon theme. Sets of the user's
 // follow them (IconSetNames); an installed icon theme can be named too.
 var IconSets = []string{"phosphor", "system"}
@@ -831,7 +905,7 @@ func Default() Config {
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppIcons: "system", EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppStyle: ObjectsTheme, EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4},
 		Background: Background{Enable: true, Fit: "cover", Generate: true},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
@@ -839,6 +913,7 @@ func Default() Config {
 		OSD:        OSD{Enable: true, Position: "bottom-center"},
 		Clipboard:  Clipboard{Enable: true, Bar: true, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
+		Widgets:    Widgets{Enable: true, Swipe: 3, Places: AutoPlaces(WidgetKinds), Apps: []string{"io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"}},
 		Voice:      Voice{Enable: false, PushToTalk: true, Engine: "voxtype", Show: "window"},
 		Shortcuts: []Shortcut{
 			{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
@@ -894,6 +969,10 @@ func Load(path string) (Config, []string, error) {
 		}
 		warnings = append(warnings, fmt.Sprintf("unknown setting %s", k))
 	}
+	if md.IsDefined("widgets", "items") && !md.IsDefined("widgets", "widget") {
+		c.Widgets.Places = AutoPlaces(c.Widgets.Items) // the first version's list
+	}
+	c.Widgets.Items = nil
 	warnings = append(warnings, c.validate()...)
 	c.AddVoiceShortcut() // voice input turned on in the file
 	return c, warnings, nil
@@ -956,13 +1035,27 @@ func (c *Config) validate() []string {
 	oneOf("language", &c.Language, d.Language, Languages...)
 	oneOf("style.theme", &c.Style.Theme, d.Style.Theme, c.ThemeNames()...)
 	oneOf("style.app_theme", &c.Style.AppTheme, d.Style.AppTheme, append([]string{""}, c.ThemeNames()...)...)
+	// An inua set in icons (it held the app style for a while): the app
+	// style, the line icons Phosphor's.
+	if slices.Contains(InuaThemes, c.Style.Icons) {
+		if c.Style.AppStyle == d.Style.AppStyle {
+			c.Style.AppStyle = c.Style.Icons
+		}
+		c.Style.Icons = d.Style.Icons
+	}
+	if c.Style.AppIcons == c.Style.AppStyle {
+		c.Style.AppIcons = "" // the same
+	}
+	oneOf("style.app_style", &c.Style.AppStyle, d.Style.AppStyle, InuaThemes...)
 	if sets := c.IconSetNames(); !slices.Contains(sets, c.Style.Icons) && !IsIconTheme(c.Style.Icons) {
 		w = append(w, fmt.Sprintf("style.icons = %q: want %s or an installed icon theme; using %q", c.Style.Icons, strings.Join(sets, " or "), d.Style.Icons))
 		c.Style.Icons = d.Style.Icons
 	}
-	if c.Style.AppIcons != "system" && !IsIconTheme(c.Style.AppIcons) {
-		w = append(w, fmt.Sprintf("style.app_icons = %q: want \"system\" or an installed icon theme; using %q", c.Style.AppIcons, d.Style.AppIcons))
-		c.Style.AppIcons = d.Style.AppIcons
+	// inua's own are kept while not installed: AppIconTheme answers the
+	// system's until they are.
+	if a := c.Style.AppIcons; a != "" && a != "system" && !slices.Contains(InuaThemes, a) && !IsIconTheme(a) {
+		w = append(w, fmt.Sprintf("style.app_icons = %q: want \"\" (the app style), \"system\" or an installed icon theme; using \"\"", a))
+		c.Style.AppIcons = ""
 	}
 	if c.Style.TextScale < 80 || c.Style.TextScale > 150 {
 		w = append(w, fmt.Sprintf("style.text_scale = %d: want 80 to 150; using %d", c.Style.TextScale, d.Style.TextScale))
@@ -1057,6 +1150,24 @@ func (c *Config) validate() []string {
 	if !slices.Contains(OSDPositions, c.OSD.Position) {
 		w = append(w, fmt.Sprintf("osd.position = %q: want top-center, top-left, top-right, bottom-center, bottom-left or bottom-right; using %q", c.OSD.Position, d.OSD.Position))
 		c.OSD.Position = d.OSD.Position
+	}
+	kinds := map[string]bool{}
+	c.Widgets.Places = slices.DeleteFunc(c.Widgets.Places, func(p WidgetPlace) bool {
+		known := slices.Contains(WidgetKinds, p.Kind)
+		if !known {
+			w = append(w, fmt.Sprintf("widgets.widget %q: want one of %s; leaving it out", p.Kind, strings.Join(WidgetKinds, ", ")))
+		}
+		twice := kinds[p.Kind]
+		kinds[p.Kind] = true
+		return !known || twice
+	})
+	for i := range c.Widgets.Places {
+		p := &c.Widgets.Places[i]
+		p.Column, p.Row = max(p.Column, 0), max(p.Row, 0)
+	}
+	if !slices.Contains(WidgetSwipes, c.Widgets.Swipe) {
+		w = append(w, fmt.Sprintf("widgets.swipe = %d: want 3 or 4 fingers, or 0 for none; using %d", c.Widgets.Swipe, d.Widgets.Swipe))
+		c.Widgets.Swipe = d.Widgets.Swipe
 	}
 	if !slices.Contains(DockPositions, c.Dock.Position) {
 		w = append(w, fmt.Sprintf("dock.position = %q: want bottom, top, left or right; using %q", c.Dock.Position, d.Dock.Position))

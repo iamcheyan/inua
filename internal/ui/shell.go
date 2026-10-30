@@ -96,6 +96,7 @@ type shellUI struct {
 	clipboard clipboardPanel
 	passwords passwordsPanel
 	agenda    agenda
+	widgets   widgetPage
 	shot      shooter
 	recording recorder
 	lock      locker
@@ -127,7 +128,14 @@ type shellUI struct {
 	onMenuBackdrop         func(gtk.GestureClick, int32, float64, float64)
 	onMenuKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onLauncherScroll       func(gtk.EventControllerScroll, float64, float64) bool
+	onLauncherPick         func(gtk.GestureClick, int32, float64, float64)
+	onLauncherAction       func(gio.SimpleAction, uintptr)
+	onLauncherMenuClosed   func(gtk.Popover)
+	onLauncherGone         glib.SourceFunc
+	onLauncherScrolled     func(gtk.Adjustment)
+	onLauncherLaidOut      func(gtk.Adjustment)
+	onLauncherFootLaidOut  func(gtk.Adjustment)
+	onLauncherTick         gtk.TickCallback
 	onOverviewKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onOverviewButton       func(gtk.Button)
 	onWorkspaceOverview    func(gtk.GestureClick, int32, float64, float64)
@@ -210,6 +218,12 @@ type shellUI struct {
 	onSearchFlash          glib.SourceFunc
 	onAboutLink            func(gtk.Button)
 	onSettingsButton       func(gtk.Button)
+	onThemeMenu            func(gtk.GestureClick, int32, float64, float64)
+	onThemeAction          func(gio.SimpleAction, uintptr)
+	onThemeMenuClosed      func(gtk.Popover)
+	onIconSetMenu          func(gtk.GestureClick, int32, float64, float64)
+	onIconSetAction        func(gio.SimpleAction, uintptr)
+	onPreviewKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onSettingsClose        func(gtk.Window) bool
 	onSettingsKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onSettingsScale        func(gtk.Range, gtk.ScrollType, float64) bool
@@ -243,6 +257,19 @@ type shellUI struct {
 	onAgendaPressed        func(gtk.GestureClick, int32, float64, float64)
 	onAgendaKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
 	onAgendaGone           glib.SourceFunc
+	onWidgetsMark          func(gtk.Button)
+	onWidgetsKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onWidgetsRevealed      func(uintptr, uintptr, uintptr)
+	onWidgetButton         func(gtk.Button)
+	onWidgetMenu           func(gtk.GestureClick, int32, float64, float64)
+	onWidgetAction         func(gio.SimpleAction, uintptr)
+	onWidgetMenuClosed     func(gtk.Popover)
+	onWidgetDrop           func(gtk.DropTarget, uintptr, float64, float64) bool
+	onWidgetQuery          func(gtk.SearchEntry)
+	onWidgetQueryActivate  func(gtk.SearchEntry)
+	onWidgetDragBegin      func(gtk.GestureDrag, float64, float64)
+	onWidgetDragUpdate     func(gtk.GestureDrag, float64, float64)
+	onWidgetDragEnd        func(gtk.GestureDrag, float64, float64)
 	onLockMonitor          func(uintptr, uintptr, uintptr)
 	onLockLocked           func(uintptr, uintptr)
 	onLockFailed           func(uintptr, uintptr)
@@ -452,6 +479,7 @@ func (s *shellUI) start() {
 	s.bindControlHandlers()
 	s.bindOSDHandlers()
 	s.bindAgendaHandlers()
+	s.bindWidgetsHandlers()
 	s.bindShotHandlers()
 	s.bindShotDrawerHandlers()
 	s.bindRecordHandlers()
@@ -677,6 +705,7 @@ func (s *shellUI) bindHandlers() {
 		return false
 	}
 	s.onWorkspaceClicked = func(b gtk.Button) {
+		s.closeWidgets() // back to the workspace under it, or on to another
 		// Hyprland answers an error for switching to the current workspace.
 		if id := b.GetName(); !s.isFocusedWorkspace(id) {
 			s.switchWorkspace(id)
@@ -700,6 +729,7 @@ func (s *shellUI) bindHandlers() {
 		for _, b := range s.bars {
 			b.setClock(s, now)
 		}
+		s.tickWidgets(now)
 		step := time.Minute
 		if config.HasSeconds(s.cfg.Bar.Clock) {
 			step = time.Second
@@ -784,6 +814,7 @@ func (s *shellUI) apply(snap hypr.Snapshot) {
 	s.launcher.st.SetSnapshot(snap)
 	s.syncLauncher()
 	s.syncPortalApps()
+	s.followWidgets()
 	if !s.overview.st.Open {
 		s.saveOverviewHistory()
 		return
@@ -929,10 +960,11 @@ func (s *shellUI) barNames() []string {
 //	notifications toggle|open|close|clear|focus [on|off]|list|dismiss ID|invoke ID [KEY]
 //	system   status|set KEY VALUE|power ACTION
 //	media    status|play-pause|next|previous
+//	widgets  toggle|open|close|right|left
 //	shell    state|close|reload|restart|snapshot DIR|tray-menu N
 func (s *shellUI) request(req ipc.Request) ipc.Response {
 	if req.Op == "show" {
-		return ipc.Response{OK: true, Result: "launcher: toggle apps windows close (apps|windows QUERY…)\noverview: toggle open close\ncontrol: toggle open close\nsettings: toggle open close\nnotifications: toggle open close clear focus list dismiss invoke\nmedia: status play-pause next previous\nvoice: toggle start stop cancel\nsystem: status set (wifi bluetooth volume mute brightness focus saver) power (suspend reboot poweroff logout)\nscreenshot: area silent-area pick-window pick-screen screen window color record stop close\nlock: now unlock state\nclipboard: toggle open close\npass: toggle open close\ndrawer: toggle open close\nshell: state close reload restart snapshot tray-menu"}
+		return ipc.Response{OK: true, Result: "launcher: toggle apps windows close (apps|windows QUERY…)\noverview: toggle open close\ncontrol: toggle open close\nsettings: toggle open close\nnotifications: toggle open close clear focus list dismiss invoke\nmedia: status play-pause next previous\nvoice: toggle start stop cancel\nsystem: status set (wifi bluetooth volume mute brightness focus saver) power (suspend reboot poweroff logout)\nscreenshot: area silent-area pick-window pick-screen screen window color record stop close\nlock: now unlock state\nclipboard: toggle open close\npass: toggle open close\ndrawer: toggle open close\nwidgets: toggle open close right left\nshell: state close reload restart snapshot tray-menu"}
 	}
 	if req.Op != "call" {
 		return ipc.Response{Error: "unknown op " + req.Op}
@@ -1029,6 +1061,10 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 		default:
 			return bad
 		}
+	case "widgets":
+		if !s.widgetsRequest(req.Function) {
+			return bad
+		}
 	case "drawer":
 		if !s.drawerRequest(req.Function) {
 			return bad
@@ -1120,6 +1156,7 @@ func (s *shellUI) shellRequest(fn string, args []string) ipc.Response {
 		s.closeOverview(false)
 		s.closeControl()
 		s.closeAgenda()
+		s.closeWidgets()
 		if s.tray.menu != nil {
 			s.tray.menu.Popdown()
 		}

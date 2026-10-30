@@ -14,6 +14,7 @@ import (
 	"github.com/lyricat/inua/internal/term/agent"
 	"github.com/lyricat/inua/internal/term/host"
 	"github.com/lyricat/inua/internal/term/model"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // Column 1 lists the workspaces (name, folder, the state of what runs in
@@ -333,7 +334,7 @@ func (c *columns) fillSessions(a *App) {
 		classIf(&h.button.Widget, "current", s.ID == shown)
 		blocked, l := a.rollup(s.Tree.Panes())
 		paint(h.mark, nil, l)
-		h.label.SetMarkup("<span alpha='55%'>[</span>" + escape(strings.ToUpper(s.Name)) + "<span alpha='55%'>]</span>")
+		h.label.SetMarkup(uikit.Bracketed(strings.ToUpper(s.Name)))
 		setBadge(h.badge, blocked)
 		for _, id := range s.Tree.Panes() {
 			c.setPaneRow(a, c.paneRows[id], id, s.ID == shown && s.Focus == id)

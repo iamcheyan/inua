@@ -15,6 +15,44 @@ reach as well, adjusts the volume 5% a notch; on the workspaces, it goes
 to the next workspace the bar shows (down) or the previous one (up), a
 notch a step, stopping at the ends. One per monitor.
 
+## Engawa
+
+Engawa (縁側, a veranda at the edge of a house) is the widget page, the
+place before the first workspace: a page of widgets over the windows,
+between the bar and the dock, its sides in line with the bar's and as far
+from the bar and the dock as the bar is from the screen's top, that fades in and blurs
+what is behind it (a layer rule inua.conf has while the page is on). The hollow
+dot before the workspaces opens it (it stretches into the accent pill
+while the page shows), and so do the wheel up past the first workspace,
+a swipe right from the first workspace, the Widget page shortcut and
+`inua call widgets toggle|open|close`. Escape, the wheel down, a
+workspace, a swipe left or another workspace shown on its monitor go
+back.
+
+The swipe is three fingers (`widgets.swipe = 3`). It takes the place of
+the three-finger workspace swipe the sample hyprland.conf has: right
+goes to the previous workspace and from the first to the page, left
+back from the page or to the next workspace, and past the last with
+windows to a new one; right again on the page goes to the first
+workspace. These switch when the swipe ends, not under the
+fingers. With `swipe = 4` four fingers only open and close the page and
+the workspace swipe stays as it was; `swipe = 0` turns it off.
+
+The widgets: the clock with Clock's world clocks, the month with the next
+alarm, the weather where Weather is set, the player playing, and apps
+to open. They sit on a grid of 60 px, each a whole number of cells: six
+columns wide and as many rows tall as it needs, so that its edges are on
+the grid; and a clear cell stays between any two. Drag one by its head
+and it follows the pointer over the grid, whose joints show while it
+moves, with the cells it would land on marked, in red where it would
+touch another. Released, it snaps there, or goes back. A widget placed
+touching another (by hand in config.toml) moves to the first free place
+when the page opens. Right-click a head to remove the widget, and bring
+it back with Add widget, in the first free place. Drag apps in from the dock or add them with +; drag
+them to reorder, right-click to remove. The places and the apps are
+`[widgets]` in config.toml; `enable = false` takes the page, its dot and
+its swipe away.
+
 When the volume or the screen's brightness changes, by the keys, the
 wheel or `inua system`, a card at the foot of the screen shows the level
 for a moment, as phones do. It takes no clicks, and stays away while the
@@ -22,12 +60,24 @@ control center is open.
 
 ## Launcher
 
-One search for apps and open windows (Super+Space; Tab switches modes), ranked by
-prefix, word starts and subsequences; Enter launches or focuses, Esc
-returns focus where it was. It also answers: arithmetic (`2^10 + 3`),
+One search for apps and open windows (Super+Space), ranked by
+prefix, word starts and subsequences; Enter launches or focuses, Tab
+opens the selected result's other actions (an app's own, such as
+Firefox's New Private Window, a new window of it, keeping it in the
+dock, quitting it; closing, floating or centring a window), Esc returns focus where it
+was. It also answers: arithmetic (`2^10 + 3`),
 units (`10 km to mi`, `32 f in c`) and currencies (`100 usd to jpy`, ECB
 rates) and crypto (`1 eth to usd`, `100 usd to btc`, Coinbase's prices);
 Enter copies the answer.
+
+Apps show as a grid of their icons, six to a line, which scrolls, the next
+apps showing at the foot, blurred more the lower. Answers, commands, the
+web search and the assistant sit two to a line below the grid, in the
+order they rank, always in sight and in at most half the space (all of
+it when no app matches); the best match is selected, so Enter on "lock"
+still locks. Windows are rows. The selection glides
+from one result to the next, the arrows moving on the grid (left and right
+along a line), and a click opens any result.
 
 Commands rank with the apps: Lock Screen, Sleep, Restart, Shut Down, Log
 Out and Empty Trash (the last four ask for Enter again), Settings,
@@ -626,6 +676,17 @@ built-in display off (`[displays] lid_off`).
 
 Seven colour themes, from 夜 yoru (night) to 青写真 aojashin (blueprint),
 Phosphor icons, and matching Fcitx 5 themes.
+
+Three app styles of inua's own draw every app as the object it stands
+for: *inua objects*, with real materials and detail, *inua objects soft*,
+the same objects drawn more simply, and *inua objects flat*, drawn flat.
+*App style* picks one for inua's apps and the other apps it draws, about
+240 of the popular ones; *Other apps* can give the rest the system's
+icons or an installed theme's instead, inua's apps keeping the style. An
+app no theme draws keeps its own icon; `inua icons missing` lists the
+installed apps without one. *Line icons* picks the icons in the bar,
+Settings and inua's apps: Phosphor's, your own set or a theme's. Each
+style and set has Preview All, every icon of it in a window.
 
 The apps can take another theme than the bar and dock (*Apps* under the
 theme swatches, `style.app_theme`): inua's own apps follow it, and other

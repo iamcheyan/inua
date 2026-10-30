@@ -103,6 +103,8 @@ archives:
       - LICENSE
       - README.md
       - config/apps/*
+      - config/apps/small/*
+      - config/icons/**/*
       - config/session/*
       - scripts/inua-session
       - scripts/install-session.sh

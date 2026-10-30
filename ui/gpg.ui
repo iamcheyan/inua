@@ -124,6 +124,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                               <object class="GtkToggleButton" id="to_browse">
                                                 <style>
                                                   <class name="plain"/>
+                                                  <class name="small"/>
                                                 </style>
                                                 <property name="valign">1</property>
                                                 <property name="icon-name">pan-down-symbolic</property>
@@ -890,7 +891,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       <object class="GtkButton" id="dec_save">
                                         <style>
                                           <class name="outlined"/>
-                                          <class name="gpg-small"/>
+                                          <class name="small"/>
                                         </style>
                                         <property name="name">dec-save</property>
                                         <property name="label" translatable="yes">Save…</property>
@@ -901,7 +902,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       <object class="GtkButton" id="dec_copy">
                                         <style>
                                           <class name="outlined"/>
-                                          <class name="gpg-small"/>
+                                          <class name="small"/>
                                         </style>
                                         <property name="name">dec-copy</property>
                                         <property name="label" translatable="yes">Copy</property>

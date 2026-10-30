@@ -202,72 +202,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                       </object>
                                     </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <style>
-                                          <class name="row"/>
-                                        </style>
-                                        <property name="spacing">16</property>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="orientation">1</property>
-                                            <property name="hexpand">true</property>
-                                            <property name="valign">3</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <style>
-                                                  <class name="title"/>
-                                                </style>
-                                                <property name="label" translatable="yes">Your themes</property>
-                                                <property name="xalign">0</property>
-                                              </object>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <style>
-                                                  <class name="sub"/>
-                                                </style>
-                                                <property name="label" translatable="yes">A CSS file of @define-color lines, kept in themes beside config.toml</property>
-                                                <property name="xalign">0</property>
-                                                <property name="wrap">true</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="theme_add">
-                                            <style>
-                                              <class name="outlined"/>
-                                            </style>
-                                            <property name="name">theme_add</property>
-                                            <property name="label" translatable="yes">Add…</property>
-                                            <property name="valign">3</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="theme_trash">
-                                            <style>
-                                              <class name="outlined"/>
-                                              <class name="danger"/>
-                                            </style>
-                                            <property name="name">theme_trash</property>
-                                            <property name="label" translatable="yes">Move to Trash</property>
-                                            <property name="tooltip-text" translatable="yes">The theme in use, if it is one of yours</property>
-                                            <property name="valign">3</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="theme_folder">
-                                            <style>
-                                              <class name="outlined"/>
-                                            </style>
-                                            <property name="name">theme_folder</property>
-                                            <property name="label" translatable="yes">Open Folder</property>
-                                            <property name="valign">3</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -530,7 +464,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="title"/>
                                                 </style>
-                                                <property name="label" translatable="yes">Icon set</property>
+                                                <property name="label" translatable="yes">App style</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
@@ -539,7 +473,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="sub"/>
                                                 </style>
-                                                <property name="label" translatable="yes">Built in, the system's, an installed theme or one of yours</property>
+                                                <property name="label" translatable="yes">How inua draws apps: its own, and the other apps it draws</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
                                               </object>
@@ -547,19 +481,26 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkDropDown" id="icons">
-                                            <property name="name">icons</property>
+                                          <object class="GtkButton" id="appstyle_preview">
+                                            <style>
+                                              <class name="plain"/>
+                                            </style>
+                                            <property name="name">appstyle_preview</property>
                                             <property name="valign">3</property>
-                                            <property name="model">
-                                              <object class="GtkStringList">
-                                                <items>
-                                                  <item translatable="yes">Phosphor</item>
-                                                  <item translatable="yes">System theme</item>
-                                                </items>
-                                              </object>
-                                            </property>
+                                            <property name="icon-name">view-reveal-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Every app of the style in use</property>
                                           </object>
                                         </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkFlowBox" id="appstyles">
+                                        <property name="selection-mode">0</property>
+                                        <property name="homogeneous">true</property>
+                                        <property name="min-children-per-line">3</property>
+                                        <property name="max-children-per-line">4</property>
+                                        <property name="row-spacing">8</property>
+                                        <property name="column-spacing">8</property>
                                       </object>
                                     </child>
                                     <child>
@@ -578,7 +519,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="title"/>
                                                 </style>
-                                                <property name="label" translatable="yes">App icons</property>
+                                                <property name="label" translatable="yes">Other apps</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
@@ -587,7 +528,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="sub"/>
                                                 </style>
-                                                <property name="label" translatable="yes">The dock, launcher, notifications and files</property>
+                                                <property name="label" translatable="yes">Apps that aren't inua's, and files: as the app style, the system's or an installed theme</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
                                               </object>
@@ -601,7 +542,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="model">
                                               <object class="GtkStringList">
                                                 <items>
-                                                  <item translatable="yes">System theme</item>
+                                                  <item translatable="yes">As the app style</item>
                                                 </items>
                                               </object>
                                             </property>
@@ -625,7 +566,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="title"/>
                                                 </style>
-                                                <property name="label" translatable="yes">Your icon sets</property>
+                                                <property name="label" translatable="yes">Line icons</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
@@ -634,7 +575,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="sub"/>
                                                 </style>
-                                                <property name="label" translatable="yes">A folder of SVG icons named like inua's, kept in icons beside config.toml</property>
+                                                <property name="label" translatable="yes">The bar, the settings and inua's apps: Phosphor's, the system's, an installed theme or one of yours</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
                                               </object>
@@ -642,35 +583,20 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="iconset_add">
-                                            <style>
-                                              <class name="outlined"/>
-                                            </style>
-                                            <property name="name">iconset_add</property>
-                                            <property name="label" translatable="yes">Add…</property>
+                                          <object class="GtkDropDown" id="icons">
+                                            <property name="name">icons</property>
                                             <property name="valign">3</property>
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="iconset_trash">
+                                          <object class="GtkButton" id="iconset_preview">
                                             <style>
-                                              <class name="outlined"/>
-                                              <class name="danger"/>
+                                              <class name="plain"/>
                                             </style>
-                                            <property name="name">iconset_trash</property>
-                                            <property name="label" translatable="yes">Move to Trash</property>
-                                            <property name="tooltip-text" translatable="yes">The icon set in use, if it is one of yours</property>
+                                            <property name="name">iconset_preview</property>
                                             <property name="valign">3</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="iconset_folder">
-                                            <style>
-                                              <class name="outlined"/>
-                                            </style>
-                                            <property name="name">iconset_folder</property>
-                                            <property name="label" translatable="yes">Open Folder</property>
-                                            <property name="valign">3</property>
+                                            <property name="icon-name">view-reveal-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Every icon of the set in use</property>
                                           </object>
                                         </child>
                                       </object>
@@ -2111,7 +2037,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="sub"/>
                                                 </style>
-                                                <property name="label" translatable="yes">What Super+Space shows first; Tab switches</property>
+                                                <property name="label" translatable="yes">What Super+Space shows</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
                                               </object>

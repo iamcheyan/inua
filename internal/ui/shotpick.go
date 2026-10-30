@@ -21,6 +21,7 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // Window and Screen pick from a grid instead of the still: every window
@@ -139,7 +140,7 @@ func (s *shellUI) fillPicker() {
 		mark.SetValign(gtk.AlignCenterValue)
 		head.Append(&mark.Widget)
 		l := gtk.NewLabel("")
-		l.SetMarkup("<span alpha='55%'>[</span>" + glib.MarkupEscapeText(title, -1) + "<span alpha='55%'>]</span>")
+		l.SetMarkup(uikit.Bracketed(title))
 		l.AddCssClass("shot-pick-title")
 		head.Append(&l.Widget)
 		m := gtk.NewLabel(meta)

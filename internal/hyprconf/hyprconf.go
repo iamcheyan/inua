@@ -42,6 +42,16 @@ misc {
     allow_session_lock_restore = true
 }
 
+# The menus inua's apps open (inua-term's, Files', Mail's) are glass like
+# the shell's panels: blur what is behind them. Their shadows (under 0.4)
+# are not blurred.
+decoration {
+    blur {
+        popups = true
+        popups_ignorealpha = 0.4
+    }
+}
+
 # inua's light apps (Clock, Weather, Stocks, Calculator, Calendar, Color
 # Picker, System Monitor, Viewer) float at their own size; so does Mail's
 # composer, which has a class of its own (io.github.lyricat.Inua.Mail.Compose).
@@ -109,6 +119,24 @@ layerrule {
     match:namespace = ^inua-bar$
     no_anim = on
 }
+
+# The menus the bar and the dock open (the tray's, an app's in the dock)
+# are their surfaces' popups, which decoration:blur:popups leaves alone:
+# blur behind them too, but their shadows.
+layerrule {
+    name = inua-shell-menus
+    match:namespace = ^inua-(bar|dock)$
+    blur_popups = on
+    ignore_alpha = 0.4
+}
+
+# The launcher's menus (a result's actions) too, the launcher keeping its
+# own blur.
+layerrule {
+    name = inua-launcher-menus
+    match:namespace = ^inua-launcher$
+    blur_popups = on
+}
 `
 
 // Path is inua.conf for the settings file at configPath: both live under
@@ -162,6 +190,82 @@ type Devices struct {
 	Touchpads []string // the touchpads, by Hyprland's device name
 	Lids      []string // the lid switches, by Hyprland's name ("Lid Switch")
 	PanelsOff []string // the built-in displays to turn off (display.System.PanelsOff)
+	// WorkspaceSwipe: the Hyprland config swipes three fingers through
+	// the workspaces (the sample's gesture = 3, horizontal, workspace),
+	// which a three-finger swipe to the widget page takes the place of.
+	WorkspaceSwipe bool
+}
+
+// widgetsLayerRule blurs what is behind the widget page, but where it is
+// clear (the part not slid in yet), and leaves its slide to itself.
+const widgetsLayerRule = `
+# The widget page blurs what is behind it, and slides in by itself.
+layerrule {
+    name = inua-widgets
+    match:namespace = ^inua-widgets$
+    blur = on
+    ignore_alpha = 0.3
+    no_anim = on
+}
+`
+
+const widgetsLayerRuleLua = `
+-- The widget page blurs what is behind it, and slides in by itself.
+hl.layer_rule({
+    name = "inua-widgets",
+    match = { namespace = "^inua-widgets$" },
+    blur = true,
+    ignore_alpha = 0.3,
+    no_anim = true,
+})
+`
+
+// gesture is a swipe that runs a command.
+type gesture struct {
+	fingers  int
+	dir, cmd string
+}
+
+// widgetGestures are the swipes to the widget page and back. With three
+// fingers they go through the workspaces as well (`widgets right|left`),
+// in the place of the workspace swipe; four only open and close the page.
+func widgetGestures(c config.Config) []gesture {
+	if !c.Widgets.Enable {
+		return nil
+	}
+	switch c.Widgets.Swipe {
+	case 3:
+		return []gesture{{3, "right", "inua call widgets right"}, {3, "left", "inua call widgets left"}}
+	case 4:
+		return []gesture{{4, "right", "inua call widgets open"}, {4, "left", "inua call widgets close"}}
+	}
+	return nil
+}
+
+// workspaceSwipeRe and workspaceSwipeLuaRe find the three-finger
+// workspace swipe in hyprland.conf and hyprland.lua.
+var (
+	workspaceSwipeRe    = regexp.MustCompile(`(?m)^\s*gesture\s*=\s*3\s*,\s*horizontal\s*,\s*workspace\s*(#.*)?$`)
+	workspaceSwipeLuaRe = regexp.MustCompile(`hl\.gesture\(\s*\{[^}]*\}\s*\)`)
+	luaFieldRe          = regexp.MustCompile(`(\w+)\s*=\s*("?)(\w+)"?`)
+)
+
+// hasWorkspaceSwipe reports whether a Hyprland config has the three-finger
+// workspace swipe, as the sample has it.
+func hasWorkspaceSwipe(file string, lua bool) bool {
+	if !lua {
+		return workspaceSwipeRe.MatchString(file)
+	}
+	for _, call := range workspaceSwipeLuaRe.FindAllString(file, -1) {
+		f := map[string]string{}
+		for _, m := range luaFieldRe.FindAllStringSubmatch(call, -1) {
+			f[m[1]] = m[3]
+		}
+		if f["fingers"] == "3" && f["direction"] == "horizontal" && f["action"] == "workspace" && f["mods"] == "" {
+			return true
+		}
+	}
+	return false
 }
 
 // Render is the file for the settings. Touchpad settings go in one device
@@ -190,11 +294,24 @@ func Render(c config.Config, d Devices) string {
 			wrote = true
 		}
 	}
-	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) {
+	gestures := widgetGestures(c)
+	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) && !c.Widgets.Enable {
 		b.WriteString("\n# Nothing set in inua; hyprland.conf decides.\n")
 	}
 	renderDisplays(&b, c, d)
 	renderShortcuts(&b, c)
+	if c.Widgets.Enable {
+		b.WriteString(widgetsLayerRule)
+	}
+	if len(gestures) > 0 {
+		b.WriteString("\n# A swipe right goes to the widget page, before the first workspace; left, back.\n")
+		if gestures[0].fingers == 3 && d.WorkspaceSwipe {
+			b.WriteString("# Three fingers go through the workspaces too, in hyprland.conf's swipe's place.\ngesture = 3, horizontal, unset\n")
+		}
+		for _, g := range gestures {
+			fmt.Fprintf(&b, "gesture = %d, %s, dispatcher, exec, %s\n", g.fingers, g.dir, g.cmd)
+		}
+	}
 	return b.String()
 }
 
@@ -208,6 +325,11 @@ const luaHeader = `-- Generated by inua from ~/.config/inua/config.toml; changes
 -- screen is locked, the screen stays locked; inua-shell, started again,
 -- takes the lock over and shows its lock screen.
 hl.config({ misc = { allow_session_lock_restore = true } })
+
+-- The menus inua's apps open (inua-term's, Files', Mail's) are glass like
+-- the shell's panels: blur what is behind them. Their shadows (under 0.4)
+-- are not blurred.
+hl.config({ decoration = { blur = { popups = true, popups_ignorealpha = 0.4 } } })
 
 -- inua's light apps (Clock, Weather, Stocks, Calculator, Calendar, Color
 -- Picker, System Monitor, Viewer) float at their own size; so does Mail's
@@ -275,6 +397,24 @@ hl.layer_rule({
     match = { namespace = "^inua-bar$" },
     no_anim = true,
 })
+
+-- The menus the bar and the dock open (the tray's, an app's in the dock)
+-- are their surfaces' popups, which decoration.blur.popups leaves alone:
+-- blur behind them too, but their shadows.
+hl.layer_rule({
+    name = "inua-shell-menus",
+    match = { namespace = "^inua-(bar|dock)$" },
+    blur_popups = true,
+    ignore_alpha = 0.4,
+})
+
+-- The launcher's menus (a result's actions) too, the launcher keeping its
+-- own blur.
+hl.layer_rule({
+    name = "inua-launcher-menus",
+    match = { namespace = "^inua-launcher$" },
+    blur_popups = true,
+})
 `
 
 // RenderLua is inua.lua for the settings, the Lua form of Render.
@@ -301,11 +441,24 @@ func RenderLua(c config.Config, d Devices) string {
 			wrote = true
 		}
 	}
-	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) {
+	gestures := widgetGestures(c)
+	if !wrote && len(c.Shortcuts) == 0 && !writesDisplays(c, d) && !c.Widgets.Enable {
 		b.WriteString("\n-- Nothing set in inua; hyprland.lua decides.\n")
 	}
 	renderDisplaysLua(&b, c, d)
 	renderShortcutsLua(&b, c)
+	if c.Widgets.Enable {
+		b.WriteString(widgetsLayerRuleLua)
+	}
+	if len(gestures) > 0 {
+		b.WriteString("\n-- A swipe right goes to the widget page, before the first workspace; left, back.\n")
+		if gestures[0].fingers == 3 && d.WorkspaceSwipe {
+			b.WriteString("-- Three fingers go through the workspaces too, in hyprland.lua's swipe's place.\nhl.gesture({ fingers = 3, direction = \"horizontal\", action = \"unset\" })\n")
+		}
+		for _, g := range gestures {
+			fmt.Fprintf(&b, "hl.gesture({ fingers = %d, direction = %q, action = function() hl.dispatch(hl.dsp.exec_cmd(%s)) end })\n", g.fingers, g.dir, luaString(g.cmd))
+		}
+	}
 	return b.String()
 }
 
@@ -332,7 +485,7 @@ func luaString(s string) string {
 
 var (
 	nameRe     = regexp.MustCompile(`^[a-z0-9][a-z0-9:._-]*$`)
-	nameLineRe = regexp.MustCompile(`(?m)^\s*name\s*=\s*(\S+)\s*$`)
+	nameLineRe = regexp.MustCompile(`(?m)^device\s*\{\s*\n\s*name\s*=\s*(\S+)\s*$`)
 	luaNameRe  = regexp.MustCompile(`hl\.device\(\{\s*name\s*=\s*"([^"]+)"`)
 	touchpadRe = regexp.MustCompile(`touchpad|trackpad`)
 )
@@ -367,7 +520,8 @@ func known(file string) []string {
 		re = luaNameRe
 	}
 	for _, m := range re.FindAllStringSubmatch(file, -1) {
-		if nameRe.MatchString(m[1]) {
+		// inua-…: a rule's name an earlier inua took for a device's
+		if nameRe.MatchString(m[1]) && !strings.HasPrefix(m[1], "inua-") {
 			names = append(names, m[1])
 		}
 	}
@@ -412,6 +566,10 @@ func Apply(ctx context.Context, c config.Config, path string, client *hypr.Clien
 	}
 	if c.Displays.LidOff {
 		d.PanelsOff = panelsOff()
+	}
+	lua := strings.HasSuffix(path, ".lua")
+	if main, err := os.ReadFile(ConfigFile(filepath.Dir(path), lua)); err == nil {
+		d.WorkspaceSwipe = hasWorkspaceSwipe(string(main), lua)
 	}
 
 	want := Render(c, d)

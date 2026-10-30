@@ -1,0 +1,63 @@
+// Engawa, the widget page: the place before the first workspace: the bar's dot,
+// the wheel up past the first workspace, a swipe right or the shortcut
+// opens it, and it fades in over the windows,
+// between the bar and the dock. Escape, a workspace, the wheel down or a
+// swipe left goes back. Go puts the cards on the board where
+// widgets.widget places them.
+using Gtk 4.0;
+
+ApplicationWindow widgets {
+  styles ["widgets"]
+
+  Revealer reveal {
+    transition-type: crossfade;
+    transition-duration: 200;
+    hexpand: true;
+    vexpand: true;
+
+    Box page {
+      styles ["widget-page"]
+      orientation: vertical;
+      spacing: 18;
+
+      Box {
+        styles ["widget-page-head"]
+        spacing: 10;
+
+        Box {
+          styles ["mark"]
+          valign: center;
+        }
+
+        Label {
+          styles ["tag"]
+          label: _("[ENGAWA]");
+        }
+
+        Label {
+          styles ["readout", "widget-page-hint"]
+          hexpand: true;
+          xalign: 0;
+          ellipsize: end;
+          label: _("Drag a head to move it on the grid · Right-click to remove");
+        }
+
+        MenuButton add {
+          styles ["link"]
+          label: _("Add widget");
+          valign: center;
+        }
+      }
+
+      ScrolledWindow {
+        vexpand: true;
+
+        // The cards, each at the column and row of its place, on a grid
+        // drawn while one is dragged.
+        Fixed board {
+          styles ["widget-board"]
+        }
+      }
+    }
+  }
+}

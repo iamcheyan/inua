@@ -4,6 +4,7 @@
 //	inua call launcher toggle|apps|windows|close
 //	inua call control  toggle|open|close
 //	inua call calendar toggle|open|close
+//	inua call widgets  toggle|open|close|right|left
 //	inua call settings toggle|open [PAGE]|close
 //	inua call shell    state|close|restart|snapshot DIR|tray-menu N
 //

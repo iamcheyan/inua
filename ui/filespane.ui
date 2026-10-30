@@ -30,7 +30,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
         <child>
           <object class="GtkButton" id="sidebar_show">
             <style>
-              <class name="files-tool"/>
+              <class name="tool"/>
               <class name="files-sidebar-show"/>
             </style>
             <property name="valign">3</property>
@@ -305,6 +305,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
               <object class="GtkButton" id="zoom_out">
                 <style>
                   <class name="plain"/>
+                  <class name="tight"/>
                 </style>
                 <property name="valign">3</property>
                 <property name="icon-name">zoom-out-symbolic</property>
@@ -324,6 +325,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
               <object class="GtkButton" id="zoom_in">
                 <style>
                   <class name="plain"/>
+                  <class name="tight"/>
                 </style>
                 <property name="valign">3</property>
                 <property name="icon-name">zoom-in-symbolic</property>

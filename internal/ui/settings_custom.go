@@ -4,53 +4,84 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
-// Themes and icon sets of the user's own, on the Appearance page: Add…
-// copies a file or a folder beside config.toml and chooses it, Move to
-// Trash takes away the one in use, Open Folder shows where they live.
+// Themes of the user's own, on the Appearance page: the last swatch adds
+// one, copying a file beside config.toml and choosing it; a right click on
+// one of yours opens Show in Folder and Move to Trash. (Sets of line
+// icons of the user's are folders in icons beside it, chosen in the menu.)
 
-// customButton handles the buttons of the user's themes and icon sets.
+// customButton handles the theme tile that adds one.
 func (s *shellUI) customButton(name string) bool {
-	c := s.cfg
 	switch name {
 	case "theme_add":
-		s.chooseCustom(false)
-	case "iconset_add":
-		s.chooseCustom(true)
-	case "theme_trash":
-		if !c.IsCustomTheme(c.Style.Theme) {
-			return true
-		}
-		if s.trash(c.ThemePath(c.Style.Theme)) {
-			if c.Style.AppTheme == c.Style.Theme {
-				c.Style.AppTheme = ""
-			}
-			c.Style.Theme = config.Default().Style.Theme
-			s.changeSettings(c)
-		}
-	case "iconset_trash":
-		if c.IconSetDir() == "" {
-			return true
-		}
-		if s.trash(c.IconSetDir()) {
-			c.Style.Icons = config.Default().Style.Icons
-			s.changeSettings(c)
-		}
-	case "theme_folder":
-		go revealFolder(filepath.Join(c.Dir, "themes"), c.ThemePath(c.Style.Theme))
-	case "iconset_folder":
-		go revealFolder(filepath.Join(c.Dir, "icons"), c.IconSetDir())
+		s.chooseTheme()
 	default:
 		return false
 	}
 	return true
+}
+
+// themeMenu opens the menu of a theme of the user's, at the right click
+// on its swatch.
+func (s *shellUI) themeMenu(btn *gtk.Widget, x, y float64) {
+	st := &s.settings
+	st.themeMenu = strings.TrimPrefix(btn.GetName(), "theme:")
+	group := gio.NewSimpleActionGroup()
+	for _, name := range []string{"trash", "folder"} {
+		a := gio.NewSimpleAction(name, nil)
+		a.ConnectActivate(&s.onThemeAction)
+		group.AddAction(a)
+		a.Unref()
+	}
+	btn.InsertActionGroup("theme", group)
+	group.Unref()
+	menu := gio.NewMenu()
+	menu.Append(i18n.T("Show in Folder"), "theme.folder")
+	menu.Append(i18n.T("Move to Trash"), "theme.trash")
+	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
+	menu.Unref()
+	uikit.Menu(&pop.Popover, uikit.AtPointer)
+	pop.SetHasArrow(false)
+	pop.SetParent(btn)
+	pop.SetPointingTo(&gdk.Rectangle{X: int32(x), Y: int32(y), Width: 1, Height: 1})
+	pop.ConnectClosed(&s.onThemeMenuClosed)
+	pop.Unref() // the swatch holds it
+	pop.Popup()
+}
+
+// themeAction does what a theme's menu chose: shows its file, or moves it
+// to the trash, the default taking its place where it was in use.
+func (s *shellUI) themeAction(action string) {
+	c := s.cfg
+	name := s.settings.themeMenu
+	if !c.IsCustomTheme(name) {
+		return
+	}
+	switch action {
+	case "folder":
+		go revealFolder(filepath.Join(c.Dir, "themes"), c.ThemePath(name))
+	case "trash":
+		if !s.trash(c.ThemePath(name)) {
+			return
+		}
+		if c.Style.AppTheme == name {
+			c.Style.AppTheme = ""
+		}
+		if c.Style.Theme == name {
+			c.Style.Theme = config.Default().Style.Theme
+		}
+		s.changeSettings(c)
+	}
 }
 
 // revealFolder shows a folder, made if missing, in the file manager, with
@@ -80,15 +111,15 @@ func (s *shellUI) trash(path string) bool {
 	return true
 }
 
-// chooseCustom asks for a theme file or an icon set folder with the
-// portal's (or GTK's) file chooser; onCustomChosen takes the answer.
-func (s *shellUI) chooseCustom(icons bool) {
+// chooseTheme asks for a theme file with the portal's (or GTK's) file
+// chooser; onCustomChosen takes the answer.
+func (s *shellUI) chooseTheme() {
 	st := &s.settings
 	if st.dialog != nil {
 		return
 	}
 	if s.onCustomChosen == nil {
-		s.onCustomChosen = func(_, result, data uintptr) { s.customChosen(result, data == 1) }
+		s.onCustomChosen = func(_, result, _ uintptr) { s.themeChosen(result) }
 	}
 	d := gtk.NewFileDialog()
 	if home, err := os.UserHomeDir(); err == nil {
@@ -97,11 +128,6 @@ func (s *shellUI) chooseCustom(icons bool) {
 		unref(f)
 	}
 	st.dialog = d
-	if icons {
-		d.SetTitle(i18n.T("Choose a folder of SVG icons"))
-		d.SelectFolder(&st.win.Window, nil, &s.onCustomChosen, 1)
-		return
-	}
 	d.SetTitle(i18n.T("Choose a theme"))
 	filter := gtk.NewFileFilter()
 	filter.SetName(i18n.T("Themes (CSS)"))
@@ -111,9 +137,9 @@ func (s *shellUI) chooseCustom(icons bool) {
 	d.Open(&st.win.Window, nil, &s.onCustomChosen, 0)
 }
 
-// customChosen installs the theme or icon set chosen and puts it in use;
-// its swatch or its place in the list shows it.
-func (s *shellUI) customChosen(result uintptr, icons bool) {
+// themeChosen installs the theme chosen and puts it in use; its swatch
+// shows it.
+func (s *shellUI) themeChosen(result uintptr) {
 	st := &s.settings
 	d := st.dialog
 	st.dialog = nil
@@ -121,13 +147,7 @@ func (s *shellUI) customChosen(result uintptr, icons bool) {
 		return
 	}
 	defer d.Unref()
-	var file *gio.FileBase
-	var err error
-	if icons {
-		file, err = d.SelectFolderFinish(&gio.AsyncResultBase{Ptr: result})
-	} else {
-		file, err = d.OpenFinish(&gio.AsyncResultBase{Ptr: result})
-	}
+	file, err := d.OpenFinish(&gio.AsyncResultBase{Ptr: result})
 	if err != nil || file == nil || st.win == nil {
 		return // cancelled, or the window closed meanwhile
 	}
@@ -137,16 +157,6 @@ func (s *shellUI) customChosen(result uintptr, icons bool) {
 		return
 	}
 	c := s.cfg
-	if icons {
-		name, _, err := c.InstallIconSet(path)
-		if err != nil {
-			s.setStatus(installError(name, err), true)
-			return
-		}
-		c.Style.Icons = name
-		s.changeSettings(c)
-		return
-	}
 	name, err := c.InstallTheme(path)
 	if err != nil {
 		s.setStatus(installError(name, err), true)
@@ -162,8 +172,6 @@ func installError(name string, err error) string {
 		return i18n.Tf("Not added: the name %s is taken; rename the file or folder", name)
 	case errors.Is(err, config.ErrNotTheme):
 		return i18n.T("Not added: a theme has @define-color lines with #rrggbb colours")
-	case errors.Is(err, config.ErrNoIcons):
-		return i18n.T("Not added: the folder has no SVG files")
 	}
 	return i18n.Tf("Not added: %s", err.Error())
 }

@@ -10,7 +10,6 @@ import (
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
-	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -19,6 +18,7 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/pinentry"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // gpgApp encrypts and decrypts with GnuPG (internal/apps/gpg): a
@@ -516,6 +516,7 @@ func (a *gpgApp) showChips() {
 		id.AddCssClass("gpg-mono-sub")
 		gtkx.Append(chip, &id.Widget)
 		x := plainIcon("unto:"+fpr, "window-close-symbolic", i18n.T("Take off"), &a.onButton)
+		x.AddCssClass("tight")
 		gtkx.Append(chip, &x.Widget)
 		n := int32(len(a.chips))
 		a.toChips.Insert(&chip.Widget, n)
@@ -706,22 +707,8 @@ func (a *gpgApp) showKeys() {
 		// A section as the other pages' are: [TITLE] and its count.
 		section := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 		section.AddCssClass("section")
-		head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-		head.AddCssClass("section-head")
-		mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-		mark.AddCssClass("mark")
-		mark.SetValign(gtk.AlignCenterValue)
-		gtkx.Append(head, &mark.Widget)
-		t := gtk.NewLabel("")
-		t.AddCssClass("section-label")
-		t.SetMarkup("<span alpha='55%'>[</span>" + glib.MarkupEscapeText(g.title, -1) + "<span alpha='55%'>]</span>")
-		gtkx.Append(head, &t.Widget)
-		n := gtk.NewLabel(i18n.Nf("%d key", "%d keys", len(g.keys), len(g.keys)))
-		n.AddCssClass("section-meta")
-		n.SetHexpand(true)
-		n.SetXalign(0)
-		gtkx.Append(head, &n.Widget)
-		gtkx.Append(section, &head.Widget)
+		head := uikit.NewHead(g.title, i18n.Nf("%d key", "%d keys", len(g.keys), len(g.keys)))
+		gtkx.Append(section, &head.Box.Widget)
 		for _, k := range g.keys {
 			gtkx.Append(section, &a.keyRow(k).Widget)
 		}

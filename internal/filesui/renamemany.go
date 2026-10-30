@@ -50,7 +50,7 @@ func (r *renamer) build() {
 	gtkx.Clear(&w.cardForm)
 
 	modes := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-	modes.AddCssClass("files-kinds")
+	modes.AddCssClass("segmented")
 	modes.SetHalign(gtk.AlignStartValue)
 	var first *gtk.ToggleButton
 	for _, m := range []struct {
@@ -120,7 +120,7 @@ func (r *renamer) build() {
 	}
 	choice := func(labels []string, chosen int, set func(int)) {
 		box := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-		box.AddCssClass("files-kinds")
+		box.AddCssClass("segmented")
 		box.SetHalign(gtk.AlignStartValue)
 		var first *gtk.ToggleButton
 		for i, l := range labels {

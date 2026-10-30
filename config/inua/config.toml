@@ -51,7 +51,7 @@ menu = false
 
 [launcher]
 # What `inua call launcher toggle` opens: "apps" or "windows".
-# (`launcher apps` and `launcher windows` open a mode directly; Tab switches.)
+# (`launcher apps` and `launcher windows` open a mode directly.)
 mode = "apps"
 
 # The default terminal (Settings, Default Apps): `inua terminal` opens it, and
@@ -152,20 +152,31 @@ theme = "yoru"
 # center and settings keep theme.
 app_theme = ""
 
-# Icons of the bar, control center, launcher and settings:
+# How inua draws apps: inua's own and the others it draws, each as the
+# object it stands for:
+#   "inua-objects"       real materials and detail (the default)
+#   "inua-objects-soft"  the same objects drawn more simply
+#   "inua-objects-flat"  the same objects drawn flat
+app_style = "inua-objects"
+
+# Icons of the other apps (dock, launcher, drawer, notifications) and of
+# files in Files: "" (the default) as app_style above, an app it has not
+# drawn keeping its icon; "system", the system's icon theme; or an installed
+# icon theme, by its folder's name ("Papirus", in /usr/share/icons or
+# ~/.local/share/icons). inua's apps keep app_style; the tray's icons come
+# from each app.
+app_icons = ""
+
+# Line icons of the bar, control center, launcher, settings and inua's
+# apps:
 #   "phosphor"  Phosphor's line icons, built in (the default)
 #   "system"    the system's icon theme
-# or an installed icon theme, by its folder's name ("Papirus", in
-# /usr/share/icons or ~/.local/share/icons), or a set of your own: a folder
-# icons/NAME/ next to this file, with SVGs named like the built-in ones
-# (NAME-symbolic.svg); icons it lacks stay Phosphor's (icons/phosphor-bold,
-# from inua init, is one). Draw them in one colour: it follows the theme.
+# or an installed icon theme, by its folder's name, or a set of your own: a
+# folder icons/NAME/ next to this file, with SVGs named like the built-in
+# ones (NAME-symbolic.svg); icons it lacks stay Phosphor's
+# (icons/phosphor-bold, from inua init, is one). Draw them in one colour:
+# it follows the theme.
 icons = "phosphor"
-
-# Icons of apps (dock, launcher, drawer, notifications) and of files in
-# Files: "system", the system's icon theme (the default), or an installed
-# icon theme, by its folder's name. The tray's come from each app.
-app_icons = "system"
 
 # A small gap between the screen edges and the bar and dock. false puts
 # them flush against the edges.
@@ -327,6 +338,50 @@ drawer = true
 # Apps always on the dock, by desktop ID (the .desktop file's name without
 # .desktop), in order. Missing ones are skipped.
 pinned = ["firefox", "io.github.lyricat.Inua.Files", "kitty"]
+
+[widgets]
+# The widget page, a place before the first workspace: a dot before the
+# workspaces on the bar opens it, so do the wheel up past the first
+# workspace and a swipe right; Escape, a workspace or a swipe left goes
+# back. Drag a widget by its head to move it on the page's grid.
+enable = true
+
+# Fingers that swipe right to the page and left back: 3 or 4, 0 for none.
+# Three fingers go through the workspaces too, taking the place of
+# hyprland.conf's three-finger workspace swipe; four leave it as it is.
+swipe = 3
+
+# The apps on its apps widget, by desktop ID. Drag one in from the dock,
+# or add it with the widget's +.
+apps = ["io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"]
+
+# The widgets on it (clock, calendar, weather, media, apps), each with the
+# column and row of the page's grid its top left corner is at (a column
+# and a row 60 pixels apart), a clear cell between any two widgets.
+[[widgets.widget]]
+kind = "clock"
+column = 0
+row = 0
+
+[[widgets.widget]]
+kind = "calendar"
+column = 7
+row = 0
+
+[[widgets.widget]]
+kind = "weather"
+column = 14
+row = 0
+
+[[widgets.widget]]
+kind = "media"
+column = 0
+row = 7
+
+[[widgets.widget]]
+kind = "apps"
+column = 7
+row = 7
 
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)

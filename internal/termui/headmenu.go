@@ -2,6 +2,7 @@ package termui
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gtk"
@@ -10,6 +11,7 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/term/settings"
 	"github.com/lyricat/inua/internal/term/webterm"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // The menu button at the top right of column 1 drops a menu that looks as
@@ -65,7 +67,7 @@ func (a *App) dropHeadMenu(running bool) {
 	}
 	m.pop = gtk.NewPopover()
 	m.pop.AddCssClass("term-menu")
-	m.pop.SetPosition(gtk.PosBottomValue)
+	uikit.Menu(m.pop, uikit.Below)
 	m.box = gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	m.box.AddCssClass("term-menu-body")
 	m.pop.SetChild(&m.box.Widget)
@@ -75,7 +77,7 @@ func (a *App) dropHeadMenu(running bool) {
 	m.runs = map[uintptr]func(){}
 	item := func(label, action string, enabled bool, run func()) {
 		b := gtk.NewButton()
-		b.AddCssClass("term-menu-item")
+		b.AddCssClass("menu-item")
 		row := gtk.NewBox(gtk.OrientationHorizontalValue, 16)
 		l := gtk.NewLabel(label)
 		l.SetXalign(0)
@@ -83,7 +85,7 @@ func (a *App) dropHeadMenu(running bool) {
 		row.Append(&l.Widget)
 		if k := a.set.Keys[action]; action != "" && k != "" {
 			key := gtk.NewLabel(keycaps(k))
-			key.AddCssClass("term-menu-keycap")
+			key.AddCssClass("menu-key")
 			key.SetValign(gtk.AlignCenterValue)
 			row.Append(&key.Widget)
 		}
@@ -113,6 +115,7 @@ func (a *App) dropHeadMenu(running bool) {
 	head := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
 	head.AddCssClass("term-menu-title")
 	title := gtk.NewLabel(i18n.T("WEB TERMINAL"))
+	title.AddCssClass("kicker")
 	title.SetXalign(0)
 	title.SetHexpand(true)
 	head.Append(&title.Widget)
@@ -123,7 +126,7 @@ func (a *App) dropHeadMenu(running bool) {
 	meta := gtk.NewLabel(state)
 	meta.AddCssClass("term-menu-state")
 	if class != "" {
-		mark.AddCssClass(class)
+		mark.AddCssClass(strings.TrimPrefix(class, "s-")) // the mark's state: on, warn
 		meta.AddCssClass(class)
 	}
 	head.Append(&mark.Widget)

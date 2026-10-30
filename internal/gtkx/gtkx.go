@@ -17,6 +17,7 @@ package gtkx
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 	"time"
 
@@ -25,6 +26,14 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"github.com/lyricat/inua/internal/i18n"
 )
+
+// init keeps the main goroutine on the process's main thread, which Go
+// otherwise moves between threads whenever it waits. AppKit takes only the
+// main thread: GtkApplication's start on another, setting the menu bar,
+// ends the program on macOS (issue #48).
+func init() {
+	runtime.LockOSThread()
+}
 
 // --- main loop ---
 

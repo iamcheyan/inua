@@ -76,6 +76,7 @@ the view uses the tricky parts of puregotk only through `gtkx`.
 | `internal/dbustest` | A private dbus-daemon for tests | Done |
 | `internal/layershell` | purego binding of gtk4-layer-shell and the `LD_PRELOAD` re-exec | Done |
 | `internal/gtkx` | Wrappers for puregotk's ownership, callbacks, main thread and `.ui` loading | Done |
+| `internal/uikit` | design/ui.md's pieces of several widgets, for the shell and the apps alike: a section and its head (`NewSection`, `NewHead`, `Bracketed`), a menu's look and motion (`Menu`) | Done |
 | `internal/shell` | Shell state: the launcher (modes, ranking, selection, focus rules for cancel and execute), each monitor's workspaces and title, the dock (apps and windows, order, click target), screenshot geometry (selections, window stacking, pixels), status icons and text, merging slider values, relative times | Done, tested |
 | `internal/config` | `~/.config/inua/config.toml` (TOML): defaults, validation (bad values fall back with a warning), strftime clocks, the commented writer | Done, tested |
 | `internal/bootstrap` | `inua init`: writes the embedded samples without overwriting (`-force` keeps a `.bak`); checks that Hyprland starts the shell and loads `inua.conf` (or requires `inua.lua`) | Done, tested |
@@ -347,28 +348,62 @@ how errors are shown, is in [design/ui.md](../design/ui.md); in short:
   chosen with `style.theme`; a test keeps the names and the files in step.
   A user's theme, `themes/<name>.css` beside `config.toml`, is loaded over
   `yoru` (or over the built-in theme of its name), so it needs only the
-  tokens it changes (`config.ThemeCSS`).
-- Icons: Phosphor's regular icons (`ui/icons`, MIT), written as an icon
-  theme for the shell's process that inherits the system's; app and tray
-  icons stay the system's. inua's apps write one that inherits Adwaita,
-  set before they start (docs/performance.md). `style.icons = "system"`
+  tokens it changes (`config.ThemeCSS`). It is a swatch among the
+  built-in ones; a right click on it opens Show in Folder and Move to
+  Trash, and a last swatch adds one.
+- Icons, in three: the app style (`style.app_style`, Settings' "App
+  style"): `inua-objects` (the default), `inua-objects-soft` or
+  `inua-objects-flat`, drawn by `design/icons` and installed as icon
+  themes of those names; inua's apps' own icons come from it
+  (`inuaIcons`, `Style.InuaIconTheme`), and the other apps' too unless
+  `style.app_icons` ("Other apps") names the system's or an installed
+  theme (`appIcons`, `Style.AppIconTheme`); elsewhere inua's apps' icons
+  are hicolor's, the objects. The line icons (`style.icons`, "Line
+  icons"): Phosphor's regular icons (`ui/icons`, MIT), written as an icon
+  theme for the shell's process that inherits the system's; inua's apps
+  write one that inherits Adwaita, set before they start
+  (docs/performance.md). An inua set in `style.icons`, as it held the app
+  style for a while, becomes the app style. `style.icons = "system"`
   uses the system theme in the shell, and an installed theme's name
   (`config.IconThemes`) that theme; the apps keep Phosphor for both. A
   user's set, `icons/<name>/` beside `config.toml`, is copied over the
   Phosphor icons into an icon theme of its own name (`style.IconTheme`),
-  in the shell and in inua's apps. `style.app_icons` naming an installed
-  theme takes app icons from it: in the shell from a `GtkIconTheme` of
-  its own (`appIcons`, apart from the shell's icons), in Files with the
-  files' icons (`DesktopIcons`); the tray's stay each app's.
+  in the shell and in inua's apps. Settings shows the app styles as tiles,
+  each with a few of its apps, a right click opening Preview All (every
+  app the style draws, in a window), and the line icons in a menu with
+  Preview All beside it (every icon of the set), the user's sets among
+  them; the icons are filled off
+  the main thread, reading a large theme taking a quarter of a second
+  (`settings_iconsets.go`). `style.app_icons` naming an installed
+  theme (inua's three among them) takes app icons from it: in the shell
+  from a `GtkIconTheme` of its own (`appIcons`, apart from the shell's
+  icons; an icon given as a file, a snap's, by the snap's or the file's
+  name, `fileIconNames`), in Files with the files' icons
+  (`DesktopIcons`); the tray's stay each app's.
 - Text size: `style.text_scale` (80 to 150 percent, the Appearance page's
   "Text size") multiplies the `font-size` pixel values of `ui/style.css` as
   it loads (`style.ScaleText`), in the shell and in inua's apps; icons,
   spacing and the user's `style.css` keep their sizes.
 - Launcher: a head with the mark, the mode and the switch hint; the entry
-  has only a bottom hairline; the selected row is the accent at 9% with a
-  38% hairline; notices (why the list is empty, or `[ERROR]` and the reason)
-  follow the list; key hints at the bottom. Its height is fixed: a notice
-  takes a result row, so the window never resizes.
+  has only a bottom hairline; in apps mode, apps that rank together show as
+  a grid, six 64 px icons to a line (`appcell.blp`), the rest as rows
+  (`row.blp`), laid out by `shell.Launcher.Lines`, lined up with the
+  query's edges. All results are built, again only when they change
+  (`Version`), in a scroll area that follows the selection. Below it,
+  under apps, a foot shows the apps that come next, blurred more the
+  lower: strips, each holding copies of the lines just below the view,
+  scrolled to line up and blurred one step more (GTK's CSS has no
+  backdrop filter, and a `GtkWidgetPaintable` of the results is empty
+  below the view: GTK does not draw what is scrolled out of sight),
+  under a fade. Answers, commands, the web search and the assistant
+  follow the apps (`appsFirst`, the best match still selected), two to a
+  line (`RowCols`), and stay below the foot, sharp, in at most half the
+  results' height (`Launcher.Pinned`); with no apps they fill the results. The selection is one box over the results (`highlight`)
+  gliding to the selected one as the view scrolls to it, each frame
+  closing the distance (`stepLauncher`): the accent at 9% with a 38%
+  hairline. A short grid line starts at the left. Notices (why
+  the list is empty, or `[ERROR]` and the reason) follow the results; key
+  hints at the bottom. Its size is fixed, so the window never resizes.
 - Control center: four tiles with status marks; display and sound sections
   of "label + hairline + percentage"; hairline sliders with small square
   knobs; mute left of the volume slider; screenshot, lock and settings in

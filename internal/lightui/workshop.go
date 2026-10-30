@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"codeberg.org/puregotk/puregotk/v4/gio"
-	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -18,6 +17,7 @@ import (
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 	"github.com/lyricat/inua/internal/workshop"
 )
 
@@ -561,19 +561,10 @@ func (a *workshopApp) make(n workshop.Node) *wsNode {
 		w.w = &w.kids.Widget
 	case "section":
 		box := vbox("section", 0)
-		head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
-		head.AddCssClass("section-head")
-		mark := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
-		mark.AddCssClass("mark")
-		mark.SetValign(gtk.AlignCenterValue)
-		gtkx.Append(head, &mark.Widget)
-		w.title = label("section-label")
-		gtkx.Append(head, &w.title.Widget)
-		w.meta = label("section-meta")
-		w.meta.SetHexpand(true)
-		w.meta.SetEllipsize(3)
-		gtkx.Append(head, &w.meta.Widget)
-		gtkx.Append(box, &head.Widget)
+		head := uikit.NewHead("", "")
+		w.title, w.meta = head.Label, head.Meta
+		w.title.SetVisible(true)
+		gtkx.Append(box, &head.Box.Widget)
 		w.kids = vbox("section-body", 6)
 		gtkx.Append(box, &w.kids.Widget)
 		w.w = &box.Widget
@@ -748,7 +739,7 @@ func (a *workshopApp) update(w *wsNode, n workshop.Node) {
 		}
 		return
 	case "section":
-		w.title.SetMarkup("<span alpha='55%'>[</span>" + glib.MarkupEscapeText(strings.ToUpper(n.Title), -1) + "<span alpha='55%'>]</span>")
+		w.title.SetMarkup(uikit.Bracketed(strings.ToUpper(n.Title)))
 		w.meta.SetText(n.Meta)
 	case "row":
 		w.title.SetText(n.Title)

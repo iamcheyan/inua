@@ -440,6 +440,38 @@ url = "https://example.com/"
 	}
 }
 
+func TestWidgets(t *testing.T) {
+	c, w, err := Load(write(t, "[widgets]\nswipe = 4\napps = [\"firefox\"]\n[[widgets.widget]]\nkind = \"apps\"\ncolumn = 3\nrow = 1\n[[widgets.widget]]\nkind = \"clock\"\ncolumn = -2\nrow = 9\n"))
+	want := []WidgetPlace{{"apps", 3, 1}, {"clock", 0, 9}} // no column before the first
+	if err != nil || len(w) != 0 || !slices.Equal(c.Widgets.Places, want) || !slices.Equal(c.Widgets.Apps, []string{"firefox"}) || !c.Widgets.Enable || c.Widgets.Swipe != 4 {
+		t.Fatalf("got %+v %v %v", c.Widgets, w, err)
+	}
+	// One not known is left out, with a warning; one twice once, silently.
+	c, w, _ = Load(write(t, "[widgets]\nswipe = 2\n[[widgets.widget]]\nkind = \"clock\"\n[[widgets.widget]]\nkind = \"stocks\"\n[[widgets.widget]]\nkind = \"clock\"\nrow = 9\n"))
+	if len(w) != 2 || !slices.Equal(c.Widgets.Places, []WidgetPlace{{"clock", 0, 0}}) || c.Widgets.Swipe != 3 {
+		t.Errorf("got %+v %v", c.Widgets, w)
+	}
+	// None is a page with nothing on it, not the defaults, and stays so
+	// written and read again.
+	c, _, _ = Load(write(t, "[widgets]\nwidget = []\n"))
+	if len(c.Widgets.Places) != 0 {
+		t.Errorf("empty: %+v", c.Widgets.Places)
+	}
+	if again, _, _ := Load(write(t, Format(c))); len(again.Widgets.Places) != 0 {
+		t.Errorf("empty, written: %+v", again.Widgets.Places)
+	}
+	// The first version's list: its widgets in rows of three, in order.
+	c, w, _ = Load(write(t, "[widgets]\nitems = [\"media\", \"apps\", \"clock\", \"weather\"]\n"))
+	step := WidgetSpan + 1
+	want = []WidgetPlace{{"media", 0, 0}, {"apps", step, 0}, {"clock", 2 * step, 0}, {"weather", 0, step}}
+	if len(w) != 0 || !slices.Equal(c.Widgets.Places, want) {
+		t.Errorf("items: %+v %v", c.Widgets.Places, w)
+	}
+	if strings.Contains(Format(c), "items") {
+		t.Error("the first version's list is written again")
+	}
+}
+
 func TestDockPosition(t *testing.T) {
 	c, w, err := Load(write(t, "[dock]\nposition = \"left\"\n[style]\nedge_gaps = false\n"))
 	if err != nil || len(w) != 0 || c.Dock.Position != "left" || c.Style.EdgeGaps {

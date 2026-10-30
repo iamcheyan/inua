@@ -12,9 +12,9 @@
    inua-bar, inua-control, inua-launcher). */
 
 window.bar, window.control, window.agenda, window.banners, window.osd, window.center, window.dock-window, window.shot-drawer-win, window.drawer-overlay, window.clipboard-panel { background: transparent; }
-window.overview { background: transparent; }
+window.overview, window.widgets { background: transparent; }
 
-window.bar, window.launcher, window.control, window.agenda, window.banners, window.osd, window.center, window.settings, window.screenshot, window.shot-drawer-win, window.lock, window.polkit, window.drawer-overlay, window.clipboard-panel, popover.menu {
+window.bar, window.widgets, window.launcher, window.control, window.agenda, window.banners, window.osd, window.center, window.settings, window.screenshot, window.shot-drawer-win, window.lock, window.polkit, window.drawer-overlay, window.clipboard-panel, popover.menu {
   font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
   font-size: 13px;
   color: @t0;
@@ -22,40 +22,57 @@ window.bar, window.launcher, window.control, window.agenda, window.banners, wind
 
 /* Shared pieces. */
 
-.tag, .kicker, .readout, .bar .island .clock, .bar .island .numeric, .mono-entry,
+.tag, .kicker, .section-label, .readout, .bar .island .clock, .bar .island .numeric, .mono-entry,
 .swatch label {
   font-family: "Geist Mono", "IBM Plex Mono", "JetBrains Mono", monospace;
   font-feature-settings: "tnum";
 }
 
-/* Labels and kickers: small capitals, tracked wide, tertiary. */
+/* A kicker: a group's name over its items (an index's, a drawer's, a
+   menu's), small capitals, tracked wide, tertiary. */
 .kicker {
   font-size: 10.5px;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: @t2;
 }
 
-/* A section or mode name in brackets: [APPS]. */
-.tag {
+/* A section's name in brackets after its mark, [STREAM]; a mode's (a tag),
+   [APPS], in the accent. */
+.section-label, .tag {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: @accent;
 }
+.tag { text-transform: uppercase; color: @accent; }
 .tag.error { color: @danger; }
 
 .readout { font-size: 11.5px; letter-spacing: 0.04em; color: @t1; }
 .dim { color: @t1; }
 .dim-icon { color: @t2; }
 
-/* The status mark. */
+/* The status mark (design/ui.md, Marks): a 7 px square, its border
+   counted, hollow when off and filled when on, or in a state's colour;
+   hollow in the accent while it waits. */
 .mark {
-  min-width: 7px;
-  min-height: 7px;
+  min-width: 5px;
+  min-height: 5px;
   border: 1px solid @t2;
+  border-radius: 1px;
   background: transparent;
+}
+.mark.on { border-color: @accent; background: @accent; }
+.mark.ok { border-color: @ok; background: @ok; }
+.mark.warn { border-color: @warn; background: @warn; }
+.mark.danger { border-color: @danger; background: @danger; }
+.mark.wait { border-color: @accent; background: transparent; }
+/* A head's mark, before a section's or a panel's [LABEL]: filled, quieter
+   than the accent, which is for what is on. */
+.section-head .mark, .widget-head .mark, .pass-head .mark, .widget-page-head .mark,
+.launcher .head .mark, .agenda .mark, .center .mark, .clipboard-panel .mark {
+  border-color: mix(@t0, @accent, 0.68);
+  background: mix(@t0, @accent, 0.68);
 }
 
 separator { background: @line; min-height: 1px; min-width: 1px; }
@@ -92,8 +109,8 @@ scrolledwindow > overshoot.right {
 
 /* A borderless icon button. */
 button.plain {
-  min-width: 28px;
-  min-height: 28px;
+  min-width: 34px;
+  min-height: 34px;
   padding: 0;
   border: none;
   border-radius: 2px;
@@ -104,9 +121,77 @@ button.plain {
 }
 button.plain:hover { background: alpha(@accent, 0.09); color: @t0; }
 button.plain:disabled { color: alpha(@t2, 0.5); }
+/* A framed icon button in a bar of tools (Files', Mail's, inua-term's):
+   a faint hairline, clear, 34 px; turned on, in the accent's tint. */
+button.tool, menubutton.tool > button {
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid alpha(@line, 0.55);
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: @t1;
+}
+button.tool:hover, menubutton.tool > button:hover { border-color: alpha(@accent, 0.2); background: alpha(@accent, 0.07); color: @t0; }
+button.tool:checked, menubutton.tool > button:checked { border-color: alpha(@accent, 0.38); background: alpha(@accent, 0.09); color: @t0; }
+button.tool.on { color: @accent; }
+button.tool:disabled { color: alpha(@t2, 0.5); border-color: alpha(@line, 0.35); }
 /* An icon button is square: no side padding, as wide as it is tall. */
 button.image-button { padding-left: 0; padding-right: 0; }
-.settings button.outlined.image-button { min-width: 34px; }
+button.outlined.image-button { min-width: 34px; }
+
+/* The buttons with a frame (design/ui.md, Controls), the same in every
+   window and surface: 34 px where they sit in a row, 26 px with .small (in
+   a section's head, a tight bar); a hairline and 2 px corners. Outlined
+   for most; filled with the accent for the one main action, with danger
+   for what is lost for good, with primary for a light app's main action. */
+button.outlined, menubutton.outlined > button,
+button.suggested-action, button.destructive-action, button.primary {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid @line;
+  border-radius: 2px;
+  box-shadow: none;
+  background-image: none;
+  transition: background 120ms ease-out, border-color 120ms ease-out;
+}
+button.outlined, menubutton.outlined > button { background: @surface; color: @t0; }
+button.outlined:hover, menubutton.outlined > button:hover {
+  background: mix(@surface, @accent, 0.06);
+  border-color: alpha(@accent, 0.38);
+}
+button.outlined:disabled, menubutton.outlined > button:disabled { color: @t2; background: transparent; border-color: alpha(@line, 0.6); }
+button.outlined.danger { color: @danger; }
+button.outlined.danger:hover { border-color: alpha(@danger, 0.5); background: alpha(@danger, 0.06); }
+/* Filled, they stay filled when hovered (not the outlined buttons' tint,
+   which left the dark label on a dark ground) and while at work. */
+button.suggested-action { border-color: @accent; background: @accent; color: @app; }
+button.suggested-action:hover { border-color: mix(@accent, @t0, 0.14); background: mix(@accent, @t0, 0.14); }
+button.destructive-action { border-color: @danger; background: @danger; color: @app; }
+button.destructive-action:hover { border-color: mix(@danger, @t0, 0.14); background: mix(@danger, @t0, 0.14); }
+button.primary { border-color: @primary; background: @primary; color: @app; }
+button.primary:hover { border-color: mix(@primary, @app, 0.12); background: mix(@primary, @app, 0.12); }
+button.suggested-action label, button.destructive-action label, button.primary label { color: @app; }
+button.suggested-action:disabled, button.destructive-action:disabled, button.primary:disabled { opacity: 0.45; }
+button.outlined.small, menubutton.outlined.small > button,
+button.suggested-action.small, button.destructive-action.small, button.primary.small {
+  min-height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+button.outlined.small.image-button { min-width: 26px; padding: 0; }
+/* The other sizes, for every button: large (44 px), small (26 px) and,
+   for an icon in a tight row, tight (20 px). */
+button.outlined.large, menubutton.outlined.large > button,
+button.suggested-action.large, button.destructive-action.large, button.primary.large {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+button.plain.large, button.image-button.large, button.tool.large { min-width: 44px; min-height: 44px; }
+button.plain.small, button.image-button.small, button.tool.small { min-width: 26px; min-height: 26px; }
+button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20px; }
 
 /* --- bar ------------------------------------------------------------- */
 
@@ -183,6 +268,19 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .bar .island .workspaces button.active { background: @t1; }
 .bar .island .workspaces button.focused { min-width: 18px; background: @accent; }
 .bar .island .workspaces button.urgent { background: @danger; }
+/* The widget page's place before them: a hollow dot of the same size, that
+   stretches into the accent pill while the page shows, when the workspace
+   under it is only active. */
+.bar .island .workspaces button.widgets-mark {
+  min-width: 4px;
+  min-height: 4px;
+  border: 1px solid alpha(@t2, 0.9);
+  border-radius: 3px;
+  background: transparent;
+}
+.bar .island .workspaces button.widgets-mark:hover { border-color: @t1; background: transparent; }
+.bar .island .workspaces button.widgets-mark.open { min-width: 16px; background: @accent; border-color: @accent; }
+.bar .island .workspaces.under-page button.focused { min-width: 6px; background: @t1; }
 
 .bar .island .app-menu button { min-height: 24px; min-width: 0; padding: 0 5px; }
 
@@ -217,13 +315,20 @@ button.image-button { padding-left: 0; padding-right: 0; }
 
 /* --- launcher -------------------------------------------------------- */
 
-.launcher {
+/* The window is clear; its box is the glass, so it can grow in as it
+   opens and fade away as it closes (Go destroys the window after). */
+window.launcher { background: transparent; }
+.launcher > box {
   background: @glass;
   border: 1px solid @line;
   border-radius: 4px;
+  padding-bottom: 8px;
+  animation: launcher-in 180ms cubic-bezier(0.2, 0.9, 0.3, 1);
 }
+.launcher > box.closing { animation: launcher-out 120ms ease-in forwards; }
+@keyframes launcher-in { from { opacity: 0; transform: scale(0.96); } }
+@keyframes launcher-out { to { opacity: 0; transform: scale(0.97); } }
 .launcher .head { padding: 16px 18px 6px; }
-.launcher .head .mark { background: @accent; border-color: @accent; }
 
 .launcher entry.query {
   margin: 0 18px;
@@ -241,8 +346,26 @@ button.image-button { padding-left: 0; padding-right: 0; }
 }
 .launcher entry.query:focus-within { border-bottom-color: alpha(@accent, 0.6); }
 .launcher entry.query placeholder { color: @t2; }
+.launcher entry.query text selection { background: alpha(@accent, 0.3); color: @t0; }
 
-.launcher .results { padding: 8px 10px 4px; }
+/* The results scroll edge to edge, their scrollbar at the window's edge;
+   inside, they line up with the query's edges. */
+.launcher .results-scroll { margin: 0; }
+.launcher .results { padding: 8px 18px 12px; }
+/* Under the results, the ones just below the view: strips of them blurred
+   more the lower (blur1 to blur8, Go's blurSteps), under a fade into the
+   window; edge to edge as the results are, the copies padded as they. */
+.launcher .results-foot { margin: 0; padding: 0; }
+.launcher .results-foot .ghost { padding: 0 18px; }
+.launcher .results-foot .blur1 { filter: blur(0.75px); }
+.launcher .results-foot .blur2 { filter: blur(1.5px); }
+.launcher .results-foot .blur3 { filter: blur(2.25px); }
+.launcher .results-foot .blur4 { filter: blur(3px); }
+.launcher .results-foot .blur5 { filter: blur(3.75px); }
+.launcher .results-foot .blur6 { filter: blur(4.5px); }
+.launcher .results-foot .blur7 { filter: blur(5.25px); }
+.launcher .results-foot .blur8 { filter: blur(6px); }
+.launcher .results-fade { background: linear-gradient(to bottom, alpha(@app, 0), alpha(@app, 0.35)); }
 .launcher .row {
   padding: 7px 10px;
   border: 1px solid transparent;
@@ -251,16 +374,21 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .launcher .row .title { font-size: 14px; }
 .launcher .row .detail { font-size: 11.5px; color: @t2; }
 .launcher .row .glyph { font-size: 20px; color: @t0; }
-.launcher .row.selected { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); }
+/* The selection: one box over the results, gliding between them; a
+   pinned row (the web search, the assistant) is marked itself. */
+.launcher .highlight, .launcher .pinned .row.selected { background: alpha(@accent, 0.09); border: 1px solid alpha(@accent, 0.38); border-radius: 2px; }
+.launcher .pinned { margin: 0 18px; padding-bottom: 4px; }
+/* Apps in a grid (appcell.blp): six to a line. */
+.launcher .cell {
+  padding: 8px 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+.launcher .cell .title { font-size: 12.5px; }
 
 .launcher .notice {
   margin: 4px 20px 0;
   padding: 6px 0;
-}
-
-.launcher .foot {
-  padding: 10px 18px 12px;
-  border-top: 1px solid @line;
 }
 
 /* Viewer: a thin toolbar, the picture on a quiet ground, the
@@ -278,8 +406,6 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .viewer button.viewer-trash label { color: @danger; }
 .viewer-stage { background: mix(@app, black, 0.22); }
 .viewer button.viewer-edge {
-  min-width: 44px;
-  min-height: 44px;
   margin: 0 12px;
   padding: 0;
   border: 1px solid alpha(@line, 0.7);
@@ -329,7 +455,6 @@ button.image-button { padding-left: 0; padding-right: 0; }
   padding: 14px 16px 16px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
 }
-.agenda .mark { background: @accent; border-color: @accent; }
 .agenda-month-bar { padding-top: 12px; border-top: 1px solid alpha(@line, 0.7); }
 .agenda-month-bar .readout { color: @t1; }
 .agenda-grid .week { min-width: 26px; padding-right: 4px; }
@@ -375,6 +500,77 @@ button.agenda-weather .agenda-weather-day image { color: @t1; }
   padding: 14px 16px 16px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
 }
+/* The widget page (widgets.blp): glass over the windows between the bar
+   and the dock, its cards as a library's tiles. */
+.widget-page { background: @glass; border: 1px solid @line; padding: 18px 32px 24px; }
+.widget-page-head { min-height: 32px; padding-bottom: 12px; border-bottom: 1px solid alpha(@line, 0.7); }
+.widget-page-hint { color: @t2; }
+.widget-page-head menubutton.link > button {
+  min-height: 24px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: @t1;
+}
+.widget-page-head menubutton.link > button:hover { color: @t0; background: alpha(@accent, 0.06); }
+.widget-board { margin-top: 18px; }
+.widget-card {
+  padding: 12px 16px 16px;
+  background: alpha(@surface, 0.72);
+  border: 1px solid @line;
+  border-radius: 4px;
+}
+/* Dragged, a card floats over the others and the grid. */
+.widget-card.lifted { background: @surface; border-color: alpha(@accent, 0.38); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32); }
+/* The grid a card snaps to, drawn in Go (snapshotGrid): a cross at each
+   joint, every 60 px (shell.WidgetCell), in this colour; and the cells
+   it lands on: the accent, or danger where another card is. */
+.widget-grid { color: alpha(@t1, 0.55); opacity: 0; transition: opacity 160ms ease-out; }
+.widget-grid.shown { opacity: 1; }
+.widget-spot { background: alpha(@accent, 0.08); border: 1px dashed alpha(@accent, 0.6); border-radius: 4px; }
+.widget-spot.blocked { background: alpha(@danger, 0.08); border-color: alpha(@danger, 0.6); }
+.widget-head { min-height: 22px; }
+button.widget-app .sub { color: @t1; }
+button.widget-plain {
+  padding: 4px 6px;
+  margin: -4px -6px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  box-shadow: none;
+}
+button.widget-plain:hover { background: alpha(@accent, 0.05); border-color: alpha(@accent, 0.2); }
+.widget-time {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 46px;
+  font-weight: 300;
+  font-feature-settings: "tnum";
+  color: @t0;
+}
+.widget-zone { padding: 8px 0; border-top: 1px solid alpha(@line, 0.6); }
+/* The days' room is kept while the forecast is read, so the card does not
+   grow by a row when it comes. */
+.widget-days { min-height: 46px; }
+.widget-zone-time { font-size: 15px; color: @t0; }
+.widget-art { min-width: 64px; min-height: 64px; border-radius: 3px; background: @surface2; color: @t2; }
+.widget-media button.flat { min-width: 34px; min-height: 30px; }
+button.widget-app {
+  padding: 8px 2px 6px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  box-shadow: none;
+}
+button.widget-app:hover { background: alpha(@accent, 0.06); border-color: alpha(@accent, 0.2); }
+button.widget-app.widget-add image { color: @t2; }
+.widget-apps > flowboxchild { padding: 0; background: none; }
+popover.widget-picker > contents { padding: 8px; min-width: 260px; }
+button.widget-pick { padding: 6px 8px; }
+
 /* Hanging from the bar (drop.go): the drop draws the card's glass and
    border as one with the bar's, and the bar's own lower border while it
    hangs; nothing dims behind it, so it is the bar's glass to the eye too. */
@@ -549,7 +745,6 @@ button.agenda-weather .agenda-weather-day image { color: @t1; }
 .dictation-state.failed { color: @danger; }
 .dictation-state.working { animation: rec-pulse 1.2s ease-in-out infinite; }
 .dictation-wave.settled { opacity: 0.35; }
-.dictation-card button.plain { min-width: 24px; min-height: 24px; }
 .osd-card levelbar trough { min-height: 2px; padding: 0; border: none; border-radius: 0; background: @line; }
 .osd-card levelbar block { min-height: 2px; border: none; border-radius: 0; }
 .osd-card levelbar block.filled { background: @accent; }
@@ -574,19 +769,9 @@ button.agenda-weather .agenda-weather-day image { color: @t1; }
 .note-body { color: @t1; }
 .note-body link { color: @accent; }
 .note image { color: @t1; }
-.note button.note-close { min-width: 22px; min-height: 22px; opacity: 0; transition: opacity 120ms ease-out; }
+.note button.note-close { opacity: 0; transition: opacity 120ms ease-out; }
 .note:hover button.note-close { opacity: 1; }
 .note-actions { margin-top: 4px; }
-.note-actions button.outlined {
-  min-height: 28px;
-  padding: 0 10px;
-  border: 1px solid @line;
-  border-radius: 2px;
-  box-shadow: none;
-  background: transparent;
-  color: @t0;
-}
-.note-actions button.outlined:hover { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); }
 
 .center .backdrop, .clipboard-panel .backdrop { background: alpha(@app, 0.18); }
 .center .card, .clipboard-panel .clipboard-card {
@@ -596,7 +781,6 @@ button.agenda-weather .agenda-weather-day image { color: @t1; }
   padding: 14px 16px 16px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
 }
-.center .mark, .clipboard-panel .mark { background: @accent; border-color: @accent; }
 .center .sub { font-size: 12px; color: @t2; }
 .center button.focus.on { color: @accent; background: alpha(@accent, 0.09); }
 button.link {
@@ -690,14 +874,7 @@ button.link:hover { color: @t0; }
 .dock button.dock-item.dock-drawer:hover image { color: @accent; transform: none; }
 /* Its glass, border, arrow and shadow are drawn round it (bubble.go). */
 .drawer-overlay .drawer { padding: 8px 12px 12px; }
-.drawer-title {
-  margin: 10px 4px 6px;
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: @t2;
-}
+.drawer-title { margin: 10px 4px 6px; }
 .drawer-grid + .drawer-title { margin-top: 14px; padding-top: 12px; border-top: 1px solid alpha(@line, 0.6); }
 button.drawer-app {
   min-width: 88px;
@@ -720,30 +897,69 @@ separator.dock-sep { margin: 6px 4px 8px; background: alpha(@line, 0.9); min-wid
    autohidden dock that is only its edge would never be shown. */
 .dock-edge { background: alpha(@line, 0.01); }
 
-/* --- tray menus ------------------------------------------------------ */
+/* --- menus (design/ui.md, Menus) ------------------------------------- */
 
-popover.menu > contents {
-  background: alpha(@app, 0.97);
-  border: 1px solid @line;
-  border-radius: 4px;
-  padding: 4px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
-}
-/* A menu's arrow: the same as its body, not GTK's white. */
-popover.menu > arrow { background-color: alpha(@app, 0.97); border: 1px solid @line; }
-popover.menu modelbutton {
-  min-height: 26px;
-  padding: 2px 10px;
-  border: 1px solid transparent;
-  border-radius: 2px;
+/* Every menu, the shell's and the apps' (uikit.Menu): the glass in a
+   hairline, the floating cards' shadow, an arrow at its trigger in the
+   same glass. It grows out of where it opens as it fades in, at each open
+   (grow-a and grow-b are twins, traded at each show so GTK starts the
+   animation again). Hyprland blurs what is behind (inua.conf's popups).
+   A popover is a surface of its own, so its type is given here whole. */
+popover.glass-menu {
+  font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
+  font-size: 13.5px;
   color: @t0;
 }
-popover.menu modelbutton:hover, popover.menu modelbutton:selected {
-  background: alpha(@accent, 0.09);
-  border-color: alpha(@accent, 0.38);
+popover.glass-menu > contents {
+  padding: 6px;
+  border: 1px solid alpha(@line, 0.9);
+  border-radius: 4px;
+  background: @glass;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
+  transform-origin: 50% 0;
 }
-popover.menu modelbutton:disabled { color: @t2; }
-popover.menu separator { margin: 4px 6px; }
+popover.glass-menu.above > contents { transform-origin: 50% 100%; }
+popover.glass-menu.at-pointer > contents { transform-origin: 0 0; }
+popover.glass-menu > arrow { background: @glass; border: 1px solid alpha(@line, 0.9); }
+popover.glass-menu.grow-a > contents { animation: menu-grow-a 200ms cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+popover.glass-menu.grow-b > contents { animation: menu-grow-b 200ms cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+popover.glass-menu.grow-a > arrow { animation: menu-fade-a 140ms ease-out; }
+popover.glass-menu.grow-b > arrow { animation: menu-fade-b 140ms ease-out; }
+@keyframes menu-grow-a { from { opacity: 0; transform: scale(0.55); } to { opacity: 1; transform: none; } }
+@keyframes menu-grow-b { from { opacity: 0; transform: scale(0.55); } to { opacity: 1; transform: none; } }
+@keyframes menu-fade-a { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menu-fade-b { from { opacity: 0; } to { opacity: 1; } }
+popover.glass-menu button.menu-item, popover.glass-menu modelbutton { min-width: 240px; }
+/* An item's keys at its end: a keycap in the menu's voice. */
+popover.glass-menu .menu-key {
+  padding: 1px 6px;
+  border: 1px solid alpha(@line, 0.9);
+  border-radius: 2px;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: @t1;
+}
+popover.glass-menu separator { margin: 6px 10px; background: alpha(@line, 0.6); }
+/* A menu's item (design/ui.md, Menus), in every menu: GTK's own
+   (modelbutton) and the ones built of buttons (.menu-item). */
+popover.menu modelbutton, button.menu-item {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: none;
+  color: @t0;
+  font-weight: normal;
+  outline: none;
+}
+button.menu-item label { font-weight: 400; }
+popover.menu modelbutton:hover, popover.menu modelbutton:selected,
+button.menu-item:hover, button.menu-item:focus-visible {
+  border-color: alpha(@accent, 0.25);
+  background: alpha(@accent, 0.07);
+}
+popover.menu modelbutton:disabled, button.menu-item:disabled { color: @t2; }
 
 /* --- settings -------------------------------------------------------- */
 
@@ -830,13 +1046,11 @@ window.settings { background: @app; font-size: 14px; }
 .settings .library-tile-icon { color: @t2; transition: color 180ms ease-out; }
 .settings .library-tiles flowboxchild:hover .library-tile-icon { color: @t1; }
 .settings .library-tiles flowboxchild:selected .library-tile-icon { color: @accent; }
-.settings .library-tile .mark.on { background: @accent; border-color: @accent; }
 .settings .library-empty-mark { color: @t2; }
 .settings .library-empty-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 17px; color: @t0; }
 /* The panel's head: the chosen one's name and what it is doing, its mark
    filled while it runs. */
 .settings .panel-head { padding: 22px 32px 16px; border-bottom: 1px solid alpha(@line, 0.55); }
-.settings .panel-head .mark.on { background: @accent; border-color: @accent; }
 .settings .status {
   min-height: 16px;
   padding: 14px 22px 18px;
@@ -867,19 +1081,6 @@ window.settings { background: @app; font-size: 14px; }
 /* The copy of the current section's head held at the top of the page. */
 .settings .section-head.sticky { margin: 0 32px; background: @app; }
 .settings .section-head { min-height: 44px; border-bottom: 1px solid alpha(@line, 0.55); }
-.settings .section-head .mark {
-  min-width: 7px;
-  min-height: 7px;
-  border: none;
-  border-radius: 1px;
-  background: mix(@t0, @accent, 0.68);
-}
-.settings .section-label {
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
 .settings .section-meta { font-size: 12px; color: @t2; }
 .settings .section-body { padding: 4px 0; }
 .settings .section-body > separator { background: alpha(@line, 0.55); }
@@ -905,7 +1106,6 @@ window.settings { background: @app; font-size: 14px; }
 .settings .keycap.unset { color: @t2; border-style: dashed; background: transparent; }
 /* Dictation's page: its status mark, filled when it is ready and red
    while it listens; the microphone test's waveform; the model in use. */
-.settings .dictation-status .mark.on { background: @accent; border-color: @accent; }
 .settings .dictation-status .mark.listening { background: @danger; border-color: @danger; }
 .settings .dictation-wave { color: @accent; }
 .settings .voxtype-models > .row.in-use .title { color: @accent; }
@@ -973,7 +1173,7 @@ window.settings { background: @app; font-size: 14px; }
 .settings entry placeholder { color: @t2; }
 .settings .mono-entry { font-size: 12.5px; }
 
-.settings button.outlined, .settings menubutton.outlined > button, .settings dropdown > button {
+.settings dropdown > button {
   min-height: 34px;
   padding: 0 14px;
   background: @surface;
@@ -983,11 +1183,10 @@ window.settings { background: @app; font-size: 14px; }
   box-shadow: none;
   transition: background 120ms ease-out, border-color 120ms ease-out;
 }
-.settings button.outlined:hover, .settings menubutton.outlined > button:hover, .settings dropdown > button:hover {
+.settings dropdown > button:hover {
   background: mix(@surface, @accent, 0.06);
   border-color: alpha(@accent, 0.38);
 }
-.settings button.outlined:disabled, .settings menubutton.outlined > button:disabled { color: @t2; background: transparent; border-color: alpha(@line, 0.6); }
 .settings dropdown > button { min-width: 150px; }
 /* A number: an entry's box with the digits in mono, and − and + as flat
    cells behind hairlines, the height of the buttons beside it. */
@@ -1086,6 +1285,19 @@ window.settings { background: @app; font-size: 14px; }
 .swatch .chip { min-width: 9px; min-height: 9px; }
 .swatch label { font-size: 11px; color: @t1; }
 .settings button.swatch.on label { color: @t0; }
+/* An app style's tile: a few of the apps it draws, on the panel colour
+   (settings_iconsets.go). */
+.swatch.iconset .ground { background: @surface; border: 1px solid @line; padding: 10px; }
+.swatch.iconset .ground image { color: @t1; }
+/* Preview All: every icon of a set, in a window of its own. */
+.icon-preview .preview-body { padding: 22px 26px 28px; }
+.icon-preview .preview-title { font-size: 20px; color: @t0; }
+.icon-preview .preview-app label { font-size: 11.5px; color: @t1; }
+.icon-preview .preview-icon { color: @t0; padding: 6px; }
+/* The last swatch adds a theme: a dashed ground, a plus in it. */
+.swatch.add .ground { border: 1px dashed alpha(@line, 0.9); background: transparent; }
+.swatch.add image { color: @t2; }
+.settings button.swatch.add:hover image { color: @accent; }
 
 .settings scrollbar { background: transparent; border: none; }
 .settings scrollbar slider { min-width: 4px; border-radius: 0; background: @line; }
@@ -1155,7 +1367,7 @@ button.shot-mode:checked image { color: @accent; }
 .shot-picker-body { padding: 64px 96px 150px; }
 .shot-pick-head { margin: 30px 2px 12px; animation: shot-pick-rise 420ms cubic-bezier(0.2, 0.9, 0.25, 1.1) backwards; }
 .shot-picker-body > .shot-pick-head:first-child { margin-top: 0; }
-.shot-pick-head .mark.on { background: @accent; border-color: @accent; }
+
 .shot-pick-title {
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 11px;
@@ -1168,7 +1380,7 @@ button.shot-mode:checked image { color: @accent; }
 button.shot-pick-card {
   padding: 0;
   border: 1px solid alpha(@line, 0.9);
-  border-radius: 6px;
+  border-radius: 4px;
   background: @surface;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.26);
   animation: shot-pick-rise 420ms cubic-bezier(0.2, 0.9, 0.25, 1.1) backwards;
@@ -1230,8 +1442,8 @@ button.shot-pick-card:active { transform: translateY(-2px) scale(0.99); }
 }
 .annot-bar separator { margin: 4px 6px; background: alpha(@line, 0.9); }
 .annot-bar button.annot-tool {
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 34px;
+  min-height: 34px;
   padding: 0;
   border: 1px solid transparent;
   border-radius: 2px;
@@ -1284,7 +1496,7 @@ button.shot-item {
   min-height: 0;
   padding: 0;
   border: 1px solid alpha(@line, 0.9);
-  border-radius: 3px;
+  border-radius: 2px;
   background: transparent;
   box-shadow: none;
   transition: border-color 140ms ease-out;
@@ -1376,30 +1588,13 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .polkit-password:focus-within { border-color: alpha(@accent, 0.6); }
 .polkit-info { font-size: 12px; color: @t2; }
 .polkit-info.error { color: @danger; }
-.polkit-card button {
-  min-height: 30px;
-  padding: 0 14px;
-  border-radius: 2px;
-  box-shadow: none;
-}
-.polkit-card button.outlined { border: 1px solid @line; background: transparent; color: @t0; }
-.polkit-card button.outlined:hover { background: alpha(@accent, 0.09); }
-.polkit-card button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-.polkit-card button.suggested-action:disabled { opacity: 0.45; }
-.polkit-card button.plain { min-height: 0; padding: 4px; border: none; background: transparent; color: @t1; }
+.polkit-card button.plain { border: none; background: transparent; color: @t1; }
 /* gpg's passphrase: the key it unlocks and who asks, in sections as
    Settings has (a mark, a [LABEL] on a hairline) of label and value rows. */
 .polkit-card button.pass-mask { padding: 5px; border: 1px solid transparent; border-radius: 2px; color: @t2; }
 .polkit-card button.pass-mask:hover { border-color: alpha(@line, 0.9); color: @t0; }
 .polkit-card button.pass-mask.on { border-color: alpha(@accent, 0.3); color: @accent; }
 .pass-head { min-height: 32px; margin-top: 6px; border-bottom: 1px solid alpha(@line, 0.55); }
-.pass-head .mark, .pass-note .mark {
-  min-width: 7px;
-  min-height: 7px;
-  border: none;
-  border-radius: 1px;
-  background: mix(@t0, @accent, 0.68);
-}
 .pass-section {
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 11px;
@@ -1430,7 +1625,7 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .pass-mono { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.04em; }
 /* A hidden value: dots, a little apart, tertiary. */
 .pass-masked { color: @t2; letter-spacing: 0.2em; }
-.pass-note .mark { background: @accent; }
+.pass-note .mark { border-color: @accent; background: @accent; }
 
 /* --- light apps ------------------------------------------------------ */
 
@@ -1481,20 +1676,6 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .settings .actions { padding: 12px 0 4px; }
 .settings .foot { padding: 4px 0 0; }
 
-/* A filled button for the one main action. */
-.settings button.primary {
-  min-height: 0;
-  padding: 7px 18px;
-  border: 1px solid @primary;
-  border-radius: 2px;
-  background: @primary;
-  box-shadow: none;
-  color: @app;
-}
-.settings button.primary:hover { background: mix(@primary, @app, 0.12); }
-.settings button.primary label { color: @app; }
-.settings button.outlined.danger { color: @danger; }
-.settings button.outlined.danger:hover { border-color: alpha(@danger, 0.5); background: alpha(@danger, 0.06); }
 /* Bluetooth: a device's icon; a pairing request under its device, the
    passkey a keycap a digit, those typed on the device lit. */
 .settings .bt-icon { color: @t1; }
@@ -1511,24 +1692,29 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
 .settings .fetch { padding: 16px 0 18px; }
 .settings .fetch .card-view { border-radius: 2px; }
 
-/* Toggle buttons joined in a row: °C/°F, chart ranges. */
-.settings .segmented > button {
-  min-height: 0;
+/* A segmented control (design/ui.md, Controls), a box of toggle buttons
+   or a stack switcher: °C/°F, chart ranges, GPG's Text | Files, Files'
+   list | grid. The options in one hairline frame, 34 px in all, the one
+   chosen tinted with the accent in the accent's colour; words in the
+   monospace, or icons (.icons), square. */
+.segmented { padding: 2px; border: 1px solid alpha(@line, 0.7); border-radius: 2px; background: @app; }
+.segmented > button {
+  min-height: 28px;
   min-width: 0;
-  padding: 4px 11px;
-  border: 1px solid @line;
-  border-left-width: 0;
+  padding: 0 12px;
+  border: none;
   border-radius: 0;
-  background: transparent;
   box-shadow: none;
-  color: @t1;
+  background: transparent;
+  color: @t2;
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 12px;
+  font-weight: 500;
 }
-.settings .segmented > button:first-child { border-left-width: 1px; border-radius: 2px 0 0 2px; }
-.settings .segmented > button:last-child { border-radius: 0 2px 2px 0; }
-.settings .segmented > button:hover { color: @t0; }
-.settings .segmented > button:checked { background: alpha(@accent, 0.09); color: @t0; box-shadow: inset 0 0 0 1px alpha(@accent, 0.38); }
+.segmented > button:hover { background: alpha(@t0, 0.06); color: @t0; }
+.segmented > button:checked { background: alpha(@accent, 0.16); color: @accent; }
+.segmented > button image { -gtk-icon-size: 14px; }
+.segmented.icons > button { min-width: 28px; padding: 0; }
 
 /* Facts in small frames: weather details, a stock's day. */
 .settings .cells { padding: 12px 0 4px; }
@@ -1547,19 +1733,11 @@ window.polkit { background: rgba(0, 0, 0, 0.45); } /* the screen behind, dimmed 
   font-feature-settings: "tnum";
   color: @t0;
 }
-.settings .picker-unit button.plain { min-width: 22px; min-height: 22px; padding: 0; }
 .settings .picker-colon { margin: 0 2px; font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 22px; color: @t2; }
 
 /* Clock and Weather: one column. Mono small capitals for labels, light
    figures for times and temperatures, hairlines between things, the
    accent for what is current. */
-.settings .kicker {
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: @t2;
-}
 .hero-time, .row-time, .alarm-time, .hero-temp, .detail-value {
   font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif;
   font-weight: 300;
@@ -1599,7 +1777,7 @@ stackswitcher.tabs { margin-top: 10px; }
 .settings .bar { padding: 18px 28px 12px; }
 
 .row-time { font-size: 28px; }
-.daymark { min-width: 8px; min-height: 8px; border-radius: 1px; background: @accent; }
+.daymark { min-width: 7px; min-height: 7px; border-radius: 1px; background: @accent; }
 .daymark.night { background: transparent; box-shadow: inset 0 0 0 1px @t2; }
 
 .alarm-time { font-size: 36px; }
@@ -1625,7 +1803,6 @@ stackswitcher.tabs { margin-top: 10px; }
 }
 .settings .days > button:checked { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); color: @accent; }
 
-.settings button.small { padding: 4px 10px; font-size: 12px; }
 .settings button.wide { min-width: 116px; }
 .settings button.text { min-height: 0; padding: 6px 4px; border: none; background: transparent; box-shadow: none; color: @t1; }
 .settings button.text.danger { color: @danger; }
@@ -1812,7 +1989,7 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
   min-height: 0;
   padding: 2px;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: 2px;
   background: transparent;
   box-shadow: none;
 }
@@ -1851,7 +2028,7 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
    then its facts, a name before each value. */
 .settings .detail-bar { padding: 14px 28px 10px 18px; }
 .detail-name { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; font-weight: 300; color: @t0; }
-.sysmonapp .section-head, .tailscaleapp .section-head { padding: 22px 0 8px; }
+.sysmonapp .section-head, .tailscaleapp .section-head { margin: 10px 0 6px; }
 .sysmonapp .action { padding: 10px 0; }
 .sysmonapp .fact, .tailscaleapp .fact { padding: 4px 0; }
 .sysmonapp .fact-key, .tailscaleapp .fact-key { font-size: 12px; color: @t2; }
@@ -1875,8 +2052,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 }
 .tailscaleapp .ts-note { margin: 0 28px 12px; font-size: 12px; color: @t1; }
 .tailscaleapp .ts-note.error { color: @danger; }
-.ts-dot { min-width: 7px; min-height: 7px; border-radius: 999px; background: alpha(@t2, 0.5); }
-.ts-dot.online { background: @ok; }
 .tailscaleapp .ts-current { color: @accent; }
 .tailscaleapp .ts-switch-row { padding: 10px 0; }
 .tailscaleapp .actions { padding: 14px 0 2px; }
@@ -1928,7 +2103,7 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
   font-feature-settings: "tnum";
   font-size: 17px; font-weight: 500; color: @t0;
 }
-.settings menubutton.game-help > button { min-width: 30px; min-height: 30px; padding: 0; background: transparent; border: none; box-shadow: none; color: @t2; }
+.settings menubutton.game-help > button { min-width: 34px; min-height: 34px; padding: 0; background: transparent; border: none; box-shadow: none; color: @t2; }
 .settings menubutton.game-help > button:hover { color: @t0; background: alpha(@t0, 0.06); }
 .game-rules { padding: 6px 4px; font-size: 13px; line-height: 1.4; color: @t1; }
 .game-body { padding: 10px 14px; }
@@ -2056,7 +2231,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .settings button.game-choice { min-height: 28px; padding: 0 12px; font-size: 12.5px; }
 .settings button.game-choice.on { border-color: @accent; color: @accent; background: alpha(@accent, 0.08); }
 
-.gamewin button.primary:disabled { opacity: 0.35; }
 
 .overview-scrim { background: alpha(@app, 0.78); padding: 28px 48px; }
 .overview-monitor-group { background: alpha(@surface, 0.9); border: 1px solid alpha(@accent, 0.65); padding: 10px 14px 14px; }
@@ -2156,7 +2330,7 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
   color: @t2;
   background: alpha(@surface, 0.7);
   border: 1px solid alpha(@line, 0.7);
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
 }
 
@@ -2180,7 +2354,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .as-answer.as-error, .as-error { color: @danger; }
 .as-tool { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 11.5px; color: @t2; }
 .as-card { padding: 12px 14px; border: 1px solid alpha(@accent, 0.38); border-radius: 2px; background: @surface; color: @t0; }
-.as-card button.suggested-action { min-height: 30px; padding: 0 14px; border: 1px solid @accent; border-radius: 2px; background: @accent; color: @app; box-shadow: none; }
 .as-card:disabled { opacity: 0.55; }
 .as-suggestions { margin-top: 6px; }
 .settings button.as-suggestion {
@@ -2194,8 +2367,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 }
 .settings button.as-suggestion:hover { border-color: alpha(@accent, 0.4); color: @t0; }
 .as-composer { padding: 12px 16px 16px; border-top: 1px solid alpha(@line, 0.55); }
-.as-composer button.suggested-action { min-height: 34px; padding: 0 16px; border: 1px solid @accent; border-radius: 2px; background: @accent; color: @app; box-shadow: none; }
-.as-composer button.suggested-action:disabled { opacity: 0.45; }
 /* Voice input: the microphone beside Ask, Stop (in danger) while it
    records; the recording in the question's place, as the bar's: a red
    mark, the time in mono, the waveform. */
@@ -2437,9 +2608,6 @@ window.pass .pass-otp {
 window.pass .pass-editor { border: 1px solid @line; border-radius: 2px; }
 window.pass .pass-text, window.pass .pass-text text { background: alpha(@surface, 0.6); color: @t0; font-size: 13px; }
 window.pass .pass-error { color: @danger; }
-window.pass button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
-window.pass button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.pass button.suggested-action:disabled { opacity: 0.45; }
 /* An entry in the list: the icon its name calls for, else its initial,
    in a hairline square; its name; and where it is, dim, in the monospace. */
 window.pass button.index-item.pass-entry { min-height: 48px; padding: 6px 12px 6px 10px; }
@@ -2523,7 +2691,6 @@ window.gpg .gpg-to:focus-within { border-color: alpha(@accent, 0.6); }
 window.gpg .gpg-to flowboxchild { padding: 0; }
 window.gpg .gpg-to entry.gpg-to-entry { min-height: 28px; border: none; box-shadow: none; background: transparent; padding: 0 4px; }
 window.gpg .gpg-chip { padding: 1px 2px 1px 10px; border: 1px solid alpha(@accent, 0.35); border-radius: 2px; background: alpha(@accent, 0.08); color: @t0; font-size: 12.5px; }
-window.gpg .gpg-chip button { min-height: 22px; min-width: 22px; padding: 0; }
 window.gpg .gpg-chip button image { -gtk-icon-size: 12px; }
 window.gpg .gpg-suggest-frame { margin-top: 4px; border: 1px solid alpha(@line, 0.8); border-radius: 2px; background: @app; }
 window.gpg button.gpg-suggest { padding: 8px 12px; border: none; border-bottom: 1px solid alpha(@line, 0.4); border-radius: 0; background: transparent; }
@@ -2538,15 +2705,6 @@ window.gpg popover.gpg-from-pop .sub { font-family: "Geist Mono", "IBM Plex Mono
 window.gpg menubutton.gpg-from image { color: @t1; }
 window.gpg button.gpg-from-row { padding: 8px 10px; border: none; border-radius: 2px; background: transparent; }
 window.gpg button.gpg-from-row:hover { background: alpha(@accent, 0.08); }
-/* A segmented control (GPG's Text | Files, Files' list | grid): the
-   options in one hairline frame, the one chosen tinted with the accent
-   (as Mister Morph's console tabs); icons or words. */
-.settings stackswitcher.segmented { padding: 2px; border: 1px solid alpha(@line, 0.7); border-radius: 0; background: @app; }
-.settings stackswitcher.segmented > button { min-height: 24px; min-width: 0; padding: 0 12px; border: none; border-radius: 0; box-shadow: none; background: transparent; color: @t2; font-size: 12px; font-weight: 500; }
-.settings stackswitcher.segmented > button:hover { background: alpha(@t0, 0.06); color: @t0; }
-.settings stackswitcher.segmented > button:checked { background: alpha(@accent, 0.16); color: @accent; }
-.settings stackswitcher.segmented > button image { -gtk-icon-size: 14px; }
-.settings stackswitcher.segmented.icons > button { min-width: 24px; min-height: 24px; padding: 0; } /* icons: square */
 window.gpg .gpg-drop { margin-top: 12px; padding: 30px; border: 1px dashed alpha(@line, 0.9); border-radius: 3px; }
 /* An offer on top of a page: a message on the clipboard, no key yet. */
 window.gpg .gpg-offer { margin: 14px 0 4px; padding: 12px 14px; border: 1px solid alpha(@accent, 0.4); border-radius: 3px; background: alpha(@accent, 0.06); }
@@ -2587,16 +2745,11 @@ window.gpg .gpg-hint { color: @warn; }
 window.gpg-dialog { background: @app; }
 window.gpg-dialog .page { padding: 22px 24px 20px; }
 window.gpg-dialog .gpg-dialog-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; color: @t0; }
-window.gpg button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
 window.gpg button.gpg-act.danger { color: @danger; }
 window.gpg button.gpg-act.danger:hover { border-color: alpha(@danger, 0.35); background: alpha(@danger, 0.06); }
-/* The buttons in a section's head. */
-window.gpg button.gpg-small { min-height: 26px; padding: 0 10px; font-size: 12px; }
 window.gpg .gpg-acts { margin: 6px 0 0 -8px; }
 window.gpg button.gpg-act { min-height: 24px; padding: 1px 8px; border: 1px solid transparent; border-radius: 2px; background: transparent; color: @accent; font-size: 12px; }
 window.gpg button.gpg-act:hover { border-color: alpha(@accent, 0.35); background: alpha(@accent, 0.06); }
-window.gpg button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.gpg button.suggested-action:disabled { opacity: 0.45; }
 
 /* Workshop apps: the building blocks an app's program describes, in the
    light apps' look (internal/appui/workshop.go). */
@@ -2636,8 +2789,6 @@ window.workshop .ws-empty-title {
   color: @t0;
 }
 window.workshop .ws-log { border: 1px solid alpha(@line, 0.55); border-radius: 2px; padding: 8px 10px; }
-window.workshop button.suggested-action, .ws-dialog button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.workshop button.destructive-action, .ws-dialog button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
 .ws-dialog { padding: 22px 24px 18px; }
 /* The blocks from Settings and the light apps: tabs as the light apps'
    (text over a hairline, the current one underlined), joined choices,
@@ -2718,13 +2869,7 @@ window.files .files-sidebar-foot { border-spacing: 6px; }
 /* Every icon button is square: as wide as tall, and centred in its row
    (valign in the layouts) so the row cannot stretch it; 28 px, or 20 px
    where the row is small. A framed one keeps its frame all round. */
-window.files button.image-button { min-width: 28px; min-height: 28px; padding: 0; }
 /* The sidebar's toggle, framed as Mail's. */
-window.files button.files-tool { border: 1px solid alpha(@line, 0.55); background: transparent; color: @t1; }
-window.files button.files-tool:hover { border-color: alpha(@accent, 0.2); background: alpha(@accent, 0.07); color: @t0; }
-window.files .files-zoom button.image-button,
-window.files button.files-col-more,
-window.files button.files-tab-close { min-width: 20px; min-height: 20px; padding: 0; }
 
 window.files paned > separator { min-width: 1px; background: alpha(@line, 0.7); }
 window.files .files-pane { background: @app; }
@@ -2732,7 +2877,6 @@ window.files .files-pane { background: @app; }
    the one the keys go to, hollow for the other, whose selection goes
    quiet (no accent: one accent per surface). */
 window.files .files-pane-mark { margin: 0 8px 0 4px; }
-window.files .files-pane-mark.on { background: @accent; border-color: @accent; }
 window.files .files-pane.inactive listview > row:selected,
 window.files .files-pane.inactive gridview > child:selected { background: alpha(@t1, 0.07); border-color: alpha(@line, 0.9); }
 window.files .files-pane.inactive .files-crumb.current { color: @t1; }
@@ -2911,12 +3055,6 @@ window.files .files-card-title {
 }
 window.files .files-card .sub { color: @t1; font-size: 13.5px; }
 window.files .files-card-error { color: @danger; font-size: 13px; }
-/* A remote disk's setup: its kinds as a segmented control (as the pane's
-   list | grid), then a label beside each field. */
-window.files box.files-kinds { padding: 2px; border: 1px solid alpha(@line, 0.7); background: @app; }
-window.files box.files-kinds > button { min-height: 26px; padding: 0 12px; border: none; border-radius: 0; box-shadow: none; background: transparent; color: @t2; font-size: 12.5px; font-weight: 500; }
-window.files box.files-kinds > button:hover { background: alpha(@t0, 0.06); color: @t0; }
-window.files box.files-kinds > button:checked { background: alpha(@accent, 0.16); color: @accent; }
 /* A remote disk's edit button: there while the pointer is on its row, or
    the keys are on the button. */
 window.files .files-rename-preview { border: 1px solid alpha(@line, 0.7); background: @app; }
@@ -2940,47 +3078,13 @@ window.files button.files-card-item .title { color: @t0; }
 window.files button.files-card-item .sub { font-size: 12px; color: @t2; }
 window.files button.files-card-item:hover { background: alpha(@accent, 0.06); }
 window.files button.files-card-item.selected { border-color: alpha(@accent, 0.3); background: alpha(@accent, 0.12); }
-window.files button.suggested-action { border: 1px solid @accent; background: @accent; color: @app; }
-window.files button.destructive-action { border: 1px solid @danger; background: @danger; color: @app; }
-/* Filled, they stay filled when hovered (not the outlined buttons' tint,
-   which left the dark label on a dark ground) and while at work. */
-window.files button.suggested-action:hover { border-color: @accent; background: mix(@accent, @t0, 0.14); }
-window.files button.destructive-action:hover { border-color: @danger; background: mix(@danger, @t0, 0.14); }
-window.files button.suggested-action:disabled { border-color: @accent; background: @accent; color: @app; opacity: 0.6; }
-window.files button.destructive-action:disabled { border-color: @danger; background: @danger; color: @app; opacity: 0.6; }
 window.files .files-keys-head { margin: 14px 0 6px; }
 window.files .files-keys-row { min-height: 24px; }
 window.files .files-key { min-width: 190px; color: @accent; }
 
-popover.files-menu {
-  font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
-  font-size: 14px;
-}
-popover.files-menu > contents {
-  padding: 4px;
-  border: 1px solid @line;
-  border-radius: 4px;
-  background: alpha(@app, 0.97);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
-}
-popover.files-menu button.files-menu-item {
-  min-height: 26px;
-  min-width: 220px;
-  padding: 2px 10px;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  background: transparent;
-  box-shadow: none;
-  color: @t0;
-  font-weight: normal;
-}
-popover.files-menu button.files-menu-item:hover,
-popover.files-menu button.files-menu-item:focus-visible { background: alpha(@accent, 0.09); border-color: alpha(@accent, 0.38); }
-popover.files-menu .files-menu-key { color: @t2; font-size: 11.5px; }
 popover.files-menu .files-menu-check { color: @accent; }
 window.files checkbutton check { border: 1px solid @line; border-radius: 2px; background: @surface; box-shadow: none; }
 window.files checkbutton check:checked { border-color: @accent; background: @accent; color: @app; }
-popover.files-menu separator { margin: 4px 6px; background: alpha(@line, 0.9); }
 /* Music: Winamp's panels in inua's look. The display is a dark well
    with the time in the accent, mono figures and the analyser; the
    equalizer's sliders stand in a row; the playlist is a plain list, the
@@ -3010,8 +3114,8 @@ popover.files-menu separator { margin: 4px 6px; background: alpha(@line, 0.9); }
 .music-dim { color: @t2; }
 .music-seek { margin: 0 -6px; }
 .music-transport > button {
-  min-width: 30px;
-  min-height: 30px;
+  min-width: 34px;
+  min-height: 34px;
   padding: 0;
   border: 1px solid @line;
   border-radius: 0;
@@ -3115,7 +3219,6 @@ window.video.video-loaded .video-empty { opacity: 0; }
 .vmpage .vm-os-mark { color: @t2; transition: color 180ms ease-out; }
 
 /* A control in a section's head is smaller than a row's. */
-.vmpage .section-head button.outlined { min-height: 26px; padding: 0 10px; font-size: 12px; }
 .vmpage .section-head button + button { margin-left: 6px; }
 
 /* A library with no machine: a mark, a title, a line and what to do. */
@@ -3214,17 +3317,6 @@ window.video.video-loaded .video-empty { opacity: 0; }
 window.vm-dialog { background: @app; }
 window.vm-dialog .page { padding: 22px 24px 20px; }
 window.vm-dialog .vm-dialog-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; color: @t0; }
-window.vm-dialog button.destructive-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  box-shadow: none;
-  color: @app;
-}
-window.vm-dialog button.destructive-action:hover { background: mix(@danger, @t0, 0.14); }
 
 /* Remote Desktop (inua-remote): a library (with the index's, above) of
    This computer and the machines, the chosen one's page in its panel; a
@@ -3242,39 +3334,14 @@ window.remote .remote-pin-digits { font-family: "Geist Mono", "IBM Plex Mono", m
 window.connect .connect-index { padding: 0 14px; }
 window.connect .connect-kicker { margin: 14px 8px 6px; }
 window.connect .connect-none { margin: 2px 8px 6px; }
-window.connect button.index-item { min-height: 44px; padding: 4px 10px; }
 window.connect .connect-away { opacity: 0.45; }
-window.connect button.connect-find { min-height: 24px; min-width: 24px; padding: 0; margin-top: 8px; color: @t2; }
+window.connect button.connect-find { margin-top: 8px; color: @t2; }
 window.connect button.connect-find:hover { color: @t0; }
 window.connect .connect-command { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 12px; }
 window.connect .connect-error, window.connect-reply .connect-error { color: @danger; }
 window.connect .connect-key { padding: 14px 16px; border: 1px solid alpha(@accent, 0.4); border-radius: 3px; background: alpha(@accent, 0.06); }
 window.connect .connect-key-digits { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 34px; font-weight: 600; letter-spacing: 0.3em; color: @accent; }
 window.connect-reply .page { padding: 18px; }
-/* Their one action at a time (Connect, Pair, Save, Add, Scan): the outlined
-   buttons' shape, filled with the accent, as GPG's and Pass's are. */
-window.remote button.suggested-action, window.connect button.suggested-action, window.disk button.suggested-action,
-window.mail button.suggested-action,
-window.vmpage button.suggested-action, window.vm-dialog button.suggested-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @accent;
-  border-radius: 2px;
-  background: @accent;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-  transition: background 120ms ease-out, border-color 120ms ease-out;
-}
-window.remote button.suggested-action:hover, window.connect button.suggested-action:hover,
-window.disk button.suggested-action:hover, window.mail button.suggested-action:hover,
-window.vmpage button.suggested-action:hover, window.vm-dialog button.suggested-action:hover {
-  border-color: mix(@accent, @t0, 0.14);
-  background: mix(@accent, @t0, 0.14);
-}
-window.remote button.suggested-action:disabled, window.connect button.suggested-action:disabled,
-window.disk button.suggested-action:disabled, window.mail button.suggested-action:disabled,
-window.vmpage button.suggested-action:disabled { opacity: 0.45; }
 window.remote-stream { background: #000; }
 window.remote-stream .remote-note {
   margin-top: 14px;
@@ -3307,18 +3374,6 @@ window.term .term-sheet-text {
   font-size: 12px;
   color: @t0;
 }
-window.term .term-sheet button { min-height: 30px; padding: 0 14px; }
-window.term .term-sheet button.suggested-action {
-  border: 1px solid @accent;
-  border-radius: 2px;
-  background: @accent;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-  transition: background 120ms ease-out, border-color 120ms ease-out;
-}
-window.term .term-sheet button.suggested-action:hover { border-color: mix(@accent, @t0, 0.14); background: mix(@accent, @t0, 0.14); }
-window.term .term-sheet button.suggested-action:disabled { opacity: 0.45; }
 /* inua-term's find bar, over the pane's top right. */
 window.term .term-find {
   padding: 4px 4px 4px 6px;
@@ -3334,7 +3389,7 @@ window.term .term-find-count {
   color: @t2;
   margin: 0 4px;
 }
-window.term .term-find button.plain { min-height: 28px; min-width: 28px; padding: 0; color: @t1; background: transparent; border: none; }
+window.term .term-find button.plain { color: @t1; background: transparent; border: none; }
 window.term .term-find button.plain:hover { background: alpha(@accent, 0.09); }
 /* inua-term's window: the two index columns, then the tiles. */
 window.term .term-col1, window.term .term-col2 { background: @panel; }
@@ -3360,93 +3415,28 @@ window.term .term-ws-dir {
   font-size: 11px;
   color: @t2;
 }
-window.term .mark { border-radius: 1px; border: 1px solid @t2; background: transparent; }
-window.term .mark.s-on { border-color: @accent; background: @accent; }
-window.term .mark.s-warn { border-color: @warn; background: @warn; }
-window.term .mark.s-ok { border-color: @ok; background: @ok; }
 /* Each column's head: finding a workspace over the workspaces, the shown
    workspace's name over its sessions; the buttons at the right. */
 window.term .term-col-head { min-height: 40px; padding: 12px 14px 10px; }
 window.term .term-col-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 15px; color: @t0; }
-window.term button.term-head-button { min-width: 34px; min-height: 34px; padding: 0; color: @t1; background: transparent; border: none; }
+window.term button.term-head-button { color: @t1; background: transparent; border: none; }
 window.term button.term-head-button:hover { background: alpha(@accent, 0.09); color: @t0; }
-/* Column 1's menu, as the dock's drawer looks (bubble.go): on the glass,
-   a hairline round it and an arrow at the button, the floating card's
-   shadow; titles in the drawer's mono small capitals over a hairline;
-   items clear until hovered. It grows out of the arrow as it fades in.
-   A popover is a surface of its own, so its look is given here whole. */
-popover.term-menu {
-  font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
-  font-size: 13.5px;
-  color: @t0;
-}
-popover.term-menu > contents {
-  padding: 6px;
-  border: 1px solid alpha(@line, 0.9);
-  border-radius: 4px;
-  background: @glass;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
-  transform-origin: 50% 0;
-  animation: term-menu-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1.15);
-}
-popover.term-menu > arrow {
-  background: @glass;
-  border: 1px solid alpha(@line, 0.9);
-  animation: term-menu-fade 140ms ease-out;
-}
-@keyframes term-menu-in {
-  from { opacity: 0; transform: scale(0.55); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes term-menu-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-popover.term-menu button.term-menu-item {
-  min-height: 32px;
-  min-width: 240px;
-  padding: 0 10px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  box-shadow: none;
-  color: @t0;
-}
-popover.term-menu button.term-menu-item label { font-weight: 400; }
-popover.term-menu button.term-menu-item:hover,
-popover.term-menu button.term-menu-item:focus-visible { border-color: alpha(@accent, 0.25); background: alpha(@accent, 0.07); }
-popover.term-menu button.term-menu-item:disabled { color: @t2; }
-popover.term-menu .term-menu-keycap {
-  padding: 1px 6px;
-  border: 1px solid alpha(@line, 0.9);
-  border-radius: 2px;
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 11px;
-  color: @t1;
-}
+/* Column 1's menu (a uikit.Menu): a group's title, a kicker, over a
+   hairline, its state at the end. */
 popover.term-menu .term-menu-title {
   margin: 8px 4px 4px;
   padding: 10px 6px 2px;
   border-top: 1px solid alpha(@line, 0.6);
-  font-family: "Geist Mono", "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: @t2;
 }
-popover.term-menu .term-menu-state { font-weight: 400; letter-spacing: 0.04em; font-size: 11px; color: @t2; }
+popover.term-menu .term-menu-state { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-weight: 400; letter-spacing: 0.04em; font-size: 11px; color: @t2; }
 popover.term-menu .term-menu-state.s-on { color: @accent; }
 popover.term-menu .term-menu-state.s-warn { color: @warn; }
-popover.term-menu .mark.s-on { border-color: @accent; background: @accent; }
-popover.term-menu .mark.s-warn { border-color: @warn; background: @warn; }
-popover.term-menu separator { margin: 6px 10px; background: alpha(@line, 0.6); }
 /* The settings' index, its first row level with the page's first
    section, and its note under it. */
 window.term-prefs .index list { padding-top: 26px; }
 window.term .term-prefs-note { padding: 0 16px 16px; }
 /* Column 1's toggle, framed as Files' and Mail's. */
-window.term button.term-tool { min-width: 30px; min-height: 30px; padding: 0; border: 1px solid alpha(@line, 0.55); background: transparent; color: @t1; }
-window.term button.term-tool:hover { border-color: alpha(@accent, 0.2); background: alpha(@accent, 0.07); color: @t0; }
+
 window.term .term-sessions { padding: 12px 14px 0; }
 /* After the last session, a new one: a dashed placeholder, quiet until
    hovered. */
@@ -3583,15 +3573,6 @@ window.term .term-copy-badge {
   font-size: 10.5px;
   letter-spacing: 0.08em;
 }
-window.term .term-sheet button.destructive-action {
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-}
-window.term .term-sheet button.destructive-action:hover { background: mix(@danger, @t0, 0.14); border-color: mix(@danger, @t0, 0.14); }
 /* inua-term's guide, on the first start: a step's choices beside their
    preview. */
 window.term-guide { background: @app; }
@@ -3604,7 +3585,7 @@ window.term-guide .term-guide-brief { font-size: 12.5px; color: @t1; margin-bott
 window.term-guide button.term-guide-choice {
   padding: 8px 12px;
   border: 1px solid alpha(@line, 0.7);
-  border-radius: 3px;
+  border-radius: 2px;
   background: transparent;
   box-shadow: none;
 }
@@ -3625,16 +3606,6 @@ window.term-guide .term-guide-mock .g-tile { margin: 10px; border: 1px solid alp
 window.term-guide .term-guide-mock .g-head { min-height: 26px; padding: 0 10px; border-bottom: 1px solid alpha(@line, 0.55); }
 window.term-guide .term-guide-mock .g-text { min-height: 6px; border-radius: 3px; background: alpha(@t1, 0.6); }
 window.term-guide .term-guide-foot { padding: 12px 26px 20px; border-top: 1px solid alpha(@line, 0.55); }
-window.term-guide .term-guide-foot button { min-height: 32px; padding: 0 16px; }
-window.term-guide button.suggested-action {
-  border: 1px solid @accent;
-  border-radius: 2px;
-  background: @accent;
-  background-image: none;
-  color: @app;
-  box-shadow: none;
-}
-window.term-guide button.suggested-action:hover { border-color: mix(@accent, @t0, 0.14); background: mix(@accent, @t0, 0.14); }
 
 /* Disk Usage (inua-disk-usage): the settings look, its index holding the places
    and the kinds found; the map and the list of the folder in view; the
@@ -3643,7 +3614,6 @@ window.term-guide button.suggested-action:hover { border-color: mix(@accent, @t0
    caches ok, the rest t2. */
 window.disk .disk-index { padding: 0 14px; }
 window.disk .disk-kicker { margin: 14px 8px 6px; }
-window.disk button.index-item { min-height: 44px; padding: 4px 10px; }
 window.disk .disk-meta { color: @t2; margin: 0 6px; }
 window.disk .disk-error { color: @danger; }
 window.disk .disk-path { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 11.5px; }
@@ -3682,7 +3652,6 @@ window.disk .disk-more { padding: 10px 0; }
 window.disk .disk-details { background: @panel; border-left: 1px solid alpha(@line, 0.7); }
 window.disk .disk-details-body { padding: 18px 22px 24px; }
 window.disk .disk-item { padding: 4px 0 26px; }
-window.disk .disk-item button.image-button { min-width: 30px; min-height: 30px; padding: 0; }
 window.disk .disk-item > .tag { margin-bottom: 6px; }
 window.disk .disk-facts { margin: 14px 0 2px; padding: 10px 0; border-top: 1px solid alpha(@line, 0.55); border-bottom: 1px solid alpha(@line, 0.55); }
 window.disk .disk-fact { font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 13px; color: @t0; }
@@ -3709,19 +3678,17 @@ window.disk .disk-verdict-tag.keep { border-color: alpha(@danger, 0.5); color: @
 /* The route to the verdict: a mark each, a line down to the next. */
 window.disk .disk-route { padding-top: 6px; }
 window.disk .disk-rail { min-width: 7px; }
-window.disk .disk-node .mark { margin-top: 6px; min-width: 5px; min-height: 5px; }
-window.disk .disk-node .mark.on { background: @accent; border-color: @accent; }
+window.disk .disk-node .mark { margin-top: 6px; }
 window.disk .disk-node .mark.safe { background: @ok; border-color: @ok; }
 window.disk .disk-node .mark.review { background: @warn; border-color: @warn; }
 window.disk .disk-node .mark.keep { background: @danger; border-color: @danger; }
-window.disk .disk-node .mark.ai { border-color: @accent; border-radius: 50%; }
+window.disk .disk-node .mark.ai { border-color: @accent; }
 window.disk .disk-line { min-width: 1px; margin: 4px 0 0; background: alpha(@line, 0.9); }
 window.disk .disk-node-body { padding-bottom: 11px; }
 window.disk .disk-node:last-child .disk-node-body { padding-bottom: 0; }
 window.disk .disk-node .disk-verdict { padding-top: 1px; }
 window.disk .disk-step-check { font-size: 12.5px; color: @t1; }
 window.disk .disk-ai-text { font-size: 12.5px; color: @t1; }
-window.disk button.disk-ask-quiet { min-height: 26px; padding: 0 10px; font-size: 12px; }
 window.disk .disk-command {
   padding: 6px 8px;
   border: 1px solid @line;
@@ -3744,17 +3711,6 @@ window.disk .disk-done { color: @ok; }
 window.disk-dialog { background: @app; }
 window.disk-dialog .page { padding: 22px 24px 20px; }
 window.disk-dialog .disk-dialog-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 18px; color: @t0; }
-window.disk button.destructive-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  box-shadow: none;
-  color: @app;
-}
-window.disk button.destructive-action:hover { background: mix(@danger, @t0, 0.14); }
 
 /* Mail (inua-mail): the settings look, quiet (docs/feat/inua-mail.md,
    section 5). The accent marks unread and the selection only; danger only
@@ -3762,19 +3718,14 @@ window.disk button.destructive-action:hover { background: mix(@danger, @t0, 0.14
    in a box. */
 /* The index's head: the sidebar's toggle, level with the search. */
 window.mail .mail-index-head { margin: 16px 14px 8px 16px; }
-window.mail button.mail-compose-button { border: 1px solid @accent; background: @accent; color: @app; }
-window.mail button.mail-compose-button:hover { background: mix(@accent, @t0, 0.14); }
 /* The foot: the sync in words, and the settings. */
 window.mail .mail-index-foot {
   padding: 10px 14px 12px 28px;
   border-top: 1px solid alpha(@line, 0.55);
 }
-window.mail .mail-status-mark { border-radius: 1px; }
-window.mail .mail-status-mark.on { background: @accent; border-color: @accent; }
 window.mail .mail-status-mark.busy { background: transparent; border-color: @accent; }
 /* Not "warn": the window is also .settings, whose .warn is a notice box. */
-window.mail .mark.down { background: @warn; border-color: @warn; border-radius: 1px; }
-window.mail button.outlined.mail-sign-in { min-height: 24px; padding: 0 10px; font-size: 12px; }
+window.mail .mark.down { background: @warn; border-color: @warn; }
 window.mail .mail-status { font-size: 12px; color: @t2; }
 window.mail .mail-side { padding: 0 14px 12px; }
 window.mail button.index-item.mail-box { min-height: 34px; padding: 2px 10px 2px 13px; }
@@ -3785,7 +3736,7 @@ window.mail .mail-acct {
   margin-top: 14px;
   padding: 4px 4px 6px;
   border: 1px solid alpha(@line, 0.6);
-  border-radius: 8px;
+  border-radius: 4px;
   background: alpha(@surface, 0.5);
 }
 window.mail button.mail-acct-head {
@@ -3793,7 +3744,7 @@ window.mail button.mail-acct-head {
   margin-bottom: 4px;
   padding: 6px 8px;
   border: none;
-  border-radius: 6px;
+  border-radius: 2px;
   background: transparent;
   box-shadow: none;
 }
@@ -3917,7 +3868,6 @@ window.mail .mail-person-row { padding: 9px 16px; }
 window.mail .mail-person-row .mail-person-name { color: @t0; }
 window.mail .mail-person-head { margin-bottom: 18px; }
 window.mail .mail-person-addr { padding: 6px 0; border-bottom: 1px solid alpha(@line, 0.4); }
-window.mail .mail-person-addr button.outlined { min-height: 30px; padding: 0 14px; }
 window.mail .mail-person-section {
   margin: 28px 0 6px;
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
@@ -3943,12 +3893,9 @@ window.mail button.mail-person-open:hover { background: alpha(@accent, 0.07); }
    pointer is on the row, and always, filled, when starred; files always
    when there are some. */
 window.mail .mail-row-gutter { min-width: 20px; }
-window.mail .mail-row .mark { border-radius: 1px; border-color: transparent; }
-window.mail .mail-row .mark.on { background: @accent; border-color: @accent; }
+window.mail .mail-row .mark { border-color: transparent; }
+window.mail .mail-row .mark.on { border-color: @accent; }
 window.mail button.image-button.mail-row-star {
-  min-height: 20px;
-  min-width: 20px;
-  padding: 0;
   border: none;
   border-radius: 2px;
   background: transparent;
@@ -4004,9 +3951,6 @@ window.mail .mail-row-acts { opacity: 0; transition: opacity 90ms ease-out; }
 window.mail listview.mail-conversations > row:hover .mail-row-acts { opacity: 1; }
 window.mail listview.mail-conversations > row:hover .mail-when { opacity: 0; }
 window.mail button.image-button.mail-row-act {
-  min-height: 26px;
-  min-width: 26px;
-  padding: 0;
   border: none;
   border-radius: 2px;
   background: transparent;
@@ -4035,30 +3979,15 @@ window.mail .mail-reader-bar {
   padding: 16px 16px 8px 28px;
   border-bottom: 1px solid alpha(@line, 0.55);
 }
-/* Every button that is only an icon is a square of the same size. */
-window.mail button.image-button,
+/* Every button that is only an icon is a square of the same size, but
+   for those given another (small, tight, large). */
+window.mail button.image-button:not(.small):not(.tight):not(.large),
 window.mail menubutton > button.image-button {
   min-width: 34px;
   min-height: 34px;
   padding: 0;
-  border-radius: 3px;
   box-shadow: none;
 }
-window.mail button.mail-tool, window.mail menubutton.mail-tool > button {
-  border: 1px solid alpha(@line, 0.55);
-  background: transparent;
-  color: @t1;
-}
-window.mail button.mail-tool:hover, window.mail menubutton.mail-tool > button:hover {
-  border-color: alpha(@accent, 0.2);
-  background: alpha(@accent, 0.07);
-  color: @t0;
-}
-window.mail button.mail-tool.on { color: @accent; }
-/* Off while the messages they need load (reply, forward). */
-window.mail button.mail-tool:disabled { color: alpha(@t2, 0.5); border-color: alpha(@line, 0.35); }
-window.mail button.mail-bar-button { min-height: 30px; padding: 0 14px; }
-window.mail button.mail-bar-button:disabled { opacity: 0.45; }
 window.mail .mail-reader { padding: 26px 40px 48px; }
 window.mail .mail-reader-empty { margin: 32px; }
 window.mail .mail-read-subject {
@@ -4072,7 +4001,7 @@ window.mail button.mail-chip {
   min-height: 26px;
   padding: 0 11px;
   border: 1px solid alpha(@line, 0.9);
-  border-radius: 13px;
+  border-radius: 2px;
   background: transparent;
   box-shadow: none;
   color: @t1;
@@ -4183,7 +4112,6 @@ window.mail popover.mail-card .mail-card-head { padding: 8px 10px 10px; margin-b
 /* A message's source, as it came. */
 window.mail-source { background: @app; }
 window.mail-source .mail-source-bar { padding: 10px 14px; border-bottom: 1px solid alpha(@line, 0.55); }
-window.mail-source .mail-source-bar button.outlined { min-height: 30px; padding: 0 14px; }
 window.mail-source .mail-source-note { padding: 6px 16px; font-size: 12px; color: @warn; }
 window.mail-source textview.mail-source-text, window.mail-source textview.mail-source-text text { background: @app; color: @t1; font-family: "Geist Mono", "IBM Plex Mono", monospace; font-size: 12px; }
 window.mail .mail-loading { color: @t2; font-size: 13px; }
@@ -4303,11 +4231,9 @@ window.mail .mail-invite-where { font-size: 12.5px; color: @t1; }
 window.mail .mail-invite-who, window.mail .mail-invite-note { font-size: 12.5px; color: @t2; }
 window.mail .mail-invite-join link { color: @t0; }
 window.mail .mail-invite-actions { margin-top: 6px; }
-window.mail .mail-invite-actions button.outlined { min-height: 30px; padding: 0 14px; }
 window.mail .mail-invite-actions button.chosen.outlined { border-color: @accent; color: @accent; }
 window.mail .mail-invite-actions button.mail-plain.chosen { color: @accent; }
 window.mail .mail-actions { margin-top: 6px; }
-window.mail .mail-actions button.outlined { min-height: 32px; padding: 0 16px; }
 window.mail .mail-keys {
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 10.5px;
@@ -4411,9 +4337,6 @@ window.mail .mail-servers-line {
   color: @t1;
 }
 window.mail .mail-log { margin: 4px 0 18px; padding: 12px 14px; border-left: 2px solid alpha(@accent, 0.45); background: alpha(@surface, 0.5); }
-window.mail .mail-log .mark { border-radius: 1px; }
-window.mail .mail-log .mark.on { background: @accent; border-color: @accent; }
-window.mail .mail-log .mark.wait { border-color: @accent; }
 window.mail .mail-log .mark.bad { background: @danger; border-color: @danger; }
 window.mail .mail-log-line {
   font-family: "Geist Mono", "IBM Plex Mono", monospace;
@@ -4437,7 +4360,6 @@ window.mail textview.mail-quick-text, window.mail textview.mail-quick-text text 
 window.mail textview.mail-quick-text:focus-within { border-color: @accent; }
 window.mail .mail-quick-hint { margin: 9px 13px; font-size: 14px; color: @t2; }
 window.mail .mail-quick-note { font-size: 13px; color: @t2; }
-window.mail .mail-quick-foot button.outlined { min-height: 30px; padding: 0 16px; }
 
 /* Move to, and the keys. */
 window.mail-dialog .mail-move-list { margin-top: 4px; }
@@ -4511,7 +4433,6 @@ window.mail-compose button.mail-chip-remove {
 }
 window.mail-compose button.mail-chip-remove:hover { color: @t0; }
 window.mail-compose .error { color: @danger; }
-window.mail-compose button.mail-tool.image-button { min-width: 30px; min-height: 30px; }
 /* AI's panel: quiet, on the window's own ground behind a hairline; a line
    to type in, actions as text, the accent only for Keep. */
 window.mail-compose .mail-compose-ai { background: @app; border-left: 1px solid alpha(@line, 0.8); }
@@ -4558,33 +4479,12 @@ window.mail-compose button.mail-compose-ai-lang {
 window.mail-compose button.mail-compose-ai-lang:hover { color: @t0; }
 window.mail-compose .mail-compose-ai-what { font-size: 13px; color: @t1; }
 window.mail-compose .mail-compose-foot { padding: 12px 28px 16px; }
-/* Mail's menus (More, Polish), as Files' are: on the theme's panel, a
-   hairline round them, the accent's tint under the pointer. */
 /* A popover is a surface of its own: the window's type is not passed on. */
-popover.mail-menu, .settings dropdown popover {
+.settings dropdown popover {
   font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
   font-size: 14px;
   color: @t0;
 }
-window.mail popover.mail-menu > contents {
-  padding: 4px;
-  border: 1px solid @line;
-  border-radius: 4px;
-  background: @panel;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
-}
-window.mail button.mail-menu-item {
-  min-height: 30px;
-  min-width: 180px;
-  padding: 0 10px;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  background: transparent;
-  box-shadow: none;
-  color: @t0;
-}
-window.mail button.mail-menu-item label { font-weight: 400; }
-window.mail button.mail-menu-item:hover { border-color: alpha(@accent, 0.38); background: alpha(@accent, 0.09); }
 
 /* The questions: before deleting or removing. */
 window.mail-dialog { background: @app; }
@@ -4599,17 +4499,6 @@ window.mail-dialog .mail-dialog-item {
   font-size: 12px;
   color: @t0;
 }
-window.mail button.destructive-action {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid @danger;
-  border-radius: 2px;
-  background: @danger;
-  background-image: none;
-  box-shadow: none;
-  color: @app;
-}
-window.mail button.destructive-action:hover { background: mix(@danger, @t0, 0.14); }
 
 /* Mail's settings: the settings look, a few things of Mail's own. */
 window.mail-settings .index row.mail-settings-heading,
@@ -4650,7 +4539,6 @@ window.mail .mail-assist-title { font-weight: 600; color: @t0; }
 window.mail .mail-assist-body { padding: 18px 18px 28px; }
 window.mail .mail-assist-note { font-size: 12.5px; color: @t2; }
 window.mail .mail-assist-text { font-size: 13.5px; line-height: 1.35; color: @t0; }
-window.mail button.mail-assist-button { min-height: 32px; }
 window.mail button.mail-assist-idea {
   min-height: 0;
   padding: 10px 12px;
@@ -4670,10 +4558,7 @@ window.mail button.mail-assist-idea:disabled { opacity: 0.5; }
 @keyframes mail-lit { 0%, 100% { opacity: 0.18; } 40% { opacity: 1; } }
 @keyframes mail-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.8; } }
 window.mail .mail-loader-marks .mark {
-  min-width: 7px;
-  min-height: 7px;
-  border: none;
-  border-radius: 1px;
+  border-color: @accent;
   background: @accent;
   animation: mail-lit 1.1s ease-in-out infinite;
 }
@@ -4705,7 +4590,6 @@ window.mail .mail-progress {
 /* "Is it safe?": a verdict as its mark and name, the checks as rows, and
    what AI made of it under a hairline. */
 window.mail .mail-verdict { min-height: 26px; }
-window.mail .mail-verdict .mark { min-width: 9px; min-height: 9px; border-radius: 1px; }
 window.mail .mail-verdict-name { font-size: 15px; font-weight: 600; color: @t0; }
 window.mail .mail-verdict.careful .mail-verdict-name { color: @warn; }
 window.mail .mail-verdict.suspicious .mail-verdict-name { color: @danger; }
@@ -4716,7 +4600,7 @@ window.mail .mail-verdict-by {
 }
 window.mail .mail-checks { margin-top: 2px; }
 window.mail .mail-check { padding: 8px 0; border-top: 1px solid alpha(@line, 0.45); }
-window.mail .mail-check .mark { min-width: 7px; min-height: 7px; margin-top: 5px; border-radius: 1px; background: alpha(@t2, 0.5); border-color: transparent; }
+window.mail .mail-check .mark { margin-top: 5px; background: alpha(@t2, 0.5); border-color: transparent; }
 window.mail .mail-check .mark.fine { background: @ok; }
 window.mail .mail-check .mark.careful { background: @warn; }
 window.mail .mail-check .mark.suspicious { background: @danger; }
@@ -4724,7 +4608,7 @@ window.mail .mail-check-q { font-size: 13px; color: @t0; }
 window.mail .mail-check-found { font-size: 12.5px; color: @t2; }
 window.mail .mail-warning .mail-checks { margin-left: 26px; }
 window.mail .mail-safety-ai { margin-top: 6px; padding-top: 12px; border-top: 1px solid alpha(@line, 0.7); }
-window.mail button.mail-plain.mail-again { min-width: 24px; min-height: 24px; padding: 0; margin-left: 4px; border-radius: 2px; color: @t2; }
+window.mail button.mail-plain.mail-again { margin-left: 4px; border-radius: 2px; color: @t2; }
 window.mail button.mail-plain.mail-again:hover { background: alpha(@accent, 0.09); color: @t0; }
 window.mail .mail-safety-reason { font-size: 13px; color: @t0; }
 window.mail .mail-safety-dot { min-width: 8px; color: @t2; font-weight: 700; }

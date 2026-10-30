@@ -270,6 +270,7 @@ func (s *shellUI) drawerContent(kind string) *gtk.Box {
 	content := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	for _, g := range sections {
 		title := gtk.NewLabel(i18n.T(g.Title))
+		title.AddCssClass("kicker")
 		title.AddCssClass("drawer-title")
 		title.SetXalign(0)
 		gtkx.Append(content, &title.Widget)

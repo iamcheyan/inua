@@ -42,6 +42,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
           <object class="GtkButton" id="close">
             <style>
               <class name="plain"/>
+              <class name="tight"/>
               <class name="note-close"/>
             </style>
             <property name="icon-name">window-close-symbolic</property>

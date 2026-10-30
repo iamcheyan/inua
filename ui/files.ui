@@ -39,7 +39,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkButton" id="sidebar_hide">
                                 <style>
-                                  <class name="files-tool"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">sidebar-show-symbolic</property>
@@ -71,7 +71,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkToggleButton" id="hidden_toggle">
                                 <style>
-                                  <class name="framed-toggle"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">view-reveal-symbolic</property>
@@ -81,7 +81,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkToggleButton" id="dual_toggle">
                                 <style>
-                                  <class name="framed-toggle"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">view-dual-symbolic</property>
@@ -91,7 +91,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkToggleButton" id="details_toggle">
                                 <style>
-                                  <class name="framed-toggle"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">dialog-information-symbolic</property>

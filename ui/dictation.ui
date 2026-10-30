@@ -64,6 +64,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
               <object class="GtkButton" id="cancel">
                 <style>
                   <class name="plain"/>
+                  <class name="small"/>
                 </style>
                 <property name="icon-name">window-close-symbolic</property>
                 <property name="tooltip-text" translatable="yes">Drop the recording</property>

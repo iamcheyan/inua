@@ -129,6 +129,7 @@ func (s *shellUI) lockScreen() error {
 	}
 	s.closeControl()
 	s.closeAgenda()
+	s.closeWidgets()
 	s.closeCenter()
 	s.closeShot("")
 	s.markLocked(true)

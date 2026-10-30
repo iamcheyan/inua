@@ -20,7 +20,7 @@ func Format(c Config) string {
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
-		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.Icons), q(c.Style.AppIcons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS),
+		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.AppStyle), q(c.Style.AppIcons), q(c.Style.Icons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS),
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		c.Background.Generate,
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
@@ -28,6 +28,7 @@ func Format(c Config) string {
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
+		c.Widgets.Enable, c.Widgets.Swipe, list(c.Widgets.Apps), widgetPlaces(c.Widgets.Places),
 		c.Voice.Enable, c.Voice.PushToTalk, q(c.Voice.Engine), q(c.Voice.Show),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision), q(c.Assistant.Transcription),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges, c.Assistant.ElevatedCommands,
@@ -103,6 +104,20 @@ func aiProfiles(all []AIProfile) string {
 }
 
 // list renders a TOML array of strings.
+// widgetPlaces writes the widget page's widgets as [[widgets.widget]]
+// tables, the last of [widgets]; none is an empty list, so that the file
+// does not get the defaults back.
+func widgetPlaces(all []WidgetPlace) string {
+	if len(all) == 0 {
+		return "widget = []\n"
+	}
+	tables := make([]string, len(all))
+	for i, p := range all {
+		tables[i] = fmt.Sprintf("[[widgets.widget]]\nkind = %s\ncolumn = %d\nrow = %d\n", q(p.Kind), p.Column, p.Row)
+	}
+	return strings.Join(tables, "\n")
+}
+
 func list(items []string) string {
 	q2 := make([]string, len(items))
 	for i, s := range items {
@@ -227,7 +242,7 @@ menu = %t
 
 [launcher]
 # What `+"`inua call launcher toggle`"+` opens: "apps" or "windows".
-# (`+"`launcher apps`"+` and `+"`launcher windows`"+` open a mode directly; Tab switches.)
+# (`+"`launcher apps`"+` and `+"`launcher windows`"+` open a mode directly.)
 mode = %s
 
 # The default terminal (Settings, Default Apps): `+"`inua terminal`"+` opens it, and
@@ -293,20 +308,31 @@ theme = %s
 # center and settings keep theme.
 app_theme = %s
 
-# Icons of the bar, control center, launcher and settings:
+# How inua draws apps: inua's own and the others it draws, each as the
+# object it stands for:
+#   "inua-objects"       real materials and detail (the default)
+#   "inua-objects-soft"  the same objects drawn more simply
+#   "inua-objects-flat"  the same objects drawn flat
+app_style = %s
+
+# Icons of the other apps (dock, launcher, drawer, notifications) and of
+# files in Files: "" (the default) as app_style above, an app it has not
+# drawn keeping its icon; "system", the system's icon theme; or an installed
+# icon theme, by its folder's name ("Papirus", in /usr/share/icons or
+# ~/.local/share/icons). inua's apps keep app_style; the tray's icons come
+# from each app.
+app_icons = %s
+
+# Line icons of the bar, control center, launcher, settings and inua's
+# apps:
 #   "phosphor"  Phosphor's line icons, built in (the default)
 #   "system"    the system's icon theme
-# or an installed icon theme, by its folder's name ("Papirus", in
-# /usr/share/icons or ~/.local/share/icons), or a set of your own: a folder
-# icons/NAME/ next to this file, with SVGs named like the built-in ones
-# (NAME-symbolic.svg); icons it lacks stay Phosphor's (icons/phosphor-bold,
-# from inua init, is one). Draw them in one colour: it follows the theme.
+# or an installed icon theme, by its folder's name, or a set of your own: a
+# folder icons/NAME/ next to this file, with SVGs named like the built-in
+# ones (NAME-symbolic.svg); icons it lacks stay Phosphor's
+# (icons/phosphor-bold, from inua init, is one). Draw them in one colour:
+# it follows the theme.
 icons = %s
-
-# Icons of apps (dock, launcher, drawer, notifications) and of files in
-# Files: "system", the system's icon theme (the default), or an installed
-# icon theme, by its folder's name. The tray's come from each app.
-app_icons = %s
 
 # A small gap between the screen edges and the bar and dock. false puts
 # them flush against the edges.
@@ -469,6 +495,26 @@ drawer = %t
 # .desktop), in order. Missing ones are skipped.
 pinned = %s
 
+[widgets]
+# The widget page, a place before the first workspace: a dot before the
+# workspaces on the bar opens it, so do the wheel up past the first
+# workspace and a swipe right; Escape, a workspace or a swipe left goes
+# back. Drag a widget by its head to move it on the page's grid.
+enable = %t
+
+# Fingers that swipe right to the page and left back: 3 or 4, 0 for none.
+# Three fingers go through the workspaces too, taking the place of
+# hyprland.conf's three-finger workspace swipe; four leave it as it is.
+swipe = %d
+
+# The apps on its apps widget, by desktop ID. Drag one in from the dock,
+# or add it with the widget's +.
+apps = %s
+
+# The widgets on it (clock, calendar, weather, media, apps), each with the
+# column and row of the page's grid its top left corner is at (a column
+# and a row 60 pixels apart), a clear cell between any two widgets.
+%s
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)
 # types the words into the focused window. true shows a microphone in the

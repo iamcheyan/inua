@@ -38,7 +38,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                             <child>
                               <object class="GtkButton" id="sidebar_hide">
                                 <style>
-                                  <class name="term-tool"/>
+                                  <class name="tool"/>
                                 </style>
                                 <property name="icon-name">sidebar-show-symbolic</property>
                                 <property name="valign">3</property>
@@ -193,7 +193,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                     <child>
                       <object class="GtkButton" id="sidebar_show">
                         <style>
-                          <class name="term-tool"/>
+                          <class name="tool"/>
                         </style>
                         <property name="icon-name">sidebar-show-symbolic</property>
                         <property name="valign">3</property>

@@ -13,8 +13,8 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     <child>
       <object class="GtkBox">
         <property name="orientation">1</property>
-        <property name="width-request">640</property>
-        <property name="height-request">520</property>
+        <property name="width-request">800</property>
+        <property name="height-request">620</property>
         <child>
           <object class="GtkBox">
             <style>
@@ -36,23 +36,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 </style>
               </object>
             </child>
-            <child>
-              <object class="GtkLabel" id="mode_desc">
-                <style>
-                  <class name="dim"/>
-                </style>
-                <property name="hexpand">true</property>
-                <property name="xalign">0</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">Tab  switch</property>
-              </object>
-            </child>
           </object>
         </child>
         <child>
@@ -64,11 +47,71 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="results">
+          <object class="GtkScrolledWindow" id="scroll">
             <style>
-              <class name="results"/>
+              <class name="results-scroll"/>
             </style>
-            <property name="orientation">1</property>
+            <property name="hscrollbar-policy">2</property>
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkOverlay">
+                <child>
+                  <object class="GtkBox" id="results">
+                    <style>
+                      <class name="results"/>
+                    </style>
+                    <property name="orientation">1</property>
+                  </object>
+                </child>
+                <child type="overlay">
+                  <object class="GtkBox" id="highlight">
+                    <style>
+                      <class name="highlight"/>
+                    </style>
+                    <property name="halign">1</property>
+                    <property name="valign">1</property>
+                    <property name="can-target">false</property>
+                    <property name="visible">false</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkOverlay" id="foot">
+            <style>
+              <class name="results-foot"/>
+            </style>
+            <child>
+              <object class="GtkBox" id="blur">
+                <property name="orientation">1</property>
+                <property name="can-target">false</property>
+              </object>
+            </child>
+            <child type="overlay">
+              <object class="GtkBox" id="fade">
+                <style>
+                  <class name="results-fade"/>
+                </style>
+                <property name="can-target">false</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="pinned_scroll">
+            <style>
+              <class name="pinned"/>
+            </style>
+            <property name="hscrollbar-policy">2</property>
+            <property name="propagate-natural-height">true</property>
+            <property name="max-content-height">230</property>
+            <child>
+              <object class="GtkBox" id="pinned">
+                <property name="orientation">1</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
@@ -95,43 +138,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                 <property name="hexpand">true</property>
                 <property name="xalign">0</property>
                 <property name="ellipsize">3</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="vexpand">true</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <style>
-              <class name="foot"/>
-            </style>
-            <property name="spacing">18</property>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">↑↓  choose</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">↵  open</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <style>
-                  <class name="kicker"/>
-                </style>
-                <property name="label" translatable="yes">Esc  close</property>
               </object>
             </child>
           </object>

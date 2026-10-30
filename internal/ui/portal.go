@@ -94,7 +94,7 @@ func (s *shellUI) syncPortalSettings() {
 	} else {
 		log.Printf("portals: theme %s: %v", theme, err)
 	}
-	if icons := s.cfg.Style.AppIcons; icons != "system" {
+	if icons := s.cfg.Style.AppIconTheme(); icons != "system" {
 		a.IconTheme = icons
 	}
 	s.portals.settings.Set(a.Values())

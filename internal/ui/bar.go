@@ -32,6 +32,7 @@ type bar struct {
 	appMenu     gtk.Box
 	appMenuGen  uint64
 	appMenuPID  int
+	widgetsMark gtk.Button // the widget page's place, before the workspaces
 	title       gtk.Label
 	clock       gtk.Label
 	end         gtk.Box
@@ -135,6 +136,9 @@ func (s *shellUI) dropBar(b *bar) {
 	if s.agenda.drop.host == b {
 		s.closeAgenda()
 	}
+	if s.widgets.open && s.widgets.monitor == b.connector() {
+		s.dropWidgets()
+	}
 	if s.passwords.drop.host == b {
 		s.closePasswords()
 	}
@@ -161,6 +165,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("workspaces", &b.workspaces)
 	ui.Get("app_menu", &b.appMenu)
 	ui.Get("end", &b.end)
+	ui.Get("widgets", &b.widgetsMark)
 	overviewClick := gtk.NewGestureClick()
 	overviewClick.SetButton(3)
 	overviewClick.SetPropagationPhase(gtk.PhaseCaptureValue)
@@ -204,6 +209,9 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	b.clipboard.ConnectClicked(&s.onClipboardButton)
 	b.clipboard.SetVisible(s.cfg.Clipboard.Enable && s.cfg.Clipboard.Bar)
 	b.passwords.ConnectClicked(&s.onPasswordsButton)
+	b.widgetsMark.ConnectClicked(&s.onWidgetsMark)
+	b.widgetsMark.SetVisible(s.cfg.Widgets.Enable)
+	toggle(&b.widgetsMark.Widget, "open", s.widgets.open && !s.widgets.closing)
 	b.passwords.SetVisible(s.cfg.Bar.Pass && s.passwords.hasStore)
 	if s.passwords.open {
 		b.passwords.AddCssClass("open")
@@ -439,7 +447,9 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 
 // scrollWorkspaces goes n notches' way (down the next, up the previous)
 // through the workspaces the bar shows, from the one its monitor shows
-// (with every workspace on the bar, the focused one).
+// (with every workspace on the bar, the focused one). The widget page is
+// the place before the first: up from there opens it, down from it goes
+// back to the workspace under it.
 func (s *shellUI) scrollWorkspaces(b *bar, n int) {
 	current := 0
 	for _, mon := range s.snap.Monitors {
@@ -447,14 +457,29 @@ func (s *shellUI) scrollWorkspaces(b *bar, n int) {
 			current = mon.ActiveWorkspaceID
 		}
 	}
-	ids := make([]string, len(b.shown))
-	for i, w := range b.shown {
-		ids[i] = fmt.Sprint(w.ID)
+	var ids []string
+	if s.cfg.Widgets.Enable {
+		ids = append(ids, widgetsPlace)
+	}
+	for _, w := range b.shown {
+		ids = append(ids, fmt.Sprint(w.ID))
 		if w.Focused && s.cfg.Bar.Workspaces == "all" {
 			current = w.ID
 		}
 	}
-	if id, ok := s.workspaceWheel.Next(ids, fmt.Sprint(current), n, time.Now()); ok {
+	from := fmt.Sprint(current)
+	shown := s.widgetsShownOn(b)
+	if shown {
+		from = widgetsPlace
+	}
+	id, ok := s.workspaceWheel.Next(ids, from, n, time.Now())
+	switch {
+	case !ok:
+	case id == widgetsPlace:
+		s.openWidgets(b)
+	case shown:
+		s.closeWidgets()
+	default:
 		s.switchWorkspace(id)
 	}
 }
@@ -473,7 +498,7 @@ func (b *bar) setWorkspaces(s *shellUI, wss []hypr.Workspace) {
 		}
 	}
 	added := false
-	prev := &gtk.Widget{} // a NULL sibling: the start of the box
+	prev := &b.widgetsMark.Widget // the dots come after the widget page's mark
 	for _, w := range wss {
 		btn, ok := b.ws[w.ID]
 		if !ok {

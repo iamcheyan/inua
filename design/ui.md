@@ -69,12 +69,16 @@ Tints of the accent, used the same way everywhere:
 
 Recurring sizes and treatments:
 
-- **Kicker** (`.kicker`): 10.5 px, upper case, tracked 0.16 em, `t2`.
-  Group names in an index: THIS COMPUTER, MACHINES.
+- **Kicker** (`.kicker`): mono 10.5 px, weight 600, upper case, tracked
+  0.14 em, `t2`. A group's name over its items: an index's (THIS
+  COMPUTER, MACHINES), the dock drawer's, a menu's (WEB TERMINAL).
 - **Section label** (`.section-label`): mono 11 px, weight 600, tracked
   0.12 em, in brackets: `[STREAM]`.
-- **Tag** (`.tag`): a mode name, mono 11 px, upper case, in the accent:
-  `[APPS]`.
+- **Tag** (`.tag`): a mode name, the section label's type, upper case, in
+  the accent: `[APPS]`.
+
+These are the only small-capital voices; a surface uses the class, not a
+copy of its numbers.
 - **Label / sub** (`.label`, `.sub`): a row's text, 13 px `t1`, and the
   line under it, 12 px `t2`.
 - **Readout** (`.readout`): mono 11.5–12 px, `t1`.
@@ -85,12 +89,18 @@ depend on text being a fixed size.
 
 ## Marks
 
-The status mark (`.mark`) is a 7 px square: hollow (`t2` border) when off,
-filled with the accent when on. It starts a section head, a launcher head,
-a pane's path (Files, with two panes) and a list of states.
+The status mark (`.mark`) is a 7 px square, its 1 px border counted, with
+1 px corners: hollow (`t2` border) when off, filled with the accent when
+`on`. A state other than on fills it in its colour (`ok`, `warn`,
+`danger`); `wait` is hollow in the accent. It marks a tile, a pane's path
+(Files, with two panes), a row of a list of states. The rules are written
+once in `ui/style.css`; a window adds a state class, not a rule.
 
-The section mark (`.settings .section-head .mark`) is the same 7 px
-square, filled with `mix(t0, accent, 0.68)`, 1 px corners.
+The head mark is the same square before a head's `[LABEL]`, filled with
+`mix(t0, accent, 0.68)`: a section's head (`.section-head`), and the heads
+of the launcher, the agenda, the notification center, the clipboard, the
+widget page and its cards. A head is not a state, so its mark is never the
+accent.
 
 In a layout a mark is an **empty `Box`**, never a `Label`: an empty label
 is as tall as a line of text, so the "square" draws as a bar.
@@ -128,13 +138,15 @@ carry `.settings`):
 ```
 
 - **Index** (left, `panel`, a hairline on its right): the title (IBM Plex
-  Sans 20 px), kickers for groups, items 40–44 px tall with an icon, a
+  Sans 20 px), kickers for groups, items at least 40 px tall (`.settings button.index-item`, in every app) with an icon, a
   title and a sub line. Hover: accent at 6% with a 20% border; selected:
   `mix(surface, primary, 0.1)` with a 30% accent border.
 - **Page** (right, `app`, padding 18 px 32 px): sections of rows.
 - **Section**: a head (44 px; the mark, the `[LABEL]`, an optional meta
   text or control at the end) on a hairline, then the body. No frame, no
-  fill. 22 px between sections.
+  fill. 22 px between sections. Built in Go, a section is
+  `uikit.NewSection` (or `uikit.NewHead` for the head alone), the shell's
+  and the apps' alike; `uikit.Bracketed` is the `[LABEL]`'s markup.
 - **Row** (`.row`, at least 44 px, 12 px above and below): the text on the
   left (label, sub line), the control at the end, centred. A **field**
   (`.field`) puts its label above a wide control.
@@ -192,12 +204,40 @@ bar, over a full-screen backdrop that closes it on a click.
   bar draws it back up (`drop.go`, `shell.DropAt`). Nothing dims behind
   it.
 
+### Engawa, the widget page
+
+The place before the first workspace (`widgets.blp`). It is glass over the
+windows between the bar and the dock, never over them, so apps can be
+dragged in from the dock. Its sides are in line with the bar's, it is as
+far from the bar and the dock as the bar is from the screen's top, and it
+has a floating surface's `line` border and corners. It fades in and out
+(`GtkRevealer`, 200 ms), and Hyprland does not animate it as well. Its
+head is a page's: the head mark, `[ENGAWA]`, how to move and remove a
+card as a hint (no keys) and Add widget as a link. The widgets are cards
+like a library's tiles
+(`surface`, a `line` border, 4 px corners), on a grid of 60 px. A card's
+outer edges are on the grid: six cells wide, its height rounded up to
+whole cells, and a clear cell between it and any other. Its glass blurs
+what is behind (a layer rule). Each card's head is a section's mark and
+`[LABEL]`: right-click it
+for its menu, drag it to move the card. A dragged card is lifted (`surface`,
+an accent border at 38%, a floating surface's shadow) and follows the
+pointer. The grid fades in under it (160 ms) as a small cross at each
+joint, and the cells it
+would land on as a dashed spot, accent or `danger` where another card is.
+It snaps there when released, or goes back. The bar's mark for the page
+is a dot like the workspaces' but hollow, before them. While the page
+shows, it stretches into the accent pill and the workspace under the page
+is drawn as active, not focused.
+
 ## Menus
 
-A menu that a button opens (the trigger) looks and moves as the dock's
-drawer does (`bubble.go`). The reference is inua-term's menu at the top
-of column 1 (`internal/termui/headmenu.go`, `popover.term-menu` in
-`ui/style.css`).
+Every menu, the shell's and the apps', looks and moves as the dock's
+drawer does (`bubble.go`): inua-term's at the top of column 1
+(`internal/termui/headmenu.go`), Files' and Mail's, the tray's, the
+dock's, a right click's. A popover becomes one with `uikit.Menu`
+(`popover.glass-menu` in `ui/style.css`), told where it opens: under its
+trigger, above it (the dock's), or at the pointer.
 
 ```
                      ≡                   ← the trigger
@@ -215,26 +255,33 @@ of column 1 (`internal/termui/headmenu.go`, `popover.term-menu` in
 - **The surface**: the glass (`@glass`), a hairline round it
   (`alpha(@line, 0.9)`), corners of `style.radius` (`style.Corners` lists
   it), 6 px inside, and the floating card's shadow (`0 8px 28px` at 32%
-  black).
+  black). Hyprland blurs what is behind it, as behind the shell's glass:
+  `inua.conf` turns on `decoration:blur:popups`, ignoring the shadow, and
+  `blur_popups` for the bar's and the dock's layer surfaces, whose menus
+  are their popups.
 - **An arrow at the trigger**, in the menu's glass and hairline, its tip
   at the trigger's middle. The menu is centred under the trigger: GTK
   counts the shadow in a popover's alignment, so one aligned to the
   trigger's end leaves its arrow beside it.
-- **It grows out of the arrow**: from 55% of its size at the arrow's tip,
-  fading in, in 200 ms, the arrow fading in with it (140 ms). Without
-  the desktop's animations it is there at once. A GTK popover plays its
-  CSS animation when it is made, so the menu is made anew each time it
-  opens. It goes at once when it closes.
+- **It grows out of the arrow** (at the pointer, out of its corner): from
+  55% of its size at the arrow's tip, fading in, in 200 ms, the arrow
+  fading in with it (140 ms). Without the desktop's animations it is
+  there at once. A GTK popover plays a CSS animation once, when its
+  style first has it; `uikit.Menu` trades it for a twin of another name
+  at each show, so a popover kept between opens grows each time too. It
+  goes at once when it closes.
+- **At the pointer** (a right click), the same menu without an arrow.
 - **Items**: running text, 13.5 px, at least 32 px tall and 240 px wide,
   4 px corners, clear until the pointer is over them (accent at 7%, a
   25% accent border); one that cannot be used now is `t2`. An item says
   what it does: a switch is the item "Turn on the Web Terminal", not a
-  check mark.
+  check mark. Every menu's items have this look, a framed one's too: a
+  button item is `.menu-item`, GTK's own (`popover.menu`) take it as is.
 - **Keys**: an item with keys shows them at its end, as a keycap in the
-  menu's voice: mono 11 px, `t1`, a hairline box with no fill.
+  menu's voice (`.menu-key`): mono 11 px, `t1`, a hairline box with no
+  fill.
 - **Groups**: a hairline between groups. A group about one thing has a
-  title in the drawer's voice (mono 10.5 px, weight 600, upper case,
-  tracked 0.14 em, `t2`) on the hairline, and the thing's state at the
+  title, a kicker (`.kicker`), on the hairline, and the thing's state at the
   title's end: its status square and a few words in mono 11 px, in the
   accent while it is on and running, `warn` when it is on but not, `t2`
   otherwise. A state is never a greyed item: it would read as an action
@@ -255,22 +302,27 @@ All controls are 34 px tall where they sit in a row, framed by a 1 px
 | --- | --- | --- |
 | Button | Outlined: `surface`, `line` border, `t0` text; hover: 6% accent, 38% accent border | `outlined` |
 | The main action | The outlined shape filled with the accent, text in `app`; hover: the accent mixed 14% toward `t0`; disabled at 45% | `suggested-action` |
-| A light app's main action | Filled with `primary`, text in `app` | `primary` |
-| Destructive | Outlined, text in `danger`; or filled with `danger` in a confirming dialog | `outlined danger`, `destructive-action` |
-| Icon button | Borderless, 28 px square (20 px in tight rows), `t1`; hover: 9% accent | `plain` |
+| A light app's main action | Filled with `primary`, text in `app`; hover: mixed 12% toward `app` | `primary` |
+| Destructive | Outlined, text in `danger`; or filled with `danger` in a confirming dialog, hover as the main action's | `outlined danger`, `destructive-action` |
+| Large | Any of the four above at 44 px, 18 px inside, 14 px text | add `large` |
+| Small | Any of the four above at 26 px, 10 px inside, 12 px text: in a section's head, a notification, a tight bar | add `small` |
+| Icon button | Borderless, 34 px square, `t1`; hover: 9% accent | `plain` |
+| Tool | An icon button in a bar of tools, framed: a 55% hairline, clear; hover as the outlined one's, turned on (`:checked`) in a 9% tint, `.on` in the accent | `tool` |
+| Icon sizes | 44 px (`large`), 34 px, 26 px (`small`), 20 px in a tight row (`tight`), for `plain`, `tool` and any `image-button` | add the size |
 | Entry | `surface`, `line` border; focus: accent border and a 3 px ring at 14% | — |
 | Number | An entry's box with the digits in mono; − and + as flat 32 px cells behind hairlines | `spinbutton` (styled for every `.settings` window) |
 | Drop-down | The outlined button's shape, at least 150 px; its list on `app` without GTK's padding | `dropdown` |
 | Switch | 36 × 18 px, 2 px corners: a 14% accent tint off, the accent on | `switch` |
-| Segmented | Options in one hairline frame; the chosen one tinted with the accent (16%) in the accent's colour | `segmented` |
+| Segmented | Options in one hairline frame, 34 px in all (28 px options inside its 2 px); the chosen one tinted with the accent (16%) in the accent's colour; words in mono 12 px, or icons, square (`icons`). A box of toggle buttons or a stack switcher alike | `segmented` |
 | Keycap | Mono 11.5 px in a hairline box | `keycap` |
 
 One main action per page, at most: the accent fill is that page's one
 accent. The other buttons beside it are outlined.
 
-Every window that uses `suggested-action` gives it the full rule (shape,
-fill, hover, disabled); GTK's default is a rounded bright button that
-belongs to no theme of inua's.
+The buttons' rules are written once, for every window and surface, at
+the top of `ui/style.css`; a window does not restate them. A button of
+another size takes a size class, not a rule of the window's: 34 px is the
+default, `large` 44 px, `small` 26 px and, for icons only, `tight` 20 px.
 
 ## Feedback
 
@@ -347,8 +399,20 @@ Phosphor's regular icons (MIT), copied by `scripts/phosphor-icons.sh` into
 only when Phosphor has nothing fitting. Files and other apps' icons come
 from the desktop's icon theme; everything else from the Phosphor set.
 
-The inua logo, its app icons and the favicons are in `design/logo/`,
-drawn by `design/logo/build.py`; see `design/logo/README.md`.
+The inua logo and the favicons are in `design/logo/`, drawn by
+`design/logo/build.py`; see `design/logo/README.md`.
+
+App icons are objects on the desk, unlike the flat interface icons: inua's
+own apps and games (`config/apps/`) and the `inua-objects` theme for other
+apps (`config/icons/inua-objects/`, the default `app_icons`), all drawn by
+`design/icons/build.py`; see `design/icons/README.md`. `inua-objects-soft`
+draws the same objects more simply, `inua-objects-flat` flat; Settings'
+"App style" picks one, "Other apps" may give the rest another theme, and
+"Line icons" the flat interface icons. They may use
+gradients, a light from the top left and one shadow; no filters, no live
+text, under 80 KB each, with a simpler drawing for 16 px. Apps the theme
+does not draw fall back to the desktop's theme; `inua icons missing` lists
+them.
 
 ## Words
 
@@ -378,16 +442,7 @@ cannot see services on the session bus (Mobile Link shows "starting").
 
 ## Known differences
 
-- The other menus a button opens (Files' columns menu, at the end of
-  the list's heads; Mail's More, in the reader's bar; the tray's,
-  `popover.menu`) are framed on `app`, without an arrow or the glass,
-  and do not grow out of their trigger; they are to move to the rule in
-  [Menus](#menus). A menu at the pointer (a right click: Files' items,
-  inua-term's workspace rows) has no rule of its own yet.
 - The settings window and Mobile Link report errors in the index's
   status line, not where they happen.
-- `suggested-action` is styled per window (GPG, Pass, Files, Workshop,
-  Remote Desktop, Mobile Link, Disk Usage, Mail, the VM manager) with the same rule; one
-  shared `.settings button.suggested-action` would replace them.
 - Two fills for a main action exist: the accent (`suggested-action`) and
   `primary` (some light apps and games). New windows use the accent.

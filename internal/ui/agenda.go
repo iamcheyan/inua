@@ -226,27 +226,32 @@ func (s *shellUI) showAgenda() {
 	_, week := now.ISOWeek()
 	a.today.SetText(i18n.Tf("%s · WK %d", strings.ToUpper(i18n.Time(now, "Mon Jan 2")), week))
 	a.month.SetText(strings.ToUpper(i18n.Time(a.shown, "January 2006")))
+	fillMonth(&a.grid, a.shown, a.mondayFirst, now)
+}
 
-	for ch := a.grid.GetFirstChild(); ch != nil; ch = a.grid.GetFirstChild() {
-		a.grid.Remove(ch)
+// fillMonth draws the month of first in grid, with week numbers: the
+// agenda's and the widget page's calendar.
+func fillMonth(grid *gtk.Grid, first time.Time, mondayFirst bool, now time.Time) {
+	for ch := grid.GetFirstChild(); ch != nil; ch = grid.GetFirstChild() {
+		grid.Remove(ch)
 	}
 	cell := func(text string, col, row int, classes ...string) {
 		l := gtk.NewLabel(text)
 		for _, c := range classes {
 			l.AddCssClass(c)
 		}
-		a.grid.Attach(&l.Widget, int32(col), int32(row), 1, 1)
+		grid.Attach(&l.Widget, int32(col), int32(row), 1, 1)
 		l.Unref()
 	}
 	cell(i18n.T("WK"), 0, 0, "grid-head", "week")
 	names := []string{i18n.T("Su"), i18n.T("Mo"), i18n.T("Tu"), i18n.T("We"), i18n.T("Th"), i18n.T("Fr"), i18n.T("Sa")}
-	if a.mondayFirst {
+	if mondayFirst {
 		names = append(names[1:], names[0])
 	}
 	for i, n := range names {
 		cell(n, i+1, 0, "grid-head")
 	}
-	for r, w := range calendar.Month(a.shown.Year(), a.shown.Month(), a.mondayFirst, now) {
+	for r, w := range calendar.Month(first.Year(), first.Month(), mondayFirst, now) {
 		cell(strconv.Itoa(w.Number), 0, r+1, "week")
 		for i, d := range w.Days {
 			classes := []string{"agenda-day"}
@@ -268,6 +273,13 @@ func firstOfMonth(t time.Time) time.Time {
 // agendaWeather shows the weather where the Weather app is set: the last
 // forecast at once, read again in the background when it is old.
 func (s *shellUI) agendaWeather() {
+	s.showAgendaWeather(s.readWeather())
+}
+
+// readWeather reads the forecast where the Weather app is set again when
+// the last one is old or for another place, for the agenda and the widget
+// page, which show it once it is read; it reports whether a place is set.
+func (s *shellUI) readWeather() bool {
 	a := &s.agenda
 	var data weather.Data
 	if err := store.Load(weather.StoreName, &data); err != nil {
@@ -275,19 +287,16 @@ func (s *shellUI) agendaWeather() {
 	}
 	if len(data.Places) == 0 {
 		a.wxFor = weather.Place{}
-		s.showAgendaWeather(false)
-		return
+		return false
 	}
 	p := data.Places[max(0, min(data.Selected, len(data.Places)-1))]
 	same := p == a.wxFor && data.Fahrenheit == a.wxF && !a.wxAt.IsZero()
-	s.showAgendaWeather(true)
 	if same && time.Since(a.wxAt) < agendaWeatherAge || a.wxLoading {
-		return
+		return true
 	}
 	if !same {
 		a.wxAt = time.Time{} // another place: nothing to show meanwhile
 		a.wxFor, a.wxF = p, data.Fahrenheit
-		s.showAgendaWeather(true)
 	}
 	a.wxLoading = true
 	go func() {
@@ -308,8 +317,10 @@ func (s *shellUI) agendaWeather() {
 			if a.open && !a.closing {
 				s.showAgendaWeather(true)
 			}
+			s.showWidgetWeather()
 		})
 	}()
+	return true
 }
 
 // showAgendaWeather fills the weather under the month: now and the next
@@ -347,6 +358,13 @@ func (s *shellUI) showAgendaWeather(havePlace bool) {
 	if len(f.Days) > 0 {
 		a.wxHL.SetText(i18n.Tf("H %s  L %s", weather.Temp(f.Days[0].Max), weather.Temp(f.Days[0].Min)))
 	}
+	a.wxDays.SetVisible(weatherDays(&a.wxDays, f))
+}
+
+// weatherDays fills box with the five days after today, and reports
+// whether there were any.
+func weatherDays(box *gtk.Box, f weather.Forecast) bool {
+	some := false
 	for _, d := range f.Days[min(1, len(f.Days)):min(6, len(f.Days))] {
 		col := gtk.NewBox(gtk.OrientationVerticalValue, 3)
 		col.AddCssClass("agenda-weather-day")
@@ -360,7 +378,8 @@ func (s *shellUI) showAgendaWeather(havePlace bool) {
 		t := gtk.NewLabel(fmt.Sprintf("%s %s", weather.Temp(d.Max), weather.Temp(d.Min)))
 		t.AddCssClass("agenda-weather-text")
 		gtkx.Append(col, &t.Widget)
-		gtkx.Append(&a.wxDays, &col.Widget)
-		a.wxDays.SetVisible(true)
+		gtkx.Append(box, &col.Widget)
+		some = true
 	}
+	return some
 }

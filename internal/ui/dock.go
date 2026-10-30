@@ -27,6 +27,7 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/uikit"
 	"github.com/lyricat/inua/internal/workshop"
 )
 
@@ -498,8 +499,7 @@ func (s *shellUI) showDockMenu(btn *gtk.Widget, it shell.DockItem) {
 	group.Unref()
 	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
 	menu.Unref()
-	pop.SetHasArrow(false)
-	pop.SetPosition(gtk.PosTopValue)
+	uikit.Menu(&pop.Popover, uikit.Above)
 	pop.SetParent(btn)
 	pop.ConnectClosed(&s.onDockMenuClosed)
 	pop.Unref() // the button holds it

@@ -32,6 +32,16 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                     </style>
                     <property name="spacing">5</property>
                     <property name="valign">3</property>
+                    <child>
+                      <object class="GtkButton" id="widgets">
+                        <style>
+                          <class name="widgets-mark"/>
+                        </style>
+                        <property name="tooltip-text" translatable="yes">Engawa</property>
+                        <property name="focusable">false</property>
+                        <property name="valign">3</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child>

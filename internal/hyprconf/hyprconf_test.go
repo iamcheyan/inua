@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -100,6 +101,14 @@ func TestApplyWithoutHyprland(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(filepath.Dir(path), LuaName)); !os.IsNotExist(err) {
 		t.Errorf("inua.lua written for hyprland.conf: %v", err)
+	}
+	// The window and layer rules' names are not devices.
+	if names := known(string(got)); !slices.Equal(names, []string{"bt-trackpad"}) {
+		t.Errorf("known = %q, want only the touchpad", names)
+	}
+	// Nor are the device blocks an earlier inua wrote for them.
+	if names := known(string(got) + "\ndevice {\n    name = inua-bar-still\n    sensitivity = 0.35\n}\n"); !slices.Equal(names, []string{"bt-trackpad"}) {
+		t.Errorf("known = %q, want the rule's device block dropped", names)
 	}
 }
 
@@ -208,6 +217,98 @@ func TestRenderShortcuts(t *testing.T) {
 	}
 }
 
+// The widget page's swipe is there while the page is on, in both kinds of
+// file. Three fingers take the workspace swipe's place, unsetting it only
+// when the config has it (Hyprland refuses to unset one it has not got);
+// four leave it. Hyprland accepts what is written.
+func TestRenderWidgetGestures(t *testing.T) {
+	c := config.Default()
+	three := []string{
+		"gesture = 3, right, dispatcher, exec, inua call widgets right\n",
+		"gesture = 3, left, dispatcher, exec, inua call widgets left\n",
+	}
+	got := Render(c, Devices{WorkspaceSwipe: true})
+	for _, want := range append(three, "gesture = 3, horizontal, unset\n") {
+		if !strings.Contains(got, want) {
+			t.Errorf("missing %q in\n%s", want, got)
+		}
+	}
+	if got := Render(c, Devices{}); strings.Contains(got, "unset") || !strings.Contains(got, three[0]) {
+		t.Errorf("without a workspace swipe:\n%s", got)
+	}
+	lua := RenderLua(c, Devices{WorkspaceSwipe: true})
+	for _, want := range []string{
+		`hl.gesture({ fingers = 3, direction = "horizontal", action = "unset" })`,
+		`hl.gesture({ fingers = 3, direction = "right", action = function() hl.dispatch(hl.dsp.exec_cmd("inua call widgets right")) end })`,
+	} {
+		if !strings.Contains(lua, want) {
+			t.Errorf("missing %q in\n%s", want, lua)
+		}
+	}
+	c.Widgets.Swipe = 4
+	got = Render(c, Devices{WorkspaceSwipe: true})
+	if strings.Contains(got, "unset") || !strings.Contains(got, "gesture = 4, right, dispatcher, exec, inua call widgets open\n") {
+		t.Errorf("four fingers:\n%s", got)
+	}
+	for _, off := range []func(*config.Config){
+		func(c *config.Config) { c.Widgets.Enable = false },
+		func(c *config.Config) { c.Widgets.Swipe = 0 },
+	} {
+		c := config.Default()
+		off(&c)
+		if got := Render(c, Devices{WorkspaceSwipe: true}) + RenderLua(c, Devices{WorkspaceSwipe: true}); strings.Contains(got, "gesture") {
+			t.Errorf("a swipe while off:\n%s", got)
+		}
+	}
+	// The page's blur, while it is on, swipe or not.
+	c = config.Default()
+	c.Widgets.Swipe = 0
+	if got := Render(c, Devices{}); !strings.Contains(got, "match:namespace = ^inua-widgets$\n    blur = on") {
+		t.Errorf("no blur:\n%s", got)
+	}
+	if got := RenderLua(c, Devices{}); !strings.Contains(got, `match = { namespace = "^inua-widgets$" },`) {
+		t.Errorf("no blur in Lua:\n%s", got)
+	}
+	c.Widgets.Enable = false
+	if got := Render(c, Devices{}); strings.Contains(got, "inua-widgets") {
+		t.Errorf("a blur while the page is off:\n%s", got)
+	}
+	if _, err := exec.LookPath("Hyprland"); err == nil {
+		path := filepath.Join(t.TempDir(), "hyprland.conf")
+		for _, file := range []string{
+			"gesture = 3, horizontal, workspace\n" + Render(config.Default(), Devices{WorkspaceSwipe: true}),
+			Render(config.Default(), Devices{}),
+		} {
+			os.WriteFile(path, []byte(file), 0o644)
+			if out, _ := exec.Command("Hyprland", "--verify-config", "-c", path).CombinedOutput(); !strings.Contains(string(out), "config ok") {
+				t.Errorf("Hyprland rejects:\n%s", out)
+			}
+		}
+	}
+}
+
+func TestHasWorkspaceSwipe(t *testing.T) {
+	for _, c := range []struct {
+		file string
+		lua  bool
+		want bool
+	}{
+		{"gesture = 3, horizontal, workspace\n", false, true},
+		{"  gesture=3,horizontal,workspace # swipe\n", false, true},
+		{"# gesture = 3, horizontal, workspace\n", false, false},
+		{"gesture = 4, horizontal, workspace\n", false, false},
+		{"gesture = 3, up, special, scratch\n", false, false},
+		{`hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })`, true, true},
+		{`hl.gesture({ action = "workspace", direction = "horizontal", fingers = 3 })`, true, true},
+		{`hl.gesture({ fingers = 3, direction = "horizontal", mods = "ALT", action = "workspace" })`, true, false},
+		{`hl.gesture({ fingers = 3, direction = "up", action = "close" })`, true, false},
+	} {
+		if got := hasWorkspaceSwipe(c.file, c.lua); got != c.want {
+			t.Errorf("%q: %v", c.file, got)
+		}
+	}
+}
+
 // Dictation's keys are bound only while it is on: held to talk, or
 // pressed to start and stop.
 func TestRenderDictation(t *testing.T) {
@@ -245,6 +346,28 @@ func TestRenderDictation(t *testing.T) {
 func TestRenderLockRestore(t *testing.T) {
 	if got := Render(config.Default(), Devices{}); !strings.Contains(got, "allow_session_lock_restore = true") {
 		t.Errorf("inua.conf does not let the lock screen take the lock back:\n%s", got)
+	}
+}
+
+// The apps' menus (popups) are blurred as the shell's glass is, their
+// shadows not.
+func TestRenderPopupBlur(t *testing.T) {
+	got := Render(config.Default(), Devices{})
+	for _, want := range []string{"popups = true", "popups_ignorealpha = 0.4"} {
+		if !strings.Contains(got, want) {
+			t.Errorf("inua.conf lacks %q:\n%s", want, got)
+		}
+	}
+	if got := RenderLua(config.Default(), Devices{}); !strings.Contains(got, "blur = { popups = true, popups_ignorealpha = 0.4 }") {
+		t.Errorf("inua.lua does not blur popups:\n%s", got)
+	}
+	// The dock's and the bar's menus are their layer surfaces' popups.
+	for _, out := range []string{got, RenderLua(config.Default(), Devices{})} {
+		for _, want := range []string{"^inua-(bar|dock)$", "blur_popups"} {
+			if !strings.Contains(out, want) {
+				t.Errorf("no %q for the shell's menus:\n%s", want, out)
+			}
+		}
 	}
 }
 

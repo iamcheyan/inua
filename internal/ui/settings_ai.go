@@ -19,6 +19,7 @@ import (
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // The AI page: the assistant's switches, which profile answers, and a
@@ -318,8 +319,7 @@ func (s *shellUI) showAIDetail() {
 	a.shown = a.open
 	a.detailStack.SetVisibleChildName(fmt.Sprintf("p%d", a.open))
 	name := s.cfg.Assistant.Profiles[a.open].Name
-	// A profile's name is letters, digits, "-" and "_": no markup in it.
-	a.detailHead.SetMarkup("<span alpha='55%'>[</span>" + strings.ToUpper(name) + "<span alpha='55%'>]</span>")
+	a.detailHead.SetMarkup(uikit.Bracketed(strings.ToUpper(name)))
 	s.showPanel(&a.panel, true, &a.cards[a.open].row.Widget)
 }
 

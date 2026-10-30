@@ -22,6 +22,7 @@ import (
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // openConversation shows a conversation: what is kept at once, the rest
@@ -262,7 +263,7 @@ func (w *window) drawReader() {
 // tool adds an icon button to the reader's bar.
 func (w *window) tool(box *gtk.Box, icon, tip string, f func()) *gtk.Button {
 	b := gtk.NewButtonFromIconName(icon)
-	b.AddCssClass("mail-tool")
+	b.AddCssClass("tool")
 	b.SetTooltipText(tip)
 	w.readerBtns = append(w.readerBtns, w.h.click(b, f))
 	gtkx.Append(box, &b.Widget)
@@ -337,15 +338,14 @@ func (w *window) drawBar(c *mail.Conversation) {
 
 	more := gtk.NewMenuButton()
 	more.SetIconName("view-more-symbolic")
-	more.AddCssClass("mail-tool")
+	more.AddCssClass("tool")
 	more.SetTooltipText(i18n.T("More"))
 	pop := gtk.NewPopover()
-	pop.AddCssClass("mail-menu")
-	pop.SetHasArrow(false)
+	uikit.Menu(pop, uikit.Below)
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	item := func(label string, f func()) {
 		b := gtk.NewButtonWithLabel(label)
-		b.AddCssClass("mail-menu-item")
+		b.AddCssClass("menu-item")
 		if l := b.GetChild(); l != nil {
 			(&gtk.Label{Widget: *l}).SetXalign(0)
 		}

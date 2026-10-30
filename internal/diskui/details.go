@@ -261,7 +261,7 @@ func (w *window) aiNode(n *disk.Node, first bool) *gtk.Widget {
 		b := gtk.NewButtonWithLabel(label)
 		b.AddCssClass("outlined")
 		if !first || (a != nil && a.ok) {
-			b.AddCssClass("disk-ask-quiet")
+			b.AddCssClass("small")
 		}
 		b.SetHalign(gtk.AlignStartValue)
 		b.SetTooltipText(i18n.T("Sends the path, the size and the largest names, never the files' contents."))

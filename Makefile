@@ -115,6 +115,15 @@ install: build
 	if [ -f bin/libinua-vt.so ]; then install -Dm644 -t "$(PREFIX)/lib/inua" bin/libinua-vt.so; fi
 	install -Dm644 -t "$(DATA_HOME)/applications" config/apps/*.desktop
 	install -Dm644 -t "$(DATA_HOME)/icons/hicolor/scalable/apps" config/apps/*.svg
+	install -Dm644 -t "$(DATA_HOME)/icons/hicolor/16x16/apps" config/apps/small/*.svg
+	# inua's icon themes (design/icons), their aliases symlinks: the objects,
+	# with inua's apps' icons copied in, and the soft and flat sets, which
+	# have their own and link to the objects' 16 px drawings
+	mkdir -p "$(DATA_HOME)/icons"
+	for t in inua-objects inua-objects-soft inua-objects-flat; do rm -rf "$(DATA_HOME)/icons/$$t"; cp -a config/icons/$$t "$(DATA_HOME)/icons/$$t"; done
+	install -m644 -t "$(DATA_HOME)/icons/inua-objects/scalable/apps" config/apps/*.svg
+	install -m644 -t "$(DATA_HOME)/icons/inua-objects/16/apps" config/apps/small/*.svg
+	-for t in inua-objects inua-objects-soft inua-objects-flat; do gtk-update-icon-cache -q -t "$(DATA_HOME)/icons/$$t" 2>/dev/null; done
 
 install-config: build
 	PATH="$(PREFIX)/bin:$$PATH" bin/inua init -dir "$(CONFIG_HOME)"

@@ -128,37 +128,32 @@ func (p *pane) buildColumns() {
 	more := gtk.NewButtonFromIconName("view-more-symbolic")
 	more.AddCssClass("plain")
 	more.AddCssClass("files-col-more")
+	more.AddCssClass("tight")
 	more.SetValign(gtk.AlignCenterValue)
 	more.SetSizeRequest(trailing, -1)
 	more.SetTooltipText(i18n.T("Columns"))
-	w.click(more, func() {
-		var x, y float64
-		more.TranslateCoordinates(&p.box.Widget, 0, float64(more.GetHeight()), &x, &y)
-		p.columnsMenu(int32(x), int32(y))
-	})
+	w.click(more, func() { p.menu.showUnder(p.columnItems, &more.Widget) })
 	gtkx.Append(&p.columns, &more.Widget)
 	w.press(&p.columns.Widget, false, func(button uint32, _ int32, x, y float64) {
 		if button == 3 {
 			var px, py float64
 			p.columns.TranslateCoordinates(&p.box.Widget, x, y, &px, &py)
-			p.columnsMenu(int32(px), int32(py))
+			p.menu.show(p.columnItems, int32(px), int32(py))
 		}
 	})
 }
 
-// columnsMenu turns the columns on and off.
-func (p *pane) columnsMenu(x, y int32) {
-	p.menu.show(func() []menuItem {
-		var items []menuItem
-		for _, c := range columns {
-			by := c.by
-			items = append(items, menuItem{label: p.columnTitle(c), check: true, on: p.w.app.settings.ShowsColumn(by), run: func() {
-				p.w.app.settings.ToggleColumn(by)
-				p.w.app.columnsChanged()
-			}})
-		}
-		return items
-	}, x, y)
+// columnItems is the columns menu: each column, turned on and off.
+func (p *pane) columnItems() []menuItem {
+	var items []menuItem
+	for _, c := range columns {
+		by := c.by
+		items = append(items, menuItem{label: p.columnTitle(c), check: true, on: p.w.app.settings.ShowsColumn(by), run: func() {
+			p.w.app.settings.ToggleColumn(by)
+			p.w.app.columnsChanged()
+		}})
+	}
+	return items
 }
 
 // syncColumns shows the heads of the columns chosen, the order marked on

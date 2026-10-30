@@ -185,23 +185,6 @@ func TestMove(t *testing.T) {
 	}
 }
 
-func TestToggleModeKeepsQuery(t *testing.T) {
-	var l Launcher
-	l.SetConnected(true)
-	l.SetApps(testApps())
-	l.SetSnapshot(testSnap())
-	l.Show(Apps)
-	l.SetQuery("fire")
-	l.ToggleMode()
-	if l.Mode != Windows || l.Query != "fire" || !slices.Equal(titles(l.Results), []string{"Mozilla Firefox"}) {
-		t.Errorf("mode %v query %q results %q", l.Mode, l.Query, titles(l.Results))
-	}
-	l.ToggleMode()
-	if l.Mode != Apps || !slices.Equal(titles(l.Results), []string{"Firefox"}) {
-		t.Errorf("back: mode %v results %q", l.Mode, titles(l.Results))
-	}
-}
-
 func TestCancelReturnsFocus(t *testing.T) {
 	var l Launcher
 	snap := testSnap()
@@ -483,5 +466,129 @@ func TestAssistant(t *testing.T) {
 	l.SetQuery("?")
 	if len(l.Results) != 0 || l.Message() != "Ask the assistant anything" {
 		t.Errorf("? alone: %q %q", titles(l.Results), l.Message())
+	}
+}
+
+// gridResults is an answer, seven apps, the web search and the assistant,
+// in apps mode.
+func gridResults() *Launcher {
+	l := &Launcher{Open: true, Mode: Apps}
+	l.Results = append(l.Results, Result{Title: "answer", Copy: "42"})
+	for _, a := range []string{"a", "b", "c", "d", "e", "f", "g"} {
+		l.Results = append(l.Results, Result{Title: a, Entry: &desktop.Entry{ID: a}})
+	}
+	l.Results = append(l.Results, Result{Title: "web", URL: "https://example.org"}, Result{Title: "ask", Ask: "?"})
+	return l
+}
+
+func TestLauncherLines(t *testing.T) {
+	l := gridResults()
+	// The quick actions two to a line, apart from the apps.
+	want := []Line{{0, 1, true}, {1, 4, true}, {4, 7, true}, {7, 8, true}, {8, 10, true}}
+	if got := l.Lines(3); !slices.Equal(got, want) {
+		t.Errorf("apps: %v, want %v", got, want)
+	}
+	l.Mode = Windows
+	if got := l.Lines(3); len(got) != len(l.Results) || got[1].Grid {
+		t.Errorf("windows are rows: %v", got)
+	}
+}
+
+func TestLauncherStep(t *testing.T) {
+	l := gridResults()
+	lines := l.Lines(3)
+	if !l.Step(lines, 1, 0) || l.Selected != 1 {
+		t.Errorf("right on a quick action: selected %d, want 1", l.Selected)
+	}
+	l.Selected = 0
+	for _, c := range []struct{ dx, dy, want int }{
+		{0, 1, 1},  // into the grid, its first app
+		{1, 0, 2},  // along the line
+		{0, 1, 5},  // down keeps the column
+		{0, 1, 7},  // a shorter line: its last app
+		{0, 1, 8},  // out of the grid, to the web search
+		{0, -2, 4}, // back up two lines: the first column of 4..6
+		{-1, 0, 3}, // left wraps to the line above
+		{0, -9, 0}, // stops at the top
+	} {
+		if !l.Step(lines, c.dx, c.dy) || l.Selected != c.want {
+			t.Fatalf("step %d,%d: selected %d, want %d", c.dx, c.dy, l.Selected, c.want)
+		}
+	}
+}
+
+func TestLauncherPinned(t *testing.T) {
+	l := gridResults()
+	if got := l.Pinned(); got != 8 {
+		t.Errorf("apps then the web search: %d, want 8", got)
+	}
+	l.Results = l.Results[:1] // an answer, no apps
+	if got := l.Pinned(); got != 1 {
+		t.Errorf("no apps: %d, want 1 (none pinned)", got)
+	}
+	l = gridResults()
+	l.Mode = Windows
+	if got := l.Pinned(); got != len(l.Results) {
+		t.Errorf("windows: %d", got)
+	}
+}
+
+// Apps go first, together, for the grid; commands, answers and the web
+// search after them in their order; the best match stays selected.
+func TestAppsFirst(t *testing.T) {
+	app := func(id string) Result { return Result{Title: id, Entry: &desktop.Entry{ID: id}} }
+	got, best := appsFirst([]Result{{Title: "Lock Screen", Command: "lock"}, app("a"), {Title: "Log Out", Command: "logout"}, app("b")})
+	if want := []string{"a", "b", "Lock Screen", "Log Out"}; !slices.Equal(titles(got), want) || best != 2 {
+		t.Errorf("command first: %q best %d, want %q best 2", titles(got), best, want)
+	}
+	if _, best := appsFirst([]Result{app("a"), {Title: "Lock Screen"}}); best != 0 {
+		t.Errorf("app first: best %d", best)
+	}
+
+	var l Launcher
+	l.SetApps(testApps())
+	l.Show(Apps)
+	l.SetQuery("o") // apps and commands both match
+	seenRest := false
+	for _, r := range l.Results {
+		if r.Entry == nil {
+			seenRest = true
+		} else if seenRest {
+			t.Fatalf("an app after the rest: %q", titles(l.Results))
+		}
+	}
+}
+
+// Tab's actions: an app's follow its own, the dock and its windows; a window's are
+// the window commands; a result with nothing more has none.
+func TestItemActions(t *testing.T) {
+	ids := func(acts []ItemAction) []string {
+		var out []string
+		for _, a := range acts {
+			out = append(out, a.ID)
+		}
+		return out
+	}
+	app := Result{Title: "a", Entry: &desktop.Entry{ID: "a"}}
+	ff := Result{Title: "ff", Entry: &desktop.Entry{ID: "ff", Actions: []desktop.Action{{ID: "new-window", Name: "New Window"}, {ID: "private", Name: "New Private Window"}}}}
+	tool := Result{Title: "t", Entry: &desktop.Entry{ID: "inua:clipboard"}}
+	for _, c := range []struct {
+		r       Result
+		pinned  bool
+		windows int
+		want    []string
+	}{
+		{app, false, 0, []string{"open", "pin"}},
+		{app, true, 2, []string{"open", "new", "unpin", "quit"}},
+		{ff, false, 1, []string{"open", "own-0", "own-1", "pin", "quit"}},
+		{tool, false, 1, []string{"open", "pin", "quit"}},
+		{Result{Address: "0x1"}, false, 0, []string{"focus", "close-window", "float", "fullscreen", "center"}},
+		{Result{Copy: "42"}, false, 0, []string{"copy"}},
+		{Result{URL: "https://example.org"}, false, 0, []string{"open-url", "copy-url"}},
+		{Result{Command: "lock"}, false, 0, nil},
+	} {
+		if got := ids(ItemActions(c.r, c.pinned, c.windows)); !slices.Equal(got, c.want) {
+			t.Errorf("%+v pinned=%v windows=%d: %q, want %q", c.r, c.pinned, c.windows, got, c.want)
+		}
 	}
 }
