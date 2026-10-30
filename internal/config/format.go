@@ -28,7 +28,7 @@ func Format(c Config) string {
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
 		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
-		c.Widgets.Enable, list(c.Widgets.Items), list(c.Widgets.Apps),
+		c.Widgets.Enable, c.Widgets.Swipe, list(c.Widgets.Apps), widgetPlaces(c.Widgets.Places),
 		c.Voice.Enable, c.Voice.PushToTalk, q(c.Voice.Engine), q(c.Voice.Show),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision), q(c.Assistant.Transcription),
 		list(c.Assistant.Tools), c.Assistant.AskBeforeChanges, c.Assistant.ElevatedCommands,
@@ -104,6 +104,20 @@ func aiProfiles(all []AIProfile) string {
 }
 
 // list renders a TOML array of strings.
+// widgetPlaces writes the widget page's widgets as [[widgets.widget]]
+// tables, the last of [widgets]; none is an empty list, so that the file
+// does not get the defaults back.
+func widgetPlaces(all []WidgetPlace) string {
+	if len(all) == 0 {
+		return "widget = []\n"
+	}
+	tables := make([]string, len(all))
+	for i, p := range all {
+		tables[i] = fmt.Sprintf("[[widgets.widget]]\nkind = %s\ncolumn = %d\nrow = %d\n", q(p.Kind), p.Column, p.Row)
+	}
+	return strings.Join(tables, "\n")
+}
+
 func list(items []string) string {
 	q2 := make([]string, len(items))
 	for i, s := range items {
@@ -473,19 +487,25 @@ drawer = %t
 pinned = %s
 
 [widgets]
-# The widget page, a place before the first workspace: a mark before the
+# The widget page, a place before the first workspace: a dot before the
 # workspaces on the bar opens it, so do the wheel up past the first
-# workspace and a four-finger swipe right; Escape, a workspace or a swipe
-# left goes back. Drag a widget by its head to move it.
+# workspace and a swipe right; Escape, a workspace or a swipe left goes
+# back. Drag a widget by its head to move it on the page's grid.
 enable = %t
 
-# The widgets on it, in order: clock, calendar, weather, media, apps.
-items = %s
+# Fingers that swipe right to the page and left back: 3 or 4, 0 for none.
+# Three fingers go through the workspaces too, taking the place of
+# hyprland.conf's three-finger workspace swipe; four leave it as it is.
+swipe = %d
 
 # The apps on its apps widget, by desktop ID. Drag one in from the dock,
 # or add it with the widget's +.
 apps = %s
 
+# The widgets on it (clock, calendar, weather, media, apps), each with the
+# column and row of the page's grid its top left corner is at, a column
+# and a row 60 pixels apart.
+%s
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)
 # types the words into the focused window. true shows a microphone in the

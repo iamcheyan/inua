@@ -1,8 +1,9 @@
-// The widget page, the place before the first workspace: the bar's mark,
-// the wheel up past the first workspace, a four-finger swipe or the
-// shortcut opens it, and it slides in from the left over the windows,
+// The widget page, the place before the first workspace: the bar's dot,
+// the wheel up past the first workspace, a swipe right or the shortcut
+// opens it, and it slides in from the left over the windows,
 // between the bar and the dock. Escape, a workspace, the wheel down or a
-// swipe left goes back. Go fills the cards, in widgets.items' order.
+// swipe left goes back. Go puts the cards on the board where
+// widgets.widget places them.
 using Gtk 4.0;
 
 ApplicationWindow widgets {
@@ -38,7 +39,7 @@ ApplicationWindow widgets {
           hexpand: true;
           xalign: 0;
           ellipsize: end;
-          label: _("Drag a head to move it · Right-click to remove · Esc · back");
+          label: _("Drag a head to move it on the grid · Right-click to remove · Esc · back");
         }
 
         MenuButton add {
@@ -50,18 +51,11 @@ ApplicationWindow widgets {
 
       ScrolledWindow {
         vexpand: true;
-        hscrollbar-policy: never;
 
-        FlowBox cards {
-          styles ["widget-cards"]
-          selection-mode: none;
-          homogeneous: false;
-          column-spacing: 18;
-          row-spacing: 18;
-          min-children-per-line: 1;
-          max-children-per-line: 4;
-          valign: start;
-          halign: start;
+        // The cards, each at the column and row of its place, on a grid
+        // drawn while one is dragged.
+        Fixed board {
+          styles ["widget-board"]
         }
       }
     }

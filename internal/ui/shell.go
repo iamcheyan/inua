@@ -249,6 +249,9 @@ type shellUI struct {
 	onWidgetDrop           func(gtk.DropTarget, uintptr, float64, float64) bool
 	onWidgetQuery          func(gtk.SearchEntry)
 	onWidgetQueryActivate  func(gtk.SearchEntry)
+	onWidgetDragBegin      func(gtk.GestureDrag, float64, float64)
+	onWidgetDragUpdate     func(gtk.GestureDrag, float64, float64)
+	onWidgetDragEnd        func(gtk.GestureDrag, float64, float64)
 	onLockMonitor          func(uintptr, uintptr, uintptr)
 	onLockLocked           func(uintptr, uintptr)
 	onLockFailed           func(uintptr, uintptr)
@@ -929,11 +932,11 @@ func (s *shellUI) barNames() []string {
 //	notifications toggle|open|close|clear|focus [on|off]|list|dismiss ID|invoke ID [KEY]
 //	system   status|set KEY VALUE|power ACTION
 //	media    status|play-pause|next|previous
-//	widgets  toggle|open|close
+//	widgets  toggle|open|close|right|left
 //	shell    state|close|reload|restart|snapshot DIR|tray-menu N
 func (s *shellUI) request(req ipc.Request) ipc.Response {
 	if req.Op == "show" {
-		return ipc.Response{OK: true, Result: "launcher: toggle apps windows close (apps|windows QUERY…)\noverview: toggle open close\ncontrol: toggle open close\nsettings: toggle open close\nnotifications: toggle open close clear focus list dismiss invoke\nmedia: status play-pause next previous\nvoice: toggle start stop cancel\nsystem: status set (wifi bluetooth volume mute brightness focus saver) power (suspend reboot poweroff logout)\nscreenshot: area silent-area pick-window pick-screen screen window color record stop close\nlock: now unlock state\nclipboard: toggle open close\npass: toggle open close\ndrawer: toggle open close\nwidgets: toggle open close\nshell: state close reload restart snapshot tray-menu"}
+		return ipc.Response{OK: true, Result: "launcher: toggle apps windows close (apps|windows QUERY…)\noverview: toggle open close\ncontrol: toggle open close\nsettings: toggle open close\nnotifications: toggle open close clear focus list dismiss invoke\nmedia: status play-pause next previous\nvoice: toggle start stop cancel\nsystem: status set (wifi bluetooth volume mute brightness focus saver) power (suspend reboot poweroff logout)\nscreenshot: area silent-area pick-window pick-screen screen window color record stop close\nlock: now unlock state\nclipboard: toggle open close\npass: toggle open close\ndrawer: toggle open close\nwidgets: toggle open close right left\nshell: state close reload restart snapshot tray-menu"}
 	}
 	if req.Op != "call" {
 		return ipc.Response{Error: "unknown op " + req.Op}

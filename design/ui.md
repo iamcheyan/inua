@@ -200,11 +200,16 @@ dragged in from the dock. It slides in from the left edge and back out
 (`GtkRevealer`, 260 ms), and Hyprland does not animate it as well. Its
 head is a page's: the filled mark, `[WIDGETS]`, the keys as a hint and
 Add widget as a link. The widgets are cards like a library's tiles
-(`surface`, a `line` border, 4 px corners). Each card's head is a
-section's mark and `[LABEL]`: drag it to move the card, right-click it for
-its menu. The bar's mark for the page is a hollow 5 px square before the
-workspace dots, filled with the accent while the page shows. Meanwhile
-the workspace under the page is drawn as active, not focused.
+(`surface`, a `line` border, 4 px corners), all one width, on a grid of
+60 px. Each card's head is a section's mark and `[LABEL]`: right-click it
+for its menu, drag it to move the card. A dragged card is lifted (`surface`,
+an accent border at 38%, a floating surface's shadow) and follows the
+pointer. The grid shows under it as a dot at each joint, and the cells it
+would land on as a dashed spot, accent or `danger` where another card is.
+It snaps there when released, or goes back. The bar's mark for the page
+is a dot like the workspaces' but hollow, before them. While the page
+shows, it stretches into the accent pill and the workspace under the page
+is drawn as active, not focused.
 
 ## Menus
 

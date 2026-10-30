@@ -209,30 +209,80 @@ func TestRenderShortcuts(t *testing.T) {
 }
 
 // The widget page's swipe is there while the page is on, in both kinds of
-// file, and Hyprland accepts it.
+// file. Three fingers take the workspace swipe's place, unsetting it only
+// when the config has it (Hyprland refuses to unset one it has not got);
+// four leave it. Hyprland accepts what is written.
 func TestRenderWidgetGestures(t *testing.T) {
 	c := config.Default()
-	got := Render(c, Devices{})
-	for _, want := range []string{
-		"gesture = 4, right, dispatcher, exec, inua call widgets open\n",
-		"gesture = 4, left, dispatcher, exec, inua call widgets close\n",
-	} {
+	three := []string{
+		"gesture = 3, right, dispatcher, exec, inua call widgets right\n",
+		"gesture = 3, left, dispatcher, exec, inua call widgets left\n",
+	}
+	got := Render(c, Devices{WorkspaceSwipe: true})
+	for _, want := range append(three, "gesture = 3, horizontal, unset\n") {
 		if !strings.Contains(got, want) {
 			t.Errorf("missing %q in\n%s", want, got)
 		}
 	}
-	if lua := RenderLua(c, Devices{}); !strings.Contains(lua, `hl.gesture({ fingers = 4, direction = "right", action = function() hl.dispatch(hl.dsp.exec_cmd("inua call widgets open")) end })`) {
-		t.Errorf("no swipe in\n%s", lua)
+	if got := Render(c, Devices{}); strings.Contains(got, "unset") || !strings.Contains(got, three[0]) {
+		t.Errorf("without a workspace swipe:\n%s", got)
 	}
-	c.Widgets.Enable = false
-	if got := Render(c, Devices{}) + RenderLua(c, Devices{}); strings.Contains(got, "gesture") {
-		t.Errorf("a swipe while the page is off:\n%s", got)
+	lua := RenderLua(c, Devices{WorkspaceSwipe: true})
+	for _, want := range []string{
+		`hl.gesture({ fingers = 3, direction = "horizontal", action = "unset" })`,
+		`hl.gesture({ fingers = 3, direction = "right", action = function() hl.dispatch(hl.dsp.exec_cmd("inua call widgets right")) end })`,
+	} {
+		if !strings.Contains(lua, want) {
+			t.Errorf("missing %q in\n%s", want, lua)
+		}
+	}
+	c.Widgets.Swipe = 4
+	got = Render(c, Devices{WorkspaceSwipe: true})
+	if strings.Contains(got, "unset") || !strings.Contains(got, "gesture = 4, right, dispatcher, exec, inua call widgets open\n") {
+		t.Errorf("four fingers:\n%s", got)
+	}
+	for _, off := range []func(*config.Config){
+		func(c *config.Config) { c.Widgets.Enable = false },
+		func(c *config.Config) { c.Widgets.Swipe = 0 },
+	} {
+		c := config.Default()
+		off(&c)
+		if got := Render(c, Devices{WorkspaceSwipe: true}) + RenderLua(c, Devices{WorkspaceSwipe: true}); strings.Contains(got, "gesture") {
+			t.Errorf("a swipe while off:\n%s", got)
+		}
 	}
 	if _, err := exec.LookPath("Hyprland"); err == nil {
 		path := filepath.Join(t.TempDir(), "hyprland.conf")
-		os.WriteFile(path, []byte(Render(config.Default(), Devices{})), 0o644)
-		if out, _ := exec.Command("Hyprland", "--verify-config", "-c", path).CombinedOutput(); !strings.Contains(string(out), "config ok") {
-			t.Errorf("Hyprland rejects:\n%s", out)
+		for _, file := range []string{
+			"gesture = 3, horizontal, workspace\n" + Render(config.Default(), Devices{WorkspaceSwipe: true}),
+			Render(config.Default(), Devices{}),
+		} {
+			os.WriteFile(path, []byte(file), 0o644)
+			if out, _ := exec.Command("Hyprland", "--verify-config", "-c", path).CombinedOutput(); !strings.Contains(string(out), "config ok") {
+				t.Errorf("Hyprland rejects:\n%s", out)
+			}
+		}
+	}
+}
+
+func TestHasWorkspaceSwipe(t *testing.T) {
+	for _, c := range []struct {
+		file string
+		lua  bool
+		want bool
+	}{
+		{"gesture = 3, horizontal, workspace\n", false, true},
+		{"  gesture=3,horizontal,workspace # swipe\n", false, true},
+		{"# gesture = 3, horizontal, workspace\n", false, false},
+		{"gesture = 4, horizontal, workspace\n", false, false},
+		{"gesture = 3, up, special, scratch\n", false, false},
+		{`hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })`, true, true},
+		{`hl.gesture({ action = "workspace", direction = "horizontal", fingers = 3 })`, true, true},
+		{`hl.gesture({ fingers = 3, direction = "horizontal", mods = "ALT", action = "workspace" })`, true, false},
+		{`hl.gesture({ fingers = 3, direction = "up", action = "close" })`, true, false},
+	} {
+		if got := hasWorkspaceSwipe(c.file, c.lua); got != c.want {
+			t.Errorf("%q: %v", c.file, got)
 		}
 	}
 }

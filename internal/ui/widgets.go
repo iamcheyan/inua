@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"log"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 	"unsafe"
@@ -22,6 +23,7 @@ import (
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
@@ -30,7 +32,11 @@ import (
 // widgetPage is the place before the first workspace (widgets.blp): a page
 // of cards over the windows of one monitor, between its bar and its dock.
 // Its window is built on every open and destroyed once it has slid out.
-// The cards are built anew for each change of widgets.items or apps; the
+// The cards sit on a grid of shell.WidgetCell (the board), each where
+// widgets.widget puts it; dragged by its head, a card follows the pointer
+// over the grid drawn for the drag, and lands on the cell under its
+// corner when no other card is there. The cards are built anew when the
+// widgets or the apps change, and only moved when their places do; the
 // parts that change by themselves (the time, the player, the forecast)
 // are kept to be filled in place.
 type widgetPage struct {
@@ -41,9 +47,20 @@ type widgetPage struct {
 	win    gtk.ApplicationWindow
 	reveal gtk.Revealer
 	page   gtk.Box // the parent of the menus: it outlives the cards
-	cards  gtk.FlowBox
+	board  gtk.Fixed
 	add    gtk.MenuButton
 	refs   gtkx.Scope
+
+	cards map[string]*gtk.Box // by kind, owned by the board
+	heads map[string]*gtk.Box // the cards' heads, to drag them by
+	lines *gtk.Box            // the grid, shown while a card is dragged
+	spot  *gtk.Box            // where the dragged card lands
+
+	// The card dragged: its kind, where it was, and where it would land.
+	dragKind string
+	dragFrom [2]float64
+	dragTo   shell.GridRect
+	dragFits bool
 
 	// What a menu is about: a widget's kind, or an app's ID.
 	menuKind, menuApp string
@@ -74,10 +91,6 @@ type widgetPicker struct {
 // widgetsPlace is the page's place among the workspaces the bar's wheel
 // goes through.
 const widgetsPlace = "widgets"
-
-// widgetDrag starts the drag of a widget by its head; an app's drag (from
-// the dock, or a tile) is its desktop ID alone.
-const widgetDrag = "widget:"
 
 func (s *shellUI) bindWidgetsHandlers() {
 	p := &s.widgets
@@ -152,11 +165,12 @@ func (s *shellUI) bindWidgetsHandlers() {
 		c := s.cfg
 		switch {
 		case name == "remove" && p.menuKind != "":
-			c.Widgets.Items = slices.DeleteFunc(slices.Clone(c.Widgets.Items), func(k string) bool { return k == p.menuKind })
+			c.Widgets.Places = slices.DeleteFunc(slices.Clone(c.Widgets.Places), func(w config.WidgetPlace) bool { return w.Kind == p.menuKind })
 		case name == "remove" && p.menuApp != "":
 			c.Widgets.Apps = slices.DeleteFunc(slices.Clone(c.Widgets.Apps), func(k string) bool { return k == p.menuApp })
 		case strings.HasPrefix(name, "add-"):
-			c.Widgets.Items = shell.MovePinned(c.Widgets.Items, strings.TrimPrefix(name, "add-"), "")
+			r := shell.FreeSpot(s.widgetRects(""), config.WidgetSpan, config.WidgetSpan, s.boardColumns())
+			c.Widgets.Places = append(slices.Clone(c.Widgets.Places), config.WidgetPlace{Kind: strings.TrimPrefix(name, "add-"), Column: r.Column, Row: r.Row})
 		default:
 			return
 		}
@@ -173,23 +187,10 @@ func (s *shellUI) bindWidgetsHandlers() {
 		if w == nil || v == nil {
 			return false
 		}
+		// An app, from the dock or the widget's own tiles: onto the
+		// apps widget, or before (or, on its right half, after) a tile.
 		name, dragged := w.GetName(), v.GetString()
-		kind := strings.TrimPrefix(name, "card:")
-		if strings.HasPrefix(name, "app:") {
-			kind = "apps"
-		}
-		if k, ok := strings.CutPrefix(dragged, widgetDrag); ok {
-			// Onto a card's right half: after it.
-			before := kind
-			if x > float64(w.GetWidth())/2 {
-				before = following(s.cfg.Widgets.Items, kind)
-			}
-			c := s.cfg
-			c.Widgets.Items = shell.MovePinned(c.Widgets.Items, k, before)
-			gtkx.Post(func() { s.changeSettings(c) }) // the card dropped on is rebuilt
-			return true
-		}
-		if kind != "apps" || s.dockState.apps.ByID(dragged) == nil {
+		if s.dockState.apps.ByID(dragged) == nil {
 			return false
 		}
 		before := ""
@@ -212,6 +213,119 @@ func (s *shellUI) bindWidgetsHandlers() {
 			s.onWidgetButton(*b)
 		}
 	}
+
+	// A card dragged by its head follows the pointer over the grid; the
+	// spot shows the cell it lands on, or that another card is there. The
+	// drag is the board's, which stays still: one of the head's own would
+	// measure the pointer from a head that moves with every step, and the
+	// card would shake.
+	s.onWidgetDragBegin = func(g gtk.GestureDrag, x, y float64) {
+		kind := s.widgetHeadAt(x, y)
+		card := p.cards[kind]
+		if card == nil {
+			g.SetState(gtk.EventSequenceDeniedValue) // not on a head: the card's own
+			return
+		}
+		p.dragKind = kind
+		p.board.GetChildPosition(&card.Widget, &p.dragFrom[0], &p.dragFrom[1])
+		card.InsertBefore(&p.board.Widget, &gtk.Widget{}) // over the others
+		card.AddCssClass("lifted")
+		p.lines.SetSizeRequest(p.board.GetWidth(), p.board.GetHeight())
+		p.lines.SetVisible(true)
+		p.spot.SetSizeRequest(card.GetWidth(), card.GetHeight())
+		p.spot.SetVisible(true)
+		s.dragWidget(0, 0)
+	}
+	s.onWidgetDragUpdate = func(_ gtk.GestureDrag, dx, dy float64) { s.dragWidget(dx, dy) }
+	s.onWidgetDragEnd = func(_ gtk.GestureDrag, dx, dy float64) {
+		card := p.cards[p.dragKind]
+		if card == nil {
+			return
+		}
+		s.dragWidget(dx, dy)
+		card.RemoveCssClass("lifted")
+		p.lines.SetVisible(false)
+		p.spot.SetVisible(false)
+		kind, to, fits := p.dragKind, p.dragTo, p.dragFits
+		p.dragKind = ""
+		if !fits {
+			p.board.Move(&card.Widget, p.dragFrom[0], p.dragFrom[1]) // back where it was
+			return
+		}
+		p.board.Move(&card.Widget, float64(to.Column*shell.WidgetCell), float64(to.Row*shell.WidgetCell))
+		c := s.cfg
+		c.Widgets.Places = slices.Clone(c.Widgets.Places)
+		for i := range c.Widgets.Places {
+			if c.Widgets.Places[i].Kind == kind {
+				c.Widgets.Places[i].Column, c.Widgets.Places[i].Row = to.Column, to.Row
+			}
+		}
+		gtkx.Post(func() { s.changeSettings(c) })
+	}
+}
+
+// widgetHeadAt is the kind of the card whose head is at x, y of the
+// board, "" for none.
+func (s *shellUI) widgetHeadAt(x, y float64) string {
+	p := &s.widgets
+	hit := p.board.Pick(x, y, gtk.PickDefaultValue)
+	if hit == nil {
+		return ""
+	}
+	defer hit.Unref()
+	for kind, head := range p.heads {
+		if hit.GoPointer() == head.GoPointer() || hit.IsAncestor(&head.Widget) {
+			return kind
+		}
+	}
+	return ""
+}
+
+// dragWidget moves the dragged card dx, dy from where it was, within the
+// board, and the spot to the cell under its corner.
+func (s *shellUI) dragWidget(dx, dy float64) {
+	p := &s.widgets
+	card := p.cards[p.dragKind]
+	if card == nil {
+		return
+	}
+	w, h := int(card.GetWidth()), int(card.GetHeight())
+	x := max(0, min(p.dragFrom[0]+dx, float64(int(p.board.GetWidth())-w)))
+	y := max(0, p.dragFrom[1]+dy)
+	p.board.Move(&card.Widget, x, y)
+	to := shell.GridRect{Column: shell.Cell(x), Row: shell.Cell(y), Columns: shell.Span(w), Rows: shell.Span(h)}
+	to.Column = min(to.Column, max(0, s.boardColumns()-to.Columns)) // the cell nearest stays on the page
+	p.dragTo, p.dragFits = to, to.Fits(s.widgetRects(p.dragKind))
+	p.board.Move(&p.spot.Widget, float64(to.Column*shell.WidgetCell), float64(to.Row*shell.WidgetCell))
+	toggle(&p.spot.Widget, "blocked", !p.dragFits)
+}
+
+// widgetRects are the cells the cards take, but the one of kind but; the
+// cells of WidgetSpan for one not built yet.
+func (s *shellUI) widgetRects(but string) []shell.GridRect {
+	p := &s.widgets
+	var out []shell.GridRect
+	for _, w := range s.cfg.Widgets.Places {
+		if w.Kind == but {
+			continue
+		}
+		r := shell.GridRect{Column: w.Column, Row: w.Row, Columns: config.WidgetSpan, Rows: config.WidgetSpan}
+		if card := p.cards[w.Kind]; p.open && card != nil && card.GetWidth() > 0 {
+			r.Columns, r.Rows = shell.Span(int(card.GetWidth())), shell.Span(int(card.GetHeight()))
+		}
+		out = append(out, r)
+	}
+	return out
+}
+
+// boardColumns is how many columns the page shows; three widgets' worth
+// while it is closed.
+func (s *shellUI) boardColumns() int {
+	p := &s.widgets
+	if p.open && p.board.GetWidth() > 0 {
+		return int(p.board.GetWidth()) / shell.WidgetCell
+	}
+	return 3 * config.WidgetSpan
 }
 
 // following is what comes after item in items, "" at the end.
@@ -322,6 +436,7 @@ func (s *shellUI) dropWidgets() {
 	p.refs.Release()
 	p.open, p.closing, p.picker = false, false, nil
 	p.time, p.zones, p.grid, p.wxDays, p.art = nil, nil, nil, nil, nil
+	p.cards, p.heads, p.lines, p.spot, p.dragKind = nil, nil, nil, nil, ""
 	s.markWidgets()
 }
 
@@ -358,10 +473,15 @@ func (s *shellUI) buildWidgets(b *bar) {
 	ui.Get("widgets", &p.win)
 	ui.Get("reveal", &p.reveal)
 	ui.Get("page", &p.page)
-	ui.Get("cards", &p.cards)
+	ui.Get("board", &p.board)
 	ui.Get("add", &p.add)
 	ui.Close()
 	gtkx.ConnectNotify(&p.reveal, "child-revealed", &s.onWidgetsRevealed)
+	drag := gtk.NewGestureDrag()
+	drag.ConnectDragBegin(&s.onWidgetDragBegin)
+	drag.ConnectDragUpdate(&s.onWidgetDragUpdate)
+	drag.ConnectDragEnd(&s.onWidgetDragEnd)
+	p.board.AddController(&drag.EventController)
 	keys := gtk.NewEventControllerKey()
 	keys.SetPropagationPhase(gtk.PhaseCaptureValue)
 	keys.ConnectKeyPressed(&s.onWidgetsKey)
@@ -424,17 +544,51 @@ var widgetTags = map[string]string{
 	"apps":     i18n.M("[APPS]"),
 }
 
-// fillWidgets builds the cards in widgets.items' order, and the menu of
-// those left out.
+// placeWidgets moves the cards to their places, while one is not dragged.
+func (s *shellUI) placeWidgets() {
+	p := &s.widgets
+	if !p.open || p.dragKind != "" {
+		return
+	}
+	for _, w := range s.cfg.Widgets.Places {
+		if card := p.cards[w.Kind]; card != nil {
+			p.board.Move(&card.Widget, float64(w.Column*shell.WidgetCell), float64(w.Row*shell.WidgetCell))
+		}
+	}
+}
+
+// widgetWidth is a card's width: its span less the gap between cards.
+const widgetWidth = config.WidgetSpan*shell.WidgetCell - 24
+
+// fillWidgets builds the cards at their places, over the grid drawn while
+// one is dragged, and the menu of those left out.
 func (s *shellUI) fillWidgets() {
 	p := &s.widgets
 	if !p.open {
 		return
 	}
-	p.cards.RemoveAll()
+	for ch := p.board.GetFirstChild(); ch != nil; ch = p.board.GetFirstChild() {
+		p.board.Remove(ch) // drops the board's reference
+		ch.Unref()         // and GetFirstChild's
+	}
 	p.time, p.zones, p.grid, p.wxDays, p.art, p.artURL = nil, nil, nil, nil, nil, ""
-	for _, kind := range s.cfg.Widgets.Items {
+	p.cards, p.heads, p.dragKind = map[string]*gtk.Box{}, map[string]*gtk.Box{}, ""
+	p.lines = gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+	p.lines.AddCssClass("widget-grid")
+	p.lines.SetCanTarget(false)
+	p.lines.SetVisible(false)
+	p.board.Put(&p.lines.Widget, 0, 0)
+	p.lines.Unref()
+	p.spot = gtk.NewBox(gtk.OrientationHorizontalValue, 0)
+	p.spot.AddCssClass("widget-spot")
+	p.spot.SetCanTarget(false)
+	p.spot.SetVisible(false)
+	p.board.Put(&p.spot.Widget, 0, 0)
+	p.spot.Unref()
+	for _, place := range s.cfg.Widgets.Places {
+		kind := place.Kind
 		card, body := s.widgetCard(kind)
+		card.SetSizeRequest(widgetWidth, -1)
 		switch kind {
 		case "clock":
 			s.buildClockWidget(body)
@@ -447,12 +601,13 @@ func (s *shellUI) fillWidgets() {
 		case "apps":
 			s.buildAppsWidget(body)
 		}
-		p.cards.Append(&card.Widget)
+		p.board.Put(&card.Widget, float64(place.Column*shell.WidgetCell), float64(place.Row*shell.WidgetCell))
 		card.Unref()
+		p.cards[kind] = card
 	}
 	menu := gio.NewMenu()
 	for _, k := range config.WidgetKinds {
-		if !slices.Contains(s.cfg.Widgets.Items, k) {
+		if p.cards[k] == nil {
 			menu.Append(i18n.T(widgetNames[k]), "widgets.add-"+k)
 		}
 	}
@@ -471,9 +626,11 @@ func (s *shellUI) widgetCard(kind string) (card, body *gtk.Box) {
 	card.AddCssClass("widget-card")
 	card.AddCssClass("widget-" + kind)
 	card.SetName("card:" + kind)
-	drop := gtk.NewDropTarget(types.GType(gobject.TypeStringVal), gdk.ActionMoveValue|gdk.ActionCopyValue)
-	drop.ConnectDrop(&s.onWidgetDrop)
-	card.AddController(&drop.EventController)
+	if kind == "apps" { // apps dropped on it from the dock
+		drop := gtk.NewDropTarget(types.GType(gobject.TypeStringVal), gdk.ActionMoveValue|gdk.ActionCopyValue)
+		drop.ConnectDrop(&s.onWidgetDrop)
+		card.AddController(&drop.EventController)
+	}
 
 	head := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
 	head.AddCssClass("widget-head")
@@ -487,7 +644,7 @@ func (s *shellUI) widgetCard(kind string) (card, body *gtk.Box) {
 	tag.AddCssClass("section-label")
 	tag.SetXalign(0)
 	gtkx.Append(head, &tag.Widget)
-	s.dragString(&head.Widget, widgetDrag+kind)
+	s.widgets.heads[kind] = head // the board's drag starts on it
 	menu := gtk.NewGestureClick()
 	menu.SetButton(3)
 	menu.ConnectPressed(&s.onWidgetMenu)
@@ -921,7 +1078,7 @@ func (s *shellUI) fillWidgetPicker() {
 	}
 }
 
-// widgetsRequest answers `inua call widgets toggle|open|close`.
+// widgetsRequest answers `inua call widgets toggle|open|close|right|left`.
 func (s *shellUI) widgetsRequest(fn string) bool {
 	switch fn {
 	case "toggle":
@@ -930,8 +1087,57 @@ func (s *shellUI) widgetsRequest(fn string) bool {
 		s.openWidgets(nil)
 	case "close":
 		s.closeWidgets()
+	case "right":
+		s.swipeWorkspaces(-1)
+	case "left":
+		s.swipeWorkspaces(1)
 	default:
 		return false
 	}
 	return true
+}
+
+// swipeWorkspaces is the three-finger swipe (widgets.swipe = 3), which
+// takes the workspace swipe's place: right (dir < 0) goes to the previous
+// workspace the focused monitor's bar shows, and from the first to the
+// widget page; left comes back from the page, or goes to the next
+// workspace, and past the last to a new one, as Hyprland's swipe does.
+// Right again on the page goes to the first workspace.
+func (s *shellUI) swipeWorkspaces(dir int) {
+	var b *bar
+	for _, x := range s.bars {
+		if x.connector() == s.snap.FocusedMonitor {
+			b = x
+		}
+	}
+	if b == nil {
+		return
+	}
+	if s.widgetsShownOn(b) {
+		s.closeWidgets()
+		if dir < 0 && len(b.shown) > 0 && !b.shown[0].Active {
+			s.switchWorkspace(strconv.Itoa(b.shown[0].ID))
+		}
+		return
+	}
+	current, last := 0, 0
+	for _, mon := range s.snap.Monitors {
+		if mon.Name == b.connector() {
+			current = mon.ActiveWorkspaceID
+		}
+	}
+	i := slices.IndexFunc(b.shown, func(w hypr.Workspace) bool { return w.ID == current })
+	for _, w := range s.snap.Workspaces {
+		last = max(last, w.ID)
+	}
+	switch {
+	case dir < 0 && i <= 0:
+		s.openWidgets(b)
+	case dir < 0:
+		s.switchWorkspace(strconv.Itoa(b.shown[i-1].ID))
+	case i >= 0 && i+1 < len(b.shown):
+		s.switchWorkspace(strconv.Itoa(b.shown[i+1].ID))
+	case slices.ContainsFunc(s.snap.Toplevels, func(t hypr.Toplevel) bool { return t.WorkspaceID == current }):
+		s.switchWorkspace(strconv.Itoa(last + 1)) // an empty one is the last
+	}
 }

@@ -331,18 +331,48 @@ drawer = true
 pinned = ["firefox", "io.github.lyricat.Inua.Files", "kitty"]
 
 [widgets]
-# The widget page, a place before the first workspace: a mark before the
+# The widget page, a place before the first workspace: a dot before the
 # workspaces on the bar opens it, so do the wheel up past the first
-# workspace and a four-finger swipe right; Escape, a workspace or a swipe
-# left goes back. Drag a widget by its head to move it.
+# workspace and a swipe right; Escape, a workspace or a swipe left goes
+# back. Drag a widget by its head to move it on the page's grid.
 enable = true
 
-# The widgets on it, in order: clock, calendar, weather, media, apps.
-items = ["clock", "calendar", "weather", "media", "apps"]
+# Fingers that swipe right to the page and left back: 3 or 4, 0 for none.
+# Three fingers go through the workspaces too, taking the place of
+# hyprland.conf's three-finger workspace swipe; four leave it as it is.
+swipe = 3
 
 # The apps on its apps widget, by desktop ID. Drag one in from the dock,
 # or add it with the widget's +.
 apps = ["io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"]
+
+# The widgets on it (clock, calendar, weather, media, apps), each with the
+# column and row of the page's grid its top left corner is at, a column
+# and a row 60 pixels apart.
+[[widgets.widget]]
+kind = "clock"
+column = 0
+row = 0
+
+[[widgets.widget]]
+kind = "calendar"
+column = 6
+row = 0
+
+[[widgets.widget]]
+kind = "weather"
+column = 12
+row = 0
+
+[[widgets.widget]]
+kind = "media"
+column = 0
+row = 6
+
+[[widgets.widget]]
+kind = "apps"
+column = 6
+row = 6
 
 [voice]
 # Dictation (Settings → Dictation): talk, and voxtype (https://voxtype.io)

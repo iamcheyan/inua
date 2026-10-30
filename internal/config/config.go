@@ -665,16 +665,48 @@ type Dock struct {
 // widgets and apps on it.
 type Widgets struct {
 	// Enable gives the bar a mark before the workspaces that opens the
-	// page, and the wheel and a four-finger swipe a way to it.
+	// page, and the wheel and a swipe a way to it.
 	Enable bool `toml:"enable"`
-	// Items are the widgets shown, in order: WidgetKinds.
-	Items []string `toml:"items"`
+	// Swipe is how many fingers swipe right to the page and left back:
+	// one of WidgetSwipes, 0 for none. Three fingers take the place of
+	// a three-finger workspace swipe, going through the workspaces too.
+	Swipe int `toml:"swipe"`
 	// Apps are the apps on the page's apps widget, by desktop ID.
 	Apps []string `toml:"apps"`
+	// Places are the widgets shown, and where on the page's grid.
+	Places []WidgetPlace `toml:"widget"`
+	// Items is the first version's list of widgets, in order; a file
+	// with it and no places gets places in that order (AutoPlaces).
+	Items []string `toml:"items"`
+}
+
+// WidgetPlace is a widget on the page: its top left corner at a column
+// and a row of the page's grid.
+type WidgetPlace struct {
+	Kind   string `toml:"kind"`
+	Column int    `toml:"column"`
+	Row    int    `toml:"row"`
 }
 
 // WidgetKinds are the widgets the page can show.
 var WidgetKinds = []string{"clock", "calendar", "weather", "media", "apps"}
+
+// WidgetSwipes are the swipes to the page offered: three or four fingers,
+// or none.
+var WidgetSwipes = []int{0, 3, 4}
+
+// WidgetSpan is the columns and rows a widget takes when placed for it:
+// a card is a little smaller, so that a gap stays between them.
+const WidgetSpan = 6
+
+// AutoPlaces places kinds in rows of three, WidgetSpan apart.
+func AutoPlaces(kinds []string) []WidgetPlace {
+	out := make([]WidgetPlace, len(kinds))
+	for i, k := range kinds {
+		out[i] = WidgetPlace{Kind: k, Column: i % 3 * WidgetSpan, Row: i / 3 * WidgetSpan}
+	}
+	return out
+}
 
 // DockSizes are the icon sizes the settings window offers.
 var DockSizes = []int{28, 36, 44, 56}
@@ -877,7 +909,7 @@ func Default() Config {
 		OSD:        OSD{Enable: true, Position: "bottom-center"},
 		Clipboard:  Clipboard{Enable: true, Bar: true, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
 		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
-		Widgets:    Widgets{Enable: true, Items: slices.Clone(WidgetKinds), Apps: []string{"io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"}},
+		Widgets:    Widgets{Enable: true, Swipe: 3, Places: AutoPlaces(WidgetKinds), Apps: []string{"io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"}},
 		Voice:      Voice{Enable: false, PushToTalk: true, Engine: "voxtype", Show: "window"},
 		Shortcuts: []Shortcut{
 			{Action: "shot-area-silent", Keys: "Print", Replaces: []string{"Print"}},
@@ -933,6 +965,10 @@ func Load(path string) (Config, []string, error) {
 		}
 		warnings = append(warnings, fmt.Sprintf("unknown setting %s", k))
 	}
+	if md.IsDefined("widgets", "items") && !md.IsDefined("widgets", "widget") {
+		c.Widgets.Places = AutoPlaces(c.Widgets.Items) // the first version's list
+	}
+	c.Widgets.Items = nil
 	warnings = append(warnings, c.validate()...)
 	c.AddVoiceShortcut() // voice input turned on in the file
 	return c, warnings, nil
@@ -1103,15 +1139,23 @@ func (c *Config) validate() []string {
 		c.OSD.Position = d.OSD.Position
 	}
 	kinds := map[string]bool{}
-	c.Widgets.Items = slices.DeleteFunc(c.Widgets.Items, func(k string) bool {
-		known := slices.Contains(WidgetKinds, k)
+	c.Widgets.Places = slices.DeleteFunc(c.Widgets.Places, func(p WidgetPlace) bool {
+		known := slices.Contains(WidgetKinds, p.Kind)
 		if !known {
-			w = append(w, fmt.Sprintf("widgets.items %q: want one of %s; leaving it out", k, strings.Join(WidgetKinds, ", ")))
+			w = append(w, fmt.Sprintf("widgets.widget %q: want one of %s; leaving it out", p.Kind, strings.Join(WidgetKinds, ", ")))
 		}
-		twice := kinds[k]
-		kinds[k] = true
+		twice := kinds[p.Kind]
+		kinds[p.Kind] = true
 		return !known || twice
 	})
+	for i := range c.Widgets.Places {
+		p := &c.Widgets.Places[i]
+		p.Column, p.Row = max(p.Column, 0), max(p.Row, 0)
+	}
+	if !slices.Contains(WidgetSwipes, c.Widgets.Swipe) {
+		w = append(w, fmt.Sprintf("widgets.swipe = %d: want 3 or 4 fingers, or 0 for none; using %d", c.Widgets.Swipe, d.Widgets.Swipe))
+		c.Widgets.Swipe = d.Widgets.Swipe
+	}
 	if !slices.Contains(DockPositions, c.Dock.Position) {
 		w = append(w, fmt.Sprintf("dock.position = %q: want bottom, top, left or right; using %q", c.Dock.Position, d.Dock.Position))
 		c.Dock.Position = d.Dock.Position

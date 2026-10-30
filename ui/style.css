@@ -183,18 +183,18 @@ button.image-button { padding-left: 0; padding-right: 0; }
 .bar .island .workspaces button.active { background: @t1; }
 .bar .island .workspaces button.focused { min-width: 18px; background: @accent; }
 .bar .island .workspaces button.urgent { background: @danger; }
-/* The widget page's place before them: a hollow square, filled while the
-   page shows, when the workspace under it is only active. */
+/* The widget page's place before them: a hollow dot of the same size, that
+   stretches into the accent pill while the page shows, when the workspace
+   under it is only active. */
 .bar .island .workspaces button.widgets-mark {
-  min-width: 5px;
-  min-height: 5px;
-  margin-right: 3px;
-  border: 1px solid @t2;
-  border-radius: 1px;
+  min-width: 4px;
+  min-height: 4px;
+  border: 1px solid alpha(@t2, 0.9);
+  border-radius: 3px;
   background: transparent;
 }
-.bar .island .workspaces button.widgets-mark:hover { border-color: @t1; }
-.bar .island .workspaces button.widgets-mark.open { background: @accent; border-color: @accent; }
+.bar .island .workspaces button.widgets-mark:hover { border-color: @t1; background: transparent; }
+.bar .island .workspaces button.widgets-mark.open { min-width: 16px; background: @accent; border-color: @accent; }
 .bar .island .workspaces.under-page button.focused { min-width: 6px; background: @t1; }
 
 /* min-width: 0 too, else GTK's icon buttons are wider than the bell. */
@@ -429,15 +429,26 @@ button.agenda-weather .agenda-weather-day image { color: @t1; }
   color: @t1;
 }
 .widget-page-head menubutton.link > button:hover { color: @t0; background: alpha(@accent, 0.06); }
-.widget-cards { padding-top: 6px; }
-.widget-cards > flowboxchild { padding: 0; background: none; }
+.widget-board { margin-top: 18px; }
 .widget-card {
-  min-width: 300px;
   padding: 12px 16px 16px;
   background: alpha(@surface, 0.72);
   border: 1px solid @line;
   border-radius: 4px;
 }
+/* Dragged, a card floats over the others and the grid. */
+.widget-card.lifted { background: @surface; border-color: alpha(@accent, 0.38); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32); }
+/* The grid a card snaps to, a dot at each joint, every 60 px
+   (shell.WidgetCell); and the cells it lands on: the accent, or danger
+   where another card is. A tile's dot is in its middle, so the tiles are
+   shifted by half of one to put the dots on the joints. */
+.widget-grid {
+  background-image: radial-gradient(circle at center, alpha(@t1, 0.55) 1.5px, transparent 2.5px);
+  background-size: 60px 60px;
+  background-position: -30px -30px;
+}
+.widget-spot { background: alpha(@accent, 0.08); border: 1px dashed alpha(@accent, 0.6); border-radius: 4px; }
+.widget-spot.blocked { background: alpha(@danger, 0.08); border-color: alpha(@danger, 0.6); }
 .widget-head { min-height: 22px; }
 .widget-head .mark { border: none; border-radius: 1px; background: mix(@t0, @accent, 0.68); }
 button.widget-app .sub { color: @t1; }
