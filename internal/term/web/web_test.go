@@ -191,6 +191,15 @@ func TestPageData(t *testing.T) {
 	if !strings.Contains(b.String(), `window.INUA = {`) || !strings.Contains(b.String(), `"NEEDS YOU":"NEEDS YOU"`) {
 		t.Errorf("the page's data is not in it")
 	}
+	// Mister Morph's own icons are named, and served, for its rows.
+	if !strings.Contains(b.String(), `"own":["agent-mistermorph"]`) {
+		t.Errorf("the agents' own icons are not in the page's data")
+	}
+	for _, v := range []string{"light", "dark"} {
+		if r := get(t, s.URL+"/icons/agent-mistermorph-"+v+".svg"); r.StatusCode != http.StatusOK {
+			t.Errorf("icon %s: %s", v, r.Status)
+		}
+	}
 }
 
 func dialWS(t *testing.T, s *httptest.Server, origin string) (*websocket.Conn, *http.Response, error) {

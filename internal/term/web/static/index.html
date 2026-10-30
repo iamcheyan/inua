@@ -38,6 +38,7 @@
   .tab { flex:1; display:none; flex-direction:column; min-height:0; }
   .tab.shown { display:flex; }
   .icon { width:18px; height:18px; background:currentColor; -webkit-mask:var(--i) center/contain no-repeat; mask:var(--i) center/contain no-repeat; flex:none; }
+  img.icon.own { background:none; -webkit-mask:none; mask:none; }
   button { font:inherit; color:inherit; background:none; border:0; padding:0; touch-action:manipulation; }
 
   /* A page's head: one line, as the window's column heads: the title
@@ -646,11 +647,25 @@ function sum(panes) {
   return "";
 }
 
+// markOf is a pane's mark: its agent's, or the terminal's. An agent may
+// have its own colours, for a light and a dark theme, shown instead of
+// its one-colour mark, as in the window.
+function markOf(p) {
+  if (!(INUA.own || []).includes(p.icon)) return icon(p.icon || "agent-shell");
+  const c = ((currentTheme() || {}).tokens || {}).app || "";
+  const v = /^#[0-9a-f]{6}$/i.test(c) ? parseInt(c.slice(1), 16) : 0xffffff;
+  const luma = (0.2126 * (v >> 16 & 255) + 0.7152 * (v >> 8 & 255) + 0.0722 * (v & 255)) / 255;
+  const i = el("img", "icon own");
+  i.src = `/icons/${p.icon}-${luma < 0.5 ? "dark" : "light"}.svg`;
+  i.alt = "";
+  return i;
+}
+
 function paneRow(p, where) {
   const [word, cls] = lookOf(p);
   const row = el("div", "row" + (p.state === "blocked" ? " blocked" : "") + (p.id === cur ? " current" : ""));
   const kind = el("div", "kind");
-  const mark = icon(p.icon || "agent-shell");
+  const mark = markOf(p);
   if (p.color) mark.style.color = p.color;
   kind.append(mark);
   row.append(kind);

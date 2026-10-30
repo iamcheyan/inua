@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -103,7 +104,7 @@ func (s *Server) page(w http.ResponseWriter, r *http.Request) {
 	}
 	text, one, many := pageStrings()
 	home, _ := os.UserHomeDir()
-	data, _ := json.Marshal(map[string]any{"strings": text, "one": one, "many": many, "home": home, "lang": i18n.Lang()})
+	data, _ := json.Marshal(map[string]any{"strings": text, "one": one, "many": many, "home": home, "lang": i18n.Lang(), "own": ownIcons()})
 	b = bytes.Replace(b, []byte("/*INUA*/"), append(append([]byte("window.INUA = "), data...), ';'), 1)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
@@ -139,6 +140,20 @@ func askToken(w http.ResponseWriter, wrong bool) {
 		"WrongText": i18n.T("That token is not right. The link may be an old one, from before New link."),
 		"Open":      i18n.T("Open"),
 	})
+}
+
+// ownIcons are the agents' icons that come in their own colours,
+// NAME-light and NAME-dark (Mister Morph's), as the window shows them.
+func ownIcons() []string {
+	var names []string
+	files, _ := fs.Glob(ui.FS, "icons/*-light.svg")
+	for _, f := range files {
+		name := strings.TrimSuffix(path.Base(f), "-light.svg")
+		if _, err := fs.Stat(ui.FS, "icons/"+name+"-dark.svg"); err == nil {
+			names = append(names, name)
+		}
+	}
+	return names
 }
 
 var iconName = regexp.MustCompile(`^[a-z0-9-]+\.svg$`)
