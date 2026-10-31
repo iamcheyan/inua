@@ -676,12 +676,7 @@ func (s *shellUI) bindHandlers() {
 	// A panel over the whole monitor, the bar too, passes the pointer on
 	// to the bar under it (barClick).
 	s.onPanelMotion = func(c gtk.EventControllerMotion, x, y float64) {
-		b := s.barUnder(c.GetWidget())
-		if b == nil {
-			return
-		}
-		b.hover(x, y)
-		s.appMenuHover(b, c.GetWidget(), x, y)
+		s.hoverAt(s.barUnder(c.GetWidget()), x, y)
 	}
 	s.onPanelLeave = func(c gtk.EventControllerMotion) {
 		if b := s.barUnder(c.GetWidget()); b != nil {
@@ -1050,6 +1045,26 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 		case "closemenu":
 			s.closeMenu()
 			return ipc.Response{OK: true}
+		case "state":
+			// What the bar's menu shows now, for a test: the section, its
+			// item count and the card's box - read from the shell, so no
+			// pointer and no focus are needed.
+			m := &s.menu
+			return ipc.Response{OK: true, Result: fmt.Sprintf("open=%v pid=%d section=%q items=%d x=%.0f y=%.0f w=%.0f h=%.0f",
+				m.open && !m.closing, m.pid, m.section, len(m.entries), m.drop.x, m.drop.y, m.drop.w, m.drop.h)}
+		case "hover":
+			// The pointer's path along the bar, for a test: the same work a
+			// real motion event does, at bar coordinates.
+			if len(req.Args) != 2 {
+				return bad
+			}
+			x, errX := strconv.ParseFloat(req.Args[0], 64)
+			y, errY := strconv.ParseFloat(req.Args[1], 64)
+			if errX != nil || errY != nil {
+				return bad
+			}
+			s.hoverAt(s.barByName(s.snap.FocusedMonitor), x, y)
+			return ipc.Response{OK: true}
 		}
 		return bad
 	case "overview":
@@ -1313,7 +1328,7 @@ func (s *shellUI) freshenApps() {
 // than waiting for a click. The common shape of a menu bar is that the
 // pointer's section is the one shown, so this is what makes the bar feel
 // like one.
-func (s *shellUI) appMenuHover(b *bar, w *gtk.Widget, x, y float64) {
+func (s *shellUI) appMenuHover(b *bar, x, y float64) {
 	m := &s.menu
 	if !m.open || m.closing || m.pid == 0 || b != m.drop.host {
 		return
@@ -1325,8 +1340,41 @@ func (s *shellUI) appMenuHover(b *bar, w *gtk.Widget, x, y float64) {
 	if !ok || target.entry.Label == m.section {
 		return
 	}
+	// A section the application builds when it opens (a browser's) has no
+	// items yet: read them first, as a click does, then show it in place.
+	entries, err := s.appmenu.client.Fill(target.entry)
+	if err != nil {
+		log.Printf("appmenu fill %q: %v", target.entry.Label, err)
+	}
+	if entries != nil {
+		target.entry.Children = entries
+	}
+	if !m.open || m.closing || m.pid != target.pid {
+		return // the menu moved on while it was read
+	}
 	m.pid, m.section = target.pid, target.entry.Label
 	m.entries, m.stack = target.entry.Children, nil
 	s.fillMenu()
 	s.dropToButton(&m.drop, b, button)
+}
+
+// hoverAt is what a pointer over the bar (or over a panel covering it) does
+// at x, y: the bar's own hover marks, and the open menu following the
+// pointer along the bar.
+func (s *shellUI) hoverAt(b *bar, x, y float64) {
+	if b == nil {
+		return
+	}
+	b.hover(x, y)
+	s.appMenuHover(b, x, y)
+}
+
+// barByName is the bar of a monitor, by connector.
+func (s *shellUI) barByName(connector string) *bar {
+	for _, b := range s.bars {
+		if b.connector() == connector {
+			return b
+		}
+	}
+	return nil
 }

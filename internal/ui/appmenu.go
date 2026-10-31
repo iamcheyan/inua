@@ -39,7 +39,6 @@ type appMenuState struct {
 	targets    map[string]appMenuTarget
 	nextTarget uint64
 	cancel     context.CancelFunc // stops the registrar when the bar's menus are turned off
-	entries    []appmenu.Entry    // the focused application's own menus, for its name's button
 }
 
 // startAppMenu reads the focused application's menu for the bar, when the
@@ -169,7 +168,7 @@ func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
 			log.Printf("appmenu %s pid=%d: %d entries", b.connector(), pid, len(entries))
 		}
 		b.appMenuTargets = make(map[string]appMenuTarget)
-		s.appmenu.entries = entries
+		b.appMenuEntries = entries
 		for _, entry := range entries {
 			if entry.Separator {
 				continue
@@ -190,8 +189,12 @@ func (s *shellUI) appendAppMenu(b *bar, entry appmenu.Entry, pid int) {
 	button.SetLabel(entry.Label)
 	button.SetHasFrame(false)
 	button.SetFocusable(false)
-	button.SetSensitive(entry.Enabled || len(entry.Children) > 0)
-	token := s.addAppMenuTarget(b, entry, pid, len(entry.Children) > 0)
+	button.SetSensitive(entry.Enabled || len(entry.Children) > 0 || appmenu.Fillable(entry))
+	// A section is anything that opens a menu of its own: one with items
+	// already, or one the application builds when it opens (a browser's,
+	// appmenu.Fillable). Everything else is an item that acts.
+	section := len(entry.Children) > 0 || appmenu.Fillable(entry)
+	token := s.addAppMenuTarget(b, entry, pid, section)
 	button.SetName(token)
 	button.ConnectClicked(&s.onAppMenuClicked)
 	gtkx.Append(&b.appMenu, &button.Widget)
@@ -470,7 +473,7 @@ func (s *shellUI) appMenuEntries(pid int) []appmenu.Entry {
 		{Label: i18n.T("Close Window"), Enabled: true, Action: appmenu.Action{Kind: appmenu.ActionCloseWindow, Index: int32(pid)}},
 		{Label: i18n.Tf("Quit %s", name), Enabled: true, Action: appmenu.Action{Kind: appmenu.ActionQuitApp, Index: int32(pid)}},
 	}
-	if own := s.appmenu.entries; len(own) > 0 {
+	if own := s.appmenuEntriesOf(pid); len(own) > 0 {
 		// The application's own sections follow the shell's, under a line of
 		// their own, as a Mac's do after About and Quit.
 		items = append(items, appmenu.Entry{Separator: true})
@@ -577,4 +580,14 @@ func (s *shellUI) dropToButton(d *drop, b *bar, button *gtk.Button) {
 	}
 	box := *(*[4]float32)(unsafe.Pointer(&br))
 	d.rehang(b, *(*[4]float32)(unsafe.Pointer(&r)), float64(box[0]+box[2]/2), float64(box[0]))
+}
+
+// appmenuEntriesOf is the menu of process pid as a bar last read it.
+func (s *shellUI) appmenuEntriesOf(pid int) []appmenu.Entry {
+	for _, b := range s.bars {
+		if b.appMenuPID == pid {
+			return b.appMenuEntries
+		}
+	}
+	return nil
 }

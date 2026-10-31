@@ -12,6 +12,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"github.com/lyricat/inua/internal/appmenu"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
@@ -41,7 +42,8 @@ type bar struct {
 	// the menu of the application it names, so two bars can hold different
 	// menus at once (appmenu.go).
 	appMenuTargets map[string]appMenuTarget
-	widgetsMark    gtk.Button // the widget page's place, before the workspaces
+	appMenuEntries []appmenu.Entry // the menu this bar read, for the app's own button
+	widgetsMark    gtk.Button      // the widget page's place, before the workspaces
 	title          gtk.Label
 	clock          gtk.Label
 	end            gtk.Box
