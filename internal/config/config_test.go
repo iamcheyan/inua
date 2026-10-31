@@ -54,6 +54,17 @@ func TestSampleIsDefaults(t *testing.T) {
 	}
 }
 
+func TestHiddenBarWorkspaces(t *testing.T) {
+	c, warnings, err := Load(write(t, "[bar]\nworkspaces = \"none\"\n"))
+	if err != nil || len(warnings) != 0 || c.Bar.Workspaces != "none" {
+		t.Fatalf("load hidden workspaces: scope=%q warnings=%v err=%v", c.Bar.Workspaces, warnings, err)
+	}
+	saved, warnings, err := Load(write(t, Format(c)))
+	if err != nil || len(warnings) != 0 || saved.Bar.Workspaces != "none" {
+		t.Fatalf("reload hidden workspaces: scope=%q warnings=%v err=%v", saved.Bar.Workspaces, warnings, err)
+	}
+}
+
 func TestPartialOverride(t *testing.T) {
 	path := write(t, `
 [bar]

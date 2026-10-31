@@ -128,7 +128,7 @@ var themeKanji = map[string]string{
 
 var (
 	fitChoices   = config.Fits
-	wsChoices    = []string{"monitor", "all"}
+	wsChoices    = []string{"monitor", "all", "none"}
 	barDensities = []string{"default", "compact"}
 	modeChoices  = []string{"apps", "windows"}
 	swapChoices  = []string{"", "left", "both"}

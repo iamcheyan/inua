@@ -445,6 +445,23 @@ func (b *bar) setApp(s *shellUI, t hypr.Toplevel) {
 	b.appIcon.SetVisible(icon != "")
 }
 
+// setDistribution names an empty workspace with this system's identity.
+func (b *bar) setDistribution(s *shellUI) {
+	d := s.distro
+	name := d.Name
+	if d.Version != "" {
+		name += " " + d.Version
+	}
+	if b.appName == name && b.appIconName == d.Logo && b.appClass == "" {
+		return
+	}
+	b.appClass = ""
+	b.appName, b.appIconName = name, d.Logo
+	b.title.SetText(name)
+	setIcon(&b.appIcon, d.Logo)
+	b.appIcon.SetVisible(d.Logo != "")
+}
+
 func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 	name := b.connector()
 	activeWorkspace := 0
@@ -468,9 +485,14 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.RemoveCssClass("occupied")
 		b.win.AddCssClass("empty")
 	}
-	b.setApp(s, shell.BarWindow(snap, name))
+	if hasWindows {
+		b.setApp(s, shell.BarWindow(snap, name))
+	} else {
+		b.setDistribution(s)
+	}
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
+	b.workspaces.SetVisible(s.cfg.Bar.Workspaces != "none")
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
 	if name == snap.FocusedMonitor {
 		s.syncAppMenu()

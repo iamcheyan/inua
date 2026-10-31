@@ -221,6 +221,7 @@ clock = %s
 
 # "monitor": each bar shows the workspaces of its own monitor.
 # "all": every bar shows every workspace.
+# "none": hide the workspace indicator.
 workspaces = %s
 
 # Show the focused window's title.

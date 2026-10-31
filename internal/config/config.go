@@ -58,7 +58,7 @@ type Bar struct {
 	// Clock is a strftime format (see Strftime).
 	Clock string `toml:"clock"`
 	// Workspaces is "monitor" (each bar shows its monitor's workspaces)
-	// or "all".
+	// or "all"; "none" hides the workspace indicator.
 	Workspaces string `toml:"workspaces"`
 	Title      bool   `toml:"title"`
 	Tray       bool   `toml:"tray"`
@@ -1005,7 +1005,7 @@ func (c *Config) validate() []string {
 		w = append(w, fmt.Sprintf("%s = %q: want %s; using %q", key, *v, strings.Join(allowed, " or "), def))
 		*v = def
 	}
-	oneOf("bar.workspaces", &c.Bar.Workspaces, d.Bar.Workspaces, "monitor", "all")
+	oneOf("bar.workspaces", &c.Bar.Workspaces, d.Bar.Workspaces, "monitor", "all", "none")
 	oneOf("bar.density", &c.Bar.Density, d.Bar.Density, "default", "compact")
 	oneOf("launcher.mode", &c.Launcher.Mode, d.Launcher.Mode, "apps", "windows")
 	if !ValidSearchURL(c.Launcher.Search) {

@@ -1269,6 +1269,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <items>
                                                   <item translatable="yes">This monitor's</item>
                                                   <item translatable="yes">All monitors'</item>
+                                                  <item translatable="yes">Do not show</item>
                                                 </items>
                                               </object>
                                             </property>
