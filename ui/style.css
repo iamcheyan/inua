@@ -11,7 +11,7 @@
    Translucent surfaces get Hyprland's blur through layer rules (namespaces
    inua-bar, inua-control, inua-launcher). */
 
-window.bar, window.control, window.agenda, window.banners, window.osd, window.center, window.dock-window, window.shot-drawer-win, window.drawer-overlay, window.clipboard-panel { background: transparent; }
+window.bar, window.control, window.agenda, window.banners, window.osd, window.center, window.dock-window, window.shot-drawer-win, window.drawer-overlay, window.clipboard-panel, window.appmenu { background: transparent; }
 window.overview, window.widgets { background: transparent; }
 /* The launcher's catcher of clicks outside it: a surface wholly clear
    gets no pointer from Hyprland, so it is all but clear. */
@@ -4642,30 +4642,24 @@ window.mail button.mail-assist-action { min-height: 34px; padding: 0 8px; font-s
 window.mail button.mail-assist-action image { color: @accent; }
 window.mail button.mail-assist-action:disabled image { color: @t2; }
 
-/* The application menu, hung under the bar as its own overlay surface
-   (appmenu_panel.go). One card: the bar's glass, a hairline round it and the
-   floating card's shadow (design/ui.md, Menus). Inside it, a submenu is a
-   column beside its item, as a Mac's is: no second card, just a hairline
-   opening between columns. */
-/* The card: the bar's glass, a hairline round it and the floating card's
-   shadow (design/ui.md, Menus). The panel holds no fill of its own, so the
-   card and each submenu's card stand as the separate menus they are. */
+/* Only the menu cards have a surface; the full-screen input window stays clear. */
+.appmenu-backdrop { background: transparent; }
+/* Application menus use a separate card for each column. */
 .menu-panel {
+  padding: 0;
+  background: transparent;
+}
+.menu-col {
+  min-width: 232px;
   padding: 5px;
   border: 1px solid alpha(@line, 0.9);
   border-radius: 4px;
   background: @glass;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
 }
-/* One card holds the whole menu, its submenus included: a submenu is a
-   column of that card, separated by a hairline, not a second card with a
-   shadow of its own. */
-.menu-col { min-width: 232px; }
-.menu-col.menu-sub {
-  margin-left: 6px;
-  padding-left: 6px;
-  border-left: 1px solid alpha(@line, 0.6);
-}
+/* A submenu stands beside the menu it came from, with a gap as wide as the
+   cards' shadow, as a menu's submenu does. */
+.menu-col.menu-sub { margin-left: 10px; }
 /* Items, as every menu's (design/ui.md): running text at 13.5 px, at least
    32 px tall, clear until the pointer is over them. */
 .menu-item {

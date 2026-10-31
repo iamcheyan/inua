@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"log"
 	"strconv"
 	"unsafe"
 
@@ -10,6 +11,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/appmenu"
+	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/layershell"
 )
 
@@ -42,6 +44,7 @@ type menuPanel struct {
 	stack       []int // the open branch: one index for each submenu shown
 	rows        map[string]menuRow
 	pairs       []menuPair // a submenu column and the item it hangs from
+	generation  uint64
 	next        uint64
 	gone        func()
 }
@@ -64,13 +67,15 @@ type menuRow struct {
 const (
 	menuRowHeight  = 32
 	menuLineHeight = 1
-	menuColPadding = 5 // .menu-panel's padding, which offsets the columns
+	menuColPadding = 5 // .menu-col's padding, which offsets the columns
 )
 
 func (s *shellUI) buildMenuPanel() {
 	m := &s.menu
 	m.win = gtk.NewWindow()
+	m.win.AddCssClass("appmenu")
 	m.backdrop = gtk.NewBox(gtk.OrientationVerticalValue, 0)
+	m.backdrop.AddCssClass("appmenu-backdrop")
 	m.card = gtk.NewBox(gtk.OrientationHorizontalValue, 4)
 	m.card.AddCssClass("menu-panel")
 	m.backdrop.Append(&m.card.Widget)
@@ -90,6 +95,7 @@ func (s *shellUI) buildMenuPanel() {
 	m.backdrop.AddController(&click.EventController)
 
 	m.drop.attach(m.win, &keys.EventController, m.backdrop, &m.card.Widget, layershell.LayerTop, false)
+	m.drop.menu = true
 	m.drop.keyboard = layershell.KeyboardNone // the menu never takes the keyboard from the app
 	m.win.SetApplication(s.app)
 	w := m.win.GoPointer()
@@ -121,15 +127,18 @@ func (s *shellUI) showMenu(button *gtk.Widget, target appMenuTarget) {
 	} else if m.drop.card == nil {
 		// Closed since: the card went back into the panel's window.
 		m.drop.attach(m.win, m.keys, m.backdrop, &m.card.Widget, layershell.LayerTop, false)
+		m.drop.menu = true
 		m.drop.keyboard = layershell.KeyboardNone
 	}
 	m.pid = target.pid
 	m.section = target.entry.Label
 	m.entries = target.entry.Children
 	m.stack = nil
+	m.generation++
 	m.open = true
 	m.closing = false
 	s.fillMenu()
+	s.refreshMenuBranch(target.entry, nil)
 	s.dropFromThisBar(&m.drop, target.bar, func(*bar) *gtk.Widget { return button })
 	glib.IdleAdd(&s.onMenuLayout, 0)
 }
@@ -180,6 +189,7 @@ func (s *shellUI) appendMenuColumn(entries []appmenu.Entry, prefix []int) *gtk.B
 	m := &s.menu
 	col := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	col.AddCssClass("menu-col")
+	col.SetValign(gtk.AlignStartValue)
 	if len(prefix) > 0 {
 		// A submenu is a menu of its own: the same card as its parent's,
 		// standing beside it, not a column of the parent's card.
@@ -231,7 +241,7 @@ func (s *shellUI) appendMenuColumn(entries []appmenu.Entry, prefix []int) *gtk.B
 
 		// The branch open at this item gets its own column; the layout pass
 		// sets it level with the row.
-		if len(entry.Children) > 0 && equalPath(m.stack, path) {
+		if len(entry.Children) > 0 && (equalPath(m.stack, path) || hasPrefix(m.stack, path)) {
 			sub := s.appendMenuColumn(entry.Children, path)
 			m.pairs = append(m.pairs, menuPair{row: &button.Widget, col: sub})
 		}
@@ -277,6 +287,7 @@ func (s *shellUI) bindMenuHandlers() {
 				m.stack = m.stack[:len(row.path)-1]
 			} else {
 				m.stack = row.path
+				s.refreshMenuBranch(row.target.entry, row.path)
 			}
 			s.fillMenu()
 			return
@@ -298,10 +309,11 @@ func (s *shellUI) bindMenuHandlers() {
 		}
 		switch {
 		case row.expand:
-			if equalPath(m.stack, row.path) {
+			if equalPath(m.stack, row.path) || hasPrefix(m.stack, row.path) {
 				return
 			}
 			m.stack = row.path
+			s.refreshMenuBranch(row.target.entry, row.path)
 			s.fillMenu()
 		case hasPrefix(m.stack, row.path):
 			// A plain item beside an open branch closes the deeper menus.
@@ -384,4 +396,42 @@ func (s *shellUI) layoutMenu() bool {
 		glib.TimeoutAdd(16, &s.onMenuLayout, 0)
 	}
 	return false
+}
+
+// Refresh only the branch still on screen; late replies cannot replace a
+// different application's menu or a branch the pointer has already left.
+func (s *shellUI) refreshMenuBranch(entry appmenu.Entry, path []int) {
+	if entry.Action.Kind != appmenu.ActionDbusmenu {
+		return
+	}
+	m := &s.menu
+	m.generation++
+	generation := m.generation
+	path = append([]int(nil), path...)
+	client := s.appmenu.client
+	go func() {
+		children, err := client.Open(entry)
+		gtkx.Post(func() {
+			if !m.open || m.closing || m.generation != generation {
+				return
+			}
+			if err != nil {
+				log.Printf("appmenu open %q: %v", entry.Label, err)
+				return
+			}
+			if len(path) == 0 {
+				m.entries = children
+			} else {
+				if !equalPath(m.stack, path) {
+					return
+				}
+				entries := m.entries
+				for _, index := range path[:len(path)-1] {
+					entries = entries[index].Children
+				}
+				entries[path[len(path)-1]].Children = children
+			}
+			s.fillMenu()
+		})
+	}()
 }

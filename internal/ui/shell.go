@@ -40,6 +40,7 @@ import (
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/portalconf"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/system"
 	layouts "github.com/lyricat/inua/ui"
 )
 
@@ -64,10 +65,11 @@ type Options struct {
 }
 
 type shellUI struct {
-	opts  Options
-	cfg   config.Config
-	app   *gtk.Application
-	layer bool // compositor supports layer-shell and it is in use
+	opts   Options
+	cfg    config.Config
+	distro system.Distribution
+	app    *gtk.Application
+	layer  bool // compositor supports layer-shell and it is in use
 
 	appsStamp string           // the applications folders as last scanned (desktop.Stamp)
 	apps      []*desktop.Entry // the desktop entries as last scanned
@@ -380,7 +382,7 @@ func Run(opts Options) int {
 	// The settings' file choosers through inua's picker, when it is on.
 	restore := gtkx.ForcePortals(portalconf.PickerOn())
 	app := gtk.NewApplication(shell.AppID, gio.GApplicationNonUniqueValue)
-	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}}
+	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}, distro: system.ReadDistribution("/")}
 	s.pass.slot = make(chan struct{}, 1) // before the control socket serves
 	activate := func(gio.Application) {
 		restore() // the display is open
@@ -661,7 +663,7 @@ func (s *shellUI) bindHandlers() {
 	// The entries' reaches show hovered, a panel open or not.
 	s.onBarMotion = func(c gtk.EventControllerMotion, x, y float64) {
 		if b := s.barOf(c.GetWidget()); b != nil {
-			b.hover(x, y)
+			s.hoverAt(b, x, y)
 		}
 	}
 	s.onBarLeave = func(c gtk.EventControllerMotion) {
@@ -1358,6 +1360,7 @@ func (s *shellUI) appMenuHover(b *bar, x, y float64) {
 	m.pid, m.section = target.pid, target.entry.Label
 	m.entries, m.stack = target.entry.Children, nil
 	s.fillMenu()
+	s.refreshMenuBranch(target.entry, nil)
 	s.dropToButton(&m.drop, b, button)
 }
 

@@ -269,6 +269,8 @@ func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) 
 		m.pid, m.section = target.pid, target.entry.Label
 		m.entries, m.stack = target.entry.Children, nil
 		s.fillMenu()
+		s.refreshMenuBranch(target.entry, nil)
+		s.dropToButton(&m.drop, b, button)
 		return
 	}
 	if m.closing {

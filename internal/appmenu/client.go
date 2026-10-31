@@ -131,11 +131,53 @@ func (c *Client) readMenu(conn *dbus.Conn, r Registration) ([]Entry, error) {
 	return n.Children, nil
 }
 
+// Open refreshes a D-Bus submenu after notifying its owner that it will be
+// shown. Dynamic menus prepare their actions and working directory here.
+func (c *Client) Open(e Entry) ([]Entry, error) {
+	if e.Action.Kind != ActionDbusmenu {
+		return e.Children, nil
+	}
+	conn, err := dbus.ConnectSessionBus()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), callTimeout)
+	defer cancel()
+	obj := conn.Object(e.Action.Bus, e.Action.Path)
+	if err := obj.CallWithContext(ctx, menuInterface+".AboutToShow", 0, e.ID).Err; err != nil {
+		return nil, err
+	}
+	call := obj.CallWithContext(ctx, menuInterface+".GetLayout", 0, e.ID, int32(-1), []string{})
+	if call.Err != nil {
+		return nil, call.Err
+	}
+	if len(call.Body) != 2 {
+		return nil, fmt.Errorf("appmenu: malformed submenu reply")
+	}
+	raw, ok := call.Body[1].([]any)
+	if !ok {
+		return nil, fmt.Errorf("appmenu: malformed submenu layout")
+	}
+	count := 0
+	node, ok := decode(raw, 0, &count)
+	if !ok {
+		return nil, fmt.Errorf("appmenu: malformed or oversized submenu")
+	}
+	setDbusmenuAction(node.Children, Registration{Service: e.Action.Bus, Path: e.Action.Path})
+	if e.Action.Direct {
+		direct(node.Children)
+	}
+	if e.Action.NativeWayland {
+		markNative(node.Children)
+	}
+	return node.Children, nil
+}
+
 func markNative(entries []Entry) {
 	for i := range entries {
 		if len(entries[i].Children) > 0 {
 			markNative(entries[i].Children)
-			continue
 		}
 		entries[i].Action.NativeWayland = true
 	}
@@ -273,7 +315,6 @@ func direct(entries []Entry) {
 	for i := range entries {
 		if len(entries[i].Children) > 0 {
 			direct(entries[i].Children)
-			continue
 		}
 		entries[i].Action.Direct = true
 	}
