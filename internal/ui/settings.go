@@ -59,6 +59,10 @@ type settings struct {
 	bgAnother                                                      gtk.Button
 	barOn, dockOn, dockHide, dockDrawer, dockFlushBar              gtk.Switch
 	barMenu                                                        gtk.Switch
+	appMenuOff, appMenuOn                                          gtk.Box
+	appMenuOffAdd, appMenuOnAdd                                    gtk.DropDown
+	appMenuOffAdds, appMenuOnAdds                                  []string // the IDs each lists
+	appMenuOffModel, appMenuOnModel                                *gtk.StringList // kept, or the model is collected
 	clipEnable, clipBar, clipPaste                                 gtk.Switch
 	dockSize, dockPosition, barDensity                             gtk.DropDown
 	dockPinned                                                     gtk.Box
@@ -191,11 +195,8 @@ func (s *shellUI) bindSettingsHandlers() {
 		default:
 			s.aiSwitch(sw.GetName(), on, &c)
 		}
-		s.changeSettings(c)
-		if sw.GetName() == "bar_menu" {
-			s.setAppMenuOn(on)
-		}
-		return false // let the switch move
+		s.changeSettings(c) // applyConfig starts or stops the menu with it
+		return false       // let the switch move
 	}
 	s.onSettingsDrop = func(ptr, _, _ uintptr) {
 		d := s.settings.drops[ptr]
@@ -316,6 +317,26 @@ func (s *shellUI) bindSettingsHandlers() {
 			action, id, _ := strings.Cut(strings.TrimPrefix(name, "pin-"), ":")
 			c.Dock.Pinned = movePinned(c.Dock.Pinned, id, action)
 			s.changeSettings(c)
+		case strings.HasPrefix(name, "menu_off-remove:"):
+			id := strings.TrimPrefix(name, "menu_off-remove:")
+			c.Bar.MenuOff = slices.DeleteFunc(slices.Clone(c.Bar.MenuOff), func(v string) bool { return v == id })
+			s.changeSettings(c)
+		case strings.HasPrefix(name, "menu_on-remove:"):
+			id := strings.TrimPrefix(name, "menu_on-remove:")
+			c.Bar.MenuOn = slices.DeleteFunc(slices.Clone(c.Bar.MenuOn), func(v string) bool { return v == id })
+			s.changeSettings(c)
+		case name == "app_menu_off_addbtn":
+			if id := pickAppMenuChoice(&s.settings.appMenuOffAdd, s.settings.appMenuOffAdds); id != "" {
+				c.Bar.MenuOff = append(slices.Clone(c.Bar.MenuOff), id)
+				c.Bar.MenuOn = slices.DeleteFunc(slices.Clone(c.Bar.MenuOn), func(v string) bool { return v == id })
+				s.changeSettings(c)
+			}
+		case name == "app_menu_on_addbtn":
+			if id := pickAppMenuChoice(&s.settings.appMenuOnAdd, s.settings.appMenuOnAdds); id != "" {
+				c.Bar.MenuOn = append(slices.Clone(c.Bar.MenuOn), id)
+				c.Bar.MenuOff = slices.DeleteFunc(slices.Clone(c.Bar.MenuOff), func(v string) bool { return v == id })
+				s.changeSettings(c)
+			}
 		case name == "lang_restart":
 			if s.settings.dirty {
 				s.saveSettings() // before the restart reads it
@@ -435,6 +456,10 @@ func (s *shellUI) openSettings() {
 	ui.Get("tray", &st.tray)
 	ui.Get("bar_pass", &st.barPass)
 	ui.Get("bar_menu", &st.barMenu)
+	ui.Get("app_menu_off", &st.appMenuOff)
+	ui.Get("app_menu_on", &st.appMenuOn)
+	ui.Get("app_menu_off_add", &st.appMenuOffAdd)
+	ui.Get("app_menu_on_add", &st.appMenuOnAdd)
 	ui.Get("bg_image", &st.bgImage)
 	ui.Get("bg_color", &st.bgColor)
 	ui.Get("clock", &st.clock)
@@ -763,6 +788,7 @@ func (s *shellUI) showSettings() {
 	st.tray.SetActive(c.Bar.Tray)
 	st.barPass.SetActive(c.Bar.Pass)
 	st.barMenu.SetActive(c.Bar.Menu)
+	s.showAppMenuSettings()
 	setEntry(&st.bgImage, c.Background.Image)
 	setEntry(&st.bgColor, c.Background.Color)
 	setEntry(&st.clock, c.Bar.Clock)

@@ -993,6 +993,100 @@ ApplicationWindow settings {
                     }
                   }
 
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Applications without a menu");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Leave one application's menu out of the bar, whatever the switch above says");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+                  }
+
+                  Box app_menu_off {
+                    styles ["column"]
+                    spacing: 8;
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 8;
+
+                    DropDown app_menu_off_add {
+                      name: "app_menu_off_add";
+                      hexpand: true;
+                      valign: center;
+                    }
+
+                    Button app_menu_off_addbtn {
+                      styles ["outlined"]
+                      name: "app_menu_off_addbtn";
+                      label:  _("Add");
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Applications with a menu");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Show these applications' menus even with the switch above off");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+                  }
+
+                  Box app_menu_on {
+                    styles ["column"]
+                    spacing: 8;
+                  }
+
+                  Box {
+                    styles ["row"]
+                    spacing: 8;
+
+                    DropDown app_menu_on_add {
+                      name: "app_menu_on_add";
+                      hexpand: true;
+                      valign: center;
+                    }
+
+                    Button app_menu_on_addbtn {
+                      styles ["outlined"]
+                      name: "app_menu_on_addbtn";
+                      label:  _("Add");
+                      valign: center;
+                    }
+                  }
+
                   Separator {}
 
                   Box {

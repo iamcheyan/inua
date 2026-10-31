@@ -1046,8 +1046,20 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 			// item count and the card's box - read from the shell, so no
 			// pointer and no focus are needed.
 			m := &s.menu
-			return ipc.Response{OK: true, Result: fmt.Sprintf("open=%v pid=%d section=%q items=%d x=%.0f y=%.0f w=%.0f h=%.0f",
-				m.open && !m.closing, m.pid, m.section, len(m.entries), m.drop.x, m.drop.y, m.drop.w, m.drop.h)}
+			// The first submenu's column: the row it hangs from and the
+			// margin the layout gave it, so a test can check they agree.
+			sub := "none"
+			if len(m.pairs) > 0 {
+				var r graphene.Rect
+				row := -1.0
+				if m.pairs[0].row.ComputeBounds(&m.card.Widget, &r) {
+					box := *(*[4]float32)(unsafe.Pointer(&r))
+					row = float64(box[1])
+				}
+				sub = fmt.Sprintf("row=%.0f margin=%d", row, m.pairs[0].col.GetMarginTop())
+			}
+			return ipc.Response{OK: true, Result: fmt.Sprintf("open=%v pid=%d section=%q items=%d x=%.0f y=%.0f w=%.0f h=%.0f subs=%d %s",
+				m.open && !m.closing, m.pid, m.section, len(m.entries), m.drop.x, m.drop.y, m.drop.w, m.drop.h, len(m.pairs), sub)}
 		case "hover":
 			// The pointer's path along the bar, for a test: the same work a
 			// real motion event does, at bar coordinates.

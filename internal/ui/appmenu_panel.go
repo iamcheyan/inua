@@ -28,21 +28,22 @@ import (
 // from and level with it, as a Mac's menus do. They are columns in the one
 // card, not windows of their own, so the whole menu is a single surface.
 type menuPanel struct {
-	drop     drop
-	open     bool
-	closing  bool
-	win      *gtk.Window
-	backdrop *gtk.Box
-	card     *gtk.Box // the columns, side by side
-	keys     *gtk.EventController
-	pid      int
-	section  string
-	entries  []appmenu.Entry
-	stack    []int // the open branch: one index for each submenu shown
-	rows     map[string]menuRow
-	pairs    []menuPair // a submenu column and the item it hangs from
-	next     uint64
-	gone     func()
+	drop        drop
+	layoutTries int // layoutMenu's retries while the rows measure
+	open        bool
+	closing     bool
+	win         *gtk.Window
+	backdrop    *gtk.Box
+	card        *gtk.Box // the columns, side by side
+	keys        *gtk.EventController
+	pid         int
+	section     string
+	entries     []appmenu.Entry
+	stack       []int // the open branch: one index for each submenu shown
+	rows        map[string]menuRow
+	pairs       []menuPair // a submenu column and the item it hangs from
+	next        uint64
+	gone        func()
 }
 
 // menuPair ties a submenu column to the row it hangs from, so the column can
@@ -63,6 +64,7 @@ type menuRow struct {
 const (
 	menuRowHeight  = 32
 	menuLineHeight = 1
+	menuColPadding = 5 // .menu-panel's padding, which offsets the columns
 )
 
 func (s *shellUI) buildMenuPanel() {
@@ -166,6 +168,7 @@ func (s *shellUI) fillMenu() {
 	m.rows = make(map[string]menuRow)
 	m.pairs = nil
 	m.next = 0
+	m.layoutTries = 0
 	s.appendMenuColumn(m.entries, nil)
 	glib.IdleAdd(&s.onMenuLayout, 0)
 }
@@ -353,13 +356,32 @@ func (s *shellUI) menuOwnedBy(pid int) bool {
 // rather than from the style sheet's row heights.
 func (s *shellUI) layoutMenu() bool {
 	m := &s.menu
+	again := false
 	for _, pair := range m.pairs {
 		var r graphene.Rect
 		if !pair.row.ComputeBounds(&m.card.Widget, &r) {
+			again = true
 			continue
 		}
 		box := *(*[4]float32)(unsafe.Pointer(&r))
-		pair.col.SetMarginTop(int32(box[1]))
+		if box[1] < 0 || box[3] < menuRowHeight {
+			// Laid out before the card gave the rows their height: GTK
+			// reports the row at y=-1 with only its border, and setting
+			// the column to that leaves the submenu at the card's top.
+			// Try again once a frame has been drawn.
+			again = true
+			continue
+		}
+		// ComputeBounds is in the card's own coordinates, padding
+		// included; the column's margin is inside that padding.
+		top := int32(box[1]) - menuColPadding
+		pair.col.SetMarginTop(max(0, top))
+	}
+	if again && m.layoutTries < 20 {
+		m.layoutTries++
+		// A timeout, not an idle: an idle runs in the same frame, before
+		// the card has laid the rows out again.
+		glib.TimeoutAdd(16, &s.onMenuLayout, 0)
 	}
 	return false
 }
