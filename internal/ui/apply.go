@@ -20,6 +20,7 @@ import (
 	"github.com/lyricat/inua/internal/rundir"
 	"github.com/lyricat/inua/internal/shell"
 	"github.com/lyricat/inua/internal/style"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // styles are the CSS providers the shell keeps, so settings can change
@@ -29,6 +30,7 @@ type styles struct {
 	user      *gtk.CssProvider // style.css from the config directory
 	wallpaper *gtk.CssProvider // window.wallpaper
 	swatches  *gtk.CssProvider // the settings window's theme swatches
+	settings  *gtk.CssProvider // the settings window in the apps' theme (loadSettingsStyle)
 	drawing   string           // the picture inua is drawing, by its key (picturePath)
 	shown     string           // the file of the picture inua drew last shown
 	midnight  *time.Timer      // draws the next day's picture (nextPicture)
@@ -68,6 +70,31 @@ func (s *shellUI) loadStyles() {
 func (s *shellUI) loadBase() {
 	// The theme defines the colour tokens style.css uses.
 	s.styles.base.LoadFromString(s.cfg.ThemeCSS(s.theme(), s.readUI) + style.Glass(s.cfg.Style.Transparency) + style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale) + style.Corners(s.cfg.Style.Radius))
+	uikit.Radius = s.cfg.Style.Radius // the menus' corners
+	s.loadSettingsStyle()
+}
+
+// loadSettingsStyle styles the settings window as an app, in the apps'
+// theme (style.app_theme), while it is open and that theme is not the
+// bar's: the shell's display has the bar's tokens, so the window's are
+// renamed and its rules its own (style.Scope).
+func (s *shellUI) loadSettingsStyle() {
+	st := &s.styles
+	theme := s.cfg.Style.ForApps()
+	css := ""
+	if s.settings.win != nil && theme != s.theme() {
+		css = style.Scope(s.cfg.ThemeCSS(theme, s.readUI)+style.Glass(s.cfg.Style.Transparency),
+			style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale)+style.Corners(s.cfg.Style.Radius),
+			"window.settings", "apps_")
+	}
+	if st.settings == nil {
+		if css == "" {
+			return
+		}
+		st.settings = gtk.NewCssProvider()
+		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), st.settings, uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION))
+	}
+	st.settings.LoadFromString(css)
 }
 
 // loadWallpaper styles the wallpaper windows from the settings: the picture

@@ -14,6 +14,7 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // drop hangs a card from the bar (shell.DropAt) as one piece with it: the
@@ -490,13 +491,13 @@ func (d *drop) shape(l, r, b float64) dropShape {
 func (g dropShape) glass() *gsk.Path {
 	pb := gsk.NewPathBuilder()
 	pb.MoveTo(f32(g.l-g.left), f32(g.y))
-	arc(pb, g.l-g.left, g.y+g.left, g.left, 270, 360)
+	uikit.Arc(pb, g.l-g.left, g.y+g.left, g.left, 270, 360)
 	pb.LineTo(f32(g.l), f32(g.bottom-g.round))
-	arc(pb, g.l+g.round, g.bottom-g.round, g.round, 180, 90)
+	uikit.Arc(pb, g.l+g.round, g.bottom-g.round, g.round, 180, 90)
 	pb.LineTo(f32(g.r-g.round), f32(g.bottom))
-	arc(pb, g.r-g.round, g.bottom-g.round, g.round, 90, 0)
+	uikit.Arc(pb, g.r-g.round, g.bottom-g.round, g.round, 90, 0)
 	pb.LineTo(f32(g.r), f32(g.y+g.right))
-	arc(pb, g.r+g.right, g.y+g.right, g.right, 180, 270)
+	uikit.Arc(pb, g.r+g.right, g.y+g.right, g.right, 180, 270)
 	pb.Close()
 	return pb.FreeToPath()
 }
@@ -511,17 +512,17 @@ func (g dropShape) outline() *gsk.Path {
 	pb := gsk.NewPathBuilder()
 	g.barStart(pb)
 	pb.LineTo(f32(g.l-g.left-0.5), f32(g.y-0.5))
-	arc(pb, g.l-g.left-0.5, g.y+g.left-0.5, g.left, 270, 360)
+	uikit.Arc(pb, g.l-g.left-0.5, g.y+g.left-0.5, g.left, 270, 360)
 	pb.LineTo(f32(g.l-0.5), f32(g.bottom-g.round))
-	arc(pb, g.l+g.round, g.bottom-g.round, g.round+0.5, 180, 90)
+	uikit.Arc(pb, g.l+g.round, g.bottom-g.round, g.round+0.5, 180, 90)
 	pb.LineTo(f32(g.r-g.round), f32(g.bottom+0.5))
-	arc(pb, g.r-g.round, g.bottom-g.round, g.round+0.5, 90, 0)
+	uikit.Arc(pb, g.r-g.round, g.bottom-g.round, g.round+0.5, 90, 0)
 	if g.end { // up into the bar's side, which goes on from here
 		pb.LineTo(f32(g.r+0.5), f32(g.y))
 		return pb.FreeToPath()
 	}
 	pb.LineTo(f32(g.r+0.5), f32(g.y+g.right-0.5))
-	arc(pb, g.r+g.right+0.5, g.y+g.right-0.5, g.right, 180, 270)
+	uikit.Arc(pb, g.r+g.right+0.5, g.y+g.right-0.5, g.right, 180, 270)
 	pb.LineTo(f32(g.r+g.right+0.5), f32(g.y-0.5))
 	g.barEnd(pb)
 	return pb.FreeToPath()
@@ -535,7 +536,7 @@ func (g dropShape) barStart(pb *gsk.PathBuilder) {
 		return
 	}
 	pb.MoveTo(f32(g.il+0.5), f32(g.y-g.radius))
-	arc(pb, g.il+g.radius, g.y-g.radius, g.radius-0.5, 180, 90)
+	uikit.Arc(pb, g.il+g.radius, g.y-g.radius, g.radius-0.5, 180, 90)
 }
 
 func (g dropShape) barEnd(pb *gsk.PathBuilder) {
@@ -544,7 +545,7 @@ func (g dropShape) barEnd(pb *gsk.PathBuilder) {
 		return
 	}
 	pb.LineTo(f32(g.ir-g.radius), f32(g.y-0.5))
-	arc(pb, g.ir-g.radius, g.y-g.radius, g.radius-0.5, 90, 0)
+	uikit.Arc(pb, g.ir-g.radius, g.y-g.radius, g.radius-0.5, 90, 0)
 }
 
 // barEdge is the island's lower edge alone, while nothing hangs from it.
@@ -554,21 +555,6 @@ func barEdge(d *drop) *gsk.Path {
 	g.barStart(pb)
 	g.barEnd(pb)
 	return pb.FreeToPath()
-}
-
-// arc goes round the circle about cx, cy from angle a0 to a1, in degrees
-// clockwise from the right as the screen's y runs down, as a cubic; a
-// quarter at most. It does nothing for a radius under half a pixel.
-func arc(pb *gsk.PathBuilder, cx, cy, r, a0, a1 float64) {
-	if r < 0.5 {
-		return
-	}
-	t0, t1 := a0*math.Pi/180, a1*math.Pi/180
-	k := 4.0 / 3 * math.Tan((t1-t0)/4) * r
-	x0, y0 := cx+r*math.Cos(t0), cy+r*math.Sin(t0)
-	x1, y1 := cx+r*math.Cos(t1), cy+r*math.Sin(t1)
-	pb.LineTo(f32(x0), f32(y0))
-	pb.CubicTo(f32(x0-k*math.Sin(t0)), f32(y0+k*math.Cos(t0)), f32(x1+k*math.Sin(t1)), f32(y1-k*math.Cos(t1)), f32(x1), f32(y1))
 }
 
 func f32(v float64) float32 { return float32(v) }

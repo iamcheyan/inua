@@ -308,10 +308,10 @@ position = %s
 # built-in theme it names.
 theme = %s
 
-# The apps' colour theme, one of the above: inua's apps (Files, the
-# terminal, the viewer …) and whether other apps are asked to be light or
-# dark. "" (the default) follows theme; the bar, dock, launcher, control
-# center and settings keep theme.
+# The apps' colour theme, one of the above: inua's apps (the settings,
+# Files, the terminal, the viewer …) and whether other apps are asked to be
+# light or dark. "" (the default) follows theme; the bar, dock, launcher
+# and control center keep theme.
 app_theme = %s
 
 # How inua draws apps: inua's own and the others it draws, each as the

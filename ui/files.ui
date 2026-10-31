@@ -72,6 +72,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                               <object class="GtkToggleButton" id="hidden_toggle">
                                 <style>
                                   <class name="tool"/>
+                                  <class name="small"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">view-reveal-symbolic</property>
@@ -82,6 +83,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                               <object class="GtkToggleButton" id="dual_toggle">
                                 <style>
                                   <class name="tool"/>
+                                  <class name="small"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">view-dual-symbolic</property>
@@ -92,6 +94,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                               <object class="GtkToggleButton" id="details_toggle">
                                 <style>
                                   <class name="tool"/>
+                                  <class name="small"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">dialog-information-symbolic</property>
@@ -107,6 +110,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                               <object class="GtkButton" id="keys_button">
                                 <style>
                                   <class name="plain"/>
+                                  <class name="small"/>
                                 </style>
                                 <property name="valign">3</property>
                                 <property name="icon-name">preferences-desktop-keyboard-shortcuts-symbolic</property>

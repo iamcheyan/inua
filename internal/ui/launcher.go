@@ -94,6 +94,9 @@ type launcher struct {
 	opens      int
 	actionsOf  int          // the result Tab's menu is for
 	menu       *gtk.Popover // that menu, while it is open
+	// catch is a clear window over the screen under the launcher, whose
+	// click outside it closes it (showLauncherCatch).
+	catch *gtk.ApplicationWindow
 
 	// The results shown: all of them, built again only when they change
 	// (shell.Launcher.Version); a move marks another one selected.
@@ -156,6 +159,11 @@ func (s *shellUI) bindLauncherHandlers() {
 	s.onLauncherTick = func(uintptr, uintptr, uintptr) bool { return s.stepLauncher() }
 	// A strip's copy is laid out after the results: place it again.
 	s.onLauncherFootLaidOut = func(gtk.Adjustment) { s.placeFoot() }
+	s.onLauncherCatch = func(g gtk.GestureClick, _ int32, x, y float64) {
+		b := s.barUnder(g.GetWidget())
+		s.cancelLauncher()
+		s.barClick(b, x, y) // an entry on the bar does its own as well
+	}
 	s.onLauncherPick = func(g gtk.GestureClick, _ int32, _, _ float64) {
 		l := &s.launcher
 		w := g.GetWidget()
@@ -178,9 +186,6 @@ func (s *shellUI) bindLauncherHandlers() {
 		}
 	}
 	s.onQueryActivate = func(gtk.Entry) { s.executeLauncher() }
-	s.onLauncherAction = func(a gio.SimpleAction, _ uintptr) {
-		s.launcherAction(a.GetName())
-	}
 	s.onLauncherGone = func(uintptr) bool {
 		s.launcher.gone = 0
 		s.dropClosedLauncher()
@@ -396,6 +401,7 @@ func (s *shellUI) syncLauncher() {
 		s.dropClosedLauncher()
 		s.buildLauncher()
 		s.renderLauncher()
+		s.showLauncherCatch() // before the launcher, so under it
 		l.win.Present()
 		l.query.GrabFocus()
 	case !l.st.Open && l.win != nil:
@@ -409,9 +415,48 @@ func (s *shellUI) syncLauncher() {
 		}
 		l.closed = l.win
 		l.win, l.hasFocus, l.menu = nil, false, nil
+		s.dropLauncherCatch()
 		l.gone = glib.TimeoutAdd(closeMS, &s.onLauncherGone, 0)
 	case l.st.Open:
 		s.renderLauncher()
+	}
+}
+
+// showLauncherCatch covers the launcher's monitor with a clear window
+// under it, the bar too, so that a click anywhere outside the launcher
+// closes it; on the bar, the entry clicked does its own as well.
+func (s *shellUI) showLauncherCatch() {
+	l := &s.launcher
+	if !s.layer || l.catch != nil {
+		return
+	}
+	l.catch = gtk.NewApplicationWindow(s.app)
+	l.catch.AddCssClass("launcher-catch")
+	click := gtk.NewGestureClick()
+	click.SetButton(0) // any button
+	click.ConnectPressed(&s.onLauncherCatch)
+	l.catch.AddController(&click.EventController)
+	w := l.catch.GoPointer()
+	layershell.InitForWindow(w)
+	layershell.SetNamespace(w, "inua-launcher-catch")
+	layershell.SetLayer(w, layershell.LayerTop)
+	layershell.SetKeyboardMode(w, layershell.KeyboardNone)
+	for _, e := range []layershell.Edge{layershell.EdgeTop, layershell.EdgeBottom, layershell.EdgeLeft, layershell.EdgeRight} {
+		layershell.SetAnchor(w, e, true)
+	}
+	layershell.SetExclusiveZone(w, -1)
+	if mon := s.focusedMonitor(); mon != nil {
+		layershell.SetMonitor(w, mon.GoPointer())
+	}
+	l.catch.Present()
+}
+
+// dropLauncherCatch takes the catching window away, the launcher closing.
+func (s *shellUI) dropLauncherCatch() {
+	l := &s.launcher
+	if l.catch != nil {
+		l.catch.Destroy()
+		l.catch = nil
 	}
 }
 
@@ -1108,25 +1153,17 @@ func (s *shellUI) showLauncherActions() {
 	if len(acts) == 0 {
 		return
 	}
-	group := gio.NewSimpleActionGroup()
-	menu := gio.NewMenu()
+	var lines []uikit.Item
 	for _, act := range acts {
-		a := gio.NewSimpleAction(act.ID, nil)
-		a.ConnectActivate(&s.onLauncherAction)
-		group.AddAction(a)
-		a.Unref()
-		menu.Append(act.Title, "item."+act.ID)
+		id := act.ID
+		lines = append(lines, uikit.Item{Label: act.Title, Run: func() { s.launcherAction(id) }})
 	}
 	w := &l.items[i]
-	w.InsertActionGroup("item", group)
-	group.Unref()
-	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-	menu.Unref()
-	uikit.Menu(&pop.Popover, uikit.Below)
+	pop := uikit.NewMenu(lines, uikit.Below)
 	pop.SetParent(w)
 	pop.ConnectClosed(&s.onLauncherMenuClosed)
 	pop.Unref() // the result holds it
-	l.actionsOf, l.menu = i, &pop.Popover
+	l.actionsOf, l.menu = i, pop
 	pop.Popup()
 }
 

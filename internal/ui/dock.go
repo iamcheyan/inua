@@ -14,7 +14,6 @@ import (
 	"unsafe"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gobject/types"
@@ -27,7 +26,6 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
-	"github.com/lyricat/inua/internal/uikit"
 	"github.com/lyricat/inua/internal/workshop"
 )
 
@@ -86,8 +84,7 @@ type dockState struct {
 	apps       shell.AppIndex
 	items      []shell.DockItem
 	launching  map[string]bool // apps started from the dock, bouncing until a window shows
-	menuKey    string          // the app whose menu is open
-	menu       *gtk.Popover    // borrowed from its button
+	menuKey    string          // the app whose menu is open (drawerMenu)
 	gapTicking bool            // onDockGapTick is running
 	drawer     *drawerPanel    // the open drawer, nil when closed
 	programs   map[int]string  // /proc/PID/comm of windows' processes, by PID
@@ -291,9 +288,6 @@ func (s *shellUI) renderDock(b *bar) {
 	withWorkshop := drawer && len(s.installedWorkshop()) > 0
 	if sig := dockSignature(items, d.size, drawer) + fmt.Sprint(withWorkshop); sig != d.shown {
 		d.shown = sig
-		if s.dockState.menu != nil {
-			s.dockState.menu.Popdown() // its button is about to go
-		}
 		gtkx.Clear(&d.items)
 		d.buttons = map[string]*dockButton{}
 		sepDone := false
@@ -463,15 +457,30 @@ func (s *shellUI) launchApp(e *desktop.Entry) {
 }
 
 // showDockMenu opens an app's menu on its button.
+// showDockMenu opens an app's menu over the dock, out of its button, in
+// the drawer's bubble: the same glass, corners and arrow.
 func (s *shellUI) showDockMenu(btn *gtk.Widget, it shell.DockItem) {
-	group := gio.NewSimpleActionGroup()
-	menu := gio.NewMenu()
+	var b *bar
+	for _, x := range s.bars {
+		if x.dock != nil && btn.IsAncestor(&x.dock.win.Widget) {
+			b = x
+		}
+	}
+	if b == nil {
+		return
+	}
+	menu := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+	menu.AddCssClass("dock-menu-items")
 	add := func(label, action string) {
-		a := gio.NewSimpleAction(action, nil)
-		a.ConnectActivate(&s.onDockAction)
-		group.AddAction(a)
-		a.Unref()
-		menu.Append(label, "dock."+action)
+		item := gtk.NewButton()
+		item.AddCssClass("menu-item")
+		item.SetName(action)
+		l := gtk.NewLabel(label)
+		l.SetXalign(0)
+		item.SetChild(&l.Widget)
+		l.Unref()
+		item.ConnectClicked(&s.onDockMenuItem)
+		gtkx.Append(menu, &item.Widget)
 	}
 	if it.Entry != nil {
 		if !strings.HasPrefix(it.Entry.ID, "inua:") { // the shell's tools have one window
@@ -490,22 +499,36 @@ func (s *shellUI) showDockMenu(btn *gtk.Widget, it shell.DockItem) {
 		}
 		add(label, "quit")
 	}
-	if menu.GetNItems() == 0 {
+	if menu.GetFirstChild() == nil {
 		menu.Unref()
-		group.Unref()
 		return
 	}
-	btn.InsertActionGroup("dock", group)
-	group.Unref()
-	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-	menu.Unref()
-	uikit.Menu(&pop.Popover, uikit.Above)
-	pop.SetParent(btn)
-	pop.ConnectClosed(&s.onDockMenuClosed)
-	pop.Unref() // the button holds it
+	s.dropDrawer()
 	s.dockState.menuKey = it.Key
-	s.dockState.menu = &pop.Popover
-	pop.Popup()
+	s.openDrawer(b, drawerMenu, btn, menu)
+}
+
+// dockMenuAction carries out a dock menu's item for its app.
+func (s *shellUI) dockMenuAction(name string) {
+	it, ok := s.dockItem(s.dockState.menuKey)
+	if !ok {
+		return
+	}
+	switch name {
+	case "new":
+		s.launchApp(it.Entry)
+		if len(it.Windows) == 0 {
+			s.markLaunching(it.Key)
+		}
+	case "pin", "unpin":
+		c := s.cfg
+		c.Dock.Pinned = shell.Pin(c.Dock.Pinned, it.Key, name == "pin")
+		s.changeSettings(c)
+	case "quit":
+		for _, w := range it.Windows {
+			s.dispatch("closewindow address:" + w.Address)
+		}
+	}
 }
 
 func (s *shellUI) bindDockHandlers() {
@@ -536,26 +559,12 @@ func (s *shellUI) bindDockHandlers() {
 			s.showDockMenu(w, it)
 		}
 	}
-	s.onDockAction = func(a gio.SimpleAction, _ uintptr) {
-		it, ok := s.dockItem(s.dockState.menuKey)
-		if !ok {
-			return
-		}
-		switch a.GetName() {
-		case "new":
-			s.launchApp(it.Entry)
-			if len(it.Windows) == 0 {
-				s.markLaunching(it.Key)
-			}
-		case "pin", "unpin":
-			c := s.cfg
-			c.Dock.Pinned = shell.Pin(c.Dock.Pinned, it.Key, a.GetName() == "pin")
-			s.changeSettings(c)
-		case "quit":
-			for _, w := range it.Windows {
-				s.dispatch("closewindow address:" + w.Address)
-			}
-		}
+	s.onDockMenuItem = func(b gtk.Button) {
+		name := b.GetName()
+		gtkx.Post(func() {
+			s.closeDrawer() // the item is in it
+			s.dockMenuAction(name)
+		})
 	}
 	s.onDockDragBegin = func(ds gtk.DragSource, _ uintptr) {
 		w := ds.GetWidget()
@@ -664,13 +673,6 @@ func (s *shellUI) bindDockHandlers() {
 		s.changeSettings(c)
 		return true
 	}
-	s.onDockMenuClosed = func(p gtk.Popover) {
-		s.dockState.menu = nil
-		gtkx.Post(func() {
-			p.Unparent()
-			s.hideDocksSoon()
-		})
-	}
 	s.onDockEnter = func(c gtk.EventControllerMotion, _, _ float64) {
 		if d := s.dockOf(c.GetWidget()); d != nil {
 			d.hover = true
@@ -699,7 +701,7 @@ func (s *shellUI) bindDockHandlers() {
 	}
 	s.onDockHide = func(gen uintptr) bool {
 		for _, b := range s.bars {
-			if d := b.dock; d != nil && d.hide && !d.hover && gen == d.hideGen && s.dockState.menu == nil && s.dockState.drawer == nil {
+			if d := b.dock; d != nil && d.hide && !d.hover && gen == d.hideGen && s.dockState.drawer == nil {
 				d.reveal.SetRevealChild(false)
 			}
 		}

@@ -33,7 +33,7 @@ const passwordsShown = 40
 // every open; what was searched and the entry open stay for the next.
 type passwordsPanel struct {
 	open             bool
-	win              *gtk.ApplicationWindow
+	win              *gtk.Window
 	backdrop, list   *gtk.Box
 	scroll           *gtk.ScrolledWindow
 	search           *gtk.SearchEntry
@@ -199,7 +199,8 @@ func (s *shellUI) openPasswords(mon *gdk.Monitor) {
 	s.closeAgenda()
 	s.closeClipboard()
 	p.drop.finish() // the last window, still going back up
-	p.win = gtk.NewApplicationWindow(s.app)
+	p.win = gtk.NewWindow()
+	p.drop.app = s.app // it joins the application only if it has to show
 	p.win.AddCssClass("clipboard-panel")
 	p.win.AddCssClass("passwords-panel")
 	p.backdrop = gtk.NewBox(gtk.OrientationVerticalValue, 0)
@@ -259,7 +260,7 @@ func (s *shellUI) openPasswords(mon *gdk.Monitor) {
 	keys.SetPropagationPhase(gtk.PhaseCaptureValue)
 	keys.ConnectKeyPressed(&s.onPasswordsKey)
 	p.win.AddController(&keys.EventController)
-	p.drop.attach(&p.win.Window, &keys.EventController, p.backdrop, &card.Widget, layershell.LayerTop, false)
+	p.drop.attach(p.win, &keys.EventController, p.backdrop, &card.Widget, layershell.LayerTop, false)
 	p.drop.resizes = true // an entry's values widen it, the results narrow it again
 	if s.layer {
 		w := p.win.GoPointer()
@@ -313,7 +314,7 @@ func (s *shellUI) closePasswords() {
 	win := p.win
 	p.drop.close(func() {
 		p.drop.detach()
-		destroyPanel(&win.Window)
+		destroyPanel(win)
 		win.Unref()
 	})
 	p.win, p.search, p.list, p.scroll, p.status, p.backdrop = nil, nil, nil, nil, nil, nil

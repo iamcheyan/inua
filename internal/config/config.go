@@ -157,10 +157,10 @@ type Style struct {
 	// Theme is the colour theme, one of Themes or a theme of the user's
 	// (ThemeNames).
 	Theme string `toml:"theme"`
-	// AppTheme is the colour theme of the apps (inua's own windows outside
-	// the shell, and the light or dark other apps are asked for), like
-	// Theme; "" follows Theme. The bar, dock, launcher, panels and the
-	// settings window keep Theme.
+	// AppTheme is the colour theme of the apps (inua's own windows, the
+	// settings window among them, and the light or dark other apps are
+	// asked for), like Theme; "" follows Theme. The bar, dock, launcher
+	// and panels keep Theme.
 	AppTheme string `toml:"app_theme"`
 	// CSS is a stylesheet loaded after the built-in style, relative to the
 	// config directory. Ignored if the file does not exist.

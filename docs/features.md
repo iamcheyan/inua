@@ -215,11 +215,14 @@ records a few seconds and says whether it heard anything.
   text with the profile chosen for Voice input in Settings → AI, whose
   provider gets the recording.
 
-Either way inua types the words with `wtype`, or, without it, pastes them
-(Ctrl+V; Ctrl+Shift+V in a terminal) and puts the clipboard's text back;
-neither copy goes into the clipboard history, and the page gives the
-command that installs wtype. Each dictation ends with a space (not after
-Chinese or Japanese), so the next does not run on.
+Either way inua pastes the words where you are: it puts them on the
+clipboard and sends the paste shortcut (Ctrl+V; Ctrl+Shift+V in a
+terminal) to the focused window by its address, then puts the
+clipboard's text back. Neither copy goes into the clipboard history. It
+does not type them key by key: synthetic keys go through whichever
+keyboard holds the keymap, and with an input method's virtual keyboard
+holding it (fcitx5) they arrive as other characters. Each dictation ends
+with a space (not after Chinese or Japanese), so the next does not run on.
 
 While it listens the bar's microphone is red and pulsing, and a small
 card shows the dictation as it goes (**Card**, `[voice] show`): a red
@@ -689,9 +692,9 @@ Settings and inua's apps: Phosphor's, your own set or a theme's. Each
 style and set has Preview All, every icon of it in a window.
 
 The apps can take another theme than the bar and dock (*Apps* under the
-theme swatches, `style.app_theme`): inua's own apps follow it, and other
-apps are asked to be light or dark by it. The launcher, control center
-and settings stay with the bar.
+theme swatches, `style.app_theme`): inua's own apps and the settings
+window follow it, and other apps are asked to be light or dark by it. The
+launcher and control center stay with the bar.
 
 ## Wallpaper
 

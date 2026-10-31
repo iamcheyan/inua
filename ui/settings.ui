@@ -138,7 +138,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         <style>
                                           <class name="section-meta"/>
                                         </style>
-                                        <property name="label" translatable="yes">The bar, launcher, control center and this window</property>
+                                        <property name="label" translatable="yes">The bar, the dock, the launcher and the control center</property>
                                         <property name="hexpand">true</property>
                                         <property name="xalign">0</property>
                                         <property name="ellipsize">3</property>
@@ -187,7 +187,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="sub"/>
                                                 </style>
-                                                <property name="label" translatable="yes">Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above</property>
+                                                <property name="label" translatable="yes">This window, Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
                                               </object>

@@ -11,6 +11,7 @@ import (
 
 	"github.com/lyricat/inua/internal/assistant/answer"
 	"github.com/lyricat/inua/internal/games/fortuneai"
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 )
@@ -48,7 +49,9 @@ func (p *fortune) checkAI() {
 	}
 	p.aiState = aiChecking
 	go func() {
-		c, err := startAI()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		c, err := gameai.Start(ctx)
+		cancel()
 		gtkx.Post(func() {
 			if err != nil {
 				p.aiState, p.aiWhy = aiFailed, err.Error()
@@ -56,6 +59,9 @@ func (p *fortune) checkAI() {
 				return
 			}
 			p.aiState, p.aiClient = aiReady, c
+			if p.net != nil && !p.net.HostLeads() {
+				p.net.SetAI(gameai.Of(c)) // the visitor who sets the game up may have AI players
+			}
 			p.ai = fortuneai.New(c.Choose, gtkx.Post)
 			var names []string
 			for _, pr := range c.Profiles {
@@ -70,19 +76,6 @@ func (p *fortune) checkAI() {
 			p.fitSeats()
 		})
 	}()
-}
-
-// startAI starts the program; the error is why the AI cannot play, for the
-// user.
-func startAI() (*answer.Client, error) {
-	prog, err := answer.Program()
-	if err != nil {
-		return nil, errors.New(i18n.T("inua-assistant is not installed"))
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-	c, err := answer.Start(ctx, prog, "--answer")
-	return c, aiError(err)
 }
 
 // checkProfiles gives each AI seat a profile, the default unless it has
@@ -112,7 +105,7 @@ func (p *fortune) checkProfiles() {
 			if err == nil && i != 0 {
 				err = errors.New(i18n.T("the AI picked the wrong option"))
 			}
-			err = aiError(err)
+			err = gameai.Err(err)
 			gtkx.Post(func() {
 				if err != nil {
 					ch.state, ch.why = aiFailed, err.Error()
@@ -136,13 +129,6 @@ func (p *fortune) forgetFailures() {
 			delete(p.checks, name)
 		}
 	}
-}
-
-func aiError(err error) error {
-	if errors.Is(err, context.DeadlineExceeded) {
-		return errors.New(i18n.T("the AI did not answer in time"))
-	}
-	return err
 }
 
 // aiSeat is what AI seat i says under its name, its tooltip, and whether
@@ -195,12 +181,8 @@ func (p *fortune) aiPlayers() (names, profiles []string) {
 			}
 			names = append(names, name)
 		}
-	case len(profiles) == 1:
-		names = []string{i18n.T("AI")}
 	default:
-		for k := range profiles {
-			names = append(names, i18n.Tf("AI %d", k+1))
-		}
+		names = gameai.Names(len(profiles))
 	}
 	return names, profiles
 }
