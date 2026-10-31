@@ -3065,7 +3065,7 @@ msgstr "コピーしました"
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:92
 #: internal/ui/askpass.go:232
-#: internal/ui/passwords.go:646
+#: internal/ui/passwords.go:647
 #: internal/vmui/window.go:896
 #: ui/disk.ui:697
 #: ui/gpg.ui:662
@@ -9318,7 +9318,7 @@ msgid "Right-click to rename or move"
 msgstr "右クリックで名前の変更または移動"
 
 #: internal/lightui/pass.go:487
-#: internal/ui/passwords.go:487
+#: internal/ui/passwords.go:488
 msgid "Nothing matches. Each word is looked for in the whole path."
 msgstr "一致するものはありません。各語はパス全体から探します。"
 
@@ -9344,32 +9344,32 @@ msgid "Add a one-time code"
 msgstr "ワンタイムコードを追加"
 
 #: internal/lightui/pass.go:698
-#: internal/ui/passwords.go:560
+#: internal/ui/passwords.go:561
 msgid "USERNAME"
 msgstr "ユーザー名"
 
 #: internal/lightui/pass.go:701
-#: internal/ui/passwords.go:563
+#: internal/ui/passwords.go:564
 msgid "PASSWORD"
 msgstr "パスワード"
 
 #: internal/lightui/pass.go:706
 #: internal/lightui/pass.go:758
-#: internal/ui/passwords.go:566
-#: internal/ui/passwords.go:569
+#: internal/ui/passwords.go:567
+#: internal/ui/passwords.go:570
 #: ui/pass.ui:802
 msgid "ONE-TIME CODE"
 msgstr "ワンタイムコード"
 
 #: internal/lightui/pass.go:713
-#: internal/ui/passwords.go:576
+#: internal/ui/passwords.go:577
 msgid "NOTES"
 msgstr "メモ"
 
 #: internal/lightui/pass.go:742
 #: internal/mailui/formatted.go:184
 #: internal/term/desktop/desktop_linux.go:43
-#: internal/ui/passwords.go:643
+#: internal/ui/passwords.go:644
 #: internal/vmui/window.go:2709
 #: internal/vmui/window.go:2710
 msgid "Show"
@@ -9377,13 +9377,13 @@ msgstr "表示"
 
 #: internal/lightui/pass.go:744
 #: internal/ui/notify.go:410
-#: internal/ui/passwords.go:641
+#: internal/ui/passwords.go:642
 msgid "Hide"
 msgstr "ヒデ"
 
 #: internal/lightui/pass.go:787
 #: internal/lightui/pass_otp.go:246
-#: internal/ui/passwords.go:660
+#: internal/ui/passwords.go:661
 msgid "%d second left"
 msgid_plural "%d seconds left"
 msgstr[0] "残り %d 秒"
@@ -10508,7 +10508,7 @@ msgstr "天気が読めませんでした。\n%s"
 
 #: internal/lightui/weather.go:274
 #: internal/mailui/panel.go:307
-#: internal/ui/passwords.go:533
+#: internal/ui/passwords.go:534
 #: ui/mail-compose.ui:456
 #: ui/pass.ui:375
 msgid "Try again"
@@ -14910,57 +14910,57 @@ msgstr "矢印 / タブ · タイプの選択 または / · 検索 中クリッ
 msgid "position floating window"
 msgstr "フローティングウィンドウの位置"
 
-#: internal/ui/passwords.go:221
+#: internal/ui/passwords.go:222
 msgid "[PASSWORDS]"
 msgstr "[パスワード]"
 
-#: internal/ui/passwords.go:228
+#: internal/ui/passwords.go:229
 #: ui/pass.ui:38
 msgid "Search every entry"
 msgstr "すべてのエントリーを検索"
 
-#: internal/ui/passwords.go:282
+#: internal/ui/passwords.go:283
 #: ui/bar.ui:126
 #: ui/settings.ui:1384
 msgid "Passwords"
 msgstr "パスワード"
 
-#: internal/ui/passwords.go:483
+#: internal/ui/passwords.go:484
 msgid "No password store. pass init YOUR-GPG-KEY-ID makes one in ~/.password-store."
 msgstr "パスワードストアがありません。pass init GPG鍵ID で ~/.password-store に作成できます。"
 
-#: internal/ui/passwords.go:485
+#: internal/ui/passwords.go:486
 msgid "%d entry · type to search · Escape to close"
 msgid_plural "%d entries · type to search · Escape to close"
 msgstr[0] "%d 件 · 入力して検索 · Esc で閉じる"
 
-#: internal/ui/passwords.go:489
+#: internal/ui/passwords.go:490
 msgid "%d found, the first %d shown · another word narrows them"
 msgid_plural "%d found, the first %d shown · another word narrows them"
 msgstr[0] "%d 件、先頭 %d 件を表示 · 語を足すと絞り込めます"
 
-#: internal/ui/passwords.go:491
+#: internal/ui/passwords.go:492
 msgid "%d found · Enter opens · Escape to close"
 msgid_plural "%d found · Enter opens · Escape to close"
 msgstr[0] "%d 件 · Enter で開く · Esc で閉じる"
 
-#: internal/ui/passwords.go:504
+#: internal/ui/passwords.go:505
 msgid "Back to the results"
 msgstr "検索結果に戻る"
 
-#: internal/ui/passwords.go:539
+#: internal/ui/passwords.go:540
 msgid "It could not be decrypted · Escape to close"
 msgstr "復号できませんでした · Esc で閉じる"
 
-#: internal/ui/passwords.go:547
+#: internal/ui/passwords.go:548
 msgid "Decrypting; gpg may ask for your passphrase."
 msgstr "復号しています。gpg がパスフレーズを求めることがあります。"
 
-#: internal/ui/passwords.go:553
+#: internal/ui/passwords.go:554
 msgid "Escape to close"
 msgstr "Esc で閉じる"
 
-#: internal/ui/passwords.go:578
+#: internal/ui/passwords.go:579
 msgid "Copied secrets are cleared after %d seconds · Enter copies the password"
 msgstr "コピーした秘密は %d 秒後に消えます · Enter でパスワードをコピー"
 

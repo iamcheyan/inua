@@ -199,7 +199,7 @@ func (s *shellUI) buildAgenda() {
 	a.win.AddController(&keys.EventController)
 	a.drop.attach(&a.win.Window, &keys.EventController, &a.backdrop, &a.card.Widget, layershell.LayerOverlay, false)
 
-	a.win.SetApplication(s.app)
+	a.drop.app = s.app // it joins the application only if it has to show
 	w := a.win.GoPointer()
 	if s.layer {
 		layershell.InitForWindow(w)
