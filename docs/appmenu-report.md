@@ -185,6 +185,38 @@ titles would offer menus that open nothing.
 | Opening a menu logged `gtk_box_remove: assertion 'gtk_widget_get_parent (child) == box' failed` | The card came back from the canvas unparented but not re-attached to the backdrop, so the next open's `backdrop.Remove(card)` had nothing to remove |
 | Opening a menu logged Gtk-CRITICALs from the event controller and could crash later | `AddController` takes ownership of the reference, and `detach`/`moveTo` unref'd it again after the move: the window kept a freed controller. The reference is now held across `RemoveController` and handed to `AddController` |
 
+## The switches, and what was taken out
+
+Two settings, one global and one per application:
+
+| Setting | Meaning |
+| --- | --- |
+| `bar.menu` (Settings, Bar & Dock) | show any application's menu in the bar |
+| `bar.menu_off` | these applications keep no menu even with `bar.menu` on, by desktop ID (`org.mozilla.firefox`) or window class (`firefox`) |
+| `bar.menu_on` | these have one even with `bar.menu` off |
+
+The per-application pair is what a slightly wrong or slow application
+needs, and what a test needs: one application can be taken out while the
+rest stay as they were.
+
+**What is no longer done: pressing an application's menu open.** A
+browser's AT-SPI menubar is a row of named sections with no items under
+them, because the application builds a section's items only when its own
+menu opens. The bar used to press the section over AT-SPI to make it build
+them. On Firefox 155 that ends the process: measured in the test VM,
+hovering `File` killed it (`PROCESS GONE`) and, in an earlier session on
+the workstation, a press left `MozCrashReason: Redirecting call to
+abort()`. So the whole path is gone (`A11y.FillSection`, `Client.Fill`,
+`appmenu.Fillable`), and a menu counts only when its sections already
+have their items.
+
+The result: a browser shows no menu in the bar, and never takes the shell
+down with it. Firefox can publish one itself - `widget.gtk.global-menu`
+over the AppMenu registrar, which is how KDE's panel gets it - and
+`config/firefox/policies.json` turns that on for a system that wants it.
+It is optional: without the policy Firefox has no bar menu, everything
+else is unchanged.
+
 ## Not claimed
 
 - No screenshot here shows a second-level submenu of an inua application. The
