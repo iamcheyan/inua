@@ -69,6 +69,17 @@ type Bar struct {
 	// applications that publish one (inua's own apps, and Qt apps through
 	// the AppMenu registrar).
 	Menu bool `toml:"menu"`
+	// MenuOff lists applications whose menu the bar leaves alone, by
+	// desktop ID ("org.mozilla.firefox") or window class ("firefox"), for
+	// the ones that answer wrongly or slowly: everything else keeps its
+	// menu, and "" leaves every application's menu on.
+	MenuOff []string `toml:"menu_off"`
+	// MenuOn lists applications whose menu the bar shows even when the
+	// bar's own menu is off, by desktop ID or class. It is the per-program
+	// switch beside Menu's global one: Menu on and an application in
+	// MenuOff hides that one, Menu off and an application in MenuOn shows
+	// that one.
+	MenuOn []string `toml:"menu_on"`
 }
 
 type Launcher struct {
@@ -899,6 +910,8 @@ func Default() Config {
 			Tray:       true,
 			Pass:       true,
 			Menu:       false,
+			MenuOff:    []string{},
+			MenuOn:     []string{},
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
 		Overview: Overview{MRU: false, PerMonitor: true},

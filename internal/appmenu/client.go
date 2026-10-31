@@ -46,45 +46,26 @@ func (c *Client) Menu(pid int) ([]Entry, error) {
 	// fill them without pressing them, which crashes Firefox. So a tree of
 	// empty sections is no menu either.
 	if c.A11y != nil {
-		if e, err := c.A11y.Menu(pid); err == nil && fillable(e) {
+		if e, err := c.A11y.Menu(pid); err == nil && labelled(e) {
 			return e, nil
 		}
 	}
 	return nil, nil
 }
 
-// fillable reports whether a menu is one the bar can show: sections with
-// their items, or named sections the application builds when they open (a
-// browser's), which the bar fills one at a time as they are asked for. A
-// tree of unnamed items is a toolkit skeleton and stays out.
-func fillable(entries []Entry) bool {
+// labelled reports whether a menu is one the bar can show: sections that
+// already have their items. A tree of unnamed items is a toolkit skeleton,
+// and a browser's menubar - named sections with nothing under them - is a
+// menu the shell cannot read: the application builds a section's items only
+// when its own menu opens, and pressing it over AT-SPI to force that ends
+// Firefox. Both stay out, so the bar never shows a section that opens
+// nothing.
+func labelled(entries []Entry) bool {
 	for _, e := range entries {
 		if strings.TrimSpace(e.Label) == "" || e.Separator {
 			continue
 		}
-		if len(e.Children) > 0 || Fillable(e) {
-			return true
-		}
-	}
-	return false
-}
-
-// Fillable reports whether an entry's items are made when it opens: the
-// application answered with a named section and an action to open it, and
-// nothing under it yet.
-func Fillable(e Entry) bool {
-	return len(e.Children) == 0 && !e.Separator && e.Label != "" &&
-		e.Action.Kind == ActionA11y && e.Action.Bus != "" && e.Action.Path != ""
-}
-
-// labelled reports whether the menu says anything: at least one top-level
-// item with text and a menu under it. A tree of unnamed items is a toolkit
-// skeleton, not a menu; a bar of sections whose items the application only
-// makes when its own menu opens (Firefox's, Chrome's) is a menu the shell
-// cannot fill, and showing its titles would offer empty menus.
-func labelled(entries []Entry) bool {
-	for _, e := range entries {
-		if strings.TrimSpace(e.Label) != "" && len(e.Children) > 0 {
+		if len(e.Children) > 0 {
 			return true
 		}
 	}
@@ -158,15 +139,6 @@ func markNative(entries []Entry) {
 		}
 		entries[i].Action.NativeWayland = true
 	}
-}
-
-// Fill reads the items of a section the application builds when it opens
-// (a browser's File, Edit …): it opens that section once and closes it.
-func (c *Client) Fill(e Entry) ([]Entry, error) {
-	if c.A11y == nil {
-		return nil, fmt.Errorf("appmenu: no accessibility bus")
-	}
-	return c.A11y.FillSection(e)
 }
 
 // Activate invokes the entry's action on the application that owns it.

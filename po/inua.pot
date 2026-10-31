@@ -3554,7 +3554,7 @@ msgstr[1] ""
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
-#: internal/ui/appmenu.go:462
+#: internal/ui/appmenu.go:546
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -12781,7 +12781,7 @@ msgid "Start the shell again"
 msgstr ""
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:396
+#: internal/ui/appmenu.go:480
 msgid "Close Window"
 msgstr ""
 
@@ -14309,16 +14309,16 @@ msgstr ""
 msgid "Snooze"
 msgstr ""
 
-#: internal/ui/appmenu.go:395
-#: internal/ui/appmenu.go:445
+#: internal/ui/appmenu.go:479
+#: internal/ui/appmenu.go:529
 msgid "About %s"
 msgstr ""
 
-#: internal/ui/appmenu.go:397
+#: internal/ui/appmenu.go:481
 msgid "Quit %s"
 msgstr ""
 
-#: internal/ui/appmenu.go:460
+#: internal/ui/appmenu.go:544
 msgid "Process %d"
 msgstr ""
 
@@ -14518,11 +14518,11 @@ msgstr ""
 msgid "The passphrases do not match."
 msgstr ""
 
-#: internal/ui/bar.go:539
+#: internal/ui/bar.go:541
 msgid "Workspace %s"
 msgstr ""
 
-#: internal/ui/bar.go:552
+#: internal/ui/bar.go:554
 msgid "WORKSPACE"
 msgstr ""
 

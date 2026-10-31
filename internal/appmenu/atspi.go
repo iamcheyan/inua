@@ -115,50 +115,6 @@ func (a *A11y) source() (a11ySource, error) {
 	return busSource{conn}, nil
 }
 
-// fillGap is how long a section gets to build its items once opened, and
-// how long the walk waits between looks.
-const (
-	fillGap   = 150 * time.Millisecond
-	fillTries = 12
-)
-
-// FillSection reads the items a section makes only when it opens: Firefox
-// and Chromium answer AT-SPI with a menubar of labelled sections and no
-// items under them, and build a section's items the first time it opens.
-//
-// The walk does what the user does - presses the section, waits for its
-// items, presses it again to close it - so the application keeps its own
-// idea of a menu being open only for as long as it takes to read. Called
-// one section at a time (the bar fills the section the user asked for),
-// Firefox stays up: the whole bar's worth in one go is what it does not
-// survive.
-func (a *A11y) FillSection(entry Entry) ([]Entry, error) {
-	if entry.Action.Kind != ActionA11y || entry.Action.Bus == "" || entry.Action.Path == "" {
-		return nil, fmt.Errorf("appmenu: %q has no accessibility action", entry.Label)
-	}
-	src, err := a.source()
-	if err != nil {
-		return nil, err
-	}
-	ref := a11yRef{Name: entry.Action.Bus, Path: entry.Action.Path}
-	if kids, err := src.children(ref); err == nil && len(kids) > 0 {
-		return decodeA11y(src, ref, 0, 0)
-	}
-	if err := src.doAction(ref, entry.Action.Index); err != nil {
-		return nil, err
-	}
-	defer src.doAction(ref, entry.Action.Index) // closed again: the shell's panel is what shows
-	for i := 0; i < fillTries; i++ {
-		time.Sleep(fillGap)
-		kids, err := src.children(ref)
-		if err != nil || len(kids) == 0 {
-			continue
-		}
-		return decodeA11y(src, ref, 0, 0)
-	}
-	return nil, nil
-}
-
 // Menu returns the focused process's menubar entries, top level first.
 func (a *A11y) Menu(pid int) ([]Entry, error) {
 	if pid <= 0 {

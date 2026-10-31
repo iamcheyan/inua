@@ -15,7 +15,7 @@ import (
 func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
-		c.Bar.Enable, q(c.Bar.Density), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass, c.Bar.Menu,
+		c.Bar.Enable, q(c.Bar.Density), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass, c.Bar.Menu, list(c.Bar.MenuOff), list(c.Bar.MenuOn),
 		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor,
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
@@ -239,6 +239,12 @@ pass = %t
 # Click elsewhere, or the same title again, to close it. The clock moves to
 # the bar's right end while this is on.
 menu = %t
+
+# Per application: the ones whose menu the bar leaves alone, and the ones it
+# still shows while menu is off. A desktop ID ("org.mozilla.firefox") or a
+# window class ("firefox").
+menu_off = %s
+menu_on = %s
 
 [launcher]
 # What `+"`inua call launcher toggle`"+` opens: "apps" or "windows".
@@ -527,8 +533,8 @@ push_to_talk = %t
 
 # What turns speech into text: "voxtype", its daemon on this machine, or
 # "ai", the assistant's profile for voice input (assistant.transcription;
-# the recording goes to its provider), typed in with wtype when there is
-# one, else pasted.
+# the recording goes to its provider). Either way the words are pasted
+# where you are, by the clipboard and the paste shortcut.
 engine = %s
 
 # Where a card shows the dictation as it goes (listening, the waveform,

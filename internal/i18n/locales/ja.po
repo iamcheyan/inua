@@ -3542,7 +3542,7 @@ msgstr[0] "…ほか %d 件"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
-#: internal/ui/appmenu.go:462
+#: internal/ui/appmenu.go:546
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -12714,7 +12714,7 @@ msgid "Start the shell again"
 msgstr "シェルを再度開始する"
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:396
+#: internal/ui/appmenu.go:480
 msgid "Close Window"
 msgstr "ウィンドウを閉じる"
 
@@ -14233,16 +14233,16 @@ msgstr "アラーム · %02d:%02d"
 msgid "Snooze"
 msgstr "スヌーズ"
 
-#: internal/ui/appmenu.go:395
-#: internal/ui/appmenu.go:445
+#: internal/ui/appmenu.go:479
+#: internal/ui/appmenu.go:529
 msgid "About %s"
 msgstr "「%s」について"
 
-#: internal/ui/appmenu.go:397
+#: internal/ui/appmenu.go:481
 msgid "Quit %s"
 msgstr "「%s」を終了"
 
-#: internal/ui/appmenu.go:460
+#: internal/ui/appmenu.go:544
 msgid "Process %d"
 msgstr ""
 
@@ -14441,11 +14441,11 @@ msgstr "スクリーンショットのため隠しています。"
 msgid "The passphrases do not match."
 msgstr "パスフレーズが一致しません。"
 
-#: internal/ui/bar.go:539
+#: internal/ui/bar.go:541
 msgid "Workspace %s"
 msgstr "ワークスペース%s"
 
-#: internal/ui/bar.go:552
+#: internal/ui/bar.go:554
 msgid "WORKSPACE"
 msgstr "ワークスペース"
 

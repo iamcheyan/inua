@@ -44,7 +44,10 @@ type appMenuState struct {
 // startAppMenu reads the focused application's menu for the bar, when the
 // bar's global menu is on (Settings, Bar & Dock) and it is not already.
 func (s *shellUI) startAppMenu() {
-	if !s.cfg.Bar.Menu || s.appmenu.client != nil {
+	if !s.cfg.Bar.Menu && len(s.cfg.Bar.MenuOn) == 0 {
+		return // no application has a menu to show
+	}
+	if s.appmenu.client != nil {
 		return
 	}
 	conn, err := system.SessionBus()
@@ -103,6 +106,40 @@ func focusedPID(snap hypr.Snapshot) int {
 	return 0
 }
 
+// menuWanted reports whether the bar shows the menu of the application with
+// this window class and desktop ID: the bar's own switch, then the
+// per-application lists over it.
+func (s *shellUI) menuWanted(class string) bool {
+	if class == "" {
+		return false // nothing to name the application by
+	}
+	if s.appMenuListed(s.cfg.Bar.MenuOff, class) {
+		return false
+	}
+	if s.cfg.Bar.Menu {
+		return true
+	}
+	return s.appMenuListed(s.cfg.Bar.MenuOn, class)
+}
+
+// appMenuListed reports whether class, or the desktop ID of the application
+// whose window class it is, is in list.
+func (s *shellUI) appMenuListed(list []string, class string) bool {
+	if class == "" {
+		return false
+	}
+	id := class
+	if e := s.dockState.apps.ForClass(class); e != nil {
+		id = e.ID
+	}
+	for _, want := range list {
+		if strings.EqualFold(want, class) || strings.EqualFold(want, id) {
+			return true
+		}
+	}
+	return false
+}
+
 // syncAppMenu gives every bar the menu of the application that bar names.
 //
 // A bar names the window it is about (shell.BarWindow): the focused window
@@ -114,7 +151,14 @@ func (s *shellUI) syncAppMenu() {
 		return
 	}
 	for _, b := range s.bars {
-		pid := shell.BarWindow(s.snap, b.connector()).PID
+		win := shell.BarWindow(s.snap, b.connector())
+		pid := win.PID
+		if pid != 0 && !s.menuWanted(win.Class) {
+			// This application's menu is off, by the bar's switch or its own
+			// entry in menu_off: the buttons go, and the process is not
+			// asked for a menu it would not show.
+			pid = 0
+		}
 		if pid == 0 {
 			// Nothing to name (an empty workspace): the buttons go, but an
 			// open menu stays - it belongs to the application that opened
@@ -189,11 +233,12 @@ func (s *shellUI) appendAppMenu(b *bar, entry appmenu.Entry, pid int) {
 	button.SetLabel(entry.Label)
 	button.SetHasFrame(false)
 	button.SetFocusable(false)
-	button.SetSensitive(entry.Enabled || len(entry.Children) > 0 || appmenu.Fillable(entry))
-	// A section is anything that opens a menu of its own: one with items
-	// already, or one the application builds when it opens (a browser's,
-	// appmenu.Fillable). Everything else is an item that acts.
-	section := len(entry.Children) > 0 || appmenu.Fillable(entry)
+	button.SetSensitive(entry.Enabled || len(entry.Children) > 0)
+	// A section is an entry with items under it: everything else is an item
+	// that acts. An application that builds its sections only when its own
+	// menu opens (a browser's) gives no items, and is left out of the bar
+	// rather than shown as a row of sections that open nothing.
+	section := len(entry.Children) > 0
 	token := s.addAppMenuTarget(b, entry, pid, section)
 	button.SetName(token)
 	button.ConnectClicked(&s.onAppMenuClicked)
@@ -220,14 +265,6 @@ func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) 
 		s.closeMenu()
 		return
 	}
-	if appmenu.Fillable(target.entry) {
-		// A browser's section: its items do not exist until the
-		// application opens it once (appmenu.Fill). Read off the main
-		// thread, then show - one section at a time, which is what the
-		// application takes.
-		s.fillSection(&button.Widget, target, m.open && !m.closing)
-		return
-	}
 	if m.open && !m.closing {
 		m.pid, m.section = target.pid, target.entry.Label
 		m.entries, m.stack = target.entry.Children, nil
@@ -240,36 +277,6 @@ func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) 
 		return
 	}
 	s.showMenu(&button.Widget, target)
-}
-
-// fillSection reads a section the application builds only when it opens,
-// then shows it: in the open menu's place, or under its button.
-func (s *shellUI) fillSection(button *gtk.Widget, target appMenuTarget, already bool) {
-	pid, label := target.pid, target.entry.Label
-	go func() {
-		entries, err := s.appmenu.client.Fill(target.entry)
-		gtkx.Post(func() {
-			if focusedPID(s.snap) != pid {
-				return // the bar moved on while it was read
-			}
-			if err != nil {
-				log.Printf("appmenu fill %q: %v", label, err)
-			}
-			filled := target
-			filled.entry.Children = entries
-			if already {
-				m := &s.menu
-				if !m.open || m.closing || m.pid != pid {
-					return // closed while it was read
-				}
-				m.section = label
-				m.entries, m.stack = entries, nil
-				s.fillMenu()
-				return
-			}
-			s.showMenu(button, filled)
-		})
-	}()
 }
 
 // activateAppMenu invokes an entry, but only while the process it belongs to

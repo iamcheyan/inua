@@ -1340,17 +1340,12 @@ func (s *shellUI) appMenuHover(b *bar, x, y float64) {
 	if !ok || target.entry.Label == m.section {
 		return
 	}
-	// A section the application builds when it opens (a browser's) has no
-	// items yet: read them first, as a click does, then show it in place.
-	entries, err := s.appmenu.client.Fill(target.entry)
-	if err != nil {
-		log.Printf("appmenu fill %q: %v", target.entry.Label, err)
-	}
-	if entries != nil {
-		target.entry.Children = entries
-	}
-	if !m.open || m.closing || m.pid != target.pid {
-		return // the menu moved on while it was read
+	// A section with no items is one the application builds only by opening
+	// its own menu, and pressing that over AT-SPI is what crashes Firefox.
+	// A pointer passing over it is no request to open anything: the hover
+	// changes sections only among those that already have their items.
+	if len(target.entry.Children) == 0 {
+		return
 	}
 	m.pid, m.section = target.pid, target.entry.Label
 	m.entries, m.stack = target.entry.Children, nil

@@ -3542,7 +3542,7 @@ msgstr[0] "… 그 외 %d개"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
-#: internal/ui/appmenu.go:462
+#: internal/ui/appmenu.go:546
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -12714,7 +12714,7 @@ msgid "Start the shell again"
 msgstr "셸을 다시 시작합니다."
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:396
+#: internal/ui/appmenu.go:480
 msgid "Close Window"
 msgstr "창 닫기"
 
@@ -14233,16 +14233,16 @@ msgstr "알람 · %02d:%02d"
 msgid "Snooze"
 msgstr "다시 알림"
 
-#: internal/ui/appmenu.go:395
-#: internal/ui/appmenu.go:445
+#: internal/ui/appmenu.go:479
+#: internal/ui/appmenu.go:529
 msgid "About %s"
 msgstr "「%s」 정보"
 
-#: internal/ui/appmenu.go:397
+#: internal/ui/appmenu.go:481
 msgid "Quit %s"
 msgstr "「%s」 종료"
 
-#: internal/ui/appmenu.go:460
+#: internal/ui/appmenu.go:544
 msgid "Process %d"
 msgstr ""
 
@@ -14441,11 +14441,11 @@ msgstr "스크린샷을 위해 숨겨집니다."
 msgid "The passphrases do not match."
 msgstr "암호 문구가 일치하지 않습니다."
 
-#: internal/ui/bar.go:539
+#: internal/ui/bar.go:541
 msgid "Workspace %s"
 msgstr "작업공간 %s"
 
-#: internal/ui/bar.go:552
+#: internal/ui/bar.go:554
 msgid "WORKSPACE"
 msgstr "작업 공간"
 

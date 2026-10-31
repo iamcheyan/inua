@@ -3556,7 +3556,7 @@ msgstr[1] "… et %d de plus"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:152
-#: internal/ui/appmenu.go:462
+#: internal/ui/appmenu.go:546
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -12783,7 +12783,7 @@ msgid "Start the shell again"
 msgstr "Redémarrez le shell"
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:396
+#: internal/ui/appmenu.go:480
 msgid "Close Window"
 msgstr "Fermer la fenêtre"
 
@@ -14311,16 +14311,16 @@ msgstr "Alarme · %02d:%02d"
 msgid "Snooze"
 msgstr "Répéter"
 
-#: internal/ui/appmenu.go:395
-#: internal/ui/appmenu.go:445
+#: internal/ui/appmenu.go:479
+#: internal/ui/appmenu.go:529
 msgid "About %s"
 msgstr "À propos de « %s »"
 
-#: internal/ui/appmenu.go:397
+#: internal/ui/appmenu.go:481
 msgid "Quit %s"
 msgstr "Quitter « %s »"
 
-#: internal/ui/appmenu.go:460
+#: internal/ui/appmenu.go:544
 msgid "Process %d"
 msgstr ""
 
@@ -14520,11 +14520,11 @@ msgstr "Masqué pour la capture d’écran."
 msgid "The passphrases do not match."
 msgstr "Les phrases secrètes ne correspondent pas."
 
-#: internal/ui/bar.go:539
+#: internal/ui/bar.go:541
 msgid "Workspace %s"
 msgstr "Espace de travail %s"
 
-#: internal/ui/bar.go:552
+#: internal/ui/bar.go:554
 msgid "WORKSPACE"
 msgstr "ESPACE DE TRAVAIL"
 
