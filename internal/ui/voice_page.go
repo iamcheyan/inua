@@ -3,7 +3,6 @@ package ui
 import (
 	"context"
 	"os"
-	"os/exec"
 	"slices"
 	"strings"
 
@@ -29,7 +28,7 @@ import (
 //	■ [ENGINE]     What turns your speech into text
 //	Runs      the recording stays here    [On this computer|An AI profile]
 //	Speech models (voxtype) / Profile (the AI's)
-//	Typing    pasted; `sudo apt install wtype` types instead
+//	Typing    pasted where you are, your clipboard put back
 type voiceSettings struct {
 	page    gtk.Box
 	filling bool // the page's controls being set, not changed
@@ -341,13 +340,8 @@ func (s *shellUI) showVoice() {
 	s.showVoxtypeModels(!ai && st.Available)
 
 	v.typingRow.SetVisible(st.Available)
-	if _, err := exec.LookPath("wtype"); err == nil {
-		v.typing.SetText(i18n.T("The words are typed where you are"))
-		v.typeCmd.SetText("")
-	} else {
-		v.typing.SetText(i18n.T("The words are pasted where you are, and your clipboard put back; to have them typed, install wtype:"))
-		v.typeCmd.SetText(installCommand("wtype"))
-	}
+	v.typing.SetText(i18n.T("The words are pasted where you are, and your clipboard put back"))
+	v.typeCmd.SetText("")
 	if st.Available {
 		v.setStatus("")
 	}
