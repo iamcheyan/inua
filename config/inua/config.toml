@@ -30,6 +30,7 @@ clock = "%a %b %-d  %H:%M"
 
 # "monitor": each bar shows the workspaces of its own monitor.
 # "all": every bar shows every workspace.
+# "none": hide the workspace indicator.
 workspaces = "monitor"
 
 # Show the focused window's title.
@@ -186,7 +187,7 @@ icons = "phosphor"
 
 # A small gap between the screen edges and the bar and dock. false puts
 # them flush against the edges.
-edge_gaps = true
+edge_gaps = false
 
 # Size of the text in the shell and inua's apps, 80 to 150 percent. Icons,
 # spacing and the stylesheet below keep their sizes.
