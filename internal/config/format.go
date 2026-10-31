@@ -27,7 +27,7 @@ func Format(c Config) string {
 		c.Displays.LidOff, monitors(c.Displays.Monitors),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
-		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
+		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.FlushBar, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Widgets.Enable, c.Widgets.Swipe, list(c.Widgets.Apps), widgetPlaces(c.Widgets.Places),
 		c.Voice.Enable, c.Voice.PushToTalk, q(c.Voice.Engine), q(c.Voice.Show),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision), q(c.Assistant.Transcription),
@@ -489,6 +489,10 @@ position = %s
 # Hide the dock until the pointer reaches its screen edge. false: windows
 # make room for it.
 autohide = %t
+
+# Remove the screen-edge margins around the dock and top bar, so they touch
+# the screen's edges.
+flush_bar = %t
 
 # Icon size in pixels (24 to 96).
 size = %d

@@ -33,6 +33,14 @@ notifications, a dock, a wallpaper, settings, and a set of apps.
 | **Notifications** | inua is the notification server: banners, then a center grouped by app. |
 | **Dock** | Pinned and running apps, and a drawer of the shell's tools. |
 | **Settings** | One searchable window, applied as you change it: displays, keyboard and touchpad, Bluetooth, shortcuts, themes, About. |
+| **Bar** | Workspaces, the focused window's title, the clock and its calendar, the tray, notifications and the control center. One per monitor. |
+| **Launcher** | One search for apps, windows and the system's commands; it answers arithmetic, units, currencies and crypto, searches the web and sites by keyword, and finds emoji after `:` (Super+Space). |
+| **Workspace overview** | Live window previews across monitors; tap Win, or cycle with Win+Tab. Drag to move, middle click to close, / to search. |
+| **Control center** | Wi-Fi, Bluetooth, power saver, Focus and Tailscale tiles; brightness, volume and media; power. |
+| **Notifications** | inua is the notification server: banners, then a notification center grouped by app. |
+| **Dock** | Pinned and running apps; drag to reorder or to unpin; a drawer of the light apps. |
+| **Settings** | One window for everything, applied as you change it. |
+| **Shortcuts** | Rebind the shell's actions and your own commands by pressing keys. |
 | **Lock screen** | On the compositor's session lock: if the shell stops, the screen stays locked. |
 | **Screenshots** | Areas, windows, screens and recordings, with a drawer of recent shots. |
 | **Wallpaper** | A new picture drawn each day, or your own. |
@@ -126,6 +134,7 @@ make install-session     # programs into ~/.local/bin, your config, the login se
 | --- | --- |
 | Super+Space | Launcher |
 | Super+Tab | Overview |
+| Super+Tab | Workspace overview |
 | Super+A | Control center |
 | Super+N | Notification center |
 | Super+Comma | Settings |

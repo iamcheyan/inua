@@ -1,8 +1,10 @@
 package shell
 
 import (
+	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/lyricat/inua/internal/desktop"
@@ -150,7 +152,7 @@ func Dock(pinned []string, apps AppIndex, snap hypr.Snapshot, skip func(hypr.Top
 			continue
 		}
 		entry := apps.ForClass(t.Class)
-		if isFcitxWindow(t.Class, entry) || (skip != nil && skip(t)) {
+		if isFcitxWindow(t.Class, entry) || isFcitxProcess(t.PID) || (skip != nil && skip(t)) {
 			continue
 		}
 		if t.Class == AppID { // the shell's own windows: Settings and its dialogs
@@ -180,6 +182,9 @@ func Dock(pinned []string, apps AppIndex, snap hypr.Snapshot, skip func(hypr.Top
 	return items
 }
 
+// isFcitxWindow excludes the input method's candidate surface from the app
+// dock. Hyprland reports it as a client while composing, but it is not an app
+// window users can launch or switch to from the dock.
 // AppName is an entry's name; the shell's own are translated here.
 func AppName(e *desktop.Entry) string {
 	if strings.HasPrefix(e.ID, "inua:") {
@@ -187,7 +192,6 @@ func AppName(e *desktop.Entry) string {
 	}
 	return e.Name
 }
-
 // isFcitxWindow tells the input method's candidate popup by its class:
 // Hyprland lists it as a window while composing, but it is not an app to
 // launch or switch to.
@@ -209,6 +213,27 @@ func IsInputMethodProgram(name string) bool {
 		return true
 	}
 	return false
+}
+
+func isFcitxProcess(pid int) bool {
+	if pid <= 0 {
+		return false
+	}
+	exe, err := os.Readlink(filepath.Join("/proc", strconv.Itoa(pid), "exe"))
+	if err != nil {
+		return false
+	}
+	name := strings.ToLower(filepath.Base(exe))
+	return isFcitxExecutable(name)
+}
+
+func isFcitxExecutable(name string) bool {
+	switch strings.ToLower(strings.TrimSpace(name)) {
+	case "fcitx", "fcitx5", "fcitx5-wayland-launcher":
+		return true
+	default:
+		return false
+	}
 }
 
 // DockTarget is what clicking an app does: launch it when it has no

@@ -2121,7 +2121,7 @@ msgstr "サービスを起動しています。"
 #: internal/ui/settings_displays.go:389
 #: internal/ui/settings_wifi.go:285
 #: ui/remote.ui:359
-#: ui/settings.ui:5885
+#: ui/settings.ui:5912
 msgid "Off"
 msgstr "オフ"
 
@@ -8381,7 +8381,7 @@ msgid "SPACE PINBALL"
 msgstr "スペースピンボール"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:312
+#: internal/shell/dock.go:337
 #: ui/settings.ui:1955
 msgid "Launcher"
 msgstr "ランチャー"
@@ -8418,7 +8418,7 @@ msgstr "フォーカスのオンまたはオフ"
 #: internal/hyprconf/keys.go:31
 #: internal/mailui/picker.go:155
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:311
+#: internal/shell/dock.go:336
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
 #: internal/termui/headmenu.go:110
@@ -8465,7 +8465,7 @@ msgstr "色を選ぶ"
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:169
 #: ui/bar.ui:209
-#: ui/settings.ui:6335
+#: ui/settings.ui:6362
 msgid "Dictation"
 msgstr "ディクテーション"
 
@@ -9638,7 +9638,7 @@ msgstr "検索できませんでした: %s"
 #: internal/lightui/sysmon.go:55
 #: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
-#: internal/ui/dock.go:496
+#: internal/ui/dock.go:489
 #: internal/ui/portal_ask.go:80
 msgid "Quit"
 msgstr "やめる"
@@ -9710,8 +9710,8 @@ msgstr "GPU"
 
 #: internal/lightui/sysmon.go:151
 #: internal/lightui/sysmon.go:1039
-#: internal/shell/dock.go:286
-#: internal/shell/dock.go:329
+#: internal/shell/dock.go:311
+#: internal/shell/dock.go:354
 msgid "NETWORK"
 msgstr "ネットワーク"
 
@@ -10054,8 +10054,8 @@ msgstr "有線"
 
 #: internal/lightui/sysmon.go:1043
 #: ui/control.ui:273
-#: ui/settings.ui:5128
-#: ui/settings.ui:5204
+#: ui/settings.ui:5155
+#: ui/settings.ui:5231
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
@@ -11071,7 +11071,7 @@ msgstr ""
 #: internal/mailui/reader.go:826
 #: ui/gpg.ui:653
 #: ui/gpg.ui:897
-#: ui/settings.ui:6516
+#: ui/settings.ui:6543
 msgid "Save…"
 msgstr "保存…"
 
@@ -12344,8 +12344,8 @@ msgstr "このコンピューターにはペアリング用の ID がありま�
 
 #: internal/remoteui/window.go:173
 #: internal/shell/card.go:80
-#: ui/settings.ui:5174
-#: ui/settings.ui:5455
+#: ui/settings.ui:5201
+#: ui/settings.ui:5482
 msgid "This computer"
 msgstr "このコンピュータ"
 
@@ -12732,7 +12732,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "もう一度 Enter を押すとゴミ箱を空にします"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:311
+#: internal/shell/dock.go:336
 msgid "inua's settings"
 msgstr "inuaの設定"
 
@@ -12894,57 +12894,57 @@ msgstr "ウェブアドレス"
 msgid "Web search"
 msgstr "ウェブ検索"
 
-#: internal/shell/dock.go:264
-#: internal/shell/dock.go:329
+#: internal/shell/dock.go:289
+#: internal/shell/dock.go:354
 msgid "EVERYDAY"
 msgstr "毎日"
 
-#: internal/shell/dock.go:274
-#: internal/shell/dock.go:329
+#: internal/shell/dock.go:299
+#: internal/shell/dock.go:354
 msgid "TOOLS"
 msgstr "ツール"
 
-#: internal/shell/dock.go:291
+#: internal/shell/dock.go:316
 msgid "PLAY"
 msgstr "遊び"
 
-#: internal/shell/dock.go:298
-#: internal/shell/dock.go:331
+#: internal/shell/dock.go:323
+#: internal/shell/dock.go:356
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "システム"
 
-#: internal/shell/dock.go:312
+#: internal/shell/dock.go:337
 msgid "Find apps, windows and answers"
 msgstr "アプリ、ウィンドウ、および回答を見つける"
 
-#: internal/shell/dock.go:313
+#: internal/shell/dock.go:338
 #: internal/ui/screenshot.go:1134
 #: ui/settings.ui:1915
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
-#: internal/shell/dock.go:313
+#: internal/shell/dock.go:338
 msgid "Capture an area, a window or a screen"
 msgstr "領域、ウィンドウ、または画面をキャプチャする"
 
-#: internal/shell/dock.go:330
+#: internal/shell/dock.go:355
 msgid "DEVELOPMENT"
 msgstr "開発"
 
-#: internal/shell/dock.go:330
+#: internal/shell/dock.go:355
 msgid "MEDIA"
 msgstr "メディア"
 
-#: internal/shell/dock.go:330
+#: internal/shell/dock.go:355
 msgid "GAMES"
 msgstr "ゲーム"
 
-#: internal/shell/dock.go:331
+#: internal/shell/dock.go:356
 msgid "OTHER"
 msgstr "その他"
 
-#: internal/shell/dock.go:356
+#: internal/shell/dock.go:381
 msgid "WORKSHOP"
 msgstr "ワークショップ"
 
@@ -13025,22 +13025,22 @@ msgid "%s · workspace %s"
 msgstr "%[1]s · ワークスペース %[2]s"
 
 #: internal/shell/launcher_actions.go:33
-#: internal/ui/dock.go:487
+#: internal/ui/dock.go:480
 msgid "New Window"
 msgstr "新しい窓"
 
 #: internal/shell/launcher_actions.go:39
-#: internal/ui/dock.go:490
+#: internal/ui/dock.go:483
 msgid "Remove from Dock"
 msgstr "ドックから取り外す"
 
 #: internal/shell/launcher_actions.go:41
-#: internal/ui/dock.go:492
+#: internal/ui/dock.go:485
 msgid "Keep in Dock"
 msgstr "ドックに固定"
 
 #: internal/shell/launcher_actions.go:47
-#: internal/ui/dock.go:498
+#: internal/ui/dock.go:491
 msgid "Quit (%d windows)"
 msgstr "終了 (%d Windows)"
 
@@ -13578,7 +13578,7 @@ msgid "Key panel"
 msgstr "キーパネル"
 
 #: internal/term/web/strings.go:63
-#: ui/settings.ui:5776
+#: ui/settings.ui:5803
 msgid "Keyboard"
 msgstr "キーボード"
 
@@ -14694,8 +14694,8 @@ msgstr "範囲内にネットワークがありません。"
 #: internal/ui/control_detail.go:182
 #: internal/ui/settings_bluetooth.go:224
 #: internal/ui/settings_wifi.go:305
-#: ui/settings.ui:5369
-#: ui/settings.ui:5598
+#: ui/settings.ui:5396
+#: ui/settings.ui:5625
 msgid "Searching…"
 msgstr "検索中…"
 
@@ -15847,8 +15847,8 @@ msgid "Mirror"
 msgstr "ミラー"
 
 #: internal/ui/settings_displays.go:313
-#: ui/settings.ui:6036
-#: ui/settings.ui:6303
+#: ui/settings.ui:6063
+#: ui/settings.ui:6330
 msgid "Use hyprland.conf"
 msgstr "hyprland.confを使用する"
 
@@ -16468,7 +16468,7 @@ msgid "%s Upgrade with: inua upgrade"
 msgstr "%s アップグレード: inua upgrade"
 
 #: internal/ui/updates.go:99
-#: ui/settings.ui:6662
+#: ui/settings.ui:6689
 msgid "Upgrade"
 msgstr "アップグレード"
 
@@ -18024,8 +18024,8 @@ msgid "Wi-Fi networks"
 msgstr "Wi-Fi ネットワーク"
 
 #: ui/control.ui:346
-#: ui/settings.ui:5409
-#: ui/settings.ui:5485
+#: ui/settings.ui:5436
+#: ui/settings.ui:5512
 msgid "Bluetooth"
 msgstr "ブルートゥース"
 
@@ -18046,7 +18046,7 @@ msgid "Display"
 msgstr "ディスプレイ"
 
 #: ui/control.ui:666
-#: ui/settings.ui:6369
+#: ui/settings.ui:6396
 msgid "Sound"
 msgstr "音"
 
@@ -18820,10 +18820,6 @@ msgstr "今すぐ使うにはシェルを再起動します。開いているア
 msgid "<span alpha='55%'>[</span>PICTURE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>画像<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:778
-msgid "Behind your windows, on every monitor"
-msgstr "すべての画面のウィンドウの背後"
-
 #: ui/settings.ui:808
 msgid "inua draws the wallpaper"
 msgstr ""
@@ -18899,10 +18895,6 @@ msgstr "各モニターの上部にあるバー"
 #: ui/settings.ui:1098
 msgid "Show the bar"
 msgstr "バーを表示する"
-
-#: ui/settings.ui:1107
-msgid "Off: Super+Space, Super+A and Super+N still open the launcher, control center and notifications"
-msgstr "オフ: Super+Space、Super+A、および Super+N は引き続きランチャー、コントロール センター、および通知を開きます。"
 
 #: ui/settings.ui:1141
 msgid "Bar spacing"
@@ -19525,7 +19517,7 @@ msgid "Press the new shortcut. Esc cancels; Backspace turns it off."
 msgstr "新しいショートカットを押します。 Esc でキャンセルします。バックスペースキーを押すとオフになります。"
 
 #: ui/settings.ui:4866
-#: ui/settings.ui:6561
+#: ui/settings.ui:6588
 msgid "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 
@@ -19561,215 +19553,215 @@ msgstr "追加…"
 msgid "Add, then press its shortcut"
 msgstr "追加して、そのショートカットを押します"
 
-#: ui/settings.ui:5075
+#: ui/settings.ui:5102
 msgid "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ハイパーランド<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5083
+#: ui/settings.ui:5110
 msgid "Other shortcuts, from hyprland.conf"
 msgstr "他のショートカット、hyprland.confから"
 
-#: ui/settings.ui:5166
+#: ui/settings.ui:5193
 msgid "<span alpha='55%'>[</span>WI-FI<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>WI-FI<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5257
+#: ui/settings.ui:5284
 msgid "<span alpha='55%'>[</span>CONNECTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>接続中<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5265
+#: ui/settings.ui:5292
 msgid "The network in use"
 msgstr "使用中のネットワーク"
 
-#: ui/settings.ui:5309
+#: ui/settings.ui:5336
 msgid "<span alpha='55%'>[</span>KNOWN NETWORKS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>既知のネットワーク<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5317
+#: ui/settings.ui:5344
 msgid "Saved on this computer; joined again by themselves"
 msgstr "このコンピュータに保存済み。自動で再接続します"
 
-#: ui/settings.ui:5361
-#: ui/settings.ui:5590
+#: ui/settings.ui:5388
+#: ui/settings.ui:5617
 msgid "<span alpha='55%'>[</span>NEARBY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>近くのデバイス<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5447
+#: ui/settings.ui:5474
 msgid "<span alpha='55%'>[</span>BLUETOOTH<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>BLUETOOTH<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5538
+#: ui/settings.ui:5565
 msgid "<span alpha='55%'>[</span>MY DEVICES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>マイデバイス<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5546
+#: ui/settings.ui:5573
 msgid "Paired with this computer"
 msgstr "このコンピュータとペアリング済み"
 
-#: ui/settings.ui:5638
+#: ui/settings.ui:5665
 msgid "Displays"
 msgstr "ディスプレイ"
 
-#: ui/settings.ui:5687
+#: ui/settings.ui:5714
 msgid "<span alpha='55%'>[</span>LID<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ふた<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5695
+#: ui/settings.ui:5722
 msgid "With another display connected"
 msgstr "ほかのディスプレイの接続中"
 
-#: ui/settings.ui:5725
+#: ui/settings.ui:5752
 msgid "Closing the lid turns off the built-in display"
 msgstr "ふたを閉じると内蔵ディスプレイをオフにする"
 
-#: ui/settings.ui:5735
+#: ui/settings.ui:5762
 msgid "Its windows move to the other display. Open the lid to use both."
 msgstr "そのウィンドウはもう一方のディスプレイに移ります。ふたを開けると両方を使えます。"
 
-#: ui/settings.ui:5824
+#: ui/settings.ui:5851
 msgid "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5832
+#: ui/settings.ui:5859
 msgid "Every keyboard"
 msgstr "あらゆるキーボード"
 
-#: ui/settings.ui:5862
+#: ui/settings.ui:5889
 msgid "Swap Ctrl and Alt"
 msgstr "Ctrl と Alt を入れ替える"
 
-#: ui/settings.ui:5871
+#: ui/settings.ui:5898
 msgid "Alt acts as Ctrl, and Ctrl as Alt"
 msgstr "Alt は Ctrl として機能し、Ctrl は Alt として機能します"
 
-#: ui/settings.ui:5886
+#: ui/settings.ui:5913
 msgid "Left side"
 msgstr "左側"
 
-#: ui/settings.ui:5887
+#: ui/settings.ui:5914
 msgid "Both sides"
 msgstr "左右両方"
 
-#: ui/settings.ui:5914
-#: ui/settings.ui:5937
+#: ui/settings.ui:5941
+#: ui/settings.ui:5964
 msgid "Caps Lock"
 msgstr "Caps Lock"
 
-#: ui/settings.ui:5923
+#: ui/settings.ui:5950
 msgid "What the Caps Lock key does"
 msgstr "Caps Lock キーの機能"
 
-#: ui/settings.ui:5938
+#: ui/settings.ui:5965
 msgid "Escape"
 msgstr "Esc"
 
-#: ui/settings.ui:5939
+#: ui/settings.ui:5966
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ui/settings.ui:5977
-#: ui/settings.ui:6259
+#: ui/settings.ui:6004
+#: ui/settings.ui:6286
 msgid "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ソース<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5985
-#: ui/settings.ui:6267
+#: ui/settings.ui:6012
+#: ui/settings.ui:6294
 msgid "inua writes these to Hyprland's inua.conf"
 msgstr "inua はこれらを Hyprland の inua.conf に書き込みます"
 
-#: ui/settings.ui:6037
+#: ui/settings.ui:6064
 msgid "Stop setting keyboard options in inua"
 msgstr "inua でのキーボード オプションの設定を停止する"
 
-#: ui/settings.ui:6068
+#: ui/settings.ui:6095
 msgid "Mouse & Touch"
 msgstr "マウスとタッチパッド"
 
-#: ui/settings.ui:6116
+#: ui/settings.ui:6143
 msgid "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6124
+#: ui/settings.ui:6151
 msgid "Every touchpad"
 msgstr "あらゆるタッチパッド"
 
-#: ui/settings.ui:6154
+#: ui/settings.ui:6181
 msgid "Pointer speed"
 msgstr "ポインタの速度"
 
-#: ui/settings.ui:6205
+#: ui/settings.ui:6232
 msgid "Acceleration"
 msgstr "加速度"
 
-#: ui/settings.ui:6214
+#: ui/settings.ui:6241
 msgid "Faster swipes move the pointer further"
 msgstr "スワイプが速いとポインタがさらに遠くに移動します"
 
-#: ui/settings.ui:6304
+#: ui/settings.ui:6331
 msgid "Stop setting the touchpad in inua"
 msgstr "inua でのタッチパッドの設定を停止する"
 
-#: ui/settings.ui:6403
+#: ui/settings.ui:6430
 msgid "Power"
 msgstr "電源"
 
-#: ui/settings.ui:6437
+#: ui/settings.ui:6464
 msgid "About"
 msgstr "について"
 
-#: ui/settings.ui:6475
+#: ui/settings.ui:6502
 msgid "<span alpha='55%'>[</span>SYSTEM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>システム<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6483
+#: ui/settings.ui:6510
 msgid "This computer, as a card to share"
 msgstr "このコンピュータを共有用カードに"
 
-#: ui/settings.ui:6495
+#: ui/settings.ui:6522
 msgid "Copy image"
 msgstr "画像をコピー"
 
-#: ui/settings.ui:6505
+#: ui/settings.ui:6532
 msgid "Copy text"
 msgstr "テキストをコピー"
 
-#: ui/settings.ui:6507
+#: ui/settings.ui:6534
 msgid "As Markdown"
 msgstr "Markdown で"
 
-#: ui/settings.ui:6518
+#: ui/settings.ui:6545
 msgid "As a PNG image"
 msgstr "PNG 画像で"
 
-#: ui/settings.ui:6569
+#: ui/settings.ui:6596
 msgid "The version, and new releases"
 msgstr "バージョンと新しいリリース"
 
-#: ui/settings.ui:6599
+#: ui/settings.ui:6626
 msgid "Version"
 msgstr "バージョン"
 
-#: ui/settings.ui:6635
+#: ui/settings.ui:6662
 msgid "Updates"
 msgstr "アップデート"
 
-#: ui/settings.ui:6671
+#: ui/settings.ui:6698
 msgid "Check for updates"
 msgstr "アップデートをチェックする"
 
-#: ui/settings.ui:6697
+#: ui/settings.ui:6724
 msgid "Check every day"
 msgstr "毎日チェックする"
 
-#: ui/settings.ui:6706
+#: ui/settings.ui:6733
 msgid "A notification says when a new release is out, with a button to upgrade"
 msgstr "新しいリリースがリリースされると、アップグレードするボタンが表示される通知が表示されます。"
 
-#: ui/settings.ui:6751
+#: ui/settings.ui:6778
 msgid "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6759
+#: ui/settings.ui:6786
 msgid "What the latest release changed"
 msgstr "最新リリースの変更点"
 

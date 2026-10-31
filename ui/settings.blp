@@ -578,7 +578,7 @@ ApplicationWindow settings {
 
                   Label {
                     styles ["section-meta"]
-                    label:  _("Behind your windows, on every monitor");
+                    label: "Apps along the chosen screen edge on each monitor";
                     hexpand: true;
                     xalign: 0;
                     ellipsize: end;
@@ -812,7 +812,7 @@ ApplicationWindow settings {
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("Off: Super+Space, Super+A and Super+N still open the launcher, control center and notifications");
+                        label: "Comes back when the pointer reaches the dock's screen edge";
                         xalign: 0;
                         wrap: true;
                       }
@@ -3621,6 +3621,25 @@ ApplicationWindow settings {
                       name: "sc_add";
                       label:  _("Add…");
                       tooltip-text:  _("Add, then press its shortcut");
+                    }
+                  }
+
+                                    Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: "Icon size";
+                        xalign: 0;
+                      }
                     }
                   }
                 }

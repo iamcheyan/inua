@@ -334,6 +334,10 @@ position = "bottom"
 # make room for it.
 autohide = false
 
+# Remove the screen-edge margins around the dock and top bar, so they touch
+# the screen's edges.
+flush_bar = false
+
 # Icon size in pixels (24 to 96).
 size = 36
 

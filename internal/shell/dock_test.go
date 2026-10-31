@@ -132,6 +132,20 @@ func TestIsInputMethodProgram(t *testing.T) {
 	}
 }
 
+func TestIsFcitxProcess(t *testing.T) {
+	for name, want := range map[string]bool{
+		"fcitx":                   true,
+		"fcitx5":                  true,
+		"fcitx5-wayland-launcher": true,
+		"fcitx5-configtool":       false,
+		"telegram-desktop":        false,
+	} {
+		if got := isFcitxExecutable(name); got != want {
+			t.Errorf("isFcitxExecutable(%q) = %v, want %v", name, got, want)
+		}
+	}
+}
+
 func TestPin(t *testing.T) {
 	p := Pin([]string{"a", "b"}, "c", true)
 	p = Pin(p, "a", false)

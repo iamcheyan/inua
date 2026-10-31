@@ -54,7 +54,7 @@ type dock struct {
 	buttons  map[string]*dockButton // by app, borrowed from items
 	size     int
 	position string
-	gaps     bool // style.edge_gaps
+	flushBar bool // dock.flush_bar
 	vertical bool // apps stack along a vertical screen edge
 	hide     bool // autohide
 	hover    bool
@@ -99,7 +99,7 @@ type dockState struct {
 func (s *shellUI) syncDock(b *bar) {
 	c := s.cfg.Dock
 	want := c.Enable && s.layer
-	if b.dock != nil && (!want || b.dock.size != c.Size || b.dock.hide != c.Autohide || b.dock.position != c.Position || b.dock.gaps != s.cfg.Style.EdgeGaps) {
+	if b.dock != nil && (!want || b.dock.size != c.Size || b.dock.hide != c.Autohide || b.dock.position != c.Position || b.dock.flushBar != c.FlushBar) {
 		dropDock(b)
 	}
 	if want && b.dock == nil {
@@ -121,7 +121,7 @@ func dropDock(b *bar) {
 
 func (s *shellUI) newDock(b *bar) *dock {
 	position := s.cfg.Dock.Position
-	d := &dock{size: s.cfg.Dock.Size, position: position, vertical: position == "left" || position == "right", hide: s.cfg.Dock.Autohide, gaps: s.cfg.Style.EdgeGaps}
+	d := &dock{size: s.cfg.Dock.Size, position: position, vertical: position == "left" || position == "right", hide: s.cfg.Dock.Autohide, flushBar: s.cfg.Dock.FlushBar}
 	ui := s.load("dock.ui", &d.refs)
 	ui.Get("dock", &d.win)
 	ui.Get("root", &d.root)
@@ -137,12 +137,12 @@ func (s *shellUI) newDock(b *bar) *dock {
 		d.island.SetMarginBottom(0)
 		d.reveal.SetVexpand(true)
 		if position == "left" {
-			if d.gaps {
+			if !d.flushBar {
 				d.island.SetMarginStart(6)
 			}
 			d.reveal.SetTransitionType(gtk.RevealerTransitionTypeSlideRightValue)
 		} else {
-			if d.gaps {
+			if !d.flushBar {
 				d.island.SetMarginEnd(6)
 			}
 			d.island.AddCssClass("dock-right")
@@ -156,27 +156,20 @@ func (s *shellUI) newDock(b *bar) *dock {
 		d.reveal.SetHexpand(true)
 		if position == "top" {
 			d.island.SetMarginBottom(0)
-			if d.gaps {
+			if !d.flushBar {
 				d.island.SetMarginTop(6)
 			}
 			d.reveal.SetTransitionType(gtk.RevealerTransitionTypeSlideDownValue)
 		} else {
-			if !d.gaps {
+			if d.flushBar {
 				d.island.SetMarginBottom(0)
 			}
 			d.reveal.SetTransitionType(gtk.RevealerTransitionTypeSlideUpValue)
 		}
-		d.edge.Widget.SetSizeRequest(-1, dockEdge)
+		d.edge.Widget.SetSizeRequest(-1, 3)
 	}
-	switch position {
-	case "top", "left":
+	if position == "top" || position == "left" {
 		d.root.ReorderChildAfter(&d.edge.Widget, &gtk.Widget{})
-	// The window takes the whole dock as it starts to show (fitDock): the
-	// dock keeps to its screen edge, so it slides out of it.
-	case "right":
-		d.root.SetHalign(gtk.AlignEndValue)
-	default:
-		d.root.SetValign(gtk.AlignEndValue)
 	}
 	drop := gtk.NewDropTarget(types.GType(gobject.TypeStringVal), gdk.ActionMoveValue)
 	drop.ConnectMotion(&s.onDockDropMotion)
@@ -718,7 +711,7 @@ func (s *shellUI) showDock(d *dock) {
 
 func (s *shellUI) dockOf(w *gtk.Widget) *dock {
 	for _, b := range s.bars {
-		if b.dock != nil && w != nil && b.dock.win.GoPointer() == w.GoPointer() {
+		if b.dock != nil && w != nil && (b.dock.win.GoPointer() == w.GoPointer() || b.dock.edge.GoPointer() == w.GoPointer() || b.dock.island.GoPointer() == w.GoPointer()) {
 			return b.dock
 		}
 	}

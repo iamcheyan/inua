@@ -214,11 +214,8 @@ func (s *shellUI) applyConfig(c config.Config) {
 		s.loadWallpaper()
 	}
 	for _, b := range s.bars {
-		if old.Bar.Density != c.Bar.Density {
-			b.setDensity(c.Bar.Density)
-		}
-		if old.Style.EdgeGaps != c.Style.EdgeGaps {
-			b.setEdgeGap(c.Style.EdgeGaps)
+		if old.Dock.FlushBar != c.Dock.FlushBar {
+			b.setEdgeGap(!c.Dock.FlushBar)
 		}
 		if old.Bar.Enable != c.Bar.Enable {
 			b.win.SetVisible(c.Bar.Enable)
