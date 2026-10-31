@@ -61,9 +61,8 @@ type menuRow struct {
 // row heights, as style.css sets them; the columns are laid out from these
 // so a submenu can be set level with the item it hangs from.
 const (
-	menuRowHeight  = 26
-	menuLineHeight = 9
-	menuColPadding = 5
+	menuRowHeight  = 32
+	menuLineHeight = 1
 )
 
 func (s *shellUI) buildMenuPanel() {
@@ -178,10 +177,17 @@ func (s *shellUI) appendMenuColumn(entries []appmenu.Entry, prefix []int) *gtk.B
 	m := &s.menu
 	col := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	col.AddCssClass("menu-col")
+	if len(prefix) > 0 {
+		// A submenu is a menu of its own: the same card as its parent's,
+		// standing beside it, not a column of the parent's card.
+		col.AddCssClass("menu-sub")
+	}
 	m.card.Append(&col.Widget)
 
 	for i, entry := range entries {
 		if entry.Separator {
+			// A hairline in its own row: the separator's margins are the
+			// room around it, so it spans the column and not the window.
 			line := gtk.NewSeparator(gtk.OrientationHorizontalValue)
 			line.AddCssClass("menu-line")
 			line.SetSizeRequest(-1, menuLineHeight)

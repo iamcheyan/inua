@@ -21,12 +21,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	"codeberg.org/puregotk/purego"
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
+	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
@@ -121,6 +123,7 @@ type shellUI struct {
 	onWorkspaceSettle      glib.SourceFunc
 	onClock                glib.SourceFunc
 	onAppMenuClicked       func(gtk.Button)
+	onAppButton            func(gtk.Button) // the application's name: opens its own menu
 	onAppMenuMeasure       glib.SourceFunc
 	onMenuRow              func(gtk.Button)
 	onMenuHover            func(gtk.EventControllerMotion, float64, float64)
@@ -571,6 +574,13 @@ func (s *shellUI) barClick(b *bar, x, y float64) bool {
 	case clock:
 		s.toggleAgenda()
 	default:
+		if s.appMenuBarAt(b, x, y) {
+			// A section of the bar's own menu: it opens, the open one
+			// giving way (openAppMenu switches in place). Nothing else
+			// closes here, so the menu never blinks shut first.
+			return true
+		}
+		s.closeMenu()
 		s.closeControl()
 		s.closeAgenda()
 		s.closePasswords()
@@ -579,6 +589,37 @@ func (s *shellUI) barClick(b *bar, x, y float64) bool {
 		s.closeDrawer()
 	}
 	return true
+}
+
+// appMenuBarAt answers the bar's menu buttons at x, y of a panel's window
+// over the bar: the button there is pressed, as if the bar's own window had
+// taken it. A panel covers the bar while a menu hangs from it, so without
+// this a press on another section would only close the open menu.
+func (s *shellUI) appMenuBarAt(b *bar, x, y float64) bool {
+	if b == nil || b.appMenu.GetFirstChild() == nil {
+		return false
+	}
+	var r graphene.Rect
+	if !b.appMenu.ComputeBounds(&b.win.Widget, &r) {
+		return false
+	}
+	box := *(*[4]float32)(unsafe.Pointer(&r))
+	px, py := float32(x), float32(y)
+	if px < box[0] || px >= box[0]+box[2] || py < box[1] || py >= box[1]+box[3] {
+		return false
+	}
+	for w := b.appMenu.GetFirstChild(); w != nil; w = w.GetNextSibling() {
+		var br graphene.Rect
+		if !w.ComputeBounds(&b.win.Widget, &br) {
+			continue
+		}
+		bb := *(*[4]float32)(unsafe.Pointer(&br))
+		if px >= bb[0] && px < bb[0]+bb[2] && py >= bb[1] && py < bb[1]+bb[3] {
+			(*gtk.Button)(unsafe.Pointer(w)).Activate()
+			return true
+		}
+	}
+	return false
 }
 
 // barUnder is the bar of the monitor w's window is on.
@@ -635,9 +676,12 @@ func (s *shellUI) bindHandlers() {
 	// A panel over the whole monitor, the bar too, passes the pointer on
 	// to the bar under it (barClick).
 	s.onPanelMotion = func(c gtk.EventControllerMotion, x, y float64) {
-		if b := s.barUnder(c.GetWidget()); b != nil {
-			b.hover(x, y)
+		b := s.barUnder(c.GetWidget())
+		if b == nil {
+			return
 		}
+		b.hover(x, y)
+		s.appMenuHover(b, c.GetWidget(), x, y)
 	}
 	s.onPanelLeave = func(c gtk.EventControllerMotion) {
 		if b := s.barUnder(c.GetWidget()); b != nil {
@@ -1250,4 +1294,27 @@ func (s *shellUI) freshenApps() {
 	if desktop.Stamp(desktop.DataDirs()) != s.appsStamp {
 		s.scanApps()
 	}
+}
+
+// appMenuHover moves the open menu to the bar's section under the pointer,
+// as a Mac's menus do: the panel follows the pointer along the bar rather
+// than waiting for a click. The common shape of a menu bar is that the
+// pointer's section is the one shown, so this is what makes the bar feel
+// like one.
+func (s *shellUI) appMenuHover(b *bar, w *gtk.Widget, x, y float64) {
+	m := &s.menu
+	if !m.open || m.closing || m.pid == 0 || b != m.drop.host {
+		return
+	}
+	if !b.overIsland(y) {
+		return
+	}
+	button, target, ok := b.appMenuButtonAt(x, y)
+	if !ok || target.entry.Label == m.section {
+		return
+	}
+	m.pid, m.section = target.pid, target.entry.Label
+	m.entries, m.stack = target.entry.Children, nil
+	s.fillMenu()
+	s.dropToButton(&m.drop, b, button)
 }

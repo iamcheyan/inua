@@ -52,7 +52,7 @@ type drop struct {
 	radius, corner float64
 	border         bool
 	end            bool    // flush with the bar's end
-	under          float64 // the middle of the button it hangs under
+	under, at      float64 // the middle of the button it hangs under, and its left edge
 	x, w, h        float64 // the card's box, at rest
 	glass, line    gdk.RGBA
 
@@ -175,7 +175,27 @@ func (d *drop) moveTo(b *bar) {
 
 // hang moves the card into a canvas, to hang from the bar b under the
 // button whose middle is at under.
-func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under float64) bool {
+// rehang moves the open card under another button of the same bar: the
+// menu follows the pointer along the bar, as a Mac's does, instead of
+// staying where it was first opened.
+func (d *drop) rehang(b *bar, island [4]float32, under, at float64) {
+	if d.host != b || d.canvas == nil {
+		return
+	}
+	d.left, d.right = float64(island[0]), float64(island[0]+island[2])
+	d.y = float64(island[1] + island[3])
+	d.under, d.at = under, at
+	if d.shownW != 0 {
+		d.resizes = true // the new section's width eases in
+	}
+	d.canvas.QueueAllocate()
+	d.canvas.QueueDraw()
+}
+
+// hang hangs the card from the bar b, under the button whose middle is at
+// under; at is the button's left edge, where the card starts when centring
+// it would push it off the button's own end.
+func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under, at float64) bool {
 	if !d.colors(b.win.HasCssClass("empty")) {
 		return false
 	}
@@ -195,7 +215,7 @@ func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under float64) bool {
 
 	d.left, d.right = float64(island[0]), float64(island[0]+island[2])
 	d.y = float64(island[1] + island[3])
-	d.under = under
+	d.under, d.at = under, at
 	d.radius = float64(s.cfg.Style.Radius)
 	if !b.edgeGaps {
 		d.radius = 0 // flush: square
@@ -371,7 +391,11 @@ func (d *drop) allocate(_ *gtk.Widget, _, _ int) {
 		d.x = d.right - 1 - d.w
 	} else {
 		room := d.radius + d.corner // the arc's
-		d.x = math.Round(max(d.left+room, min(d.under-d.w/2, d.right-room-d.w)))
+		// Centred under the button; a card that is wider than the screen
+		// has room for starts at the button's left edge instead, so it
+		// hangs from the thing that opened it rather than at the screen's
+		// corner.
+		d.x = math.Round(max(d.left+room, min(d.at, min(d.under-d.w/2, d.right-room-d.w))))
 	}
 	n := d.now()
 	at := d.anchor()
@@ -596,7 +620,10 @@ func (s *shellUI) hangFrom(d *drop, on *bar, button func(*bar) *gtk.Widget) {
 	var r, br graphene.Rect
 	if on != nil && on.island.ComputeBounds(&on.win.Widget, &r) && button(on).ComputeBounds(&on.win.Widget, &br) {
 		b := *(*[4]float32)(unsafe.Pointer(&br))
-		if d.hang(s, on, *(*[4]float32)(unsafe.Pointer(&r)), float64(b[0]+b[2]/2)) {
+		// Under the button's middle, but never past the card's own end:
+		// a card wider than the room to its right stops there instead of
+		// running off, and its left edge stays on the button's.
+		if d.hang(s, on, *(*[4]float32)(unsafe.Pointer(&r)), float64(b[0]+b[2]/2), float64(b[0])) {
 			d.open()
 			return
 		}

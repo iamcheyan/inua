@@ -29,7 +29,7 @@ type bar struct {
 	frame       gtk.Overlay // the island, and the panel hanging from it
 	island      gtk.CenterBox
 	workspaces  gtk.Box
-	app         gtk.Box
+	app         gtk.Button // the application's name, which opens its own menu
 	appIcon     gtk.Image
 	appClass    string // the focused window's class
 	appName     string // the application the bar names, and its icon
@@ -37,32 +37,36 @@ type bar struct {
 	appMenu     gtk.Box
 	appMenuGen  uint64
 	appMenuPID  int
-	widgetsMark gtk.Button // the widget page's place, before the workspaces
-	title       gtk.Label
-	clock       gtk.Label
-	end         gtk.Box
-	clipboard   gtk.Button
-	passwords   gtk.Button
-	notes       gtk.Button
-	notesIcon   gtk.Image
-	voice       gtk.Button
-	voiceIcon   gtk.Image
-	unread      gtk.Box
-	tray        gtk.Box
-	status      gtk.Button
-	netIcon     gtk.Image
-	btIcon      gtk.Image
-	volIcon     gtk.Image
-	battery     gtk.Box
-	batIcon     gtk.Image
-	batLabel    gtk.Label
-	rec         gtk.Button
-	clockButton gtk.Button // opens the calendar panel
-	recTime     gtk.Label
-	refs        gtkx.Scope
-	edgeGaps    bool
-	compact     bool
-	height      int32 // the window's, by its density
+	// appMenuTargets is this bar's own menu buttons, by name. Each bar shows
+	// the menu of the application it names, so two bars can hold different
+	// menus at once (appmenu.go).
+	appMenuTargets map[string]appMenuTarget
+	widgetsMark    gtk.Button // the widget page's place, before the workspaces
+	title          gtk.Label
+	clock          gtk.Label
+	end            gtk.Box
+	clipboard      gtk.Button
+	passwords      gtk.Button
+	notes          gtk.Button
+	notesIcon      gtk.Image
+	voice          gtk.Button
+	voiceIcon      gtk.Image
+	unread         gtk.Box
+	tray           gtk.Box
+	status         gtk.Button
+	netIcon        gtk.Image
+	btIcon         gtk.Image
+	volIcon        gtk.Image
+	battery        gtk.Box
+	batIcon        gtk.Image
+	batLabel       gtk.Label
+	rec            gtk.Button
+	clockButton    gtk.Button // opens the calendar panel
+	recTime        gtk.Label
+	refs           gtkx.Scope
+	edgeGaps       bool
+	compact        bool
+	height         int32 // the window's, by its density
 
 	// held counts the panels hanging from the bar (drop.go), whose
 	// window is grown down over the monitor meanwhile; pressHeld is
@@ -225,6 +229,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	}
 	b.rec.ConnectClicked(&s.onRecButton)
 	b.clockButton.ConnectClicked(&s.onClockButton)
+	b.app.ConnectClicked(&s.onAppButton)
 	s.showNotesButton(b)
 	// The buttons reach to the screen's edges: the bar's margin around and
 	// between them hovers, clicks and scrolls as the button (endReach,

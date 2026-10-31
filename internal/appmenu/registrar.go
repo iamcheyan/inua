@@ -83,6 +83,11 @@ type Action struct {
 const (
 	ActionA11y     = "atspi"
 	ActionDbusmenu = "dbusmenu"
+	// Actions the shell itself runs, for the entries every application has
+	// (its name's menu): Index carries the process they act on.
+	ActionAbout       = "about"
+	ActionCloseWindow = "close-window"
+	ActionQuitApp     = "quit-app"
 )
 
 type Registrar struct {
