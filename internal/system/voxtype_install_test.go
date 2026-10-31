@@ -246,6 +246,40 @@ fallback_on_empty = false
 	}
 }
 
+// A config.toml without the tables inua writes is read as unset, not a
+// panic; one that sets a table in a way inua does not edit (inline, by
+// dotted keys) is left as it is, rather than made one voxtype cannot read.
+func TestConfigureVoxtypeFileShapes(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", home)
+	conf := filepath.Join(home, "voxtype", "config.toml")
+	os.MkdirAll(filepath.Dir(conf), 0o755)
+
+	os.WriteFile(conf, []byte("[hotkey]\nenabled = true\n"), 0o644)
+	if v, err := voxtypeFileGet("output.post_process.command"); v != "" || err != nil {
+		t.Errorf("no [output]: %q, %v", v, err)
+	}
+	if err := voxtypeFileSet("output.notification.on_transcription", "false"); err != nil {
+		t.Fatal(err)
+	}
+	if v, err := voxtypeFileGet("output.notification.on_transcription"); v != "false" || err != nil {
+		t.Errorf("written into a new table: %q, %v", v, err)
+	}
+
+	for _, before := range []string{
+		"[output]\nnotification = { on_transcription = true }\n",
+		"[output]\nnotification.on_transcription = true\n",
+	} {
+		os.WriteFile(conf, []byte(before), 0o644)
+		if err := voxtypeFileSet("output.notification.on_transcription", "false"); err == nil {
+			t.Errorf("%q: written", before)
+		}
+		if got, _ := os.ReadFile(conf); string(got) != before {
+			t.Errorf("%q: the file changed:\n%s", before, got)
+		}
+	}
+}
+
 // A model's files go, and only they: Whisper's file, another engine's
 // folder, nothing for a name that would leave the models folder.
 func TestDeleteVoxtypeModel(t *testing.T) {
