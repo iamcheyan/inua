@@ -46,11 +46,35 @@ func (c *Client) Menu(pid int) ([]Entry, error) {
 	// fill them without pressing them, which crashes Firefox. So a tree of
 	// empty sections is no menu either.
 	if c.A11y != nil {
-		if e, err := c.A11y.Menu(pid); err == nil && labelled(e) {
+		if e, err := c.A11y.Menu(pid); err == nil && fillable(e) {
 			return e, nil
 		}
 	}
 	return nil, nil
+}
+
+// fillable reports whether a menu is one the bar can show: sections with
+// their items, or named sections the application builds when they open (a
+// browser's), which the bar fills one at a time as they are asked for. A
+// tree of unnamed items is a toolkit skeleton and stays out.
+func fillable(entries []Entry) bool {
+	for _, e := range entries {
+		if strings.TrimSpace(e.Label) == "" || e.Separator {
+			continue
+		}
+		if len(e.Children) > 0 || Fillable(e) {
+			return true
+		}
+	}
+	return false
+}
+
+// Fillable reports whether an entry's items are made when it opens: the
+// application answered with a named section and an action to open it, and
+// nothing under it yet.
+func Fillable(e Entry) bool {
+	return len(e.Children) == 0 && !e.Separator && e.Label != "" &&
+		e.Action.Kind == ActionA11y && e.Action.Bus != "" && e.Action.Path != ""
 }
 
 // labelled reports whether the menu says anything: at least one top-level
@@ -134,6 +158,15 @@ func markNative(entries []Entry) {
 		}
 		entries[i].Action.NativeWayland = true
 	}
+}
+
+// Fill reads the items of a section the application builds when it opens
+// (a browser's File, Edit …): it opens that section once and closes it.
+func (c *Client) Fill(e Entry) ([]Entry, error) {
+	if c.A11y == nil {
+		return nil, fmt.Errorf("appmenu: no accessibility bus")
+	}
+	return c.A11y.FillSection(e)
 }
 
 // Activate invokes the entry's action on the application that owns it.

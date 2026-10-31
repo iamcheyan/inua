@@ -2,6 +2,7 @@ package ui
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"strconv"
@@ -164,6 +165,9 @@ func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
 			return
 		}
 		gtkx.Clear(&b.appMenu)
+		if os.Getenv("INUA_APPMENU_DEBUG") != "" {
+			log.Printf("appmenu %s pid=%d: %d entries", b.connector(), pid, len(entries))
+		}
 		b.appMenuTargets = make(map[string]appMenuTarget)
 		s.appmenu.entries = entries
 		for _, entry := range entries {
@@ -213,6 +217,14 @@ func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) 
 		s.closeMenu()
 		return
 	}
+	if appmenu.Fillable(target.entry) {
+		// A browser's section: its items do not exist until the
+		// application opens it once (appmenu.Fill). Read off the main
+		// thread, then show - one section at a time, which is what the
+		// application takes.
+		s.fillSection(&button.Widget, target, m.open && !m.closing)
+		return
+	}
 	if m.open && !m.closing {
 		m.pid, m.section = target.pid, target.entry.Label
 		m.entries, m.stack = target.entry.Children, nil
@@ -225,6 +237,36 @@ func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) 
 		return
 	}
 	s.showMenu(&button.Widget, target)
+}
+
+// fillSection reads a section the application builds only when it opens,
+// then shows it: in the open menu's place, or under its button.
+func (s *shellUI) fillSection(button *gtk.Widget, target appMenuTarget, already bool) {
+	pid, label := target.pid, target.entry.Label
+	go func() {
+		entries, err := s.appmenu.client.Fill(target.entry)
+		gtkx.Post(func() {
+			if focusedPID(s.snap) != pid {
+				return // the bar moved on while it was read
+			}
+			if err != nil {
+				log.Printf("appmenu fill %q: %v", label, err)
+			}
+			filled := target
+			filled.entry.Children = entries
+			if already {
+				m := &s.menu
+				if !m.open || m.closing || m.pid != pid {
+					return // closed while it was read
+				}
+				m.section = label
+				m.entries, m.stack = entries, nil
+				s.fillMenu()
+				return
+			}
+			s.showMenu(button, filled)
+		})
+	}()
 }
 
 // activateAppMenu invokes an entry, but only while the process it belongs to
@@ -318,25 +360,57 @@ func processAlive(pid int) bool {
 	return err == nil || err == syscall.EPERM
 }
 
+// openAppMenuFor opens the menu of the application the bar b names, from
+// the button of its name.
+func (s *shellUI) openAppMenuFor(button gtk.Button, b *bar) {
+	pid := shell.BarWindow(s.snap, b.connector()).PID
+	if pid == 0 {
+		return
+	}
+	t := s.windowOf(pid)
+	if t == nil {
+		return
+	}
+	entries := s.appMenuEntries(pid)
+	if len(entries) == 0 {
+		return
+	}
+	section := appmenu.Entry{Label: s.appNameOf(*t), Children: entries}
+	target := appMenuTarget{entry: section, pid: pid, bar: b, section: true}
+	s.openAppMenu(b, &button, target)
+}
+
+// openAppMenuOn shows the application's own menu (About, Close, Quit and
+// its sections) on the bar of the focused monitor, as a click on its name
+// does. It is what the shell's IPC "bar appmenu" asks for, so the menu can
+// be opened, and taken again, without a pointer.
+func (s *shellUI) openAppMenuOn() error {
+	pid := focusedPID(s.snap)
+	if pid == 0 || s.appmenu.client == nil {
+		return errors.New("no focused application")
+	}
+	for _, b := range s.bars {
+		if b.connector() == s.snap.FocusedMonitor {
+			s.onAppButton(b.app)
+			return nil
+		}
+	}
+	return errors.New("no bar on the focused monitor")
+}
+
 func (s *shellUI) bindAppMenuHandlers() {
 	s.onAppMenuMeasure = func(uintptr) bool { return s.logAppMenuBounds() }
 	// The application's name opens the menu every application has: About,
 	// Close Window, Quit, then its own sections (appMenuEntries).
+	// The application's name opens the menu every application has: About,
+	// Close Window, Quit, then its own sections. Each bar's button calls it
+	// with that bar, so the menu is the one that bar is about.
 	s.onAppButton = func(button gtk.Button) {
-		pid := focusedPID(s.snap)
-		if pid == 0 {
+		b := s.barUnder(&button.Widget)
+		if b == nil {
 			return
 		}
-		entries := s.appMenuEntries(pid)
-		if len(entries) == 0 {
-			return
-		}
-		section := appmenu.Entry{Label: s.appNameOf(*s.windowOf(pid)), Children: entries}
-		target := appMenuTarget{entry: section, pid: pid, bar: s.barUnder(&button.Widget), section: true}
-		if target.bar == nil {
-			return
-		}
-		s.openAppMenu(target.bar, &button, target)
+		s.openAppMenuFor(button, b)
 	}
 	s.onAppMenuClicked = func(button gtk.Button) {
 		var target appMenuTarget
