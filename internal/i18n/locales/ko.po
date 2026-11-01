@@ -3544,6 +3544,7 @@ msgstr[0] "… 그 외 %d개"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:129
+#: internal/ui/bar_appmenu.go:92
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -8402,7 +8403,7 @@ msgid "Notification center"
 msgstr "알림 센터"
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:136
+#: ui/bar.ui:163
 msgid "Clipboard history"
 msgstr "클립보드 기록"
 
@@ -8463,7 +8464,7 @@ msgstr "색상을 선택하세요"
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:169
-#: ui/bar.ui:177
+#: ui/bar.ui:204
 #: ui/settings.ui:6292
 msgid "Dictation"
 msgstr "받아쓰기"
@@ -8619,7 +8620,7 @@ msgstr "계산기"
 
 #: internal/lightui/apps.go:20
 #: internal/ui/widgets.go:588
-#: ui/bar.ui:65
+#: ui/bar.ui:92
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr "달력"
@@ -12840,6 +12841,7 @@ msgid "Start the shell again"
 msgstr "셸을 다시 시작합니다."
 
 #: internal/shell/commands.go:46
+#: internal/ui/bar_appmenu.go:36
 msgid "Close Window"
 msgstr "창 닫기"
 
@@ -14160,7 +14162,7 @@ msgstr "bash, zsh, fish가 프롬프트를 표시해 명령을 기억할 수 있
 
 #: internal/termui/prefs.go:182
 #: internal/ui/notify.go:324
-#: ui/bar.ui:147
+#: ui/bar.ui:174
 #: ui/settings.ui:3282
 msgid "Notifications"
 msgstr "알림"
@@ -14545,13 +14547,26 @@ msgstr "스크린샷을 위해 숨겨집니다."
 msgid "The passphrases do not match."
 msgstr "암호 문구가 일치하지 않습니다."
 
-#: internal/ui/bar.go:471
+#: internal/ui/bar.go:493
 msgid "Workspace %s"
 msgstr "작업공간 %s"
 
-#: internal/ui/bar.go:484
+#: internal/ui/bar.go:506
 msgid "WORKSPACE"
 msgstr "작업 공간"
+
+#: internal/ui/bar_appmenu.go:35
+#: internal/ui/bar_appmenu.go:76
+msgid "About %s"
+msgstr ""
+
+#: internal/ui/bar_appmenu.go:37
+msgid "Quit %s"
+msgstr ""
+
+#: internal/ui/bar_appmenu.go:90
+msgid "Process %d"
+msgstr ""
 
 #: internal/ui/clipboard.go:82
 msgid "Could not clear the history"
@@ -14920,7 +14935,7 @@ msgid "Search every entry"
 msgstr "모든 항목 검색"
 
 #: internal/ui/passwords.go:283
-#: ui/bar.ui:126
+#: ui/bar.ui:153
 #: ui/settings.ui:1384
 msgid "Passwords"
 msgstr "비밀번호"
@@ -17795,11 +17810,11 @@ msgstr "나에게 무엇을 해야 할지 묻거나 말해주세요"
 msgid "Discard the recording"
 msgstr "녹음 버리기"
 
-#: ui/bar.ui:95
+#: ui/bar.ui:122
 msgid "Stop recording"
 msgstr "녹화 중지"
 
-#: ui/bar.ui:192
+#: ui/bar.ui:219
 msgid "Control Center"
 msgstr "제어 센터"
 

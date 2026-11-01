@@ -3544,6 +3544,7 @@ msgstr[0] "…ほか %d 件"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:270
 #: internal/termui/wsmenu.go:129
+#: internal/ui/bar_appmenu.go:92
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -8402,7 +8403,7 @@ msgid "Notification center"
 msgstr "通知センター"
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:136
+#: ui/bar.ui:163
 msgid "Clipboard history"
 msgstr "クリップボード履歴"
 
@@ -8463,7 +8464,7 @@ msgstr "色を選ぶ"
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:169
-#: ui/bar.ui:177
+#: ui/bar.ui:204
 #: ui/settings.ui:6292
 msgid "Dictation"
 msgstr "ディクテーション"
@@ -8619,7 +8620,7 @@ msgstr "電卓"
 
 #: internal/lightui/apps.go:20
 #: internal/ui/widgets.go:588
-#: ui/bar.ui:65
+#: ui/bar.ui:92
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr "カレンダー"
@@ -12840,6 +12841,7 @@ msgid "Start the shell again"
 msgstr "シェルを再度開始する"
 
 #: internal/shell/commands.go:46
+#: internal/ui/bar_appmenu.go:36
 msgid "Close Window"
 msgstr "ウィンドウを閉じる"
 
@@ -14160,7 +14162,7 @@ msgstr "bash、zsh、fish がプロンプトに印を付け、コマンドを記
 
 #: internal/termui/prefs.go:182
 #: internal/ui/notify.go:324
-#: ui/bar.ui:147
+#: ui/bar.ui:174
 #: ui/settings.ui:3282
 msgid "Notifications"
 msgstr "通知"
@@ -14545,13 +14547,26 @@ msgstr "スクリーンショットのため隠しています。"
 msgid "The passphrases do not match."
 msgstr "パスフレーズが一致しません。"
 
-#: internal/ui/bar.go:471
+#: internal/ui/bar.go:493
 msgid "Workspace %s"
 msgstr "ワークスペース%s"
 
-#: internal/ui/bar.go:484
+#: internal/ui/bar.go:506
 msgid "WORKSPACE"
 msgstr "ワークスペース"
+
+#: internal/ui/bar_appmenu.go:35
+#: internal/ui/bar_appmenu.go:76
+msgid "About %s"
+msgstr ""
+
+#: internal/ui/bar_appmenu.go:37
+msgid "Quit %s"
+msgstr ""
+
+#: internal/ui/bar_appmenu.go:90
+msgid "Process %d"
+msgstr ""
 
 #: internal/ui/clipboard.go:82
 msgid "Could not clear the history"
@@ -14920,7 +14935,7 @@ msgid "Search every entry"
 msgstr "すべてのエントリーを検索"
 
 #: internal/ui/passwords.go:283
-#: ui/bar.ui:126
+#: ui/bar.ui:153
 #: ui/settings.ui:1384
 msgid "Passwords"
 msgstr "パスワード"
@@ -17795,11 +17810,11 @@ msgstr "何をすべきかを尋ねるか、教えてください"
 msgid "Discard the recording"
 msgstr "録音を破棄"
 
-#: ui/bar.ui:95
+#: ui/bar.ui:122
 msgid "Stop recording"
 msgstr "録画を停止"
 
-#: ui/bar.ui:192
+#: ui/bar.ui:219
 msgid "Control Center"
 msgstr "コントロールセンター"
 

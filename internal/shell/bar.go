@@ -32,13 +32,21 @@ func BarWorkspaces(snap hypr.Snapshot, connector string, all bool) []hypr.Worksp
 // window on the focused monitor, elsewhere the window last focused on that
 // monitor's visible workspace.
 func BarTitle(snap hypr.Snapshot, connector string) string {
+	if win, ok := BarWindow(snap, connector); ok {
+		return win.Title
+	}
+	return ""
+}
+
+// BarWindow is the window a bar names, using the same focus rule as BarTitle.
+func BarWindow(snap hypr.Snapshot, connector string) (hypr.Toplevel, bool) {
 	if !knownMonitor(snap, connector) || connector == snap.FocusedMonitor {
 		for _, t := range snap.Toplevels {
 			if t.Address == snap.ActiveToplevel {
-				return t.Title
+				return t, true
 			}
 		}
-		return ""
+		return hypr.Toplevel{}, false
 	}
 	ws := 0
 	for _, m := range snap.Monitors {
@@ -46,16 +54,17 @@ func BarTitle(snap hypr.Snapshot, connector string) string {
 			ws = m.ActiveWorkspaceID
 		}
 	}
-	title, best := "", -1
+	var selected hypr.Toplevel
+	best := -1
 	for i, t := range snap.Toplevels {
 		if t.WorkspaceID != ws {
 			continue
 		}
 		if h := focusHistory(t, len(snap.Toplevels)+i); best < 0 || h < best {
-			title, best = t.Title, h
+			selected, best = t, h
 		}
 	}
-	return title
+	return selected, best >= 0
 }
 
 // BarReach finds which of the bar's buttons at its end, left to right, a

@@ -35,10 +35,26 @@ ApplicationWindow bar {
           }
         }
 
-        Label title {
-          styles ["title"]
-          ellipsize: end;
-          max-width-chars: 48;
+        Button app {
+          styles ["app-title", "plain", "tight"]
+          name: "app-title";
+          has-frame: false;
+          focusable: false;
+
+          Box {
+            spacing: 7;
+            Image app_icon {
+              styles ["app-icon"]
+              pixel-size: 16;
+              valign: center;
+              visible: false;
+            }
+            Label title {
+              styles ["title"]
+              ellipsize: end;
+              max-width-chars: 48;
+            }
+          }
         }
       };
 

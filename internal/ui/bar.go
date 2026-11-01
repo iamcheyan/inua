@@ -30,7 +30,11 @@ type bar struct {
 	island      gtk.CenterBox
 	workspaces  gtk.Box
 	widgetsMark gtk.Button // the widget page's place, before the workspaces
+	app         gtk.Button
+	appIcon     gtk.Image
 	title       gtk.Label
+	appPopover  gtk.Popover
+	appPID      int
 	clock       gtk.Label
 	clipboard   gtk.Button
 	passwords   gtk.Button
@@ -159,6 +163,8 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("island", &b.island)
 	ui.Get("workspaces", &b.workspaces)
 	ui.Get("widgets", &b.widgetsMark)
+	ui.Get("app", &b.app)
+	ui.Get("app_icon", &b.appIcon)
 	overviewClick := gtk.NewGestureClick()
 	overviewClick.SetButton(3)
 	overviewClick.SetPropagationPhase(gtk.PhaseCaptureValue)
@@ -230,8 +236,10 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	}
 	b.setStatus(&s.sys)
 	b.setHypr(s, s.snap)
+	onApp := func(gtk.Button) { s.showBarAppMenu(b) }
+	b.app.ConnectClicked(&onApp)
 	b.setClock(s, time.Now())
-	b.title.SetVisible(s.cfg.Bar.Title)
+	b.app.SetVisible(s.cfg.Bar.Title && b.appPID != 0)
 	b.tray.SetVisible(s.cfg.Bar.Tray)
 	s.renderTray(b)
 
@@ -401,7 +409,21 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.RemoveCssClass("occupied")
 		b.win.AddCssClass("empty")
 	}
-	b.title.SetText(shell.BarTitle(snap, name))
+	win, hasWindow := shell.BarWindow(snap, name)
+	if hasWindow {
+		appName, icon := win.Class, win.Class
+		if e := s.dockState.apps.ForClass(win.Class); e != nil {
+			appName, icon = e.Name, e.Icon
+		}
+		b.title.SetText(appName)
+		setIcon(&b.appIcon, icon)
+		b.appPID = win.PID
+	} else {
+		b.title.SetText("")
+		b.appPID = 0
+	}
+	b.app.SetVisible(s.cfg.Bar.Title && hasWindow)
+	b.appIcon.SetVisible(hasWindow)
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))

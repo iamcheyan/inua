@@ -225,6 +225,9 @@ button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20p
 .bar.compact .island .tray button { min-height: 0; padding: 1px 6px; margin: 1px 0; }
 .bar.compact .island .tray button { padding-left: 4px; padding-right: 4px; }
 .bar .island .title { color: @t1; }
+.bar .island button.app-title { min-width: 0; padding: 0 4px; box-shadow: none; }
+.bar .island button.app-title:hover { background: alpha(@t0, 0.06); color: @t0; border-radius: 3px; }
+.bar .island .app-icon { -gtk-icon-size: 16px; }
 .bar .island .clock {
   color: @t0; /* not the button's colour it sits in */
   font-size: 12px;

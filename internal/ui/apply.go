@@ -224,7 +224,7 @@ func (s *shellUI) applyConfig(c config.Config) {
 			b.win.SetVisible(c.Bar.Enable)
 		}
 		s.syncDock(b)
-		b.title.SetVisible(c.Bar.Title)
+		b.app.SetVisible(c.Bar.Title && b.appPID != 0)
 		b.tray.SetVisible(c.Bar.Tray)
 		b.clipboard.SetVisible(c.Clipboard.Enable && c.Clipboard.Bar)
 		b.passwords.SetVisible(c.Bar.Pass && s.passwords.hasStore)
