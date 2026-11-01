@@ -415,6 +415,9 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		if e := s.dockState.apps.ForClass(win.Class); e != nil {
 			appName, icon = e.Name, e.Icon
 		}
+		if s.cfg.Bar.TitleMode == "window" && win.Title != "" {
+			appName = win.Title
+		}
 		b.title.SetText(appName)
 		setIcon(&b.appIcon, icon)
 		b.appPID = win.PID

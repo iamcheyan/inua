@@ -59,6 +59,7 @@ func TestPartialOverride(t *testing.T) {
 [bar]
 clock = "%H:%M:%S"
 workspaces = "all"
+title_mode = "window"
 tray = false
 
 [launcher]
@@ -69,7 +70,7 @@ terminal = "foot --app-id term"
 		t.Fatalf("err=%v warnings=%v", err, w)
 	}
 	want := withDir(Default(), filepath.Dir(path))
-	want.Bar.Clock, want.Bar.Workspaces, want.Bar.Tray = "%H:%M:%S", "all", false
+	want.Bar.Clock, want.Bar.Workspaces, want.Bar.TitleMode, want.Bar.Tray = "%H:%M:%S", "all", "window", false
 	want.Launcher.Terminal = "foot --app-id term"
 	if !reflect.DeepEqual(c, want) {
 		t.Errorf("got %+v\nwant %+v", c, want)
@@ -83,6 +84,7 @@ func TestBadValuesFallBack(t *testing.T) {
 	path := write(t, `
 [bar]
 workspaces = "every"
+title_mode = "class"
 clock = "  "
 colour = "red"
 
@@ -104,7 +106,7 @@ x = 1
 		t.Errorf("not reset: %+v", c)
 	}
 	all := strings.Join(w, "\n")
-	for _, s := range []string{"unknown setting bar.colour", "unknown setting extra", "bar.workspaces", "launcher.mode", "bar.clock", "style.theme"} {
+	for _, s := range []string{"unknown setting bar.colour", "unknown setting extra", "bar.workspaces", "bar.title_mode", "launcher.mode", "bar.clock", "style.theme"} {
 		if !strings.Contains(all, s) {
 			t.Errorf("no warning about %s in:\n%s", s, all)
 		}
