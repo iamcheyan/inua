@@ -141,3 +141,63 @@ func TestApplyWritesOnlyOnChange(t *testing.T) {
 		t.Fatalf("second Apply = %v, %v; want unchanged", changed, err)
 	}
 }
+
+// A decoration preset writes its colors and sizes into [decoration]; the
+// plain "wayfire" choice gives the user's own values back, and the colors
+// survive Wayfire's INI reader, where an unescaped '#' starts a comment.
+func TestRenderDecorationPresets(t *testing.T) {
+	before := "[core]\nplugins = ipc\n\n[decoration]\nactive_color = #112233ff\nborder_size = 7\n"
+	cfg := config.Default()
+	cfg.Style.WayfireDecoration = "inua"
+	overridden, err := Render(before, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	parsed, err := loadWayfire(overridden)
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoration := parsed.Section("decoration")
+	if got := decoration.Key("border_size").String(); got != "2" {
+		t.Errorf("border_size = %q, want the preset's 2", got)
+	}
+	if got := decoration.Key("active_color").String(); got != "#89b4faff" {
+		t.Errorf("active_color = %q, want the preset's color as Wayfire reads it", got)
+	}
+	if !strings.Contains(overridden, `\#89b4faff`) {
+		t.Errorf("the color is not escaped in the file:\n%s", overridden)
+	}
+
+	cfg.Style.WayfireDecoration = "wayfire"
+	restored, err := Render(overridden, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	parsed, err = loadWayfire(restored)
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoration = parsed.Section("decoration")
+	if got := decoration.Key("border_size").String(); got != "7" {
+		t.Errorf("restored border_size = %q, want the user's 7", got)
+	}
+	if got := decoration.Key("active_color").String(); got != "#112233ff" {
+		t.Errorf("restored active_color = %q, want the user's color", got)
+	}
+}
+
+// An absent wayfire.ini is written from scratch, header included.
+func TestRenderEmptyConfig(t *testing.T) {
+	got, err := Render("", config.Default())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(got, "[decoration]") || !strings.Contains(got, "border_size") {
+		t.Fatalf("empty config has no decoration section:\n%s", got)
+	}
+}
+
+// loadWayfire parses a rendered config the way Render does, colors included.
+func loadWayfire(content string) (*ini.File, error) {
+	return ini.LoadSources(ini.LoadOptions{AllowShadows: true, PreserveSurroundedQuote: true, IgnoreInlineComment: true, UnescapeValueCommentSymbols: true}, []byte(content))
+}

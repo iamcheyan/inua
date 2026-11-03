@@ -33,8 +33,13 @@ icon_spacing = 4
 # second.
 clock = "%a %b %-d  %H:%M"
 
-# "monitor": each bar shows the workspaces of its own monitor.
-# "all": every bar shows every workspace.
+# Language for weekday, month and AM/PM names: "auto" follows the interface,
+# or choose English, Simplified or Traditional Chinese, Japanese, Korean,
+# Spanish or French. The format above remains freely editable.
+clock_language = "auto"
+
+# "monitor": each bar shows its own monitor; "all": every monitor;
+# "none": hide the workspace indicator.
 workspaces = "monitor"
 
 # Show the focused window's title.
@@ -207,6 +212,15 @@ radius = 4
 # directory. Ignored if the file does not exist. See style.css next to this
 # file for the colors you can override.
 css = "style.css"
+
+# Wayfire Xwayland window decorations, only used in Wayfire sessions:
+# "wayfire" keeps your Wayfire config; "inua", "paper" and "neon" are
+# built-in border color, thickness, title bar and button-order presets.
+wayfire_decoration = "inua"
+
+# Inua's GTK controls, only used in Wayfire sessions:
+# "inua" hairline, "soft" rounded, or "outline" square and transparent.
+wayfire_controls = "inua"
 
 [background]
 # Draw the wallpaper. false leaves the background to another program.

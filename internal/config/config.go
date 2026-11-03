@@ -17,6 +17,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/lyricat/inua/internal/i18n"
 )
 
 // Config is the shell's settings.
@@ -60,8 +61,10 @@ type Bar struct {
 	IconSpacing int `toml:"icon_spacing"`
 	// Clock is a strftime format (see Strftime).
 	Clock string `toml:"clock"`
-	// Workspaces is "monitor" (each bar shows its monitor's workspaces)
-	// or "all".
+	// ClockLanguage is the clock's localized date language: "auto" follows
+	// the interface language; explicit values are ClockLanguages.
+	ClockLanguage string `toml:"clock_language"`
+	// Workspaces is "monitor" (this bar's monitor), "all", or "none" to hide the indicator.
 	Workspaces string `toml:"workspaces"`
 	Title      bool   `toml:"title"`
 	Tray       bool   `toml:"tray"`
@@ -181,6 +184,10 @@ type Style struct {
 	// the app style; "system", the system's icon theme; or an installed
 	// icon theme (IconThemes). inua's apps keep the app style.
 	AppIcons string `toml:"app_icons"`
+	// WayfireDecoration selects a Wayfire Xwayland window decoration preset.
+	WayfireDecoration string `toml:"wayfire_decoration"`
+	// WayfireControls selects the GTK control skin used in Wayfire sessions.
+	WayfireControls string `toml:"wayfire_controls"`
 	// EdgeGaps leaves a small gap between the screen edges and the bar and
 	// dock; off puts them flush against the edges.
 	EdgeGaps bool `toml:"edge_gaps"`
@@ -898,23 +905,45 @@ var Languages = []string{"auto", "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr"}
 // everyday ones, then four dark editions.
 var Themes = []string{"yoru", "washi", "aojashin", "suimen", "rinko", "bunko", "denko"}
 
+// WayfireDecorationPresets are the compositor decoration styles offered in settings.
+var WayfireDecorationPresets = []string{"wayfire", "inua", "paper", "neon"}
+
+// WayfireControlSkins are the GTK control skins offered in settings.
+var WayfireControlSkins = []string{"inua", "soft", "outline"}
+
+var ClockLanguages = []string{"auto", "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr"}
+
+type ClockPreset struct {
+	Name, Label, Format string
+}
+
+// ClockPresets are the built-in formats; the stored format remains editable.
+var ClockPresets = []ClockPreset{
+	{"compact", i18n.M("Compact"), "%a %b %-d  %H:%M"},
+	{"long", i18n.M("Weekday and date"), "%A, %B %-d  %H:%M"},
+	{"24-hour", i18n.M("24-hour time"), "%H:%M"},
+	{"12-hour", i18n.M("12-hour time"), "%I:%M %p"},
+	{"iso", i18n.M("ISO date and time"), "%Y-%m-%d  %H:%M"},
+}
+
 // Default returns the settings used when the file says nothing.
 func Default() Config {
 	return Config{
 		Language: "auto",
 		Bar: Bar{
-			Enable:      true,
-			Density:     "default",
-			IconSize:    16,
-			IconSpacing: 4,
-			Clock:       "%a %b %-d  %H:%M",
-			Workspaces:  "monitor",
-			Title:       true,
-			Tray:        true,
-			Pass:        true,
-			Menu:        false,
-			MenuOff:     []string{},
-			MenuOn:      []string{},
+			Enable:        true,
+			Density:       "default",
+			IconSize:      16,
+			IconSpacing:   4,
+			Clock:         "%a %b %-d  %H:%M",
+			ClockLanguage: "auto",
+			Workspaces:    "monitor",
+			Title:         true,
+			Tray:          true,
+			Pass:          true,
+			Menu:          false,
+			MenuOff:       []string{},
+			MenuOn:        []string{},
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
 		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true},
@@ -922,7 +951,7 @@ func Default() Config {
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppStyle: ObjectsTheme, EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppStyle: ObjectsTheme, EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4, WayfireDecoration: "inua", WayfireControls: "inua"},
 		Background: Background{Enable: true, Fit: "cover", Generate: true},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
@@ -1006,7 +1035,7 @@ func (c *Config) validate() []string {
 		w = append(w, fmt.Sprintf("%s = %q: want %s; using %q", key, *v, strings.Join(allowed, " or "), def))
 		*v = def
 	}
-	oneOf("bar.workspaces", &c.Bar.Workspaces, d.Bar.Workspaces, "monitor", "all")
+	oneOf("bar.workspaces", &c.Bar.Workspaces, d.Bar.Workspaces, "monitor", "all", "none")
 	oneOf("bar.density", &c.Bar.Density, d.Bar.Density, "default", "compact")
 	if c.Bar.IconSize < 12 || c.Bar.IconSize > 24 {
 		w = append(w, fmt.Sprintf("bar.icon_size = %d: want 12 to 24; using %d", c.Bar.IconSize, d.Bar.IconSize))
@@ -1060,6 +1089,9 @@ func (c *Config) validate() []string {
 	oneOf("language", &c.Language, d.Language, Languages...)
 	oneOf("style.theme", &c.Style.Theme, d.Style.Theme, c.ThemeNames()...)
 	oneOf("style.app_theme", &c.Style.AppTheme, d.Style.AppTheme, append([]string{""}, c.ThemeNames()...)...)
+	oneOf("style.wayfire_decoration", &c.Style.WayfireDecoration, d.Style.WayfireDecoration, WayfireDecorationPresets...)
+	oneOf("style.wayfire_controls", &c.Style.WayfireControls, d.Style.WayfireControls, WayfireControlSkins...)
+	oneOf("bar.clock_language", &c.Bar.ClockLanguage, d.Bar.ClockLanguage, ClockLanguages...)
 	// An inua set in icons (it held the app style for a while): the app
 	// style, the line icons Phosphor's.
 	if slices.Contains(InuaThemes, c.Style.Icons) {

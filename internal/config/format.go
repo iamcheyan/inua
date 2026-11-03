@@ -15,12 +15,12 @@ import (
 func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
-		c.Bar.Enable, q(c.Bar.Density), c.Bar.IconSize, c.Bar.IconSpacing, q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass, c.Bar.Menu,
+		c.Bar.Enable, q(c.Bar.Density), c.Bar.IconSize, c.Bar.IconSpacing, q(c.Bar.Clock), q(c.Bar.ClockLanguage), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass, c.Bar.Menu,
 		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor, c.Overview.ShowDock,
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
-		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.AppStyle), q(c.Style.AppIcons), q(c.Style.Icons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS),
+		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.AppStyle), q(c.Style.AppIcons), q(c.Style.Icons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS), q(c.Style.WayfireDecoration), q(c.Style.WayfireControls),
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		c.Background.Generate,
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
@@ -224,8 +224,13 @@ icon_spacing = %d
 # second.
 clock = %s
 
-# "monitor": each bar shows the workspaces of its own monitor.
-# "all": every bar shows every workspace.
+# Language for weekday, month and AM/PM names: "auto" follows the interface,
+# or choose English, Simplified or Traditional Chinese, Japanese, Korean,
+# Spanish or French. The format above remains freely editable.
+clock_language = %s
+
+# "monitor": each bar shows its own monitor; "all": every monitor;
+# "none": hide the workspace indicator.
 workspaces = %s
 
 # Show the focused window's title.
@@ -363,6 +368,15 @@ radius = %d
 # directory. Ignored if the file does not exist. See style.css next to this
 # file for the colors you can override.
 css = %s
+
+# Wayfire Xwayland window decorations, only used in Wayfire sessions:
+# "wayfire" keeps your Wayfire config; "inua", "paper" and "neon" are
+# built-in border color, thickness, title bar and button-order presets.
+wayfire_decoration = %s
+
+# Inua's GTK controls, only used in Wayfire sessions:
+# "inua" hairline, "soft" rounded, or "outline" square and transparent.
+wayfire_controls = %s
 
 [background]
 # Draw the wallpaper. false leaves the background to another program.

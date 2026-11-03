@@ -24,7 +24,7 @@ func Path(configPath string) string {
 // Render applies the settings Inua owns to an existing Wayfire config while
 // preserving every unrelated key and section.
 func Render(content string, c config.Config) (string, error) {
-	cfg, err := ini.LoadSources(ini.LoadOptions{AllowShadows: true, PreserveSurroundedQuote: true}, []byte(content))
+ cfg, err := ini.LoadSources(ini.LoadOptions{AllowShadows: true, PreserveSurroundedQuote: true, IgnoreInlineComment: true, UnescapeValueCommentSymbols: true}, []byte(content))
 	if err != nil {
 		return "", fmt.Errorf("parse Wayfire config: %w", err)
 	}
@@ -33,6 +33,10 @@ func Render(content string, c config.Config) (string, error) {
 	setManaged(input, "xkb_options", stringValue(c.Input.KbOptions))
 	setManaged(input, "touchpad_accel", floatValue(c.Input.TouchpadSpeed))
 	setManaged(input, "touchpad_accel_profile", c.Input.TouchpadAccel)
+
+	decoration := cfg.Section("decoration")
+	clearManaged(decoration)
+	applyWayfireDecoration(decoration, c.Style.WayfireDecoration)
 
 	for _, section := range cfg.Sections() {
 		if strings.HasPrefix(section.Name(), "output:") {
@@ -94,7 +98,7 @@ func Render(content string, c config.Config) (string, error) {
 	}
 
 	if content == "" && len(cfg.Sections()) > 1 {
-		cfg.Section(ini.DefaultSection).Comment = header
+		cfg.Section(ini.DefaultSection).Comment = strings.TrimSuffix(header, "\n")
 	}
 	var out strings.Builder
 	if _, err := cfg.WriteTo(&out); err != nil {
@@ -102,6 +106,38 @@ func Render(content string, c config.Config) (string, error) {
 	}
 	return out.String(), nil
 }
+
+func applyWayfireDecoration(section *ini.Section, name string) {
+	switch name {
+	case "inua":
+		setManaged(section, "active_color", wayfireColor("#89b4faff"))
+		setManaged(section, "inactive_color", wayfireColor("#30343bcc"))
+		setManaged(section, "font_color", wayfireColor("#f2f2f2ff"))
+		setManaged(section, "border_size", "2")
+		setManaged(section, "title_height", "28")
+		setManaged(section, "title_halign", "center")
+		setManaged(section, "button_order", "minimize maximize close")
+	case "paper":
+		setManaged(section, "active_color", wayfireColor("#b7793eff"))
+		setManaged(section, "inactive_color", wayfireColor("#766f66cc"))
+		setManaged(section, "font_color", wayfireColor("#fffaf0ff"))
+		setManaged(section, "border_size", "1")
+		setManaged(section, "title_height", "30")
+		setManaged(section, "title_halign", "left")
+		setManaged(section, "button_order", "close minimize maximize")
+	case "neon":
+		setManaged(section, "active_color", wayfireColor("#59e1f7ff"))
+		setManaged(section, "inactive_color", wayfireColor("#203043dd"))
+		setManaged(section, "font_color", wayfireColor("#ecfbffff"))
+		setManaged(section, "border_size", "3")
+		setManaged(section, "title_height", "32")
+		setManaged(section, "title_halign", "center")
+		setManaged(section, "button_order", "minimize maximize close")
+	}
+}
+
+// wayfireColor escapes a color for Wayfire's INI reader, where '#' starts a comment.
+func wayfireColor(value string) string { return `\` + value }
 
 // Apply atomically updates the settings in Wayfire's config file.
 func Apply(path string, c config.Config) (bool, error) {
