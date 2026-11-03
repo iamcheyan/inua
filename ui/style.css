@@ -2431,7 +2431,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 }
 .wayfire-overview-hud {
   min-width: 720px;
-  max-width: 860px;
   background: alpha(@app, 0.96);
   border: 1px solid alpha(@line, 0.85);
   border-radius: 6px;
@@ -2657,7 +2656,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 }
 .wayfire-window-tile {
   min-width: 290px;
-  max-width: 330px;
   min-height: 170px;
   padding: 16px 18px;
   background: alpha(@surface, 0.85);
@@ -2726,7 +2724,6 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 /* Fast Task Switcher HUD */
 .wayfire-switcher-hud {
   min-width: 280px;
-  max-width: 960px;
   padding: 18px 24px 14px 24px;
   background: alpha(@app, 0.90);
   border: 1px solid alpha(@line, 0.65);
