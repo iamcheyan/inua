@@ -104,14 +104,19 @@ func CurrentDesktops() []string {
 // directory when switching sessions.
 func Wayfire() bool {
 	desktops := CurrentDesktops()
-	if slices.ContainsFunc(desktops, func(d string) bool { return strings.Contains(d, "hyprland") }) ||
-		os.Getenv("HYPRLAND_INSTANCE_SIGNATURE") != "" {
-		return false
-	}
 	if slices.ContainsFunc(desktops, func(d string) bool { return strings.Contains(d, "wayfire") }) {
 		return true
 	}
-	if os.Getenv("WAYFIRE_SOCKET") != "" || os.Getenv("_WAYFIRE_SOCKET") != "" || os.Getenv("INUA_INSTANCE") == "wayfire" {
+	if slices.ContainsFunc(desktops, func(d string) bool { return strings.Contains(d, "hyprland") }) {
+		return false
+	}
+	if os.Getenv("INUA_INSTANCE") == "wayfire" {
+		return true
+	}
+	if os.Getenv("HYPRLAND_INSTANCE_SIGNATURE") != "" {
+		return false
+	}
+	if os.Getenv("WAYFIRE_SOCKET") != "" || os.Getenv("_WAYFIRE_SOCKET") != "" {
 		return true
 	}
 	if runtime := os.Getenv("XDG_RUNTIME_DIR"); runtime != "" {

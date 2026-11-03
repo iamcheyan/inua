@@ -201,9 +201,9 @@ func (s *shellUI) applyConfig(c config.Config) {
 			s.loadStyles()
 		}
 	}
-	if old.Style.Font != c.Style.Font || old.Style.TextScale != c.Style.TextScale {
-		// Qt draws its own title bars and menus: write the shell's type into
-		// the KDE configuration it reads, as X11 and Wayland Qt clients do.
+	if desktop.Wayfire() && (old.Style.Font != c.Style.Font || old.Style.TextScale != c.Style.TextScale) {
+		// Wayfire's Qt clients read these fonts from KDE configuration. Keep
+		// this compositor-specific write out of Hyprland sessions.
 		path := qtConfigPath()
 		font, scale := c.Style.Font, c.Style.TextScale
 		go func() {

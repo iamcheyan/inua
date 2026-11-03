@@ -167,20 +167,21 @@ func TestWayfire(t *testing.T) {
 		t.Error("Hyprland reported as Wayfire with leftover Wayfire markers")
 	}
 
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "stale-hyprland")
 	t.Setenv("XDG_CURRENT_DESKTOP", "Wayfire:Inua")
 	if !Wayfire() {
-		t.Error("the current Wayfire desktop name was not seen")
+		t.Error("the current Wayfire desktop name was overridden by a stale Hyprland signature")
 	}
 
 	t.Setenv("XDG_CURRENT_DESKTOP", "")
 	t.Setenv("WAYFIRE_SOCKET", "")
 	t.Setenv("INUA_INSTANCE", "")
-	if !Wayfire() {
-		t.Error("an automatically discovered Wayfire socket was not seen")
+	if Wayfire() {
+		t.Error("a stale Wayfire socket overrode an active Hyprland signature")
 	}
 
-	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "current-hyprland")
-	if Wayfire() {
-		t.Error("Hyprland reported as Wayfire with an active Hyprland signature")
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "")
+	if !Wayfire() {
+		t.Error("an automatically discovered Wayfire socket was not seen")
 	}
 }

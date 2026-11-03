@@ -15,6 +15,11 @@ boundary and the refactor needed before adding another compositor.
 | `internal/ui` | `shellUI.client` is `*hypr.Client`; `shellUI.snap` is `hypr.Snapshot`; Wayfire state is converted by `wayfireSnapshot`. Actions branch on `s.wayfire != nil` or `s.hyprLua`. |
 | Settings and shortcuts | Hyprland writers (`hyprconf`) and Hyprland dispatchers remain the default. Wayfire has branch-specific writers and commands. |
 
+Session selection follows an explicit `XDG_CURRENT_DESKTOP` name before
+falling back to compositor markers or runtime socket discovery. A leftover
+Wayfire socket must not override a Hyprland session. Qt font writes to
+`kdeglobals` are Wayfire-only.
+
 The Wayfire path currently works through two adapters:
 
 1. `wayfire.Client` implements the neutral action interface (focus, close,
