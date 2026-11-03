@@ -48,6 +48,7 @@ const (
 	dockPreviewThumbHeight = 90
 	dockPreviewCardWidth   = 168
 	dockPreviewCardGap     = 8
+	dockPreviewMaxWidth    = 720
 )
 
 type dock struct {
@@ -1044,7 +1045,10 @@ func (s *shellUI) nextPinned(key string) string {
 	return ""
 }
 
-// showDockPreview shows the app's open windows as thumbnails beside the dock.
+// showDockPreview shows the app's open windows as a row of thumbnails beside
+// the dock. Each picture is the window's own, kept from when it was focused:
+// Wayfire captures whole outputs, so a covered window cannot be recognized
+// from the screen now.
 func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem) {
 	if s.wayfire == nil || len(it.Windows) == 0 {
 		s.closeDockPreview()
@@ -1061,23 +1065,20 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 	hover.ConnectLeave(&s.onDockPreviewHoverLeave)
 	pop.AddController(&hover.EventController)
 
-	columns := int32(2)
 	position := gtk.PosTopValue
 	switch s.cfg.Dock.Position {
 	case "top":
 		position = gtk.PosBottomValue
 	case "left":
-		position, columns = gtk.PosRightValue, 1
+		position = gtk.PosRightValue
 	case "right":
-		position, columns = gtk.PosLeftValue, 1
+		position = gtk.PosLeftValue
 	}
 	pop.SetPosition(position)
 
-	grid := gtk.NewGrid()
-	grid.SetColumnHomogeneous(true)
-	grid.SetColumnSpacing(dockPreviewCardGap)
-	grid.SetRowSpacing(dockPreviewCardGap)
+	row := gtk.NewBox(gtk.OrientationHorizontalValue, dockPreviewCardGap)
 	pictures := make([]*gtk.Picture, len(it.Windows))
+	icons := make([]*gtk.Image, len(it.Windows))
 	for i, window := range it.Windows {
 		card := gtk.NewBox(gtk.OrientationVerticalValue, 4)
 		card.SetSizeRequest(dockPreviewCardWidth, -1)
@@ -1095,56 +1096,65 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 		picture.SetCanShrink(true)
 		picture.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
 		picture.SetContentFit(gtk.ContentFitContainValue)
+		icon := gtk.NewImage()
+		setIcon(icon, it.Icon)
+		icon.SetPixelSize(dockPreviewThumbHeight / 2)
+		icon.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
 		gtkx.Append(card, &label.Widget)
 		gtkx.Append(card, &picture.Widget)
-		grid.Attach(&card.Widget, int32(i)%columns, int32(i)/columns, 1, 1)
-		card.Unref()
-		pictures[i] = picture
+		gtkx.Append(card, &icon.Widget)
+		gtkx.Append(row, &card.Widget)
+		pictures[i], icons[i] = picture, icon
 	}
-	visibleColumns := min(columns, int32(len(it.Windows)))
-	contentWidth := visibleColumns*dockPreviewCardWidth + (visibleColumns-1)*dockPreviewCardGap
 	scroll := gtk.NewScrolledWindow()
-	scroll.SetSizeRequest(contentWidth+20, -1)
-	scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
-	scroll.SetPropagateNaturalWidth(true)
+	scroll.SetPolicy(gtk.PolicyAutomaticValue, gtk.PolicyNeverValue)
 	scroll.SetPropagateNaturalHeight(true)
-	scroll.SetMaxContentHeight(320)
-	scroll.SetChild(&grid.Widget)
-	scroll.SetMinContentWidth(contentWidth)
-	scroll.SetMaxContentWidth(contentWidth)
-	grid.Unref()
+	scroll.SetMaxContentWidth(dockPreviewMaxWidth)
+	scroll.SetChild(&row.Widget)
+	row.Unref()
 	pop.SetChild(&scroll.Widget)
 	scroll.Unref()
 	s.dockPreview, s.dockPreviewKey = pop, key
 	s.dockPreviewGen++
 	gen := s.dockPreviewGen
 
+	cached := make([]string, len(it.Windows))
+	for i, window := range it.Windows {
+		cached[i] = s.wfThumbs[window.Address]
+	}
+	active := s.snap.ActiveToplevel
 	snapshot := s.snap
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
-		// grim captures a whole output, so load every window before showing
-		// the popover to keep it out of its own thumbnails.
-		paths, err := s.windowThumbnails(ctx, snapshot, it.Windows, dockPreviewThumbWidth, dockPreviewThumbHeight)
-		if err != nil {
-			log.Printf("dock preview: capture: %v", err)
-			gtkx.Post(func() {
-				if s.dockPreviewGen == gen && s.dockPreview == pop {
-					s.closeDockPreview()
-				}
-			})
-			return
+		paths := cached
+		// A window that is on top right now can be captured without
+		// guessing; one that is covered has no picture until it is.
+		for i, window := range it.Windows {
+			if paths[i] != "" || window.Address != active {
+				continue
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			fresh, err := s.windowThumbnails(ctx, snapshot, []hypr.Toplevel{window}, dockPreviewThumbWidth, dockPreviewThumbHeight)
+			cancel()
+			if err == nil && len(fresh) == 1 {
+				paths[i] = fresh[0]
+			}
 		}
 		gtkx.Post(func() {
 			if s.dockPreviewGen != gen || s.dockPreview != pop {
 				return
 			}
 			for i, path := range paths {
+				if path == "" {
+					pictures[i].SetVisible(false)
+					continue
+				}
 				if err := setPictureFile(pictures[i], path); err != nil {
 					log.Printf("dock preview: load image: %v", err)
-					s.closeDockPreview()
-					return
+					pictures[i].SetVisible(false)
+					continue
 				}
+				icons[i].SetVisible(false)
+				pictures[i].SetVisible(true)
 			}
 			pop.Popup()
 		})

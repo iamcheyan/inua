@@ -93,41 +93,46 @@ type shellUI struct {
 	dockPreviewKey      string
 	dockPreviewGen      uint64
 	dockPreviewLeaveGen uint64
-	icons               icons
+	// wfThumbs holds each Wayfire window's own picture, captured while it
+	// was focused: Wayfire has no per-window capture, so that is the only
+	// moment a view is certainly on top.
+	wfThumbs    map[string]string
+	wfThumbBusy map[string]bool
+	icons       icons
 	// The wheel over the bars' workspaces, and over the docks.
 	workspaceWheel, dockWheel shell.WheelStep
 
-	bars       map[uintptr]*bar // by GdkMonitor
-	styles     styles
-	clockGen   uintptr // the running clock timer; see restartClock
-	launcher   launcher
-	overview   workspaceOverview
+	bars                   map[uintptr]*bar // by GdkMonitor
+	styles                 styles
+	clockGen               uintptr // the running clock timer; see restartClock
+	launcher               launcher
+	overview               workspaceOverview
 	wfOverview             wayfireOverview
 	wfSwitcher             wayfireSwitcher
 	wayfireMRU             []string
 	wayfireActiveWorkspace int
 	wayfireWinWorkspaces   map[string]int
-	control    control
-	clipboard  clipboardPanel
-	passwords  passwordsPanel
-	agenda     agenda
-	widgets    widgetPage
-	shot       shooter
-	recording  recorder
-	lock       locker
-	auth       authAgent   // the polkit agent
-	portals    portals     // inua's portal backend (docs/portals.md)
-	pass       passPrompts // gpg's passphrases (inua-pinentry)
-	alarms     alarms
-	settings   settings
-	wifi       wifiState // the networks, while a list shows them
-	appmenu    appMenuState
-	menu       menuPanel // the bar's application menu, when open
-	tray       tray
-	osd        osd
-	dictation  dictationCard // dictation as it goes
-	sys        shell.System
-	svc        services
+	control                control
+	clipboard              clipboardPanel
+	passwords              passwordsPanel
+	agenda                 agenda
+	widgets                widgetPage
+	shot                   shooter
+	recording              recorder
+	lock                   locker
+	auth                   authAgent   // the polkit agent
+	portals                portals     // inua's portal backend (docs/portals.md)
+	pass                   passPrompts // gpg's passphrases (inua-pinentry)
+	alarms                 alarms
+	settings               settings
+	wifi                   wifiState // the networks, while a list shows them
+	appmenu                appMenuState
+	menu                   menuPanel // the bar's application menu, when open
+	tray                   tray
+	osd                    osd
+	dictation              dictationCard // dictation as it goes
+	sys                    shell.System
+	svc                    services
 
 	// Long-lived signal handlers, shared by all widgets (see package gtkx).
 	onMonitorsChanged       func(uintptr, uint32, uint32, uint32, uintptr)

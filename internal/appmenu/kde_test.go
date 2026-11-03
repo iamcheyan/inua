@@ -87,6 +87,38 @@ func TestLabelledNeedsRealSubmenus(t *testing.T) {
 	}
 }
 
+func TestFillableBrowserSections(t *testing.T) {
+	entry := Entry{
+		Label: "File",
+		Action: Action{
+			Kind: ActionA11y,
+			Bus:  ":1.123",
+			Path: "/org/a11y/atspi/accessible/root",
+		},
+	}
+	if !Fillable(entry) {
+		t.Error("an AT-SPI section with action but no items was not fillable")
+	}
+	if !fillable([]Entry{entry}) {
+		t.Error("a list of fillable sections was not fillable")
+	}
+	filled := entry
+	filled.Children = []Entry{{Label: "New"}}
+	if Fillable(filled) {
+		t.Error("a section with children counted as fillable")
+	}
+	if !fillable([]Entry{filled}) {
+		t.Error("a list with filled children did not count as fillable")
+	}
+	skeleton := Entry{Label: "File"}
+	if Fillable(skeleton) {
+		t.Error("a skeleton without action counted as fillable")
+	}
+	if fillable([]Entry{skeleton}) {
+		t.Error("a skeleton list counted as fillable")
+	}
+}
+
 // startBus runs a private bus and returns its address, skipping the test
 // when dbus-daemon is not installed.
 func startBus(t *testing.T) string {

@@ -66,6 +66,7 @@ func (s *shellUI) applyWayfireSnapshot(snapshot compositor.Snapshot) {
 	s.snap = s.windowSnap
 	if s.snap.ActiveToplevel != "" {
 		s.recordWayfireFocus(s.snap.ActiveToplevel)
+		s.captureWayfireThumbnail(s.snap.ActiveToplevel)
 	}
 	if s.menu.open && s.menu.pid != focusedPID(s.snap) {
 		s.closeMenu()
@@ -179,4 +180,52 @@ func (s *shellUI) recordWayfireFocus(address string) {
 	}
 	s.wayfireMRU = slices.DeleteFunc(s.wayfireMRU, func(a string) bool { return a == address })
 	s.wayfireMRU = append([]string{address}, s.wayfireMRU...)
+}
+
+// captureWayfireThumbnail waits for the compositor to finish focusing a
+// window, then keeps that window's own picture for the dock preview.
+func (s *shellUI) captureWayfireThumbnail(address string) {
+	if address == "" {
+		return
+	}
+	if s.wfThumbs == nil {
+		s.wfThumbs = map[string]string{}
+	}
+	if s.wfThumbBusy == nil {
+		s.wfThumbBusy = map[string]bool{}
+	}
+	if s.wfThumbBusy[address] {
+		return
+	}
+	s.wfThumbBusy[address] = true
+	snapshot := s.snap
+	time.AfterFunc(350*time.Millisecond, func() {
+		go func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			path := ""
+			var err error
+			for _, window := range snapshot.Toplevels {
+				if window.Address != address {
+					continue
+				}
+				var paths []string
+				paths, err = s.windowThumbnails(ctx, snapshot, []hypr.Toplevel{window}, dockPreviewThumbWidth, dockPreviewThumbHeight)
+				if err == nil && len(paths) == 1 {
+					path = paths[0]
+				}
+				break
+			}
+			gtkx.Post(func() {
+				s.wfThumbBusy[address] = false
+				if err != nil {
+					log.Printf("dock preview: cache %s: %v", address, err)
+					return
+				}
+				if path != "" {
+					s.wfThumbs[address] = path
+				}
+			})
+		}()
+	})
 }

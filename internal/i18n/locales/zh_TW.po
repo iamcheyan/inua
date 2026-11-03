@@ -3544,7 +3544,7 @@ msgstr[0] "……還有 %d 項"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:295
 #: internal/termui/wsmenu.go:129
-#: internal/ui/appmenu.go:555
+#: internal/ui/appmenu.go:597
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -9656,7 +9656,7 @@ msgstr "無法搜尋:%s"
 #: internal/lightui/sysmon.go:55
 #: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
-#: internal/ui/dock.go:544
+#: internal/ui/dock.go:545
 #: internal/ui/portal_ask.go:80
 msgid "Quit"
 msgstr "退出"
@@ -12859,7 +12859,7 @@ msgid "Start the shell again"
 msgstr "再次啟動shell"
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:489
+#: internal/ui/appmenu.go:531
 msgid "Close Window"
 msgstr "關閉窗口"
 
@@ -13043,22 +13043,22 @@ msgid "%s · workspace %s"
 msgstr "%[1]s·工作區%[2]s"
 
 #: internal/shell/launcher_actions.go:33
-#: internal/ui/dock.go:535
+#: internal/ui/dock.go:536
 msgid "New Window"
 msgstr "新視窗"
 
 #: internal/shell/launcher_actions.go:39
-#: internal/ui/dock.go:538
+#: internal/ui/dock.go:539
 msgid "Remove from Dock"
 msgstr "從 Dock 移除"
 
 #: internal/shell/launcher_actions.go:41
-#: internal/ui/dock.go:540
+#: internal/ui/dock.go:541
 msgid "Keep in Dock"
 msgstr "釘選至 Dock"
 
 #: internal/shell/launcher_actions.go:47
-#: internal/ui/dock.go:546
+#: internal/ui/dock.go:547
 msgid "Quit (%d windows)"
 msgstr "退出(%d視窗)"
 
@@ -14378,16 +14378,16 @@ msgstr "鬧鐘 · %02d:%02d"
 msgid "Snooze"
 msgstr "稍後提醒"
 
-#: internal/ui/appmenu.go:488
-#: internal/ui/appmenu.go:538
+#: internal/ui/appmenu.go:530
+#: internal/ui/appmenu.go:580
 msgid "About %s"
 msgstr ""
 
-#: internal/ui/appmenu.go:490
+#: internal/ui/appmenu.go:532
 msgid "Quit %s"
 msgstr ""
 
-#: internal/ui/appmenu.go:553
+#: internal/ui/appmenu.go:595
 msgid "Process %d"
 msgstr ""
 
