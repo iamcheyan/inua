@@ -233,12 +233,11 @@ func (s *shellUI) appendAppMenu(b *bar, entry appmenu.Entry, pid int) {
 	button.SetLabel(entry.Label)
 	button.SetHasFrame(false)
 	button.SetFocusable(false)
-	button.SetSensitive(entry.Enabled || len(entry.Children) > 0)
-	// A section is an entry with items under it: everything else is an item
-	// that acts. An application that builds its sections only when its own
-	// menu opens (a browser's) gives no items, and is left out of the bar
-	// rather than shown as a row of sections that open nothing.
-	section := len(entry.Children) > 0
+	button.SetSensitive(entry.Enabled || len(entry.Children) > 0 || appmenu.Fillable(entry))
+	// A section is anything that opens a menu of its own: one with items
+	// already, or one the application builds when it opens (a browser's,
+	// appmenu.Fillable). Everything else is an item that acts.
+	section := len(entry.Children) > 0 || appmenu.Fillable(entry)
 	token := s.addAppMenuTarget(b, entry, pid, section)
 	button.SetName(token)
 	button.ConnectClicked(&s.onAppMenuClicked)
@@ -442,6 +441,10 @@ func (s *shellUI) bindAppMenuHandlers() {
 		if !ok {
 			return
 		}
+		if len(target.entry.Children) == 0 && appmenu.Fillable(target.entry) {
+			s.fillSection(&button.Widget, target, false)
+			return
+		}
 		if target.section {
 			s.openAppMenu(target.bar, &button, target)
 			return
@@ -451,6 +454,45 @@ func (s *shellUI) bindAppMenuHandlers() {
 		}
 		s.activateAppMenu(target)
 	}
+}
+
+// fillSection reads a section the application builds only when it opens,
+// then shows it: in the open menu's place, or under its button.
+func (s *shellUI) fillSection(button *gtk.Widget, target appMenuTarget, already bool) {
+	pid, label := target.pid, target.entry.Label
+	go func() {
+		entries, err := s.appmenu.client.Fill(target.entry)
+		gtkx.Post(func() {
+			if focusedPID(s.snap) != pid {
+				return // the bar moved on while it was read
+			}
+			if err != nil {
+				log.Printf("appmenu fill %q: %v", label, err)
+			}
+			filled := target
+			filled.entry.Children = entries
+			if target.bar != nil {
+				for k, t := range target.bar.appMenuTargets {
+					if t.pid == pid && t.entry.Label == label {
+						t.entry.Children = entries
+						target.bar.appMenuTargets[k] = t
+					}
+				}
+			}
+			if already {
+				m := &s.menu
+				if !m.open || m.closing || m.pid != pid {
+					return // closed while it was read
+				}
+				m.section = label
+				m.entries, m.stack = entries, nil
+				s.fillMenu()
+				return
+			}
+			btn := (*gtk.Button)(unsafe.Pointer(button))
+			s.openAppMenu(target.bar, btn, filled)
+		})
+	}()
 }
 
 // logAppMenuBounds writes each section button's box to the log, so a test

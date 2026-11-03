@@ -15,6 +15,12 @@ reach as well, adjusts the volume 5% a notch; on the workspaces, it goes
 to the next workspace the bar shows (down) or the previous one (up), a
 notch a step, stopping at the ends. One per monitor.
 
+*Workspaces* in Settings keeps each bar to its own monitor's or shows every
+monitor's; *Do not show* (`bar.workspaces = "none"`) hides the marks, the
+bar keeping the rest. *Clock* takes a format from the presets or any
+strftime text, and *Date language* picks the weekday, month and AM/PM
+names (`bar.clock_language`) independently of the interface's.
+
 ## Engawa
 
 Engawa (縁側, a veranda at the edge of a house) is the widget page, the
@@ -253,6 +259,9 @@ room) or off the pinned ones to unpin; a drawer at the end slides up the
 light apps, the Assistant, Settings, the launcher and Screenshot, grouped
 by kind; optional autohide. Starting a light app that is open brings
 its window to the current workspace.
+
+On Wayfire, hovering a running app shows its open windows as thumbnails in a
+scrollable grid beside the dock; the app icon stays visible at rest.
 
 ## Settings
 
@@ -697,6 +706,14 @@ The apps can take another theme than the bar and dock (*Apps* under the
 theme swatches, `style.app_theme`): inua's own apps and the settings
 window follow it, and other apps are asked to be light or dark by it. The
 launcher and control center stay with the bar.
+
+Under Wayfire, Appearance adds two choices of its own. *Window borders*
+sets the Xwayland frame's colors, thickness and title bar through
+Wayfire's `[decoration]` (`style.wayfire_decoration`, written to
+`wayfire.ini`; a restart applies it, and *Wayfire config* restores your
+own values). *Control skin* shapes inua's GTK controls at once
+(`style.wayfire_controls`): hairline, soft rounded or outline square.
+Both are hidden where Wayfire is not the compositor.
 
 ## Wallpaper
 

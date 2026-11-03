@@ -206,6 +206,15 @@ func markNative(entries []Entry) {
 	}
 }
 
+// Fill reads the items of a section the application builds when it opens
+// (a browser's File, Edit …): it opens that section once and closes it.
+func (c *Client) Fill(e Entry) ([]Entry, error) {
+	if c.A11y == nil {
+		return nil, fmt.Errorf("appmenu: no accessibility bus")
+	}
+	return c.A11y.FillSection(e)
+}
+
 // Activate invokes the entry's action on the application that owns it.
 func (c *Client) Activate(e Entry) error {
 	switch e.Action.Kind {

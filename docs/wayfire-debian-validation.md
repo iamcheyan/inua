@@ -59,7 +59,12 @@ because output capture and overview state integration are not connected;
 
 Inua writes managed keyboard and touchpad options to `[input]`, monitor mode,
 position and scale to `[output:NAME]`, and recorded shell shortcuts to
-`[command]` in `wayfire.ini`. Wayfire must restart to load these file changes.
+`[command]` in `wayfire.ini`, and the window-border preset chosen in
+Settings to `[decoration]` (the user's own colors and sizes return when
+“Wayfire config” is chosen again). Wayfire must restart to load these file
+changes. Inua's control skin under Wayfire (`style.wayfire_controls`) is a
+GTK stylesheet and changes at once.
+
 Its output query does not report alternate modes; the settings page offers the
 current mode and preferred mode. Output enable/disable, mirroring, automatic
 relative positions, lid-triggered switching, and listing existing Wayfire
@@ -106,8 +111,10 @@ window, and retains pinned app IDs from Inua's config. Its menu can pin,
 unpin, launch and close apps; window focus and close use Wayfire's
 `window-rules` IPC methods. `Super+Tab` opens Inua's launcher in window mode.
 The foreign-toplevel protocol does not provide workspace membership, so the
-window list does not show workspace names. Overview and per-window capture
-remain unavailable.
+window list does not show workspace names. On hover, a running app's Dock
+preview captures its open windows from the output with `grim`, crops them by
+view geometry and places them opposite the Dock edge. The workspace overview
+and screenshot tool's window picker remain unavailable.
 
 ## Remaining runtime acceptance
 
