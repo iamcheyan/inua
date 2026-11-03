@@ -67,10 +67,11 @@ type Options struct {
 }
 
 type shellUI struct {
-	opts  Options
-	cfg   config.Config
-	app   *gtk.Application
-	layer bool // compositor supports layer-shell and it is in use
+	opts           Options
+	cfg            config.Config
+	app            *gtk.Application
+	layer          bool // compositor supports layer-shell and it is in use
+	wayfireSession bool // GTK popups on layer-shell surfaces block Wayfire's main loop
 
 	appsStamp string           // the applications folders as last scanned (desktop.Stamp)
 	apps      []*desktop.Entry // the desktop entries as last scanned
@@ -470,10 +471,22 @@ func (s *shellUI) load(name string, scope *gtkx.Scope) *gtkx.Builder {
 	return b
 }
 
+var wayfireTooltipsDisabled bool
+
+func setTooltip(pointer uintptr, text string) {
+	w := gtk.WidgetNewFromInternalPtr(pointer)
+	w.SetTooltipText(text)
+	if wayfireTooltipsDisabled {
+		w.SetHasTooltip(false)
+	}
+}
+
 func (s *shellUI) start() {
 	// A desktop shell must survive having no windows while outputs change
 	// or while restoring a lock before its desktop surfaces can be created.
 	s.app.Hold()
+	s.wayfireSession = desktop.Wayfire()
+	wayfireTooltipsDisabled = s.wayfireSession
 	s.loadStyles()
 	s.loadWallpaper()
 
@@ -555,7 +568,7 @@ func (s *shellUI) start() {
 		s.startTray()
 	}
 
-	if desktop.Wayfire() {
+	if s.wayfireSession {
 		s.startWayfire()
 	} else if paths, err := hypr.PathsFromEnv(); err != nil {
 		log.Printf("hyprland: %v", err)

@@ -103,7 +103,7 @@ func (s *shellUI) updateOverviewWidgets(o *workspaceOverview) {
 				window.rect = rect
 			}
 			if window.title != w.Title {
-				window.button.SetTooltipText(w.Title)
+				setTooltip(window.button.GoPointer(), w.Title)
 				window.label.SetText(w.Title)
 				window.title = w.Title
 			}

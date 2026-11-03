@@ -495,7 +495,7 @@ func keyringRow(g keyring.Reads) *gtk.Button {
 	b := gtk.NewButton()
 	b.AddCssClass("keyring-read")
 	b.SetChild(&row.Widget)
-	b.SetTooltipText(i18n.T("Show the details"))
+	setTooltip(b.GoPointer(), i18n.T("Show the details"))
 	return b
 }
 
@@ -633,7 +633,7 @@ func (s *shellUI) listTrustedApps() {
 		sub.AddCssClass("mono-sub")
 		sub.SetXalign(0)
 		sub.SetEllipsize(2)
-		sub.SetTooltipText(where)
+		setTooltip(sub.GoPointer(), where)
 		gtkx.Append(text, &sub.Widget)
 		gtkx.Append(row, &text.Widget)
 		if !a.app.Since.IsZero() {
@@ -646,7 +646,7 @@ func (s *shellUI) listTrustedApps() {
 		rm.AddCssClass("outlined")
 		rm.SetValign(gtk.AlignCenterValue)
 		rm.SetName(fmt.Sprintf("keyring-untrust:%d", i))
-		rm.SetTooltipText(i18n.T("Stop trusting it: it is asked about at its next read"))
+		setTooltip(rm.GoPointer(), i18n.T("Stop trusting it: it is asked about at its next read"))
 		rm.ConnectClicked(&s.onSettingsButton)
 		gtkx.Append(row, &rm.Widget)
 		gtkx.Append(&k.trusted, &row.Widget)
@@ -667,8 +667,9 @@ func (s *shellUI) listKeyringPaths() {
 		l.AddCssClass("mono-sub")
 		l.SetXalign(0)
 		l.SetHexpand(true)
-		l.SetEllipsize(2) // middle
-		l.SetTooltipText(r.Pattern)
+		l.SetEllipsize(2)
+		setTooltip( // middle
+			l.GoPointer(), r.Pattern)
 		gtkx.Append(row, &l.Widget)
 		if !r.Since.IsZero() {
 			when := gtk.NewLabel(i18n.Tf("since %s", i18n.Time(r.Since.Local(), "Jan 2, 2006")))
@@ -680,7 +681,7 @@ func (s *shellUI) listKeyringPaths() {
 		rm.AddCssClass("outlined")
 		rm.SetValign(gtk.AlignCenterValue)
 		rm.SetName(fmt.Sprintf("keyring-path-rm:%d", i))
-		rm.SetTooltipText(i18n.T("Stop allowing it: its programs are asked about again"))
+		setTooltip(rm.GoPointer(), i18n.T("Stop allowing it: its programs are asked about again"))
 		rm.ConnectClicked(&s.onSettingsButton)
 		gtkx.Append(row, &rm.Widget)
 		gtkx.Append(&k.paths, &row.Widget)

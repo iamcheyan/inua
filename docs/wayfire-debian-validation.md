@@ -81,6 +81,7 @@ shortcuts remain unavailable with reasons in Settings.
 | Managed display, input and shortcut settings | `[input]`, `[output:NAME]`, `[command]` config sections | Written to `wayfire.ini`; restart required; alternate modes are not listed by output IPC |
 | Output enablement / mirror / lid switch | No verified Inua Wayfire equivalent is connected | Unavailable in Settings |
 | Launcher / control center | Shell IPC and Wayland surfaces | Both opened; screenshots captured |
+| Dock/bar hover popups | GTK tooltips and dock preview | Wayfire layer-shell tooltip popup blocked GTK dispatch; shell now clears `has-tooltip` and skips dock preview. In WayVNC, a 5-second dock hover, repeated shell-state queries and an Apps drawer click remained responsive |
 | Overview UI / cards | Shared GTK overview | Blocked: `overview open` returns unavailable on Wayfire because capture/state integration is missing |
 | Output capture | `zwlr_screencopy_manager_v1`, `grim` | Three distinct full-output screenshots captured, hashed and variance-checked |
 | Resize / workspace creation / shortcut listing / lock | Not implemented | Unsupported |

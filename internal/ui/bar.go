@@ -224,7 +224,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	b.voice.ConnectClicked(&s.onVoiceButton)
 	b.voice.SetVisible(s.cfg.Voice.Enable)
 	b.voiceIcon.SetFromIconName(shell.VoiceIcon(s.sys.Voice))
-	b.voiceIcon.SetTooltipText(shell.VoiceTooltip(s.sys.Voice))
+	setTooltip(b.voiceIcon.GoPointer(), shell.VoiceTooltip(s.sys.Voice))
 	b.clipboard.ConnectClicked(&s.onClipboardButton)
 	b.clipboard.SetVisible(s.cfg.Clipboard.Enable && s.cfg.Clipboard.Bar)
 	b.passwords.ConnectClicked(&s.onPasswordsButton)
@@ -588,7 +588,7 @@ func (b *bar) setWorkspaces(s *shellUI, wss []hypr.Workspace) {
 			btn.SetName(fmt.Sprint(w.ID))
 			btn.SetFocusable(false)
 			btn.SetValign(gtk.AlignCenterValue)
-			btn.SetTooltipText(i18n.Tf("Workspace %s", w.Name))
+			setTooltip(btn.GoPointer(), i18n.Tf("Workspace %s", w.Name))
 			btn.ConnectClicked(&s.onWorkspaceClicked)
 			b.workspaces.InsertChildAfter(&btn.Widget, prev)
 			btn.Unref() // the box holds it
@@ -631,7 +631,7 @@ func (b *bar) styleWorkspaces() {
 // setStatus updates the bar's status button.
 func (b *bar) setStatus(st *shell.System) {
 	b.netIcon.SetFromIconName(shell.NetIcon(st.Net))
-	b.netIcon.SetTooltipText(shell.NetTooltip(st.Net))
+	setTooltip(b.netIcon.GoPointer(), shell.NetTooltip(st.Net))
 	b.btIcon.SetVisible(st.BT.Available && st.BT.Powered)
 	b.btIcon.SetFromIconName("bluetooth-active-symbolic")
 	b.volIcon.SetFromIconName(shell.VolumeIcon(st.Audio))

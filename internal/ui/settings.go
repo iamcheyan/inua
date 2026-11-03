@@ -791,7 +791,7 @@ func (s *shellUI) buildSwatches() {
 		btn.SetName("theme:" + name)
 		btn.AddCssClass("swatch")
 		btn.AddCssClass("sw-" + name)
-		btn.SetTooltipText(name)
+		setTooltip(btn.GoPointer(), name)
 
 		box := gtk.NewBox(gtk.OrientationVerticalValue, 6)
 		ground := gtk.NewBox(gtk.OrientationHorizontalValue, 4)
@@ -817,7 +817,7 @@ func (s *shellUI) buildSwatches() {
 			menu.SetButton(3)
 			menu.ConnectPressed(&s.onThemeMenu)
 			btn.AddController(&menu.EventController)
-			btn.SetTooltipText(i18n.Tf("%s · yours: right-click for more", name))
+			setTooltip(btn.GoPointer(), i18n.Tf("%s · yours: right-click for more", name))
 		}
 		st.themes.Append(&btn.Widget)
 		btn.Unref() // the flow box holds it
@@ -834,7 +834,7 @@ func (s *shellUI) addThemeTile() *gtk.Widget {
 	btn.SetName("theme_add")
 	btn.AddCssClass("swatch")
 	btn.AddCssClass("add")
-	btn.SetTooltipText(i18n.T("A CSS file of @define-color lines, kept in themes beside config.toml"))
+	setTooltip(btn.GoPointer(), i18n.T("A CSS file of @define-color lines, kept in themes beside config.toml"))
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 6)
 	ground := gtk.NewBox(gtk.OrientationHorizontalValue, 0)
 	ground.AddCssClass("ground")
@@ -1299,7 +1299,7 @@ func (s *shellUI) showDockSettings() {
 			btn := gtk.NewButtonFromIconName(b.icon)
 			btn.AddCssClass("plain")
 			btn.SetName("pin-" + b.action + ":" + id)
-			btn.SetTooltipText(b.tip)
+			setTooltip(btn.GoPointer(), b.tip)
 			btn.SetSensitive(b.ok)
 			btn.SetValign(gtk.AlignCenterValue)
 			btn.ConnectClicked(&s.onSettingsButton)

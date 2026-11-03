@@ -2284,7 +2284,7 @@ msgstr ""
 #: internal/mailui/compose.go:474
 #: internal/ui/settings_ai.go:583
 #: internal/ui/settings_keyring.go:645
-#: internal/ui/settings_keyring.go:679
+#: internal/ui/settings_keyring.go:680
 #: internal/vmui/window.go:1976
 #: ui/stocks.ui:292
 msgid "Remove"
@@ -8948,7 +8948,7 @@ msgstr ""
 #: internal/ui/askpass.go:488
 #: internal/ui/settings_about.go:234
 #: internal/ui/settings_keyring.go:640
-#: internal/ui/settings_keyring.go:674
+#: internal/ui/settings_keyring.go:675
 msgid "Jan 2, 2006"
 msgstr ""
 
@@ -9624,27 +9624,27 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: internal/lightui/pass.go:1230
-#: internal/ui/settings_keyring.go:694
+#: internal/ui/settings_keyring.go:695
 msgid "trusted"
 msgstr ""
 
 #: internal/lightui/pass.go:1232
-#: internal/ui/settings_keyring.go:696
+#: internal/ui/settings_keyring.go:697
 msgid "allowed once"
 msgstr ""
 
 #: internal/lightui/pass.go:1234
-#: internal/ui/settings_keyring.go:698
+#: internal/ui/settings_keyring.go:699
 msgid "allowed, and trusted from now on"
 msgstr ""
 
 #: internal/lightui/pass.go:1236
-#: internal/ui/settings_keyring.go:700
+#: internal/ui/settings_keyring.go:701
 msgid "denied"
 msgstr ""
 
 #: internal/lightui/pass.go:1238
-#: internal/ui/settings_keyring.go:702
+#: internal/ui/settings_keyring.go:703
 msgid "allowed: no one to ask"
 msgstr ""
 
@@ -10449,7 +10449,7 @@ msgstr ""
 #: internal/termui/prefs.go:345
 #: internal/ui/settings_ai.go:272
 #: internal/ui/settings_keyring.go:572
-#: internal/ui/shortcuts.go:151
+#: internal/ui/shortcuts.go:152
 #: internal/ui/voice_page.go:313
 msgid "None"
 msgstr ""
@@ -13916,7 +13916,7 @@ msgstr ""
 
 #: internal/term/web/strings.go:126
 #: internal/ui/settings_keyring.go:640
-#: internal/ui/settings_keyring.go:674
+#: internal/ui/settings_keyring.go:675
 msgid "since %s"
 msgstr ""
 
@@ -14342,7 +14342,7 @@ msgid "Click a key, then press the new one; Backspace frees it"
 msgstr ""
 
 #: internal/termui/prefs.go:357
-#: internal/ui/shortcuts.go:202
+#: internal/ui/shortcuts.go:203
 msgid "Press keys…"
 msgstr ""
 
@@ -16422,7 +16422,7 @@ msgstr ""
 msgid "%s reads “%s”"
 msgstr ""
 
-#: internal/ui/settings_keyring.go:683
+#: internal/ui/settings_keyring.go:684
 msgid "Stop allowing it: its programs are asked about again"
 msgstr ""
 
@@ -16715,31 +16715,31 @@ msgstr ""
 msgid "Lua function"
 msgstr ""
 
-#: internal/ui/shortcuts.go:153
+#: internal/ui/shortcuts.go:154
 msgid "Existing Wayfire shortcuts are not listed"
 msgstr ""
 
-#: internal/ui/shortcuts.go:197
+#: internal/ui/shortcuts.go:198
 msgid "Click, then press the new shortcut"
 msgstr ""
 
-#: internal/ui/shortcuts.go:206
+#: internal/ui/shortcuts.go:207
 msgid "Not set"
 msgstr ""
 
-#: internal/ui/shortcuts.go:232
+#: internal/ui/shortcuts.go:233
 msgid "Remove this command"
 msgstr ""
 
-#: internal/ui/shortcuts.go:234
+#: internal/ui/shortcuts.go:235
 msgid "Use hyprland.conf's shortcut again"
 msgstr ""
 
-#: internal/ui/shortcuts.go:236
+#: internal/ui/shortcuts.go:237
 msgid "Use Wayfire's shortcut again"
 msgstr ""
 
-#: internal/ui/shortcuts.go:240
+#: internal/ui/shortcuts.go:241
 msgid "Turn the shortcut off"
 msgstr ""
 

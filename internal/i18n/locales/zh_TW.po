@@ -2281,7 +2281,7 @@ msgstr "執行的內容：systemctl suspend"
 #: internal/mailui/compose.go:474
 #: internal/ui/settings_ai.go:583
 #: internal/ui/settings_keyring.go:645
-#: internal/ui/settings_keyring.go:679
+#: internal/ui/settings_keyring.go:680
 #: internal/vmui/window.go:1976
 #: ui/stocks.ui:292
 msgid "Remove"
@@ -8913,7 +8913,7 @@ msgstr "建立於 %s"
 #: internal/ui/askpass.go:488
 #: internal/ui/settings_about.go:234
 #: internal/ui/settings_keyring.go:640
-#: internal/ui/settings_keyring.go:674
+#: internal/ui/settings_keyring.go:675
 msgid "Jan 2, 2006"
 msgstr "2006年1月2日"
 
@@ -9577,27 +9577,27 @@ msgid_plural "%s · %d times"
 msgstr[0] "%s · %d 次"
 
 #: internal/lightui/pass.go:1230
-#: internal/ui/settings_keyring.go:694
+#: internal/ui/settings_keyring.go:695
 msgid "trusted"
 msgstr "已信任"
 
 #: internal/lightui/pass.go:1232
-#: internal/ui/settings_keyring.go:696
+#: internal/ui/settings_keyring.go:697
 msgid "allowed once"
 msgstr "允許一次"
 
 #: internal/lightui/pass.go:1234
-#: internal/ui/settings_keyring.go:698
+#: internal/ui/settings_keyring.go:699
 msgid "allowed, and trusted from now on"
 msgstr "已允許，今後信任"
 
 #: internal/lightui/pass.go:1236
-#: internal/ui/settings_keyring.go:700
+#: internal/ui/settings_keyring.go:701
 msgid "denied"
 msgstr "已拒絕"
 
 #: internal/lightui/pass.go:1238
-#: internal/ui/settings_keyring.go:702
+#: internal/ui/settings_keyring.go:703
 msgid "allowed: no one to ask"
 msgstr "已允許：無人可詢問"
 
@@ -10398,7 +10398,7 @@ msgstr "使用中"
 #: internal/termui/prefs.go:345
 #: internal/ui/settings_ai.go:272
 #: internal/ui/settings_keyring.go:572
-#: internal/ui/shortcuts.go:151
+#: internal/ui/shortcuts.go:152
 #: internal/ui/voice_page.go:313
 msgid "None"
 msgstr "無"
@@ -13847,7 +13847,7 @@ msgstr ""
 
 #: internal/term/web/strings.go:126
 #: internal/ui/settings_keyring.go:640
-#: internal/ui/settings_keyring.go:674
+#: internal/ui/settings_keyring.go:675
 msgid "since %s"
 msgstr "自 %s 起"
 
@@ -14269,7 +14269,7 @@ msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "點選一個按鍵，再按下新的按鍵；Backspace 清除"
 
 #: internal/termui/prefs.go:357
-#: internal/ui/shortcuts.go:202
+#: internal/ui/shortcuts.go:203
 msgid "Press keys…"
 msgstr "按鍵…"
 
@@ -16331,7 +16331,7 @@ msgstr "沒有與「%s」相符的受信任應用程式。"
 msgid "%s reads “%s”"
 msgstr "%s 讀取「%s」"
 
-#: internal/ui/settings_keyring.go:683
+#: internal/ui/settings_keyring.go:684
 msgid "Stop allowing it: its programs are asked about again"
 msgstr "不再允許：會重新詢問其中的程式"
 
@@ -16624,31 +16624,31 @@ msgstr "來自 Hyprland"
 msgid "Lua function"
 msgstr "Lua 函式"
 
-#: internal/ui/shortcuts.go:153
+#: internal/ui/shortcuts.go:154
 msgid "Existing Wayfire shortcuts are not listed"
 msgstr ""
 
-#: internal/ui/shortcuts.go:197
+#: internal/ui/shortcuts.go:198
 msgid "Click, then press the new shortcut"
 msgstr "按一下，然後按新的快速鍵"
 
-#: internal/ui/shortcuts.go:206
+#: internal/ui/shortcuts.go:207
 msgid "Not set"
 msgstr "未設定"
 
-#: internal/ui/shortcuts.go:232
+#: internal/ui/shortcuts.go:233
 msgid "Remove this command"
 msgstr "刪除該指令"
 
-#: internal/ui/shortcuts.go:234
+#: internal/ui/shortcuts.go:235
 msgid "Use hyprland.conf's shortcut again"
 msgstr "再次使用hyprland.conf的捷徑"
 
-#: internal/ui/shortcuts.go:236
+#: internal/ui/shortcuts.go:237
 msgid "Use Wayfire's shortcut again"
 msgstr ""
 
-#: internal/ui/shortcuts.go:240
+#: internal/ui/shortcuts.go:241
 msgid "Turn the shortcut off"
 msgstr "關閉快捷方式"
 

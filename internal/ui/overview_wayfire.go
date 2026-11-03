@@ -828,7 +828,7 @@ func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
 	titleLbl.SetHalign(gtk.AlignStartValue)
 	titleLbl.SetHexpand(true)
 	titleLbl.SetEllipsize(pango.EllipsizeEndValue)
-	titleLbl.SetTooltipText(it.title)
+	setTooltip(titleLbl.GoPointer(), it.title)
 	titleLbl.SetCanTarget(false)
 	gtkx.Append(topBar, &titleLbl.Widget)
 
@@ -836,7 +836,7 @@ func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
 	closeBtn.SetName("wf-close:" + it.address)
 	closeBtn.SetLabel("×")
 	closeBtn.AddCssClass("wayfire-card-close")
-	closeBtn.SetTooltipText(i18n.T("Close window"))
+	setTooltip(closeBtn.GoPointer(), i18n.T("Close window"))
 	closeBtn.SetValign(gtk.AlignStartValue)
 	closeBtn.ConnectClicked(&s.wfOverview.onCardClose)
 	gtkx.Append(topBar, &closeBtn.Widget)

@@ -988,7 +988,7 @@ func (s *shellUI) launcherCell(cellUI string, i int) *gtk.Widget {
 	ui.Close()
 	setIcon(&icon, r.Icon)
 	title.SetText(r.Title)
-	cell.SetTooltipText(cmp.Or(r.Detail, r.Title))
+	setTooltip(cell.GoPointer(), cmp.Or(r.Detail, r.Title))
 	cell.SetHexpand(false) // its name's expanding must not widen it
 	s.markLauncherResult(&cell.Widget, i)
 	refs.Release()

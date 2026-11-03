@@ -303,7 +303,7 @@ func (s *shellUI) benchHead(d *benchDialog, h benchHead) {
 		r.summary.AddCssClass("flat")
 		r.summary.AddCssClass("bench-summary")
 		r.summary.SetHalign(gtk.AlignStartValue)
-		r.summary.SetTooltipText(i18n.T("Show what the model answered"))
+		setTooltip(r.summary.GoPointer(), i18n.T("Show what the model answered"))
 		r.summary.ConnectClicked(&d.onRow)
 		texts.Append(&r.summary.Widget)
 		gtkx.Append(line, &texts.Widget)

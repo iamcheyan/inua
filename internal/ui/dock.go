@@ -412,7 +412,7 @@ func (s *shellUI) newDockButton(it shell.DockItem, size int) *dockButton {
 	btn := gtk.NewButton()
 	btn.AddCssClass("dock-item")
 	btn.SetName("dock:" + it.Key)
-	btn.SetTooltipText(it.Name)
+	setTooltip(btn.GoPointer(), it.Name)
 	btn.SetFocusable(false)
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 3)
 	img := gtk.NewImage()
@@ -456,7 +456,7 @@ func (s *shellUI) newDockButton(it shell.DockItem, size int) *dockButton {
 // updateDockButton shows whether the app runs, is in front, or is starting;
 // the classes drive CSS transitions and animations.
 func (s *shellUI) updateDockButton(db *dockButton, it shell.DockItem) {
-	db.btn.SetTooltipText(it.Name)
+	setTooltip(db.btn.GoPointer(), it.Name)
 	toggle(&db.dot.Widget, "running", len(it.Windows) > 0 && !it.Active)
 	toggle(&db.dot.Widget, "active", it.Active)
 	toggle(&db.img.Widget, "launching", s.dockState.launching[it.Key])
@@ -599,6 +599,9 @@ func (s *shellUI) bindDockHandlers() {
 		}
 	}
 	s.onDockHover = func(c gtk.EventControllerMotion, _, _ float64) {
+		if s.wayfireSession {
+			return // GTK popups on Wayfire layer-shell surfaces block dispatch.
+		}
 		s.dockPreviewLeaveGen++ // cancel a pending close while on a dock item
 		w := c.GetWidget()
 		if w == nil {
@@ -1102,7 +1105,7 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 		label.SetXalign(0)
 		label.SetEllipsize(pango.EllipsizeEndValue)
 		label.SetMaxWidthChars(24)
-		label.SetTooltipText(title)
+		setTooltip(label.GoPointer(), title)
 		image := gtk.NewImage()
 		image.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
 		image.SetPixelSize(max(dockPreviewThumbWidth, dockPreviewThumbHeight))
@@ -1212,7 +1215,7 @@ func (s *shellUI) showDockPreviewList(pop *gtk.Popover, it shell.DockItem) {
 		titleLbl.SetXalign(0)
 		titleLbl.SetEllipsize(pango.EllipsizeEndValue)
 		titleLbl.SetMaxWidthChars(36)
-		titleLbl.SetTooltipText(title)
+		setTooltip(titleLbl.GoPointer(), title)
 		gtkx.Append(texts, &titleLbl.Widget)
 		appLbl := gtk.NewLabel(it.Name)
 		appLbl.AddCssClass("sub")

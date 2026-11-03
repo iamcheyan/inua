@@ -134,9 +134,9 @@ func (s *shellUI) showDisplays() {
 	d.lidOff.SetActive(s.cfg.Displays.LidOff)
 	d.lidOff.SetSensitive(!desktop.Wayfire())
 	if desktop.Wayfire() {
-		d.lidOff.SetTooltipText(i18n.T("Wayfire does not expose a lid switch binding that can disable and restore this output"))
+		setTooltip(d.lidOff.GoPointer(), i18n.T("Wayfire does not expose a lid switch binding that can disable and restore this output"))
 	} else {
-		d.lidOff.SetTooltipText("")
+		setTooltip(d.lidOff.GoPointer(), "")
 	}
 	s.settings.filling = false
 	d.gen++
@@ -260,7 +260,7 @@ func (s *shellUI) outputSection(o display.Output, outputs []display.Output, on i
 	// The last display on stays on; one off for the lid follows the lid.
 	sw.SetSensitive(!desktop.Wayfire() && !lidOff && (o.Disabled || on > 1))
 	if desktop.Wayfire() {
-		sw.SetTooltipText(i18n.T("Inua has no verified Wayfire output enable or disable option"))
+		setTooltip(sw.GoPointer(), i18n.T("Inua has no verified Wayfire output enable or disable option"))
 	}
 	d.controls[sw.GoPointer()] = displayControl{output: o, kind: "on"}
 	sw.ConnectStateSet(&s.onDisplaySwitch)
@@ -396,7 +396,7 @@ func (s *shellUI) outputSection(o display.Output, outputs []display.Output, on i
 	row, _ = displayRow(source, "")
 	reset := gtk.NewButtonWithLabel(resetLabel)
 	reset.SetValign(gtk.AlignCenterValue)
-	reset.SetTooltipText(i18n.T("Stop setting this display in inua"))
+	setTooltip(reset.GoPointer(), i18n.T("Stop setting this display in inua"))
 	reset.SetSensitive(ruled)
 	d.controls[reset.GoPointer()] = displayControl{output: o, kind: "reset"}
 	reset.ConnectClicked(&s.onDisplayButton)

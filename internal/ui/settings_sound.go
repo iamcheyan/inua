@@ -191,9 +191,9 @@ func (s *shellUI) showVolumeRow(v *volumeRow, st system.VolumeState, icon string
 	}
 	v.mute.SetIconName(icon)
 	if st.Muted {
-		v.mute.SetTooltipText(i18n.T("Unmute"))
+		setTooltip(v.mute.GoPointer(), i18n.T("Unmute"))
 	} else {
-		v.mute.SetTooltipText(i18n.T("Mute"))
+		setTooltip(v.mute.GoPointer(), i18n.T("Mute"))
 	}
 }
 

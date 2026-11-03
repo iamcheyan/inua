@@ -653,7 +653,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 			b := gtk.NewButton()
 			b.SetName("window:" + w.Address)
 			b.SetSizeRequest(int32(pw), int32(ph))
-			b.SetTooltipText(w.Title) // the label is cut short in small previews
+			setTooltip(b.GoPointer(), w.Title) // the label is cut short in small previews
 			ww := &overviewWindowWidgets{button: b, rect: [4]float64{x, y, pw, ph}, title: w.Title}
 			o.windowWidgets[w.Address] = ww
 			b.AddCssClass("overview-window")
