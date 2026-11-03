@@ -61,7 +61,7 @@ type settings struct {
 	barMenu                                                        gtk.Switch
 	appMenuOff, appMenuOn                                          gtk.Box
 	appMenuOffAdd, appMenuOnAdd                                    gtk.DropDown
-	appMenuOffAdds, appMenuOnAdds                                  []string // the IDs each lists
+	appMenuOffAdds, appMenuOnAdds                                  []string        // the IDs each lists
 	appMenuOffModel, appMenuOnModel                                *gtk.StringList // kept, or the model is collected
 	clipEnable, clipBar, clipPaste                                 gtk.Switch
 	dockSize, dockPosition, barDensity                             gtk.DropDown
@@ -78,7 +78,9 @@ type settings struct {
 	appTheme                                                       gtk.DropDown
 	appThemes, appThemeLabels                                      []string // appTheme's choices, "" first
 	tpSpeed, transparency, radius                                  gtk.Scale
+	barIconSize, barIconSpacing                                    gtk.Scale
 	transparencyVal, radiusVal, clipStats                          gtk.Label
+	barIconSizeVal, barIconSpacingVal                              gtk.Label
 	clipClear, clipReveal                                          gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
@@ -196,7 +198,7 @@ func (s *shellUI) bindSettingsHandlers() {
 			s.aiSwitch(sw.GetName(), on, &c)
 		}
 		s.changeSettings(c) // applyConfig starts or stops the menu with it
-		return false       // let the switch move
+		return false        // let the switch move
 	}
 	s.onSettingsDrop = func(ptr, _, _ uintptr) {
 		d := s.settings.drops[ptr]
@@ -371,6 +373,20 @@ func (s *shellUI) bindSettingsHandlers() {
 			s.changeSettings(c)
 			return false
 		}
+		if r.GetName() == "bar_icon_size" {
+			val := int(math.Round(v))
+			c.Bar.IconSize = val
+			s.settings.barIconSizeVal.SetText(i18n.Tf("%d px", val))
+			s.changeSettings(c)
+			return false
+		}
+		if r.GetName() == "bar_icon_spacing" {
+			val := int(math.Round(v))
+			c.Bar.IconSpacing = val
+			s.settings.barIconSpacingVal.SetText(i18n.Tf("%d px", val))
+			s.changeSettings(c)
+			return false
+		}
 		v = math.Round(max(-1, min(v, 1))*20) / 20 // the steps of 0.05
 		c.Input.TouchpadSpeed = &v
 		s.changeSettings(c)
@@ -469,6 +485,10 @@ func (s *shellUI) openSettings() {
 	ui.Get("bg_fit", &st.bgFit)
 	ui.Get("ws", &st.ws)
 	ui.Get("bar_density", &st.barDensity)
+	ui.Get("bar_icon_size", &st.barIconSize)
+	ui.Get("bar_icon_spacing", &st.barIconSpacing)
+	ui.Get("bar_icon_size_val", &st.barIconSizeVal)
+	ui.Get("bar_icon_spacing_val", &st.barIconSpacingVal)
 	ui.Get("launch_mode", &st.launchMode)
 	ui.Get("icons", &st.icons)
 	ui.Get("appstyles", &st.appstyles)
@@ -574,6 +594,8 @@ func (s *shellUI) openSettings() {
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
 	st.transparency.ConnectChangeValue(&s.onSettingsScale)
 	st.radius.ConnectChangeValue(&s.onSettingsScale)
+	st.barIconSize.ConnectChangeValue(&s.onSettingsScale)
+	st.barIconSpacing.ConnectChangeValue(&s.onSettingsScale)
 	s.buildSwatches()
 	st.hyprKb = s.hyprKbOptions()
 	st.sc.binds = s.hyprBinds()
@@ -803,6 +825,10 @@ func (s *shellUI) showSettings() {
 	st.ws.SetSelected(uint32(max(0, slices.Index(wsChoices, c.Bar.Workspaces))))
 	st.launchMode.SetSelected(uint32(max(0, slices.Index(modeChoices, c.Launcher.Mode))))
 	st.barDensity.SetSelected(uint32(max(0, slices.Index(barDensities, c.Bar.Density))))
+	st.barIconSize.SetValue(float64(c.Bar.IconSize))
+	st.barIconSizeVal.SetText(i18n.Tf("%d px", c.Bar.IconSize))
+	st.barIconSpacing.SetValue(float64(c.Bar.IconSpacing))
+	st.barIconSpacingVal.SetText(i18n.Tf("%d px", c.Bar.IconSpacing))
 	st.transparency.SetValue(float64(c.Style.Transparency))
 	st.transparencyVal.SetText(i18n.Tf("%d%%", c.Style.Transparency))
 	st.radius.SetValue(float64(c.Style.Radius))

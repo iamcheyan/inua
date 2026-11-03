@@ -82,11 +82,11 @@ ApplicationWindow bar {
       };
 
       end-widget: Box end {
-        spacing: 0;
+        spacing: 2;
 
         Box tray {
           styles ["tray"]
-          spacing: 0;
+          spacing: 2;
           valign: center;
         }
 
@@ -121,14 +121,18 @@ ApplicationWindow bar {
           focusable: false;
           visible: false;
           tooltip-text: _("Passwords");
-          icon-name: "dialog-password-symbolic";
+          Image password_icon {
+            icon-name: "dialog-password-symbolic";
+          }
         }
 
         Button clipboard {
           styles ["clipboard"]
           focusable: false;
           tooltip-text: _("Clipboard history");
-          icon-name: "edit-paste-symbolic";
+          Image clipboard_icon {
+            icon-name: "edit-paste-symbolic";
+          }
         }
 
         // Opens the notification center: a bell, a moon while Focus is on,
@@ -177,7 +181,7 @@ ApplicationWindow bar {
           focusable: false;
           tooltip-text:  _("Control Center");
 
-          Box {
+          Box status_icons {
             spacing: 4;
 
             Image net_icon {
