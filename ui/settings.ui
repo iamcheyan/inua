@@ -267,14 +267,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="valign">3</property>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="title"/></style>
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Appearance preset</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="sub"/></style>
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Pairs window borders and control skin; both remain adjustable below.</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
@@ -290,7 +294,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                       </object>
                                     </child>
-                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
                                     <child>
                                       <object class="GtkBox">
                                         <style>
@@ -304,14 +310,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="valign">3</property>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="title"/></style>
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Window borders</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="sub"/></style>
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Xwayland window frame color, thickness and title bar; restart Wayfire to apply</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
@@ -327,10 +337,14 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                       </object>
                                     </child>
-                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
                                     <child>
                                       <object class="GtkBox">
-                                        <style><class name="row"/></style>
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
                                         <property name="spacing">16</property>
                                         <child>
                                           <object class="GtkBox">
@@ -339,14 +353,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="valign">3</property>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="title"/></style>
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Control skin</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="sub"/></style>
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Shape and borders of Inua's buttons, fields and switches; applies immediately</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
@@ -1477,7 +1495,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                         <child>
                                           <object class="GtkBox">
-                                            <style><class name="row"/></style>
+                                            <style>
+                                              <class name="row"/>
+                                            </style>
                                             <property name="spacing">12</property>
                                             <child>
                                               <object class="GtkBox">
@@ -1485,7 +1505,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <property name="hexpand">true</property>
                                                 <child>
                                                   <object class="GtkLabel">
-                                                    <style><class name="title"/></style>
+                                                    <style>
+                                                      <class name="title"/>
+                                                    </style>
                                                     <property name="label" translatable="yes">Format preset</property>
                                                     <property name="xalign">0</property>
                                                   </object>
@@ -1503,7 +1525,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <property name="hexpand">true</property>
                                                 <child>
                                                   <object class="GtkLabel">
-                                                    <style><class name="title"/></style>
+                                                    <style>
+                                                      <class name="title"/>
+                                                    </style>
                                                     <property name="label" translatable="yes">Date language</property>
                                                     <property name="xalign">0</property>
                                                   </object>
@@ -1904,14 +1928,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="valign">3</property>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="title"/></style>
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Overview cards</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="sub"/></style>
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Window pictures, or application icons alone</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
@@ -1927,7 +1955,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                       </object>
                                     </child>
-                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
                                     <child>
                                       <object class="GtkBox">
                                         <style>
@@ -1941,14 +1971,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="valign">3</property>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="title"/></style>
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Scope</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="sub"/></style>
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
                                                 <property name="label" translatable="yes">With several displays: this display's windows, or every window</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
@@ -1972,7 +2006,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                       </object>
                                     </child>
-                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
                                     <child>
                                       <object class="GtkBox">
                                         <style>
@@ -1986,14 +2022,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <property name="valign">3</property>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="title"/></style>
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Dock preview</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">
-                                                <style><class name="sub"/></style>
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
                                                 <property name="label" translatable="yes">What hovering an app shows: window pictures, or a list of its windows</property>
                                                 <property name="xalign">0</property>
                                                 <property name="wrap">true</property>
@@ -2009,7 +2049,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                         </child>
                                       </object>
                                     </child>
-                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
                                     <child>
                                       <object class="GtkBox">
                                         <style>
