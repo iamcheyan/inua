@@ -22,7 +22,6 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hyprconf"
 	"github.com/lyricat/inua/internal/i18n"
-	"github.com/lyricat/inua/internal/qttheme"
 	"github.com/lyricat/inua/internal/shell"
 	"github.com/lyricat/inua/internal/wayfire"
 	"github.com/lyricat/inua/internal/wayfireconf"
@@ -80,10 +79,9 @@ func (s *shellUI) applyWayfire() {
 		}
 		frame := c.FrameOf(c.ThemeCSS(s.theme(), s.readUI))
 		changed, err := wayfireconf.Apply(path, c, frame)
-		if err == nil && s.wayfire != nil {
-			// Wayfire reads its options live: push the frame every time, so a
-			// theme change repaints at once and a value another program left
-			// behind is corrected.
+		if err == nil && changed && s.wayfire != nil {
+			// Wayfire reads its options live: push the frame now, so a
+			// theme change repaints the windows without a restart.
 			style := c.Style.WayfireDecoration
 			if want, ok := config.ThemeDecoration[c.Style.Theme]; ok && style != "wayfire" {
 				style = want
@@ -96,12 +94,6 @@ func (s *shellUI) applyWayfire() {
 					log.Printf("Wayfire frame: %v", ferr)
 				}
 				cancel()
-			}
-		}
-		if qpath := qtConfigPath(); qpath != "" {
-			// Qt draws its own title bars and menus; they read this file.
-			if _, qerr := qttheme.Apply(qpath, c.Style.Font, c.Style.TextScale); qerr != nil {
-				log.Printf("qt: %v", qerr)
 			}
 		}
 		gtkx.Post(func() {
