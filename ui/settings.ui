@@ -1942,6 +1942,51 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <child>
                                               <object class="GtkLabel">
                                                 <style><class name="title"/></style>
+                                                <property name="label" translatable="yes">Scope</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="sub"/></style>
+                                                <property name="label" translatable="yes">With several displays: this display's windows, or every window</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkDropDown" id="overview_scope">
+                                            <property name="name">overview_scope</property>
+                                            <property name="valign">3</property>
+                                            <property name="model">
+                                              <object class="GtkStringList">
+                                                <items>
+                                                  <item translatable="yes">This display's</item>
+                                                  <item translatable="yes">All displays</item>
+                                                </items>
+                                              </object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="title"/></style>
                                                 <property name="label" translatable="yes">Dock preview</property>
                                                 <property name="xalign">0</property>
                                               </object>

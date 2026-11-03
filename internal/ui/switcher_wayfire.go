@@ -196,6 +196,11 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 		if t.Address == "" {
 			continue
 		}
+		// overview.per_monitor: the switcher keeps to the focused display's
+		// windows, as the overview does, instead of every window there is.
+		if s.cfg.Overview.PerMonitor && len(s.snap.Monitors) > 1 && t.Monitor != focusedMon {
+			continue
+		}
 		appName := t.Class
 		iconName := t.Class
 		if entry := s.dockState.apps.ForClass(t.Class); entry != nil {

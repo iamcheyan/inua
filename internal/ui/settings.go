@@ -54,31 +54,32 @@ type settings struct {
 	setThemes map[string]*gtk.IconTheme
 	themeMenu string // the theme of yours a right click opened a menu for
 
-	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus  gtk.Switch
-	noteHistory                                                     gtk.Switch
-	bgOwn                                                           gtk.Box // the image's rows, hidden while inua draws
-	bgAnother                                                       gtk.Button
-	barOn, dockOn, dockHide, dockDrawer, dockFlushBar, overviewDock gtk.Switch
-	barMenu                                                         gtk.Switch
-	clipEnable, clipBar, clipPaste                                  gtk.Switch
-	dockSize, dockPosition, dockPreview, overviewStyle, barDensity  gtk.DropDown
-	dockPinned                                                      gtk.Box
-	bgImage, bgColor, clock, terminal, lock, screenshot             gtk.Entry
-	clipSensitive                                                   gtk.Entry
-	clockPreset, clockLanguage                                      gtk.DropDown
-	clockLanguageNames                                              []string
-	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner      gtk.DropDown
-	clipLimit                                                       gtk.DropDown
-	clipLimits                                                      []int // clipLimit's choices
-	textScale                                                       gtk.DropDown
-	textScales                                                      []int    // textScale's choices
-	iconSets                                                        []string // icons' choices
-	appIconSets                                                     []string // appIcons' choices
-	appTheme                                                        gtk.DropDown
-	appThemes, appThemeLabels                                       []string // appTheme's choices, "" first
-	wayfireAppearance                                               gtk.Box
-	wayfireTheme, wayfireDecoration, wayfireControls                gtk.DropDown
-	wayfireDecorationNames, wayfireControlNames                     []string
+	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus    gtk.Switch
+	noteHistory                                                       gtk.Switch
+	bgOwn                                                             gtk.Box // the image's rows, hidden while inua draws
+	bgAnother                                                         gtk.Button
+	barOn, dockOn, dockHide, dockDrawer, dockFlushBar, overviewDock   gtk.Switch
+	barMenu                                                           gtk.Switch
+	clipEnable, clipBar, clipPaste                                    gtk.Switch
+	dockSize, dockPosition, dockPreview, overviewStyle, overviewScope gtk.DropDown
+	barDensity                                                        gtk.DropDown
+	dockPinned                                                        gtk.Box
+	bgImage, bgColor, clock, terminal, lock, screenshot               gtk.Entry
+	clipSensitive                                                     gtk.Entry
+	clockPreset, clockLanguage                                        gtk.DropDown
+	clockLanguageNames                                                []string
+	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner        gtk.DropDown
+	clipLimit                                                         gtk.DropDown
+	clipLimits                                                        []int // clipLimit's choices
+	textScale                                                         gtk.DropDown
+	textScales                                                        []int    // textScale's choices
+	iconSets                                                          []string // icons' choices
+	appIconSets                                                       []string // appIcons' choices
+	appTheme                                                          gtk.DropDown
+	appThemes, appThemeLabels                                         []string // appTheme's choices, "" first
+	wayfireAppearance                                                 gtk.Box
+	wayfireTheme, wayfireDecoration, wayfireControls                  gtk.DropDown
+	wayfireDecorationNames, wayfireControlNames                       []string
 
 	tpSpeed, transparency, radius         gtk.Scale
 	barIconSize, barIconSpacing           gtk.Scale
@@ -240,6 +241,8 @@ func (s *shellUI) bindSettingsHandlers() {
 		case "overview_style":
 			// One choice while the pictures are settled.
 			c.Overview.Style = "icons"
+		case "overview_scope":
+			c.Overview.PerMonitor = i == 0
 		case "dock_preview":
 			c.Dock.Preview = "list"
 		case "banner":
@@ -543,6 +546,7 @@ func (s *shellUI) openSettings() {
 	st.textScales = nil // a new dropdown, without its choices
 	st.iconSets, st.appIconSets, st.styleTiles = nil, nil, nil
 	ui.Get("overview_style", &st.overviewStyle)
+	ui.Get("overview_scope", &st.overviewScope)
 	ui.Get("dock_preview", &st.dockPreview)
 	// Only the icon styles are offered while the pictures are settled: the
 	// setting keeps its "thumbnails" value for when they come back.
@@ -636,7 +640,7 @@ func (s *shellUI) openSettings() {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, d := range []*gtk.DropDown{&st.clockPreset, &st.clockLanguage, &st.wayfireTheme, &st.wayfireDecoration, &st.wayfireControls, &st.overviewStyle, &st.dockPreview} {
+	for _, d := range []*gtk.DropDown{&st.clockPreset, &st.clockLanguage, &st.wayfireTheme, &st.wayfireDecoration, &st.wayfireControls, &st.overviewStyle, &st.overviewScope, &st.dockPreview} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
@@ -1227,6 +1231,11 @@ func (s *shellUI) showDockSettings() {
 	st.dockSize.SetSelected(uint32(max(0, slices.Index(config.DockSizes, c.Dock.Size))))
 	st.dockPosition.SetSelected(uint32(max(0, slices.Index(config.DockPositions, c.Dock.Position))))
 	st.overviewStyle.SetSelected(0)
+	if c.Overview.PerMonitor {
+		st.overviewScope.SetSelected(0)
+	} else {
+		st.overviewScope.SetSelected(1)
+	}
 	st.dockPreview.SetSelected(0)
 	gtkx.Clear(&st.dockPinned)
 	if len(c.Dock.Pinned) == 0 {

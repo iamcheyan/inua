@@ -1423,6 +1423,43 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
+                        label:  _("Scope");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("With several displays: this display's windows, or every window");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown overview_scope {
+                      name: "overview_scope";
+                      valign: center;
+
+                      model: StringList {
+                        strings [
+                          _("This display's"),
+                          _("All displays"),
+                        ]
+                      };
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
                         label:  _("Dock preview");
                         xalign: 0;
                       }
