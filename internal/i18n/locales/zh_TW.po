@@ -3085,7 +3085,7 @@ msgstr "已複製"
 #: internal/term/web/strings.go:36
 #: internal/termui/prefsweb.go:92
 #: internal/ui/askpass.go:232
-#: internal/ui/passwords.go:647
+#: internal/ui/passwords.go:646
 #: internal/vmui/window.go:896
 #: ui/disk.ui:697
 #: ui/gpg.ui:662
@@ -9361,7 +9361,7 @@ msgid "Right-click to rename or move"
 msgstr "右鍵點擊以重新命名或移動"
 
 #: internal/lightui/pass.go:488
-#: internal/ui/passwords.go:488
+#: internal/ui/passwords.go:487
 msgid "Nothing matches. Each word is looked for in the whole path."
 msgstr "沒有符合項目。每個詞都會在整個路徑中尋找。"
 
@@ -9387,32 +9387,32 @@ msgid "Add a one-time code"
 msgstr "新增一次性驗證碼"
 
 #: internal/lightui/pass.go:699
-#: internal/ui/passwords.go:561
+#: internal/ui/passwords.go:560
 msgid "USERNAME"
 msgstr "使用者名稱"
 
 #: internal/lightui/pass.go:702
-#: internal/ui/passwords.go:564
+#: internal/ui/passwords.go:563
 msgid "PASSWORD"
 msgstr "密碼"
 
 #: internal/lightui/pass.go:707
 #: internal/lightui/pass.go:759
-#: internal/ui/passwords.go:567
-#: internal/ui/passwords.go:570
+#: internal/ui/passwords.go:566
+#: internal/ui/passwords.go:569
 #: ui/pass.ui:802
 msgid "ONE-TIME CODE"
 msgstr "一次性驗證碼"
 
 #: internal/lightui/pass.go:714
-#: internal/ui/passwords.go:577
+#: internal/ui/passwords.go:576
 msgid "NOTES"
 msgstr "備註"
 
 #: internal/lightui/pass.go:743
 #: internal/mailui/formatted.go:184
 #: internal/term/desktop/desktop_linux.go:43
-#: internal/ui/passwords.go:644
+#: internal/ui/passwords.go:643
 #: internal/vmui/window.go:2709
 #: internal/vmui/window.go:2710
 msgid "Show"
@@ -9420,13 +9420,13 @@ msgstr "顯示"
 
 #: internal/lightui/pass.go:745
 #: internal/ui/notify.go:410
-#: internal/ui/passwords.go:642
+#: internal/ui/passwords.go:641
 msgid "Hide"
 msgstr "隱藏"
 
 #: internal/lightui/pass.go:788
 #: internal/lightui/pass_otp.go:246
-#: internal/ui/passwords.go:661
+#: internal/ui/passwords.go:660
 msgid "%d second left"
 msgid_plural "%d seconds left"
 msgstr[0] "剩 %d 秒"
@@ -10552,7 +10552,7 @@ msgstr "無法讀取天氣。\n%s"
 
 #: internal/lightui/weather.go:276
 #: internal/mailui/panel.go:307
-#: internal/ui/passwords.go:534
+#: internal/ui/passwords.go:533
 #: ui/mail-compose.ui:456
 #: ui/pass.ui:375
 msgid "Try again"
@@ -14961,31 +14961,31 @@ msgid "%d RESULT"
 msgid_plural "%d RESULTS"
 msgstr[0] "%d 個結果"
 
-#: internal/ui/overview.go:505
+#: internal/ui/overview.go:510
 msgid "No workspaces"
 msgstr "沒有工作區"
 
-#: internal/ui/overview.go:507
+#: internal/ui/overview.go:512
 msgid "No matches"
 msgstr "沒有匹配項"
 
-#: internal/ui/overview.go:626
+#: internal/ui/overview.go:632
 msgid "＋  New workspace"
 msgstr "＋  新工作區"
 
-#: internal/ui/overview.go:968
+#: internal/ui/overview.go:998
 msgid "Filter by window title or app"
 msgstr "按視窗標題或應用程式過濾"
 
-#: internal/ui/overview.go:984
+#: internal/ui/overview.go:1014
 msgid "TYPE TO FILTER WINDOWS"
 msgstr "輸入以篩選視窗"
 
-#: internal/ui/overview.go:997
+#: internal/ui/overview.go:1027
 msgid "Type or / to filter windows   Esc · clear / close   Arrows / Tab · select   Middle click · close   Ctrl+Shift+X · kill   Drag · move"
 msgstr "鍵入 或 / 來過濾視窗 Esc · 清除/關閉箭頭/ Tab · 選擇中按一下 · 關閉 Ctrl+Shift+X · 刪除 拖曳 · 移動"
 
-#: internal/ui/overview.go:1041
+#: internal/ui/overview.go:1071
 msgid "inua overview"
 msgstr "inua概述"
 
@@ -15035,57 +15035,57 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: internal/ui/passwords.go:222
+#: internal/ui/passwords.go:221
 msgid "[PASSWORDS]"
 msgstr "[密碼]"
 
-#: internal/ui/passwords.go:229
+#: internal/ui/passwords.go:228
 #: ui/pass.ui:38
 msgid "Search every entry"
 msgstr "搜尋所有項目"
 
-#: internal/ui/passwords.go:283
+#: internal/ui/passwords.go:282
 #: ui/bar.ui:158
 #: ui/settings.ui:1732
 msgid "Passwords"
 msgstr "密碼"
 
-#: internal/ui/passwords.go:484
+#: internal/ui/passwords.go:483
 msgid "No password store. pass init YOUR-GPG-KEY-ID makes one in ~/.password-store."
 msgstr "沒有密碼庫。pass init 你的GPG金鑰ID 會在 ~/.password-store 建立一個。"
 
-#: internal/ui/passwords.go:486
+#: internal/ui/passwords.go:485
 msgid "%d entry · type to search · Escape to close"
 msgid_plural "%d entries · type to search · Escape to close"
 msgstr[0] "%d 個項目 · 輸入以搜尋 · Esc 關閉"
 
-#: internal/ui/passwords.go:490
+#: internal/ui/passwords.go:489
 msgid "%d found, the first %d shown · another word narrows them"
 msgid_plural "%d found, the first %d shown · another word narrows them"
 msgstr[0] "找到 %d 個，顯示前 %d 個 · 再加一個詞可縮小範圍"
 
-#: internal/ui/passwords.go:492
+#: internal/ui/passwords.go:491
 msgid "%d found · Enter opens · Escape to close"
 msgid_plural "%d found · Enter opens · Escape to close"
 msgstr[0] "找到 %d 個 · Enter 開啟 · Esc 關閉"
 
-#: internal/ui/passwords.go:505
+#: internal/ui/passwords.go:504
 msgid "Back to the results"
 msgstr "返回結果"
 
-#: internal/ui/passwords.go:540
+#: internal/ui/passwords.go:539
 msgid "It could not be decrypted · Escape to close"
 msgstr "無法解密 · Esc 關閉"
 
-#: internal/ui/passwords.go:548
+#: internal/ui/passwords.go:547
 msgid "Decrypting; gpg may ask for your passphrase."
 msgstr "正在解密；gpg 可能會詢問你的密碼短語。"
 
-#: internal/ui/passwords.go:554
+#: internal/ui/passwords.go:553
 msgid "Escape to close"
 msgstr "Esc 關閉"
 
-#: internal/ui/passwords.go:579
+#: internal/ui/passwords.go:578
 msgid "Copied secrets are cleared after %d seconds · Enter copies the password"
 msgstr "複製的機密 %d 秒後清除 · Enter 複製密碼"
 
