@@ -144,22 +144,43 @@ func TestTerminalArgv(t *testing.T) {
 	check([]string{"kitty", "--single-instance"}, "kitty --single-instance", true)
 }
 
-// A Wayfire session is named by the desktop or by the socket Wayfire gives
-// the apps it starts; another session is not.
+// Wayfire detection follows the current session before checking sockets or
+// markers that may have been left in the shared user environment.
 func TestWayfire(t *testing.T) {
 	t.Setenv("WAYFIRE_SOCKET", "")
 	t.Setenv("_WAYFIRE_SOCKET", "")
+	t.Setenv("INUA_INSTANCE", "")
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "")
+	runtime := t.TempDir()
+	t.Setenv("XDG_RUNTIME_DIR", runtime)
+	if err := os.WriteFile(filepath.Join(runtime, "wayfire-wayland-1.socket"), nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
 	t.Setenv("XDG_CURRENT_DESKTOP", "Hyprland")
 	if Wayfire() {
-		t.Error("Hyprland reported as Wayfire")
+		t.Error("Hyprland reported as Wayfire with a leftover socket")
 	}
+	t.Setenv("WAYFIRE_SOCKET", "/run/user/1000/wayfire-wayland-1.socket")
+	t.Setenv("INUA_INSTANCE", "wayfire")
+	if Wayfire() {
+		t.Error("Hyprland reported as Wayfire with leftover Wayfire markers")
+	}
+
 	t.Setenv("XDG_CURRENT_DESKTOP", "Wayfire:Inua")
 	if !Wayfire() {
-		t.Error("the desktop name was not seen")
+		t.Error("the current Wayfire desktop name was not seen")
 	}
+
 	t.Setenv("XDG_CURRENT_DESKTOP", "")
-	t.Setenv("_WAYFIRE_SOCKET", "/run/user/1000/wayfire-wayland-1.socket")
+	t.Setenv("WAYFIRE_SOCKET", "")
+	t.Setenv("INUA_INSTANCE", "")
 	if !Wayfire() {
-		t.Error("the socket was not seen")
+		t.Error("an automatically discovered Wayfire socket was not seen")
+	}
+
+	t.Setenv("HYPRLAND_INSTANCE_SIGNATURE", "current-hyprland")
+	if Wayfire() {
+		t.Error("Hyprland reported as Wayfire with an active Hyprland signature")
 	}
 }

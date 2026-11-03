@@ -99,10 +99,19 @@ func CurrentDesktops() []string {
 	return out
 }
 
-// Wayfire reports whether this is a Wayfire session: the apps Wayfire
-// starts carry its socket, and the session's desktop names Wayfire.
+// Wayfire reports whether this is a Wayfire session. The session's desktop
+// name takes precedence over compositor sockets left in the shared runtime
+// directory when switching sessions.
 func Wayfire() bool {
-	if os.Getenv("WAYFIRE_SOCKET") != "" || os.Getenv("_WAYFIRE_SOCKET") != "" {
+	desktops := CurrentDesktops()
+	if slices.ContainsFunc(desktops, func(d string) bool { return strings.Contains(d, "hyprland") }) ||
+		os.Getenv("HYPRLAND_INSTANCE_SIGNATURE") != "" {
+		return false
+	}
+	if slices.ContainsFunc(desktops, func(d string) bool { return strings.Contains(d, "wayfire") }) {
+		return true
+	}
+	if os.Getenv("WAYFIRE_SOCKET") != "" || os.Getenv("_WAYFIRE_SOCKET") != "" || os.Getenv("INUA_INSTANCE") == "wayfire" {
 		return true
 	}
 	if runtime := os.Getenv("XDG_RUNTIME_DIR"); runtime != "" {
@@ -110,12 +119,7 @@ func Wayfire() bool {
 			return true
 		}
 	}
-	if os.Getenv("INUA_INSTANCE") == "wayfire" {
-		return true
-	}
-	return slices.ContainsFunc(CurrentDesktops(), func(d string) bool {
-		return strings.Contains(d, "wayfire")
-	})
+	return false
 }
 
 // UserMimeApps is the user's own mimeapps.list, where choices are written.
