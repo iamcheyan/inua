@@ -16,7 +16,7 @@ func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
 		c.Bar.Enable, q(c.Bar.Density), c.Bar.IconSize, c.Bar.IconSpacing, q(c.Bar.Clock), q(c.Bar.ClockLanguage), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass, c.Bar.Menu,
-		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor, c.Overview.ShowDock,
+		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor, c.Overview.ShowDock, q(c.Overview.Style),
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
@@ -27,7 +27,7 @@ func Format(c Config) string {
 		c.Displays.LidOff, monitors(c.Displays.Monitors),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
-		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
+		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, q(c.Dock.Preview), c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Widgets.Enable, c.Widgets.Swipe, list(c.Widgets.Apps), widgetPlaces(c.Widgets.Places),
 		c.Voice.Enable, c.Voice.PushToTalk, q(c.Voice.Engine), q(c.Voice.Show),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision), q(c.Assistant.Transcription),
@@ -274,6 +274,8 @@ mru = %t
 per_monitor = %t
 # Show the dock above the workspace overview while it is open.
 show_dock = %t
+# What the overview shows on its cards: "thumbnails" or "icons".
+style = %s
 
 [control]
 # Shell commands run by the control center's buttons.
@@ -500,6 +502,8 @@ position = %s
 # Hide the dock until the pointer reaches its screen edge. false: windows
 # make room for it.
 autohide = %t
+# What hovering a dock app shows: "thumbnails" or "list".
+preview = %s
 
 # Icon size in pixels (24 to 96).
 size = %d

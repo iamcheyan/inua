@@ -46,7 +46,7 @@ window.overview, window.widgets { background: transparent; }
    gets no pointer from Hyprland, so it is all but clear. */
 window.launcher-catch { background: rgba(0, 0, 0, 0.004); }
 
-window.bar, window.widgets, window.launcher, window.control, window.agenda, window.banners, window.osd, window.center, window.settings, window.screenshot, window.shot-drawer-win, window.lock, window.polkit, window.drawer-overlay, window.clipboard-panel, popover.menu {
+window.bar, window.widgets, window.launcher, window.control, window.agenda, window.banners, window.osd, window.center, window.settings, window.screenshot, window.shot-drawer-win, window.lock, window.polkit, window.drawer-overlay, window.clipboard-panel, window.appmenu, popover.menu {
   font-family: "Zen Kaku Gothic New", "Noto Sans CJK JP", "Noto Sans CJK SC", sans-serif;
   font-size: 13px;
   color: @t0;
@@ -337,6 +337,11 @@ button.plain.tight, button.image-button.tight { min-width: 20px; min-height: 20p
 .bar .island .app-menu { margin-left: 2px; }
 .bar .island .app-menu button { min-height: 24px; min-width: 0; padding: 0 5px; color: @t1; }
 .bar .island .app-menu button:hover { color: @t0; }
+/* The section names (File, Edit …) are the same size as the application's
+   name before them: a button's text is not the island's title otherwise,
+   and the menus read as larger than the thing that opened them. */
+.bar .island .app-menu button label { font-size: 13px; }
+
 
 /* min-width: 0 too, else GTK's icon buttons are wider than the bell. */
 .bar .island button.status, .bar .island button.passwords, .bar .island button.clipboard, .bar .island button.notes, .bar .island button.voice, .bar .island button.clock-button, .bar .island .tray button {
@@ -2676,6 +2681,25 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .wayfire-tile-stage {
   border-radius: 6px;
   background: @panel;
+}
+/* Icon cards: no wallpaper or pictures behind them, just the application
+   icons, as the Mac's Mission Control shows windows. */
+.wayfire-workspace-thumb.icons {
+  background: alpha(@surface, 0.9);
+}
+.wayfire-workspace-thumb.icons .wayfire-workspace-empty-icon {
+  color: @t2;
+}
+.dock-preview-list {
+  padding: 4px;
+  min-width: 220px;
+}
+.dock-preview-row {
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.dock-preview-row:hover {
+  background: alpha(@accent, 0.09);
 }
 .wayfire-tile-thumb {
   border-radius: 6px;

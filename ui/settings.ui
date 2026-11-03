@@ -268,6 +268,43 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                             <child>
                                               <object class="GtkLabel">
                                                 <style><class name="title"/></style>
+                                                <property name="label" translatable="yes">Appearance preset</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="sub"/></style>
+                                                <property name="label" translatable="yes">Pairs window borders and control skin; both remain adjustable below.</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkDropDown" id="wayfire_theme">
+                                            <property name="name">wayfire_theme</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="title"/></style>
                                                 <property name="label" translatable="yes">Window borders</property>
                                                 <property name="xalign">0</property>
                                               </object>
@@ -1854,6 +1891,80 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                     <child>
                                       <object class="GtkSeparator"></object>
                                     </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="title"/></style>
+                                                <property name="label" translatable="yes">Overview cards</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="sub"/></style>
+                                                <property name="label" translatable="yes">Window pictures, or application icons alone</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkDropDown" id="overview_style">
+                                            <property name="name">overview_style</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child><object class="GtkSeparator"/></child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="title"/></style>
+                                                <property name="label" translatable="yes">Dock preview</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style><class name="sub"/></style>
+                                                <property name="label" translatable="yes">What hovering an app shows: window pictures, or a list of its windows</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkDropDown" id="dock_preview">
+                                            <property name="name">dock_preview</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child><object class="GtkSeparator"/></child>
                                     <child>
                                       <object class="GtkBox">
                                         <style>

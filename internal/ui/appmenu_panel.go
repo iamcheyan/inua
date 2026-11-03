@@ -211,6 +211,15 @@ func (s *shellUI) appendMenuColumn(entries []appmenu.Entry, prefix []int) *gtk.B
 
 		box := gtk.NewBox(gtk.OrientationHorizontalValue, 10)
 		box.AddCssClass("menu-row")
+		if entry.Toggle != "" {
+			// The system's menu carries the icon of each action, as the
+			// control center's power buttons do.
+			icon := gtk.NewImage()
+			icon.AddCssClass("menu-icon")
+			setIcon(icon, entry.Toggle)
+			icon.SetPixelSize(14)
+			box.Append(&icon.Widget)
+		}
 		label := gtk.NewLabel(entry.Label)
 		label.SetXalign(0)
 		label.SetHexpand(true)

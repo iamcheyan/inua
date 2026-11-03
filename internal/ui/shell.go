@@ -41,6 +41,7 @@ import (
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/portalconf"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/system"
 	"github.com/lyricat/inua/internal/wayfire"
 	layouts "github.com/lyricat/inua/ui"
 )
@@ -98,6 +99,7 @@ type shellUI struct {
 	// moment a view is certainly on top.
 	wfThumbs    map[string]string
 	wfThumbBusy map[string]bool
+	distro      system.Distribution
 	icons       icons
 	// The wheel over the bars' workspaces, and over the docks.
 	workspaceWheel, dockWheel shell.WheelStep
@@ -402,7 +404,7 @@ func Run(opts Options) int {
 	// The settings' file choosers through inua's picker, when it is on.
 	restore := gtkx.ForcePortals(portalconf.PickerOn())
 	app := gtk.NewApplication(shell.AppID, gio.GApplicationNonUniqueValue)
-	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}}
+	s := &shellUI{opts: opts, cfg: opts.Config, app: app, bars: map[uintptr]*bar{}, distro: system.ReadDistribution("/")}
 	s.pass.slot = make(chan struct{}, 1) // before the control socket serves
 	activate := func(gio.Application) {
 		restore() // the display is open

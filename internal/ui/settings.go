@@ -61,7 +61,7 @@ type settings struct {
 	barOn, dockOn, dockHide, dockDrawer, dockFlushBar, overviewDock gtk.Switch
 	barMenu                                                         gtk.Switch
 	clipEnable, clipBar, clipPaste                                  gtk.Switch
-	dockSize, dockPosition, barDensity                              gtk.DropDown
+	dockSize, dockPosition, dockPreview, overviewStyle, barDensity  gtk.DropDown
 	dockPinned                                                      gtk.Box
 	bgImage, bgColor, clock, terminal, lock, screenshot             gtk.Entry
 	clipSensitive                                                   gtk.Entry
@@ -77,7 +77,7 @@ type settings struct {
 	appTheme                                                        gtk.DropDown
 	appThemes, appThemeLabels                                       []string // appTheme's choices, "" first
 	wayfireAppearance                                               gtk.Box
-	wayfireDecoration, wayfireControls                              gtk.DropDown
+	wayfireTheme, wayfireDecoration, wayfireControls                gtk.DropDown
 	wayfireDecorationNames, wayfireControlNames                     []string
 
 	tpSpeed, transparency, radius         gtk.Scale
@@ -237,6 +237,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			}
 		case "dock_position":
 			c.Dock.Position = pick(config.DockPositions, i, c.Dock.Position)
+		case "overview_style":
+			c.Overview.Style = pick(config.OverviewStyles, i, c.Overview.Style)
+		case "dock_preview":
+			c.Dock.Preview = pick(config.DockPreviews, i, c.Dock.Preview)
 		case "banner":
 			if i >= 0 && i < len(config.BannerChoices) {
 				c.Notify.Banner = config.BannerChoices[i]
@@ -247,6 +251,11 @@ func (s *shellUI) bindSettingsHandlers() {
 			}
 		case "app_theme":
 			c.Style.AppTheme = pick(s.settings.appThemes, i, c.Style.AppTheme)
+		case "wayfire_theme":
+			if !config.ApplyWayfireTheme(&c, i) {
+				s.showSettings()
+				return
+			}
 		case "wayfire_decoration":
 			c.Style.WayfireDecoration = pick(s.settings.wayfireDecorationNames, i, c.Style.WayfireDecoration)
 		case "wayfire_controls":
@@ -507,6 +516,14 @@ func (s *shellUI) openSettings() {
 	ui.Get("wayfire_appearance", &st.wayfireAppearance)
 	ui.Get("wayfire_decoration", &st.wayfireDecoration)
 	ui.Get("wayfire_controls", &st.wayfireControls)
+	ui.Get("wayfire_theme", &st.wayfireTheme)
+	themeLabels := []string{i18n.T("Custom")}
+	for _, preset := range config.WayfireThemePresets {
+		themeLabels = append(themeLabels, i18n.T(preset.Name))
+	}
+	themeList := gtk.NewStringList(themeLabels)
+	st.wayfireTheme.SetModel(themeList)
+	themeList.Unref()
 	st.wayfireDecorationNames = slices.Clone(config.WayfireDecorationPresets)
 	st.wayfireControlNames = slices.Clone(config.WayfireControlSkins)
 	decorationLabels := []string{i18n.T("Wayfire config"), i18n.T("Inua midnight"), i18n.T("Paper"), i18n.T("Neon")}
@@ -524,6 +541,14 @@ func (s *shellUI) openSettings() {
 	ui.Get("radius_val", &st.radiusVal)
 	st.textScales = nil // a new dropdown, without its choices
 	st.iconSets, st.appIconSets, st.styleTiles = nil, nil, nil
+	ui.Get("overview_style", &st.overviewStyle)
+	ui.Get("dock_preview", &st.dockPreview)
+	overviewStyles := gtk.NewStringList([]string{i18n.T("Thumbnails"), i18n.T("Icons")})
+	st.overviewStyle.SetModel(overviewStyles)
+	overviewStyles.Unref()
+	dockPreviews := gtk.NewStringList([]string{i18n.T("Thumbnails"), i18n.T("List")})
+	st.dockPreview.SetModel(dockPreviews)
+	dockPreviews.Unref()
 	st.appThemes, st.appThemeLabels = nil, nil
 	ui.Get("lang_restart_row", &st.langRestartRow)
 	ui.Get("lang_restart", &st.langRestart)
@@ -608,7 +633,7 @@ func (s *shellUI) openSettings() {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, d := range []*gtk.DropDown{&st.clockPreset, &st.clockLanguage, &st.wayfireDecoration, &st.wayfireControls} {
+	for _, d := range []*gtk.DropDown{&st.clockPreset, &st.clockLanguage, &st.wayfireTheme, &st.wayfireDecoration, &st.wayfireControls, &st.overviewStyle, &st.dockPreview} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
@@ -844,6 +869,7 @@ func (s *shellUI) showSettings() {
 	st.clockLanguage.SetSelected(uint32(max(0, slices.Index(st.clockLanguageNames, c.Bar.ClockLanguage))))
 	st.wayfireDecoration.SetSelected(uint32(max(0, slices.Index(st.wayfireDecorationNames, c.Style.WayfireDecoration))))
 	st.wayfireControls.SetSelected(uint32(max(0, slices.Index(st.wayfireControlNames, c.Style.WayfireControls))))
+	st.wayfireTheme.SetSelected(uint32(config.WayfireThemeChoice(c.Style.WayfireDecoration, c.Style.WayfireControls)))
 	st.wayfireAppearance.SetVisible(desktop.Wayfire())
 	st.bgOwn.SetVisible(!c.Background.Generate)
 	st.bgAnother.SetVisible(c.Background.Generate)
@@ -1197,6 +1223,8 @@ func (s *shellUI) showDockSettings() {
 	st.dockDrawer.SetActive(c.Dock.Drawer)
 	st.dockSize.SetSelected(uint32(max(0, slices.Index(config.DockSizes, c.Dock.Size))))
 	st.dockPosition.SetSelected(uint32(max(0, slices.Index(config.DockPositions, c.Dock.Position))))
+	st.overviewStyle.SetSelected(uint32(max(0, slices.Index(config.OverviewStyles, c.Overview.Style))))
+	st.dockPreview.SetSelected(uint32(max(0, slices.Index(config.DockPreviews, c.Dock.Preview))))
 	gtkx.Clear(&st.dockPinned)
 	if len(c.Dock.Pinned) == 0 {
 		l := gtk.NewLabel(i18n.T("Nothing pinned"))

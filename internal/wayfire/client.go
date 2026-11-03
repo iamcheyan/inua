@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
+
 	"net"
 	"os"
 	"strconv"
@@ -291,17 +293,41 @@ func (c *Client) Events(ctx context.Context) (<-chan compositor.Event, error) {
 	events := c.events
 	c.mu.Unlock()
 	go func() {
-		_ = c.Watch(ctx, []string{"view-mapped", "view-unmapped", "view-set-output", "view-geometry-changed", "view-wset-changed", "view-focused", "view-title-changed", "view-app-id-changed", "output-gain-focus", "output-wset-changed", "wset-workspace-changed"}, func(raw json.RawMessage) {
-			c.RecordWorkspaceEvent(raw)
-			var data map[string]any
-			if json.Unmarshal(raw, &data) != nil {
+		subscribed := []string{"view-mapped", "view-unmapped", "view-set-output", "view-geometry-changed", "view-wset-changed", "view-focused", "view-title-changed", "view-app-id-changed", "output-gain-focus", "output-wset-changed", "wset-workspace-changed"}
+		for {
+			err := c.Watch(ctx, subscribed, func(raw json.RawMessage) {
+				c.RecordWorkspaceEvent(raw)
+				var data map[string]any
+				if json.Unmarshal(raw, &data) != nil {
+					return
+				}
+				// A full queue must not lose the newest state change: what
+				// matters is that the bar and the dock catch up.
+				select {
+				case events <- compositor.Event{Kind: fmt.Sprint(data["event"]), Data: data}:
+				default:
+					select {
+					case <-events:
+					default:
+					}
+					select {
+					case events <- compositor.Event{Kind: fmt.Sprint(data["event"]), Data: data}:
+					default:
+					}
+				}
+			})
+			if ctx.Err() != nil {
 				return
 			}
+			// Wayfire restarted, or the watch connection dropped: without a
+			// new subscription the shell would only see the 2 s poll again.
+			log.Printf("wayfire: events: %v; resubscribing", err)
 			select {
-			case events <- compositor.Event{Kind: fmt.Sprint(data["event"]), Data: data}:
-			default:
+			case <-ctx.Done():
+				return
+			case <-time.After(time.Second):
 			}
-		})
+		}
 	}()
 	return events, nil
 }

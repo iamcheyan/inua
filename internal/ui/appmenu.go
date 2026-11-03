@@ -283,6 +283,11 @@ func (s *shellUI) openAppMenu(b *bar, button *gtk.Button, target appMenuTarget) 
 // activateAppMenu invokes an entry, but only while the process it belongs to
 // still has the focus the bar drew the menu for.
 func (s *shellUI) activateAppMenu(target appMenuTarget) {
+	if target.entry.Action.Kind == appmenu.ActionSystem {
+		s.closeMenu()
+		s.runSystemAction(target.entry.Action.Bus)
+		return
+	}
 	if focusedPID(s.snap) != target.pid || !target.entry.Enabled {
 		return
 	}
@@ -306,6 +311,28 @@ func (s *shellUI) activateAppMenu(target appMenuTarget) {
 		}
 		gtkx.Post(func() { s.refreshAppMenu(target.pid) })
 	}()
+}
+
+// runSystemAction carries out the system menu's own items.
+func (s *shellUI) runSystemAction(id string) {
+	switch id {
+	case "settings":
+		s.openSettings()
+	case "launcher":
+		s.showLauncher(shell.Apps)
+	case "screenshot":
+		s.screenshotRequest("area")
+	case "control":
+		s.controlAction("status")
+	case "lock":
+		if err := s.lockScreen(); err != nil {
+			log.Printf("lock: %v", err)
+		}
+	case "hibernate", "suspend", "reboot", "poweroff", "logout":
+		s.doPower(id)
+	default:
+		log.Printf("system menu: unknown action %q", id)
+	}
 }
 
 // closeWindowOf asks the compositor to close the focused window of process
@@ -378,10 +405,16 @@ func processAlive(pid int) bool {
 	return err == nil || err == syscall.EPERM
 }
 
-// openAppMenuFor opens the menu of the application the bar b names, from
-// the button of its name.
+// openAppMenuFor opens the menu of the application the bar b names, from the
+// button of its name. With no window on that bar there is no application:
+// the same button opens the system's own menu instead.
 func (s *shellUI) openAppMenuFor(button gtk.Button, b *bar) {
-	pid := shell.BarWindow(s.snap, b.connector()).PID
+	win := shell.BarWindow(s.snap, b.connector())
+	if win.Address == "" {
+		s.openSystemMenu(b, &button)
+		return
+	}
+	pid := win.PID
 	if pid == 0 {
 		return
 	}
@@ -396,6 +429,43 @@ func (s *shellUI) openAppMenuFor(button gtk.Button, b *bar) {
 	section := appmenu.Entry{Label: s.appNameOf(*t), Children: entries}
 	target := appMenuTarget{entry: section, pid: pid, bar: b, section: true}
 	s.openAppMenu(b, &button, target)
+}
+
+// systemMenuEntries is the system's menu on an empty workspace: the shell's
+// own actions, then the power actions the control center offers.
+func (s *shellUI) systemMenuEntries() []appmenu.Entry {
+	item := func(id, label, icon string) appmenu.Entry {
+		return appmenu.Entry{Label: label, Enabled: true, Action: appmenu.Action{Kind: appmenu.ActionSystem, Bus: id}, Toggle: icon}
+	}
+	items := []appmenu.Entry{
+		item("settings", i18n.T("Settings"), "emblem-system-symbolic"),
+		item("launcher", i18n.T("Launcher"), "system-search-symbolic"),
+		item("screenshot", i18n.T("Screenshot"), "applets-screenshooter-symbolic"),
+		item("control", i18n.T("Control Center"), "computer-symbolic"),
+		{Separator: true},
+		item("lock", i18n.T("Lock Screen"), "system-lock-screen-symbolic"),
+		item("logout", i18n.T("Log Out"), "system-log-out-symbolic"),
+	}
+	if s.control.canHibernate {
+		items = append(items, item("hibernate", i18n.T("Hibernate"), "system-suspend-symbolic"))
+	}
+	return append(items, item("suspend", i18n.T("Suspend"), "system-suspend-symbolic"),
+		appmenu.Entry{Separator: true},
+		item("reboot", i18n.T("Restart"), "system-reboot-symbolic"),
+		item("poweroff", i18n.T("Shut Down"), "system-shutdown-symbolic"))
+}
+
+// openSystemMenu hangs the system's menu under the bar's name, as an empty
+// workspace does: it is the application menu's own card, so it behaves the
+// same way.
+func (s *shellUI) openSystemMenu(b *bar, button *gtk.Button) {
+	name := b.appName
+	if name == "" {
+		name = i18n.T("System")
+	}
+	section := appmenu.Entry{Label: name, Children: s.systemMenuEntries()}
+	target := appMenuTarget{entry: section, bar: b, section: true}
+	s.openAppMenu(b, button, target)
 }
 
 // openAppMenuOn shows the application's own menu (About, Close, Quit and

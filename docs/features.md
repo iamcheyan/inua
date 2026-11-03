@@ -5,9 +5,13 @@ version; the light apps have [their own page](apps.md).
 
 ## Bar
 
-Workspaces as square marks, the focused window's title, the clock (a click
-shows the month under it), the tray, the clipboard history, a bell for
-notifications and the status button for the control center. The clock and
+Workspaces as square marks, the focused window's application (its icon and
+name; a click opens its own menu), the clock (a click shows the month under
+it), the tray, the clipboard history, a bell for notifications and the status
+button for the control center. With no window on the monitor's workspace the
+left side shows this system's own icon and name (NixOS 26.05, for example),
+and a click opens the system's menu: Settings, Launcher, Screenshot, Control
+Center, Lock Screen, Log Out, Suspend, Restart and Shut Down. The clock and
 the buttons at the end reach up to the screen's top edge and across the
 gaps between them, and the status button into the corner, so the pointer
 thrown at the edge lands on one. Scrolling on the status button, its
@@ -260,8 +264,19 @@ light apps, the Assistant, Settings, the launcher and Screenshot, grouped
 by kind; optional autohide. Starting a light app that is open brings
 its window to the current workspace.
 
-On Wayfire, hovering a running app shows its open windows as thumbnails in a
-scrollable grid beside the dock; the app icon stays visible at rest.
+On Wayfire, hovering a running app shows its open windows beside the dock
+(above or below it along the top and bottom edges, beside it on the left and
+right). *Dock preview* chooses how (`dock.preview`): *Thumbnails* shows each
+window's picture, kept from when it was last focused, with the app icon in
+its place for a window never focused; *List* shows a row per window with its
+title and application, asking for no capture. The app icon stays visible at
+rest.
+
+The overview (`overview.style`, Settings → Dock, *Overview cards*) draws
+window pictures (*Thumbnails*) or each application's icon alone (*Icons*).
+Wayfire captures whole outputs, so a covered window may have no picture; the
+icon style, like the Mac's Mission Control, always shows the icon and never
+captures the screen.
 
 ## Settings
 
@@ -707,13 +722,16 @@ theme swatches, `style.app_theme`): inua's own apps and the settings
 window follow it, and other apps are asked to be light or dark by it. The
 launcher and control center stay with the bar.
 
-Under Wayfire, Appearance adds two choices of its own. *Window borders*
-sets the Xwayland frame's colors, thickness and title bar through
-Wayfire's `[decoration]` (`style.wayfire_decoration`, written to
-`wayfire.ini`; a restart applies it, and *Wayfire config* restores your
-own values). *Control skin* shapes inua's GTK controls at once
-(`style.wayfire_controls`): hairline, soft rounded or outline square.
-Both are hidden where Wayfire is not the compositor.
+Under Wayfire, Appearance adds a preset selector as well as the two independent
+style choices below it. *Wayfire native*, *Inua midnight*, *Paper* and *Neon*
+pair window frame and control skins. The selector shows the matching preset,
+or *Custom* when the combination does not match one. *Window borders* sets the
+Xwayland frame's colors, thickness and title bar through Wayfire's
+`[decoration]` (`style.wayfire_decoration`, written to `wayfire.ini`; a
+restart applies it, and *Wayfire config* restores your own values). *Control
+skin* shapes Inua's GTK controls at once (`style.wayfire_controls`): hairline,
+soft rounded or outline square. Both are hidden where Wayfire is not the
+compositor.
 
 ## Wallpaper
 

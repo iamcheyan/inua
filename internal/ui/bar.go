@@ -469,6 +469,27 @@ func (b *bar) setApp(s *shellUI, t hypr.Toplevel) {
 	b.appIcon.SetVisible(icon != "")
 }
 
+// setDistribution names an empty workspace with this system's identity: its
+// icon and name. The bar's app button then opens the system's own menu.
+func (b *bar) setDistribution(s *shellUI) {
+	d := s.distro
+	name := d.Name
+	if name == "" {
+		name = i18n.T("System")
+	}
+	if d.Version != "" {
+		name += " " + d.Version
+	}
+	if b.appName == name && b.appIconName == d.Logo && b.appClass == "" {
+		return
+	}
+	b.appClass = ""
+	b.appName, b.appIconName = name, d.Logo
+	b.title.SetText(name)
+	setIcon(&b.appIcon, d.Logo)
+	b.appIcon.SetVisible(true)
+}
+
 func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 	name := b.connector()
 	activeWorkspace := 0
@@ -492,7 +513,11 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.RemoveCssClass("occupied")
 		b.win.AddCssClass("empty")
 	}
-	b.setApp(s, shell.BarWindow(snap, name))
+	if win := shell.BarWindow(snap, name); win.Address != "" {
+		b.setApp(s, win)
+	} else {
+		b.setDistribution(s)
+	}
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
 	b.workspaces.SetVisible(s.cfg.Bar.Workspaces != "none")

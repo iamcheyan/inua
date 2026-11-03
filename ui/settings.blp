@@ -210,6 +210,36 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
+                        label:  _("Appearance preset");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Pairs window borders and control skin; both remain adjustable below.");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown wayfire_theme {
+                      name: "wayfire_theme";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
                         label: _("Window borders");
                         xalign: 0;
                       }
@@ -1346,6 +1376,66 @@ ApplicationWindow settings {
 
                     Switch overview_dock {
                       name: "overview_dock";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Overview cards");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Window pictures, or application icons alone");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown overview_style {
+                      name: "overview_style";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Dock preview");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("What hovering an app shows: window pictures, or a list of its windows");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown dock_preview {
+                      name: "dock_preview";
                       valign: center;
                     }
                   }

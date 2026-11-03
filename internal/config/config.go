@@ -107,7 +107,12 @@ type Overview struct {
 	MRU        bool `toml:"mru"`
 	PerMonitor bool `toml:"per_monitor"`
 	ShowDock   bool `toml:"show_dock"`
+	// Style is how the overview draws its cards: "thumbnails" or "icons".
+	Style string `toml:"style"`
 }
+
+// OverviewStyles are the overview's card styles.
+var OverviewStyles = []string{"thumbnails", "icons"}
 
 // Quicklink is a site the launcher searches by keyword.
 type Quicklink struct {
@@ -682,6 +687,8 @@ type Dock struct {
 	// Autohide keeps the dock out of sight until the pointer reaches the
 	// selected edge; otherwise windows make room for it.
 	Autohide bool `toml:"autohide"`
+	// Preview is what hovering an app shows: "thumbnails" or "list".
+	Preview string `toml:"preview"`
 	// Size is the icons' size in pixels, one of DockSizes.
 	Size int `toml:"size"`
 	// Drawer shows a button at the dock's end that opens inua's light apps.
@@ -690,6 +697,9 @@ type Dock struct {
 	// ("org.gnome.Nautilus" for org.gnome.Nautilus.desktop), in order.
 	Pinned []string `toml:"pinned"`
 }
+
+// DockPreviews are the dock's hover preview styles.
+var DockPreviews = []string{"thumbnails", "list"}
 
 // Widgets is the widget page: a place before the first workspace, with
 // widgets and apps on it.
@@ -911,6 +921,40 @@ var WayfireDecorationPresets = []string{"wayfire", "inua", "paper", "neon"}
 // WayfireControlSkins are the GTK control skins offered in settings.
 var WayfireControlSkins = []string{"inua", "soft", "outline"}
 
+// WayfireThemePresets pair an Xwayland frame preset with an Inua control skin.
+type WayfireThemePreset struct {
+	Name, Decoration, Controls string
+}
+
+var WayfireThemePresets = []WayfireThemePreset{
+	{i18n.M("Wayfire native"), "wayfire", "inua"},
+	{i18n.M("Inua midnight"), "inua", "inua"},
+	{i18n.M("Paper"), "paper", "soft"},
+	{i18n.M("Neon"), "neon", "outline"},
+}
+
+// WayfireThemeChoice is the settings dropdown index: 0 means the current
+// border and control choices form a custom combination.
+func WayfireThemeChoice(decoration, controls string) int {
+	for i, preset := range WayfireThemePresets {
+		if preset.Decoration == decoration && preset.Controls == controls {
+			return i + 1
+		}
+	}
+	return 0
+}
+
+// ApplyWayfireTheme updates the two independent style settings for a preset.
+// Choice 0 is Custom and leaves both values alone.
+func ApplyWayfireTheme(c *Config, choice int) bool {
+	if c == nil || choice <= 0 || choice > len(WayfireThemePresets) {
+		return false
+	}
+	preset := WayfireThemePresets[choice-1]
+	c.Style.WayfireDecoration, c.Style.WayfireControls = preset.Decoration, preset.Controls
+	return true
+}
+
 var ClockLanguages = []string{"auto", "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr"}
 
 type ClockPreset struct {
@@ -946,7 +990,7 @@ func Default() Config {
 			MenuOn:        []string{},
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
-		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true},
+		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true, Style: "thumbnails"},
 		Control: Control{
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
@@ -958,7 +1002,7 @@ func Default() Config {
 		Screenshot: Screenshot{Folder: "~/Pictures/Screenshots", Copy: true, Recordings: "~/Videos/Screencasts"},
 		OSD:        OSD{Enable: true, Position: "bottom-center"},
 		Clipboard:  Clipboard{Enable: true, Bar: true, Limit: 300, PasteOnClick: true, SensitiveSources: slices.Clone(DefaultSensitiveSources)},
-		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
+		Dock:       Dock{Enable: true, Position: "bottom", Size: 36, Drawer: true, Preview: "thumbnails", Pinned: []string{"firefox", "io.github.lyricat.Inua.Files", "kitty"}},
 		Widgets:    Widgets{Enable: true, Swipe: 3, Places: AutoPlaces(WidgetKinds), Apps: []string{"io.github.lyricat.Inua.Files", "io.github.lyricat.Inua.Term", "io.github.lyricat.Inua.Mail", "io.github.lyricat.Inua.Music"}},
 		Voice:      Voice{Enable: false, PushToTalk: true, Engine: "voxtype", Show: "window"},
 		Shortcuts: []Shortcut{
@@ -1057,6 +1101,8 @@ func (c *Config) validate() []string {
 	}
 	oneOf("keyring.untrusted", &c.Keyring.Untrusted, d.Keyring.Untrusted, "allow", "deny")
 	oneOf("mcp.policy", &c.MCP.Policy, d.MCP.Policy, MCPPolicies...)
+	oneOf("overview.style", &c.Overview.Style, d.Overview.Style, OverviewStyles...)
+	oneOf("dock.preview", &c.Dock.Preview, d.Dock.Preview, DockPreviews...)
 	if c.Keyring.LockAfter < 0 {
 		w = append(w, fmt.Sprintf("keyring.lock_after = %d: want minutes, or 0 for never; using 0", c.Keyring.LockAfter))
 		c.Keyring.LockAfter = 0

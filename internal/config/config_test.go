@@ -193,6 +193,40 @@ func TestThemesExist(t *testing.T) {
 	}
 }
 
+func TestWayfireThemePresets(t *testing.T) {
+	for i, preset := range WayfireThemePresets {
+		c := Default()
+		if !ApplyWayfireTheme(&c, i+1) {
+			t.Fatalf("preset %q was not applied", preset.Name)
+		}
+		if c.Style.WayfireDecoration != preset.Decoration || c.Style.WayfireControls != preset.Controls {
+			t.Errorf("preset %q applied %q/%q", preset.Name, c.Style.WayfireDecoration, c.Style.WayfireControls)
+		}
+		if got := WayfireThemeChoice(c.Style.WayfireDecoration, c.Style.WayfireControls); got != i+1 {
+			t.Errorf("preset %q choice = %d, want %d", preset.Name, got, i+1)
+		}
+	}
+	c := Default()
+	c.Style.WayfireDecoration, c.Style.WayfireControls = "paper", "outline"
+	if got := WayfireThemeChoice(c.Style.WayfireDecoration, c.Style.WayfireControls); got != 0 {
+		t.Errorf("custom combination choice = %d, want 0", got)
+	}
+	if ApplyWayfireTheme(&c, 0) || c.Style.WayfireDecoration != "paper" || c.Style.WayfireControls != "outline" {
+		t.Error("Custom changed the independent style choices")
+	}
+}
+
+func TestPreviewStyles(t *testing.T) {
+	c, w, err := Load(write(t, "[overview]\nstyle = \"icons\"\n[dock]\npreview = \"list\"\n"))
+	if err != nil || len(w) != 0 || c.Overview.Style != "icons" || c.Dock.Preview != "list" {
+		t.Fatalf("styles: %q/%q warnings=%v err=%v", c.Overview.Style, c.Dock.Preview, w, err)
+	}
+	c, w, _ = Load(write(t, "[overview]\nstyle = \"none\"\n[dock]\npreview = \"grid\"\n"))
+	if len(w) != 2 || c.Overview.Style != "thumbnails" || c.Dock.Preview != "thumbnails" {
+		t.Errorf("unknown styles: %q/%q %v", c.Overview.Style, c.Dock.Preview, w)
+	}
+}
+
 // The sample is generated: config/inua/config.toml == Format(Default()).
 // After changing a setting or the template, regenerate it with
 //

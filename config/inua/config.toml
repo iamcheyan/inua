@@ -118,6 +118,8 @@ mru = false
 per_monitor = true
 # Show the dock above the workspace overview while it is open.
 show_dock = true
+# What the overview shows on its cards: "thumbnails" or "icons".
+style = "thumbnails"
 
 [control]
 # Shell commands run by the control center's buttons.
@@ -344,6 +346,8 @@ position = "bottom"
 # Hide the dock until the pointer reaches its screen edge. false: windows
 # make room for it.
 autohide = false
+# What hovering a dock app shows: "thumbnails" or "list".
+preview = "thumbnails"
 
 # Icon size in pixels (24 to 96).
 size = 36

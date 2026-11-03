@@ -1076,8 +1076,19 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 	}
 	pop.SetPosition(position)
 
-	row := gtk.NewBox(gtk.OrientationHorizontalValue, dockPreviewCardGap)
-	pictures := make([]*gtk.Picture, len(it.Windows))
+	if s.cfg.Dock.Preview == "list" {
+		s.dockPreview, s.dockPreviewKey = pop, key
+		s.dockPreviewGen++
+		s.showDockPreviewList(pop, it)
+		return
+	}
+	flow := gtk.NewFlowBox()
+	flow.SetSelectionMode(gtk.SelectionNoneValue)
+	flow.SetHomogeneous(true)
+	flow.SetMaxChildrenPerLine(uint32(len(it.Windows)))
+	flow.SetColumnSpacing(uint32(dockPreviewCardGap))
+	flow.SetRowSpacing(uint32(dockPreviewCardGap))
+	images := make([]*gtk.Image, len(it.Windows))
 	icons := make([]*gtk.Image, len(it.Windows))
 	for i, window := range it.Windows {
 		card := gtk.NewBox(gtk.OrientationVerticalValue, 4)
@@ -1092,31 +1103,24 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 		label.SetEllipsize(pango.EllipsizeEndValue)
 		label.SetMaxWidthChars(24)
 		label.SetTooltipText(title)
-		picture := gtk.NewPicture()
-		picture.SetCanShrink(true)
-		picture.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
-		picture.SetContentFit(gtk.ContentFitContainValue)
+		image := gtk.NewImage()
+		image.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
+		image.SetPixelSize(max(dockPreviewThumbWidth, dockPreviewThumbHeight))
 		icon := gtk.NewImage()
 		setIcon(icon, it.Icon)
 		icon.SetPixelSize(dockPreviewThumbHeight / 2)
 		icon.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
 		gtkx.Append(card, &label.Widget)
-		gtkx.Append(card, &picture.Widget)
+		gtkx.Append(card, &image.Widget)
 		gtkx.Append(card, &icon.Widget)
-		gtkx.Append(row, &card.Widget)
-		pictures[i], icons[i] = picture, icon
+		flow.Append(&card.Widget)
+		images[i], icons[i] = image, icon
 	}
-	width := int32(len(it.Windows))*dockPreviewCardWidth + int32(len(it.Windows)-1)*dockPreviewCardGap + 20
-	scroll := gtk.NewScrolledWindow()
-	scroll.SetSizeRequest(width, -1)
-	scroll.SetMinContentWidth(width - 20)
-	scroll.SetMaxContentWidth(max(width, dockPreviewMaxWidth))
-	scroll.SetPolicy(gtk.PolicyAutomaticValue, gtk.PolicyNeverValue)
-	scroll.SetPropagateNaturalHeight(true)
-	scroll.SetChild(&row.Widget)
-	row.Unref()
-	pop.SetChild(&scroll.Widget)
-	scroll.Unref()
+	pop.SetChild(&flow.Widget)
+	flow.Unref()
+	if width := int32(len(it.Windows))*dockPreviewCardWidth + int32(len(it.Windows)-1)*dockPreviewCardGap; width > dockPreviewMaxWidth {
+		flow.SetSizeRequest(dockPreviewMaxWidth, -1)
+	}
 	s.dockPreview, s.dockPreviewKey = pop, key
 	s.dockPreviewGen++
 	gen := s.dockPreviewGen
@@ -1148,16 +1152,12 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 			}
 			for i, path := range paths {
 				if path == "" {
-					pictures[i].SetVisible(false)
+					images[i].SetVisible(false)
 					continue
 				}
-				if err := setPictureFile(pictures[i], path); err != nil {
-					log.Printf("dock preview: load image: %v", err)
-					pictures[i].SetVisible(false)
-					continue
-				}
+				images[i].SetFromFile(path)
 				icons[i].SetVisible(false)
-				pictures[i].SetVisible(true)
+				images[i].SetVisible(true)
 			}
 			pop.Popup()
 		})
@@ -1186,4 +1186,43 @@ func (s *shellUI) closeDockPreview() {
 	}
 	pop.Popdown()
 	pop.Unparent()
+}
+
+// showDockPreviewList fills a dock preview with one row per open window:
+// its application's icon, the window's title and the application's name.
+// It asks for no picture, so it is right at once and has nothing to fail.
+func (s *shellUI) showDockPreviewList(pop *gtk.Popover, it shell.DockItem) {
+	list := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+	list.AddCssClass("dock-preview-list")
+	for _, window := range it.Windows {
+		row := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
+		row.AddCssClass("dock-preview-row")
+		icon := gtk.NewImage()
+		setIcon(icon, it.Icon)
+		icon.SetPixelSize(18)
+		icon.SetValign(gtk.AlignCenterValue)
+		gtkx.Append(row, &icon.Widget)
+		texts := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+		texts.SetHexpand(true)
+		title := strings.TrimSpace(window.Title)
+		if title == "" {
+			title = it.Name
+		}
+		titleLbl := gtk.NewLabel(title)
+		titleLbl.SetXalign(0)
+		titleLbl.SetEllipsize(pango.EllipsizeEndValue)
+		titleLbl.SetMaxWidthChars(36)
+		titleLbl.SetTooltipText(title)
+		gtkx.Append(texts, &titleLbl.Widget)
+		appLbl := gtk.NewLabel(it.Name)
+		appLbl.AddCssClass("sub")
+		appLbl.SetXalign(0)
+		appLbl.SetEllipsize(pango.EllipsizeEndValue)
+		gtkx.Append(texts, &appLbl.Widget)
+		gtkx.Append(row, &texts.Widget)
+		list.Append(&row.Widget)
+	}
+	pop.SetChild(&list.Widget)
+	list.Unref()
+	pop.Popup()
 }

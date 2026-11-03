@@ -496,18 +496,22 @@ func (s *shellUI) renderWayfireOverview() {
 
 	activeWS := s.currentWayfireActiveWorkspace()
 
-	// 1. The workspaces as pictures of themselves: the wallpaper, with each
-	// window drawn where it sits. A workspace with nothing on it is just its
-	// wallpaper.
+	// 1. The workspaces. With thumbnails, each is the wallpaper with its
+	// windows drawn where they sit; with icons, a plain card of the
+	// applications' icons, as the Mac's Mission Control shows them.
 	activeMon := s.snap.FocusedMonitor
 	if activeMon == "" && len(s.snap.Monitors) > 0 {
 		activeMon = s.snap.Monitors[0].Name
 	}
 	wsW, wsH := wayfireWorkspaceThumbSize(s.snap.Monitors, activeMon)
+	iconsOnly := s.cfg.Overview.Style == "icons"
 	for i := 1; i <= 4; i++ {
 		card := gtk.NewOverlay()
 		card.SetName(fmt.Sprintf("workspace:%d", i))
 		card.AddCssClass("wayfire-workspace-thumb")
+		if iconsOnly {
+			card.AddCssClass("icons")
+		}
 		card.SetSizeRequest(wsW, wsH)
 		if i == activeWS {
 			card.AddCssClass("active")
@@ -523,29 +527,39 @@ func (s *shellUI) renderWayfireOverview() {
 		drop.ConnectDrop(&o.onDrop)
 		card.AddController(&drop.EventController)
 
-		wall := gtk.NewPicture()
-		wall.AddCssClass("wayfire-workspace-wallpaper")
-		wall.SetContentFit(gtk.ContentFitCoverValue)
-		wall.SetCanShrink(true)
-		if path := s.overviewWallpaper(); path != "" {
-			if setPictureFile(wall, path) != nil {
-				log.Printf("wayfire overview: wallpaper %s", path)
-			}
-		}
-		card.SetChild(&wall.Widget)
-		wall.Unref()
-
-		board := *gtk.NewFixed()
-		card.AddOverlay(&board.Widget)
 		inWs := 0
 		for _, it := range o.allWindows {
-			if it.workspaceID != i {
-				continue
+			if it.workspaceID == i {
+				inWs++
 			}
-			inWs++
-			s.addWayfireOverviewWindow(&board, it, wsW, wsH)
 		}
-		board.Unref()
+		if iconsOnly {
+			grid := wayfireWorkspaceIcons(o.allWindows, i, wsW, wsH)
+			card.SetChild(&grid.Widget)
+			grid.Unref()
+		} else {
+			wall := gtk.NewPicture()
+			wall.AddCssClass("wayfire-workspace-wallpaper")
+			wall.SetContentFit(gtk.ContentFitCoverValue)
+			wall.SetCanShrink(true)
+			if path := s.overviewWallpaper(); path != "" {
+				if setPictureFile(wall, path) != nil {
+					log.Printf("wayfire overview: wallpaper %s", path)
+				}
+			}
+			card.SetChild(&wall.Widget)
+			wall.Unref()
+
+			board := *gtk.NewFixed()
+			card.AddOverlay(&board.Widget)
+			for _, it := range o.allWindows {
+				if it.workspaceID != i {
+					continue
+				}
+				s.addWayfireOverviewWindow(&board, it, wsW, wsH)
+			}
+			board.Unref()
+		}
 
 		head := gtk.NewBox(gtk.OrientationHorizontalValue, 6)
 		head.AddCssClass("wayfire-workspace-head")
@@ -610,7 +624,7 @@ func (s *shellUI) renderWayfireOverview() {
 // per monitor. A window that has a picture already keeps it, which is the
 // one taken while it was on top.
 func (s *shellUI) captureWayfireOverviewThumbs(o *wayfireOverview) {
-	if len(o.pending) == 0 {
+	if s.cfg.Overview.Style == "icons" || len(o.pending) == 0 {
 		return
 	}
 	var wanted []hypr.Toplevel
@@ -828,29 +842,38 @@ func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
 	gtkx.Append(tile, &topBar.Widget)
 
 	// The window's own picture; its application's icon stands in until the
-	// capture arrives.
-	picture := gtk.NewPicture()
-	picture.AddCssClass("wayfire-tile-thumb")
-	picture.SetContentFit(gtk.ContentFitCoverValue)
-	picture.SetCanShrink(true)
-	picture.SetCanTarget(false)
-	iconPlaceholder := gtk.NewImage()
-	setIcon(iconPlaceholder, it.icon)
-	iconPlaceholder.SetPixelSize(48)
-	iconPlaceholder.AddCssClass("wayfire-tile-icon")
-	icon.SetCanTarget(false)
+	// capture arrives. In icon style the icon is the card, with no capture
+	// behind it: Wayfire cannot photograph a covered window.
 	stage := gtk.NewOverlay()
 	stage.AddCssClass("wayfire-tile-stage")
 	stage.SetSizeRequest(wayfireTileThumbW, wayfireTileThumbH)
 	stage.SetCanTarget(false)
-	if path := s.wfThumbs[it.address]; path != "" {
-		if setPictureFile(picture, path) != nil {
-			log.Printf("wayfire overview: window picture %s", path)
-		}
+	if s.cfg.Overview.Style == "icons" {
+		iconOnly := gtk.NewImage()
+		setIcon(iconOnly, it.icon)
+		iconOnly.SetPixelSize(56)
+		iconOnly.AddCssClass("wayfire-tile-icon")
+		stage.SetChild(&iconOnly.Widget)
 	} else {
-		stage.SetChild(&iconPlaceholder.Widget)
-		stage.AddOverlay(&picture.Widget)
-		s.wfOverview.pending[it.address] = picture
+		picture := gtk.NewPicture()
+		picture.AddCssClass("wayfire-tile-thumb")
+		picture.SetContentFit(gtk.ContentFitCoverValue)
+		picture.SetCanShrink(true)
+		picture.SetCanTarget(false)
+		iconPlaceholder := gtk.NewImage()
+		setIcon(iconPlaceholder, it.icon)
+		iconPlaceholder.SetPixelSize(48)
+		iconPlaceholder.AddCssClass("wayfire-tile-icon")
+		iconPlaceholder.SetCanTarget(false)
+		if path := s.wfThumbs[it.address]; path != "" {
+			if setPictureFile(picture, path) != nil {
+				log.Printf("wayfire overview: window picture %s", path)
+			}
+		} else {
+			stage.SetChild(&iconPlaceholder.Widget)
+			stage.AddOverlay(&picture.Widget)
+			s.wfOverview.pending[it.address] = picture
+		}
 	}
 	gtkx.Append(tile, &stage.Widget)
 
@@ -888,6 +911,41 @@ func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
 
 	gtkx.Append(tile, &foot.Widget)
 	return tile
+}
+
+// wayfireWorkspaceIcons draws a workspace's applications as icons in a
+// grid, the same card with no capture behind it.
+func wayfireWorkspaceIcons(items []wayfireOverviewItem, workspace int, w, h int32) *gtk.FlowBox {
+	flow := gtk.NewFlowBox()
+	flow.SetSelectionMode(gtk.SelectionNoneValue)
+	flow.SetHomogeneous(true)
+	flow.SetMaxChildrenPerLine(4)
+	flow.SetColumnSpacing(8)
+	flow.SetRowSpacing(8)
+	flow.SetHalign(gtk.AlignCenterValue)
+	flow.SetValign(gtk.AlignCenterValue)
+	flow.SetSizeRequest(w, h)
+	shown := 0
+	for _, it := range items {
+		if it.workspaceID != workspace {
+			continue
+		}
+		img := gtk.NewImage()
+		setIcon(img, it.icon)
+		img.SetPixelSize(36)
+		img.SetSizeRequest(48, 48)
+		img.SetCanTarget(false)
+		flow.Append(&img.Widget)
+		shown++
+	}
+	if shown == 0 {
+		empty := gtk.NewImage()
+		setIcon(empty, "view-grid-symbolic")
+		empty.SetPixelSize(24)
+		empty.AddCssClass("wayfire-workspace-empty-icon")
+		flow.Append(&empty.Widget)
+	}
+	return flow
 }
 
 func (s *shellUI) stepWayfireOverview(delta int) {

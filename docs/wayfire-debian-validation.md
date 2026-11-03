@@ -112,9 +112,11 @@ unpin, launch and close apps; window focus and close use Wayfire's
 `window-rules` IPC methods. `Super+Tab` opens Inua's launcher in window mode.
 The foreign-toplevel protocol does not provide workspace membership, so the
 window list does not show workspace names. On hover, a running app's Dock
-preview captures its open windows from the output with `grim`, crops them by
-view geometry and places them opposite the Dock edge. The workspace overview
-and screenshot tool's window picker remain unavailable.
+preview shows one small thumbnail per open window in a single row opposite
+the Dock edge. Each is captured with `grim` while its window is focused: the
+Wayfire IPC has no per-window capture, so a window covered by another cannot
+be recognized from the composite afterwards. The workspace overview and
+screenshot tool's window picker remain unavailable.
 
 ## Remaining runtime acceptance
 
