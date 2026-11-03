@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -16,8 +17,18 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/pango"
 
 	"github.com/lyricat/inua/internal/gtkx"
+	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
+)
+
+// How large the overview draws each window's picture, and what it asks the
+// compositor for: a little larger than the card so the crop stays sharp.
+const (
+	wayfireTileThumbW = 320
+	wayfireTileThumbH = 180
+	wayfireThumbW     = 640
+	wayfireThumbH     = 360
 )
 
 type wayfireOverview struct {
@@ -28,12 +39,12 @@ type wayfireOverview struct {
 	allWindows    []wayfireOverviewItem
 	windows       []wayfireOverviewItem
 	selectedIndex int
-	cardWidgets   map[string]*gtk.Box
-	wsWidgets     map[int]*gtk.Box
-	workspacesBox gtk.Box
-	windowsBox    gtk.Box
-	scroll        gtk.ScrolledWindow
+	workspacesBox *gtk.Box
+	windowsBox    *gtk.Box
+	scroll        *gtk.ScrolledWindow
 	refs          gtkx.Scope
+	// pending holds each window's picture view until its capture arrives.
+	pending map[string]*gtk.Picture
 
 	onCardClick      func(gtk.GestureClick, int32, float64, float64)
 	onCardClose      func(gtk.Button)
@@ -306,8 +317,8 @@ func (s *shellUI) showWayfireOverview() {
 		focusedMon = s.snap.Monitors[0].Name
 	}
 	o.focusedMon = focusedMon
-	o.cardWidgets = make(map[string]*gtk.Box)
-	o.wsWidgets = make(map[int]*gtk.Box)
+
+	o.pending = make(map[string]*gtk.Picture)
 
 	activeWS := s.currentWayfireActiveWorkspace()
 
@@ -422,26 +433,34 @@ func (s *shellUI) showWayfireOverview() {
 	rootClick.ConnectReleased(&o.onBackdropClick)
 	root.AddController(&rootClick.EventController)
 
-	// Top Workspaces Bar
-	o.workspacesBox = *gtk.NewBox(gtk.OrientationHorizontalValue, 16)
-	o.workspacesBox.AddCssClass("wayfire-workspaces-bar")
-	o.workspacesBox.SetHalign(gtk.AlignCenterValue)
-	gtkx.Append(root, &o.workspacesBox.Widget)
+	// Top Workspaces Bar. gtkx.Append unsinks and drops the reference it
+	// is handed, so the box keeps one of its own for every render.
+	workspacesBox := gtk.NewBox(gtk.OrientationHorizontalValue, 16)
+	workspacesBox.AddCssClass("wayfire-workspaces-bar")
+	workspacesBox.SetHalign(gtk.AlignCenterValue)
+	workspacesBox.Ref()
+	o.refs.Track(&workspacesBox.Widget)
+	o.workspacesBox = workspacesBox
+	gtkx.Append(root, &workspacesBox.Widget)
 
 	// Middle Windows Row (Scrolled)
-	o.scroll = *gtk.NewScrolledWindow()
-	o.scroll.AddCssClass("wayfire-windows-scroll")
-	o.scroll.SetPolicy(gtk.PolicyAutomaticValue, gtk.PolicyNeverValue)
-	o.scroll.SetPropagateNaturalHeight(true)
-	o.scroll.SetVexpand(true)
-	o.scroll.SetHexpand(true)
+	scroll := gtk.NewScrolledWindow()
+	o.scroll = scroll
+	scroll.AddCssClass("wayfire-windows-scroll")
+	scroll.SetPolicy(gtk.PolicyAutomaticValue, gtk.PolicyNeverValue)
+	scroll.SetPropagateNaturalHeight(true)
+	scroll.SetVexpand(true)
+	scroll.SetHexpand(true)
 
-	o.windowsBox = *gtk.NewBox(gtk.OrientationHorizontalValue, 18)
-	o.windowsBox.AddCssClass("wayfire-windows-row")
-	o.windowsBox.SetHalign(gtk.AlignCenterValue)
-	o.windowsBox.SetValign(gtk.AlignCenterValue)
-	o.scroll.SetChild(&o.windowsBox.Widget)
-	gtkx.Append(root, &o.scroll.Widget)
+	windowsBox := gtk.NewBox(gtk.OrientationHorizontalValue, 18)
+	windowsBox.AddCssClass("wayfire-windows-row")
+	windowsBox.SetHalign(gtk.AlignCenterValue)
+	windowsBox.SetValign(gtk.AlignCenterValue)
+	windowsBox.Ref()
+	o.refs.Track(&windowsBox.Widget)
+	o.windowsBox = windowsBox
+	scroll.SetChild(&windowsBox.Widget)
+	gtkx.Append(root, &scroll.Widget)
 
 	// Bottom Hint Footer
 	footer := gtk.NewBox(gtk.OrientationHorizontalValue, 16)
@@ -466,53 +485,85 @@ func (s *shellUI) showWayfireOverview() {
 
 func (s *shellUI) renderWayfireOverview() {
 	o := &s.wfOverview
-	gtkx.Clear(&o.workspacesBox)
-	gtkx.Clear(&o.windowsBox)
-	o.cardWidgets = make(map[string]*gtk.Box)
-	o.wsWidgets = make(map[int]*gtk.Box)
+	// Unparent, then drop: the cards' own widgets are also held by a Fixed
+	// or an Overlay, so a bare Unref here would dispose one still parented.
+	for _, box := range []*gtk.Box{o.workspacesBox, o.windowsBox} {
+		for child := box.GetFirstChild(); child != nil; child = box.GetFirstChild() {
+			child.Unparent()
+			child.Unref()
+		}
+	}
 
 	activeWS := s.currentWayfireActiveWorkspace()
 
-	// 1. Build Top Workspaces Bar (Workspaces 1 to 4)
-	wsCount := 4
-	for i := 1; i <= wsCount; i++ {
-		wsCard := gtk.NewBox(gtk.OrientationVerticalValue, 4)
-		wsCard.SetName(fmt.Sprintf("workspace:%d", i))
-		wsCard.AddCssClass("wayfire-workspace-card")
+	// 1. The workspaces as pictures of themselves: the wallpaper, with each
+	// window drawn where it sits. A workspace with nothing on it is just its
+	// wallpaper.
+	activeMon := s.snap.FocusedMonitor
+	if activeMon == "" && len(s.snap.Monitors) > 0 {
+		activeMon = s.snap.Monitors[0].Name
+	}
+	wsW, wsH := wayfireWorkspaceThumbSize(s.snap.Monitors, activeMon)
+	for i := 1; i <= 4; i++ {
+		card := gtk.NewOverlay()
+		card.SetName(fmt.Sprintf("workspace:%d", i))
+		card.AddCssClass("wayfire-workspace-thumb")
+		card.SetSizeRequest(wsW, wsH)
 		if i == activeWS {
-			wsCard.AddCssClass("active")
+			card.AddCssClass("active")
 		}
 
-		wsClick := gtk.NewGestureClick()
-		wsClick.ConnectReleased(&o.onWorkspaceClick)
-		wsCard.AddController(&wsClick.EventController)
+		click := gtk.NewGestureClick()
+		click.ConnectReleased(&o.onWorkspaceClick)
+		card.AddController(&click.EventController)
 
 		drop := gtk.NewDropTarget(types.GType(gobject.TypeStringVal), gdk.ActionMoveValue)
 		drop.ConnectMotion(&o.onDropMotion)
 		drop.ConnectLeave(&o.onDropLeave)
 		drop.ConnectDrop(&o.onDrop)
-		wsCard.AddController(&drop.EventController)
+		card.AddController(&drop.EventController)
 
-		// Workspace Header: number
-		numLbl := gtk.NewLabel(strconv.Itoa(i))
-		numLbl.AddCssClass("wayfire-workspace-num")
-		numLbl.SetHalign(gtk.AlignCenterValue)
-		gtkx.Append(wsCard, &numLbl.Widget)
-
-		// Window Count in this workspace
-		inWs := 0
-		for _, w := range o.allWindows {
-			if w.workspaceID == i {
-				inWs++
+		wall := gtk.NewPicture()
+		wall.AddCssClass("wayfire-workspace-wallpaper")
+		wall.SetContentFit(gtk.ContentFitCoverValue)
+		wall.SetCanShrink(true)
+		if path := s.overviewWallpaper(); path != "" {
+			if setPictureFile(wall, path) != nil {
+				log.Printf("wayfire overview: wallpaper %s", path)
 			}
 		}
-		countLbl := gtk.NewLabel(i18n.Nf("%d window", "%d windows", inWs, inWs))
-		countLbl.AddCssClass("wayfire-workspace-count")
-		countLbl.SetHalign(gtk.AlignCenterValue)
-		gtkx.Append(wsCard, &countLbl.Widget)
+		card.SetChild(&wall.Widget)
+		wall.Unref()
 
-		o.wsWidgets[i] = wsCard
-		gtkx.Append(&o.workspacesBox, &wsCard.Widget)
+		board := *gtk.NewFixed()
+		card.AddOverlay(&board.Widget)
+		inWs := 0
+		for _, it := range o.allWindows {
+			if it.workspaceID != i {
+				continue
+			}
+			inWs++
+			s.addWayfireOverviewWindow(&board, it, wsW, wsH)
+		}
+		board.Unref()
+
+		head := gtk.NewBox(gtk.OrientationHorizontalValue, 6)
+		head.AddCssClass("wayfire-workspace-head")
+		head.SetHalign(gtk.AlignStartValue)
+		head.SetValign(gtk.AlignStartValue)
+		numLbl := gtk.NewLabel(strconv.Itoa(i))
+		numLbl.AddCssClass("wayfire-workspace-num")
+		gtkx.Append(head, &numLbl.Widget)
+		if inWs > 0 {
+			countLbl := gtk.NewLabel(i18n.Nf("%d window", "%d windows", inWs, inWs))
+			countLbl.AddCssClass("wayfire-workspace-count")
+			gtkx.Append(head, &countLbl.Widget)
+		}
+		card.AddOverlay(&head.Widget)
+		head.Unref()
+
+		cardWidget := &card.Widget
+		gtkx.Append(o.workspacesBox, cardWidget)
 	}
 
 	// 2. Filter windows on the current active workspace
@@ -533,19 +584,182 @@ func (s *shellUI) renderWayfireOverview() {
 		empty.AddCssClass("overview-empty")
 		empty.SetHalign(gtk.AlignCenterValue)
 		empty.SetValign(gtk.AlignCenterValue)
-		gtkx.Append(&o.windowsBox, &empty.Widget)
+		gtkx.Append(o.windowsBox, &empty.Widget)
 		return
 	}
 
 	// 3. Arrange windows horizontally from left to right (从左到右排列)
 	for i, it := range o.windows {
 		tile := s.buildWayfireWindowTile(it)
-		o.cardWidgets[it.address] = tile
-		gtkx.Append(&o.windowsBox, &tile.Widget)
 		if i == o.selectedIndex {
 			tile.AddCssClass("selected")
 		}
+		// gtkx.Append unsinks and releases what it is handed; the tree
+		// holds the card from here, so ask the map for it by address
+		// rather than keeping a wrapper of our own.
+		tileWidget := &tile.Widget
+		gtkx.Append(o.windowsBox, tileWidget)
 	}
+
+	s.captureWayfireOverviewThumbs(o)
+}
+
+// captureWayfireOverviewThumbs fills in the pictures of the windows on show.
+// One frame per output serves every window on it: windowThumbnails cuts each
+// window out of the same capture, so a handful of cards costs one grim run
+// per monitor. A window that has a picture already keeps it, which is the
+// one taken while it was on top.
+func (s *shellUI) captureWayfireOverviewThumbs(o *wayfireOverview) {
+	if len(o.pending) == 0 {
+		return
+	}
+	var wanted []hypr.Toplevel
+	for _, window := range s.snap.Toplevels {
+		if _, ok := o.pending[window.Address]; ok {
+			wanted = append(wanted, window)
+		}
+	}
+	if len(wanted) == 0 {
+		return
+	}
+	snapshot := s.snap
+	// The overview covers the desktop it photographs: take the frame with
+	// it out of the way, then put it back before the pictures are pinned to
+	// the cards.
+	o.win.SetVisible(false)
+	go func() {
+		// One frame turn: a layer surface hidden this frame is gone from
+		// the next capture.
+		time.Sleep(120 * time.Millisecond)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		paths, err := s.windowThumbnails(ctx, snapshot, wanted, wayfireThumbW, wayfireThumbH)
+		if err != nil {
+			log.Printf("wayfire overview: capture: %v", err)
+		}
+		gtkx.Post(func() {
+			if !o.open {
+				return
+			}
+			o.win.SetVisible(true)
+			if err != nil {
+				return
+			}
+			for i, window := range wanted {
+				if i >= len(paths) || paths[i] == "" {
+					continue
+				}
+				address := window.Address
+				s.wfThumbs[address] = paths[i]
+				if picture := o.pending[address]; picture != nil {
+					if setPictureFile(picture, paths[i]) == nil {
+						delete(o.pending, address)
+					}
+				}
+			}
+		})
+	}()
+}
+
+// overviewWallpaper is the picture behind a workspace's thumbnail: the
+// wallpaper the desktop shows, or "" when a theme's texture stands in for it.
+func (s *shellUI) overviewWallpaper() string {
+	if !s.cfg.Background.Enable {
+		return ""
+	}
+	if s.cfg.Background.Generate {
+		return s.shownPicture()
+	}
+	if path := s.cfg.ImagePath(); path != "" {
+		if _, err := os.Stat(path); err == nil {
+			return path
+		}
+	}
+	return ""
+}
+
+// wayfireWorkspaceThumbSize is how large a workspace's picture is drawn in
+// the overview bar: the monitor's shape, wide enough to read a window.
+func wayfireWorkspaceThumbSize(monitors []hypr.Monitor, name string) (int32, int32) {
+	w, h := 1920.0, 1080.0
+	for _, mon := range monitors {
+		if mon.Name != name || mon.Width <= 0 || mon.Height <= 0 {
+			continue
+		}
+		scale := max(mon.Scale, 1)
+		w, h = float64(mon.Width)/scale, float64(mon.Height)/scale
+	}
+	const thumbW = 260.0
+	return int32(thumbW), int32(thumbW * h / w)
+}
+
+// addWayfireOverviewWindow puts a window's picture where the window sits on
+// its workspace's thumbnail. A window that has no capture yet keeps its
+// place, drawn as its application's icon.
+func (s *shellUI) addWayfireOverviewWindow(board *gtk.Fixed, it wayfireOverviewItem, cardW, cardH int32) {
+	x, y, w, h := s.wayfireOverviewWindowRect(it, cardW, cardH)
+	cell := gtk.NewOverlay()
+	cell.AddCssClass("wayfire-workspace-window")
+	cell.SetSizeRequest(w, h)
+	cell.SetCanTarget(false)
+	if path := s.wfThumbs[it.address]; path != "" {
+		pic := gtk.NewPicture()
+		pic.SetContentFit(gtk.ContentFitCoverValue)
+		pic.SetCanShrink(true)
+		if setPictureFile(pic, path) != nil {
+			log.Printf("wayfire overview: window picture %s", path)
+		}
+		cell.SetChild(&pic.Widget)
+		pic.Unref()
+	} else {
+		icon := gtk.NewImage()
+		setIcon(icon, it.icon)
+		icon.SetPixelSize(28)
+		icon.AddCssClass("wayfire-workspace-window-icon")
+		cell.SetChild(&icon.Widget)
+		icon.Unref()
+	}
+	board.Put(&cell.Widget, float64(x), float64(y))
+	cell.Unref()
+}
+
+// wayfireOverviewWindowRect maps a window's compositor geometry onto its
+// workspace's thumbnail, which is the whole monitor.
+func (s *shellUI) wayfireOverviewWindowRect(it wayfireOverviewItem, cardW, cardH int32) (x, y, w, h int32) {
+	var mon hypr.Monitor
+	found := false
+	for _, candidate := range s.snap.Monitors {
+		if candidate.Name == it.monitor {
+			mon, found = candidate, true
+			break
+		}
+	}
+	if !found || mon.Width <= 0 || mon.Height <= 0 {
+		return 0, 0, cardW, cardH
+	}
+	var gx, gy, gw, gh float64
+	for _, window := range s.snap.Toplevels {
+		if window.Address != it.address {
+			continue
+		}
+		if geometry, ok := window.Raw["geometry"].([]any); ok && len(geometry) >= 4 {
+			gx, _ = geometry[0].(float64)
+			gy, _ = geometry[1].(float64)
+			gw, _ = geometry[2].(float64)
+			gh, _ = geometry[3].(float64)
+		}
+		break
+	}
+	if gw <= 0 || gh <= 0 {
+		return 0, 0, cardW, cardH
+	}
+	scaleX := float64(cardW) / float64(mon.Width)
+	scaleY := float64(cardH) / float64(mon.Height)
+	x = int32(max(0, (gx-float64(mon.X))*scaleX))
+	y = int32(max(0, (gy-float64(mon.Y))*scaleY))
+	w = int32(max(16, min(gw*scaleX, float64(cardW-x))))
+	h = int32(max(12, min(gh*scaleY, float64(cardH-y))))
+	return x, y, w, h
 }
 
 func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
@@ -593,13 +807,14 @@ func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
 	icon.SetCanTarget(false)
 	gtkx.Append(topBar, &icon.Widget)
 
-	appLbl := gtk.NewLabel(it.appName)
-	appLbl.AddCssClass("wayfire-tile-app")
-	appLbl.SetHalign(gtk.AlignStartValue)
-	appLbl.SetHexpand(true)
-	appLbl.SetEllipsize(3)
-	appLbl.SetCanTarget(false)
-	gtkx.Append(topBar, &appLbl.Widget)
+	titleLbl := gtk.NewLabel(it.title)
+	titleLbl.AddCssClass("wayfire-tile-app")
+	titleLbl.SetHalign(gtk.AlignStartValue)
+	titleLbl.SetHexpand(true)
+	titleLbl.SetEllipsize(pango.EllipsizeEndValue)
+	titleLbl.SetTooltipText(it.title)
+	titleLbl.SetCanTarget(false)
+	gtkx.Append(topBar, &titleLbl.Widget)
 
 	closeBtn := gtk.NewButton()
 	closeBtn.SetName("wf-close:" + it.address)
@@ -612,17 +827,40 @@ func (s *shellUI) buildWayfireWindowTile(it wayfireOverviewItem) *gtk.Box {
 
 	gtkx.Append(tile, &topBar.Widget)
 
-	// Title
-	titleLbl := gtk.NewLabel(it.title)
-	titleLbl.AddCssClass("wayfire-tile-title")
-	titleLbl.SetWrap(true)
-	titleLbl.SetWrapMode(pango.WrapWordCharValue)
-	titleLbl.SetLines(3)
-	titleLbl.SetEllipsize(3)
-	titleLbl.SetHalign(gtk.AlignStartValue)
-	titleLbl.SetVexpand(true)
-	titleLbl.SetCanTarget(false)
-	gtkx.Append(tile, &titleLbl.Widget)
+	// The window's own picture; its application's icon stands in until the
+	// capture arrives.
+	picture := gtk.NewPicture()
+	picture.AddCssClass("wayfire-tile-thumb")
+	picture.SetContentFit(gtk.ContentFitCoverValue)
+	picture.SetCanShrink(true)
+	picture.SetCanTarget(false)
+	iconPlaceholder := gtk.NewImage()
+	setIcon(iconPlaceholder, it.icon)
+	iconPlaceholder.SetPixelSize(48)
+	iconPlaceholder.AddCssClass("wayfire-tile-icon")
+	icon.SetCanTarget(false)
+	stage := gtk.NewOverlay()
+	stage.AddCssClass("wayfire-tile-stage")
+	stage.SetSizeRequest(wayfireTileThumbW, wayfireTileThumbH)
+	stage.SetCanTarget(false)
+	if path := s.wfThumbs[it.address]; path != "" {
+		if setPictureFile(picture, path) != nil {
+			log.Printf("wayfire overview: window picture %s", path)
+		}
+	} else {
+		stage.SetChild(&iconPlaceholder.Widget)
+		stage.AddOverlay(&picture.Widget)
+		s.wfOverview.pending[it.address] = picture
+	}
+	gtkx.Append(tile, &stage.Widget)
+
+	// The application, under its window.
+	appLbl := gtk.NewLabel(it.appName)
+	appLbl.AddCssClass("wayfire-tile-app-sub")
+	appLbl.SetHalign(gtk.AlignStartValue)
+	appLbl.SetEllipsize(pango.EllipsizeEndValue)
+	appLbl.SetCanTarget(false)
+	gtkx.Append(tile, &appLbl.Widget)
 
 	// Footer: Active indicator & Monitor
 	foot := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
@@ -665,23 +903,16 @@ func (s *shellUI) stepWayfireOverview(delta int) {
 	s.selectWayfireOverviewIndex(newIdx)
 }
 
+// selectWayfireOverviewIndex moves the selection and draws it again: the
+// cards belong to the window's tree, so the overview does not keep their
+// wrappers, and a render is the one place that knows where each one is.
 func (s *shellUI) selectWayfireOverviewIndex(idx int) {
 	o := &s.wfOverview
-	if idx < 0 || idx >= len(o.windows) {
+	if idx < 0 || idx >= len(o.windows) || idx == o.selectedIndex {
 		return
 	}
-	if o.selectedIndex >= 0 && o.selectedIndex < len(o.windows) {
-		oldAddr := o.windows[o.selectedIndex].address
-		if box, ok := o.cardWidgets[oldAddr]; ok && box != nil {
-			box.RemoveCssClass("selected")
-		}
-	}
 	o.selectedIndex = idx
-	newAddr := o.windows[idx].address
-	if box, ok := o.cardWidgets[newAddr]; ok && box != nil {
-		box.AddCssClass("selected")
-		box.GrabFocus()
-	}
+	s.renderWayfireOverview()
 }
 
 func (s *shellUI) commitWayfireOverviewSelection() {
@@ -748,8 +979,6 @@ func (s *shellUI) closeWayfireOverview(restore bool) {
 		o.win.Unref()
 		o.win = nil
 	}
-	o.cardWidgets = nil
-	o.wsWidgets = nil
 	o.windows = nil
 	o.allWindows = nil
 }

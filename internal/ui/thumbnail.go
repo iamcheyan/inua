@@ -37,6 +37,30 @@ func (s *shellUI) windowThumbnail(ctx context.Context, snap hypr.Snapshot, addre
 	return "", errors.New("window is gone")
 }
 
+// outputFrame captures one output as it is now. The overview keeps it to
+// paint each workspace on the wallpaper: a window's own picture is cut
+// from the same frame, so the two cannot drift apart.
+func outputFrame(ctx context.Context, name string) (image.Image, error) {
+	raw, err := exec.CommandContext(ctx, "grim", "-o", name, "-").Output()
+	if err != nil {
+		return nil, err
+	}
+	return png.Decode(bytes.NewReader(raw))
+}
+
+// cropToMonitor cuts the part of a frame that belongs to a workspace card:
+// the monitor's own area, scaled from pixels to the card's size.
+func cropToMonitor(img image.Image, monitor hypr.Monitor, w, h int) image.Image {
+	src := img.Bounds()
+	if monitor.Width > 0 && monitor.Height > 0 {
+		scale := float64(src.Dx()) / float64(monitor.Width)
+		src = image.Rect(0, 0, int(float64(monitor.Width)*scale), int(float64(monitor.Height)*scale))
+	}
+	small := image.NewRGBA(image.Rect(0, 0, max(w, 1), max(h, 1)))
+	xdraw.ApproxBiLinear.Scale(small, small.Bounds(), img, src, xdraw.Src, nil)
+	return small
+}
+
 // windowThumbnails captures each output once, then crops every requested
 // window from that frame. Windows on different outputs use their own frame.
 func (s *shellUI) windowThumbnails(ctx context.Context, snap hypr.Snapshot, windows []hypr.Toplevel, maxW, maxH int) ([]string, error) {

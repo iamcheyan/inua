@@ -3,6 +3,7 @@ package ui
 import (
 	"context"
 	"log"
+	"maps"
 	"slices"
 	"strings"
 	"time"
@@ -62,12 +63,20 @@ func followWayfire(client *wayfire.Client, update func(compositor.Snapshot)) {
 
 func (s *shellUI) applyWayfireSnapshot(snapshot compositor.Snapshot) {
 	oldPID := focusedPID(s.snap)
+	oldActive := s.snap.ActiveToplevel
 	s.windowSnap = wayfireSnapshot(snapshot)
 	s.snap = s.windowSnap
 	if s.snap.ActiveToplevel != "" {
 		s.recordWayfireFocus(s.snap.ActiveToplevel)
-		s.captureWayfireThumbnail(s.snap.ActiveToplevel)
+		// Only when focus moves: a picture is worth keeping until then,
+		// and grim captures the whole output.
+		if s.snap.ActiveToplevel != oldActive {
+			s.captureWayfireThumbnail(s.snap.ActiveToplevel)
+		}
 	}
+	maps.DeleteFunc(s.wfThumbs, func(address, _ string) bool {
+		return !slices.ContainsFunc(s.windowSnap.Toplevels, func(t hypr.Toplevel) bool { return t.Address == address })
+	})
 	if s.menu.open && s.menu.pid != focusedPID(s.snap) {
 		s.closeMenu()
 	}
@@ -218,10 +227,6 @@ func (s *shellUI) captureWayfireThumbnail(address string) {
 			}
 			gtkx.Post(func() {
 				s.wfThumbBusy[address] = false
-				if err != nil {
-					log.Printf("dock preview: cache %s: %v", address, err)
-					return
-				}
 				if path != "" {
 					s.wfThumbs[address] = path
 				}
