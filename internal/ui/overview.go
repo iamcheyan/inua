@@ -88,13 +88,21 @@ type queuedOverviewFrame struct {
 }
 
 func (s *shellUI) showOverview() {
+	if s.wayfire != nil {
+		if s.wfOverview.open {
+			s.closeWayfireOverview(false)
+			return
+		}
+		s.showWayfireOverview()
+		return
+	}
 	s.closeClipboard()
 	s.closePasswords()
 	if s.overview.st.Open {
 		s.closeOverview(false)
 		return
 	}
-	if !s.hyprLua && s.wayfire == nil {
+	if !s.hyprLua {
 		// Hyprland without Lua (before 0.55): the launcher's windows
 		// instead, what Super+Tab opened before the overview.
 		s.showLauncher(shell.Windows)
@@ -149,6 +157,10 @@ func (s *shellUI) showOverview() {
 }
 
 func (s *shellUI) closeOverview(restore bool) {
+	if s.wayfire != nil {
+		s.closeWayfireOverview(restore)
+		return
+	}
 	o := &s.overview
 	if !o.st.Open {
 		return

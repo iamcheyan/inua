@@ -20,6 +20,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"codeberg.org/puregotk/puregotk/v4/pango"
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
@@ -40,6 +41,13 @@ const (
 	dockHideMS   = 500
 	dockEdge     = 3 // px of a hidden dock along the screen edge
 	dockLaunchMS = 6000
+)
+
+const (
+	dockPreviewThumbWidth  = 160
+	dockPreviewThumbHeight = 90
+	dockPreviewCardWidth   = 168
+	dockPreviewCardGap     = 8
 )
 
 type dock struct {
@@ -590,6 +598,7 @@ func (s *shellUI) bindDockHandlers() {
 		}
 	}
 	s.onDockHover = func(c gtk.EventControllerMotion, _, _ float64) {
+		s.dockPreviewLeaveGen++ // cancel a pending close while on a dock item
 		w := c.GetWidget()
 		if w == nil {
 			return
@@ -614,7 +623,13 @@ func (s *shellUI) bindDockHandlers() {
 		}
 	}
 	s.onDockHoverLeave = func(gtk.EventControllerMotion) {
-		s.closeDockPreview()
+		s.scheduleDockPreviewClose()
+	}
+	s.onDockPreviewHover = func(gtk.EventControllerMotion, float64, float64) {
+		s.dockPreviewLeaveGen++ // keep it open when the pointer enters the preview
+	}
+	s.onDockPreviewHoverLeave = func(gtk.EventControllerMotion) {
+		s.scheduleDockPreviewClose()
 	}
 	s.onDockScroll = func(_ gtk.EventControllerScroll, _, dy float64) bool {
 		s.scrollDock(int(dy))
@@ -1029,9 +1044,10 @@ func (s *shellUI) nextPinned(key string) string {
 	return ""
 }
 
-// showDockPreview shows the app's latest window as a thumbnail above the dock.
+// showDockPreview shows the app's open windows as thumbnails beside the dock.
 func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem) {
 	if s.wayfire == nil || len(it.Windows) == 0 {
+		s.closeDockPreview()
 		return
 	}
 	s.closeDockPreview()
@@ -1039,50 +1055,122 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 	pop := gtk.NewPopover()
 	pop.SetParent(at)
 	pop.SetHasArrow(true)
-	pop.SetPosition(gtk.PosTopValue)
 	pop.SetAutohide(false)
+	hover := gtk.NewEventControllerMotion()
+	hover.ConnectEnter(&s.onDockPreviewHover)
+	hover.ConnectLeave(&s.onDockPreviewHoverLeave)
+	pop.AddController(&hover.EventController)
 
-	box := gtk.NewBox(gtk.OrientationVerticalValue, 6)
-	title := gtk.NewLabel(it.Name)
-	title.SetXalign(0)
-	picture := gtk.NewPicture()
-	picture.SetSizeRequest(360, 203)
-	picture.SetContentFit(gtk.ContentFitContainValue)
-	gtkx.Append(box, &title.Widget)
-	gtkx.Append(box, &picture.Widget)
-	pop.SetChild(&box.Widget)
-	box.Unref()
+	columns := int32(2)
+	position := gtk.PosTopValue
+	switch s.cfg.Dock.Position {
+	case "top":
+		position = gtk.PosBottomValue
+	case "left":
+		position, columns = gtk.PosRightValue, 1
+	case "right":
+		position, columns = gtk.PosLeftValue, 1
+	}
+	pop.SetPosition(position)
+
+	grid := gtk.NewGrid()
+	grid.SetColumnHomogeneous(true)
+	grid.SetColumnSpacing(dockPreviewCardGap)
+	grid.SetRowSpacing(dockPreviewCardGap)
+	pictures := make([]*gtk.Picture, len(it.Windows))
+	for i, window := range it.Windows {
+		card := gtk.NewBox(gtk.OrientationVerticalValue, 4)
+		card.SetSizeRequest(dockPreviewCardWidth, -1)
+		title := strings.TrimSpace(window.Title)
+		if title == "" {
+			title = it.Name
+		}
+		label := gtk.NewLabel(title)
+		label.AddCssClass("sub")
+		label.SetXalign(0)
+		label.SetEllipsize(pango.EllipsizeEndValue)
+		label.SetMaxWidthChars(24)
+		label.SetTooltipText(title)
+		picture := gtk.NewPicture()
+		picture.SetCanShrink(true)
+		picture.SetSizeRequest(dockPreviewThumbWidth, dockPreviewThumbHeight)
+		picture.SetContentFit(gtk.ContentFitContainValue)
+		gtkx.Append(card, &label.Widget)
+		gtkx.Append(card, &picture.Widget)
+		grid.Attach(&card.Widget, int32(i)%columns, int32(i)/columns, 1, 1)
+		card.Unref()
+		pictures[i] = picture
+	}
+	visibleColumns := min(columns, int32(len(it.Windows)))
+	contentWidth := visibleColumns*dockPreviewCardWidth + (visibleColumns-1)*dockPreviewCardGap
+	scroll := gtk.NewScrolledWindow()
+	scroll.SetSizeRequest(contentWidth+20, -1)
+	scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
+	scroll.SetPropagateNaturalWidth(true)
+	scroll.SetPropagateNaturalHeight(true)
+	scroll.SetMaxContentHeight(320)
+	scroll.SetChild(&grid.Widget)
+	scroll.SetMinContentWidth(contentWidth)
+	scroll.SetMaxContentWidth(contentWidth)
+	grid.Unref()
+	pop.SetChild(&scroll.Widget)
+	scroll.Unref()
 	s.dockPreview, s.dockPreviewKey = pop, key
 	s.dockPreviewGen++
 	gen := s.dockPreviewGen
-	pop.Popup()
 
 	snapshot := s.snap
-	address := it.Windows[0].Address
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
-		path, err := s.windowThumbnail(ctx, snapshot, address)
+		// grim captures a whole output, so load every window before showing
+		// the popover to keep it out of its own thumbnails.
+		paths, err := s.windowThumbnails(ctx, snapshot, it.Windows, dockPreviewThumbWidth, dockPreviewThumbHeight)
 		if err != nil {
-			log.Printf("dock preview: %v", err)
+			log.Printf("dock preview: capture: %v", err)
+			gtkx.Post(func() {
+				if s.dockPreviewGen == gen && s.dockPreview == pop {
+					s.closeDockPreview()
+				}
+			})
 			return
 		}
 		gtkx.Post(func() {
-			if s.dockPreviewGen != gen || s.dockPreview == nil {
+			if s.dockPreviewGen != gen || s.dockPreview != pop {
 				return
 			}
-			setPictureFile(picture, path)
+			for i, path := range paths {
+				if err := setPictureFile(pictures[i], path); err != nil {
+					log.Printf("dock preview: load image: %v", err)
+					s.closeDockPreview()
+					return
+				}
+			}
+			pop.Popup()
 		})
 	}()
 }
 
+func (s *shellUI) scheduleDockPreviewClose() {
+	s.dockPreviewLeaveGen++
+	gen := s.dockPreviewLeaveGen
+	time.AfterFunc(150*time.Millisecond, func() {
+		gtkx.Post(func() {
+			if s.dockPreviewLeaveGen == gen {
+				s.closeDockPreview()
+			}
+		})
+	})
+}
+
 func (s *shellUI) closeDockPreview() {
-	if s.dockPreview == nil {
-		return
-	}
 	s.dockPreviewGen++
+	s.dockPreviewLeaveGen++
 	pop := s.dockPreview
 	s.dockPreview, s.dockPreviewKey = nil, ""
+	if pop == nil {
+		return
+	}
 	pop.Popdown()
 	pop.Unparent()
 }

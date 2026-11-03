@@ -84,282 +84,290 @@ type shellUI struct {
 	// hyprLua: Hyprland runs Lua (0.55 and later; probeLua). The overview
 	// needs it, and focusing and switching use its dispatchers when there,
 	// the classic ones otherwise.
-	hyprLua        bool
-	settingsApply compositorSettingsApply
-	notes          notes
-	dockState      dockState
-	dockPreview    *gtk.Popover
-	dockPreviewKey string
-	dockPreviewGen uint64
-	icons          icons
+	hyprLua             bool
+	settingsApply       compositorSettingsApply
+	notes               notes
+	dockState           dockState
+	dockPreview         *gtk.Popover
+	dockPreviewKey      string
+	dockPreviewGen      uint64
+	dockPreviewLeaveGen uint64
+	icons               icons
 	// The wheel over the bars' workspaces, and over the docks.
 	workspaceWheel, dockWheel shell.WheelStep
 
-	bars      map[uintptr]*bar // by GdkMonitor
-	styles    styles
-	clockGen  uintptr // the running clock timer; see restartClock
-	launcher  launcher
-	overview  workspaceOverview
-	control   control
-	clipboard clipboardPanel
-	passwords passwordsPanel
-	agenda    agenda
-	widgets   widgetPage
-	shot      shooter
-	recording recorder
-	lock      locker
-	auth      authAgent   // the polkit agent
-	portals   portals     // inua's portal backend (docs/portals.md)
-	pass      passPrompts // gpg's passphrases (inua-pinentry)
-	alarms    alarms
-	settings  settings
-	wifi      wifiState // the networks, while a list shows them
-	appmenu   appMenuState
-	menu      menuPanel // the bar's application menu, when open
-	tray      tray
-	osd       osd
-	dictation dictationCard // dictation as it goes
-	sys       shell.System
-	svc       services
+	bars       map[uintptr]*bar // by GdkMonitor
+	styles     styles
+	clockGen   uintptr // the running clock timer; see restartClock
+	launcher   launcher
+	overview   workspaceOverview
+	wfOverview             wayfireOverview
+	wfSwitcher             wayfireSwitcher
+	wayfireMRU             []string
+	wayfireActiveWorkspace int
+	wayfireWinWorkspaces   map[string]int
+	control    control
+	clipboard  clipboardPanel
+	passwords  passwordsPanel
+	agenda     agenda
+	widgets    widgetPage
+	shot       shooter
+	recording  recorder
+	lock       locker
+	auth       authAgent   // the polkit agent
+	portals    portals     // inua's portal backend (docs/portals.md)
+	pass       passPrompts // gpg's passphrases (inua-pinentry)
+	alarms     alarms
+	settings   settings
+	wifi       wifiState // the networks, while a list shows them
+	appmenu    appMenuState
+	menu       menuPanel // the bar's application menu, when open
+	tray       tray
+	osd        osd
+	dictation  dictationCard // dictation as it goes
+	sys        shell.System
+	svc        services
 
 	// Long-lived signal handlers, shared by all widgets (see package gtkx).
-	onMonitorsChanged      func(uintptr, uint32, uint32, uint32, uintptr)
-	onConnector            func(uintptr, uintptr, uintptr)
-	onWorkspaceClicked     func(gtk.Button)
-	onWorkspaceSettle      glib.SourceFunc
-	onClock                glib.SourceFunc
-	onAppMenuClicked       func(gtk.Button)
-	onAppButton            func(gtk.Button) // the application's name: opens its own menu
-	onAppMenuMeasure       glib.SourceFunc
-	onMenuRow              func(gtk.Button)
-	onMenuHover            func(gtk.EventControllerMotion, float64, float64)
-	onMenuLayout           glib.SourceFunc
-	onMenuBackdrop         func(gtk.GestureClick, int32, float64, float64)
-	onMenuKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onKey                  func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onLauncherPick         func(gtk.GestureClick, int32, float64, float64)
-	onLauncherCatch        func(gtk.GestureClick, int32, float64, float64)
-	onLauncherMenuClosed   func(gtk.Popover)
-	onLauncherGone         glib.SourceFunc
-	onLauncherScrolled     func(gtk.Adjustment)
-	onLauncherLaidOut      func(gtk.Adjustment)
-	onLauncherFootLaidOut  func(gtk.Adjustment)
-	onLauncherTick         gtk.TickCallback
-	onOverviewKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onOverviewButton       func(gtk.Button)
-	onWorkspaceOverview    func(gtk.GestureClick, int32, float64, float64)
-	onOverviewCanvas       func(gtk.GestureClick, int32, float64, float64)
-	onOverviewQuery        func(uintptr, uintptr)
-	onOverviewDrop         func(gtk.DropTarget, uintptr, float64, float64) bool
-	onOverviewMotion       func(gtk.DropTarget, float64, float64) gdk.DragAction
-	onOverviewLeave        func(gtk.DropTarget)
-	onOverviewFilterRender glib.SourceFunc
-	onOverviewRender       glib.SourceFunc
-	onQueryChanged         func(uintptr, uintptr)
-	onQueryActivate        func(gtk.Entry)
-	onQueryFocus           func(gtk.EventControllerFocus)
-	onControlButton        func(gtk.Button)
-	onControlItem          func(gtk.Button)
-	onBarMotion            func(gtk.EventControllerMotion, float64, float64)
-	onBarLeave             func(gtk.EventControllerMotion)
-	onPanelMotion          func(gtk.EventControllerMotion, float64, float64)
-	onPanelLeave           func(gtk.EventControllerMotion)
-	onBarPressed           func(gtk.GestureClick, int32, float64, float64)
-	onBarReleased          func(gtk.GestureClick, int32, float64, float64)
-	onBarScroll            func(gtk.EventControllerScroll, float64, float64) bool
-	onWorkspaceScroll      func(gtk.EventControllerScroll, float64, float64) bool
-	onDockScroll           func(gtk.EventControllerScroll, float64, float64) bool
-	onDockHover            func(gtk.EventControllerMotion, float64, float64)
-	onDockHoverLeave       func(gtk.EventControllerMotion)
-	onSlider               func(gtk.Range, gtk.ScrollType, float64) bool
-	onBackdropPressed      func(gtk.GestureClick, int32, float64, float64)
-	onControlKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onControlGone          glib.SourceFunc
-	onControlTick          glib.SourceFunc
-	onPowerToggled         func(gtk.ToggleButton)
-	onPowerDisarm          glib.SourceFunc
-	onTrayClicked          func(gtk.Button)
-	onTrayPressed          func(gtk.GestureClick, int32, float64, float64)
-	onTrayMenuClosed       func(gtk.Popover)
-	onSettingsEntry        func(uintptr, uintptr)
-	onSettingsSwitch       func(gtk.Switch, bool) bool
-	onAIAbility            func(gtk.ToggleButton)
-	onAIModelSearch        func(gtk.SearchEntry)
-	onAIModelPick          func(gtk.Button)
-	onSettingsDrop         func(uintptr, uintptr, uintptr)
-	onSettingsPage         func(uintptr, uintptr, uintptr)
-	onDefaultApp           func(uintptr, uintptr, uintptr)
-	onDisplayDrop          func(uintptr, uintptr, uintptr)
-	onPowerDrop            func(uintptr, uintptr, uintptr) // the Power page's drop-downs
-	onVoiceSwitch          func(gtk.Switch, bool) bool
-	onVoiceMode            func(gtk.ToggleButton)
-	onVoiceRuns            func(gtk.ToggleButton)
-	onVoiceShow            func(uintptr, uintptr, uintptr)
-	onSoundSlider          func(gtk.Range, gtk.ScrollType, float64) bool
-	onSoundMute            func(gtk.Button)
-	onSoundPlay            func(gtk.Button)
-	onVoiceKeys            func(gtk.Button)
-	onVoiceSetup           func(gtk.Button)
-	onVoiceInstall         func(gtk.Button)
-	onVoiceSite            func(gtk.Button)
-	onVoiceAI              func(gtk.Button)
-	onVoiceStart           func(gtk.Button)
-	onVoxtypeFilter        func(uintptr, uintptr, uintptr)
-	onVoxtypeRow           func(gtk.Button)
-	onVoxtypeMore          func(gtk.Button)
-	onDisplaySwitch        func(gtk.Switch, bool) bool
-	onDisplayButton        func(gtk.Button)
-	onBluetoothSwitch      func(gtk.Switch, bool) bool
-	onBluetoothButton      func(gtk.Button)
-	onBluetoothEntry       func(gtk.Entry)
-	onWifiSwitch           func(gtk.Switch, bool) bool
-	onWifiButton           func(gtk.Button)
-	onWifiDetailsClose     func(gtk.Button) // the details dialog's Close, one for every opening
-	onWifiEntry            func(gtk.PasswordEntry)
-	onWifiPoll             glib.SourceFunc
-	onSettingsIndex        func(gtk.ListBox, uintptr)
-	onSettingsHeader       gtk.ListBoxUpdateHeaderFunc // the index's group kickers
-	onSettingsHeaderDone   glib.DestroyNotify
-	onSettingsSearch       func(gtk.SearchEntry)
-	onSettingsSearchGo     func(gtk.SearchEntry)
-	onSettingsSearchStop   func(gtk.SearchEntry)
-	onSettingsResult       func(gtk.ListBox, uintptr)
-	onSearchScroll         glib.SourceFunc
-	onSearchFlash          glib.SourceFunc
-	onAboutLink            func(gtk.Button)
-	onSettingsButton       func(gtk.Button)
-	onThemeMenu            func(gtk.GestureClick, int32, float64, float64)
-	onThemeMenuClosed      func(gtk.Popover)
-	onIconSetMenu          func(gtk.GestureClick, int32, float64, float64)
-	onPreviewKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onSettingsClose        func(gtk.Window) bool
-	onSettingsKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onSettingsScale        func(gtk.Range, gtk.ScrollType, float64) bool
-	onSettingsScroll       func(gtk.Adjustment)
-	onShotDragBegin        func(gtk.GestureDrag, float64, float64)
-	onShotDragUpdate       func(gtk.GestureDrag, float64, float64)
-	onShotDragEnd          func(gtk.GestureDrag, float64, float64)
-	onShotMotion           func(gtk.EventControllerMotion, float64, float64)
-	onShotLeave            func(gtk.EventControllerMotion)
-	onShotKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onShotMode             func(gtk.ToggleButton)
-	onShotCancel           func(gtk.Button)
-	onShotCamera           func(gtk.Button)
-	onShotRecord           func(gtk.ToggleButton)
-	onShotDrawer           func(gtk.Button)
-	onShotItem             func(gtk.Button)
-	onShotTake             func(gtk.Button)
-	onShotDrawerClose      func(gtk.Button)
-	onShotDrawerRecord     func(gtk.ToggleButton)
-	onShotDrawerKey        func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onShotReopen           glib.SourceFunc
-	onShotItemDragBegin    func(gtk.DragSource, uintptr)
-	onShotItemDragCancel   func(gtk.DragSource, uintptr, gdk.DragCancelReason) bool
-	onShotItemDragEnd      func(gtk.DragSource, uintptr, bool)
-	onRecordTick           glib.SourceFunc
-	onRecordStart          glib.SourceFunc
-	onRecButton            func(gtk.Button)
-	onClockButton          func(gtk.Button)
-	onAgendaButton         func(gtk.Button)
-	onAgendaWeather        func(gtk.Button)
-	onAgendaPressed        func(gtk.GestureClick, int32, float64, float64)
-	onAgendaKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onAgendaGone           glib.SourceFunc
-	onWidgetsMark          func(gtk.Button)
-	onWidgetsKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onWidgetsRevealed      func(uintptr, uintptr, uintptr)
-	onWidgetButton         func(gtk.Button)
-	onWidgetMenu           func(gtk.GestureClick, int32, float64, float64)
-	onWidgetMenuClosed     func(gtk.Popover)
-	onWidgetsAddActive     func(uintptr, uintptr, uintptr)
-	onWidgetDrop           func(gtk.DropTarget, uintptr, float64, float64) bool
-	onWidgetQuery          func(gtk.SearchEntry)
-	onWidgetQueryActivate  func(gtk.SearchEntry)
-	onWidgetDragBegin      func(gtk.GestureDrag, float64, float64)
-	onWidgetDragUpdate     func(gtk.GestureDrag, float64, float64)
-	onWidgetDragEnd        func(gtk.GestureDrag, float64, float64)
-	onLockMonitor          func(uintptr, uintptr, uintptr)
-	onLockLocked           func(uintptr, uintptr)
-	onLockFailed           func(uintptr, uintptr)
-	onLockUnlocked         func(uintptr, uintptr)
-	onLockTick             glib.SourceFunc
-	onLockActivate         func(gtk.PasswordEntry)
-	onAuthOK               func(gtk.Button)
-	onAuthCancel           func(gtk.Button)
-	onAuthSwitch           func(gtk.Button)
-	onAuthActivate         func(gtk.PasswordEntry)
-	onAuthKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onPassOK               func(gtk.Button)
-	onPassCancel           func(gtk.Button)
-	onPassNotOK            func(gtk.Button)
-	onPassActivate         func(gtk.PasswordEntry)
-	onPassTextActivate     func(gtk.Entry)
-	onPassKey              func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onPassMask             func(gtk.Button)
-	onPassRow              func(gtk.Button)
-	onAlarmTick            glib.SourceFunc
-	onRecordTimeout        glib.SourceFunc
-	onSettingsSave         glib.SourceFunc
-	onNoteButton           func(gtk.Button)
-	onNoteClicked          func(gtk.GestureClick, int32, float64, float64)
-	onNotesSave            glib.SourceFunc
-	onBannerTick           glib.SourceFunc
-	onOSDHide              glib.SourceFunc
-	onOSDGone              glib.SourceFunc
-	onBannerGone           glib.SourceFunc
-	onBannerEnter          func(gtk.EventControllerMotion, float64, float64)
-	onBannerLeave          func(gtk.EventControllerMotion)
-	onCenterPressed        func(gtk.GestureClick, int32, float64, float64)
-	onCenterKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onCenterGone           glib.SourceFunc
-	onNotesButton          func(gtk.Button)
-	onVoiceButton          func(gtk.Button)
-	onDockClicked          func(gtk.Button)
-	onClipboardButton      func(gtk.Button)
-	onClipboardSearch      func(gtk.SearchEntry)
-	onClipboardActivate    func(gtk.SearchEntry)
-	onClipboardAction      func(gtk.Button)
-	onClipboardHover       func(gtk.EventControllerMotion, float64, float64)
-	onClipboardLeave       func(gtk.EventControllerMotion)
-	onClipboardBackdrop    func(gtk.GestureClick, int32, float64, float64)
-	onClipboardKey         func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onClipboardTick        glib.SourceFunc
-	onClipboardGone        glib.SourceFunc
-	onPasswordsButton      func(gtk.Button)
-	onPasswordsSearch      func(gtk.SearchEntry)
-	onPasswordsActivate    func(gtk.SearchEntry)
-	onPasswordsAction      func(gtk.Button)
-	onPasswordsBackdrop    func(gtk.GestureClick, int32, float64, float64)
-	onPasswordsKey         func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onPasswordsTick        glib.SourceFunc
-	onPasswordsForget      glib.SourceFunc
-	onDrawerClicked        func(gtk.Button)
-	onDrawerApp            func(gtk.Button)
-	onDrawerSearch         func(gtk.SearchEntry)
-	onDrawerBackdrop       func(gtk.GestureClick, int32, float64, float64)
-	onDrawerKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onDrawerGone           glib.SourceFunc
-	onWorkshopTick         glib.SourceFunc
-	onDockMenu             func(gtk.GestureClick, int32, float64, float64)
-	onDockMenuItem         func(gtk.Button)
-	onDockEnter            func(gtk.EventControllerMotion, float64, float64)
-	onDockLeave            func(gtk.EventControllerMotion)
-	onDockHide             glib.SourceFunc
-	onDockRevealed         func(uintptr, uintptr, uintptr)
-	onDockLaunched         glib.SourceFunc
-	onDockDragBegin        func(gtk.DragSource, uintptr)
-	onDockDragEnd          func(gtk.DragSource, uintptr, bool)
-	onDockDragCancel       func(gtk.DragSource, uintptr, gdk.DragCancelReason) bool
-	onDockGapTick          glib.SourceFunc
-	onDockDropMotion       func(gtk.DropTarget, float64, float64) gdk.DragAction
-	onDockDropLeave        func(gtk.DropTarget)
-	onDockDrop             func(gtk.DropTarget, uintptr, float64, float64) bool
-	onImageChosen          gio.AsyncReadyCallback
-	onCardSaved            gio.AsyncReadyCallback
-	onCustomChosen         gio.AsyncReadyCallback // a theme or icon set to add
-	onAfter                glib.SourceFunc        // runAfter's
-	afterFns               map[uintptr]func()
-	afterSeq               uintptr
+	onMonitorsChanged       func(uintptr, uint32, uint32, uint32, uintptr)
+	onConnector             func(uintptr, uintptr, uintptr)
+	onWorkspaceClicked      func(gtk.Button)
+	onWorkspaceSettle       glib.SourceFunc
+	onClock                 glib.SourceFunc
+	onAppMenuClicked        func(gtk.Button)
+	onAppButton             func(gtk.Button) // the application's name: opens its own menu
+	onAppMenuMeasure        glib.SourceFunc
+	onMenuRow               func(gtk.Button)
+	onMenuHover             func(gtk.EventControllerMotion, float64, float64)
+	onMenuLayout            glib.SourceFunc
+	onMenuBackdrop          func(gtk.GestureClick, int32, float64, float64)
+	onMenuKey               func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onKey                   func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onLauncherPick          func(gtk.GestureClick, int32, float64, float64)
+	onLauncherCatch         func(gtk.GestureClick, int32, float64, float64)
+	onLauncherMenuClosed    func(gtk.Popover)
+	onLauncherGone          glib.SourceFunc
+	onLauncherScrolled      func(gtk.Adjustment)
+	onLauncherLaidOut       func(gtk.Adjustment)
+	onLauncherFootLaidOut   func(gtk.Adjustment)
+	onLauncherTick          gtk.TickCallback
+	onOverviewKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onOverviewButton        func(gtk.Button)
+	onWorkspaceOverview     func(gtk.GestureClick, int32, float64, float64)
+	onOverviewCanvas        func(gtk.GestureClick, int32, float64, float64)
+	onOverviewQuery         func(uintptr, uintptr)
+	onOverviewDrop          func(gtk.DropTarget, uintptr, float64, float64) bool
+	onOverviewMotion        func(gtk.DropTarget, float64, float64) gdk.DragAction
+	onOverviewLeave         func(gtk.DropTarget)
+	onOverviewFilterRender  glib.SourceFunc
+	onOverviewRender        glib.SourceFunc
+	onQueryChanged          func(uintptr, uintptr)
+	onQueryActivate         func(gtk.Entry)
+	onQueryFocus            func(gtk.EventControllerFocus)
+	onControlButton         func(gtk.Button)
+	onControlItem           func(gtk.Button)
+	onBarMotion             func(gtk.EventControllerMotion, float64, float64)
+	onBarLeave              func(gtk.EventControllerMotion)
+	onPanelMotion           func(gtk.EventControllerMotion, float64, float64)
+	onPanelLeave            func(gtk.EventControllerMotion)
+	onBarPressed            func(gtk.GestureClick, int32, float64, float64)
+	onBarReleased           func(gtk.GestureClick, int32, float64, float64)
+	onBarScroll             func(gtk.EventControllerScroll, float64, float64) bool
+	onWorkspaceScroll       func(gtk.EventControllerScroll, float64, float64) bool
+	onDockScroll            func(gtk.EventControllerScroll, float64, float64) bool
+	onDockHover             func(gtk.EventControllerMotion, float64, float64)
+	onDockHoverLeave        func(gtk.EventControllerMotion)
+	onDockPreviewHover      func(gtk.EventControllerMotion, float64, float64)
+	onDockPreviewHoverLeave func(gtk.EventControllerMotion)
+	onSlider                func(gtk.Range, gtk.ScrollType, float64) bool
+	onBackdropPressed       func(gtk.GestureClick, int32, float64, float64)
+	onControlKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onControlGone           glib.SourceFunc
+	onControlTick           glib.SourceFunc
+	onPowerToggled          func(gtk.ToggleButton)
+	onPowerDisarm           glib.SourceFunc
+	onTrayClicked           func(gtk.Button)
+	onTrayPressed           func(gtk.GestureClick, int32, float64, float64)
+	onTrayMenuClosed        func(gtk.Popover)
+	onSettingsEntry         func(uintptr, uintptr)
+	onSettingsSwitch        func(gtk.Switch, bool) bool
+	onAIAbility             func(gtk.ToggleButton)
+	onAIModelSearch         func(gtk.SearchEntry)
+	onAIModelPick           func(gtk.Button)
+	onSettingsDrop          func(uintptr, uintptr, uintptr)
+	onSettingsPage          func(uintptr, uintptr, uintptr)
+	onDefaultApp            func(uintptr, uintptr, uintptr)
+	onDisplayDrop           func(uintptr, uintptr, uintptr)
+	onPowerDrop             func(uintptr, uintptr, uintptr) // the Power page's drop-downs
+	onVoiceSwitch           func(gtk.Switch, bool) bool
+	onVoiceMode             func(gtk.ToggleButton)
+	onVoiceRuns             func(gtk.ToggleButton)
+	onVoiceShow             func(uintptr, uintptr, uintptr)
+	onSoundSlider           func(gtk.Range, gtk.ScrollType, float64) bool
+	onSoundMute             func(gtk.Button)
+	onSoundPlay             func(gtk.Button)
+	onVoiceKeys             func(gtk.Button)
+	onVoiceSetup            func(gtk.Button)
+	onVoiceInstall          func(gtk.Button)
+	onVoiceSite             func(gtk.Button)
+	onVoiceAI               func(gtk.Button)
+	onVoiceStart            func(gtk.Button)
+	onVoxtypeFilter         func(uintptr, uintptr, uintptr)
+	onVoxtypeRow            func(gtk.Button)
+	onVoxtypeMore           func(gtk.Button)
+	onDisplaySwitch         func(gtk.Switch, bool) bool
+	onDisplayButton         func(gtk.Button)
+	onBluetoothSwitch       func(gtk.Switch, bool) bool
+	onBluetoothButton       func(gtk.Button)
+	onBluetoothEntry        func(gtk.Entry)
+	onWifiSwitch            func(gtk.Switch, bool) bool
+	onWifiButton            func(gtk.Button)
+	onWifiDetailsClose      func(gtk.Button) // the details dialog's Close, one for every opening
+	onWifiEntry             func(gtk.PasswordEntry)
+	onWifiPoll              glib.SourceFunc
+	onSettingsIndex         func(gtk.ListBox, uintptr)
+	onSettingsHeader        gtk.ListBoxUpdateHeaderFunc // the index's group kickers
+	onSettingsHeaderDone    glib.DestroyNotify
+	onSettingsSearch        func(gtk.SearchEntry)
+	onSettingsSearchGo      func(gtk.SearchEntry)
+	onSettingsSearchStop    func(gtk.SearchEntry)
+	onSettingsResult        func(gtk.ListBox, uintptr)
+	onSearchScroll          glib.SourceFunc
+	onSearchFlash           glib.SourceFunc
+	onAboutLink             func(gtk.Button)
+	onSettingsButton        func(gtk.Button)
+	onThemeMenu             func(gtk.GestureClick, int32, float64, float64)
+	onThemeMenuClosed       func(gtk.Popover)
+	onIconSetMenu           func(gtk.GestureClick, int32, float64, float64)
+	onPreviewKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onSettingsClose         func(gtk.Window) bool
+	onSettingsKey           func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onSettingsScale         func(gtk.Range, gtk.ScrollType, float64) bool
+	onSettingsScroll        func(gtk.Adjustment)
+	onShotDragBegin         func(gtk.GestureDrag, float64, float64)
+	onShotDragUpdate        func(gtk.GestureDrag, float64, float64)
+	onShotDragEnd           func(gtk.GestureDrag, float64, float64)
+	onShotMotion            func(gtk.EventControllerMotion, float64, float64)
+	onShotLeave             func(gtk.EventControllerMotion)
+	onShotKey               func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onShotMode              func(gtk.ToggleButton)
+	onShotCancel            func(gtk.Button)
+	onShotCamera            func(gtk.Button)
+	onShotRecord            func(gtk.ToggleButton)
+	onShotDrawer            func(gtk.Button)
+	onShotItem              func(gtk.Button)
+	onShotTake              func(gtk.Button)
+	onShotDrawerClose       func(gtk.Button)
+	onShotDrawerRecord      func(gtk.ToggleButton)
+	onShotDrawerKey         func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onShotReopen            glib.SourceFunc
+	onShotItemDragBegin     func(gtk.DragSource, uintptr)
+	onShotItemDragCancel    func(gtk.DragSource, uintptr, gdk.DragCancelReason) bool
+	onShotItemDragEnd       func(gtk.DragSource, uintptr, bool)
+	onRecordTick            glib.SourceFunc
+	onRecordStart           glib.SourceFunc
+	onRecButton             func(gtk.Button)
+	onClockButton           func(gtk.Button)
+	onAgendaButton          func(gtk.Button)
+	onAgendaWeather         func(gtk.Button)
+	onAgendaPressed         func(gtk.GestureClick, int32, float64, float64)
+	onAgendaKey             func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onAgendaGone            glib.SourceFunc
+	onWidgetsMark           func(gtk.Button)
+	onWidgetsKey            func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onWidgetsRevealed       func(uintptr, uintptr, uintptr)
+	onWidgetButton          func(gtk.Button)
+	onWidgetMenu            func(gtk.GestureClick, int32, float64, float64)
+	onWidgetMenuClosed      func(gtk.Popover)
+	onWidgetsAddActive      func(uintptr, uintptr, uintptr)
+	onWidgetDrop            func(gtk.DropTarget, uintptr, float64, float64) bool
+	onWidgetQuery           func(gtk.SearchEntry)
+	onWidgetQueryActivate   func(gtk.SearchEntry)
+	onWidgetDragBegin       func(gtk.GestureDrag, float64, float64)
+	onWidgetDragUpdate      func(gtk.GestureDrag, float64, float64)
+	onWidgetDragEnd         func(gtk.GestureDrag, float64, float64)
+	onLockMonitor           func(uintptr, uintptr, uintptr)
+	onLockLocked            func(uintptr, uintptr)
+	onLockFailed            func(uintptr, uintptr)
+	onLockUnlocked          func(uintptr, uintptr)
+	onLockTick              glib.SourceFunc
+	onLockActivate          func(gtk.PasswordEntry)
+	onAuthOK                func(gtk.Button)
+	onAuthCancel            func(gtk.Button)
+	onAuthSwitch            func(gtk.Button)
+	onAuthActivate          func(gtk.PasswordEntry)
+	onAuthKey               func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onPassOK                func(gtk.Button)
+	onPassCancel            func(gtk.Button)
+	onPassNotOK             func(gtk.Button)
+	onPassActivate          func(gtk.PasswordEntry)
+	onPassTextActivate      func(gtk.Entry)
+	onPassKey               func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onPassMask              func(gtk.Button)
+	onPassRow               func(gtk.Button)
+	onAlarmTick             glib.SourceFunc
+	onRecordTimeout         glib.SourceFunc
+	onSettingsSave          glib.SourceFunc
+	onNoteButton            func(gtk.Button)
+	onNoteClicked           func(gtk.GestureClick, int32, float64, float64)
+	onNotesSave             glib.SourceFunc
+	onBannerTick            glib.SourceFunc
+	onOSDHide               glib.SourceFunc
+	onOSDGone               glib.SourceFunc
+	onBannerGone            glib.SourceFunc
+	onBannerEnter           func(gtk.EventControllerMotion, float64, float64)
+	onBannerLeave           func(gtk.EventControllerMotion)
+	onCenterPressed         func(gtk.GestureClick, int32, float64, float64)
+	onCenterKey             func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onCenterGone            glib.SourceFunc
+	onNotesButton           func(gtk.Button)
+	onVoiceButton           func(gtk.Button)
+	onDockClicked           func(gtk.Button)
+	onClipboardButton       func(gtk.Button)
+	onClipboardSearch       func(gtk.SearchEntry)
+	onClipboardActivate     func(gtk.SearchEntry)
+	onClipboardAction       func(gtk.Button)
+	onClipboardHover        func(gtk.EventControllerMotion, float64, float64)
+	onClipboardLeave        func(gtk.EventControllerMotion)
+	onClipboardBackdrop     func(gtk.GestureClick, int32, float64, float64)
+	onClipboardKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onClipboardTick         glib.SourceFunc
+	onClipboardGone         glib.SourceFunc
+	onPasswordsButton       func(gtk.Button)
+	onPasswordsSearch       func(gtk.SearchEntry)
+	onPasswordsActivate     func(gtk.SearchEntry)
+	onPasswordsAction       func(gtk.Button)
+	onPasswordsBackdrop     func(gtk.GestureClick, int32, float64, float64)
+	onPasswordsKey          func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onPasswordsTick         glib.SourceFunc
+	onPasswordsForget       glib.SourceFunc
+	onDrawerClicked         func(gtk.Button)
+	onDrawerApp             func(gtk.Button)
+	onDrawerSearch          func(gtk.SearchEntry)
+	onDrawerBackdrop        func(gtk.GestureClick, int32, float64, float64)
+	onDrawerKey             func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onDrawerGone            glib.SourceFunc
+	onWorkshopTick          glib.SourceFunc
+	onDockMenu              func(gtk.GestureClick, int32, float64, float64)
+	onDockMenuItem          func(gtk.Button)
+	onDockEnter             func(gtk.EventControllerMotion, float64, float64)
+	onDockLeave             func(gtk.EventControllerMotion)
+	onDockHide              glib.SourceFunc
+	onDockRevealed          func(uintptr, uintptr, uintptr)
+	onDockLaunched          glib.SourceFunc
+	onDockDragBegin         func(gtk.DragSource, uintptr)
+	onDockDragEnd           func(gtk.DragSource, uintptr, bool)
+	onDockDragCancel        func(gtk.DragSource, uintptr, gdk.DragCancelReason) bool
+	onDockGapTick           glib.SourceFunc
+	onDockDropMotion        func(gtk.DropTarget, float64, float64) gdk.DragAction
+	onDockDropLeave         func(gtk.DropTarget)
+	onDockDrop              func(gtk.DropTarget, uintptr, float64, float64) bool
+	onImageChosen           gio.AsyncReadyCallback
+	onCardSaved             gio.AsyncReadyCallback
+	onCustomChosen          gio.AsyncReadyCallback // a theme or icon set to add
+	onAfter                 glib.SourceFunc        // runAfter's
+	afterFns                map[uintptr]func()
+	afterSeq                uintptr
 }
 
 // Run runs the shell until it is killed and returns the exit status. Call
@@ -476,6 +484,8 @@ func (s *shellUI) start() {
 	}
 	s.bindLauncherHandlers()
 	s.bindOverviewHandlers()
+	s.bindWayfireOverviewHandlers()
+	s.bindWayfireSwitcherHandlers()
 	s.onWorkspaceOverview = func(g gtk.GestureClick, _ int32, _, _ float64) {
 		if !s.hyprLua {
 			return
@@ -1087,6 +1097,31 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 			}
 		case "close":
 			s.closeOverview(true)
+		default:
+			return bad
+		}
+	case "switcher":
+		switch req.Function {
+		case "next":
+			if s.wayfire != nil {
+				s.stepWayfireSwitcher(1)
+				return ipc.Response{OK: true}
+			}
+		case "prev":
+			if s.wayfire != nil {
+				s.stepWayfireSwitcher(-1)
+				return ipc.Response{OK: true}
+			}
+		case "toggle":
+			if s.wayfire != nil {
+				s.toggleWayfireSwitcher()
+				return ipc.Response{OK: true}
+			}
+		case "close":
+			if s.wayfire != nil {
+				s.closeWayfireSwitcher(true)
+				return ipc.Response{OK: true}
+			}
 		default:
 			return bad
 		}

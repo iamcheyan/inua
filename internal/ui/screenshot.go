@@ -131,11 +131,15 @@ func (s *shellUI) bindShotHandlers() {
 			if math.Hypot(dx, dy) < 4 { // not yet a drag: the area stays
 				return
 			}
+			previous := sh.selOn
 			sh.sel, sh.selOn = shell.SpanRect(sh.x0, sh.y0, sh.x0+dx, sh.y0+dy, sf.w, sf.h), sf
+			if previous != nil && previous != sf {
+				s.drawShot(previous)
+			}
 		} else {
 			sh.sel = shell.AdjustArea(sh.from, sh.part, dx, dy, sf.w, sf.h)
 		}
-		s.drawAllShots()
+		s.drawShot(sf)
 	}
 	s.onShotDragEnd = func(g gtk.GestureDrag, dx, dy float64) {
 		sf := s.shotSurfaceOf(g.GetWidget())

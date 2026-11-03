@@ -64,6 +64,9 @@ func (s *shellUI) applyWayfireSnapshot(snapshot compositor.Snapshot) {
 	oldPID := focusedPID(s.snap)
 	s.windowSnap = wayfireSnapshot(snapshot)
 	s.snap = s.windowSnap
+	if s.snap.ActiveToplevel != "" {
+		s.recordWayfireFocus(s.snap.ActiveToplevel)
+	}
 	if s.menu.open && s.menu.pid != focusedPID(s.snap) {
 		s.closeMenu()
 	}
@@ -168,4 +171,12 @@ func (s *shellUI) closeWayfireWindow(address string) {
 			log.Printf("wayfire: close %s: %v", address, err)
 		}
 	}()
+}
+
+func (s *shellUI) recordWayfireFocus(address string) {
+	if address == "" {
+		return
+	}
+	s.wayfireMRU = slices.DeleteFunc(s.wayfireMRU, func(a string) bool { return a == address })
+	s.wayfireMRU = append([]string{address}, s.wayfireMRU...)
 }

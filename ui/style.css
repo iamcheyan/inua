@@ -2410,6 +2410,308 @@ button.shot-record:checked { background: alpha(@danger, 0.1); border-color: alph
 .overview-kill-glyph { font-family: "JetBrainsMono Nerd Font Mono";font-size: 28px; color: @accent; }
 .overview.kill-mode .overview-window:hover { border-color: #e05f65; }
 
+/* Wayfire Overview / Window Switcher */
+.wayfire-overview-backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+.wayfire-overview-scrim {
+  background: rgba(0, 0, 0, 0.55);
+}
+.wayfire-overview-hud {
+  min-width: 720px;
+  max-width: 860px;
+  background: alpha(@app, 0.96);
+  border: 1px solid alpha(@line, 0.85);
+  border-radius: 6px;
+  padding: 18px 22px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+.wayfire-overview-header {
+  margin-bottom: 2px;
+}
+.wayfire-overview-search {
+  min-height: 38px;
+  padding: 0 10px;
+  background: alpha(@surface, 0.85);
+  border: 1px solid alpha(@line, 0.85);
+  border-radius: 4px;
+  transition: border-color 150ms ease-out;
+}
+.wayfire-overview-search:focus-within {
+  border-color: @accent;
+}
+.wayfire-overview-search-icon {
+  color: @t2;
+  margin-right: 6px;
+}
+.wayfire-overview-search:focus-within .wayfire-overview-search-icon {
+  color: @accent;
+}
+.wayfire-overview-search entry {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: @t0;
+  font-size: 13.5px;
+  padding: 4px 0;
+}
+.wayfire-overview-search entry:focus {
+  outline: none;
+  box-shadow: none;
+  border: 0;
+}
+.wayfire-overview-pill {
+  min-height: 28px;
+  padding: 0 12px;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: @t1;
+  background: alpha(@surface, 0.6);
+  border: 1px solid alpha(@line, 0.6);
+  border-radius: 4px;
+  box-shadow: none;
+  transition: all 120ms ease-out;
+}
+.wayfire-overview-pill:hover {
+  color: @t0;
+  background: alpha(@surface, 0.95);
+  border-color: alpha(@accent, 0.4);
+}
+.wayfire-overview-pill.on {
+  color: @accent;
+  background: alpha(@accent, 0.12);
+  border-color: @accent;
+  font-weight: 600;
+}
+.wayfire-overview-status {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: @t2;
+  margin: 0 4px;
+}
+.wayfire-overview-sep {
+  background: alpha(@line, 0.5);
+  margin: 4px 0 6px;
+}
+.wayfire-overview-section {
+  margin-bottom: 8px;
+}
+.wayfire-overview-section-header {
+  margin: 6px 0 2px;
+}
+.wayfire-overview-section-label {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: @accent;
+}
+.wayfire-overview-section-count {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: @t2;
+}
+.wayfire-card {
+  min-width: 380px;
+  min-height: 76px;
+  padding: 10px 14px;
+  background: alpha(@surface, 0.65);
+  border: 1px solid alpha(@line, 0.6);
+  border-radius: 4px;
+  transition: all 120ms ease-out;
+}
+.wayfire-card:hover {
+  background: alpha(@surface, 0.95);
+  border-color: alpha(@accent, 0.45);
+}
+.wayfire-card.selected {
+  background: alpha(@accent, 0.12);
+  border: 2px solid @accent;
+  box-shadow: 0 0 0 1px alpha(@accent, 0.2);
+}
+.wayfire-card-app {
+  font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: @t0;
+}
+.wayfire-card-mon {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 10px;
+  padding: 1px 5px;
+  background: alpha(@t1, 0.12);
+  border-radius: 2px;
+  color: @t2;
+}
+.wayfire-card-title {
+  font-size: 12px;
+  line-height: 1.25;
+  color: @t1;
+}
+.wayfire-card-active {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: @accent;
+}
+.wayfire-card-close {
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
+  border-radius: 3px;
+  color: @t2;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  font-size: 16px;
+  transition: all 100ms ease-out;
+}
+.wayfire-card-close:hover {
+  color: @danger;
+  background: alpha(@danger, 0.16);
+}
+.wayfire-overview-footer {
+  padding-top: 8px;
+  border-top: 1px solid alpha(@line, 0.4);
+}
+.wayfire-overview-footer label {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: @t2;
+}
+
+/* GNOME Shell style Workspace Overview */
+.wayfire-workspaces-bar {
+  margin: 28px 0 16px;
+}
+.wayfire-workspace-card {
+  min-width: 140px;
+  min-height: 76px;
+  padding: 8px 14px;
+  background: alpha(@surface, 0.75);
+  border: 1px solid alpha(@line, 0.7);
+  border-radius: 6px;
+  transition: all 120ms ease-out;
+}
+.wayfire-workspace-card:hover {
+  background: alpha(@surface, 0.95);
+  border-color: alpha(@accent, 0.45);
+}
+.wayfire-workspace-card.active {
+  border: 2px solid @accent;
+  background: alpha(@accent, 0.14);
+  box-shadow: 0 0 14px alpha(@accent, 0.25);
+}
+.wayfire-workspace-card.drop-target {
+  border: 2px dashed @accent;
+  background: alpha(@accent, 0.32);
+}
+.wayfire-workspace-num {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: @t0;
+}
+.wayfire-workspace-card.active .wayfire-workspace-num {
+  color: @accent;
+}
+.wayfire-workspace-count {
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: @t2;
+}
+.wayfire-windows-scroll {
+  margin: 16px 28px 24px;
+}
+.wayfire-windows-row {
+  margin: 12px 0;
+}
+.wayfire-window-tile {
+  min-width: 290px;
+  max-width: 330px;
+  min-height: 170px;
+  padding: 16px 18px;
+  background: alpha(@surface, 0.85);
+  border: 1px solid alpha(@line, 0.7);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: all 120ms ease-out;
+}
+.wayfire-window-tile:hover {
+  background: alpha(@surface, 0.98);
+  border-color: alpha(@accent, 0.5);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.wayfire-window-tile.selected {
+  border: 2px solid @accent;
+  background: alpha(@accent, 0.14);
+  box-shadow: 0 0 0 1px alpha(@accent, 0.3), 0 12px 36px rgba(0, 0, 0, 0.55);
+}
+.wayfire-window-tile.dragging {
+  opacity: 0.35;
+}
+.wayfire-tile-app {
+  font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: @t0;
+}
+.wayfire-tile-title {
+  font-family: "Zen Kaku Gothic New", "Noto Sans CJK", sans-serif;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: @t1;
+  margin-top: 6px;
+}
+.wayfire-tile-footer {
+  margin-top: 10px;
+}
+
+/* Fast Task Switcher HUD */
+.wayfire-switcher-hud {
+  min-width: 380px;
+  max-width: 1040px;
+  padding: 18px 22px;
+  background: alpha(@app, 0.96);
+  border: 1px solid alpha(@line, 0.85);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+}
+.wayfire-switcher-card {
+  min-width: 140px;
+  max-width: 180px;
+  min-height: 120px;
+  padding: 14px 10px;
+  background: alpha(@surface, 0.7);
+  border: 1px solid alpha(@line, 0.6);
+  border-radius: 6px;
+  transition: all 100ms ease-out;
+}
+.wayfire-switcher-card:hover {
+  background: alpha(@surface, 0.95);
+  border-color: alpha(@accent, 0.45);
+}
+.wayfire-switcher-card.selected {
+  background: alpha(@accent, 0.14);
+  border: 2px solid @accent;
+  box-shadow: 0 0 0 1px alpha(@accent, 0.25);
+}
+.wayfire-switcher-title {
+  font-size: 11px;
+  color: @t1;
+  text-align: center;
+}
+.wayfire-switcher-app {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: @t0;
+  text-align: center;
+}
+
 /* Assistant (cmd/inua-assistant) */
 .as-head { padding: 12px 12px 12px 20px; border-bottom: 1px solid alpha(@line, 0.55); }
 .as-title { font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif; font-size: 17px; color: @t0; }
