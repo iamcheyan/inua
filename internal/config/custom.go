@@ -112,25 +112,40 @@ type Frame struct {
 	Font                   string // Pango font description, size included
 }
 
-// FrameFont is the title bar's type: the same sans the bar's app name uses,
-// at 10 px, so the frame reads as part of the shell and not as a second app.
+// FrameFonts are each type family's name as Pango writes it in a window
+// frame's title: the family the style uses for its running text, at the
+// shell's title size. Wayfire draws the frame itself, so the family has to be
+// named rather than read from the stylesheet.
+var FrameFonts = map[string]string{
+	"inua":       "IBM Plex Sans 10",
+	"maple":      "Maple Mono NF CN 10",
+	"noto-sans":  "Noto Sans CJK JP 10",
+	"noto-serif": "Noto Serif CJK JP 10",
+	"system":     "Adwaita Sans 10",
+}
+
+// FrameFont is the frame title's type when style.font names none it knows.
 const FrameFont = "Zen Kaku Gothic New 10"
 
-// FrameOf derives a window frame from a theme's colour tokens: the accent
-// paints the focused window's frame, the hairline colour the others', and the
-// theme's text colour the title.
-func FrameOf(colors map[string]string) Frame {
+// FrameOf derives a window frame from a theme's colour tokens and the type
+// family in force: the accent paints the focused window's frame, the hairline
+// colour the others', and the theme's text colour the title.
+func FrameOf(colors map[string]string, font string) Frame {
 	hex := func(name, fallback string) string {
 		if v := colors[name]; len(v) == 7 && v[0] == '#' {
 			return v
 		}
 		return fallback
 	}
+	title := FrameFont
+	if f, ok := FrameFonts[font]; ok {
+		title = f
+	}
 	return Frame{
 		Active:   hex("accent", "#9FC3C9"),
 		Inactive: hex("line", "#243134"),
 		Text:     hex("t0", "#E7E4DA"),
-		Font:     FrameFont,
+		Font:     title,
 	}
 }
 
@@ -138,7 +153,7 @@ func FrameOf(colors map[string]string) Frame {
 // in ui/themes; the caller reads the CSS, so the shell and the apps agree on
 // what the theme is.
 func (c Config) FrameOf(themeCSS string) Frame {
-	return FrameOf(ThemeColors(themeCSS))
+	return FrameOf(ThemeColors(themeCSS), c.Style.Font)
 }
 
 // IconSetDir is the folder of style.icons when it is a set of the user's,

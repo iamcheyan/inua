@@ -35,4 +35,10 @@ INUA_INSTANCE=wayfire
 export INUA_INSTANCE
 QT_QPA_PLATFORMTHEME=kde
 export QT_QPA_PLATFORMTHEME
+# Wayfire's decoration plugin frames XWayland windows only; a native Wayland
+# Qt client (Dolphin, Kate, ...) draws its own Breeze titlebar instead, which
+# the theme's frames and type never reach. xcb puts Qt apps under the
+# compositor's frames, so the theme's border and title apply to them too.
+QT_QPA_PLATFORM=xcb
+export QT_QPA_PLATFORM
 exec wayfire -c "$config_file"
