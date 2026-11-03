@@ -42,15 +42,38 @@ func (c *Client) Menu(pid int) ([]Entry, error) {
 	// AT-SPI last: plain GTK4 apps answer it with a skeleton (a menubar whose
 	// items have no labels), which must not shadow a real menu nor put blank
 	// buttons in the bar. A browser's sections come through with no items at
-	// all - it builds them when its own menu opens - and the shell cannot
-	// fill them without pressing them, which crashes Firefox. So a tree of
-	// empty sections is no menu either.
+	// all - it builds them when its own menu opens - and the shell fills them
+	// on demand.
 	if c.A11y != nil {
-		if e, err := c.A11y.Menu(pid); err == nil && labelled(e) {
+		if e, err := c.A11y.Menu(pid); err == nil && fillable(e) {
 			return e, nil
 		}
 	}
 	return nil, nil
+}
+
+// fillable reports whether a menu is one the bar can show: sections with
+// their items, or named sections the application builds when they open (a
+// browser's), which the bar fills one at a time as they are asked for. A
+// tree of unnamed items is a toolkit skeleton and stays out.
+func fillable(entries []Entry) bool {
+	for _, e := range entries {
+		if strings.TrimSpace(e.Label) == "" || e.Separator {
+			continue
+		}
+		if len(e.Children) > 0 || Fillable(e) {
+			return true
+		}
+	}
+	return false
+}
+
+// Fillable reports whether an entry's items are made when it opens: the
+// application answered with a named section and an action to open it, and
+// nothing under it yet.
+func Fillable(e Entry) bool {
+	return len(e.Children) == 0 && !e.Separator && e.Label != "" &&
+		e.Action.Kind == ActionA11y && e.Action.Bus != "" && e.Action.Path != ""
 }
 
 // labelled reports whether a menu is one the bar can show: sections that
