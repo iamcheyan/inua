@@ -16,6 +16,7 @@ import (
 	"github.com/lyricat/inua/internal/gst"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 func decoderFor(codec string) string { return gst.Decoder(codec) }
@@ -124,6 +125,7 @@ func openStream(w *window, m remotedesk.Machine) *stream {
 	s.win = gtk.NewApplicationWindow(w.c.App)
 	s.win.AddCssClass("remote-stream")
 	s.win.SetTitle(i18n.Tf("%s — Remote Desktop", remotedesk.Label(m)))
+	uikit.AddTitlebarHere(s.win)
 	s.win.SetDefaultSize(int32(min(s.width, 1600)), int32(min(s.height, 900)))
 	overlay := gtk.NewOverlay()
 	s.picture = gtk.NewPicture()

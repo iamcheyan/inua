@@ -14,6 +14,7 @@ import (
 	"github.com/lyricat/inua/internal/term/host"
 	"github.com/lyricat/inua/internal/term/pty"
 	"github.com/lyricat/inua/internal/term/shellint"
+	"github.com/lyricat/inua/internal/uikit"
 )
 
 // The quick mode (inua-term --quick) is a terminal for a moment: one
@@ -46,6 +47,7 @@ func (a *App) buildQuick(c *appui.Ctx) *gtk.ApplicationWindow {
 	a.win = gtk.NewApplicationWindow(c.App)
 	a.win.SetTitle(i18n.T("Terminal"))
 	a.win.SetDefaultSize(900, 560)
+	uikit.AddTitlebarHere(a.win)
 	a.win.AddCssClass("term")
 	a.win.AddCssClass("term-quick")
 	p, err := newTermPane(quickBackend{q}, 80, 24, a.scheme(), c.Colors["warn"], a.look())

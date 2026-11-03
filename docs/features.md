@@ -722,16 +722,34 @@ theme swatches, `style.app_theme`): inua's own apps and the settings
 window follow it, and other apps are asked to be light or dark by it. The
 launcher and control center stay with the bar.
 
-Under Wayfire, Appearance adds a preset selector as well as the two independent
-style choices below it. *Wayfire native*, *Inua midnight*, *Paper* and *Neon*
-pair window frame and control skins. The selector shows the matching preset,
-or *Custom* when the combination does not match one. *Window borders* sets the
-Xwayland frame's colors, thickness and title bar through Wayfire's
-`[decoration]` (`style.wayfire_decoration`, written to `wayfire.ini`; a
-restart applies it, and *Wayfire config* restores your own values). *Control
-skin* shapes Inua's GTK controls at once (`style.wayfire_controls`): hairline,
-soft rounded or outline square. Both are hidden where Wayfire is not the
-compositor.
+Under Wayfire, each of the seven colour themes carries its own window frame and
+control skin, so choosing a theme changes the Xwayland windows and the GTK
+controls with the rest of the desktop: *yoru* hairline and square controls,
+*washi* and *aojashin* soft frames with rounded controls, *suimen* a 4 px inset,
+*rinko* an accent frame, *bunko* a tall 34 px title bar, *denko* square
+outline controls. The frames are painted in the theme's own colours (the accent
+for the focused window, the hairline colour for the others) and set the title
+in the shell's sans at 10 px, so a frame reads as part of the interface rather
+than a second app.
+
+Appearance also offers a preset selector and the two independent choices below
+it. The presets pair a frame shape (*Hairline*, *Soft*, *Sharp*, *Inset*,
+*Wide*, *Accent*) with a control skin; *Wayfire native* keeps your own
+`[decoration]` values. The selector shows the matching preset, or *Custom* when
+the combination matches none. *Window borders* writes the frame through Wayfire's
+`[decoration]` (`style.wayfire_decoration` in `wayfire.ini`; a restart applies
+it). *Control skin* shapes Inua's GTK controls and its apps'
+(`style.wayfire_controls`): hairline, soft rounded or outline square. Both are
+hidden where Wayfire is not the compositor.
+
+The type family (`style.font`, Settings → Appearance, *Font*) covers Latin,
+Chinese and Japanese in every choice: inua's own stack (*Inua*), *Maple Mono
+NF CN*, which ships with inua and has Nerd Font icons for a terminal or a
+prompt, *Noto Sans CJK*, *Noto Serif CJK*, or the desktop's *System fonts*.
+The choice rewrites the styles' font families, keeping each list's kind, so
+the bar, the shell's windows and inua's apps change together. The bundled
+fonts are installed to `$XDG_DATA_HOME/fonts/inua`; the Noto choices use the
+system's `fonts-noto-cjk`.
 
 ## Wallpaper
 

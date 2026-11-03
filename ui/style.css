@@ -21,7 +21,14 @@
   color: @t0;
   box-shadow: none;
 }
-.window-titlebar .title {
+/* GTK draws a headerbar's title in a bold, larger face of its own; the shell's
+   titlebars are one line of the interface, so the title keeps the body size
+   and weight whatever widget draws it. */
+.window-titlebar .title,
+.window-titlebar headerbar .title,
+headerbar.window-titlebar .title,
+headerbar.window-titlebar label.title,
+headerbar.window-titlebar .subtitle {
   color: @t1;
   font-family: "IBM Plex Sans", "Zen Kaku Gothic New", sans-serif;
   font-size: 12px;

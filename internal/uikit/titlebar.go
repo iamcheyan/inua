@@ -24,3 +24,13 @@ func AddTitlebar(win TitlebarWindow) {
 	bar.SetDecorationLayout(":minimize,maximize,close")
 	win.SetTitlebar(&bar.Widget)
 }
+
+// AddTitlebarHere adds the shell's titlebar to a window an app built itself
+// (a stream, a quick terminal): those never pass through the app's own
+// window-added hook, and GTK would otherwise draw its own large title.
+func AddTitlebarHere(win *gtk.ApplicationWindow) {
+	if win == nil {
+		return
+	}
+	AddTitlebar(win)
+}
