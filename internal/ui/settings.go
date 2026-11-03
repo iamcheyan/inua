@@ -238,9 +238,10 @@ func (s *shellUI) bindSettingsHandlers() {
 		case "dock_position":
 			c.Dock.Position = pick(config.DockPositions, i, c.Dock.Position)
 		case "overview_style":
-			c.Overview.Style = pick(config.OverviewStyles, i, c.Overview.Style)
+			// One choice while the pictures are settled.
+			c.Overview.Style = "icons"
 		case "dock_preview":
-			c.Dock.Preview = pick(config.DockPreviews, i, c.Dock.Preview)
+			c.Dock.Preview = "list"
 		case "banner":
 			if i >= 0 && i < len(config.BannerChoices) {
 				c.Notify.Banner = config.BannerChoices[i]
@@ -543,10 +544,12 @@ func (s *shellUI) openSettings() {
 	st.iconSets, st.appIconSets, st.styleTiles = nil, nil, nil
 	ui.Get("overview_style", &st.overviewStyle)
 	ui.Get("dock_preview", &st.dockPreview)
-	overviewStyles := gtk.NewStringList([]string{i18n.T("Thumbnails"), i18n.T("Icons")})
+	// Only the icon styles are offered while the pictures are settled: the
+	// setting keeps its "thumbnails" value for when they come back.
+	overviewStyles := gtk.NewStringList([]string{i18n.T("Icons")})
 	st.overviewStyle.SetModel(overviewStyles)
 	overviewStyles.Unref()
-	dockPreviews := gtk.NewStringList([]string{i18n.T("Thumbnails"), i18n.T("List")})
+	dockPreviews := gtk.NewStringList([]string{i18n.T("List")})
 	st.dockPreview.SetModel(dockPreviews)
 	dockPreviews.Unref()
 	st.appThemes, st.appThemeLabels = nil, nil
@@ -1223,8 +1226,8 @@ func (s *shellUI) showDockSettings() {
 	st.dockDrawer.SetActive(c.Dock.Drawer)
 	st.dockSize.SetSelected(uint32(max(0, slices.Index(config.DockSizes, c.Dock.Size))))
 	st.dockPosition.SetSelected(uint32(max(0, slices.Index(config.DockPositions, c.Dock.Position))))
-	st.overviewStyle.SetSelected(uint32(max(0, slices.Index(config.OverviewStyles, c.Overview.Style))))
-	st.dockPreview.SetSelected(uint32(max(0, slices.Index(config.DockPreviews, c.Dock.Preview))))
+	st.overviewStyle.SetSelected(0)
+	st.dockPreview.SetSelected(0)
 	gtkx.Clear(&st.dockPinned)
 	if len(c.Dock.Pinned) == 0 {
 		l := gtk.NewLabel(i18n.T("Nothing pinned"))

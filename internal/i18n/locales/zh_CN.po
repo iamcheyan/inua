@@ -346,9 +346,9 @@ msgid "%d%%, charging"
 msgstr "%d%%，正在充电"
 
 #: internal/apps/connect/service.go:519
-#: internal/ui/settings.go:373
-#: internal/ui/settings.go:899
-#: internal/ui/settings.go:1003
+#: internal/ui/settings.go:374
+#: internal/ui/settings.go:902
+#: internal/ui/settings.go:1006
 #: internal/ui/settings_displays.go:501
 msgid "%d%%"
 msgstr "%d%%"
@@ -1472,7 +1472,7 @@ msgid "Checks"
 msgstr "检查"
 
 #: internal/apps/mail/details.go:64
-#: internal/ui/settings.go:549
+#: internal/ui/settings.go:552
 msgid "List"
 msgstr ""
 
@@ -2048,17 +2048,17 @@ msgid "Wayfire native"
 msgstr "Wayfire 原生"
 
 #: internal/config/config.go:931
-#: internal/ui/settings.go:529
+#: internal/ui/settings.go:530
 msgid "Inua midnight"
 msgstr "Inua 午夜"
 
 #: internal/config/config.go:932
-#: internal/ui/settings.go:529
+#: internal/ui/settings.go:530
 msgid "Paper"
 msgstr "纸感"
 
 #: internal/config/config.go:933
-#: internal/ui/settings.go:529
+#: internal/ui/settings.go:530
 msgid "Neon"
 msgstr "霓虹"
 
@@ -2857,7 +2857,7 @@ msgstr "打开视频文件"
 
 #: internal/desktop/defaults.go:48
 #: internal/lightui/pass_otp.go:340
-#: internal/ui/settings.go:1165
+#: internal/ui/settings.go:1168
 msgid "Images"
 msgstr "图像"
 
@@ -3137,7 +3137,7 @@ msgstr "主文件夹"
 #: internal/lightui/tailscale.go:568
 #: internal/ui/appmenu.go:464
 #: internal/ui/bar.go:478
-#: internal/ui/settings.go:682
+#: internal/ui/settings.go:685
 #: ui/vm.ui:2981
 msgid "System"
 msgstr "系统"
@@ -9350,8 +9350,8 @@ msgid "Top level"
 msgstr "顶层"
 
 #: internal/lightui/pass.go:420
-#: internal/ui/settings.go:1028
-#: internal/ui/settings.go:1055
+#: internal/ui/settings.go:1031
+#: internal/ui/settings.go:1058
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d 条"
@@ -12710,7 +12710,7 @@ msgid "%d thr"
 msgstr "%d 线程"
 
 #: internal/shell/cardterm.go:136
-#: internal/ui/settings.go:680
+#: internal/ui/settings.go:683
 msgid "Desktop"
 msgstr "桌面"
 
@@ -14762,7 +14762,7 @@ msgid "Searching…"
 msgstr "正在搜索…"
 
 #: internal/ui/control_detail.go:214
-#: internal/ui/settings.go:679
+#: internal/ui/settings.go:682
 msgid "Devices"
 msgstr "设备"
 
@@ -14781,7 +14781,7 @@ msgid "No devices paired yet"
 msgstr "还没有配对的设备"
 
 #: internal/ui/drawer.go:217
-#: internal/ui/settings.go:681
+#: internal/ui/settings.go:684
 #: internal/ui/widgets.go:591
 #: ui/settings.ui:181
 #: ui/settings.ui:2476
@@ -15206,158 +15206,153 @@ msgstr "截图已复制"
 msgid "Screenshot taken"
 msgstr "截图"
 
-#: internal/ui/settings.go:355
+#: internal/ui/settings.go:356
 msgid "Not restarted: %s"
 msgstr "未重新启动：%s"
 
-#: internal/ui/settings.go:380
-#: internal/ui/settings.go:387
-#: internal/ui/settings.go:394
-#: internal/ui/settings.go:895
-#: internal/ui/settings.go:897
-#: internal/ui/settings.go:901
+#: internal/ui/settings.go:381
+#: internal/ui/settings.go:388
+#: internal/ui/settings.go:395
+#: internal/ui/settings.go:898
+#: internal/ui/settings.go:900
+#: internal/ui/settings.go:904
 msgid "%d px"
 msgstr "%d 像素"
 
-#: internal/ui/settings.go:489
-#: internal/ui/settings.go:520
+#: internal/ui/settings.go:490
+#: internal/ui/settings.go:521
 #: internal/vmui/window.go:2352
 msgid "Custom"
 msgstr "自定义"
 
-#: internal/ui/settings.go:497
+#: internal/ui/settings.go:498
 msgid "Follow interface language"
 msgstr "跟随界面语言"
 
-#: internal/ui/settings.go:529
+#: internal/ui/settings.go:530
 msgid "Wayfire config"
 msgstr "Wayfire 配置"
 
-#: internal/ui/settings.go:530
+#: internal/ui/settings.go:531
 msgid "Inua hairline"
 msgstr "Inua 细线"
 
-#: internal/ui/settings.go:530
+#: internal/ui/settings.go:531
 msgid "Soft rounded"
 msgstr "柔和圆角"
 
-#: internal/ui/settings.go:530
+#: internal/ui/settings.go:531
 msgid "Outline square"
 msgstr "方形描边"
 
-#: internal/ui/settings.go:546
 #: internal/ui/settings.go:549
-msgid "Thumbnails"
-msgstr ""
-
-#: internal/ui/settings.go:546
 msgid "Icons"
 msgstr ""
 
-#: internal/ui/settings.go:678
+#: internal/ui/settings.go:681
 msgid "Connections"
 msgstr "连接"
 
-#: internal/ui/settings.go:790
+#: internal/ui/settings.go:793
 msgid "%s · yours: right-click for more"
 msgstr "%s · 你的主题：右键查看更多"
 
-#: internal/ui/settings.go:807
+#: internal/ui/settings.go:810
 msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
 msgstr "由 @define-color 行组成的 CSS 文件，放在 config.toml 旁的 themes 中"
 
-#: internal/ui/settings.go:816
+#: internal/ui/settings.go:819
 msgid "Add Theme…"
 msgstr "添加主题…"
 
-#: internal/ui/settings.go:933
+#: internal/ui/settings.go:936
 msgid "As the bar (%s)"
 msgstr "同栏（%s）"
 
-#: internal/ui/settings.go:950
+#: internal/ui/settings.go:953
 msgid "inua objects"
 msgstr "inua objects"
 
-#: internal/ui/settings.go:951
+#: internal/ui/settings.go:954
 msgid "inua objects soft"
 msgstr "inua objects soft"
 
-#: internal/ui/settings.go:952
+#: internal/ui/settings.go:955
 msgid "inua objects flat"
 msgstr "inua objects flat"
 
-#: internal/ui/settings.go:960
+#: internal/ui/settings.go:963
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:960
-#: internal/ui/settings.go:961
+#: internal/ui/settings.go:963
+#: internal/ui/settings.go:964
 msgid "System theme"
 msgstr "系统主题"
 
-#: internal/ui/settings.go:961
+#: internal/ui/settings.go:964
 #: ui/settings.ui:705
 msgid "As the app style"
 msgstr "跟随应用风格"
 
-#: internal/ui/settings.go:1054
+#: internal/ui/settings.go:1057
 msgid "%s (%s, %s) · %s"
 msgstr "%s(%s,%s)· %s"
 
-#: internal/ui/settings.go:1056
+#: internal/ui/settings.go:1059
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "%d 段文字"
 
-#: internal/ui/settings.go:1057
+#: internal/ui/settings.go:1060
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "%d 张图片"
 
-#: internal/ui/settings.go:1058
+#: internal/ui/settings.go:1061
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:1137
+#: internal/ui/settings.go:1140
 #: internal/ui/settings_apps.go:168
 #: internal/ui/settings_card.go:288
 #: internal/ui/settings_portals.go:177
 msgid "Not saved: %s"
 msgstr "未保存：%s"
 
-#: internal/ui/settings.go:1163
+#: internal/ui/settings.go:1166
 msgid "Choose a wallpaper"
 msgstr "选择壁纸"
 
-#: internal/ui/settings.go:1205
+#: internal/ui/settings.go:1208
 msgid "Off: another notification daemon can show them"
 msgstr "关闭：另一个通知守护进程可以显示它们"
 
-#: internal/ui/settings.go:1207
+#: internal/ui/settings.go:1210
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "先显示横幅，再收进通知中心（顶栏铃铛或 Super+N）"
 
-#: internal/ui/settings.go:1209
+#: internal/ui/settings.go:1212
 msgid "Waiting: another notification daemon is running"
 msgstr "等待：另一个通知守护进程正在运行"
 
-#: internal/ui/settings.go:1230
+#: internal/ui/settings.go:1233
 msgid "Nothing pinned"
 msgstr "尚未固定应用"
 
-#: internal/ui/settings.go:1246
+#: internal/ui/settings.go:1249
 msgid "%s (not installed)"
 msgstr "%s(未安装)"
 
-#: internal/ui/settings.go:1259
+#: internal/ui/settings.go:1262
 msgid "Move earlier"
 msgstr "向前移动"
 
-#: internal/ui/settings.go:1260
+#: internal/ui/settings.go:1263
 msgid "Move later"
 msgstr "向后移动"
 
-#: internal/ui/settings.go:1261
+#: internal/ui/settings.go:1264
 msgid "Remove from the dock"
 msgstr "从程序坞移除"
 

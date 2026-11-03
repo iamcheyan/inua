@@ -222,7 +222,7 @@ func TestPreviewStyles(t *testing.T) {
 		t.Fatalf("styles: %q/%q warnings=%v err=%v", c.Overview.Style, c.Dock.Preview, w, err)
 	}
 	c, w, _ = Load(write(t, "[overview]\nstyle = \"none\"\n[dock]\npreview = \"grid\"\n"))
-	if len(w) != 2 || c.Overview.Style != "thumbnails" || c.Dock.Preview != "thumbnails" {
+	if len(w) != 2 || c.Overview.Style != "icons" || c.Dock.Preview != "list" {
 		t.Errorf("unknown styles: %q/%q %v", c.Overview.Style, c.Dock.Preview, w)
 	}
 }
