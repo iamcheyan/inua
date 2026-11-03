@@ -18,6 +18,7 @@ import (
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/notify"
+	"github.com/lyricat/inua/internal/qttheme"
 	"github.com/lyricat/inua/internal/rundir"
 	"github.com/lyricat/inua/internal/shell"
 	"github.com/lyricat/inua/internal/style"
@@ -199,6 +200,19 @@ func (s *shellUI) applyConfig(c config.Config) {
 		} else {
 			s.loadStyles()
 		}
+	}
+	if old.Style.Font != c.Style.Font || old.Style.TextScale != c.Style.TextScale {
+		// Qt draws its own title bars and menus: write the shell's type into
+		// the KDE configuration it reads, as X11 and Wayland Qt clients do.
+		path := qtConfigPath()
+		font, scale := c.Style.Font, c.Style.TextScale
+		go func() {
+			if changed, err := qttheme.Apply(path, font, scale); err != nil {
+				log.Printf("qt: %v", err)
+			} else if changed {
+				log.Printf("qt: wrote %s", path)
+			}
+		}()
 	}
 	if old.Style.AppIcons != c.Style.AppIcons {
 		for _, b := range s.bars {

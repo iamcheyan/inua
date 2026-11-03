@@ -118,25 +118,45 @@ func Render(content string, c config.Config, frame config.Frame) (string, error)
 // colour: the colours come from the theme in force, so switching theme also
 // repaints Xwayland windows. "wayfire" leaves the user's own values alone.
 func applyWayfireDecoration(section *ini.Section, name string, theme config.Frame) {
+	if shape, ok := FrameShapeOf(name); ok {
+		writeFrame(section, theme, shape)
+	}
+}
+
+// FrameShape is one frame look's shape, without colours: how thick the border
+// is, how tall the title bar and where the buttons sit.
+type FrameShape struct {
+	Border, Height int
+	Buttons        string
+	Left           bool
+}
+
+// FrameShape returns a preset's shape; false for "wayfire", which keeps the
+// user's own values.
+func FrameShapeOf(name string) (FrameShape, bool) {
+	// Wayfire draws a frame's title at title_height * 0.8 pixels and ignores
+	// the size in the font description, so these heights are what make a frame
+	// read at the bar's own type size (13-14 px).
 	switch name {
 	case "hairline":
-		writeFrame(section, theme, "1", "26", "minimize maximize close", false)
+		return FrameShape{1, 20, "minimize maximize close", false}, true
 	case "soft":
-		writeFrame(section, theme, "2", "30", "minimize maximize close", false)
+		return FrameShape{2, 22, "minimize maximize close", false}, true
 	case "sharp":
-		writeFrame(section, theme, "1", "24", "close minimize maximize", true)
+		return FrameShape{1, 18, "close minimize maximize", true}, true
 	case "inset":
-		writeFrame(section, theme, "4", "28", "minimize maximize close", true)
+		return FrameShape{4, 20, "minimize maximize close", true}, true
 	case "wide":
-		writeFrame(section, theme, "2", "34", "close minimize maximize", false)
+		return FrameShape{2, 24, "close minimize maximize", false}, true
 	case "accent":
-		writeFrame(section, theme, "3", "28", "minimize maximize close", true)
+		return FrameShape{3, 20, "minimize maximize close", true}, true
 	}
+	return FrameShape{}, false
 }
 
 // writeFrame writes one frame. left puts the title at the bar's start, as the
 // paper-like looks do; the rest centre it.
-func writeFrame(section *ini.Section, theme config.Frame, border, height, order string, left bool) {
+func writeFrame(section *ini.Section, theme config.Frame, shape FrameShape) {
 	if theme.Active != "" {
 		setManaged(section, "active_color", wayfireColor(theme.Active))
 	}
@@ -146,15 +166,12 @@ func writeFrame(section *ini.Section, theme config.Frame, border, height, order 
 	if theme.Text != "" {
 		setManaged(section, "font_color", wayfireColor(theme.Text))
 	}
-	setManaged(section, "border_size", border)
-	setManaged(section, "title_height", height)
+	setManaged(section, "border_size", strconv.Itoa(shape.Border))
+	setManaged(section, "title_height", strconv.Itoa(shape.Height))
 	if theme.Font != "" {
 		setManaged(section, "font", theme.Font)
 	}
-	setManaged(section, "button_order", order)
-	// Wayfire 0.10 has no title alignment option; the button order is all a
-	// look has to say about where the title sits.
-	_ = left
+	setManaged(section, "button_order", shape.Buttons)
 }
 
 // wayfireColor escapes a color for Wayfire's INI reader, where '#' starts a comment.

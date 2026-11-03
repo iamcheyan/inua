@@ -17,11 +17,13 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/bootstrap"
+	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hyprconf"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/wayfire"
 	"github.com/lyricat/inua/internal/wayfireconf"
 )
 
@@ -75,14 +77,32 @@ func (s *shellUI) applyWayfire() {
 		if s.settingsApply.latest.Load() != gen {
 			return
 		}
-		changed, err := wayfireconf.Apply(path, c, c.FrameOf(c.ThemeCSS(s.theme(), s.readUI)))
+		frame := c.FrameOf(c.ThemeCSS(s.theme(), s.readUI))
+		changed, err := wayfireconf.Apply(path, c, frame)
+		if err == nil && changed && s.wayfire != nil {
+			// Wayfire reads its options live: push the frame now, so a
+			// theme change repaints the windows without a restart.
+			style := c.Style.WayfireDecoration
+			if want, ok := config.ThemeDecoration[c.Style.Theme]; ok && style != "wayfire" {
+				style = want
+			}
+			if shape, ok := wayfireconf.FrameShapeOf(style); ok {
+				live := wayfire.Frame{Active: frame.Active, Inactive: frame.Inactive, Text: frame.Text,
+					Font: frame.Font, Border: shape.Border, TitleHeight: shape.Height, Buttons: shape.Buttons}
+				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+				if ferr := s.wayfire.SetFrame(ctx, live); ferr != nil {
+					log.Printf("Wayfire frame: %v", ferr)
+				}
+				cancel()
+			}
+		}
 		gtkx.Post(func() {
 			if err != nil {
 				log.Printf("Wayfire settings: %v", err)
 				s.setStatus(i18n.Tf("Not saved to Wayfire: %s", err.Error()), true)
 			} else if changed {
 				log.Printf("Wayfire settings: wrote %s", path)
-				s.setStatus(i18n.T("Saved in wayfire.ini; restart Wayfire to apply these settings"), false)
+				s.setStatus(i18n.T("Saved in wayfire.ini"), false)
 			}
 		})
 	}()

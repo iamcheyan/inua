@@ -14812,65 +14812,65 @@ msgstr "워크숍 앱"
 msgid "The light apps are not installed (make install)."
 msgstr "라이트 앱이 설치되지 않았습니다(make install)."
 
-#: internal/ui/input.go:60
+#: internal/ui/input.go:62
 msgid "Not applied to Hyprland: %s"
 msgstr "하이프랜드에는 적용되지 않음: %s"
 
-#: internal/ui/input.go:82
+#: internal/ui/input.go:102
 msgid "Not saved to Wayfire: %s"
 msgstr ""
 
-#: internal/ui/input.go:85
-msgid "Saved in wayfire.ini; restart Wayfire to apply these settings"
+#: internal/ui/input.go:105
+msgid "Saved in wayfire.ini"
 msgstr ""
 
-#: internal/ui/input.go:164
-#: internal/ui/input.go:185
+#: internal/ui/input.go:184
+#: internal/ui/input.go:205
 #: internal/ui/settings_displays.go:394
 msgid "Set by inua"
 msgstr "이누아에 의해 설정됨"
 
-#: internal/ui/input.go:166
-#: internal/ui/input.go:187
+#: internal/ui/input.go:186
+#: internal/ui/input.go:207
 #: internal/ui/settings_displays.go:390
 msgid "Set in wayfire.ini"
 msgstr ""
 
-#: internal/ui/input.go:168
-#: internal/ui/input.go:189
+#: internal/ui/input.go:188
+#: internal/ui/input.go:209
 #: internal/ui/settings_displays.go:387
 msgid "Set in hyprland.conf"
 msgstr "Hyprland.conf에 설정"
 
-#: internal/ui/input.go:170
+#: internal/ui/input.go:190
 msgid "no XKB options"
 msgstr "XKB 옵션 없음"
 
-#: internal/ui/input.go:178
+#: internal/ui/input.go:198
 msgid "From wayfire.ini"
 msgstr ""
 
-#: internal/ui/input.go:180
+#: internal/ui/input.go:200
 msgid "From hyprland.conf"
 msgstr "Hyprland.conf에서"
 
-#: internal/ui/input.go:207
+#: internal/ui/input.go:227
 msgid "Wayfire settings use wayfire.ini. Inua supports XKB options, touchpad speed and acceleration, output modes, positions and scales, and recorded command shortcuts. Wayfire does not report alternate output modes, so the resolution menu only offers the current mode and preferred; configure other values in config.toml. Wayfire requires connector names; Hyprland desc: output identifiers do not apply. Inua has no verified Wayfire equivalent for display enable/disable, mirroring, automatic relative positions, or lid-triggered output switching. Existing Wayfire shortcuts cannot be listed here."
 msgstr ""
 
-#: internal/ui/input.go:213
+#: internal/ui/input.go:233
 msgid "hyprland.lua does not load inua.lua, so these settings do nothing yet. Add this as its last line: %s"
 msgstr "hyprland.lua가 inua.lua를 불러오지 않아 이 설정은 아직 적용되지 않습니다. 마지막 줄에 다음을 추가하세요: %s"
 
-#: internal/ui/input.go:215
+#: internal/ui/input.go:235
 msgid "hyprland.conf does not load inua.conf, so these settings do nothing yet. Add this as its last line: source = ./%s"
 msgstr "hyporland.conf는 inua.conf를 로드하지 않으므로 이러한 설정은 아직 아무 작업도 수행하지 않습니다. 마지막 줄에 다음을 추가하세요: source = ./%s"
 
-#: internal/ui/input.go:219
+#: internal/ui/input.go:239
 msgid "hyprland.lua sets these again after loading inua.lua, which wins over inua: %s. Move the require line below them."
 msgstr "hyprland.lua가 inua.lua를 불러온 뒤 이 항목을 다시 설정하여 inua의 설정을 덮어씁니다: %s. require 줄을 그 아래로 옮기세요."
 
-#: internal/ui/input.go:221
+#: internal/ui/input.go:241
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyporland.conf는 inua.conf를 로드한 후 이를 다시 설정하며, 이는 inua: %s를 이깁니다. 소스 줄을 그 아래로 이동하세요."
 

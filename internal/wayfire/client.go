@@ -557,6 +557,34 @@ func (c *Client) CloseWindow(ctx context.Context, address string) error {
 	return err
 }
 
+// Frame is the colours and type of an XWayland window's frame.
+type Frame struct {
+	Active, Inactive, Text, Font string
+	Border, TitleHeight          int
+	Buttons                      string
+}
+
+// SetFrame applies a frame to the running compositor. Wayfire reads its
+// options live, so the windows repaint at once instead of after a restart.
+func (c *Client) SetFrame(ctx context.Context, f Frame) error {
+	if !c.hasMethod("wayfire/set-config-options") {
+		return errors.New("Wayfire cannot set options at run time")
+	}
+	options := map[string]any{
+		"decoration/active_color":   f.Active,
+		"decoration/inactive_color": f.Inactive,
+		"decoration/font_color":     f.Text,
+		"decoration/font":           f.Font,
+		"decoration/border_size":    f.Border,
+		"decoration/title_height":   f.TitleHeight,
+	}
+	if f.Buttons != "" {
+		options["decoration/button_order"] = f.Buttons
+	}
+	_, err := c.Request(ctx, "wayfire/set-config-options", options)
+	return err
+}
+
 func (c *Client) SwitchWorkspace(ctx context.Context, workspace int) error {
 	snapshot, err := c.Snapshot(ctx)
 	if err != nil {
