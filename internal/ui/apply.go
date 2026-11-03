@@ -14,6 +14,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/config"
+	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/notify"
@@ -69,7 +70,11 @@ func (s *shellUI) loadStyles() {
 // more.
 func (s *shellUI) loadBase() {
 	// The theme defines the colour tokens style.css uses.
-	s.styles.base.LoadFromString(s.cfg.ThemeCSS(s.theme(), s.readUI) + style.Glass(s.cfg.Style.Transparency) + style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale) + style.Corners(s.cfg.Style.Radius))
+	css := s.cfg.ThemeCSS(s.theme(), s.readUI) + style.Glass(s.cfg.Style.Transparency) + style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale) + style.Corners(s.cfg.Style.Radius)
+	if desktop.Wayfire() {
+		css += style.WayfireControls(s.cfg.Style.WayfireControls)
+	}
+	s.styles.base.LoadFromString(css)
 	uikit.Radius = s.cfg.Style.Radius // the menus' corners
 	s.loadSettingsStyle()
 }
@@ -272,7 +277,7 @@ func (s *shellUI) applyConfig(c config.Config) {
 	if old.Notify.Enable != c.Notify.Enable {
 		s.syncNotify()
 	}
-	if old.Bar.Clock != c.Bar.Clock {
+	if old.Bar.Clock != c.Bar.Clock || old.Bar.ClockLanguage != c.Bar.ClockLanguage {
 		s.restartClock()
 	}
 	if old.OSD != c.OSD {

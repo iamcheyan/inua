@@ -448,7 +448,7 @@ func (b *bar) setClockAtEnd(atEnd bool) {
 }
 
 func (b *bar) setClock(s *shellUI, now time.Time) {
-	b.clock.SetText(config.Strftime(s.cfg.Bar.Clock, now))
+	b.clock.SetText(config.StrftimeIn(s.cfg.Bar.Clock, now, s.cfg.Bar.ClockLanguage))
 }
 
 // setApp names the window in the bar: its application's icon and name, the
@@ -495,6 +495,7 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 	b.setApp(s, shell.BarWindow(snap, name))
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
+	b.workspaces.SetVisible(s.cfg.Bar.Workspaces != "none")
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
 	if name == snap.FocusedMonitor {
 		s.syncAppMenu()

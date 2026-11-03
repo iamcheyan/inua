@@ -166,6 +166,99 @@ ApplicationWindow settings {
                 }
               }
 
+              // Wayfire-only compositor frame and Inua control appearance.
+              Box wayfire_appearance {
+                styles ["section"]
+                orientation: vertical;
+
+                Box {
+                  styles ["section-head"]
+                  spacing: 10;
+
+                  Box {
+                    styles ["mark"]
+                    valign: center;
+                  }
+
+                  Label {
+                    styles ["section-label"]
+                    use-markup: true;
+                    label: _("<span alpha='55%'>[</span>WAYFIRE<span alpha='55%'>]</span>");
+                  }
+
+                  Label {
+                    styles ["section-meta"]
+                    label: _("Window frames and Inua controls");
+                    hexpand: true;
+                    xalign: 0;
+                    ellipsize: end;
+                  }
+                }
+
+                Box {
+                  styles ["section-body"]
+                  orientation: vertical;
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: _("Window borders");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label: _("Xwayland window frame color, thickness and title bar; restart Wayfire to apply");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown wayfire_decoration {
+                      name: "wayfire_decoration";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label: _("Control skin");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label: _("Shape and borders of Inua's buttons, fields and switches; applies immediately");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown wayfire_controls {
+                      name: "wayfire_controls";
+                      valign: center;
+                    }
+                  }
+                }
+              }
+
               // [TEXT]
               Box {
                 styles ["section"]
@@ -962,6 +1055,41 @@ ApplicationWindow settings {
                       }
                     }
 
+                    Box {
+                      styles ["row"]
+                      spacing: 12;
+
+                      Box {
+                        orientation: vertical;
+                        hexpand: true;
+
+                        Label {
+                          styles ["title"]
+                          label: _("Format preset");
+                          xalign: 0;
+                        }
+
+                        DropDown clock_preset {
+                          name: "clock_preset";
+                        }
+                      }
+
+                      Box {
+                        orientation: vertical;
+                        hexpand: true;
+
+                        Label {
+                          styles ["title"]
+                          label: _("Date language");
+                          xalign: 0;
+                        }
+
+                        DropDown clock_language {
+                          name: "clock_language";
+                        }
+                      }
+                    }
+
                     Label {
                       styles ["sub"]
                       label:  _("strftime: %a weekday, %b month, %-d day, %H:%M time");
@@ -1002,6 +1130,7 @@ ApplicationWindow settings {
                         strings [
                           _("This monitor's"),
                           _("All monitors'"),
+                          _("Do not show"),
                         ]
                       };
                     }

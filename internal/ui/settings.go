@@ -65,6 +65,8 @@ type settings struct {
 	dockPinned                                                      gtk.Box
 	bgImage, bgColor, clock, terminal, lock, screenshot             gtk.Entry
 	clipSensitive                                                   gtk.Entry
+	clockPreset, clockLanguage                                      gtk.DropDown
+	clockLanguageNames                                              []string
 	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner      gtk.DropDown
 	clipLimit                                                       gtk.DropDown
 	clipLimits                                                      []int // clipLimit's choices
@@ -74,11 +76,15 @@ type settings struct {
 	appIconSets                                                     []string // appIcons' choices
 	appTheme                                                        gtk.DropDown
 	appThemes, appThemeLabels                                       []string // appTheme's choices, "" first
-	tpSpeed, transparency, radius                                   gtk.Scale
-	barIconSize, barIconSpacing                                     gtk.Scale
-	transparencyVal, radiusVal, clipStats                           gtk.Label
-	barIconSizeVal, barIconSpacingVal                               gtk.Label
-	clipClear, clipReveal                                           gtk.Button
+	wayfireAppearance                                               gtk.Box
+	wayfireDecoration, wayfireControls                              gtk.DropDown
+	wayfireDecorationNames, wayfireControlNames                     []string
+
+	tpSpeed, transparency, radius         gtk.Scale
+	barIconSize, barIconSpacing           gtk.Scale
+	transparencyVal, radiusVal, clipStats gtk.Label
+	barIconSizeVal, barIconSpacingVal     gtk.Label
+	clipClear, clipReveal                 gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
 	// would do nothing.
@@ -127,7 +133,7 @@ var themeKanji = map[string]string{
 
 var (
 	fitChoices   = config.Fits
-	wsChoices    = []string{"monitor", "all"}
+	wsChoices    = []string{"monitor", "all", "none"}
 	barDensities = []string{"default", "compact"}
 	modeChoices  = []string{"apps", "windows"}
 	swapChoices  = []string{"", "left", "both"}
@@ -214,6 +220,13 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Background.Fit = pick(fitChoices, i, c.Background.Fit)
 		case "ws":
 			c.Bar.Workspaces = pick(wsChoices, i, c.Bar.Workspaces)
+		case "clock_preset":
+			if i == 0 || i-1 >= len(config.ClockPresets) {
+				return
+			}
+			c.Bar.Clock = config.ClockPresets[i-1].Format
+		case "clock_language":
+			c.Bar.ClockLanguage = pick(s.settings.clockLanguageNames, i, c.Bar.ClockLanguage)
 		case "bar_density":
 			c.Bar.Density = pick(barDensities, i, c.Bar.Density)
 		case "launch_mode":
@@ -234,6 +247,10 @@ func (s *shellUI) bindSettingsHandlers() {
 			}
 		case "app_theme":
 			c.Style.AppTheme = pick(s.settings.appThemes, i, c.Style.AppTheme)
+		case "wayfire_decoration":
+			c.Style.WayfireDecoration = pick(s.settings.wayfireDecorationNames, i, c.Style.WayfireDecoration)
+		case "wayfire_controls":
+			c.Style.WayfireControls = pick(s.settings.wayfireControlNames, i, c.Style.WayfireControls)
 		case "icons":
 			c.Style.Icons = pick(s.settings.iconSets, i, c.Style.Icons)
 		case "app_icons":
@@ -458,6 +475,20 @@ func (s *shellUI) openSettings() {
 	ui.Get("bg_color", &st.bgColor)
 	ui.Get("clock", &st.clock)
 	ui.Get("terminal", &st.terminal)
+	ui.Get("clock_preset", &st.clockPreset)
+	ui.Get("clock_language", &st.clockLanguage)
+	presetLabels := []string{i18n.T("Custom")}
+	for _, preset := range config.ClockPresets {
+		presetLabels = append(presetLabels, i18n.T(preset.Label))
+	}
+	presetList := gtk.NewStringList(presetLabels)
+	st.clockPreset.SetModel(presetList)
+	presetList.Unref()
+	st.clockLanguageNames = slices.Clone(config.ClockLanguages)
+	languageLabels := []string{i18n.T("Follow interface language"), "English", "简体中文", "繁體中文", "日本語", "한국어", "Español", "Français"}
+	languageList := gtk.NewStringList(languageLabels)
+	st.clockLanguage.SetModel(languageList)
+	languageList.Unref()
 	ui.Get("lock", &st.lock)
 	ui.Get("screenshot", &st.screenshot)
 	ui.Get("bg_fit", &st.bgFit)
@@ -473,6 +504,19 @@ func (s *shellUI) openSettings() {
 	ui.Get("app_icons", &st.appIcons)
 	ui.Get("app_theme", &st.appTheme)
 	ui.Get("language", &st.language)
+	ui.Get("wayfire_appearance", &st.wayfireAppearance)
+	ui.Get("wayfire_decoration", &st.wayfireDecoration)
+	ui.Get("wayfire_controls", &st.wayfireControls)
+	st.wayfireDecorationNames = slices.Clone(config.WayfireDecorationPresets)
+	st.wayfireControlNames = slices.Clone(config.WayfireControlSkins)
+	decorationLabels := []string{i18n.T("Wayfire config"), i18n.T("Inua midnight"), i18n.T("Paper"), i18n.T("Neon")}
+	controlLabels := []string{i18n.T("Inua hairline"), i18n.T("Soft rounded"), i18n.T("Outline square")}
+	decorationList := gtk.NewStringList(decorationLabels)
+	st.wayfireDecoration.SetModel(decorationList)
+	decorationList.Unref()
+	controlList := gtk.NewStringList(controlLabels)
+	st.wayfireControls.SetModel(controlList)
+	controlList.Unref()
 	ui.Get("text_scale", &st.textScale)
 	ui.Get("transparency", &st.transparency)
 	ui.Get("transparency_val", &st.transparencyVal)
@@ -561,6 +605,10 @@ func (s *shellUI) openSettings() {
 		gtkx.ConnectChanged(e, &s.onSettingsEntry)
 	}
 	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.appTheme, &st.textScale, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
+		st.drops[d.GoPointer()] = d
+		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
+	}
+	for _, d := range []*gtk.DropDown{&st.clockPreset, &st.clockLanguage, &st.wayfireDecoration, &st.wayfireControls} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
@@ -785,7 +833,18 @@ func (s *shellUI) showSettings() {
 		toggle(&btn.Widget, "on", name == s.theme())
 	}
 	s.showAppTheme()
-	st.bgGenerate.SetActive(c.Background.Generate)
+	preset := 0
+	for i, option := range config.ClockPresets {
+		if c.Bar.Clock == option.Format {
+			preset = i + 1
+			break
+		}
+	}
+	st.clockPreset.SetSelected(uint32(preset))
+	st.clockLanguage.SetSelected(uint32(max(0, slices.Index(st.clockLanguageNames, c.Bar.ClockLanguage))))
+	st.wayfireDecoration.SetSelected(uint32(max(0, slices.Index(st.wayfireDecorationNames, c.Style.WayfireDecoration))))
+	st.wayfireControls.SetSelected(uint32(max(0, slices.Index(st.wayfireControlNames, c.Style.WayfireControls))))
+	st.wayfireAppearance.SetVisible(desktop.Wayfire())
 	st.bgOwn.SetVisible(!c.Background.Generate)
 	st.bgAnother.SetVisible(c.Background.Generate)
 	st.title.SetActive(c.Bar.Title)
@@ -834,7 +893,7 @@ func (s *shellUI) showSettings() {
 	s.showAboutSettings()
 	st.keyring.notify.SetActive(c.Keyring.Notify)
 	s.showKeyringSettings()
-	st.clockPreview.SetText(config.Strftime(c.Bar.Clock, time.Now()))
+	st.clockPreview.SetText(config.StrftimeIn(c.Bar.Clock, time.Now(), c.Bar.ClockLanguage))
 	for _, e := range st.entries {
 		e.RemoveCssClass("invalid")
 	}
@@ -1006,7 +1065,7 @@ func (s *shellUI) settingsEntryChanged(e *gtk.Entry) {
 	case "clock":
 		valid = strings.TrimSpace(text) != ""
 		c.Bar.Clock = text
-		st.clockPreview.SetText(config.Strftime(text, time.Now()))
+		st.clockPreview.SetText(config.StrftimeIn(text, time.Now(), c.Bar.ClockLanguage))
 	case "terminal":
 		c.Launcher.Terminal = text
 	case "lock":
