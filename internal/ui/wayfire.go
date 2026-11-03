@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"cmp"
 	"context"
 	"log"
 	"maps"
@@ -64,7 +65,18 @@ func followWayfire(client *wayfire.Client, update func(compositor.Snapshot)) {
 func (s *shellUI) applyWayfireSnapshot(snapshot compositor.Snapshot) {
 	oldPID := focusedPID(s.snap)
 	oldActive := s.snap.ActiveToplevel
-	s.windowSnap = wayfireSnapshot(snapshot)
+	if snapshot.ActiveToplevel != "" {
+		s.recordWayfireFocus(snapshot.ActiveToplevel)
+	}
+	s.wayfireMRU = slices.DeleteFunc(s.wayfireMRU, func(addr string) bool {
+		return !slices.ContainsFunc(snapshot.Toplevels, func(t compositor.Toplevel) bool { return t.Address == addr })
+	})
+	for _, t := range snapshot.Toplevels {
+		if !slices.Contains(s.wayfireMRU, t.Address) {
+			s.wayfireMRU = append(s.wayfireMRU, t.Address)
+		}
+	}
+	s.windowSnap = wayfireSnapshot(snapshot, s.wayfireMRU)
 	s.snap = s.windowSnap
 	if s.snap.ActiveToplevel != "" {
 		s.recordWayfireFocus(s.snap.ActiveToplevel)
@@ -92,7 +104,7 @@ func (s *shellUI) applyWayfireSnapshot(snapshot compositor.Snapshot) {
 	s.syncLauncher()
 }
 
-func wayfireSnapshot(snapshot compositor.Snapshot) hypr.Snapshot {
+func wayfireSnapshot(snapshot compositor.Snapshot, mru ...[]string) hypr.Snapshot {
 	out := hypr.Snapshot{
 		ActiveToplevel: snapshot.ActiveToplevel,
 		FocusedMonitor: snapshot.FocusedMonitor,
@@ -118,12 +130,30 @@ func wayfireSnapshot(snapshot compositor.Snapshot) hypr.Snapshot {
 	active := func(t compositor.Toplevel) bool {
 		return t.Activated || t.Address == snapshot.ActiveToplevel
 	}
+	var mruList []string
+	if len(mru) > 0 {
+		mruList = mru[0]
+	}
+	mruPos := func(addr string) int {
+		for i, a := range mruList {
+			if a == addr {
+				return i
+			}
+		}
+		return len(mruList) + 100
+	}
 	slices.SortStableFunc(toplevels, func(a, b compositor.Toplevel) int {
 		if active(a) != active(b) {
 			if active(a) {
 				return -1
 			}
 			return 1
+		}
+		if len(mruList) > 0 {
+			pa, pb := mruPos(a.Address), mruPos(b.Address)
+			if pa != pb {
+				return cmp.Compare(pa, pb)
+			}
 		}
 		return strings.Compare(a.Address, b.Address)
 	})
@@ -155,6 +185,8 @@ func (s *shellUI) focusWayfireWindow(address string) {
 		log.Printf("wayfire: cannot focus %s without the IPC socket", address)
 		return
 	}
+	s.recordWayfireFocus(address)
+	s.snap.ActiveToplevel = address
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()

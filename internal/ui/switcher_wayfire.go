@@ -24,12 +24,15 @@ type wayfireSwitcher struct {
 	cardWidgets   map[string]*gtk.Box
 	cardsBox      gtk.Box
 	scroll        gtk.ScrolledWindow
+	appLabel      *gtk.Label
+	titleLabel    *gtk.Label
 	refs          gtkx.Scope
 
-	onKey       func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onCardClick func(gtk.GestureClick, int32, float64, float64)
-	onCardHover func(gtk.EventControllerMotion, float64, float64)
-	onBackdrop  func(gtk.GestureClick, int32, float64, float64)
+	onKey        func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
+	onKeyRelease func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType)
+	onCardClick  func(gtk.GestureClick, int32, float64, float64)
+	onCardHover  func(gtk.EventControllerMotion, float64, float64)
+	onBackdrop   func(gtk.GestureClick, int32, float64, float64)
 }
 
 func (s *shellUI) bindWayfireSwitcherHandlers() {
@@ -44,6 +47,8 @@ func (s *shellUI) bindWayfireSwitcherHandlers() {
 		name := w.GetName()
 		if strings.HasPrefix(name, "sw-win:") {
 			addr := strings.TrimPrefix(name, "sw-win:")
+			s.recordWayfireFocus(addr)
+			s.snap.ActiveToplevel = addr
 			s.closeWayfireSwitcher(false)
 			s.focusWindow(addr)
 		}
@@ -79,6 +84,16 @@ func (s *shellUI) bindWayfireSwitcherHandlers() {
 			if picked.HasCssClass("wayfire-overview-backdrop") || picked.HasCssClass("wayfire-overview-scrim") {
 				s.closeWayfireSwitcher(true)
 			}
+		}
+	}
+
+	sw.onKeyRelease = func(_ gtk.EventControllerKey, keyval, _ uint32, _ gdk.ModifierType) {
+		if !sw.open {
+			return
+		}
+		switch int32(keyval) {
+		case gdk.KEY_Alt_L, gdk.KEY_Alt_R, gdk.KEY_Super_L, gdk.KEY_Super_R, gdk.KEY_Meta_L, gdk.KEY_Meta_R:
+			s.commitWayfireSwitcherSelection()
 		}
 	}
 
@@ -124,6 +139,7 @@ func (s *shellUI) bindWayfireSwitcherHandlers() {
 					sw.selectedIndex = max(0, len(sw.windows)-1)
 				}
 				s.renderWayfireSwitcher()
+				s.selectWayfireSwitcherIndex(sw.selectedIndex)
 			}
 			return true
 		}
@@ -239,7 +255,7 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 
 	if initialDelta < 0 {
 		sw.selectedIndex = len(items) - 1
-	} else if len(items) >= 2 {
+	} else if len(items) >= 2 && initialDelta > 0 {
 		sw.selectedIndex = 1
 	} else {
 		sw.selectedIndex = 0
@@ -251,7 +267,7 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 	if s.layer {
 		layershell.InitForWindow(w)
 		layershell.SetNamespace(w, "inua-wayfire-switcher")
-		layershell.SetLayer(w, layershell.LayerTop)
+		layershell.SetLayer(w, layershell.LayerOverlay)
 		layershell.SetKeyboardMode(w, layershell.KeyboardExclusive)
 		for _, e := range []layershell.Edge{layershell.EdgeTop, layershell.EdgeBottom, layershell.EdgeLeft, layershell.EdgeRight} {
 			layershell.SetAnchor(w, e, true)
@@ -265,7 +281,7 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 		}
 	} else {
 		sw.win.SetTitle(i18n.T("Task Switcher"))
-		sw.win.SetDefaultSize(800, 300)
+		sw.win.SetDefaultSize(800, 260)
 	}
 
 	for _, m := range s.snap.Monitors {
@@ -278,7 +294,7 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 		if s.layer {
 			layershell.InitForWindow(swPtr)
 			layershell.SetNamespace(swPtr, "inua-wayfire-switcher-scrim")
-			layershell.SetLayer(swPtr, layershell.LayerTop)
+			layershell.SetLayer(swPtr, layershell.LayerOverlay)
 			layershell.SetKeyboardMode(swPtr, layershell.KeyboardNone)
 			for _, e := range []layershell.Edge{layershell.EdgeTop, layershell.EdgeBottom, layershell.EdgeLeft, layershell.EdgeRight} {
 				layershell.SetAnchor(swPtr, e, true)
@@ -315,7 +331,7 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 	hudContainer.SetHexpand(true)
 	hudContainer.SetVexpand(true)
 
-	hud := gtk.NewBox(gtk.OrientationVerticalValue, 14)
+	hud := gtk.NewBox(gtk.OrientationVerticalValue, 10)
 	hud.AddCssClass("wayfire-switcher-hud")
 	gtkx.Append(hudContainer, &hud.Widget)
 	gtkx.Append(root, &hudContainer.Widget)
@@ -323,25 +339,37 @@ func (s *shellUI) openWayfireSwitcher(initialDelta int) {
 	sw.scroll = *gtk.NewScrolledWindow()
 	sw.scroll.SetPolicy(gtk.PolicyAutomaticValue, gtk.PolicyNeverValue)
 	sw.scroll.SetPropagateNaturalWidth(true)
-	sw.scroll.SetMaxContentWidth(1000)
+	sw.scroll.SetMaxContentWidth(920)
 
-	sw.cardsBox = *gtk.NewBox(gtk.OrientationHorizontalValue, 12)
+	sw.cardsBox = *gtk.NewBox(gtk.OrientationHorizontalValue, 8)
 	sw.cardsBox.SetHalign(gtk.AlignCenterValue)
+	sw.cardsBox.SetValign(gtk.AlignCenterValue)
 	sw.scroll.SetChild(&sw.cardsBox.Widget)
 	gtkx.Append(hud, &sw.scroll.Widget)
 
-	footer := gtk.NewBox(gtk.OrientationHorizontalValue, 16)
-	footer.AddCssClass("wayfire-overview-footer")
-	footer.SetHalign(gtk.AlignCenterValue)
+	infoBox := gtk.NewBox(gtk.OrientationVerticalValue, 2)
+	infoBox.AddCssClass("wayfire-switcher-info")
+	infoBox.SetHalign(gtk.AlignCenterValue)
 
-	hintSwitch := gtk.NewLabel(i18n.T("Win+Tab · Next    Win+Shift+Tab · Prev    Enter · Switch    Esc · Cancel"))
-	hintSwitch.AddCssClass("wayfire-overview-status")
-	gtkx.Append(footer, &hintSwitch.Widget)
-	gtkx.Append(hud, &footer.Widget)
+	sw.appLabel = gtk.NewLabel("")
+	sw.appLabel.AddCssClass("wayfire-switcher-app")
+	sw.appLabel.SetHalign(gtk.AlignCenterValue)
+	sw.appLabel.SetEllipsize(pango.EllipsizeEndValue)
+	gtkx.Append(infoBox, &sw.appLabel.Widget)
+
+	sw.titleLabel = gtk.NewLabel("")
+	sw.titleLabel.AddCssClass("wayfire-switcher-title")
+	sw.titleLabel.SetHalign(gtk.AlignCenterValue)
+	sw.titleLabel.SetEllipsize(pango.EllipsizeEndValue)
+	sw.titleLabel.SetMaxWidthChars(60)
+	gtkx.Append(infoBox, &sw.titleLabel.Widget)
+
+	gtkx.Append(hud, &infoBox.Widget)
 
 	keys := gtk.NewEventControllerKey()
 	keys.SetPropagationPhase(gtk.PhaseCaptureValue)
 	keys.ConnectKeyPressed(&sw.onKey)
+	keys.ConnectKeyReleased(&sw.onKeyRelease)
 	sw.win.AddController(&keys.EventController)
 
 	sw.win.SetChild(&root.Widget)
@@ -357,7 +385,7 @@ func (s *shellUI) renderWayfireSwitcher() {
 	sw.cardWidgets = make(map[string]*gtk.Box)
 
 	for _, it := range sw.windows {
-		card := gtk.NewBox(gtk.OrientationVerticalValue, 6)
+		card := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 		card.SetName("sw-win:" + it.address)
 		card.AddCssClass("wayfire-switcher-card")
 		card.SetFocusable(true)
@@ -374,27 +402,11 @@ func (s *shellUI) renderWayfireSwitcher() {
 
 		icon := gtk.NewImage()
 		setIcon(icon, it.icon)
-		icon.SetPixelSize(48)
+		icon.SetPixelSize(64)
 		icon.SetHalign(gtk.AlignCenterValue)
+		icon.SetValign(gtk.AlignCenterValue)
 		icon.SetCanTarget(false)
 		gtkx.Append(card, &icon.Widget)
-
-		appLbl := gtk.NewLabel(it.appName)
-		appLbl.AddCssClass("wayfire-switcher-app")
-		appLbl.SetEllipsize(3) // pango.EllipsizeEndValue
-		appLbl.SetHalign(gtk.AlignCenterValue)
-		appLbl.SetCanTarget(false)
-		gtkx.Append(card, &appLbl.Widget)
-
-		titleLbl := gtk.NewLabel(it.title)
-		titleLbl.AddCssClass("wayfire-switcher-title")
-		titleLbl.SetWrap(true)
-		titleLbl.SetWrapMode(pango.WrapWordCharValue)
-		titleLbl.SetLines(2)
-		titleLbl.SetEllipsize(3)
-		titleLbl.SetHalign(gtk.AlignCenterValue)
-		titleLbl.SetCanTarget(false)
-		gtkx.Append(card, &titleLbl.Widget)
 
 		sw.cardWidgets[it.address] = card
 		gtkx.Append(&sw.cardsBox, &card.Widget)
@@ -413,10 +425,22 @@ func (s *shellUI) selectWayfireSwitcherIndex(idx int) {
 		}
 	}
 	sw.selectedIndex = idx
-	newAddr := sw.windows[idx].address
-	if box, ok := sw.cardWidgets[newAddr]; ok && box != nil {
+	item := sw.windows[idx]
+	if box, ok := sw.cardWidgets[item.address]; ok && box != nil {
 		box.AddCssClass("selected")
 		box.GrabFocus()
+	}
+	if sw.appLabel != nil {
+		sw.appLabel.SetText(item.appName)
+	}
+	if sw.titleLabel != nil {
+		if item.title != "" && item.title != item.appName {
+			sw.titleLabel.SetText(item.title)
+			sw.titleLabel.SetVisible(true)
+		} else {
+			sw.titleLabel.SetText("")
+			sw.titleLabel.SetVisible(false)
+		}
 	}
 }
 
@@ -427,6 +451,8 @@ func (s *shellUI) commitWayfireSwitcherSelection() {
 		return
 	}
 	addr := sw.windows[sw.selectedIndex].address
+	s.recordWayfireFocus(addr)
+	s.snap.ActiveToplevel = addr
 	s.closeWayfireSwitcher(false)
 	s.focusWindow(addr)
 }
@@ -454,4 +480,6 @@ func (s *shellUI) closeWayfireSwitcher(restore bool) {
 	}
 	sw.cardWidgets = nil
 	sw.windows = nil
+	sw.appLabel = nil
+	sw.titleLabel = nil
 }

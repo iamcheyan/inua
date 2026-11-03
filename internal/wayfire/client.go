@@ -11,6 +11,7 @@ import (
 
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -104,6 +105,14 @@ func FromEnv() (*Client, error) {
 	socket := os.Getenv("WAYFIRE_SOCKET")
 	if socket == "" {
 		socket = os.Getenv("_WAYFIRE_SOCKET")
+	}
+	if socket == "" {
+		if runtime := os.Getenv("XDG_RUNTIME_DIR"); runtime != "" {
+			matches, _ := filepath.Glob(filepath.Join(runtime, "wayfire*.socket"))
+			if len(matches) > 0 {
+				socket = matches[0]
+			}
+		}
 	}
 	if socket == "" {
 		return nil, errors.New("WAYFIRE_SOCKET is not set; not running under Wayfire with the IPC plugin")
@@ -750,6 +759,11 @@ func (c *Client) Watch(ctx context.Context, events []string, receive func(json.R
 	}
 	defer cancel()
 	defer conn.Close()
+	_ = conn.SetDeadline(time.Time{})
+	go func() {
+		<-ctx.Done()
+		_ = conn.Close()
+	}()
 	if err := writeFrame(conn, payload); err != nil {
 		return err
 	}

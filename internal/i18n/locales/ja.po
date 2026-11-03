@@ -3730,8 +3730,8 @@ msgstr "ここで端末を開く"
 
 #: internal/filesui/cards.go:702
 #: internal/termui/menubar.go:44
-#: internal/ui/overview_wayfire.go:344
-#: internal/ui/switcher_wayfire.go:197
+#: internal/ui/overview_wayfire.go:346
+#: internal/ui/switcher_wayfire.go:213
 #: ui/screenshot.ui:180
 #: ui/shotdrawer.ui:122
 msgid "Window"
@@ -14924,68 +14924,68 @@ msgstr ""
 msgid "Bluetooth off"
 msgstr ""
 
-#: internal/ui/overview.go:211
+#: internal/ui/overview.go:216
 msgid "restore focus"
 msgstr "フォーカスを復元する"
 
-#: internal/ui/overview.go:328
+#: internal/ui/overview.go:333
 msgid "kill window"
 msgstr "ウィンドウをキルする"
 
-#: internal/ui/overview.go:463
+#: internal/ui/overview.go:468
 msgid "MRU: ON"
 msgstr "MRU:オン"
 
-#: internal/ui/overview.go:463
+#: internal/ui/overview.go:468
 msgid "MRU: OFF"
 msgstr "MRU: オフ"
 
-#: internal/ui/overview.go:464
+#: internal/ui/overview.go:469
 msgid "This monitor"
 msgstr "このモニター"
 
-#: internal/ui/overview.go:464
+#: internal/ui/overview.go:469
 msgid "All monitors"
 msgstr "すべてのモニター"
 
-#: internal/ui/overview.go:473
+#: internal/ui/overview.go:478
 msgid "FILTER"
 msgstr "絞り込み"
 
-#: internal/ui/overview.go:475
+#: internal/ui/overview.go:480
 msgid "NO MATCHES"
 msgstr "一致なし"
 
-#: internal/ui/overview.go:477
+#: internal/ui/overview.go:482
 msgid "%d RESULT"
 msgid_plural "%d RESULTS"
 msgstr[0] "%d 件"
 
-#: internal/ui/overview.go:510
+#: internal/ui/overview.go:515
 msgid "No workspaces"
 msgstr "ワークスペースがない"
 
-#: internal/ui/overview.go:512
+#: internal/ui/overview.go:517
 msgid "No matches"
 msgstr "一致しない"
 
-#: internal/ui/overview.go:632
+#: internal/ui/overview.go:637
 msgid "＋  New workspace"
 msgstr "＋  新しいワークスペース"
 
-#: internal/ui/overview.go:998
+#: internal/ui/overview.go:1003
 msgid "Filter by window title or app"
 msgstr "ウィンドウのタイトルまたはアプリでフィルタリングする"
 
-#: internal/ui/overview.go:1014
+#: internal/ui/overview.go:1019
 msgid "TYPE TO FILTER WINDOWS"
 msgstr "入力してウィンドウを絞り込む"
 
-#: internal/ui/overview.go:1027
+#: internal/ui/overview.go:1032
 msgid "Type or / to filter windows   Esc · clear / close   Arrows / Tab · select   Middle click · close   Ctrl+Shift+X · kill   Drag · move"
 msgstr "または / を入力してウィンドウをフィルタリングします Esc · クリア / 閉じる 矢印 / Tab · 選択 中クリック · 閉じる Ctrl+Shift+X · kill ドラッグ · 移動"
 
-#: internal/ui/overview.go:1071
+#: internal/ui/overview.go:1076
 msgid "inua overview"
 msgstr "イヌアの概要"
 
@@ -15009,29 +15009,29 @@ msgstr "矢印 / タブ · タイプの選択 または / · 検索 中クリッ
 msgid "position floating window"
 msgstr "フローティングウィンドウの位置"
 
-#: internal/ui/overview_wayfire.go:391
+#: internal/ui/overview_wayfire.go:393
 msgid "Activities Overview"
 msgstr ""
 
-#: internal/ui/overview_wayfire.go:470
+#: internal/ui/overview_wayfire.go:472
 msgid "Drag window to workspace · Click to switch · 1..4 switch workspace · Esc close"
 msgstr ""
 
-#: internal/ui/overview_wayfire.go:572
+#: internal/ui/overview_wayfire.go:574
 #: internal/ui/shotpick.go:231
 msgid "%d window"
 msgid_plural "%d windows"
 msgstr[0] "%d ウィンドウ"
 
-#: internal/ui/overview_wayfire.go:597
+#: internal/ui/overview_wayfire.go:599
 msgid "No open windows in this workspace"
 msgstr ""
 
-#: internal/ui/overview_wayfire.go:837
+#: internal/ui/overview_wayfire.go:839
 msgid "Close window"
 msgstr ""
 
-#: internal/ui/overview_wayfire.go:901
+#: internal/ui/overview_wayfire.go:903
 msgid "Active"
 msgstr ""
 
@@ -16651,12 +16651,8 @@ msgstr "開いているウィンドウはありません。"
 msgid "WORKSPACE %s"
 msgstr "ワークスペース %s"
 
-#: internal/ui/switcher_wayfire.go:267
+#: internal/ui/switcher_wayfire.go:283
 msgid "Task Switcher"
-msgstr ""
-
-#: internal/ui/switcher_wayfire.go:337
-msgid "Win+Tab · Next    Win+Shift+Tab · Prev    Enter · Switch    Esc · Cancel"
 msgstr ""
 
 #: internal/ui/updates.go:91

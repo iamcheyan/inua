@@ -105,6 +105,14 @@ func Wayfire() bool {
 	if os.Getenv("WAYFIRE_SOCKET") != "" || os.Getenv("_WAYFIRE_SOCKET") != "" {
 		return true
 	}
+	if runtime := os.Getenv("XDG_RUNTIME_DIR"); runtime != "" {
+		if matches, _ := filepath.Glob(filepath.Join(runtime, "wayfire*.socket")); len(matches) > 0 {
+			return true
+		}
+	}
+	if os.Getenv("INUA_INSTANCE") == "wayfire" {
+		return true
+	}
 	return slices.ContainsFunc(CurrentDesktops(), func(d string) bool {
 		return strings.Contains(d, "wayfire")
 	})

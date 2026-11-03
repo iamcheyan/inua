@@ -17,6 +17,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/pango"
 
 	"github.com/lyricat/inua/internal/capture/hyprland"
+	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/i18n"
@@ -88,12 +89,16 @@ type queuedOverviewFrame struct {
 }
 
 func (s *shellUI) showOverview() {
-	if s.wayfire != nil {
+	if s.wayfire != nil || desktop.Wayfire() {
+		if s.wfSwitcher.open {
+			s.closeWayfireSwitcher(false)
+			return
+		}
 		if s.wfOverview.open {
 			s.closeWayfireOverview(false)
 			return
 		}
-		s.showWayfireOverview()
+		s.openWayfireSwitcher(1)
 		return
 	}
 	s.closeClipboard()

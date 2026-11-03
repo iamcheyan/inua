@@ -66,3 +66,36 @@ func TestWayfireWorkspaceAssignment(t *testing.T) {
 		t.Errorf("expected wf:10 assigned to workspace 3, got %d", s.wayfireWinWorkspaces["wf:10"])
 	}
 }
+
+func TestWayfireMRUSwap1And2(t *testing.T) {
+	s := &shellUI{}
+	// Windows opened in order: wf:1, wf:2, wf:3
+	s.recordWayfireFocus("wf:1")
+	s.recordWayfireFocus("wf:2")
+	s.recordWayfireFocus("wf:3") // currently focused
+
+	// MRU order: wf:3 (active), wf:2 (previous), wf:1 (older)
+	if s.wayfireMRU[0] != "wf:3" || s.wayfireMRU[1] != "wf:2" || s.wayfireMRU[2] != "wf:1" {
+		t.Fatalf("unexpected initial MRU: %v", s.wayfireMRU)
+	}
+
+	// User presses Alt+Tab: previous window is at index 1 (wf:2)
+	target := s.wayfireMRU[1] // "wf:2"
+	s.recordWayfireFocus(target)
+	if s.wayfireMRU[0] != "wf:2" || s.wayfireMRU[1] != "wf:3" || s.wayfireMRU[2] != "wf:1" {
+		t.Fatalf("expected wf:2 at front and wf:3 at index 1, got %v", s.wayfireMRU)
+	}
+
+	// User presses Alt+Tab again: previous window is now at index 1 (wf:3)
+	target2 := s.wayfireMRU[1] // "wf:3"
+	s.recordWayfireFocus(target2)
+	if s.wayfireMRU[0] != "wf:3" || s.wayfireMRU[1] != "wf:2" || s.wayfireMRU[2] != "wf:1" {
+		t.Fatalf("expected wf:3 at front and wf:2 at index 1, got %v", s.wayfireMRU)
+	}
+
+	// Repeated switching continues swapping #1 and #2
+	s.recordWayfireFocus(s.wayfireMRU[1])
+	if s.wayfireMRU[0] != "wf:2" || s.wayfireMRU[1] != "wf:3" {
+		t.Fatalf("expected wf:2 and wf:3 to swap again, got %v", s.wayfireMRU)
+	}
+}

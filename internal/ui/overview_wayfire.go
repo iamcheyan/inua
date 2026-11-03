@@ -298,14 +298,16 @@ func (s *shellUI) switchWayfireWorkspace(workspace int) {
 }
 
 func (s *shellUI) showWayfireOverview() {
-	if s.wfOverview.open {
+	if s.wfOverview.open || s.wfSwitcher.open {
 		return
-	}
-	if s.wfSwitcher.open {
-		s.closeWayfireSwitcher(false)
 	}
 	s.closeClipboard()
 	s.closePasswords()
+
+	if s.cfg.Overview.Style == "icons" {
+		s.openWayfireSwitcher(0)
+		return
+	}
 
 	o := &s.wfOverview
 	o.open = true
@@ -1015,6 +1017,9 @@ func (s *shellUI) removeWayfireWindowItem(addr string) {
 }
 
 func (s *shellUI) closeWayfireOverview(restore bool) {
+	if s.wfSwitcher.open {
+		s.closeWayfireSwitcher(restore)
+	}
 	o := &s.wfOverview
 	if !o.open {
 		return

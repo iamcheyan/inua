@@ -1096,6 +1096,22 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 		}
 		return bad
 	case "overview":
+		if s.wayfire != nil || desktop.Wayfire() {
+			switch req.Function {
+			case "toggle", "open":
+				s.stepWayfireSwitcher(1)
+				return ipc.Response{OK: true}
+			case "next":
+				s.stepWayfireSwitcher(1)
+				return ipc.Response{OK: true}
+			case "prev":
+				s.stepWayfireSwitcher(-1)
+				return ipc.Response{OK: true}
+			case "close":
+				s.closeWayfireSwitcher(true)
+				return ipc.Response{OK: true}
+			}
+		}
 		switch req.Function {
 		case "toggle":
 			s.showOverview()
@@ -1111,25 +1127,17 @@ func (s *shellUI) request(req ipc.Request) ipc.Response {
 	case "switcher":
 		switch req.Function {
 		case "next":
-			if s.wayfire != nil {
-				s.stepWayfireSwitcher(1)
-				return ipc.Response{OK: true}
-			}
+			s.stepWayfireSwitcher(1)
+			return ipc.Response{OK: true}
 		case "prev":
-			if s.wayfire != nil {
-				s.stepWayfireSwitcher(-1)
-				return ipc.Response{OK: true}
-			}
+			s.stepWayfireSwitcher(-1)
+			return ipc.Response{OK: true}
 		case "toggle":
-			if s.wayfire != nil {
-				s.toggleWayfireSwitcher()
-				return ipc.Response{OK: true}
-			}
+			s.toggleWayfireSwitcher()
+			return ipc.Response{OK: true}
 		case "close":
-			if s.wayfire != nil {
-				s.closeWayfireSwitcher(true)
-				return ipc.Response{OK: true}
-			}
+			s.closeWayfireSwitcher(true)
+			return ipc.Response{OK: true}
 		default:
 			return bad
 		}
