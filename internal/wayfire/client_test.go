@@ -177,7 +177,7 @@ func TestMapState(t *testing.T) {
 
 func TestWindowsUseIPCViewIDs(t *testing.T) {
 	path := fakeSockets(t,
-		`[{"id":12,"pid":123,"title":"Terminal","app-id":"kitty","output-name":"HDMI-A-1","activated":true,"wset-index":1},{"id":7,"pid":124,"title":"Files","app-id":"files","output-name":"HDMI-A-2","activated":false,"wset-index":2},{"id":3,"pid":125,"title":"Layer","app-id":"inua","output-name":"HDMI-A-1","activated":false,"wset-index":-1}]`,
+		`[{"id":12,"pid":123,"title":"Terminal","app-id":"kitty","output-name":"HDMI-A-1","activated":true,"wset-index":1},{"id":7,"pid":124,"title":"Files","app-id":"files","output-name":"HDMI-A-2","activated":false,"wset-index":2},{"id":3,"pid":125,"title":"Layer","app-id":"inua","output-name":"HDMI-A-1","activated":false,"wset-index":-1},{"id":4,"pid":126,"title":"Ghost","app-id":"ghost","output-name":"HDMI-A-1","activated":false,"wset-index":18446744073709551615}]`,
 		`{"result":"ok","info":{"id":11,"name":"HDMI-A-2"}}`,
 		`[{"id":1,"name":"HDMI-A-1","geometry":{"x":0,"y":0,"width":1280,"height":1024},"workspace":{"x":0,"y":0,"grid_width":3,"grid_height":3}},{"id":11,"name":"HDMI-A-2","geometry":{"x":1280,"y":0,"width":1920,"height":1080},"workspace":{"x":0,"y":0,"grid_width":3,"grid_height":3}}]`,
 		`{"result":"ok","value":"1.000000"}`,

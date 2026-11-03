@@ -37,15 +37,41 @@ type Client struct {
 }
 
 type viewRecord struct {
-	ID          int          `json:"id"`
-	PID         int          `json:"pid"`
-	Title       string       `json:"title"`
-	AppID       string       `json:"app-id"`
-	OutputID    int          `json:"output-id"`
-	OutputName  string       `json:"output-name"`
-	Activated   bool         `json:"activated"`
-	WorkspaceID int64        `json:"wset-index"`
-	Geometry    viewGeometry `json:"geometry"`
+	ID          int            `json:"id"`
+	PID         int            `json:"pid"`
+	Title       string         `json:"title"`
+	AppID       string         `json:"app-id"`
+	OutputID    int            `json:"output-id"`
+	OutputName  string         `json:"output-name"`
+	Activated   bool           `json:"activated"`
+	WorkspaceID workspaceIndex `json:"wset-index"`
+	Geometry    viewGeometry   `json:"geometry"`
+}
+
+// workspaceIndex accepts both encodings of an unassigned view: Wayfire 0.9
+// sends uint64 -1, while 0.10 sends -1.
+type workspaceIndex int64
+
+func (w *workspaceIndex) UnmarshalJSON(data []byte) error {
+	text := strings.TrimSpace(string(data))
+	if text == "null" {
+		*w = -1
+		return nil
+	}
+	if value, err := strconv.ParseInt(text, 10, 64); err == nil {
+		*w = workspaceIndex(value)
+		return nil
+	}
+	value, err := strconv.ParseUint(text, 10, 64)
+	if err != nil {
+		return fmt.Errorf("invalid workspace index %q", text)
+	}
+	if value == ^uint64(0) {
+		*w = -1
+		return nil
+	}
+	*w = workspaceIndex(value)
+	return nil
 }
 
 type outputRecord struct {
