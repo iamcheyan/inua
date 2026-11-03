@@ -1106,10 +1106,13 @@ func (s *shellUI) showDockPreview(key string, at *gtk.Widget, it shell.DockItem)
 		gtkx.Append(row, &card.Widget)
 		pictures[i], icons[i] = picture, icon
 	}
+	width := int32(len(it.Windows))*dockPreviewCardWidth + int32(len(it.Windows)-1)*dockPreviewCardGap + 20
 	scroll := gtk.NewScrolledWindow()
+	scroll.SetSizeRequest(width, -1)
+	scroll.SetMinContentWidth(width - 20)
+	scroll.SetMaxContentWidth(max(width, dockPreviewMaxWidth))
 	scroll.SetPolicy(gtk.PolicyAutomaticValue, gtk.PolicyNeverValue)
 	scroll.SetPropagateNaturalHeight(true)
-	scroll.SetMaxContentWidth(dockPreviewMaxWidth)
 	scroll.SetChild(&row.Widget)
 	row.Unref()
 	pop.SetChild(&scroll.Widget)
