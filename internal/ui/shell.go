@@ -31,6 +31,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/graphene"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
+	"github.com/lyricat/inua/internal/appmenu"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
@@ -1389,10 +1390,11 @@ func (s *shellUI) appMenuHover(b *bar, x, y float64) {
 		return
 	}
 	// A section with no items is one the application builds only by opening
-	// its own menu, and pressing that over AT-SPI is what crashes Firefox.
-	// A pointer passing over it is no request to open anything: the hover
-	// changes sections only among those that already have their items.
+	// its own menu (a browser's). Hovering to it requests the section to fill.
 	if len(target.entry.Children) == 0 {
+		if appmenu.Fillable(target.entry) {
+			s.fillSection(&button.Widget, target, true)
+		}
 		return
 	}
 	m.pid, m.section = target.pid, target.entry.Label

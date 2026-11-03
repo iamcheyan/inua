@@ -24,7 +24,7 @@ func Path(configPath string) string {
 // Render applies the settings Inua owns to an existing Wayfire config while
 // preserving every unrelated key and section.
 func Render(content string, c config.Config) (string, error) {
- cfg, err := ini.LoadSources(ini.LoadOptions{AllowShadows: true, PreserveSurroundedQuote: true, IgnoreInlineComment: true, UnescapeValueCommentSymbols: true}, []byte(content))
+	cfg, err := ini.LoadSources(ini.LoadOptions{AllowShadows: true, PreserveSurroundedQuote: true, IgnoreInlineComment: true, UnescapeValueCommentSymbols: true}, []byte(content))
 	if err != nil {
 		return "", fmt.Errorf("parse Wayfire config: %w", err)
 	}
