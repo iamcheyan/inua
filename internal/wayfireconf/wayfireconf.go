@@ -23,7 +23,7 @@ func Path(configPath string) string {
 
 // Render applies the settings Inua owns to an existing Wayfire config while
 // preserving every unrelated key and section.
-func Render(content string, c config.Config) (string, error) {
+func Render(content string, c config.Config, frame config.Frame) (string, error) {
 	cfg, err := ini.LoadSources(ini.LoadOptions{AllowShadows: true, PreserveSurroundedQuote: true, IgnoreInlineComment: true, UnescapeValueCommentSymbols: true}, []byte(content))
 	if err != nil {
 		return "", fmt.Errorf("parse Wayfire config: %w", err)
@@ -36,7 +36,14 @@ func Render(content string, c config.Config) (string, error) {
 
 	decoration := cfg.Section("decoration")
 	clearManaged(decoration)
-	applyWayfireDecoration(decoration, c.Style.WayfireDecoration)
+	// The frame style follows the theme when the two disagree: a stored
+	// wayfire_decoration from before the theme had one must not keep the
+	// old shape.
+	frameStyle := c.Style.WayfireDecoration
+	if want, ok := config.ThemeDecoration[c.Style.Theme]; ok && frameStyle != "wayfire" {
+		frameStyle = want
+	}
+	applyWayfireDecoration(decoration, frameStyle, frame)
 
 	for _, section := range cfg.Sections() {
 		if strings.HasPrefix(section.Name(), "output:") {
@@ -107,40 +114,54 @@ func Render(content string, c config.Config) (string, error) {
 	return out.String(), nil
 }
 
-func applyWayfireDecoration(section *ini.Section, name string) {
+// applyWayfireDecoration writes a preset's frame. A preset is a shape, not a
+// colour: the colours come from the theme in force, so switching theme also
+// repaints Xwayland windows. "wayfire" leaves the user's own values alone.
+func applyWayfireDecoration(section *ini.Section, name string, theme config.Frame) {
 	switch name {
-	case "inua":
-		setManaged(section, "active_color", wayfireColor("#89b4faff"))
-		setManaged(section, "inactive_color", wayfireColor("#30343bcc"))
-		setManaged(section, "font_color", wayfireColor("#f2f2f2ff"))
-		setManaged(section, "border_size", "2")
-		setManaged(section, "title_height", "28")
-		setManaged(section, "title_halign", "center")
-		setManaged(section, "button_order", "minimize maximize close")
-	case "paper":
-		setManaged(section, "active_color", wayfireColor("#b7793eff"))
-		setManaged(section, "inactive_color", wayfireColor("#766f66cc"))
-		setManaged(section, "font_color", wayfireColor("#fffaf0ff"))
-		setManaged(section, "border_size", "1")
-		setManaged(section, "title_height", "30")
-		setManaged(section, "title_halign", "left")
-		setManaged(section, "button_order", "close minimize maximize")
-	case "neon":
-		setManaged(section, "active_color", wayfireColor("#59e1f7ff"))
-		setManaged(section, "inactive_color", wayfireColor("#203043dd"))
-		setManaged(section, "font_color", wayfireColor("#ecfbffff"))
-		setManaged(section, "border_size", "3")
-		setManaged(section, "title_height", "32")
-		setManaged(section, "title_halign", "center")
-		setManaged(section, "button_order", "minimize maximize close")
+	case "hairline":
+		writeFrame(section, theme, "1", "26", "minimize maximize close", false)
+	case "soft":
+		writeFrame(section, theme, "2", "30", "minimize maximize close", false)
+	case "sharp":
+		writeFrame(section, theme, "1", "24", "close minimize maximize", true)
+	case "inset":
+		writeFrame(section, theme, "4", "28", "minimize maximize close", true)
+	case "wide":
+		writeFrame(section, theme, "2", "34", "close minimize maximize", false)
+	case "accent":
+		writeFrame(section, theme, "3", "28", "minimize maximize close", true)
 	}
+}
+
+// writeFrame writes one frame. left puts the title at the bar's start, as the
+// paper-like looks do; the rest centre it.
+func writeFrame(section *ini.Section, theme config.Frame, border, height, order string, left bool) {
+	if theme.Active != "" {
+		setManaged(section, "active_color", wayfireColor(theme.Active))
+	}
+	if theme.Inactive != "" {
+		setManaged(section, "inactive_color", wayfireColor(theme.Inactive))
+	}
+	if theme.Text != "" {
+		setManaged(section, "font_color", wayfireColor(theme.Text))
+	}
+	setManaged(section, "border_size", border)
+	setManaged(section, "title_height", height)
+	if theme.Font != "" {
+		setManaged(section, "font", theme.Font)
+	}
+	setManaged(section, "button_order", order)
+	// Wayfire 0.10 has no title alignment option; the button order is all a
+	// look has to say about where the title sits.
+	_ = left
 }
 
 // wayfireColor escapes a color for Wayfire's INI reader, where '#' starts a comment.
 func wayfireColor(value string) string { return `\` + value }
 
 // Apply atomically updates the settings in Wayfire's config file.
-func Apply(path string, c config.Config) (bool, error) {
+func Apply(path string, c config.Config, frame config.Frame) (bool, error) {
 	old, err := os.ReadFile(path)
 	if err != nil && !os.IsNotExist(err) {
 		return false, err
@@ -151,7 +172,7 @@ func Apply(path string, c config.Config) (bool, error) {
 	} else if !os.IsNotExist(statErr) {
 		return false, statErr
 	}
-	content, err := Render(string(old), c)
+	content, err := Render(string(old), c, frame)
 	if err != nil {
 		return false, err
 	}

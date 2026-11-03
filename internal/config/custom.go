@@ -104,6 +104,43 @@ func (c Config) ThemeCSS(name string, builtin func(name string) string) string {
 	return css + "\n" + string(user)
 }
 
+// Frame is the look of an Xwayland window's frame under Wayfire: the colours
+// of the theme in force, so a theme switch repaints the windows with the rest
+// of the desktop.
+type Frame struct {
+	Active, Inactive, Text string // "#rrggbb"
+	Font                   string // Pango font description, size included
+}
+
+// FrameFont is the title bar's type: the same sans the bar's app name uses,
+// at 10 px, so the frame reads as part of the shell and not as a second app.
+const FrameFont = "Zen Kaku Gothic New 10"
+
+// FrameOf derives a window frame from a theme's colour tokens: the accent
+// paints the focused window's frame, the hairline colour the others', and the
+// theme's text colour the title.
+func FrameOf(colors map[string]string) Frame {
+	hex := func(name, fallback string) string {
+		if v := colors[name]; len(v) == 7 && v[0] == '#' {
+			return v
+		}
+		return fallback
+	}
+	return Frame{
+		Active:   hex("accent", "#9FC3C9"),
+		Inactive: hex("line", "#243134"),
+		Text:     hex("t0", "#E7E4DA"),
+		Font:     FrameFont,
+	}
+}
+
+// Frame is the window frame of the theme in force. The built-in themes live
+// in ui/themes; the caller reads the CSS, so the shell and the apps agree on
+// what the theme is.
+func (c Config) FrameOf(themeCSS string) Frame {
+	return FrameOf(ThemeColors(themeCSS))
+}
+
 // IconSetDir is the folder of style.icons when it is a set of the user's,
 // "" for a built-in set or an installed icon theme.
 func (c Config) IconSetDir() string {

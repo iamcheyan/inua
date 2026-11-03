@@ -382,12 +382,15 @@ radius = %d
 css = %s
 
 # Wayfire Xwayland window decorations, only used in Wayfire sessions:
-# "wayfire" keeps your Wayfire config; "inua", "paper" and "neon" are
-# built-in border color, thickness, title bar and button-order presets.
+# "wayfire" keeps your Wayfire config; "hairline", "soft", "sharp", "inset",
+# "wide" and "accent" are built-in border, title bar and button-order shapes
+# painted in the theme's colours.
 wayfire_decoration = %s
 
 # Inua's GTK controls, only used in Wayfire sessions:
 # "inua" hairline, "soft" rounded, or "outline" square and transparent.
+# Choosing a theme above pairs it with that theme's controls; both stay
+# adjustable afterwards.
 wayfire_controls = %s
 
 [background]

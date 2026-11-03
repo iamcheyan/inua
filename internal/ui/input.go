@@ -75,7 +75,7 @@ func (s *shellUI) applyWayfire() {
 		if s.settingsApply.latest.Load() != gen {
 			return
 		}
-		changed, err := wayfireconf.Apply(path, c)
+		changed, err := wayfireconf.Apply(path, c, c.FrameOf(c.ThemeCSS(s.theme(), s.readUI)))
 		gtkx.Post(func() {
 			if err != nil {
 				log.Printf("Wayfire settings: %v", err)

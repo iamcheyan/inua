@@ -44,6 +44,7 @@ import (
 	"github.com/lyricat/inua/internal/hyprconf"
 	"github.com/lyricat/inua/internal/ipc"
 	"github.com/lyricat/inua/internal/wayfireconf"
+	layouts "github.com/lyricat/inua/ui"
 )
 
 // version is the release, set by the release build (-X main.version).
@@ -362,7 +363,11 @@ func applyCompositorSettings(path string) error {
 	}
 	if desktop.Wayfire() {
 		target := wayfireconf.Path(path)
-		changed, err := wayfireconf.Apply(target, c)
+		frame := c.FrameOf(c.ThemeCSS(c.Style.Theme, func(file string) string {
+			b, _ := layouts.FS.ReadFile(file)
+			return string(b)
+		}))
+		changed, err := wayfireconf.Apply(target, c, frame)
 		switch {
 		case err != nil:
 			return err

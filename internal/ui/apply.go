@@ -70,7 +70,7 @@ func (s *shellUI) loadStyles() {
 // more.
 func (s *shellUI) loadBase() {
 	// The theme defines the colour tokens style.css uses.
-	css := s.cfg.ThemeCSS(s.theme(), s.readUI) + style.Glass(s.cfg.Style.Transparency) + style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale) + style.Corners(s.cfg.Style.Radius)
+	css := s.cfg.ThemeCSS(s.theme(), s.readUI) + style.Glass(s.cfg.Style.Transparency) + style.FontFamily(style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale), s.cfg.Style.Font) + style.Corners(s.cfg.Style.Radius)
 	if desktop.Wayfire() {
 		css += style.WayfireControls(s.cfg.Style.WayfireControls)
 	}
@@ -89,7 +89,7 @@ func (s *shellUI) loadSettingsStyle() {
 	css := ""
 	if s.settings.win != nil && theme != s.theme() {
 		css = style.Scope(s.cfg.ThemeCSS(theme, s.readUI)+style.Glass(s.cfg.Style.Transparency),
-			style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale)+style.Corners(s.cfg.Style.Radius),
+			style.FontFamily(style.ScaleText(s.readUI("style.css"), s.cfg.Style.TextScale), s.cfg.Style.Font)+style.Corners(s.cfg.Style.Radius),
 			"window.settings", "apps_")
 	}
 	if st.settings == nil {
@@ -282,6 +282,13 @@ func (s *shellUI) applyConfig(c config.Config) {
 	}
 	if old.OSD != c.OSD {
 		s.reanchorOSD() // the position the settings now ask for
+	}
+	if old.Style.Theme != c.Style.Theme || old.Style.WayfireDecoration != c.Style.WayfireDecoration ||
+		old.Style.WayfireControls != c.Style.WayfireControls {
+		// The Xwayland frames and the compositor's own colours follow the
+		// theme, so a theme change writes wayfire.ini at once, not only when
+		// the settings window saves.
+		go s.applyHyprland()
 	}
 	s.applyLauncherWeb()
 	s.overview.st.SetMRU(c.Overview.MRU)

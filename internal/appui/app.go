@@ -306,7 +306,12 @@ func (c *Ctx) loadStyle() {
 	}
 	themeCSS := cfg.ThemeCSS(theme, c.ReadUI)
 	c.Colors = config.ThemeColors(themeCSS)
-	css := themeCSS + style.Glass(cfg.Style.Transparency) + style.ScaleText(c.ReadUI("style.css"), cfg.Style.TextScale) + style.Corners(cfg.Style.Radius)
+	css := themeCSS + style.Glass(cfg.Style.Transparency) + style.FontFamily(style.ScaleText(c.ReadUI("style.css"), cfg.Style.TextScale), cfg.Style.Font) + style.Corners(cfg.Style.Radius)
+	if desktop.Wayfire() {
+		// The shell's control skin, so an app's buttons, fields and
+		// switches match the bar's in a Wayfire session.
+		css += style.WayfireControls(cfg.Style.WayfireControls)
+	}
 	if runtime.GOOS == "darwin" {
 		css = style.SystemFonts(css) // a Mac has none of the styles' fonts
 	}

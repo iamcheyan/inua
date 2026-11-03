@@ -329,6 +329,12 @@ func (s *shellUI) bindSettingsHandlers() {
 		switch {
 		case strings.HasPrefix(name, "theme:"):
 			c.Style.Theme = strings.TrimPrefix(name, "theme:")
+			// The frames and controls follow the theme, so a theme change
+			// repaints the Xwayland windows and the desktop's controls too.
+			if frame, ok := config.ThemeDecoration[c.Style.Theme]; ok {
+				c.Style.WayfireDecoration = frame
+				c.Style.WayfireControls = style.ControlsFor(c.Style.Theme)
+			}
 			s.changeSettings(c)
 		case name == "iconset_preview":
 			s.previewIconSet(c.Style.Icons)
@@ -533,7 +539,10 @@ func (s *shellUI) openSettings() {
 	themeList.Unref()
 	st.wayfireDecorationNames = slices.Clone(config.WayfireDecorationPresets)
 	st.wayfireControlNames = slices.Clone(config.WayfireControlSkins)
-	decorationLabels := []string{i18n.T("Wayfire config"), i18n.T("Inua midnight"), i18n.T("Paper"), i18n.T("Neon")}
+	decorationLabels := []string{
+		i18n.T("Wayfire config"), i18n.T("Hairline"), i18n.T("Soft"),
+		i18n.T("Sharp"), i18n.T("Inset"), i18n.T("Wide"), i18n.T("Accent"),
+	}
 	controlLabels := []string{i18n.T("Inua hairline"), i18n.T("Soft rounded"), i18n.T("Outline square")}
 	decorationList := gtk.NewStringList(decorationLabels)
 	st.wayfireDecoration.SetModel(decorationList)

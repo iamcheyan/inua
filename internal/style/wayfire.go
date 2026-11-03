@@ -36,3 +36,19 @@ button.outlined, menubutton.outlined > button,
 		return ""
 	}
 }
+
+// ThemeControls is the control skin that goes with a colour theme, so the
+// seven built-in themes change the desktop's controls as well as its colours:
+// square and transparent for the cool editions, rounded for the paper ones.
+var ThemeControls = map[string]string{
+	"yoru": "inua", "washi": "soft", "aojashin": "soft",
+	"suimen": "inua", "rinko": "soft", "bunko": "outline", "denko": "outline",
+}
+
+// ControlsFor is the skin a theme uses unless the user chose one.
+func ControlsFor(theme string) string {
+	if skin, ok := ThemeControls[theme]; ok {
+		return skin
+	}
+	return "inua"
+}

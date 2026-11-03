@@ -20,7 +20,7 @@ func TestRenderWritesWayfireSettingsAndPreservesUserConfig(t *testing.T) {
 	cfg.Displays.Monitors = []config.Monitor{{Output: "DP-1", Mode: "2560x1440@144", Position: "2560x0", Scale: 1.25}}
 	cfg.Shortcuts = []config.Shortcut{{Action: "overview", Keys: "SUPER+SHIFT+O"}, {Action: "exec", Keys: "ALT+F2", Command: "inua call launcher toggle"}}
 	before := "[core]\nplugins = ipc command\n\n[input]\nxkb_layout = us\n\n[output:DP-1]\nmode = 1920x1080@60000\nposition = 0,0\n\n[command]\nbindings_mine = <super> M : echo mine\n"
-	got, err := Render(before, cfg)
+	got, err := Render(before, cfg, config.Frame{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,11 +52,11 @@ func TestRenderRestoresUserConfigWhenOverrideIsRemoved(t *testing.T) {
 	cfg.Displays.Monitors = []config.Monitor{{Output: "DP-1", Mode: "2560x1440@144", Position: "2560x0", Scale: 1.25}}
 	cfg.Shortcuts = []config.Shortcut{{Action: "overview", Keys: "SUPER+O"}}
 	before := "[input]\nxkb_options = caps:escape\n\n[output:DP-1]\nmode = 1920x1080@60000\nposition = 0,0\nscale = 1.000000\n\n[command]\nbinding_inua_overview = <super>\ncommand_inua_overview = inua call overview toggle\nbindings_user = <super> U : keep\n"
-	overridden, err := Render(before, cfg)
+	overridden, err := Render(before, cfg, config.Frame{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	restored, err := Render(overridden, config.Default())
+	restored, err := Render(overridden, config.Default(), config.Frame{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestRenderWritesWayfirePushToTalkBindings(t *testing.T) {
 	cfg := config.Default()
 	cfg.Voice.Enable = true
 	cfg.Shortcuts = []config.Shortcut{{Action: "voice", Keys: "SUPER+SHIFT+V"}}
-	got, err := Render("[command]\n", cfg)
+	got, err := Render("[command]\n", cfg, config.Frame{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -126,7 +126,7 @@ func TestApplyWritesOnlyOnChange(t *testing.T) {
 		t.Fatal(err)
 	}
 	cfg := config.Default()
-	changed, err := Apply(path, cfg)
+	changed, err := Apply(path, cfg, config.Frame{})
 	if err != nil || !changed {
 		t.Fatalf("Apply = %v, %v; want changed", changed, err)
 	}
@@ -137,47 +137,55 @@ func TestApplyWritesOnlyOnChange(t *testing.T) {
 	if info.Mode().Perm() != 0o640 {
 		t.Fatalf("file mode after apply = %v; want 0640", info.Mode().Perm())
 	}
-	if changed, err = Apply(path, cfg); err != nil || changed {
+	if changed, err = Apply(path, cfg, config.Frame{}); err != nil || changed {
 		t.Fatalf("second Apply = %v, %v; want unchanged", changed, err)
 	}
 }
 
-// A decoration preset writes its colors and sizes into [decoration]; the
-// plain "wayfire" choice gives the user's own values back, and the colors
-// survive Wayfire's INI reader, where an unescaped '#' starts a comment.
+// A decoration preset writes its frame into [decoration] in the theme's
+// colours; the plain "wayfire" choice gives the user's own values back, and
+// the colours survive Wayfire's INI reader, where an unescaped '#' starts a
+// comment.
 func TestRenderDecorationPresets(t *testing.T) {
 	before := "[core]\nplugins = ipc\n\n[decoration]\nactive_color = #112233ff\nborder_size = 7\n"
+	frame := config.Frame{Active: "#89b4fa", Inactive: "#30343b", Text: "#f2f2f2", Font: config.FrameFont}
+	for _, preset := range []string{"hairline", "soft", "sharp", "inset", "wide", "accent"} {
+		cfg := config.Default()
+		cfg.Style.WayfireDecoration = preset
+		overridden, err := Render(before, cfg, frame)
+		if err != nil {
+			t.Fatal(err)
+		}
+		parsed, err := loadWayfire(overridden)
+		if err != nil {
+			t.Fatal(err)
+		}
+		decoration := parsed.Section("decoration")
+		if got := decoration.Key("active_color").String(); got != "#89b4fa" {
+			t.Errorf("%s: active_color = %q, want the theme's accent", preset, got)
+		}
+		if got := decoration.Key("font").String(); got != config.FrameFont {
+			t.Errorf("%s: font = %q, want %q", preset, got, config.FrameFont)
+		}
+		if got := decoration.Key("border_size").String(); got == "7" {
+			t.Errorf("%s: border_size kept the user's 7", preset)
+		}
+		if !strings.Contains(overridden, `\#89b4fa`) {
+			t.Errorf("%s: the colour is not escaped in the file:\n%s", preset, overridden)
+		}
+	}
+
 	cfg := config.Default()
-	cfg.Style.WayfireDecoration = "inua"
-	overridden, err := Render(before, cfg)
+	cfg.Style.WayfireDecoration = "wayfire"
+	restored, err := Render(before, cfg, frame)
 	if err != nil {
 		t.Fatal(err)
 	}
-	parsed, err := loadWayfire(overridden)
+	parsed, err := loadWayfire(restored)
 	if err != nil {
 		t.Fatal(err)
 	}
 	decoration := parsed.Section("decoration")
-	if got := decoration.Key("border_size").String(); got != "2" {
-		t.Errorf("border_size = %q, want the preset's 2", got)
-	}
-	if got := decoration.Key("active_color").String(); got != "#89b4faff" {
-		t.Errorf("active_color = %q, want the preset's color as Wayfire reads it", got)
-	}
-	if !strings.Contains(overridden, `\#89b4faff`) {
-		t.Errorf("the color is not escaped in the file:\n%s", overridden)
-	}
-
-	cfg.Style.WayfireDecoration = "wayfire"
-	restored, err := Render(overridden, cfg)
-	if err != nil {
-		t.Fatal(err)
-	}
-	parsed, err = loadWayfire(restored)
-	if err != nil {
-		t.Fatal(err)
-	}
-	decoration = parsed.Section("decoration")
 	if got := decoration.Key("border_size").String(); got != "7" {
 		t.Errorf("restored border_size = %q, want the user's 7", got)
 	}
@@ -188,7 +196,7 @@ func TestRenderDecorationPresets(t *testing.T) {
 
 // An absent wayfire.ini is written from scratch, header included.
 func TestRenderEmptyConfig(t *testing.T) {
-	got, err := Render("", config.Default())
+	got, err := Render("", config.Default(), config.Frame{})
 	if err != nil {
 		t.Fatal(err)
 	}

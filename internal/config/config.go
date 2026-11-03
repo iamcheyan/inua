@@ -926,8 +926,11 @@ var Languages = []string{"auto", "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr"}
 // everyday ones, then four dark editions.
 var Themes = []string{"yoru", "washi", "aojashin", "suimen", "rinko", "bunko", "denko"}
 
-// WayfireDecorationPresets are the compositor decoration styles offered in settings.
-var WayfireDecorationPresets = []string{"wayfire", "inua", "paper", "neon"}
+// WayfireDecorationPresets are the window frame styles: "wayfire" keeps the
+// user's own values, and each of the others is a shape (border, title height,
+// button order) painted in the theme's colours. They follow the themes so a
+// switch repaints the frames with the rest of the desktop.
+var WayfireDecorationPresets = []string{"wayfire", "hairline", "soft", "sharp", "inset", "wide", "accent"}
 
 // WayfireControlSkins are the GTK control skins offered in settings.
 var WayfireControlSkins = []string{"inua", "soft", "outline"}
@@ -939,9 +942,19 @@ type WayfireThemePreset struct {
 
 var WayfireThemePresets = []WayfireThemePreset{
 	{i18n.M("Wayfire native"), "wayfire", "inua"},
-	{i18n.M("Inua midnight"), "inua", "inua"},
-	{i18n.M("Paper"), "paper", "soft"},
-	{i18n.M("Neon"), "neon", "outline"},
+	{i18n.M("Hairline"), "hairline", "inua"},
+	{i18n.M("Soft"), "soft", "soft"},
+	{i18n.M("Sharp"), "sharp", "outline"},
+	{i18n.M("Inset"), "inset", "inua"},
+	{i18n.M("Wide"), "wide", "soft"},
+	{i18n.M("Accent"), "accent", "outline"},
+}
+
+// ThemeDecoration is the frame style a colour theme uses, so choosing a theme
+// also changes the windows: each of the seven built-in themes has its own.
+var ThemeDecoration = map[string]string{
+	"yoru": "hairline", "washi": "soft", "aojashin": "sharp",
+	"suimen": "inset", "rinko": "accent", "bunko": "wide", "denko": "accent",
 }
 
 // WayfireThemeChoice is the settings dropdown index: 0 means the current
@@ -1006,7 +1019,7 @@ func Default() Config {
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",
 		},
-		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppStyle: ObjectsTheme, EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4, WayfireDecoration: "inua", WayfireControls: "inua"},
+		Style:      Style{Theme: "yoru", CSS: "style.css", Icons: "phosphor", AppStyle: ObjectsTheme, EdgeGaps: true, TextScale: 100, Transparency: 16, Radius: 4, WayfireDecoration: ThemeDecoration["yoru"], WayfireControls: "inua", Font: "inua"},
 		Background: Background{Enable: true, Fit: "cover", Generate: true},
 		Displays:   Displays{LidOff: true},
 		Notify:     Notify{Enable: true, Banner: 5, CriticalInFocus: true, Updates: true},
