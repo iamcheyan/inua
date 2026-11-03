@@ -193,6 +193,11 @@ type Style struct {
 	WayfireDecoration string `toml:"wayfire_decoration"`
 	// WayfireControls selects the GTK control skin used in Wayfire sessions.
 	WayfireControls string `toml:"wayfire_controls"`
+	// Font is the type family of the shell and inua's apps: "inua" (the
+	// built-in stack), "maple" (the bundled Maple Mono NF CN), "noto-sans"
+	// (Noto Sans CJK), "noto-serif" (Noto Serif CJK) or "system" (the
+	// desktop's sans-serif, serif and monospace).
+	Font string `toml:"font"`
 	// EdgeGaps leaves a small gap between the screen edges and the bar and
 	// dock; off puts them flush against the edges.
 	EdgeGaps bool `toml:"edge_gaps"`
@@ -907,6 +912,12 @@ var IconSets = []string{"phosphor", "system"}
 // TextScales are the text sizes, in percent, the settings window offers.
 var TextScales = []int{90, 100, 110, 125, 150}
 
+// Fonts are the type families the settings window offers: the built-in
+// stack, the bundled Maple Mono NF CN, Noto Sans CJK, Noto Serif CJK and the
+// system's fonts. Maple Mono NF CN carries Latin, Greek, Cyrillic, Chinese,
+// Japanese and the Nerd Fonts icon ranges; Korean falls back to Noto.
+var Fonts = []string{"inua", "maple", "noto-sans", "noto-serif", "system"}
+
 // Languages are the interface's languages: "auto" (the environment's),
 // English, then the catalogs in internal/i18n/locales.
 var Languages = []string{"auto", "en", "zh_CN", "zh_TW", "ja", "ko", "es", "fr"}
@@ -1135,6 +1146,7 @@ func (c *Config) validate() []string {
 	oneOf("language", &c.Language, d.Language, Languages...)
 	oneOf("style.theme", &c.Style.Theme, d.Style.Theme, c.ThemeNames()...)
 	oneOf("style.app_theme", &c.Style.AppTheme, d.Style.AppTheme, append([]string{""}, c.ThemeNames()...)...)
+	oneOf("style.font", &c.Style.Font, d.Style.Font, Fonts...)
 	oneOf("style.wayfire_decoration", &c.Style.WayfireDecoration, d.Style.WayfireDecoration, WayfireDecorationPresets...)
 	oneOf("style.wayfire_controls", &c.Style.WayfireControls, d.Style.WayfireControls, WayfireControlSkins...)
 	oneOf("bar.clock_language", &c.Bar.ClockLanguage, d.Bar.ClockLanguage, ClockLanguages...)

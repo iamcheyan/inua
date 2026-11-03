@@ -192,6 +192,16 @@ app_icons = ""
 # it follows the theme.
 icons = "phosphor"
 
+# Type family of the shell and inua's apps, covering Latin, Chinese and
+# Japanese:
+#   "inua"        inua's own stack (the default)
+#   "maple"       Maple Mono NF CN, bundled and installed with inua; it has
+#                 Nerd Font icons, for a terminal or a prompt
+#   "noto-sans"   Noto Sans CJK (fonts-noto-cjk)
+#   "noto-serif"  Noto Serif CJK
+#   "system"      the desktop's sans, serif and monospace
+font = "inua"
+
 # A small gap between the screen edges and the bar and dock. false puts
 # them flush against the edges.
 edge_gaps = true

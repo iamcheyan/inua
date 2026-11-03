@@ -25,6 +25,7 @@ import (
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/shell"
+	"github.com/lyricat/inua/internal/style"
 	"github.com/lyricat/inua/internal/system"
 	"github.com/lyricat/inua/internal/uikit"
 )
@@ -71,7 +72,7 @@ type settings struct {
 	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner        gtk.DropDown
 	clipLimit                                                         gtk.DropDown
 	clipLimits                                                        []int // clipLimit's choices
-	textScale                                                         gtk.DropDown
+	textScale, font                                                   gtk.DropDown
 	textScales                                                        []int    // textScale's choices
 	iconSets                                                          []string // icons' choices
 	appIconSets                                                       []string // appIcons' choices
@@ -268,6 +269,8 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Style.Icons = pick(s.settings.iconSets, i, c.Style.Icons)
 		case "app_icons":
 			c.Style.AppIcons = pick(s.settings.appIconSets, i, c.Style.AppIcons)
+		case "font":
+			c.Style.Font = pick(config.Fonts, i, c.Style.Font)
 		case "text_scale":
 			if i >= 0 && i < len(s.settings.textScales) {
 				c.Style.TextScale = s.settings.textScales[i]
@@ -538,6 +541,17 @@ func (s *shellUI) openSettings() {
 	controlList := gtk.NewStringList(controlLabels)
 	st.wayfireControls.SetModel(controlList)
 	controlList.Unref()
+	ui.Get("font", &st.font)
+	fontLabels := []string{
+		i18n.T("Inua"),
+		i18n.T("Maple Mono NF CN"),
+		i18n.T("Noto Sans CJK"),
+		i18n.T("Noto Serif CJK"),
+		i18n.T("System fonts"),
+	}
+	fontList := gtk.NewStringList(fontLabels)
+	st.font.SetModel(fontList)
+	fontList.Unref()
 	ui.Get("text_scale", &st.textScale)
 	ui.Get("transparency", &st.transparency)
 	ui.Get("transparency_val", &st.transparencyVal)
@@ -636,7 +650,7 @@ func (s *shellUI) openSettings() {
 		st.entries[e.GoPointer()] = e
 		gtkx.ConnectChanged(e, &s.onSettingsEntry)
 	}
-	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.appTheme, &st.textScale, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
+	for _, d := range []*gtk.DropDown{&st.bgFit, &st.ws, &st.barDensity, &st.launchMode, &st.swap, &st.caps, &st.icons, &st.appIcons, &st.appTheme, &st.textScale, &st.font, &st.language, &st.banner, &st.dockSize, &st.dockPosition, &st.clipLimit} {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
@@ -1015,6 +1029,7 @@ func (s *shellUI) showTextScale() {
 		st.textScales = scales
 	}
 	st.textScale.SetSelected(uint32(slices.Index(scales, scale)))
+	st.font.SetSelected(uint32(max(0, slices.Index(config.Fonts, s.cfg.Style.Font))))
 }
 
 func (s *shellUI) showClipboardSettings() {

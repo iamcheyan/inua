@@ -20,7 +20,7 @@ func Format(c Config) string {
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
-		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.AppStyle), q(c.Style.AppIcons), q(c.Style.Icons), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS), q(c.Style.WayfireDecoration), q(c.Style.WayfireControls),
+		q(c.Style.Theme), q(c.Style.AppTheme), q(c.Style.AppStyle), q(c.Style.AppIcons), q(c.Style.Icons), q(c.Style.Font), c.Style.EdgeGaps, c.Style.TextScale, c.Style.Transparency, c.Style.Radius, q(c.Style.CSS), q(c.Style.WayfireDecoration), q(c.Style.WayfireControls),
 		c.Background.Enable, q(c.Background.Image), q(c.Background.Fit), q(c.Background.Color),
 		c.Background.Generate,
 		kbOptionsLine(c.Input.KbOptions), touchpadSpeedLine(c.Input.TouchpadSpeed), q(c.Input.TouchpadAccel),
@@ -347,6 +347,16 @@ app_icons = %s
 # (icons/phosphor-bold, from inua init, is one). Draw them in one colour:
 # it follows the theme.
 icons = %s
+
+# Type family of the shell and inua's apps, covering Latin, Chinese and
+# Japanese:
+#   "inua"        inua's own stack (the default)
+#   "maple"       Maple Mono NF CN, bundled and installed with inua; it has
+#                 Nerd Font icons, for a terminal or a prompt
+#   "noto-sans"   Noto Sans CJK (fonts-noto-cjk)
+#   "noto-serif"  Noto Serif CJK
+#   "system"      the desktop's sans, serif and monospace
+font = %s
 
 # A small gap between the screen edges and the bar and dock. false puts
 # them flush against the edges.

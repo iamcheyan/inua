@@ -358,6 +358,36 @@ ApplicationWindow settings {
 
                     Box {
                       orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Font");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Latin, Chinese and Japanese; Maple Mono NF CN is bundled and includes Nerd Font icons");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    DropDown font {
+                      name: "font";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
                       width-request: 260;
                       valign: center;
 

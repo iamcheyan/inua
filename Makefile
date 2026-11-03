@@ -124,6 +124,9 @@ install: build
 	install -m644 -t "$(DATA_HOME)/icons/inua-objects/scalable/apps" config/apps/*.svg
 	install -m644 -t "$(DATA_HOME)/icons/inua-objects/16/apps" config/apps/small/*.svg
 	-for t in inua-objects inua-objects-soft inua-objects-flat; do gtk-update-icon-cache -q -t "$(DATA_HOME)/icons/$$t" 2>/dev/null; done
+	# The bundled fonts (Maple Mono NF CN), where fontconfig finds them
+	install -Dm644 -t "$(DATA_HOME)/fonts/inua" config/fonts/*.ttf config/fonts/OFL-MapleMono.txt
+	-fc-cache -q -f "$(DATA_HOME)/fonts/inua" 2>/dev/null
 
 install-config: build
 	PATH="$(PREFIX)/bin:$$PATH" bin/inua init -dir "$(CONFIG_HOME)"
