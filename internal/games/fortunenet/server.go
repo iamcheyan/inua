@@ -15,6 +15,7 @@ import (
 
 	samples "github.com/lyricat/inua/config"
 	"github.com/lyricat/inua/internal/games"
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/games/gameweb"
 	"github.com/lyricat/inua/internal/i18n"
@@ -81,8 +82,8 @@ func (h *Host) URLs() []string { return gameweb.URLs(h.Port(), h.Code) }
 // where the Host lives.
 func (h *Host) Close() {
 	h.closed = true
-	if h.opt.AI != nil {
-		h.opt.AI.Stop()
+	if h.ai != nil {
+		h.ai.Stop()
 	}
 	if h.cpu != nil {
 		h.cpu.Stop()
@@ -261,4 +262,26 @@ func (h *Host) Status() gamerelay.Status {
 		st.Lead = h.Seats[l].Name
 	}
 	return st
+}
+
+// Unattended opens a game with no one at a host's screen, for a lobby to
+// host itself (inua-game-lobby): the first visitor sets it up and starts
+// it, on a plain board, with AI players when ai answers (nil: computer
+// players only). run runs what changes the game, one at a time; changed
+// is told, from there, how it stands each time that changes. It returns
+// the game's handler, how it stands now, and what ends it.
+func Unattended(run func(func()), changed func(gamerelay.Status), ai gameai.AI) (http.Handler, gamerelay.Status, func()) {
+	var h *Host
+	h = NewHost(Options{
+		Settings: games.DefaultFortune,
+		LeadAI:   ai,
+		Run:      run,
+		Changed: func() {
+			if h != nil { // not while NewHost sets the seats out
+				changed(h.Status())
+			}
+		},
+		Seed: uint64(time.Now().UnixNano()),
+	})
+	return h.Handler(), h.Status(), func() { run(h.Close) }
 }

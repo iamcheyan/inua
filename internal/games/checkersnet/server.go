@@ -1,6 +1,7 @@
 package checkersnet
 
 import (
+	"context"
 	"embed"
 	"encoding/json"
 	"io/fs"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/games/gameweb"
 	"github.com/lyricat/inua/internal/i18n"
@@ -170,4 +172,33 @@ func (h *Host) Status() gamerelay.Status {
 		st.Lead = h.Seats[l].Name
 	}
 	return st
+}
+
+// Unattended opens a game for two with no one at a host's screen, for a
+// lobby to host itself (inua-game-lobby): the first visitor sets the
+// seats up and starts it, and may give seats to ai when it answers (nil:
+// to the computer only). run runs what changes the game, one at a time;
+// changed is told, from there, how it stands each time that changes. It
+// returns the game's handler, how it stands now, and what ends it.
+func Unattended(run func(func()), changed func(gamerelay.Status), ai gameai.AI) (http.Handler, gamerelay.Status, func()) {
+	var choose func(ctx context.Context, profile, instructions, state string, options []string) (int, error)
+	var profiles []string
+	if ai != nil {
+		if profiles = ai.Profiles(); len(profiles) > 0 {
+			choose = ai.Choose
+		}
+	}
+	var h *Host
+	h = NewHost(Options{
+		Choose: choose, Profiles: profiles,
+		Players: 2, NoParking: true,
+		Run: run,
+		Changed: func() {
+			if h != nil { // not while NewHost sets the seats out
+				changed(h.Status())
+			}
+		},
+		Seed: uint64(time.Now().UnixNano()),
+	})
+	return h.Handler(), h.Status(), func() { run(h.Close) }
 }

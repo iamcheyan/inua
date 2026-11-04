@@ -170,6 +170,14 @@ the library says so and the panel is hidden. The layout is the app's
 Blueprint in the `library` classes (`.library`, `.library-tiles`,
 `.library-panel`, `.panel-head`); the tiles are `appui.NewLibraryTile`.
 
+A **sidebar beside a pane** (Files) lines up with it: the sidebar's
+head is as tall as the pane's head, and its foot as the pane's status
+bar, so the hairlines under the heads and over the feet run straight
+across the window. A head holds tools at the default 34 px; a foot is a
+tight bar, its tools `small` and its text 12 px. A bar sized to match
+another counts the buttons' borders: a 34 px tool is 36 px tall in all,
+a `small` one 28 px (`window.files .files-head`, `.files-status`).
+
 They follow `docs/performance.md` for start-up.
 
 ### Top bar panels
@@ -234,10 +242,12 @@ is drawn as active, not focused.
 
 Every menu, the shell's and the apps', looks and moves as the dock's
 drawer does (`bubble.go`): inua-term's at the top of column 1
-(`internal/termui/headmenu.go`), Files' and Mail's, the tray's, the
-dock's, a right click's. A popover becomes one with `uikit.Menu`
-(`popover.glass-menu` in `ui/style.css`), told where it opens: under its
-trigger, above it (the dock's), or at the pointer.
+(`internal/termui/headmenu.go`), Files' and Mail's, the tray's, a right
+click's. A popover becomes one with `uikit.Menu` (`popover.glass-menu` in
+`ui/style.css`), told where it opens: under its trigger, above it, or at
+the pointer. An app's menu on the dock is the drawer's bubble itself
+(`showDockMenu`): its corners the dock's, from `style.radius`, the arrow
+joined to the card by arcs, and `menu-item`s inside.
 
 ```
                      ≡                   ← the trigger

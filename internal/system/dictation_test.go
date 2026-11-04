@@ -12,7 +12,9 @@ import (
 // nothing goes to Failed.
 func TestDictation(t *testing.T) {
 	bin := t.TempDir()
-	t.Setenv("PATH", bin+":/usr/bin:/bin")
+	// The fakes first, then the system's own tools: the fake pw-cat below
+	// runs head and sleep, which are not in /usr/bin on every system.
+	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
 	write := func(name, script string) {
 		if err := os.WriteFile(filepath.Join(bin, name), []byte("#!/bin/sh\n"+script), 0o755); err != nil {
 			t.Fatal(err)

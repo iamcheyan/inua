@@ -2,7 +2,9 @@
 // publishes its game at (gamerelay.Publish), and the page visitors see
 // them on. The game keeps running on the desktop; the lobby passes each
 // browser's requests to it under /t/N/, over the desktop's own
-// connection, so the desktop needs no address others can reach.
+// connection, so the desktop needs no address others can reach. A visitor
+// may also open a game at a free table, which the lobby then hosts itself
+// (Options.Games).
 package lobby
 
 import (
@@ -24,6 +26,7 @@ import (
 
 	"github.com/gorilla/websocket"
 
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/games/gameweb"
 	"github.com/lyricat/inua/internal/i18n"
@@ -46,6 +49,17 @@ type Options struct {
 	// Hold is how long a table stays its desktop's after the connection
 	// drops, for it to come back.
 	Hold time.Duration
+	// Games are the games a visitor may open at a free table, which the
+	// lobby then hosts itself; none, only desktops open games.
+	Games []Game
+	// AI is the user's AI, for the one who sets up a game the lobby hosts
+	// to give it players (inua-game-lobby -ai); nil, computer players
+	// only. A public lobby has none: its visitors would spend the user's.
+	AI gameai.AI
+	// Idle is how long a game the lobby hosts stays with no browser at its
+	// table (2 minutes); Over, how long once it is over and not started
+	// again (10 minutes). Then the table is free.
+	Idle, Over time.Duration
 }
 
 // MaxWatchers is how many browsers may follow the lobby page at once.
@@ -59,7 +73,7 @@ type Lobby struct {
 	watchers map[*gameweb.Client]bool
 }
 
-// table is a table: free, or a desktop's game.
+// table is a table: free, a desktop's game, or one the lobby hosts.
 type table struct {
 	n      int
 	sess   *gamerelay.Session // nil while free, or held after a drop
@@ -67,7 +81,11 @@ type table struct {
 	token  string            // what its desktop has it back with
 	status *gamerelay.Status // nil until the desktop says
 	held   *time.Timer
+	own    *hosted // the lobby's own game; nil for a desktop's
 }
+
+// free reports whether a game may open at the table.
+func (t *table) free() bool { return t.sess == nil && t.token == "" && t.own == nil }
 
 // New opens the lobby.
 func New(opt Options) *Lobby {
@@ -77,6 +95,12 @@ func New(opt Options) *Lobby {
 	if opt.Hold <= 0 {
 		opt.Hold = 30 * time.Second
 	}
+	if opt.Idle <= 0 {
+		opt.Idle = 2 * time.Minute
+	}
+	if opt.Over <= 0 {
+		opt.Over = 10 * time.Minute
+	}
 	l := &Lobby{opt: opt, watchers: map[*gameweb.Client]bool{}}
 	for i := range opt.Tables {
 		l.tables = append(l.tables, &table{n: i + 1})
@@ -85,7 +109,8 @@ func New(opt Options) *Lobby {
 }
 
 // Handler serves the lobby: its page at /, the tables' list at /ws,
-// desktops at /host, and each table's game at /t/N/.
+// desktops at /host, a visitor's new game at /new, and each table's game
+// at /t/N/.
 func (l *Lobby) Handler() http.Handler {
 	page, _ := fs.Sub(web, "web")
 	mux := http.NewServeMux()
@@ -96,6 +121,7 @@ func (l *Lobby) Handler() http.Handler {
 	})
 	mux.HandleFunc("/ws", l.serveWatch)
 	mux.HandleFunc("/host", l.serveHost)
+	mux.HandleFunc("POST /new", l.serveNew)
 	mux.HandleFunc("/t/{n}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, r.PathValue("n")+"/", http.StatusMovedPermanently)
 	})
@@ -103,7 +129,8 @@ func (l *Lobby) Handler() http.Handler {
 	return mux
 }
 
-// serveTable passes a browser's request on to the table's desktop.
+// serveTable passes a browser's request on to the table's game: its
+// desktop's, or the lobby's own.
 func (l *Lobby) serveTable(w http.ResponseWriter, r *http.Request) {
 	n, _ := strconv.Atoi(r.PathValue("n"))
 	var proxy http.Handler
@@ -217,13 +244,13 @@ func (l *Lobby) seat(sess *gamerelay.Session, token string, want int) *table {
 			break
 		}
 	}
-	if t == nil && want >= 1 && want <= len(l.tables) && l.tables[want-1].sess == nil && l.tables[want-1].token == "" {
+	if t == nil && want >= 1 && want <= len(l.tables) && l.tables[want-1].free() {
 		t = l.tables[want-1]
 		t.token, t.status = newToken(), nil
 	}
 	if t == nil {
 		for _, x := range l.tables {
-			if x.sess == nil && x.token == "" {
+			if x.free() {
 				t = x
 				t.token, t.status = newToken(), nil
 				break
@@ -283,7 +310,8 @@ func (l *Lobby) tableURL(r *http.Request, n int) string {
 // Status is nil and not Away.
 type Table struct {
 	N      int               `json:"n"`
-	Away   bool              `json:"away"` // its desktop's connection dropped
+	Away   bool              `json:"away"`            // its desktop's connection dropped
+	Lobby  bool              `json:"lobby,omitempty"` // the lobby hosts its game
 	Status *gamerelay.Status `json:"status"`
 }
 
@@ -291,6 +319,8 @@ type Table struct {
 type Tables struct {
 	T      string  `json:"t"` // "tables"
 	Tables []Table `json:"tables"`
+	// Games are the games a visitor may open at a free table (Options.Games).
+	Games []string `json:"games,omitempty"`
 }
 
 func (l *Lobby) tablesMsg() Tables {
@@ -298,9 +328,13 @@ func (l *Lobby) tablesMsg() Tables {
 	defer l.mu.Unlock()
 	out := make([]Table, len(l.tables))
 	for i, t := range l.tables {
-		out[i] = Table{N: t.n, Away: t.sess == nil && t.token != "", Status: t.status}
+		out[i] = Table{N: t.n, Away: t.sess == nil && t.token != "", Lobby: t.own != nil, Status: t.status}
 	}
-	return Tables{"tables", out}
+	var games []string
+	for _, g := range l.opt.Games {
+		games = append(games, g.Name)
+	}
+	return Tables{"tables", out, games}
 }
 
 // serveWatch keeps a browser's lobby page up to date.

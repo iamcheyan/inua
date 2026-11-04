@@ -20,6 +20,9 @@ type Canvas struct {
 	// Min and Natural are its size each way, in pixels, when set: a
 	// canvas wants none of its own otherwise.
 	Min, Natural int
+	// Measure, when set, is its size along o (for forSize the other way,
+	// -1 for any) in place of Min and Natural: a canvas holding a child.
+	Measure func(w *gtk.Widget, o gtk.Orientation, forSize int) (min, nat int)
 }
 
 var canvases struct {
@@ -55,9 +58,13 @@ func canvasType() types.GType {
 					d.Snapshot(w, s)
 				}
 			})
-			wc.OverrideMeasure(func(w *gtk.Widget, _ gtk.Orientation, _ int32, min, nat, minBase, natBase *int32) {
+			wc.OverrideMeasure(func(w *gtk.Widget, o gtk.Orientation, forSize int32, min, nat, minBase, natBase *int32) {
 				*min, *nat, *minBase, *natBase = 0, 0, -1, -1
-				if d := canvasOf(w); d != nil {
+				switch d := canvasOf(w); {
+				case d != nil && d.Measure != nil:
+					m, n := d.Measure(w, o, int(forSize))
+					*min, *nat = int32(m), int32(max(n, m))
+				case d != nil:
 					*min, *nat = int32(d.Min), int32(max(d.Natural, d.Min))
 				}
 			})

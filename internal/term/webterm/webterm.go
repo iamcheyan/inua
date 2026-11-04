@@ -8,13 +8,13 @@ package webterm
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/url"
 	"strconv"
 	"time"
 
+	"github.com/lyricat/inua/internal/apps/tailscale"
 	"github.com/lyricat/inua/internal/term/host"
 	"github.com/lyricat/inua/internal/term/settings"
 )
@@ -24,7 +24,7 @@ import (
 func Addr(w settings.Web) (string, error) {
 	host := "127.0.0.1"
 	if w.Tailscale {
-		ip, err := TailscaleIP()
+		ip, err := tailscale.LocalIP()
 		if err != nil {
 			return "", err
 		}
@@ -90,30 +90,4 @@ func AtLogin(ctx context.Context) error {
 		return err
 	}
 	return Start(ctx, set.Web)
-}
-
-// tailscaleNet is Tailscale's range of addresses (100.64.0.0/10).
-var tailscaleNet = &net.IPNet{IP: net.IPv4(100, 64, 0, 0), Mask: net.CIDRMask(10, 32)}
-
-// ErrNoTailscale is a computer with no Tailscale address.
-var ErrNoTailscale = errors.New("no Tailscale address: is Tailscale up?")
-
-// TailscaleIP is this computer's Tailscale IPv4 address.
-func TailscaleIP() (string, error) {
-	ifaces, err := net.Interfaces()
-	if err != nil {
-		return "", err
-	}
-	for _, iface := range ifaces {
-		if iface.Flags&net.FlagUp == 0 {
-			continue
-		}
-		addrs, _ := iface.Addrs()
-		for _, a := range addrs {
-			if n, ok := a.(*net.IPNet); ok && n.IP.To4() != nil && tailscaleNet.Contains(n.IP) {
-				return n.IP.String(), nil
-			}
-		}
-	}
-	return "", ErrNoTailscale
 }

@@ -52,7 +52,21 @@ input:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transpare
 #seats li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
 #seats li .who { flex: 1; }
 #seats li .note { font-size: 12px; }
-#setup { gap: 10px; margin-top: 16px; }
+#seats li.slot .who { color: var(--t1); }
+#seats li.slot.open .who { color: var(--t2); }
+#seats select.seat-choice { flex: 1; min-width: 0; font: inherit; font-size: 13px; min-height: 32px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+#seats select.seat-choice:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+#setup { gap: 10px; }
+/* The lead's setup, as the app's: the players beside the game's settings
+   in a wider card; one above the other where the screen is narrow. */
+.join-card:has(#setup:not([hidden])) { width: min(780px, 100%); }
+.lobby-cols { display: grid; gap: 16px; }
+.lobby-cols:has(#setup:not([hidden])) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+@media (max-width: 640px) {
+  .lobby-cols:has(#setup:not([hidden])) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .join-card { padding: 22px 18px 18px; }
+  #seats select.seat-choice, #setup select { min-height: 40px; font-size: 16px; }
+}
 #setup label:not(.rule) { display: grid; grid-template-columns: 1fr minmax(0, 1.4fr); align-items: center; gap: 10px; }
 #setup select { font: inherit; font-size: 13px; min-height: 32px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
 #setup .rule { display: flex; align-items: center; gap: 10px; cursor: pointer; }

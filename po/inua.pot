@@ -130,10 +130,10 @@ msgid "Black"
 msgstr ""
 
 #: internal/apps/calendar/calendar.go:69
-#: internal/lightui/clock.go:220
+#: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
-#: internal/ui/widgets.go:978
+#: internal/ui/widgets.go:992
 msgid "Monday, January 2"
 msgstr ""
 
@@ -170,11 +170,11 @@ msgstr ""
 #: internal/apps/clock/clock.go:69
 #: internal/config/strftime.go:50
 #: internal/i18n/time.go:11
-#: internal/lightui/weather.go:360
+#: internal/lightui/weather.go:358
 #: internal/mailui/window.go:1434
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
-#: internal/ui/widgets.go:1036
+#: internal/ui/widgets.go:1050
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr ""
@@ -221,8 +221,8 @@ msgid "Weekends"
 msgstr ""
 
 #: internal/apps/clock/clock.go:112
-#: internal/lightui/weather.go:362
-#: internal/ui/widgets.go:1038
+#: internal/lightui/weather.go:360
+#: internal/ui/widgets.go:1052
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -276,7 +276,7 @@ msgstr ""
 msgid "Reply"
 msgstr ""
 
-#: internal/apps/connect/service.go:246
+#: internal/apps/connect/service.go:247
 #: internal/apps/connect/share.go:213
 #: internal/apps/connect/share.go:219
 #: internal/connectui/app.go:20
@@ -286,15 +286,15 @@ msgstr ""
 msgid "Mobile Link"
 msgstr ""
 
-#: internal/apps/connect/service.go:248
+#: internal/apps/connect/service.go:249
 msgid "%s wants to pair"
 msgstr ""
 
-#: internal/apps/connect/service.go:249
+#: internal/apps/connect/service.go:250
 msgid "Pair only if %s shows the key %s."
 msgstr ""
 
-#: internal/apps/connect/service.go:250
+#: internal/apps/connect/service.go:251
 #: internal/connectui/window.go:425
 #: internal/connectui/window.go:434
 #: internal/remoteui/window.go:618
@@ -306,48 +306,48 @@ msgstr ""
 msgid "Pair"
 msgstr ""
 
-#: internal/apps/connect/service.go:250
+#: internal/apps/connect/service.go:251
 #: internal/connectui/window.go:426
 msgid "Refuse"
 msgstr ""
 
-#: internal/apps/connect/service.go:292
+#: internal/apps/connect/service.go:293
 msgid "Ping!"
 msgstr ""
 
-#: internal/apps/connect/service.go:505
+#: internal/apps/connect/service.go:506
 msgid "Wants to pair"
 msgstr ""
 
-#: internal/apps/connect/service.go:507
+#: internal/apps/connect/service.go:508
 #: internal/shell/bluetooth.go:42
 msgid "Pairing…"
 msgstr ""
 
-#: internal/apps/connect/service.go:509
+#: internal/apps/connect/service.go:510
 #: internal/apps/tailscale/status.go:265
 #: internal/remoteui/window.go:331
 #: internal/shell/bluetooth.go:52
 msgid "Connected"
 msgstr ""
 
-#: internal/apps/connect/service.go:511
+#: internal/apps/connect/service.go:512
 msgid "Away"
 msgstr ""
 
-#: internal/apps/connect/service.go:513
+#: internal/apps/connect/service.go:514
 #: internal/remoteui/window.go:326
 msgid "Not paired"
 msgstr ""
 
-#: internal/apps/connect/service.go:517
+#: internal/apps/connect/service.go:518
 msgid "%d%%, charging"
 msgstr ""
 
-#: internal/apps/connect/service.go:519
-#: internal/ui/settings.go:350
-#: internal/ui/settings.go:787
-#: internal/ui/settings.go:891
+#: internal/apps/connect/service.go:520
+#: internal/ui/settings.go:338
+#: internal/ui/settings.go:776
+#: internal/ui/settings.go:880
 #: internal/ui/settings_displays.go:418
 msgid "%d%%"
 msgstr ""
@@ -394,7 +394,7 @@ msgstr ""
 #: internal/apps/connect/share.go:129
 #: internal/ui/record.go:157
 #: internal/ui/screenshot.go:1140
-#: internal/ui/settings_custom.go:49
+#: internal/ui/settings_custom.go:41
 msgid "Show in Folder"
 msgstr ""
 
@@ -574,12 +574,13 @@ msgstr ""
 #: internal/apps/disk/rules.go:43
 #: internal/games/checkersnet/host.go:326
 #: internal/games/checkersnet/texts.go:31
-#: internal/games/lobby/texts.go:27
-#: internal/gamesui/checkers.go:463
-#: internal/gamesui/checkers.go:558
+#: internal/games/fortunenet/texts.go:101
+#: internal/games/gameai/gameai.go:51
+#: internal/games/lobby/texts.go:30
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:559
 #: internal/gamesui/fortune.go:427
-#: internal/gamesui/fortune_ai.go:199
-#: internal/gamesui/lobbywin.go:257
+#: internal/gamesui/lobbywin.go:263
 #: internal/mailui/panel.go:51
 #: internal/mailui/panel.go:309
 #: internal/mailui/settings.go:203
@@ -1741,8 +1742,8 @@ msgid "%d mo ago"
 msgstr ""
 
 #: internal/apps/tailscale/status.go:187
-#: internal/lightui/gpg.go:364
-#: internal/lightui/gpg.go:605
+#: internal/lightui/gpg.go:363
+#: internal/lightui/gpg.go:604
 msgid "expired %s"
 msgstr ""
 
@@ -1830,7 +1831,7 @@ msgid "Thunderstorm"
 msgstr ""
 
 #: internal/apps/weather/weather.go:214
-#: internal/lightui/sysmon.go:1083
+#: internal/lightui/sysmon.go:1081
 #: internal/vmui/window.go:2335
 msgid "Unknown"
 msgstr ""
@@ -1957,7 +1958,7 @@ msgid "Could not start the Console endpoint: %s"
 msgstr ""
 
 #: internal/assistantui/assistantui.go:482
-#: internal/lightui/clock.go:498
+#: internal/lightui/clock.go:497
 #: internal/ui/alarms.go:108
 #: ui/disk.ui:179
 #: ui/mail-compose.ui:375
@@ -2094,7 +2095,7 @@ msgstr ""
 #: internal/connectui/window.go:384
 #: internal/remoteui/window.go:269
 #: internal/termui/headmenu.go:156
-#: internal/termui/prefsweb.go:165
+#: internal/termui/prefsweb.go:166
 #: internal/ui/voice_models.go:232
 #: internal/vmui/window.go:1822
 #: internal/vmui/window.go:1927
@@ -2109,7 +2110,7 @@ msgid "The service is starting."
 msgstr ""
 
 #: internal/connectui/window.go:387
-#: internal/lightui/video.go:531
+#: internal/lightui/video.go:530
 #: internal/mailui/settings.go:530
 #: internal/shell/notify.go:44
 #: internal/shell/status.go:103
@@ -2117,7 +2118,7 @@ msgstr ""
 #: internal/shell/status.go:137
 #: internal/shell/status.go:152
 #: internal/termui/headmenu.go:164
-#: internal/termui/prefsweb.go:129
+#: internal/termui/prefsweb.go:130
 #: internal/ui/settings_bluetooth.go:214
 #: internal/ui/settings_displays.go:294
 #: internal/ui/settings_displays.go:389
@@ -2161,15 +2162,15 @@ msgstr ""
 #: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
 #: internal/gamesui/fortune_host.go:334
-#: internal/lightui/workshop.go:983
+#: internal/lightui/workshop.go:982
 #: internal/mailui/dialog.go:92
 #: internal/remoteui/window.go:811
 #: internal/term/web/strings.go:29
-#: internal/termui/keys.go:268
-#: internal/termui/keys.go:396
+#: internal/termui/keys.go:293
+#: internal/termui/keys.go:421
 #: internal/termui/paste.go:337
 #: internal/termui/restart.go:42
-#: internal/termui/wsmenu.go:150
+#: internal/termui/wsmenu.go:127
 #: internal/ui/askpass.go:301
 #: internal/ui/askpass.go:446
 #: internal/ui/askpass.go:450
@@ -2182,8 +2183,8 @@ msgstr ""
 #: ui/clock.ui:244
 #: ui/clock.ui:454
 #: ui/connectreply.ui:49
-#: ui/files.ui:176
-#: ui/files.ui:274
+#: ui/files.ui:180
+#: ui/files.ui:278
 #: ui/gpg.ui:1253
 #: ui/gpg.ui:1470
 #: ui/gpg.ui:1564
@@ -2225,12 +2226,12 @@ msgstr ""
 #: internal/filesui/archive.go:76
 #: internal/filesui/remotesetup.go:226
 #: internal/filesui/renamemany.go:168
-#: internal/lightui/sysmon.go:968
-#: internal/lightui/tailscale.go:632
+#: internal/lightui/sysmon.go:966
+#: internal/lightui/tailscale.go:631
 #: internal/ui/settings_ai.go:486
 #: internal/viewerui/app.go:806
 #: ui/connect.ui:291
-#: ui/files.ui:229
+#: ui/files.ui:233
 #: ui/gpg.ui:1343
 #: ui/settings.ui:5020
 #: ui/sysmon.ui:96
@@ -2242,7 +2243,7 @@ msgid "What it runs: systemctl suspend"
 msgstr ""
 
 #: internal/connectui/window.go:560
-#: internal/lightui/pass.go:1201
+#: internal/lightui/pass.go:1200
 #: internal/lightui/workshop_manager.go:115
 #: internal/mailui/actions.go:469
 #: internal/mailui/compose.go:474
@@ -2254,259 +2255,259 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: internal/convert/convert.go:97
+#: internal/convert/convert.go:99
 msgid "millimetres"
 msgstr ""
 
-#: internal/convert/convert.go:98
+#: internal/convert/convert.go:100
 msgid "centimetres"
 msgstr ""
 
-#: internal/convert/convert.go:99
+#: internal/convert/convert.go:101
 msgid "metres"
 msgstr ""
 
-#: internal/convert/convert.go:100
+#: internal/convert/convert.go:102
 msgid "kilometres"
 msgstr ""
 
-#: internal/convert/convert.go:101
+#: internal/convert/convert.go:103
 msgid "inches"
 msgstr ""
 
-#: internal/convert/convert.go:102
+#: internal/convert/convert.go:104
 msgid "feet"
 msgstr ""
 
-#: internal/convert/convert.go:103
+#: internal/convert/convert.go:105
 msgid "yards"
 msgstr ""
 
-#: internal/convert/convert.go:104
+#: internal/convert/convert.go:106
 msgid "miles"
 msgstr ""
 
-#: internal/convert/convert.go:105
+#: internal/convert/convert.go:107
 msgid "nautical miles"
 msgstr ""
 
-#: internal/convert/convert.go:107
+#: internal/convert/convert.go:109
 msgid "milligrams"
 msgstr ""
 
-#: internal/convert/convert.go:108
+#: internal/convert/convert.go:110
 msgid "grams"
 msgstr ""
 
-#: internal/convert/convert.go:109
+#: internal/convert/convert.go:111
 msgid "kilograms"
 msgstr ""
 
-#: internal/convert/convert.go:110
+#: internal/convert/convert.go:112
 msgid "tonnes"
 msgstr ""
 
-#: internal/convert/convert.go:111
+#: internal/convert/convert.go:113
 msgid "ounces"
 msgstr ""
 
-#: internal/convert/convert.go:112
+#: internal/convert/convert.go:114
 msgid "pounds"
 msgstr ""
 
-#: internal/convert/convert.go:113
+#: internal/convert/convert.go:115
 msgid "stone"
 msgstr ""
 
-#: internal/convert/convert.go:115
+#: internal/convert/convert.go:117
 msgid "millilitres"
 msgstr ""
 
-#: internal/convert/convert.go:116
+#: internal/convert/convert.go:118
 msgid "litres"
 msgstr ""
 
-#: internal/convert/convert.go:117
+#: internal/convert/convert.go:119
 msgid "cubic metres"
 msgstr ""
 
-#: internal/convert/convert.go:118
+#: internal/convert/convert.go:120
 msgid "US gallons"
 msgstr ""
 
-#: internal/convert/convert.go:119
+#: internal/convert/convert.go:121
 msgid "US quarts"
 msgstr ""
 
-#: internal/convert/convert.go:120
+#: internal/convert/convert.go:122
 msgid "US pints"
 msgstr ""
 
-#: internal/convert/convert.go:121
+#: internal/convert/convert.go:123
 msgid "US cups"
 msgstr ""
 
-#: internal/convert/convert.go:122
+#: internal/convert/convert.go:124
 msgid "US fluid ounces"
 msgstr ""
 
-#: internal/convert/convert.go:123
+#: internal/convert/convert.go:125
 msgid "tablespoons"
 msgstr ""
 
-#: internal/convert/convert.go:124
+#: internal/convert/convert.go:126
 msgid "teaspoons"
 msgstr ""
 
-#: internal/convert/convert.go:126
+#: internal/convert/convert.go:128
 msgid "square metres"
 msgstr ""
 
-#: internal/convert/convert.go:127
+#: internal/convert/convert.go:129
 msgid "square kilometres"
 msgstr ""
 
-#: internal/convert/convert.go:128
+#: internal/convert/convert.go:130
 msgid "hectares"
 msgstr ""
 
-#: internal/convert/convert.go:129
+#: internal/convert/convert.go:131
 msgid "acres"
 msgstr ""
 
-#: internal/convert/convert.go:130
+#: internal/convert/convert.go:132
 msgid "square feet"
 msgstr ""
 
-#: internal/convert/convert.go:131
+#: internal/convert/convert.go:133
 msgid "square miles"
 msgstr ""
 
-#: internal/convert/convert.go:133
+#: internal/convert/convert.go:135
 msgid "metres per second"
 msgstr ""
 
-#: internal/convert/convert.go:134
+#: internal/convert/convert.go:136
 msgid "kilometres per hour"
 msgstr ""
 
-#: internal/convert/convert.go:135
+#: internal/convert/convert.go:137
 msgid "miles per hour"
 msgstr ""
 
-#: internal/convert/convert.go:136
+#: internal/convert/convert.go:138
 msgid "knots"
 msgstr ""
 
-#: internal/convert/convert.go:137
+#: internal/convert/convert.go:139
 msgid "feet per second"
 msgstr ""
 
-#: internal/convert/convert.go:139
+#: internal/convert/convert.go:141
 msgid "bytes"
 msgstr ""
 
-#: internal/convert/convert.go:140
+#: internal/convert/convert.go:142
 msgid "kilobytes"
 msgstr ""
 
-#: internal/convert/convert.go:141
+#: internal/convert/convert.go:143
 msgid "megabytes"
 msgstr ""
 
-#: internal/convert/convert.go:142
+#: internal/convert/convert.go:144
 msgid "gigabytes"
 msgstr ""
 
-#: internal/convert/convert.go:143
+#: internal/convert/convert.go:145
 msgid "terabytes"
 msgstr ""
 
-#: internal/convert/convert.go:144
+#: internal/convert/convert.go:146
 msgid "kibibytes"
 msgstr ""
 
-#: internal/convert/convert.go:145
+#: internal/convert/convert.go:147
 msgid "mebibytes"
 msgstr ""
 
-#: internal/convert/convert.go:146
+#: internal/convert/convert.go:148
 msgid "gibibytes"
 msgstr ""
 
-#: internal/convert/convert.go:147
+#: internal/convert/convert.go:149
 msgid "tebibytes"
 msgstr ""
 
-#: internal/convert/convert.go:148
+#: internal/convert/convert.go:150
 msgid "bits"
 msgstr ""
 
-#: internal/convert/convert.go:149
+#: internal/convert/convert.go:151
 msgid "kilobits"
 msgstr ""
 
-#: internal/convert/convert.go:150
+#: internal/convert/convert.go:152
 msgid "megabits"
 msgstr ""
 
-#: internal/convert/convert.go:151
+#: internal/convert/convert.go:153
 msgid "gigabits"
 msgstr ""
 
-#: internal/convert/convert.go:153
+#: internal/convert/convert.go:155
 msgid "milliseconds"
 msgstr ""
 
-#: internal/convert/convert.go:154
+#: internal/convert/convert.go:156
 msgid "seconds"
 msgstr ""
 
-#: internal/convert/convert.go:155
+#: internal/convert/convert.go:157
 msgid "minutes"
 msgstr ""
 
-#: internal/convert/convert.go:156
+#: internal/convert/convert.go:158
 msgid "hours"
 msgstr ""
 
-#: internal/convert/convert.go:157
+#: internal/convert/convert.go:159
 msgid "days"
 msgstr ""
 
-#: internal/convert/convert.go:158
+#: internal/convert/convert.go:160
 msgid "weeks"
 msgstr ""
 
-#: internal/convert/convert.go:159
+#: internal/convert/convert.go:161
 msgid "years"
 msgstr ""
 
-#: internal/convert/convert.go:166
+#: internal/convert/convert.go:168
 msgid "degrees Celsius"
 msgstr ""
 
-#: internal/convert/convert.go:167
+#: internal/convert/convert.go:169
 msgid "degrees Fahrenheit"
 msgstr ""
 
-#: internal/convert/convert.go:168
+#: internal/convert/convert.go:170
 msgid "kelvin"
 msgstr ""
 
-#: internal/convert/convert.go:277
+#: internal/convert/convert.go:279
 msgid "%s %s in %s"
 msgstr ""
 
-#: internal/convert/convert.go:309
+#: internal/convert/convert.go:311
 msgid "rates of %s"
 msgstr ""
 
-#: internal/convert/convert.go:311
+#: internal/convert/convert.go:313
 msgid "prices from Coinbase · %s"
 msgstr ""
 
-#: internal/convert/convert.go:315
+#: internal/convert/convert.go:317
 msgid "%s %s in %s · %s"
 msgstr ""
 
@@ -2794,10 +2795,10 @@ msgstr ""
 
 #: internal/desktop/defaults.go:39
 #: internal/term/web/strings.go:101
-#: internal/termui/app.go:114
-#: internal/termui/app.go:150
-#: internal/termui/app.go:356
-#: internal/termui/app.go:358
+#: internal/termui/app.go:115
+#: internal/termui/app.go:151
+#: internal/termui/app.go:357
+#: internal/termui/app.go:359
 #: internal/termui/menubar.go:40
 #: internal/termui/prefs.go:160
 #: internal/termui/quick.go:29
@@ -2816,7 +2817,7 @@ msgstr ""
 #: internal/desktop/defaults.go:41
 #: internal/lightui/apps.go:30
 #: internal/lightui/music.go:293
-#: internal/lightui/music.go:1105
+#: internal/lightui/music.go:1104
 #: config/apps/io.github.lyricat.Inua.Music.desktop:3
 msgid "Music"
 msgstr ""
@@ -2828,7 +2829,7 @@ msgstr ""
 #: internal/desktop/defaults.go:45
 #: internal/lightui/apps.go:31
 #: internal/lightui/video.go:257
-#: internal/lightui/video.go:512
+#: internal/lightui/video.go:511
 #: config/apps/io.github.lyricat.Inua.Video.desktop:3
 msgid "Video"
 msgstr ""
@@ -2839,7 +2840,7 @@ msgstr ""
 
 #: internal/desktop/defaults.go:48
 #: internal/lightui/pass_otp.go:340
-#: internal/ui/settings.go:1053
+#: internal/ui/settings.go:1042
 msgid "Images"
 msgstr ""
 
@@ -3009,8 +3010,8 @@ msgstr ""
 #: internal/diskui/details.go:528
 #: internal/filesui/cards.go:435
 #: internal/lightui/calculator.go:53
-#: internal/lightui/gpg.go:1518
-#: internal/lightui/pass.go:951
+#: internal/lightui/gpg.go:1517
+#: internal/lightui/pass.go:950
 #: internal/term/web/strings.go:43
 #: internal/ui/clipboard.go:503
 #: internal/vmui/window.go:1996
@@ -3045,10 +3046,10 @@ msgid "Runs in %s."
 msgstr ""
 
 #: internal/diskui/details.go:578
-#: internal/gamesui/checkers.go:731
+#: internal/gamesui/checkers.go:738
 #: internal/gamesui/fortune_host.go:293
-#: internal/lightui/gpg.go:872
-#: internal/lightui/tailscale.go:471
+#: internal/lightui/gpg.go:871
+#: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
 #: internal/term/web/strings.go:35
 #: internal/ui/askpass.go:571
@@ -3060,15 +3061,16 @@ msgstr ""
 
 #: internal/diskui/details.go:581
 #: internal/filesui/window.go:819
-#: internal/lightui/pass.go:749
-#: internal/lightui/pass.go:774
+#: internal/gamesui/lobbyhost.go:169
+#: internal/lightui/pass.go:748
+#: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
 #: internal/shell/launcher_actions.go:59
 #: internal/term/settings/settings.go:118
 #: internal/term/web/strings.go:36
-#: internal/termui/prefsweb.go:91
+#: internal/termui/prefsweb.go:92
 #: internal/ui/askpass.go:232
-#: internal/ui/passwords.go:646
+#: internal/ui/passwords.go:647
 #: internal/vmui/window.go:896
 #: ui/disk.ui:697
 #: ui/gpg.ui:662
@@ -3115,10 +3117,10 @@ msgid "Home"
 msgstr ""
 
 #: internal/diskui/window.go:329
-#: internal/lightui/sysmon.go:969
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:568
-#: internal/ui/settings.go:587
+#: internal/lightui/sysmon.go:967
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:567
+#: internal/ui/settings.go:576
 #: ui/vm.ui:2981
 msgid "System"
 msgstr ""
@@ -3169,7 +3171,7 @@ msgstr ""
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
-#: internal/ui/widgets.go:1040
+#: internal/ui/widgets.go:1054
 msgid "15:04"
 msgstr ""
 
@@ -3328,7 +3330,7 @@ msgstr ""
 
 #: internal/filesui/archive.go:131
 #: internal/games/checkersnet/texts.go:34
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
 msgid "Normal"
 msgstr ""
 
@@ -3433,7 +3435,7 @@ msgstr[1] ""
 #: internal/filesui/cards.go:692
 #: internal/filesui/renamemany.go:38
 #: internal/term/web/strings.go:89
-#: internal/termui/keys.go:398
+#: internal/termui/keys.go:423
 msgid "Rename"
 msgstr ""
 
@@ -3537,7 +3539,7 @@ msgid "A folder “%s” is already in %s"
 msgstr ""
 
 #: internal/filesui/cards.go:505
-#: ui/files.ui:372
+#: ui/files.ui:376
 msgid "Do the same for the rest"
 msgstr ""
 
@@ -3552,8 +3554,8 @@ msgstr[1] ""
 #: internal/mailui/welcome.go:156
 #: internal/shell/launcher_actions.go:53
 #: internal/term/web/strings.go:30
-#: internal/termui/keys.go:270
-#: internal/termui/wsmenu.go:152
+#: internal/termui/keys.go:295
+#: internal/termui/wsmenu.go:129
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
@@ -3673,9 +3675,9 @@ msgstr ""
 
 #: internal/filesui/cards.go:693
 #: internal/filesui/window.go:844
-#: internal/lightui/gpg.go:1526
+#: internal/lightui/gpg.go:1525
 #: internal/mailui/picker.go:143
-#: internal/ui/settings_custom.go:50
+#: internal/ui/settings_custom.go:42
 #: ui/disk.ui:771
 msgid "Move to Trash"
 msgstr ""
@@ -3843,7 +3845,7 @@ msgid "Columns"
 msgstr ""
 
 #: internal/filesui/columns.go:176
-#: internal/lightui/pass.go:1013
+#: internal/lightui/pass.go:1012
 msgid "NAME"
 msgstr ""
 
@@ -3852,7 +3854,7 @@ msgid "FOLDERS"
 msgstr ""
 
 #: internal/filesui/details.go:51
-#: internal/lightui/sysmon.go:793
+#: internal/lightui/sysmon.go:791
 #: internal/mailui/window.go:247
 #: internal/term/web/strings.go:52
 msgid "FILES"
@@ -3960,14 +3962,14 @@ msgstr ""
 #: internal/filesui/remotesetup.go:68
 #: internal/filesui/remotesetup.go:75
 #: internal/filesui/remotesetup.go:83
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 #: internal/viewerui/app.go:807
 #: ui/vm.ui:322
 msgid "Folder"
 msgstr ""
 
 #: internal/filesui/kinds.go:38
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 #: internal/ui/settings_keyring.go:326
 msgid "Program"
 msgstr ""
@@ -4067,8 +4069,8 @@ msgid "done"
 msgstr ""
 
 #: internal/filesui/pane.go:1554
-#: internal/lightui/pass.go:1216
-#: internal/lightui/sysmon.go:973
+#: internal/lightui/pass.go:1215
+#: internal/lightui/sysmon.go:971
 #: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
@@ -4120,7 +4122,7 @@ msgstr ""
 
 #: internal/filesui/picker.go:494
 #: internal/filesui/window.go:839
-#: internal/termui/wsmenu.go:81
+#: internal/termui/wsmenu.go:69
 msgid "Rename…"
 msgstr ""
 
@@ -4136,7 +4138,7 @@ msgstr ""
 
 #: internal/filesui/remote.go:160
 #: internal/filesui/remotesetup.go:132
-#: internal/gamesui/lobbywin.go:55
+#: internal/gamesui/lobbywin.go:58
 #: internal/ui/settings_bluetooth.go:340
 #: internal/ui/settings_wifi.go:414
 #: internal/ui/settings_wifi.go:439
@@ -4162,7 +4164,7 @@ msgstr ""
 #: internal/filesui/remotesetup.go:54
 #: internal/filesui/remotesetup.go:60
 #: internal/filesui/remotesetup.go:66
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "User"
 msgstr ""
 
@@ -4498,7 +4500,7 @@ msgid "A regular expression ($1 in the replacement)"
 msgstr ""
 
 #: internal/filesui/renamemany.go:161
-#: internal/termui/prefsweb.go:80
+#: internal/termui/prefsweb.go:81
 msgid "Where"
 msgstr ""
 
@@ -4762,29 +4764,29 @@ msgid "Everyone is in one team: make two at least."
 msgstr ""
 
 #: internal/games/checkersnet/host.go:385
-#: internal/games/fortunenet/host.go:302
+#: internal/games/fortunenet/host.go:388
 msgid "The host sent you away."
 msgstr ""
 
 #: internal/games/checkersnet/host.go:507
-#: internal/games/fortunenet/host.go:442
+#: internal/games/fortunenet/host.go:528
 msgid "That is not this game's code."
 msgstr ""
 
 #: internal/games/checkersnet/host.go:514
-#: internal/games/fortunenet/host.go:449
+#: internal/games/fortunenet/host.go:535
 msgid "Your seat was taken up in another window."
 msgstr ""
 
-#: internal/games/checkersnet/server.go:82
+#: internal/games/checkersnet/server.go:84
 msgid "The host closed the game to the network."
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:12
-#: internal/games/lobby/texts.go:31
+#: internal/games/lobby/texts.go:34
 #: internal/gamesui/catalog.go:30
-#: internal/gamesui/lobbywin.go:173
-#: internal/gamesui/lobbywin.go:235
+#: internal/gamesui/lobbywin.go:179
+#: internal/gamesui/lobbywin.go:241
 #: config/apps/io.github.lyricat.Inua.ChineseCheckers.desktop:3
 msgid "Chinese Checkers"
 msgstr ""
@@ -4798,16 +4800,16 @@ msgstr ""
 
 #: internal/games/checkersnet/texts.go:14
 #: internal/games/fortunenet/texts.go:19
-#: internal/games/lobby/texts.go:20
-#: internal/gamesui/lobbywin.go:292
+#: internal/games/lobby/texts.go:23
+#: internal/gamesui/lobbywin.go:298
 #: internal/mailui/reader.go:1037
 msgid "Join"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:15
 #: internal/games/fortunenet/texts.go:20
-#: internal/games/lobby/texts.go:21
-#: internal/gamesui/lobbywin.go:294
+#: internal/games/lobby/texts.go:24
+#: internal/gamesui/lobbywin.go:300
 msgid "Watch"
 msgstr ""
 
@@ -4837,14 +4839,14 @@ msgstr ""
 
 #: internal/games/checkersnet/texts.go:21
 #: internal/games/fortunenet/texts.go:24
-#: internal/games/lobby/texts.go:28
+#: internal/games/lobby/texts.go:31
 msgid "Connection lost: trying again…"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:22
 #: internal/games/fortunenet/texts.go:32
-#: internal/gamesui/checkers.go:178
-#: internal/gamesui/checkers.go:251
+#: internal/gamesui/checkers.go:174
+#: internal/gamesui/checkers.go:247
 #: internal/gamesui/fortune.go:263
 #: internal/gamesui/fortune.go:419
 #: internal/gamesui/fortune_host.go:308
@@ -4853,26 +4855,26 @@ msgstr ""
 
 #: internal/games/checkersnet/texts.go:23
 #: internal/games/fortunenet/texts.go:87
-#: internal/gamesui/checkers.go:320
+#: internal/gamesui/checkers.go:316
 msgid "THE GAME"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:24
 #: internal/games/fortunenet/texts.go:34
-#: internal/gamesui/checkers.go:208
+#: internal/gamesui/checkers.go:204
 #: internal/gamesui/fortune.go:287
 msgid "WHAT HAPPENED"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:25
 #: internal/games/fortunenet/texts.go:35
-#: internal/gamesui/checkers.go:139
+#: internal/gamesui/checkers.go:135
 #: internal/gamesui/fortune.go:219
 msgid "ROUND"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:26
-#: internal/gamesui/checkers.go:265
+#: internal/gamesui/checkers.go:261
 msgid "%d players"
 msgstr ""
 
@@ -4882,17 +4884,17 @@ msgstr ""
 
 #: internal/games/checkersnet/texts.go:28
 #: internal/games/fortunenet/texts.go:27
-#: internal/games/lobby/texts.go:24
-#: internal/gamesui/lobbywin.go:256
+#: internal/games/lobby/texts.go:27
+#: internal/gamesui/lobbywin.go:262
 msgid "at the host's screen"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:29
 #: internal/games/fortunenet/texts.go:28
-#: internal/games/lobby/texts.go:25
-#: internal/gamesui/checkers.go:488
+#: internal/games/lobby/texts.go:28
+#: internal/gamesui/checkers.go:484
 #: internal/gamesui/fortune_host.go:188
-#: internal/gamesui/lobbywin.go:256
+#: internal/gamesui/lobbywin.go:262
 msgid "in a browser"
 msgstr ""
 
@@ -4901,24 +4903,24 @@ msgid "the default profile"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:33
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
 msgid "Easy"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:35
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
 msgid "Hard"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:36
-#: internal/gamesui/checkers.go:466
-#: internal/gamesui/checkers.go:1040
+#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:1027
 msgid "Team %s"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:37
 #: internal/games/fortunenet/texts.go:29
-#: internal/lightui/gpg.go:1187
+#: internal/lightui/gpg.go:1186
 msgid "you"
 msgstr ""
 
@@ -4928,31 +4930,31 @@ msgid "sets up the game"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:39
-#: internal/gamesui/checkers.go:1049
+#: internal/gamesui/checkers.go:1036
 msgid "away, the computer plays"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:40
-#: internal/gamesui/checkers.go:350
+#: internal/gamesui/checkers.go:346
 msgid "Stay out of other points"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:41
-#: internal/gamesui/checkers.go:350
+#: internal/gamesui/checkers.go:346
 msgid "A marble may cross another player's point, but not stop in it."
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:42
-#: internal/games/fortunenet/texts.go:99
-#: internal/gamesui/checkers.go:383
+#: internal/games/fortunenet/texts.go:102
+#: internal/gamesui/checkers.go:379
 #: internal/gamesui/fortune_host.go:329
 msgid "Start the game"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:43
-#: internal/games/fortunenet/texts.go:100
-#: internal/gamesui/checkers.go:194
-#: internal/gamesui/checkers.go:234
+#: internal/games/fortunenet/texts.go:103
+#: internal/gamesui/checkers.go:190
+#: internal/gamesui/checkers.go:230
 #: internal/gamesui/fortune.go:333
 #: internal/gamesui/fortune.go:1180
 #: ui/game.ui:76
@@ -4960,25 +4962,25 @@ msgid "New game"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:44
-#: internal/gamesui/checkers.go:196
+#: internal/gamesui/checkers.go:192
 msgid "Set up again"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:45
 #: internal/games/fortunenet/texts.go:47
-#: internal/gamesui/checkers.go:1013
-#: internal/gamesui/checkers.go:1020
+#: internal/gamesui/checkers.go:1000
+#: internal/gamesui/checkers.go:1007
 #: internal/gamesui/fortune_board.go:1113
 msgid "%s's turn"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:46
-#: internal/gamesui/checkers.go:1011
+#: internal/gamesui/checkers.go:998
 msgid "Your turn: pick one of your marbles."
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:47
-#: internal/gamesui/checkers.go:1016
+#: internal/gamesui/checkers.go:1003
 msgid "You are home: move %s's marbles."
 msgstr ""
 
@@ -4991,12 +4993,12 @@ msgid "home"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:50
-#: internal/gamesui/checkers.go:1047
+#: internal/gamesui/checkers.go:1034
 msgid "#%d home"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:51
-#: internal/gamesui/checkers.go:1044
+#: internal/gamesui/checkers.go:1031
 msgid "%d to go"
 msgstr ""
 
@@ -5005,49 +5007,49 @@ msgid "%d hops"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:53
-#: internal/gamesui/checkers.go:946
+#: internal/gamesui/checkers.go:933
 msgid "%s moved"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:54
-#: internal/gamesui/checkers.go:944
+#: internal/gamesui/checkers.go:931
 msgid "%s hopped %d times"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:55
-#: internal/gamesui/checkers.go:942
+#: internal/gamesui/checkers.go:929
 msgid "%s moved %s's marble"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:56
-#: internal/gamesui/checkers.go:949
+#: internal/gamesui/checkers.go:936
 msgid "%s could not move"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:57
-#: internal/gamesui/checkers.go:951
+#: internal/gamesui/checkers.go:938
 msgid "%s is home"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:58
-#: internal/gamesui/checkers.go:976
+#: internal/gamesui/checkers.go:963
 msgid "%s wins"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:59
-#: internal/gamesui/checkers.go:982
+#: internal/gamesui/checkers.go:969
 msgid "%s win"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:60
-#: internal/gamesui/checkers.go:980
+#: internal/gamesui/checkers.go:967
 #: internal/gamesui/fortune.go:595
 msgid "%s and %s"
 msgstr ""
 
 #: internal/games/checkersnet/texts.go:61
-#: internal/gamesui/checkers.go:955
-#: internal/gamesui/checkers.go:1009
+#: internal/gamesui/checkers.go:942
+#: internal/gamesui/checkers.go:996
 msgid "No one got home in time: a draw."
 msgstr ""
 
@@ -5075,9 +5077,9 @@ msgstr ""
 
 #: internal/games/fortune.go:65
 #: internal/gamesui/fortune_menu.go:172
-#: internal/lightui/clock.go:493
+#: internal/lightui/clock.go:492
 #: internal/termui/guide.go:161
-#: internal/ui/voice_page.go:190
+#: internal/ui/voice_page.go:186
 #: ui/clock.ui:339
 #: ui/clock.ui:406
 #: ui/vm.ui:686
@@ -5116,9 +5118,9 @@ msgid "You"
 msgstr ""
 
 #: internal/games/fortune.go:329
-#: internal/gamesui/checkers.go:593
+#: internal/gamesui/checkers.go:594
 #: internal/gamesui/fortune.go:677
-#: internal/gamesui/fortune_host.go:46
+#: internal/gamesui/fortune_host.go:44
 msgid "Player %d"
 msgstr ""
 
@@ -5148,14 +5150,14 @@ msgid "%s bought %s for $%d."
 msgstr ""
 
 #: internal/games/fortune.go:605
-#: internal/games/fortunenet/texts.go:103
+#: internal/games/fortunenet/texts.go:106
 #: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:276
 msgid "a double"
 msgstr ""
 
 #: internal/games/fortune.go:607
-#: internal/games/fortunenet/texts.go:104
+#: internal/games/fortunenet/texts.go:107
 #: internal/gamesui/fortune_panel.go:276
 msgid "a six"
 msgstr ""
@@ -6794,11 +6796,16 @@ msgstr ""
 msgid "No answer from the AI: the computer plays this turn for %s."
 msgstr ""
 
+#: internal/games/fortunenet/host.go:285
+#: internal/games/gameai/gameai.go:55
+msgid "AI %d"
+msgstr ""
+
 #: internal/games/fortunenet/texts.go:17
-#: internal/games/lobby/texts.go:30
+#: internal/games/lobby/texts.go:33
 #: internal/gamesui/catalog.go:26
-#: internal/gamesui/lobbywin.go:173
-#: internal/gamesui/lobbywin.go:234
+#: internal/gamesui/lobbywin.go:179
+#: internal/gamesui/lobbywin.go:240
 #: config/apps/io.github.lyricat.Inua.SmallFortune.desktop:3
 msgid "Small Fortune"
 msgstr ""
@@ -7107,102 +7114,134 @@ msgstr ""
 msgid "Computer players"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:102
+#: internal/games/fortunenet/texts.go:99
+msgid "AI players"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:100
+#: internal/games/lobby/texts.go:26
+#: internal/gamesui/checkers.go:561
+#: internal/gamesui/fortune.go:427
+#: internal/gamesui/fortune.go:686
+#: internal/gamesui/lobbywin.go:274
+msgid "Open seat"
+msgstr ""
+
+#: internal/games/fortunenet/texts.go:105
 #: internal/gamesui/fortune_menu.go:172
 #: internal/gamesui/fortune_panel.go:273
 msgid "Collect $%d every time you pass."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:103
-#: internal/games/fortunenet/texts.go:104
+#: internal/games/fortunenet/texts.go:106
+#: internal/games/fortunenet/texts.go:107
 #: internal/gamesui/fortune_menu.go:173
 #: internal/gamesui/fortune_panel.go:275
 msgid "Only visiting, unless sent here. In jail, roll %s to leave, or pay $50 before rolling; after three tries you pay and go."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:105
+#: internal/games/fortunenet/texts.go:108
 #: internal/gamesui/fortune_panel.go:278
 msgid "Taxes and fines go into the fountain; the next player to land here takes it all: $%d now."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:106
+#: internal/games/fortunenet/texts.go:109
 #: internal/gamesui/fortune_menu.go:175
 #: internal/gamesui/fortune_panel.go:280
 msgid "Straight to jail, without passing Start."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:107
+#: internal/games/fortunenet/texts.go:110
 #: internal/gamesui/fortune_menu.go:179
 #: internal/gamesui/fortune_panel.go:282
 msgid "Draw a card: money, a fine, a trip, or a card for your hand."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:108
+#: internal/games/fortunenet/texts.go:111
 #: internal/gamesui/fortune_menu.go:180
 #: internal/gamesui/fortune_panel.go:284
 msgid "Three cards on offer: buy any of them, or none. A hand holds up to %d cards."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:109
+#: internal/games/fortunenet/texts.go:112
 #: internal/gamesui/fortune_menu.go:181
 #: internal/gamesui/fortune_panel.go:286
 msgid "Pay $%d into the fountain."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:110
+#: internal/games/fortunenet/texts.go:113
 #: internal/gamesui/fortune_panel.go:244
 msgid "The whole group: bare rent doubled, built rents half again."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:111
+#: internal/games/fortunenet/texts.go:114
 #: internal/gamesui/fortune_menu.go:176
 #: internal/gamesui/fortune_panel.go:246
 msgid "With the whole group: bare rent doubled, built rents half again."
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:112
+#: internal/games/fortunenet/texts.go:115
 #: internal/gamesui/fortune_panel.go:259
 msgid "Group:"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:113
+#: internal/games/fortunenet/texts.go:116
 #: internal/gamesui/fortune_panel.go:269
 msgid "× %d"
 msgstr ""
 
-#: internal/games/fortunenet/texts.go:115
+#: internal/games/fortunenet/texts.go:118
 #: internal/gamesui/fortune_panel.go:263
 msgid "%d pier"
 msgid_plural "%d piers"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/fortunenet/texts.go:118
+#: internal/games/fortunenet/texts.go:121
 #: internal/gamesui/fortune_panel.go:269
 msgid "%d utility"
 msgid_plural "%d utilities"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/fortunenet/texts.go:121
+#: internal/games/fortunenet/texts.go:124
 #: internal/gamesui/fortune.go:1134
 msgid " · %d card"
 msgid_plural " · %d cards"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/fortunenet/texts.go:124
+#: internal/games/fortunenet/texts.go:127
 msgid "and %d computer player"
 msgid_plural "and %d computer players"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/games/fortunenet/texts.go:127
+#: internal/games/fortunenet/texts.go:130
 #: internal/gamesui/fortune_panel.go:239
 msgid "%d house"
 msgid_plural "%d houses"
 msgstr[0] ""
 msgstr[1] ""
+
+#: internal/games/gameai/gameai.go:34
+#: internal/ui/settings_bench.go:227
+#: internal/vmui/assistant.go:109
+msgid "inua-assistant is not installed"
+msgstr ""
+
+#: internal/games/gameai/gameai.go:43
+msgid "the AI did not answer in time"
+msgstr ""
+
+#: internal/games/gameai/gameai.go:133
+#: internal/gamesui/checkers.go:629
+msgid "no profile of Settings → AI makes decisions"
+msgstr ""
+
+#: internal/games/gameai/gameai.go:177
+msgid "the AI is not running"
+msgstr ""
 
 #: internal/games/gamerelay/publish.go:131
 msgid "Give the lobby's address."
@@ -7233,11 +7272,28 @@ msgstr ""
 msgid "The lobby turned the game away."
 msgstr ""
 
-#: internal/games/lobby/lobby.go:118
+#: internal/games/lobby/hosted.go:55
+msgid "Only a host opens games at this lobby."
+msgstr ""
+
+#: internal/games/lobby/hosted.go:66
+msgid "A page elsewhere may not open games here."
+msgstr ""
+
+#: internal/games/lobby/hosted.go:75
+#: internal/games/lobby/hosted.go:85
+msgid "The lobby does not host that game."
+msgstr ""
+
+#: internal/games/lobby/hosted.go:90
+msgid "Someone took this table first."
+msgstr ""
+
+#: internal/games/lobby/lobby.go:145
 msgid "No game is at this table now."
 msgstr ""
 
-#: internal/games/lobby/lobby.go:139
+#: internal/games/lobby/lobby.go:166
 msgid "The table's host does not answer."
 msgstr ""
 
@@ -7252,13 +7308,13 @@ msgid "Join a game at a table, or watch one. A host opens a game here from Small
 msgstr ""
 
 #: internal/games/lobby/texts.go:11
-#: internal/gamesui/lobbywin.go:181
+#: internal/gamesui/lobbywin.go:187
 msgid "TABLE %d"
 msgstr ""
 
 #: internal/games/lobby/texts.go:12
-#: internal/gamesui/lobbywin.go:230
-#: internal/lightui/sysmon.go:997
+#: internal/gamesui/lobbywin.go:236
+#: internal/lightui/sysmon.go:995
 msgid "Free"
 msgstr ""
 
@@ -7267,52 +7323,68 @@ msgid "A host can open a game here."
 msgstr ""
 
 #: internal/games/lobby/texts.go:14
-#: internal/gamesui/lobbywin.go:225
-#: internal/gamesui/lobbywin.go:241
-msgid "The host’s connection dropped: waiting for it to come back…"
+msgid "Join a game at a table, watch one, or open one at a free table. A host can also open a game here from Small Fortune or Chinese Checkers in inua."
 msgstr ""
 
 #: internal/games/lobby/texts.go:15
-#: internal/gamesui/lobbywin.go:220
-msgid "Reconnecting…"
+msgid "Open a game here for others to join."
 msgstr ""
 
 #: internal/games/lobby/texts.go:16
-#: internal/gamesui/lobbywin.go:245
-msgid "Waiting to start"
+msgid "The game could not open: %s"
 msgstr ""
 
 #: internal/games/lobby/texts.go:17
+#: internal/gamesui/lobbywin.go:231
 #: internal/gamesui/lobbywin.go:247
-msgid "Open seats: %d"
+msgid "The host’s connection dropped: waiting for it to come back…"
 msgstr ""
 
 #: internal/games/lobby/texts.go:18
-#: internal/gamesui/lobbywin.go:251
-msgid "Playing"
+#: internal/gamesui/lobbywin.go:226
+msgid "Reconnecting…"
 msgstr ""
 
 #: internal/games/lobby/texts.go:19
+#: internal/gamesui/lobbywin.go:251
+msgid "Waiting to start"
+msgstr ""
+
+#: internal/games/lobby/texts.go:20
 #: internal/gamesui/lobbywin.go:253
-msgid "Over"
+msgid "Open seats: %d"
+msgstr ""
+
+#: internal/games/lobby/texts.go:21
+#: internal/gamesui/lobbywin.go:257
+msgid "Playing"
 msgstr ""
 
 #: internal/games/lobby/texts.go:22
-#: internal/gamesui/lobbywin.go:287
+#: internal/gamesui/lobbywin.go:259
+msgid "Over"
+msgstr ""
+
+#: internal/games/lobby/texts.go:25
+#: internal/gamesui/lobbywin.go:293
 msgid "%s sets up the game"
 msgstr ""
 
-#: internal/games/lobby/texts.go:23
-#: internal/gamesui/checkers.go:560
-#: internal/gamesui/fortune.go:427
-#: internal/gamesui/fortune.go:686
-#: internal/gamesui/lobbywin.go:268
-msgid "Open seat"
+#: internal/games/lobby/texts.go:29
+#: internal/gamesui/lobbywin.go:263
+msgid "computer"
 msgstr ""
 
-#: internal/games/lobby/texts.go:26
-#: internal/gamesui/lobbywin.go:257
-msgid "computer"
+#: internal/games/lobbyservice/service_linux.go:49
+msgid "inua-game-lobby is not installed"
+msgstr ""
+
+#: internal/games/lobbyservice/service_linux.go:76
+msgid "inua-game-lobby stopped: %s says why"
+msgstr ""
+
+#: internal/games/lobbyservice/service_other.go:18
+msgid "A lobby runs as a service only with systemd."
 msgstr ""
 
 #: internal/games/pinball_rules.go:63
@@ -7665,109 +7737,106 @@ msgstr ""
 msgid "Enter connects  ·  N connects again"
 msgstr ""
 
-#: internal/gamesui/checkers.go:351
+#: internal/gamesui/checkers.go:347
 #: internal/gamesui/fortune.go:479
 msgid "On the network"
 msgstr ""
 
-#: internal/gamesui/checkers.go:351
+#: internal/gamesui/checkers.go:347
 msgid "Others join from a browser on this network, with the link or the QR code."
 msgstr ""
 
-#: internal/gamesui/checkers.go:365
+#: internal/gamesui/checkers.go:361
 #: internal/gamesui/fortune.go:500
 msgid "At a lobby"
 msgstr ""
 
-#: internal/gamesui/checkers.go:365
+#: internal/gamesui/checkers.go:361
 msgid "Others join from a game lobby on the internet, where the game takes a table."
 msgstr ""
 
-#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:458
 msgid "At this screen"
 msgstr ""
 
-#: internal/gamesui/checkers.go:462
+#: internal/gamesui/checkers.go:458
 msgid "Open: someone in a browser"
 msgstr ""
 
-#: internal/gamesui/checkers.go:463
-#: internal/gamesui/checkers.go:463
-#: internal/gamesui/checkers.go:463
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
+#: internal/gamesui/checkers.go:459
 msgid "Computer · %s"
 msgstr ""
 
-#: internal/gamesui/checkers.go:490
+#: internal/gamesui/checkers.go:486
 msgid "in a browser · sets up the game"
 msgstr ""
 
-#: internal/gamesui/checkers.go:492
+#: internal/gamesui/checkers.go:488
 #: internal/gamesui/fortune_host.go:192
 msgid "Send away"
 msgstr ""
 
-#: internal/gamesui/checkers.go:526
+#: internal/gamesui/checkers.go:523
 msgid "No one plays at this screen: the first to join from a browser sets the game up, and may start it."
 msgstr ""
 
-#: internal/gamesui/checkers.go:568
+#: internal/gamesui/checkers.go:569
 #: internal/gamesui/fortune.go:674
 #: internal/gamesui/fortune_host.go:188
 msgid "at this screen"
 msgstr ""
 
-#: internal/gamesui/checkers.go:570
+#: internal/gamesui/checkers.go:571
 msgid "the computer"
 msgstr ""
 
-#: internal/gamesui/checkers.go:574
+#: internal/gamesui/checkers.go:575
 msgid "Asking the AI…"
 msgstr ""
 
-#: internal/gamesui/checkers.go:578
+#: internal/gamesui/checkers.go:579
 msgid "the AI of Settings → AI"
 msgstr ""
 
-#: internal/gamesui/checkers.go:581
+#: internal/gamesui/checkers.go:582
 msgid "the computer, unless the game is on the network"
 msgstr ""
 
-#: internal/gamesui/checkers.go:583
+#: internal/gamesui/checkers.go:584
 msgid "waiting for someone to join"
 msgstr ""
 
-#: internal/gamesui/checkers.go:622
-msgid "no profile of Settings → AI makes decisions"
-msgstr ""
-
-#: internal/gamesui/checkers.go:702
+#: internal/gamesui/checkers.go:709
 #: internal/gamesui/fortune.go:221
 #: internal/gamesui/fortune_host.go:281
 msgid "JOIN CODE"
 msgstr ""
 
-#: internal/gamesui/checkers.go:732
-#: internal/gamesui/checkers.go:735
+#: internal/gamesui/checkers.go:739
+#: internal/gamesui/checkers.go:742
 #: internal/gamesui/fortune_host.go:294
 #: internal/gamesui/fortune_host.go:297
 msgid "Copy link"
 msgstr ""
 
-#: internal/gamesui/checkers.go:774
+#: internal/gamesui/checkers.go:781
+#: internal/gamesui/lobbyhost.go:327
 msgid "This computer is on no network a browser could reach it from."
 msgstr ""
 
-#: internal/gamesui/checkers.go:783
-#: internal/gamesui/fortune_host.go:110
+#: internal/gamesui/checkers.go:790
+#: internal/gamesui/fortune_host.go:115
 msgid "Scan the code, or open the link in a browser."
 msgstr ""
 
-#: internal/gamesui/checkers.go:785
-#: internal/gamesui/fortune_host.go:112
+#: internal/gamesui/checkers.go:792
+#: internal/gamesui/fortune_host.go:117
 msgid "Scan the code, or open the link in a browser on this network."
 msgstr ""
 
-#: internal/gamesui/checkers.go:1058
+#: internal/gamesui/checkers.go:1045
 msgid "Join code %s"
 msgstr ""
 
@@ -7807,38 +7876,24 @@ msgstr ""
 msgid "Pay $50 bail"
 msgstr ""
 
-#: internal/gamesui/fortune_ai.go:80
-#: internal/ui/settings_bench.go:227
-#: internal/vmui/assistant.go:109
-msgid "inua-assistant is not installed"
-msgstr ""
-
-#: internal/gamesui/fortune_ai.go:113
+#: internal/gamesui/fortune_ai.go:106
 msgid "the AI picked the wrong option"
 msgstr ""
 
-#: internal/gamesui/fortune_ai.go:143
-msgid "the AI did not answer in time"
-msgstr ""
-
-#: internal/gamesui/fortune_ai.go:156
-#: internal/gamesui/fortune_ai.go:162
+#: internal/gamesui/fortune_ai.go:142
+#: internal/gamesui/fortune_ai.go:148
 msgid "checking the AI…"
 msgstr ""
 
-#: internal/gamesui/fortune_ai.go:164
+#: internal/gamesui/fortune_ai.go:150
 msgid "this profile did not answer"
 msgstr ""
 
-#: internal/gamesui/fortune_ai.go:172
+#: internal/gamesui/fortune_ai.go:158
 msgid "the AI: %s"
 msgstr ""
 
-#: internal/gamesui/fortune_ai.go:202
-msgid "AI %d"
-msgstr ""
-
-#: internal/gamesui/fortune_ai.go:216
+#: internal/gamesui/fortune_ai.go:198
 msgid "The profile of Settings → AI this player asks"
 msgstr ""
 
@@ -7898,7 +7953,7 @@ msgstr ""
 msgid "palazzi"
 msgstr ""
 
-#: internal/gamesui/fortune_host.go:65
+#: internal/gamesui/fortune_host.go:70
 msgid "The game could not open to the network: %v"
 msgstr ""
 
@@ -7996,48 +8051,128 @@ msgstr ""
 msgid "Plays on the square in focus: %s."
 msgstr ""
 
-#: internal/gamesui/lobby.go:61
+#: internal/gamesui/lobby.go:69
 msgid "The lobby's address"
 msgstr ""
 
-#: internal/gamesui/lobby.go:62
+#: internal/gamesui/lobby.go:70
 msgid "As the lobby's host gave it: lobby.example.org, with ?key=… when it asks for a key."
 msgstr ""
 
-#: internal/gamesui/lobby.go:92
+#: internal/gamesui/lobby.go:100
 msgid "At table %d of the lobby."
 msgstr ""
 
-#: internal/gamesui/lobby.go:94
+#: internal/gamesui/lobby.go:102
 msgid "Not at the lobby: %v"
 msgstr ""
 
-#: internal/gamesui/lobby.go:96
-#: internal/gamesui/lobbywin.go:105
+#: internal/gamesui/lobby.go:104
+#: internal/gamesui/lobbywin.go:108
 msgid "Connecting to the lobby…"
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:62
+#: internal/gamesui/lobbyhost.go:70
+msgid "Run a lobby on this computer"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:74
+msgid "Its games go on when this window closes, and the AI may play in them."
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:89
+#: internal/termui/prefsweb.go:60
+msgid "no address: is Tailscale up?"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:97
+msgid "This network"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:97
+msgid "Every address of this computer: anyone on its networks can open the lobby"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:98
+#: internal/gamesui/lobbyhost.go:98
+#: internal/lightui/apps.go:23
+#: internal/termui/headmenu.go:152
+#: internal/termui/prefsweb.go:66
+#: ui/control.ui:536
+#: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
+msgid "Tailscale"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:98
+msgid "only the devices on the tailnet can open the lobby"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:123
+msgid "Run the lobby, or stop it and the games at it"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:148
+msgid "OTHERS OPEN"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:207
+msgid "The lobby stopped with an error and is started again: %s says why."
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:283
+msgid "off"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:283
+msgid "starting…"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:284
+msgid "listening"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:284
+msgid "failed"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:305
+#: internal/termui/prefsweb.go:152
+msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:307
+msgid "The lobby did not start in time: %s says why."
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:333
+msgid "Open it on a device on the tailnet."
+msgstr ""
+
+#: internal/gamesui/lobbyhost.go:336
+msgid "Open it in a browser on this network."
+msgstr ""
+
+#: internal/gamesui/lobbywin.go:65
 msgid "Open in the browser"
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:97
+#: internal/gamesui/lobbywin.go:100
 msgid "Give the address of a game lobby to see its tables."
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:128
+#: internal/gamesui/lobbywin.go:131
 msgid "The lobby cannot be reached: %v. Trying again…"
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:159
+#: internal/gamesui/lobbywin.go:165
 msgid "Games at %d of %d tables; %d free."
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:231
+#: internal/gamesui/lobbywin.go:237
 msgid "Host a game here: it opens set to this table."
 msgstr ""
 
-#: internal/gamesui/lobbywin.go:324
+#: internal/gamesui/lobbywin.go:330
 msgid "The browser could not be opened: %v"
 msgstr ""
 
@@ -8131,7 +8266,7 @@ msgid "Hit the three yellow mission targets to light a mission; the hyperspace r
 msgstr ""
 
 #: internal/gamesui/pinball.go:241
-#: internal/lightui/clock.go:584
+#: internal/lightui/clock.go:583
 msgid "PAUSED"
 msgstr ""
 
@@ -8302,7 +8437,7 @@ msgid "Notification center"
 msgstr ""
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:144
+#: ui/bar.ui:136
 msgid "Clipboard history"
 msgstr ""
 
@@ -8362,8 +8497,8 @@ msgid "Pick a colour"
 msgstr ""
 
 #: internal/hyprconf/keys.go:40
-#: internal/ui/voice_page.go:173
-#: ui/bar.ui:185
+#: internal/ui/voice_page.go:169
+#: ui/bar.ui:177
 #: ui/settings.ui:6335
 msgid "Dictation"
 msgstr ""
@@ -8491,17 +8626,17 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: internal/ui/widgets.go:620
+#: internal/ui/widgets.go:587
 #: ui/settings.ui:1188
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
 msgstr ""
 
 #: internal/lightui/apps.go:17
-#: internal/lightui/weather.go:226
+#: internal/lightui/weather.go:224
 #: internal/ui/agenda.go:334
-#: internal/ui/widgets.go:622
-#: internal/ui/widgets.go:1057
+#: internal/ui/widgets.go:589
+#: internal/ui/widgets.go:1071
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr ""
@@ -8518,8 +8653,8 @@ msgid "Calculator"
 msgstr ""
 
 #: internal/lightui/apps.go:20
-#: internal/ui/widgets.go:621
-#: ui/bar.ui:73
+#: internal/ui/widgets.go:588
+#: ui/bar.ui:65
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr ""
@@ -8533,14 +8668,6 @@ msgstr ""
 #: internal/lightui/apps.go:22
 #: config/apps/io.github.lyricat.Inua.SystemMonitor.desktop:3
 msgid "System Monitor"
-msgstr ""
-
-#: internal/lightui/apps.go:23
-#: internal/termui/headmenu.go:152
-#: internal/termui/prefsweb.go:65
-#: ui/control.ui:536
-#: config/apps/io.github.lyricat.Inua.Tailscale.desktop:3
-msgid "Tailscale"
 msgstr ""
 
 #: internal/lightui/apps.go:24
@@ -8561,66 +8688,66 @@ msgstr ""
 msgid "Change sign"
 msgstr ""
 
-#: internal/lightui/calculator.go:241
+#: internal/lightui/calculator.go:240
 msgid "Error"
 msgstr ""
 
-#: internal/lightui/calculator.go:275
+#: internal/lightui/calculator.go:274
 msgid "No calculations yet"
 msgstr ""
 
-#: internal/lightui/calculator.go:297
+#: internal/lightui/calculator.go:296
 msgid "Use %s"
 msgstr ""
 
-#: internal/lightui/calendar.go:138
+#: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
-#: internal/ui/widgets.go:1010
+#: internal/ui/widgets.go:1024
 msgid "January 2006"
 msgstr ""
 
-#: internal/lightui/calendar.go:140
+#: internal/lightui/calendar.go:134
 #: internal/ui/agenda.go:246
 msgid "WK"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Su"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Mo"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Tu"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "We"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Th"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Fr"
 msgstr ""
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Sa"
@@ -8638,89 +8765,89 @@ msgstr ""
 msgid "SEC"
 msgstr ""
 
-#: internal/lightui/clock.go:261
+#: internal/lightui/clock.go:260
 msgid "Day"
 msgstr ""
 
-#: internal/lightui/clock.go:264
+#: internal/lightui/clock.go:263
 msgid "Night"
 msgstr ""
 
-#: internal/lightui/clock.go:339
+#: internal/lightui/clock.go:338
 msgid "No city by that name"
 msgstr ""
 
-#: internal/lightui/clock.go:371
-#: internal/lightui/weather.go:249
+#: internal/lightui/clock.go:370
+#: internal/lightui/weather.go:247
 msgid "Remove %s"
 msgstr ""
 
-#: internal/lightui/clock.go:404
+#: internal/lightui/clock.go:403
 #: internal/termui/menubar.go:42
 #: ui/pass.ui:252
 msgid "Edit"
 msgstr ""
 
-#: internal/lightui/clock.go:494
+#: internal/lightui/clock.go:493
 #: ui/music.ui:332
 msgid "Reset"
 msgstr ""
 
-#: internal/lightui/clock.go:499
-#: internal/lightui/clock.go:508
+#: internal/lightui/clock.go:498
+#: internal/lightui/clock.go:507
 #: ui/clock.ui:329
 msgid "Lap"
 msgstr ""
 
-#: internal/lightui/clock.go:547
+#: internal/lightui/clock.go:546
 msgid "LAP %d"
 msgstr ""
 
-#: internal/lightui/clock.go:567
-#: internal/lightui/clock.go:577
-#: internal/lightui/sysmon.go:58
-#: internal/lightui/sysmon.go:58
+#: internal/lightui/clock.go:566
+#: internal/lightui/clock.go:576
+#: internal/lightui/sysmon.go:57
+#: internal/lightui/sysmon.go:57
 #: ui/clock.ui:463
 msgid "Pause"
 msgstr ""
 
-#: internal/lightui/clock.go:570
-#: internal/lightui/clock.go:578
+#: internal/lightui/clock.go:569
+#: internal/lightui/clock.go:577
 msgid "ENDS AT %s"
 msgstr ""
 
-#: internal/lightui/clock.go:583
-#: internal/lightui/sysmon.go:871
-#: internal/lightui/sysmon.go:871
+#: internal/lightui/clock.go:582
+#: internal/lightui/sysmon.go:869
+#: internal/lightui/sysmon.go:869
 #: internal/vmui/window.go:2465
 msgid "Resume"
 msgstr ""
 
-#: internal/lightui/clock.go:595
+#: internal/lightui/clock.go:594
 msgid "Timer done"
 msgstr ""
 
-#: internal/lightui/clock.go:596
+#: internal/lightui/clock.go:595
 msgid "Your timer has ended."
 msgstr ""
 
-#: internal/lightui/colorpicker.go:123
+#: internal/lightui/colorpicker.go:121
 msgid "HEX"
 msgstr ""
 
-#: internal/lightui/colorpicker.go:123
+#: internal/lightui/colorpicker.go:121
 msgid "RGB"
 msgstr ""
 
-#: internal/lightui/colorpicker.go:123
+#: internal/lightui/colorpicker.go:121
 msgid "HSL"
 msgstr ""
 
-#: internal/lightui/colorpicker.go:137
+#: internal/lightui/colorpicker.go:135
 msgid "Copy %s"
 msgstr ""
 
-#: internal/lightui/colorpicker.go:142
+#: internal/lightui/colorpicker.go:140
 msgid "No colour yet. Pick one from anywhere on the screen."
 msgstr ""
 
@@ -8743,19 +8870,19 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: internal/lightui/gpg.go:319
+#: internal/lightui/gpg.go:318
 msgid "The keyring cannot be read: %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:361
+#: internal/lightui/gpg.go:360
 msgid "created %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:361
-#: internal/lightui/gpg.go:364
-#: internal/lightui/gpg.go:366
-#: internal/lightui/gpg.go:605
-#: internal/lightui/gpg.go:627
+#: internal/lightui/gpg.go:360
+#: internal/lightui/gpg.go:363
+#: internal/lightui/gpg.go:365
+#: internal/lightui/gpg.go:604
+#: internal/lightui/gpg.go:626
 #: internal/shell/notify.go:32
 #: internal/ui/askpass.go:414
 #: internal/ui/askpass.go:482
@@ -8767,155 +8894,155 @@ msgstr ""
 msgid "Jan 2, 2006"
 msgstr ""
 
-#: internal/lightui/gpg.go:366
+#: internal/lightui/gpg.go:365
 msgid "expires %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:380
-#: internal/lightui/gpg.go:764
+#: internal/lightui/gpg.go:379
+#: internal/lightui/gpg.go:763
 msgid "signs only"
 msgstr ""
 
-#: internal/lightui/gpg.go:390
+#: internal/lightui/gpg.go:389
 msgid "revoked"
 msgstr ""
 
-#: internal/lightui/gpg.go:392
+#: internal/lightui/gpg.go:391
 msgid "expired"
 msgstr ""
 
-#: internal/lightui/gpg.go:394
+#: internal/lightui/gpg.go:393
 msgid "disabled"
 msgstr ""
 
-#: internal/lightui/gpg.go:396
-#: internal/lightui/gpg.go:611
-#: internal/lightui/gpg.go:737
+#: internal/lightui/gpg.go:395
+#: internal/lightui/gpg.go:610
+#: internal/lightui/gpg.go:736
 msgid "yours"
 msgstr ""
 
-#: internal/lightui/gpg.go:398
+#: internal/lightui/gpg.go:397
 msgid "verified"
 msgstr ""
 
-#: internal/lightui/gpg.go:400
+#: internal/lightui/gpg.go:399
 msgid "partly verified"
 msgstr ""
 
-#: internal/lightui/gpg.go:402
+#: internal/lightui/gpg.go:401
 msgid "not verified"
 msgstr ""
 
-#: internal/lightui/gpg.go:465
+#: internal/lightui/gpg.go:464
 #: ui/gpg.ui:306
 msgid "Encrypt to your key as well, so you can open it later"
 msgstr ""
 
-#: internal/lightui/gpg.go:467
+#: internal/lightui/gpg.go:466
 msgid "This key only signs; it cannot be encrypted to"
 msgstr ""
 
-#: internal/lightui/gpg.go:518
+#: internal/lightui/gpg.go:517
 msgid "Take off"
 msgstr ""
 
-#: internal/lightui/gpg.go:529
+#: internal/lightui/gpg.go:528
 msgid "%d recipient"
 msgid_plural "%d recipients"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/gpg.go:532
+#: internal/lightui/gpg.go:531
 #: ui/gpg.ui:118
 msgid "Name, address or key ID"
 msgstr ""
 
-#: internal/lightui/gpg.go:534
+#: internal/lightui/gpg.go:533
 msgid "Add another"
 msgstr ""
 
-#: internal/lightui/gpg.go:583
+#: internal/lightui/gpg.go:582
 msgid "%d more: type to narrow them down"
 msgid_plural "%d more: type to narrow them down"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/gpg.go:626
+#: internal/lightui/gpg.go:625
 msgid "This key expired on %s, so gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr ""
 
-#: internal/lightui/gpg.go:629
-#: internal/lightui/gpg.go:780
+#: internal/lightui/gpg.go:628
+#: internal/lightui/gpg.go:779
 msgid "%s revoked this key; ask for their new one."
 msgstr ""
 
-#: internal/lightui/gpg.go:631
+#: internal/lightui/gpg.go:630
 msgid "This key cannot encrypt."
 msgstr ""
 
-#: internal/lightui/gpg.go:641
+#: internal/lightui/gpg.go:640
 msgid "No key matches. Import theirs on the Keys tab."
 msgstr ""
 
-#: internal/lightui/gpg.go:643
+#: internal/lightui/gpg.go:642
 msgid "Already added."
 msgstr ""
 
-#: internal/lightui/gpg.go:646
+#: internal/lightui/gpg.go:645
 msgid "Your keyring is empty. Import their key on the Keys tab."
 msgstr ""
 
-#: internal/lightui/gpg.go:648
+#: internal/lightui/gpg.go:647
 msgid "Every key is chosen."
 msgstr ""
 
-#: internal/lightui/gpg.go:703
+#: internal/lightui/gpg.go:702
 msgid "MY KEYS"
 msgstr ""
 
-#: internal/lightui/gpg.go:703
+#: internal/lightui/gpg.go:702
 msgid "OTHERS"
 msgstr ""
 
-#: internal/lightui/gpg.go:703
+#: internal/lightui/gpg.go:702
 msgid "INVALID KEYS"
 msgstr ""
 
-#: internal/lightui/gpg.go:710
+#: internal/lightui/gpg.go:709
 msgid "%d key"
 msgid_plural "%d keys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/gpg.go:774
+#: internal/lightui/gpg.go:773
 msgid "Extend it to use it again. Keep it either way: it opens what was encrypted to it."
 msgstr ""
 
-#: internal/lightui/gpg.go:776
+#: internal/lightui/gpg.go:775
 msgid "Keep it: it opens what was encrypted to it."
 msgstr ""
 
-#: internal/lightui/gpg.go:778
+#: internal/lightui/gpg.go:777
 msgid "gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr ""
 
-#: internal/lightui/gpg.go:801
+#: internal/lightui/gpg.go:800
 msgid "Copy fingerprint"
 msgstr ""
 
-#: internal/lightui/gpg.go:802
+#: internal/lightui/gpg.go:801
 msgid "Copy public key"
 msgstr ""
 
-#: internal/lightui/gpg.go:804
+#: internal/lightui/gpg.go:803
 msgid "Encrypt to…"
 msgstr ""
 
-#: internal/lightui/gpg.go:807
+#: internal/lightui/gpg.go:806
 msgid "Extend 2 years"
 msgstr ""
 
-#: internal/lightui/gpg.go:812
+#: internal/lightui/gpg.go:811
 #: ui/disk.ui:781
 #: ui/vm.ui:391
 #: ui/vm.ui:1540
@@ -8926,189 +9053,189 @@ msgstr ""
 msgid "Delete…"
 msgstr ""
 
-#: internal/lightui/gpg.go:875
+#: internal/lightui/gpg.go:874
 msgid "Copied; taken off the clipboard in 45 seconds"
 msgstr ""
 
-#: internal/lightui/gpg.go:928
+#: internal/lightui/gpg.go:927
 msgid "Fingerprint copied"
 msgstr ""
 
-#: internal/lightui/gpg.go:940
+#: internal/lightui/gpg.go:939
 msgid "Public key copied"
 msgstr ""
 
-#: internal/lightui/gpg.go:1008
+#: internal/lightui/gpg.go:1007
 msgid "Files to encrypt"
 msgstr ""
 
-#: internal/lightui/gpg.go:1008
+#: internal/lightui/gpg.go:1007
 msgid "Files to decrypt"
 msgstr ""
 
-#: internal/lightui/gpg.go:1008
+#: internal/lightui/gpg.go:1007
 msgid "Key file to import"
 msgstr ""
 
-#: internal/lightui/gpg.go:1074
+#: internal/lightui/gpg.go:1073
 msgid "Leave it out"
 msgstr ""
 
-#: internal/lightui/gpg.go:1109
+#: internal/lightui/gpg.go:1108
 msgid "Saved to %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:1125
+#: internal/lightui/gpg.go:1124
 msgid "Add someone to encrypt to."
 msgstr ""
 
-#: internal/lightui/gpg.go:1139
-#: internal/lightui/gpg.go:1265
+#: internal/lightui/gpg.go:1138
+#: internal/lightui/gpg.go:1264
 msgid "Choose or drop files first."
 msgstr ""
 
-#: internal/lightui/gpg.go:1150
+#: internal/lightui/gpg.go:1149
 msgid "Type a message first."
 msgstr ""
 
-#: internal/lightui/gpg.go:1155
+#: internal/lightui/gpg.go:1154
 msgid "Encrypting…"
 msgstr ""
 
-#: internal/lightui/gpg.go:1192
+#: internal/lightui/gpg.go:1191
 msgid "For %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:1194
+#: internal/lightui/gpg.go:1193
 msgid "signed"
 msgstr ""
 
-#: internal/lightui/gpg.go:1211
+#: internal/lightui/gpg.go:1210
 msgid "written in %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:1215
+#: internal/lightui/gpg.go:1214
 msgid "Move to Trash…"
 msgstr ""
 
-#: internal/lightui/gpg.go:1239
+#: internal/lightui/gpg.go:1238
 msgid "%s moved to the trash"
 msgstr ""
 
-#: internal/lightui/gpg.go:1274
+#: internal/lightui/gpg.go:1273
 msgid "Paste a message first."
 msgstr ""
 
-#: internal/lightui/gpg.go:1281
+#: internal/lightui/gpg.go:1280
 msgid "Decrypting… gpg may ask for your passphrase."
 msgstr ""
 
-#: internal/lightui/gpg.go:1330
+#: internal/lightui/gpg.go:1329
 msgid "Not signed: who sent it is not known"
 msgstr ""
 
-#: internal/lightui/gpg.go:1338
+#: internal/lightui/gpg.go:1337
 msgid "Signed by %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:1341
+#: internal/lightui/gpg.go:1340
 msgid "Jan 2, 2006 15:04"
 msgstr ""
 
-#: internal/lightui/gpg.go:1345
+#: internal/lightui/gpg.go:1344
 msgid "The signature by %s does not match: it was changed after signing"
 msgstr ""
 
-#: internal/lightui/gpg.go:1349
+#: internal/lightui/gpg.go:1348
 msgid "Signed by a key not in your keyring, so it cannot be checked"
 msgstr ""
 
-#: internal/lightui/gpg.go:1353
+#: internal/lightui/gpg.go:1352
 msgid "Signed by %s, with a key that is no longer valid"
 msgstr ""
 
-#: internal/lightui/gpg.go:1371
+#: internal/lightui/gpg.go:1370
 msgid "Encrypted to %s"
 msgstr ""
 
-#: internal/lightui/gpg.go:1387
+#: internal/lightui/gpg.go:1386
 #: ui/gpg.ui:1281
 msgid "Import"
 msgstr ""
 
-#: internal/lightui/gpg.go:1397
+#: internal/lightui/gpg.go:1396
 msgid "No key found in it."
 msgstr ""
 
-#: internal/lightui/gpg.go:1402
+#: internal/lightui/gpg.go:1401
 msgid "Import %d key"
 msgid_plural "Import %d keys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/gpg.go:1414
+#: internal/lightui/gpg.go:1413
 msgid "new"
 msgstr ""
 
-#: internal/lightui/gpg.go:1417
+#: internal/lightui/gpg.go:1416
 msgid "holds a secret key"
 msgstr ""
 
-#: internal/lightui/gpg.go:1419
+#: internal/lightui/gpg.go:1418
 msgid "updates one you have"
 msgstr ""
 
-#: internal/lightui/gpg.go:1444
+#: internal/lightui/gpg.go:1443
 msgid "Importing…"
 msgstr ""
 
-#: internal/lightui/gpg.go:1455
+#: internal/lightui/gpg.go:1454
 msgid "%d key imported"
 msgid_plural "%d keys imported"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/gpg.go:1468
+#: internal/lightui/gpg.go:1467
 msgid "Give a name and an address."
 msgstr ""
 
-#: internal/lightui/gpg.go:1472
+#: internal/lightui/gpg.go:1471
 msgid "That address has no @."
 msgstr ""
 
-#: internal/lightui/gpg.go:1478
+#: internal/lightui/gpg.go:1477
 msgid "Creating… gpg asks for a passphrase for the new key."
 msgstr ""
 
-#: internal/lightui/gpg.go:1492
+#: internal/lightui/gpg.go:1491
 msgid "Your key is created"
 msgstr ""
 
-#: internal/lightui/gpg.go:1515
+#: internal/lightui/gpg.go:1514
 msgid "Delete the key of %s?"
 msgstr ""
 
-#: internal/lightui/gpg.go:1517
+#: internal/lightui/gpg.go:1516
 msgid "It goes from your keyring. Messages it signed then show as signed by a key not in your keyring; importing it again brings that back."
 msgstr ""
 
-#: internal/lightui/gpg.go:1524
+#: internal/lightui/gpg.go:1523
 msgid "Move %s to the trash?"
 msgstr ""
 
-#: internal/lightui/gpg.go:1525
+#: internal/lightui/gpg.go:1524
 msgid "The decrypted copy goes to the trash, where it can be restored from; the encrypted file stays."
 msgstr ""
 
-#: internal/lightui/gpg.go:1542
+#: internal/lightui/gpg.go:1541
 msgid "Key deleted"
 msgstr ""
 
-#: internal/lightui/gpg.go:1552
+#: internal/lightui/gpg.go:1551
 msgid "Extending… gpg asks for your passphrase."
 msgstr ""
 
-#: internal/lightui/gpg.go:1561
+#: internal/lightui/gpg.go:1560
 msgid "Extended by 2 years"
 msgstr ""
 
@@ -9121,278 +9248,278 @@ msgstr ""
 msgid "Presets"
 msgstr ""
 
-#: internal/lightui/music.go:487
+#: internal/lightui/music.go:486
 msgid "Cannot play %s: %s"
 msgstr ""
 
-#: internal/lightui/music.go:561
-#: internal/ui/widgets.go:1088
+#: internal/lightui/music.go:560
+#: internal/ui/widgets.go:1102
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr ""
 
-#: internal/lightui/music.go:611
+#: internal/lightui/music.go:610
 msgid "MONO"
 msgstr ""
 
-#: internal/lightui/music.go:613
+#: internal/lightui/music.go:612
 msgid "STEREO"
 msgstr ""
 
-#: internal/lightui/music.go:680
+#: internal/lightui/music.go:679
 msgid "PRE"
 msgstr ""
 
-#: internal/lightui/music.go:789
+#: internal/lightui/music.go:788
 #: ui/music.ui:270
 msgid "Repeat: off (R)"
 msgstr ""
 
-#: internal/lightui/music.go:792
+#: internal/lightui/music.go:791
 msgid "Repeat: the playlist (R)"
 msgstr ""
 
-#: internal/lightui/music.go:794
+#: internal/lightui/music.go:793
 msgid "Repeat: this track (R)"
 msgstr ""
 
-#: internal/lightui/music.go:1017
+#: internal/lightui/music.go:1016
 msgid "%d track"
 msgid_plural "%d tracks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/music.go:1104
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/music.go:1103
+#: internal/lightui/sysmon.go:792
 msgid "Open files"
 msgstr ""
 
-#: internal/lightui/music.go:1104
+#: internal/lightui/music.go:1103
 #: ui/music.ui:424
 msgid "Add files"
 msgstr ""
 
-#: internal/lightui/music.go:1108
+#: internal/lightui/music.go:1107
 #: ui/music.ui:434
 msgid "Add a folder"
 msgstr ""
 
-#: internal/lightui/music.go:1111
+#: internal/lightui/music.go:1110
 msgid "Load a playlist"
 msgstr ""
 
-#: internal/lightui/music.go:1112
+#: internal/lightui/music.go:1111
 msgid "Playlists"
 msgstr ""
 
-#: internal/lightui/music.go:1115
+#: internal/lightui/music.go:1114
 msgid "Save the playlist"
 msgstr ""
 
-#: internal/lightui/music.go:1116
+#: internal/lightui/music.go:1115
 msgid "Playlist"
 msgstr ""
 
-#: internal/lightui/pass.go:348
+#: internal/lightui/pass.go:347
 msgid "A password store: a folder with a .gpg-id"
 msgstr ""
 
-#: internal/lightui/pass.go:356
+#: internal/lightui/pass.go:355
 msgid "%s is not a password store: it has no .gpg-id (pass init makes one)."
 msgstr ""
 
-#: internal/lightui/pass.go:376
+#: internal/lightui/pass.go:375
 msgid "No password store. pass init YOUR-GPG-KEY-ID makes one in ~/.password-store; another folder can be added below."
 msgstr ""
 
-#: internal/lightui/pass.go:403
+#: internal/lightui/pass.go:402
 msgid "The store is empty. + makes an entry."
 msgstr ""
 
-#: internal/lightui/pass.go:406
-#: internal/lightui/pass.go:805
-#: internal/lightui/pass.go:877
-#: internal/lightui/pass.go:1136
+#: internal/lightui/pass.go:405
+#: internal/lightui/pass.go:804
+#: internal/lightui/pass.go:876
+#: internal/lightui/pass.go:1135
 msgid "Choose an entry."
 msgstr ""
 
-#: internal/lightui/pass.go:412
+#: internal/lightui/pass.go:411
 msgid "Top level"
 msgstr ""
 
-#: internal/lightui/pass.go:420
-#: internal/ui/settings.go:916
-#: internal/ui/settings.go:943
+#: internal/lightui/pass.go:419
+#: internal/ui/settings.go:905
+#: internal/ui/settings.go:932
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/pass.go:425
+#: internal/lightui/pass.go:424
 msgid "Right-click to rename or move"
 msgstr ""
 
-#: internal/lightui/pass.go:488
-#: internal/ui/passwords.go:487
+#: internal/lightui/pass.go:487
+#: internal/ui/passwords.go:488
 msgid "Nothing matches. Each word is looked for in the whole path."
 msgstr ""
 
-#: internal/lightui/pass.go:490
+#: internal/lightui/pass.go:489
 msgid "And %d more: another word narrows them."
 msgid_plural "And %d more: another word narrows them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/pass.go:636
+#: internal/lightui/pass.go:635
 msgid "Decrypting %s"
 msgstr ""
 
-#: internal/lightui/pass.go:692
+#: internal/lightui/pass.go:691
 #: internal/lightui/pass_otp.go:188
 msgid "Replace the one-time code"
 msgstr ""
 
-#: internal/lightui/pass.go:694
+#: internal/lightui/pass.go:693
 #: internal/lightui/pass_otp.go:191
 #: ui/pass.ui:230
 #: ui/pass.ui:670
 msgid "Add a one-time code"
 msgstr ""
 
-#: internal/lightui/pass.go:699
-#: internal/ui/passwords.go:560
+#: internal/lightui/pass.go:698
+#: internal/ui/passwords.go:561
 msgid "USERNAME"
 msgstr ""
 
-#: internal/lightui/pass.go:702
-#: internal/ui/passwords.go:563
+#: internal/lightui/pass.go:701
+#: internal/ui/passwords.go:564
 msgid "PASSWORD"
 msgstr ""
 
-#: internal/lightui/pass.go:707
-#: internal/lightui/pass.go:759
-#: internal/ui/passwords.go:566
-#: internal/ui/passwords.go:569
+#: internal/lightui/pass.go:706
+#: internal/lightui/pass.go:758
+#: internal/ui/passwords.go:567
+#: internal/ui/passwords.go:570
 #: ui/pass.ui:802
 msgid "ONE-TIME CODE"
 msgstr ""
 
-#: internal/lightui/pass.go:714
-#: internal/ui/passwords.go:576
+#: internal/lightui/pass.go:713
+#: internal/ui/passwords.go:577
 msgid "NOTES"
 msgstr ""
 
-#: internal/lightui/pass.go:743
+#: internal/lightui/pass.go:742
 #: internal/mailui/formatted.go:184
 #: internal/term/desktop/desktop_linux.go:43
-#: internal/ui/passwords.go:643
+#: internal/ui/passwords.go:644
 #: internal/vmui/window.go:2709
 #: internal/vmui/window.go:2710
 msgid "Show"
 msgstr ""
 
-#: internal/lightui/pass.go:745
+#: internal/lightui/pass.go:744
 #: internal/ui/notify.go:410
-#: internal/ui/passwords.go:641
+#: internal/ui/passwords.go:642
 msgid "Hide"
 msgstr ""
 
-#: internal/lightui/pass.go:788
+#: internal/lightui/pass.go:787
 #: internal/lightui/pass_otp.go:246
-#: internal/ui/passwords.go:660
+#: internal/ui/passwords.go:661
 msgid "%d second left"
 msgid_plural "%d seconds left"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/pass.go:933
+#: internal/lightui/pass.go:932
 msgid "Rename or move the category “%s”"
 msgstr ""
 
-#: internal/lightui/pass.go:934
+#: internal/lightui/pass.go:933
 msgid "Its new path. Another name renames it; a path under another category moves it there, with all its entries."
 msgstr ""
 
-#: internal/lightui/pass.go:935
-#: internal/lightui/pass.go:939
+#: internal/lightui/pass.go:934
+#: internal/lightui/pass.go:938
 #: internal/term/web/strings.go:65
 msgid "Move"
 msgstr ""
 
-#: internal/lightui/pass.go:937
+#: internal/lightui/pass.go:936
 msgid "Rename or move “%s”"
 msgstr ""
 
-#: internal/lightui/pass.go:938
+#: internal/lightui/pass.go:937
 msgid "Its new path. The first part is its category: change it to move the entry, the rest to rename it."
 msgstr ""
 
-#: internal/lightui/pass.go:941
+#: internal/lightui/pass.go:940
 #: ui/pass.ui:137
 msgid "New entry"
 msgstr ""
 
-#: internal/lightui/pass.go:942
+#: internal/lightui/pass.go:941
 msgid "Its path: the first part is its category. Its content comes next."
 msgstr ""
 
-#: internal/lightui/pass.go:947
+#: internal/lightui/pass.go:946
 #: internal/termui/guide.go:163
 #: ui/vm.ui:3289
 msgid "Next"
 msgstr ""
 
-#: internal/lightui/pass.go:949
+#: internal/lightui/pass.go:948
 msgid "Delete “%s”?"
 msgstr ""
 
-#: internal/lightui/pass.go:950
+#: internal/lightui/pass.go:949
 msgid "pass removes its file; a git store keeps it in its history."
 msgstr ""
 
-#: internal/lightui/pass.go:986
-#: internal/lightui/pass.go:1016
+#: internal/lightui/pass.go:985
+#: internal/lightui/pass.go:1015
 #: internal/mailui/reader.go:549
 #: internal/mailui/reader.go:794
 #: internal/viewerui/app.go:805
 msgid "FILE"
 msgstr ""
 
-#: internal/lightui/pass.go:1012
+#: internal/lightui/pass.go:1011
 msgid "CATEGORY"
 msgstr ""
 
-#: internal/lightui/pass.go:1026
+#: internal/lightui/pass.go:1025
 msgid "and %d more"
 msgid_plural "and %d more"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/pass.go:1070
+#: internal/lightui/pass.go:1069
 msgid "That is where it is."
 msgstr ""
 
-#: internal/lightui/pass.go:1072
+#: internal/lightui/pass.go:1071
 msgid "A category cannot move into itself."
 msgstr ""
 
-#: internal/lightui/pass.go:1074
+#: internal/lightui/pass.go:1073
 msgid "That path is already in the store."
 msgstr ""
 
-#: internal/lightui/pass.go:1076
+#: internal/lightui/pass.go:1075
 msgid "It is no longer in the store."
 msgstr ""
 
-#: internal/lightui/pass.go:1078
+#: internal/lightui/pass.go:1077
 msgid "Each part of the path needs a name, without a leading dot."
 msgstr ""
 
-#: internal/lightui/pass.go:1185
+#: internal/lightui/pass.go:1184
 msgid "TRUSTED APPS"
 msgstr ""
 
-#: internal/lightui/pass.go:1185
+#: internal/lightui/pass.go:1184
 #: internal/lightui/workshop_manager.go:50
 #: internal/ui/settings_keyring.go:551
 msgid "%d app"
@@ -9400,18 +9527,18 @@ msgid_plural "%d apps"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/pass.go:1187
+#: internal/lightui/pass.go:1186
 msgid "None: an app reading it is asked about first."
 msgstr ""
 
-#: internal/lightui/pass.go:1193
+#: internal/lightui/pass.go:1192
 #: internal/ui/askpass.go:405
 #: internal/ui/settings_keyring.go:624
 msgid "Flatpak: %s"
 msgstr ""
 
-#: internal/lightui/pass.go:1198
-#: internal/lightui/pass.go:1220
+#: internal/lightui/pass.go:1197
+#: internal/lightui/pass.go:1219
 #: internal/ui/settings_keyring.go:469
 #: internal/ui/settings_keyring.go:477
 #: internal/ui/settings_keyring.go:629
@@ -9419,51 +9546,51 @@ msgstr ""
 msgid "%s · %s"
 msgstr ""
 
-#: internal/lightui/pass.go:1205
+#: internal/lightui/pass.go:1204
 #: internal/ui/settings_keyring.go:649
 msgid "Stop trusting it: it is asked about at its next read"
 msgstr ""
 
-#: internal/lightui/pass.go:1210
+#: internal/lightui/pass.go:1209
 msgid "LAST READS"
 msgstr ""
 
-#: internal/lightui/pass.go:1212
+#: internal/lightui/pass.go:1211
 msgid "No app has read it yet."
 msgstr ""
 
-#: internal/lightui/pass.go:1218
+#: internal/lightui/pass.go:1217
 msgid "%s · %d times"
 msgid_plural "%s · %d times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/pass.go:1230
+#: internal/lightui/pass.go:1229
 #: internal/ui/settings_keyring.go:694
 msgid "trusted"
 msgstr ""
 
-#: internal/lightui/pass.go:1232
+#: internal/lightui/pass.go:1231
 #: internal/ui/settings_keyring.go:696
 msgid "allowed once"
 msgstr ""
 
-#: internal/lightui/pass.go:1234
+#: internal/lightui/pass.go:1233
 #: internal/ui/settings_keyring.go:698
 msgid "allowed, and trusted from now on"
 msgstr ""
 
-#: internal/lightui/pass.go:1236
+#: internal/lightui/pass.go:1235
 #: internal/ui/settings_keyring.go:700
 msgid "denied"
 msgstr ""
 
-#: internal/lightui/pass.go:1238
+#: internal/lightui/pass.go:1237
 #: internal/ui/settings_keyring.go:702
 msgid "allowed: no one to ask"
 msgstr ""
 
-#: internal/lightui/pass.go:1240
+#: internal/lightui/pass.go:1239
 msgid "read"
 msgstr ""
 
@@ -9473,7 +9600,7 @@ msgstr ""
 
 #: internal/lightui/pass_otp.go:192
 #: internal/lightui/workshop_manager.go:88
-#: internal/ui/widgets.go:936
+#: internal/ui/widgets.go:950
 #: ui/connect.ui:967
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -9505,531 +9632,531 @@ msgstr ""
 msgid "Reading the QR code…"
 msgstr ""
 
-#: internal/lightui/stocks.go:277
+#: internal/lightui/stocks.go:275
 msgid "Search for a symbol to add it."
 msgstr ""
 
-#: internal/lightui/stocks.go:284
+#: internal/lightui/stocks.go:282
 #: internal/mailui/window.go:990
 msgid "Loading %s…"
 msgstr ""
 
-#: internal/lightui/stocks.go:297
+#: internal/lightui/stocks.go:295
 msgid "%s could not be read.\n%s"
 msgstr ""
 
-#: internal/lightui/stocks.go:320
+#: internal/lightui/stocks.go:318
 msgid "Previous close"
 msgstr ""
 
-#: internal/lightui/stocks.go:322
+#: internal/lightui/stocks.go:320
 msgid "Range start"
 msgstr ""
 
-#: internal/lightui/stocks.go:325
+#: internal/lightui/stocks.go:323
 #: internal/ui/settings_ai.go:100
 msgid "High"
 msgstr ""
 
-#: internal/lightui/stocks.go:325
+#: internal/lightui/stocks.go:323
 #: internal/ui/settings_ai.go:100
 msgid "Low"
 msgstr ""
 
-#: internal/lightui/stocks.go:331
+#: internal/lightui/stocks.go:329
 msgid "As of %s"
 msgstr ""
 
-#: internal/lightui/stocks.go:331
+#: internal/lightui/stocks.go:329
 msgid "Jan 2, 15:04"
 msgstr ""
 
-#: internal/lightui/stocks.go:407
+#: internal/lightui/stocks.go:405
 msgid "Nothing by that name"
 msgstr ""
 
-#: internal/lightui/stocks.go:409
-#: internal/lightui/weather.go:475
+#: internal/lightui/stocks.go:407
+#: internal/lightui/weather.go:473
 msgid "Could not search: %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:55
-#: internal/lightui/sysmon.go:55
+#: internal/lightui/sysmon.go:54
+#: internal/lightui/sysmon.go:54
 #: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
-#: internal/ui/dock.go:487
+#: internal/ui/dock.go:532
 #: internal/ui/portal_ask.go:80
 msgid "Quit"
 msgstr ""
 
-#: internal/lightui/sysmon.go:55
+#: internal/lightui/sysmon.go:54
 msgid "Asks it to quit. It can save its work first."
 msgstr ""
 
-#: internal/lightui/sysmon.go:56
-#: internal/lightui/sysmon.go:56
+#: internal/lightui/sysmon.go:55
+#: internal/lightui/sysmon.go:55
 msgid "Interrupt"
 msgstr ""
 
-#: internal/lightui/sysmon.go:56
+#: internal/lightui/sysmon.go:55
 msgid "As Ctrl+C in a terminal."
 msgstr ""
 
-#: internal/lightui/sysmon.go:57
-#: internal/lightui/sysmon.go:57
+#: internal/lightui/sysmon.go:56
+#: internal/lightui/sysmon.go:56
 msgid "Hang Up"
 msgstr ""
 
-#: internal/lightui/sysmon.go:57
+#: internal/lightui/sysmon.go:56
 msgid "As closing its terminal. Many services reload instead."
 msgstr ""
 
-#: internal/lightui/sysmon.go:58
+#: internal/lightui/sysmon.go:57
 msgid "Stops it running until it is resumed."
 msgstr ""
 
-#: internal/lightui/sysmon.go:59
-#: internal/lightui/sysmon.go:59
+#: internal/lightui/sysmon.go:58
+#: internal/lightui/sysmon.go:58
 msgid "Force Quit"
 msgstr ""
 
-#: internal/lightui/sysmon.go:59
+#: internal/lightui/sysmon.go:58
 msgid "Ends it at once. Work it has not saved is lost."
 msgstr ""
 
-#: internal/lightui/sysmon.go:60
+#: internal/lightui/sysmon.go:59
 msgid "Quit with Children"
 msgstr ""
 
+#: internal/lightui/sysmon.go:59
 #: internal/lightui/sysmon.go:60
-#: internal/lightui/sysmon.go:61
 msgid "Quit All"
 msgstr ""
 
-#: internal/lightui/sysmon.go:61
+#: internal/lightui/sysmon.go:60
 msgid "Quit All by Name"
 msgstr ""
 
-#: internal/lightui/sysmon.go:145
-#: internal/lightui/sysmon.go:728
+#: internal/lightui/sysmon.go:144
+#: internal/lightui/sysmon.go:726
 #: ui/sysmon.ui:84
 msgid "CPU"
 msgstr ""
 
-#: internal/lightui/sysmon.go:147
-#: internal/lightui/sysmon.go:728
-#: internal/lightui/sysmon.go:789
-#: internal/lightui/sysmon.go:993
+#: internal/lightui/sysmon.go:146
+#: internal/lightui/sysmon.go:726
+#: internal/lightui/sysmon.go:787
+#: internal/lightui/sysmon.go:991
 msgid "MEMORY"
 msgstr ""
 
-#: internal/lightui/sysmon.go:149
+#: internal/lightui/sysmon.go:148
 msgid "GPU"
 msgstr ""
 
-#: internal/lightui/sysmon.go:151
-#: internal/lightui/sysmon.go:1039
+#: internal/lightui/sysmon.go:150
+#: internal/lightui/sysmon.go:1037
 #: internal/shell/dock.go:286
 #: internal/shell/dock.go:329
 msgid "NETWORK"
 msgstr ""
 
-#: internal/lightui/sysmon.go:152
+#: internal/lightui/sysmon.go:151
 #: internal/ui/settings_card.go:526
 msgid "DISK"
 msgstr ""
 
-#: internal/lightui/sysmon.go:154
+#: internal/lightui/sysmon.go:153
 msgid "BATTERY"
 msgstr ""
 
-#: internal/lightui/sysmon.go:395
+#: internal/lightui/sysmon.go:393
 msgid "%d threads"
 msgstr ""
 
-#: internal/lightui/sysmon.go:400
+#: internal/lightui/sysmon.go:398
 msgid "load %.2f %.2f %.2f"
 msgstr ""
 
-#: internal/lightui/sysmon.go:410
+#: internal/lightui/sysmon.go:408
 msgid "CPU %d: %.0f%%"
 msgstr ""
 
-#: internal/lightui/sysmon.go:419
+#: internal/lightui/sysmon.go:417
 msgid "of %s · cache %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:421
+#: internal/lightui/sysmon.go:419
 msgid " · swap %s of %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:436
+#: internal/lightui/sysmon.go:434
 msgid " · video memory %s of %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:448
+#: internal/lightui/sysmon.go:446
 msgid "↑ %s · received %s, sent %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:455
+#: internal/lightui/sysmon.go:453
 msgid "of %s on / · %s free"
 msgstr ""
 
-#: internal/lightui/sysmon.go:457
+#: internal/lightui/sysmon.go:455
 msgid " · read %s · write %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:473
+#: internal/lightui/sysmon.go:471
 msgid "health %.0f%%"
 msgstr ""
 
-#: internal/lightui/sysmon.go:478
+#: internal/lightui/sysmon.go:476
 msgid "UP %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:540
+#: internal/lightui/sysmon.go:538
 msgid "%d PROCESSES"
 msgstr ""
 
-#: internal/lightui/sysmon.go:542
+#: internal/lightui/sysmon.go:540
 msgid "%d OF %d PROCESSES"
 msgstr ""
 
-#: internal/lightui/sysmon.go:546
+#: internal/lightui/sysmon.go:544
 msgid "No process matches."
 msgstr ""
 
-#: internal/lightui/sysmon.go:582
+#: internal/lightui/sysmon.go:580
 msgid "Details and the ways to end %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:610
+#: internal/lightui/sysmon.go:608
 msgid "Not sent: an administrator's password is needed."
 msgstr ""
 
-#: internal/lightui/sysmon.go:654
+#: internal/lightui/sysmon.go:652
 msgid "Process %d has ended."
 msgstr ""
 
-#: internal/lightui/sysmon.go:728
+#: internal/lightui/sysmon.go:726
 msgid "THREADS"
 msgstr ""
 
-#: internal/lightui/sysmon.go:744
+#: internal/lightui/sysmon.go:742
 msgid "END OR PAUSE"
 msgstr ""
 
-#: internal/lightui/sysmon.go:785
+#: internal/lightui/sysmon.go:783
 msgid "PROCESS"
 msgstr ""
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Parent"
 msgstr ""
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "State"
 msgstr ""
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Started"
 msgstr ""
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "CPU time"
 msgstr ""
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Priority"
 msgstr ""
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Unit"
 msgstr ""
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Resident"
 msgstr ""
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Private"
 msgstr ""
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Shared"
 msgstr ""
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Swapped out"
 msgstr ""
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Peak"
 msgstr ""
 
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 msgid "Command"
 msgstr ""
 
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 msgid "Disk read"
 msgstr ""
 
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 msgid "Disk written"
 msgstr ""
 
-#: internal/lightui/sysmon.go:808
+#: internal/lightui/sysmon.go:806
 msgid "PID %d · %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:810
+#: internal/lightui/sysmon.go:808
 msgid "PID %d · ENDED"
 msgstr ""
 
-#: internal/lightui/sysmon.go:821
-#: internal/lightui/sysmon.go:1104
-#: internal/lightui/sysmon.go:1111
+#: internal/lightui/sysmon.go:819
+#: internal/lightui/sysmon.go:1102
+#: internal/lightui/sysmon.go:1109
 msgid "Not readable: not your process"
 msgstr ""
 
-#: internal/lightui/sysmon.go:844
+#: internal/lightui/sysmon.go:842
 msgid "%s · %s ago"
 msgstr ""
 
-#: internal/lightui/sysmon.go:844
+#: internal/lightui/sysmon.go:842
 #: internal/ui/settings_keyring.go:298
 msgid "Jan 2 15:04:05"
 msgstr ""
 
-#: internal/lightui/sysmon.go:847
+#: internal/lightui/sysmon.go:845
 msgid "nice %d"
 msgstr ""
 
-#: internal/lightui/sysmon.go:871
+#: internal/lightui/sysmon.go:869
 msgid "It is paused. Lets it go on."
 msgstr ""
 
-#: internal/lightui/sysmon.go:875
+#: internal/lightui/sysmon.go:873
 msgid "Also its %d child process, the youngest first."
 msgid_plural "Also its %d child processes, the youngest first."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/sysmon.go:878
+#: internal/lightui/sysmon.go:876
 msgid "All %d processes named %s."
 msgstr ""
 
-#: internal/lightui/sysmon.go:900
+#: internal/lightui/sysmon.go:898
 msgid "This process has ended."
 msgstr ""
 
-#: internal/lightui/sysmon.go:931
+#: internal/lightui/sysmon.go:929
 msgid "Asked %s to quit."
 msgstr ""
 
-#: internal/lightui/sysmon.go:933
+#: internal/lightui/sysmon.go:931
 msgid "Interrupted %s."
 msgstr ""
 
-#: internal/lightui/sysmon.go:935
+#: internal/lightui/sysmon.go:933
 msgid "Hung up on %s."
 msgstr ""
 
-#: internal/lightui/sysmon.go:937
+#: internal/lightui/sysmon.go:935
 msgid "Ended %s."
 msgstr ""
 
-#: internal/lightui/sysmon.go:939
+#: internal/lightui/sysmon.go:937
 msgid "Paused %s."
 msgstr ""
 
-#: internal/lightui/sysmon.go:941
+#: internal/lightui/sysmon.go:939
 msgid "Resumed %s."
 msgstr ""
 
-#: internal/lightui/sysmon.go:945
+#: internal/lightui/sysmon.go:943
 msgid "Asked %s and its %d child to quit."
 msgid_plural "Asked %s and its %d children to quit."
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/sysmon.go:948
+#: internal/lightui/sysmon.go:946
 msgid "Asked %d processes named %s to quit."
 msgstr ""
 
-#: internal/lightui/sysmon.go:966
+#: internal/lightui/sysmon.go:964
 msgid "COMPUTER"
 msgstr ""
 
-#: internal/lightui/sysmon.go:967
-#: internal/lightui/sysmon.go:979
+#: internal/lightui/sysmon.go:965
+#: internal/lightui/sysmon.go:977
 #: internal/shell/cardterm.go:113
 #: internal/ui/settings_ai.go:497
 msgid "Model"
 msgstr ""
 
-#: internal/lightui/sysmon.go:970
+#: internal/lightui/sysmon.go:968
 #: internal/shell/cardterm.go:136
 msgid "Kernel"
 msgstr ""
 
-#: internal/lightui/sysmon.go:973
+#: internal/lightui/sysmon.go:971
 msgid "%s · since %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:975
+#: internal/lightui/sysmon.go:973
 msgid "Up"
 msgstr ""
 
-#: internal/lightui/sysmon.go:978
+#: internal/lightui/sysmon.go:976
 msgid "PROCESSOR"
 msgstr ""
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "Cores"
 msgstr ""
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "%s, %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "%d core"
 msgid_plural "%d cores"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "%d thread"
 msgid_plural "%d threads"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/lightui/sysmon.go:983
+#: internal/lightui/sysmon.go:981
 msgid "up to %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:986
+#: internal/lightui/sysmon.go:984
 msgid "now %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:989
+#: internal/lightui/sysmon.go:987
 msgid "Speed"
 msgstr ""
 
-#: internal/lightui/sysmon.go:994
+#: internal/lightui/sysmon.go:992
 #: internal/lightui/workshop_manager.go:50
 msgid "Installed"
 msgstr ""
 
-#: internal/lightui/sysmon.go:995
+#: internal/lightui/sysmon.go:993
 #: internal/ui/voice_models.go:152
 msgid "In use"
 msgstr ""
 
-#: internal/lightui/sysmon.go:996
+#: internal/lightui/sysmon.go:994
 msgid "Cache"
 msgstr ""
 
-#: internal/lightui/sysmon.go:996
+#: internal/lightui/sysmon.go:994
 msgid "%s · given back when needed"
 msgstr ""
 
-#: internal/lightui/sysmon.go:999
+#: internal/lightui/sysmon.go:997
 msgid "Swap"
 msgstr ""
 
-#: internal/lightui/sysmon.go:999
-#: internal/lightui/sysmon.go:1011
-#: internal/lightui/sysmon.go:1025
+#: internal/lightui/sysmon.go:997
+#: internal/lightui/sysmon.go:1009
+#: internal/lightui/sysmon.go:1023
 msgid "%s of %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1003
+#: internal/lightui/sysmon.go:1001
 msgid "GRAPHICS"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1005
-#: internal/ui/voice_page.go:204
+#: internal/lightui/sysmon.go:1003
+#: internal/ui/voice_page.go:200
 msgid "Card"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1006
+#: internal/lightui/sysmon.go:1004
 msgid "Driver"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1008
+#: internal/lightui/sysmon.go:1006
 msgid "Busy"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1011
+#: internal/lightui/sysmon.go:1009
 msgid "Video memory"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1017
+#: internal/lightui/sysmon.go:1015
 msgid "STORAGE"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1041
+#: internal/lightui/sysmon.go:1039
 msgid "wired"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1043
+#: internal/lightui/sysmon.go:1041
 #: ui/control.ui:273
 #: ui/settings.ui:5128
 #: ui/settings.ui:5204
 msgid "Wi-Fi"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1045
+#: internal/lightui/sysmon.go:1043
 msgid "down"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1047
+#: internal/lightui/sysmon.go:1045
 msgid "up"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1051
-#: internal/lightui/tailscale.go:634
+#: internal/lightui/sysmon.go:1049
+#: internal/lightui/tailscale.go:633
 msgid "Addresses"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1054
+#: internal/lightui/sysmon.go:1052
 msgid "Hardware"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1057
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:571
+#: internal/lightui/sysmon.go:1055
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:570
 msgid "Traffic"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1057
+#: internal/lightui/sysmon.go:1055
 msgid "received %s · sent %s"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1063
+#: internal/lightui/sysmon.go:1061
 msgid "SENSORS"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1082
+#: internal/lightui/sysmon.go:1080
 msgid "Charging"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1082
+#: internal/lightui/sysmon.go:1080
 msgid "Discharging"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1082
+#: internal/lightui/sysmon.go:1080
 msgid "Full"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1083
+#: internal/lightui/sysmon.go:1081
 msgid "Not charging"
 msgstr ""
 
-#: internal/lightui/sysmon.go:1090
+#: internal/lightui/sysmon.go:1088
 msgid "%.1f s"
 msgstr ""
 
@@ -10093,388 +10220,388 @@ msgstr ""
 msgid "%s off."
 msgstr ""
 
-#: internal/lightui/tailscale.go:305
+#: internal/lightui/tailscale.go:304
 msgid "Not changed: allow this app to manage Tailscale first."
 msgstr ""
 
-#: internal/lightui/tailscale.go:307
+#: internal/lightui/tailscale.go:306
 msgid "Tailscale is not running."
 msgstr ""
 
-#: internal/lightui/tailscale.go:349
+#: internal/lightui/tailscale.go:348
 #: internal/shell/status.go:99
 #: internal/shell/status.go:116
 #: internal/shell/status.go:131
 msgid "Unavailable"
 msgstr ""
 
-#: internal/lightui/tailscale.go:360
+#: internal/lightui/tailscale.go:359
 msgid "%d of %d devices online"
 msgstr ""
 
-#: internal/lightui/tailscale.go:373
+#: internal/lightui/tailscale.go:372
 msgid "Tailscale's service is not running."
 msgstr ""
 
-#: internal/lightui/tailscale.go:373
+#: internal/lightui/tailscale.go:372
 msgid "Start…"
 msgstr ""
 
-#: internal/lightui/tailscale.go:374
+#: internal/lightui/tailscale.go:373
 msgid "Started Tailscale."
 msgstr ""
 
-#: internal/lightui/tailscale.go:378
+#: internal/lightui/tailscale.go:377
 msgid "This device is logged out of its tailnet."
 msgstr ""
 
-#: internal/lightui/tailscale.go:378
+#: internal/lightui/tailscale.go:377
 msgid "Log In"
 msgstr ""
 
-#: internal/lightui/tailscale.go:381
+#: internal/lightui/tailscale.go:380
 msgid "An admin of the tailnet has to approve this device."
 msgstr ""
 
-#: internal/lightui/tailscale.go:381
-#: internal/lightui/tailscale.go:668
+#: internal/lightui/tailscale.go:380
+#: internal/lightui/tailscale.go:667
 msgid "Admin Console"
 msgstr ""
 
-#: internal/lightui/tailscale.go:384
+#: internal/lightui/tailscale.go:383
 msgid "To change Tailscale from here, allow it once; it asks for an administrator's password."
 msgstr ""
 
-#: internal/lightui/tailscale.go:384
+#: internal/lightui/tailscale.go:383
 msgid "Allow…"
 msgstr ""
 
-#: internal/lightui/tailscale.go:386
+#: internal/lightui/tailscale.go:385
 msgid "This app may now manage Tailscale."
 msgstr ""
 
-#: internal/lightui/tailscale.go:418
+#: internal/lightui/tailscale.go:417
 msgid "No device matches."
 msgstr ""
 
-#: internal/lightui/tailscale.go:420
+#: internal/lightui/tailscale.go:419
 msgid "No other devices in the tailnet yet."
 msgstr ""
 
-#: internal/lightui/tailscale.go:437
+#: internal/lightui/tailscale.go:436
 msgid "exit node in use"
 msgstr ""
 
-#: internal/lightui/tailscale.go:439
+#: internal/lightui/tailscale.go:438
 msgid "exit node"
 msgstr ""
 
-#: internal/lightui/tailscale.go:449
+#: internal/lightui/tailscale.go:448
 msgid "Details, ping, exit node and sending files"
 msgstr ""
 
-#: internal/lightui/tailscale.go:509
+#: internal/lightui/tailscale.go:508
 msgid "Copy IP"
 msgstr ""
 
-#: internal/lightui/tailscale.go:509
+#: internal/lightui/tailscale.go:508
 msgid "Copy Name"
 msgstr ""
 
-#: internal/lightui/tailscale.go:509
+#: internal/lightui/tailscale.go:508
 #: ui/connect.ui:622
 msgid "Ping"
 msgstr ""
 
-#: internal/lightui/tailscale.go:517
-#: internal/lightui/tailscale.go:579
+#: internal/lightui/tailscale.go:516
+#: internal/lightui/tailscale.go:578
 msgid "Use as Exit Node"
 msgstr ""
 
-#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:525
 msgid "DEVICE"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:565
-#: internal/lightui/tailscale.go:633
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:564
+#: internal/lightui/tailscale.go:632
 msgid "MagicDNS"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:566
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:565
 msgid "IPv4"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:567
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:566
 msgid "IPv6"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:569
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:568
 msgid "Status"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:570
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:569
 #: internal/term/web/strings.go:32
 msgid "Connection"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:572
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:571
 msgid "Key expires"
 msgstr ""
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:573
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:572
 msgid "Tags"
 msgstr ""
 
-#: internal/lightui/tailscale.go:530
+#: internal/lightui/tailscale.go:529
 msgid "SEND FILES"
 msgstr ""
 
-#: internal/lightui/tailscale.go:546
+#: internal/lightui/tailscale.go:545
 msgid "NO LONGER IN THE TAILNET"
 msgstr ""
 
-#: internal/lightui/tailscale.go:568
+#: internal/lightui/tailscale.go:567
 msgid "%s · host name %s"
 msgstr ""
 
-#: internal/lightui/tailscale.go:574
+#: internal/lightui/tailscale.go:573
 msgid "Drop files on this panel to send them to %s with Taildrop. They wait on it until saved."
 msgstr ""
 
-#: internal/lightui/tailscale.go:577
+#: internal/lightui/tailscale.go:576
 msgid "Stop Using as Exit Node"
 msgstr ""
 
-#: internal/lightui/tailscale.go:586
+#: internal/lightui/tailscale.go:585
 msgid "SEND THIS DEVICE'S TRAFFIC THROUGH"
 msgstr ""
 
-#: internal/lightui/tailscale.go:596
+#: internal/lightui/tailscale.go:595
 msgid "IN USE"
 msgstr ""
 
-#: internal/lightui/tailscale.go:603
+#: internal/lightui/tailscale.go:602
 #: internal/termui/prefs.go:345
 #: internal/ui/settings_ai.go:272
 #: internal/ui/settings_keyring.go:572
 #: internal/ui/shortcuts.go:150
-#: internal/ui/voice_page.go:314
+#: internal/ui/voice_page.go:302
 msgid "None"
 msgstr ""
 
-#: internal/lightui/tailscale.go:603
+#: internal/lightui/tailscale.go:602
 msgid "Traffic goes out from this device as usual."
 msgstr ""
 
-#: internal/lightui/tailscale.go:611
+#: internal/lightui/tailscale.go:610
 msgid "No device in the tailnet offers to be an exit node. Turn on Offer as Exit Node on one, then approve it in the admin console."
 msgstr ""
 
-#: internal/lightui/tailscale.go:618
+#: internal/lightui/tailscale.go:617
 msgid "Allow local network access"
 msgstr ""
 
-#: internal/lightui/tailscale.go:619
+#: internal/lightui/tailscale.go:618
 msgid "Reach printers and other devices on this network while the exit node carries the rest."
 msgstr ""
 
-#: internal/lightui/tailscale.go:630
+#: internal/lightui/tailscale.go:629
 #: ui/tailscale.ui:170
 msgid "THIS DEVICE"
 msgstr ""
 
-#: internal/lightui/tailscale.go:637
+#: internal/lightui/tailscale.go:636
 msgid "Tailnet"
 msgstr ""
 
-#: internal/lightui/tailscale.go:639
+#: internal/lightui/tailscale.go:638
 msgid "SETTINGS"
 msgstr ""
 
-#: internal/lightui/tailscale.go:648
+#: internal/lightui/tailscale.go:647
 msgid "RECEIVED FILES"
 msgstr ""
 
-#: internal/lightui/tailscale.go:651
+#: internal/lightui/tailscale.go:650
 msgid "Files sent to this device show here once this app may manage Tailscale."
 msgstr ""
 
-#: internal/lightui/tailscale.go:655
+#: internal/lightui/tailscale.go:654
 msgid "None waiting. Files other devices send with Taildrop show here."
 msgstr ""
 
-#: internal/lightui/tailscale.go:660
+#: internal/lightui/tailscale.go:659
 msgid "Save to Downloads"
 msgstr ""
 
-#: internal/lightui/tailscale.go:663
+#: internal/lightui/tailscale.go:662
 msgid "ACCOUNT"
 msgstr ""
 
-#: internal/lightui/tailscale.go:664
+#: internal/lightui/tailscale.go:663
 #: internal/shell/commands.go:31
 msgid "Log Out"
 msgstr ""
 
-#: internal/lightui/tailscale.go:666
+#: internal/lightui/tailscale.go:665
 msgid "Sure?"
 msgstr ""
 
-#: internal/lightui/tailscale.go:751
+#: internal/lightui/tailscale.go:750
 msgid "No exit node: traffic goes out from this device."
 msgstr ""
 
-#: internal/lightui/tailscale.go:753
-#: internal/lightui/tailscale.go:764
+#: internal/lightui/tailscale.go:752
+#: internal/lightui/tailscale.go:763
 msgid "Traffic now goes through %s."
 msgstr ""
 
-#: internal/lightui/tailscale.go:762
+#: internal/lightui/tailscale.go:761
 msgid "Stopped using %s as exit node."
 msgstr ""
 
-#: internal/lightui/tailscale.go:784
+#: internal/lightui/tailscale.go:783
 msgid "Logged out."
 msgstr ""
 
-#: internal/lightui/tailscale.go:807
+#: internal/lightui/tailscale.go:806
 msgid "Pinging %s…"
 msgstr ""
 
-#: internal/lightui/tailscale.go:821
+#: internal/lightui/tailscale.go:820
 msgid "%s did not answer"
 msgstr ""
 
-#: internal/lightui/tailscale.go:824
+#: internal/lightui/tailscale.go:823
 msgid "%s answered in %.0f ms"
 msgstr ""
 
-#: internal/lightui/tailscale.go:825
+#: internal/lightui/tailscale.go:824
 msgid "Direct, %s"
 msgstr ""
 
-#: internal/lightui/tailscale.go:827
+#: internal/lightui/tailscale.go:826
 msgid "Relayed through %s"
 msgstr ""
 
-#: internal/lightui/tailscale.go:843
+#: internal/lightui/tailscale.go:842
 msgid "Sending %s to %s…"
 msgstr ""
 
-#: internal/lightui/tailscale.go:868
+#: internal/lightui/tailscale.go:867
 msgid "Sent %s to %s."
 msgstr ""
 
-#: internal/lightui/tailscale.go:905
+#: internal/lightui/tailscale.go:904
 msgid "Saved %s to %s."
 msgstr ""
 
-#: internal/lightui/tailscale.go:916
+#: internal/lightui/tailscale.go:915
 msgid "Opening the login page…"
 msgstr ""
 
-#: internal/lightui/tailscale.go:943
+#: internal/lightui/tailscale.go:942
 msgid "No password prompt is running in this session (a polkit agent); run in a terminal: sudo %s"
 msgstr ""
 
-#: internal/lightui/tailscale.go:945
+#: internal/lightui/tailscale.go:944
 msgid "not done: no administrator's password was given"
 msgstr ""
 
-#: internal/lightui/video.go:307
+#: internal/lightui/video.go:306
 msgid "Resumed at %s"
 msgstr ""
 
-#: internal/lightui/video.go:396
+#: internal/lightui/video.go:395
 msgid "Playing a video"
 msgstr ""
 
-#: internal/lightui/video.go:419
+#: internal/lightui/video.go:418
 msgid "Cannot play it: %s"
 msgstr ""
 
-#: internal/lightui/video.go:577
+#: internal/lightui/video.go:576
 msgid "Speed %s×"
 msgstr ""
 
-#: internal/lightui/video.go:686
+#: internal/lightui/video.go:685
 msgid "Open a video"
 msgstr ""
 
-#: internal/lightui/video.go:694
+#: internal/lightui/video.go:693
 msgid "Videos"
 msgstr ""
 
-#: internal/lightui/weather.go:258
+#: internal/lightui/weather.go:256
 msgid "Add a city to see its weather."
 msgstr ""
 
-#: internal/lightui/weather.go:258
+#: internal/lightui/weather.go:256
 #: ui/clock.ui:122
 #: ui/weather.ui:95
 msgid "Add a city"
 msgstr ""
 
-#: internal/lightui/weather.go:264
+#: internal/lightui/weather.go:262
 msgid "Reading the weather…"
 msgstr ""
 
-#: internal/lightui/weather.go:276
+#: internal/lightui/weather.go:274
 msgid "The weather could not be read.\n%s"
 msgstr ""
 
-#: internal/lightui/weather.go:276
+#: internal/lightui/weather.go:274
 #: internal/mailui/panel.go:307
-#: internal/ui/passwords.go:533
+#: internal/ui/passwords.go:534
 #: ui/mail-compose.ui:456
 #: ui/pass.ui:375
 msgid "Try again"
 msgstr ""
 
-#: internal/lightui/weather.go:325
+#: internal/lightui/weather.go:323
 msgid "H %s   L %s"
 msgstr ""
 
-#: internal/lightui/weather.go:334
+#: internal/lightui/weather.go:332
 msgid "NOW"
 msgstr ""
 
-#: internal/lightui/weather.go:397
+#: internal/lightui/weather.go:395
 msgid "FEELS LIKE"
 msgstr ""
 
-#: internal/lightui/weather.go:398
+#: internal/lightui/weather.go:396
 msgid "HUMIDITY"
 msgstr ""
 
-#: internal/lightui/weather.go:399
+#: internal/lightui/weather.go:397
 msgid "WIND"
 msgstr ""
 
-#: internal/lightui/weather.go:400
+#: internal/lightui/weather.go:398
 msgid "RAIN"
 msgstr ""
 
-#: internal/lightui/weather.go:405
+#: internal/lightui/weather.go:403
 msgid "SUNRISE"
 msgstr ""
 
-#: internal/lightui/weather.go:406
+#: internal/lightui/weather.go:404
 msgid "SUNSET"
 msgstr ""
 
-#: internal/lightui/weather.go:428
+#: internal/lightui/weather.go:426
 msgid "UPDATED %s · OPEN-METEO"
 msgstr ""
 
-#: internal/lightui/weather.go:473
+#: internal/lightui/weather.go:471
 msgid "No place by that name"
 msgstr ""
 
@@ -10483,35 +10610,35 @@ msgstr ""
 msgid "Workshop"
 msgstr ""
 
-#: internal/lightui/workshop.go:210
+#: internal/lightui/workshop.go:209
 msgid "Starting %s…"
 msgstr ""
 
-#: internal/lightui/workshop.go:223
+#: internal/lightui/workshop.go:222
 msgid "%s could not start"
 msgstr ""
 
-#: internal/lightui/workshop.go:234
+#: internal/lightui/workshop.go:233
 msgid "It ended without an error."
 msgstr ""
 
-#: internal/lightui/workshop.go:238
+#: internal/lightui/workshop.go:237
 msgid "%s stopped"
 msgstr ""
 
-#: internal/lightui/workshop.go:289
+#: internal/lightui/workshop.go:288
 msgid "Start again"
 msgstr ""
 
-#: internal/lightui/workshop.go:295
+#: internal/lightui/workshop.go:294
 msgid "It starts again by itself when a file of it changes."
 msgstr ""
 
-#: internal/lightui/workshop.go:690
+#: internal/lightui/workshop.go:689
 msgid "Unknown building block %q"
 msgstr ""
 
-#: internal/lightui/workshop.go:988
+#: internal/lightui/workshop.go:987
 #: internal/term/web/strings.go:81
 #: internal/ui/askpass.go:300
 #: internal/ui/settings_card.go:624
@@ -10617,7 +10744,7 @@ msgid "Replace the installed %s?"
 msgstr ""
 
 #: internal/lightui/workshop_manager.go:154
-#: internal/ui/voice_page.go:189
+#: internal/ui/voice_page.go:185
 #: ui/vm.ui:1283
 msgid "Install"
 msgstr ""
@@ -11908,8 +12035,8 @@ msgid "SMTP server"
 msgstr ""
 
 #: internal/mailui/welcome.go:589
-#: internal/ui/voice_page.go:201
-#: internal/ui/voice_page.go:230
+#: internal/ui/voice_page.go:197
+#: internal/ui/voice_page.go:226
 msgid "Change"
 msgstr ""
 
@@ -11985,7 +12112,7 @@ msgid "Fetching your mail"
 msgstr ""
 
 #: internal/mailui/welcome.go:726
-#: internal/ui/voice_page.go:383
+#: internal/ui/voice_page.go:363
 msgid "Ready"
 msgstr ""
 
@@ -12606,7 +12733,7 @@ msgid "%d thr"
 msgstr ""
 
 #: internal/shell/cardterm.go:136
-#: internal/ui/settings.go:585
+#: internal/ui/settings.go:574
 msgid "Desktop"
 msgstr ""
 
@@ -12907,7 +13034,7 @@ msgid "[WINDOWS]"
 msgstr ""
 
 #: internal/shell/launcher.go:50
-#: internal/ui/widgets.go:633
+#: internal/ui/widgets.go:600
 msgid "[APPS]"
 msgstr ""
 
@@ -12965,22 +13092,22 @@ msgid "%s · workspace %s"
 msgstr ""
 
 #: internal/shell/launcher_actions.go:33
-#: internal/ui/dock.go:478
+#: internal/ui/dock.go:523
 msgid "New Window"
 msgstr ""
 
 #: internal/shell/launcher_actions.go:39
-#: internal/ui/dock.go:481
+#: internal/ui/dock.go:526
 msgid "Remove from Dock"
 msgstr ""
 
 #: internal/shell/launcher_actions.go:41
-#: internal/ui/dock.go:483
+#: internal/ui/dock.go:528
 msgid "Keep in Dock"
 msgstr ""
 
 #: internal/shell/launcher_actions.go:47
-#: internal/ui/dock.go:489
+#: internal/ui/dock.go:534
 msgid "Quit (%d windows)"
 msgstr ""
 
@@ -13070,7 +13197,7 @@ msgstr ""
 
 #: internal/shell/status.go:48
 #: internal/ui/dictation.go:156
-#: internal/ui/voice_page.go:381
+#: internal/ui/voice_page.go:361
 #: ui/assistant.ui:172
 msgid "Transcribing…"
 msgstr ""
@@ -13307,7 +13434,7 @@ msgstr ""
 
 #: internal/term/settings/settings.go:122
 #: internal/term/web/strings.go:90
-#: internal/termui/keys.go:370
+#: internal/termui/keys.go:395
 msgid "Rename the session"
 msgstr ""
 
@@ -13852,7 +13979,7 @@ msgid "Command palette"
 msgstr ""
 
 #: internal/termui/headmenu.go:117
-#: internal/termui/prefsweb.go:41
+#: internal/termui/prefsweb.go:42
 msgid "WEB TERMINAL"
 msgstr ""
 
@@ -13890,20 +14017,28 @@ msgstr ""
 msgid "On, but not running"
 msgstr ""
 
-#: internal/termui/keys.go:257
-#: internal/termui/wsmenu.go:136
+#: internal/termui/keys.go:275
+msgid "Close pane?"
+msgstr ""
+
+#: internal/termui/keys.go:276
+msgid "A program may still be running. Closing the pane ends it."
+msgstr ""
+
+#: internal/termui/keys.go:278
+#: internal/termui/wsmenu.go:113
 msgid "Close %s?"
 msgstr ""
 
-#: internal/termui/keys.go:258
+#: internal/termui/keys.go:279
 msgid "It is working on “%s”; closing the pane ends it."
 msgstr ""
 
-#: internal/termui/keys.go:260
+#: internal/termui/keys.go:281
 msgid "It is waiting for you: %s. Closing the pane ends it."
 msgstr ""
 
-#: internal/termui/keys.go:301
+#: internal/termui/keys.go:326
 msgid "Choose the workspace's folder"
 msgstr ""
 
@@ -14106,7 +14241,7 @@ msgstr ""
 
 #: internal/termui/prefs.go:182
 #: internal/ui/notify.go:324
-#: ui/bar.ui:155
+#: ui/bar.ui:147
 #: ui/settings.ui:3325
 msgid "Notifications"
 msgstr ""
@@ -14156,51 +14291,43 @@ msgstr ""
 msgid "%s was %s's; that one has no keys now."
 msgstr ""
 
-#: internal/termui/prefsweb.go:41
+#: internal/termui/prefsweb.go:42
 msgid "The terminals in a browser, a phone's over Tailscale"
 msgstr ""
 
-#: internal/termui/prefsweb.go:55
+#: internal/termui/prefsweb.go:56
 msgid "Web Terminal"
 msgstr ""
 
-#: internal/termui/prefsweb.go:55
+#: internal/termui/prefsweb.go:56
 msgid "Serve the terminals to a browser; it starts again at login while on"
 msgstr ""
 
-#: internal/termui/prefsweb.go:59
-msgid "no address: is Tailscale up?"
-msgstr ""
-
-#: internal/termui/prefsweb.go:64
+#: internal/termui/prefsweb.go:65
 msgid "This computer only"
 msgstr ""
 
-#: internal/termui/prefsweb.go:80
+#: internal/termui/prefsweb.go:81
 msgid "Tailscale: on this computer's Tailscale address, for a phone on the tailnet"
 msgstr ""
 
-#: internal/termui/prefsweb.go:98
+#: internal/termui/prefsweb.go:99
 msgid "New link"
 msgstr ""
 
-#: internal/termui/prefsweb.go:104
+#: internal/termui/prefsweb.go:105
 msgid "Link"
 msgstr ""
 
-#: internal/termui/prefsweb.go:104
+#: internal/termui/prefsweb.go:105
 msgid "Open it on the phone; New link stops the old one working"
 msgstr ""
 
-#: internal/termui/prefsweb.go:149
+#: internal/termui/prefsweb.go:150
 msgid "The link's token could be kept neither in the keyring nor in a file."
 msgstr ""
 
-#: internal/termui/prefsweb.go:151
-msgid "This computer has no Tailscale address: is Tailscale up? (tailscale up)"
-msgstr ""
-
-#: internal/termui/prefsweb.go:153
+#: internal/termui/prefsweb.go:154
 msgid "The Web Terminal did not start in time."
 msgstr ""
 
@@ -14213,7 +14340,7 @@ msgid "Every program in the panes ends. The sessions come back, each pane's last
 msgstr ""
 
 #: internal/termui/restart.go:34
-#: internal/termui/wsmenu.go:141
+#: internal/termui/wsmenu.go:118
 msgid "%d agent is working or waiting for you."
 msgid_plural "%d agents are working or waiting for you."
 msgstr[0] ""
@@ -14241,25 +14368,25 @@ msgstr ""
 msgid "%s, a worktree of %s\nBranch %s"
 msgstr ""
 
-#: internal/termui/wsmenu.go:82
+#: internal/termui/wsmenu.go:70
 msgid "Close…"
 msgstr ""
 
-#: internal/termui/wsmenu.go:114
+#: internal/termui/wsmenu.go:91
 msgid "Rename the workspace"
 msgstr ""
 
-#: internal/termui/wsmenu.go:137
+#: internal/termui/wsmenu.go:114
 msgid "Its %s and %s end, and every program running in them quits."
 msgstr ""
 
-#: internal/termui/wsmenu.go:138
+#: internal/termui/wsmenu.go:115
 msgid "%d session"
 msgid_plural "%d sessions"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/termui/wsmenu.go:139
+#: internal/termui/wsmenu.go:116
 msgid "%d pane"
 msgid_plural "%d panes"
 msgstr[0] ""
@@ -14270,32 +14397,32 @@ msgid "inua calendar"
 msgstr ""
 
 #: internal/ui/agenda.go:227
-#: internal/ui/widgets.go:978
+#: internal/ui/widgets.go:992
 msgid "%s · WK %d"
 msgstr ""
 
 #: internal/ui/agenda.go:335
-#: internal/ui/widgets.go:1058
+#: internal/ui/widgets.go:1072
 msgid "Add a place in Weather to see it here"
 msgstr ""
 
 #: internal/ui/agenda.go:346
-#: internal/ui/widgets.go:1064
+#: internal/ui/widgets.go:1078
 msgid "No forecast: offline?"
 msgstr ""
 
 #: internal/ui/agenda.go:348
-#: internal/ui/widgets.go:1062
+#: internal/ui/widgets.go:1076
 msgid "Reading the forecast…"
 msgstr ""
 
 #: internal/ui/agenda.go:356
-#: internal/ui/widgets.go:1071
+#: internal/ui/widgets.go:1085
 msgid "%s · feels %s"
 msgstr ""
 
 #: internal/ui/agenda.go:359
-#: internal/ui/widgets.go:1073
+#: internal/ui/widgets.go:1087
 msgid "H %s  L %s"
 msgstr ""
 
@@ -14503,11 +14630,11 @@ msgstr ""
 msgid "The passphrases do not match."
 msgstr ""
 
-#: internal/ui/bar.go:509
+#: internal/ui/bar.go:472
 msgid "Workspace %s"
 msgstr ""
 
-#: internal/ui/bar.go:522
+#: internal/ui/bar.go:485
 msgid "WORKSPACE"
 msgstr ""
 
@@ -14645,7 +14772,7 @@ msgid "Searching…"
 msgstr ""
 
 #: internal/ui/control_detail.go:214
-#: internal/ui/settings.go:584
+#: internal/ui/settings.go:573
 msgid "Devices"
 msgstr ""
 
@@ -14663,19 +14790,19 @@ msgstr ""
 msgid "No devices paired yet"
 msgstr ""
 
-#: internal/ui/drawer.go:215
-#: internal/ui/settings.go:586
-#: internal/ui/widgets.go:624
+#: internal/ui/drawer.go:217
+#: internal/ui/settings.go:575
+#: internal/ui/widgets.go:591
 #: ui/settings.ui:181
 #: ui/settings.ui:2054
 msgid "Apps"
 msgstr ""
 
-#: internal/ui/drawer.go:218
+#: internal/ui/drawer.go:220
 msgid "Workshop apps"
 msgstr ""
 
-#: internal/ui/drawer.go:321
+#: internal/ui/drawer.go:338
 msgid "The light apps are not installed (make install)."
 msgstr ""
 
@@ -14719,7 +14846,7 @@ msgstr ""
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr ""
 
-#: internal/ui/launcher.go:471
+#: internal/ui/launcher.go:516
 msgid "inua launcher"
 msgstr ""
 
@@ -14785,69 +14912,69 @@ msgstr ""
 msgid "Bluetooth off"
 msgstr ""
 
-#: internal/ui/overview.go:184
+#: internal/ui/overview.go:186
 msgid "restore focus"
 msgstr ""
 
-#: internal/ui/overview.go:295
+#: internal/ui/overview.go:297
 msgid "kill window"
 msgstr ""
 
-#: internal/ui/overview.go:430
+#: internal/ui/overview.go:432
 msgid "MRU: ON"
 msgstr ""
 
-#: internal/ui/overview.go:430
+#: internal/ui/overview.go:432
 msgid "MRU: OFF"
 msgstr ""
 
-#: internal/ui/overview.go:431
+#: internal/ui/overview.go:433
 msgid "This monitor"
 msgstr ""
 
-#: internal/ui/overview.go:431
+#: internal/ui/overview.go:433
 msgid "All monitors"
 msgstr ""
 
-#: internal/ui/overview.go:440
+#: internal/ui/overview.go:442
 msgid "FILTER"
 msgstr ""
 
-#: internal/ui/overview.go:442
+#: internal/ui/overview.go:444
 msgid "NO MATCHES"
 msgstr ""
 
-#: internal/ui/overview.go:444
+#: internal/ui/overview.go:446
 msgid "%d RESULT"
 msgid_plural "%d RESULTS"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/overview.go:472
+#: internal/ui/overview.go:479
 msgid "No workspaces"
 msgstr ""
 
-#: internal/ui/overview.go:474
+#: internal/ui/overview.go:481
 msgid "No matches"
 msgstr ""
 
-#: internal/ui/overview.go:593
+#: internal/ui/overview.go:601
 msgid "＋  New workspace"
 msgstr ""
 
-#: internal/ui/overview.go:895
+#: internal/ui/overview.go:927
 msgid "Filter by window title or app"
 msgstr ""
 
-#: internal/ui/overview.go:911
+#: internal/ui/overview.go:943
 msgid "TYPE TO FILTER WINDOWS"
 msgstr ""
 
-#: internal/ui/overview.go:924
+#: internal/ui/overview.go:956
 msgid "Type or / to filter windows   Esc · clear / close   Arrows / Tab · select   Middle click · close   Ctrl+Shift+X · kill   Drag · move"
 msgstr ""
 
-#: internal/ui/overview.go:968
+#: internal/ui/overview.go:1000
 msgid "inua overview"
 msgstr ""
 
@@ -14871,60 +14998,60 @@ msgstr ""
 msgid "position floating window"
 msgstr ""
 
-#: internal/ui/passwords.go:221
+#: internal/ui/passwords.go:222
 msgid "[PASSWORDS]"
 msgstr ""
 
-#: internal/ui/passwords.go:228
+#: internal/ui/passwords.go:229
 #: ui/pass.ui:38
 msgid "Search every entry"
 msgstr ""
 
-#: internal/ui/passwords.go:282
-#: ui/bar.ui:134
-#: ui/settings.ui:1427
+#: internal/ui/passwords.go:283
+#: ui/bar.ui:126
+#: ui/settings.ui:1384
 msgid "Passwords"
 msgstr ""
 
-#: internal/ui/passwords.go:483
+#: internal/ui/passwords.go:484
 msgid "No password store. pass init YOUR-GPG-KEY-ID makes one in ~/.password-store."
 msgstr ""
 
-#: internal/ui/passwords.go:485
+#: internal/ui/passwords.go:486
 msgid "%d entry · type to search · Escape to close"
 msgid_plural "%d entries · type to search · Escape to close"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/passwords.go:489
+#: internal/ui/passwords.go:490
 msgid "%d found, the first %d shown · another word narrows them"
 msgid_plural "%d found, the first %d shown · another word narrows them"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/passwords.go:491
+#: internal/ui/passwords.go:492
 msgid "%d found · Enter opens · Escape to close"
 msgid_plural "%d found · Enter opens · Escape to close"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/passwords.go:504
+#: internal/ui/passwords.go:505
 msgid "Back to the results"
 msgstr ""
 
-#: internal/ui/passwords.go:539
+#: internal/ui/passwords.go:540
 msgid "It could not be decrypted · Escape to close"
 msgstr ""
 
-#: internal/ui/passwords.go:547
+#: internal/ui/passwords.go:548
 msgid "Decrypting; gpg may ask for your passphrase."
 msgstr ""
 
-#: internal/ui/passwords.go:553
+#: internal/ui/passwords.go:554
 msgid "Escape to close"
 msgstr ""
 
-#: internal/ui/passwords.go:578
+#: internal/ui/passwords.go:579
 msgid "Copied secrets are cleared after %d seconds · Enter copies the password"
 msgstr ""
 
@@ -15045,121 +15172,121 @@ msgstr ""
 msgid "Screenshot taken"
 msgstr ""
 
-#: internal/ui/settings.go:332
+#: internal/ui/settings.go:320
 msgid "Not restarted: %s"
 msgstr ""
 
-#: internal/ui/settings.go:357
-#: internal/ui/settings.go:789
+#: internal/ui/settings.go:345
+#: internal/ui/settings.go:778
 msgid "%d px"
 msgstr ""
 
-#: internal/ui/settings.go:583
+#: internal/ui/settings.go:572
 msgid "Connections"
 msgstr ""
 
-#: internal/ui/settings.go:694
+#: internal/ui/settings.go:684
 msgid "%s · yours: right-click for more"
 msgstr ""
 
-#: internal/ui/settings.go:711
+#: internal/ui/settings.go:701
 msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
 msgstr ""
 
-#: internal/ui/settings.go:720
+#: internal/ui/settings.go:710
 msgid "Add Theme…"
 msgstr ""
 
-#: internal/ui/settings.go:821
+#: internal/ui/settings.go:810
 msgid "As the bar (%s)"
 msgstr ""
 
-#: internal/ui/settings.go:838
+#: internal/ui/settings.go:827
 msgid "inua objects"
 msgstr ""
 
-#: internal/ui/settings.go:839
+#: internal/ui/settings.go:828
 msgid "inua objects soft"
 msgstr ""
 
-#: internal/ui/settings.go:840
+#: internal/ui/settings.go:829
 msgid "inua objects flat"
 msgstr ""
 
-#: internal/ui/settings.go:848
+#: internal/ui/settings.go:837
 msgid "Phosphor"
 msgstr ""
 
-#: internal/ui/settings.go:848
-#: internal/ui/settings.go:849
+#: internal/ui/settings.go:837
+#: internal/ui/settings.go:838
 msgid "System theme"
 msgstr ""
 
-#: internal/ui/settings.go:849
+#: internal/ui/settings.go:838
 #: ui/settings.ui:545
 msgid "As the app style"
 msgstr ""
 
-#: internal/ui/settings.go:942
+#: internal/ui/settings.go:931
 msgid "%s (%s, %s) · %s"
 msgstr ""
 
-#: internal/ui/settings.go:944
+#: internal/ui/settings.go:933
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings.go:945
+#: internal/ui/settings.go:934
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] ""
 msgstr[1] ""
 
-#: internal/ui/settings.go:946
+#: internal/ui/settings.go:935
 msgid "%.1f KB"
 msgstr ""
 
-#: internal/ui/settings.go:1025
+#: internal/ui/settings.go:1014
 #: internal/ui/settings_apps.go:168
 #: internal/ui/settings_card.go:288
 #: internal/ui/settings_portals.go:177
 msgid "Not saved: %s"
 msgstr ""
 
-#: internal/ui/settings.go:1051
+#: internal/ui/settings.go:1040
 msgid "Choose a wallpaper"
 msgstr ""
 
-#: internal/ui/settings.go:1093
+#: internal/ui/settings.go:1082
 msgid "Off: another notification daemon can show them"
 msgstr ""
 
-#: internal/ui/settings.go:1095
+#: internal/ui/settings.go:1084
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr ""
 
-#: internal/ui/settings.go:1097
+#: internal/ui/settings.go:1086
 msgid "Waiting: another notification daemon is running"
 msgstr ""
 
-#: internal/ui/settings.go:1115
+#: internal/ui/settings.go:1105
 msgid "Nothing pinned"
 msgstr ""
 
-#: internal/ui/settings.go:1131
+#: internal/ui/settings.go:1121
 msgid "%s (not installed)"
 msgstr ""
 
-#: internal/ui/settings.go:1144
+#: internal/ui/settings.go:1134
 msgid "Move earlier"
 msgstr ""
 
-#: internal/ui/settings.go:1145
+#: internal/ui/settings.go:1135
 msgid "Move later"
 msgstr ""
 
-#: internal/ui/settings.go:1146
+#: internal/ui/settings.go:1136
 msgid "Remove from the dock"
 msgstr ""
 
@@ -15696,27 +15823,27 @@ msgstr ""
 msgid "Hyprland, with inua on top."
 msgstr ""
 
-#: internal/ui/settings_custom.go:108
+#: internal/ui/settings_custom.go:97
 msgid "Not moved to the trash: %s"
 msgstr ""
 
-#: internal/ui/settings_custom.go:131
+#: internal/ui/settings_custom.go:120
 msgid "Choose a theme"
 msgstr ""
 
-#: internal/ui/settings_custom.go:133
+#: internal/ui/settings_custom.go:122
 msgid "Themes (CSS)"
 msgstr ""
 
-#: internal/ui/settings_custom.go:172
+#: internal/ui/settings_custom.go:161
 msgid "Not added: the name %s is taken; rename the file or folder"
 msgstr ""
 
-#: internal/ui/settings_custom.go:174
+#: internal/ui/settings_custom.go:163
 msgid "Not added: a theme has @define-color lines with #rrggbb colours"
 msgstr ""
 
-#: internal/ui/settings_custom.go:176
+#: internal/ui/settings_custom.go:165
 #: internal/ui/settings_keyring.go:181
 msgid "Not added: %s"
 msgstr ""
@@ -15832,23 +15959,23 @@ msgstr ""
 msgid "%d × %d, %s Hz"
 msgstr ""
 
-#: internal/ui/settings_iconsets.go:54
+#: internal/ui/settings_iconsets.go:53
 msgid "%s · right-click to preview every icon"
 msgstr ""
 
-#: internal/ui/settings_iconsets.go:186
+#: internal/ui/settings_iconsets.go:179
 msgid "Preview All…"
 msgstr ""
 
-#: internal/ui/settings_iconsets.go:253
+#: internal/ui/settings_iconsets.go:243
 msgid "inua's apps"
 msgstr ""
 
-#: internal/ui/settings_iconsets.go:262
+#: internal/ui/settings_iconsets.go:252
 msgid "Other apps · %d"
 msgstr ""
 
-#: internal/ui/settings_iconsets.go:289
+#: internal/ui/settings_iconsets.go:279
 msgid "%s: every icon"
 msgstr ""
 
@@ -15958,7 +16085,7 @@ msgid "the dialog could not be shown"
 msgstr ""
 
 #: internal/ui/settings_keyring.go:383
-#: internal/ui/voice_page.go:377
+#: internal/ui/voice_page.go:357
 msgid "Looking…"
 msgstr ""
 
@@ -16221,7 +16348,7 @@ msgid "What apps record"
 msgstr ""
 
 #: internal/ui/settings_sound.go:95
-#: internal/ui/voice_page.go:212
+#: internal/ui/voice_page.go:208
 msgid "Microphone"
 msgstr ""
 
@@ -16243,7 +16370,7 @@ msgid "Test plays a sound on the left, then on the right"
 msgstr ""
 
 #: internal/ui/settings_sound.go:167
-#: internal/ui/voice_page.go:458
+#: internal/ui/voice_page.go:438
 msgid "PipeWire has no microphone"
 msgstr ""
 
@@ -16447,15 +16574,15 @@ msgstr ""
 msgid "Could not upgrade: %s"
 msgstr ""
 
-#: internal/ui/voice.go:206
+#: internal/ui/voice.go:209
 msgid "Dictation did not work"
 msgstr ""
 
-#: internal/ui/voice.go:252
-msgid "dictation types with wtype, which is not installed"
+#: internal/ui/voice.go:271
+msgid "dictation pastes with Hyprland, which is not running"
 msgstr ""
 
-#: internal/ui/voice.go:262
+#: internal/ui/voice.go:281
 msgid "no window has the focus to type into"
 msgstr ""
 
@@ -16544,7 +16671,7 @@ msgstr[1] ""
 
 #: internal/ui/voice_models.go:237
 #: internal/ui/voice_models.go:266
-#: internal/ui/voice_page.go:471
+#: internal/ui/voice_page.go:451
 msgid "Downloading…"
 msgstr ""
 
@@ -16560,254 +16687,242 @@ msgstr ""
 msgid "voxtype's other engines did not come: %s"
 msgstr ""
 
-#: internal/ui/voice_page.go:74
+#: internal/ui/voice_page.go:70
 msgid "At the top of your window"
 msgstr ""
 
-#: internal/ui/voice_page.go:74
+#: internal/ui/voice_page.go:70
 msgid "In the screen's corner"
 msgstr ""
 
-#: internal/ui/voice_page.go:74
+#: internal/ui/voice_page.go:70
 msgid "Off: the bar's microphone alone"
 msgstr ""
 
-#: internal/ui/voice_page.go:172
+#: internal/ui/voice_page.go:168
 msgid "DICTATION"
 msgstr ""
 
-#: internal/ui/voice_page.go:172
+#: internal/ui/voice_page.go:168
 msgid "Talk, and the words are typed where you are"
 msgstr ""
 
-#: internal/ui/voice_page.go:173
+#: internal/ui/voice_page.go:169
 msgid "A microphone in the bar, and a shortcut to talk"
 msgstr ""
 
-#: internal/ui/voice_page.go:188
+#: internal/ui/voice_page.go:184
 msgid "voxtype.io"
 msgstr ""
 
-#: internal/ui/voice_page.go:191
+#: internal/ui/voice_page.go:187
 msgid "AI Settings"
 msgstr ""
 
-#: internal/ui/voice_page.go:194
+#: internal/ui/voice_page.go:190
 msgid "Shortcut"
 msgstr ""
 
-#: internal/ui/voice_page.go:199
+#: internal/ui/voice_page.go:195
 msgid "Hold"
 msgstr ""
 
-#: internal/ui/voice_page.go:199
+#: internal/ui/voice_page.go:195
 msgid "Press"
 msgstr ""
 
-#: internal/ui/voice_page.go:204
+#: internal/ui/voice_page.go:200
 msgid "The waveform as you talk, then the words"
 msgstr ""
 
-#: internal/ui/voice_page.go:221
+#: internal/ui/voice_page.go:217
 msgid "ENGINE"
 msgstr ""
 
-#: internal/ui/voice_page.go:221
+#: internal/ui/voice_page.go:217
 msgid "What turns your speech into text"
 msgstr ""
 
-#: internal/ui/voice_page.go:223
+#: internal/ui/voice_page.go:219
 msgid "Runs"
 msgstr ""
 
-#: internal/ui/voice_page.go:225
+#: internal/ui/voice_page.go:221
 msgid "On this computer"
 msgstr ""
 
-#: internal/ui/voice_page.go:225
+#: internal/ui/voice_page.go:221
 msgid "With an AI profile"
 msgstr ""
 
-#: internal/ui/voice_page.go:228
+#: internal/ui/voice_page.go:224
 msgid "Profile"
 msgstr ""
 
-#: internal/ui/voice_page.go:233
-msgid "Typing"
-msgstr ""
-
-#: internal/ui/voice_page.go:323
+#: internal/ui/voice_page.go:311
 msgid "Hold it to talk; Escape drops what you said"
 msgstr ""
 
-#: internal/ui/voice_page.go:325
+#: internal/ui/voice_page.go:313
 msgid "Press it to start and again to end; Escape drops what you said"
 msgstr ""
 
-#: internal/ui/voice_page.go:332
+#: internal/ui/voice_page.go:320
 msgid "The recording goes to the AI profile's provider"
 msgstr ""
 
-#: internal/ui/voice_page.go:334
+#: internal/ui/voice_page.go:322
 msgid "voxtype turns it into text here; the recording stays on this computer"
 msgstr ""
 
-#: internal/ui/voice_page.go:345
-msgid "The words are typed where you are"
-msgstr ""
-
-#: internal/ui/voice_page.go:348
-msgid "The words are pasted where you are, and your clipboard put back; to have them typed, install wtype:"
-msgstr ""
-
-#: internal/ui/voice_page.go:364
+#: internal/ui/voice_page.go:344
 msgid "Installing voxtype…"
 msgstr ""
 
-#: internal/ui/voice_page.go:366
+#: internal/ui/voice_page.go:346
 msgid "No AI profile turns speech into text"
 msgstr ""
 
-#: internal/ui/voice_page.go:367
+#: internal/ui/voice_page.go:347
 msgid "Turn on Voice for a profile in Settings → AI, and choose it for Voice input"
 msgstr ""
 
-#: internal/ui/voice_page.go:369
+#: internal/ui/voice_page.go:349
 msgid "pw-cat is not installed"
 msgstr ""
 
-#: internal/ui/voice_page.go:370
+#: internal/ui/voice_page.go:350
 msgid "Dictation records with PipeWire's pw-cat: %s"
 msgstr ""
 
-#: internal/ui/voice_page.go:372
+#: internal/ui/voice_page.go:352
 msgid "voxtype is not installed"
 msgstr ""
 
-#: internal/ui/voice_page.go:373
+#: internal/ui/voice_page.go:353
 msgid "Install downloads voxtype %s and a speech model for your language from GitHub, about %d MB, and checks them before they run"
 msgstr ""
 
-#: internal/ui/voice_page.go:375
+#: internal/ui/voice_page.go:355
 msgid "voxtype is not running"
 msgstr ""
 
-#: internal/ui/voice_page.go:375
+#: internal/ui/voice_page.go:355
 msgid "It is installed; its service is stopped"
 msgstr ""
 
-#: internal/ui/voice_page.go:379
+#: internal/ui/voice_page.go:359
 msgid "Listening…"
 msgstr ""
 
-#: internal/ui/voice_page.go:379
+#: internal/ui/voice_page.go:359
 msgid "Escape drops what you said"
 msgstr ""
 
-#: internal/ui/voice_page.go:387
+#: internal/ui/voice_page.go:367
 msgid "Click the microphone in the bar, and talk"
 msgstr ""
 
-#: internal/ui/voice_page.go:389
+#: internal/ui/voice_page.go:369
 msgid "Hold %s, or click the microphone in the bar, and talk"
 msgstr ""
 
-#: internal/ui/voice_page.go:391
+#: internal/ui/voice_page.go:371
 msgid "Press %s, or click the microphone in the bar, and talk"
 msgstr ""
 
-#: internal/ui/voice_page.go:460
+#: internal/ui/voice_page.go:440
 msgid "The system's input, which dictation records from"
 msgstr ""
 
-#: internal/ui/voice_page.go:480
+#: internal/ui/voice_page.go:460
 msgid "Downloading voxtype %s… %s"
 msgstr ""
 
-#: internal/ui/voice_page.go:482
+#: internal/ui/voice_page.go:462
 msgid "Downloading a speech model… %s"
 msgstr ""
 
-#: internal/ui/voice_page.go:484
+#: internal/ui/voice_page.go:464
 msgid "Downloading a speech model…"
 msgstr ""
 
-#: internal/ui/voice_page.go:486
+#: internal/ui/voice_page.go:466
 msgid "Starting its service…"
 msgstr ""
 
-#: internal/ui/voice_page.go:496
+#: internal/ui/voice_page.go:476
 msgid "voxtype was not installed: %s"
 msgstr ""
 
-#: internal/ui/voice_page.go:514
+#: internal/ui/voice_page.go:494
 msgid "voxtype did not start: %s"
 msgstr ""
 
-#: internal/ui/widgets.go:156
+#: internal/ui/widgets.go:158
 msgid "Remove Widget"
 msgstr ""
 
-#: internal/ui/widgets.go:158
+#: internal/ui/widgets.go:160
 msgid "Remove from the Page"
 msgstr ""
 
-#: internal/ui/widgets.go:589
+#: internal/ui/widgets.go:564
 #: ui/bar.ui:40
 msgid "Engawa"
 msgstr ""
 
-#: internal/ui/widgets.go:623
+#: internal/ui/widgets.go:590
 msgid "Now Playing"
 msgstr ""
 
-#: internal/ui/widgets.go:629
+#: internal/ui/widgets.go:596
 msgid "[CLOCK]"
 msgstr ""
 
-#: internal/ui/widgets.go:630
+#: internal/ui/widgets.go:597
 #: ui/agenda.ui:46
 msgid "[CALENDAR]"
 msgstr ""
 
-#: internal/ui/widgets.go:631
+#: internal/ui/widgets.go:598
 msgid "[WEATHER]"
 msgstr ""
 
-#: internal/ui/widgets.go:632
+#: internal/ui/widgets.go:599
 msgid "[NOW PLAYING]"
 msgstr ""
 
-#: internal/ui/widgets.go:820
+#: internal/ui/widgets.go:834
 msgid "Open Clock"
 msgstr ""
 
-#: internal/ui/widgets.go:838
+#: internal/ui/widgets.go:852
 msgid "Open Calendar"
 msgstr ""
 
-#: internal/ui/widgets.go:873
+#: internal/ui/widgets.go:887
 #: ui/agenda.ui:116
 msgid "Open Weather"
 msgstr ""
 
-#: internal/ui/widgets.go:938
+#: internal/ui/widgets.go:952
 msgid "Add an app, or drag one here from the dock"
 msgstr ""
 
-#: internal/ui/widgets.go:1040
+#: internal/ui/widgets.go:1054
 msgid "Alarm %s %s · %s"
 msgstr ""
 
-#: internal/ui/widgets.go:1089
+#: internal/ui/widgets.go:1103
 msgid "A player that plays shows here"
 msgstr ""
 
-#: internal/ui/widgets.go:1123
+#: internal/ui/widgets.go:1137
 msgid "Search apps"
 msgstr ""
 
-#: internal/ui/widgets.go:1172
+#: internal/ui/widgets.go:1188
 msgid "No app by that name"
 msgstr ""
 
@@ -17786,11 +17901,11 @@ msgstr ""
 msgid "Discard the recording"
 msgstr ""
 
-#: ui/bar.ui:103
+#: ui/bar.ui:95
 msgid "Stop recording"
 msgstr ""
 
-#: ui/bar.ui:200
+#: ui/bar.ui:192
 msgid "Control Center"
 msgstr ""
 
@@ -18063,19 +18178,19 @@ msgstr ""
 msgid "Hide the sidebar (F9)"
 msgstr ""
 
-#: ui/files.ui:78
+#: ui/files.ui:79
 msgid "Hidden files (Ctrl+H)"
 msgstr ""
 
-#: ui/files.ui:88
+#: ui/files.ui:90
 msgid "Two panes (F3)"
 msgstr ""
 
-#: ui/files.ui:98
+#: ui/files.ui:101
 msgid "Details (Space)"
 msgstr ""
 
-#: ui/files.ui:113
+#: ui/files.ui:117
 msgid "Keys (Ctrl+?)"
 msgstr ""
 
@@ -18701,11 +18816,11 @@ msgid "<span alpha='55%'>[</span>THEME<span alpha='55%'>]</span>"
 msgstr ""
 
 #: ui/settings.ui:141
-msgid "The bar, launcher, control center and this window"
+msgid "The bar, the dock, the launcher and the control center"
 msgstr ""
 
 #: ui/settings.ui:190
-msgid "Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above"
+msgid "This window, Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above"
 msgstr ""
 
 #: ui/settings.ui:235
@@ -18917,39 +19032,39 @@ msgid "The focused window's title"
 msgstr ""
 
 #: ui/settings.ui:1341
-msgid "Global menu"
-msgstr ""
-
-#: ui/settings.ui:1350
-msgid "Experimental: the focused application's menus in the bar; click elsewhere to close them"
-msgstr ""
-
-#: ui/settings.ui:1384
 msgid "Tray icons"
 msgstr ""
 
-#: ui/settings.ui:1393
+#: ui/settings.ui:1350
 msgid "Status icons from apps"
 msgstr ""
 
-#: ui/settings.ui:1436
+#: ui/settings.ui:1393
 msgid "Search the password store and copy from it, when there is one"
 msgstr ""
 
-#: ui/settings.ui:1481
+#: ui/settings.ui:1438
 msgid "<span alpha='55%'>[</span>DOCK<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:1489
+#: ui/settings.ui:1446
 msgid "Apps along the chosen screen edge on each monitor"
 msgstr ""
 
-#: ui/settings.ui:1519
+#: ui/settings.ui:1476
 msgid "Show the dock"
 msgstr ""
 
-#: ui/settings.ui:1528
+#: ui/settings.ui:1485
 msgid "Pinned apps, then the others with open windows"
+msgstr ""
+
+#: ui/settings.ui:1519
+msgid "Show during workspace overview"
+msgstr ""
+
+#: ui/settings.ui:1528
+msgid "Keep the dock visible above the overview"
 msgstr ""
 
 #: ui/settings.ui:1562

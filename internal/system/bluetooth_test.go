@@ -11,6 +11,7 @@ import (
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/prop"
 
+	"github.com/lyricat/inua/internal/dbusexport"
 	"github.com/lyricat/inua/internal/dbustest"
 )
 
@@ -133,15 +134,15 @@ func newFakeBlueZ(t *testing.T, addr string) *fakeBlueZ {
 		"Discovering":  emitted(false),
 		"Alias":        {Value: "laptop"},
 	}})
-	if err := f.conn.Export(fakeAdapter{f}, hci0, bluezName+".Adapter1"); err != nil {
+	if err := dbusexport.Export(f.conn, fakeAdapter{f}, hci0, bluezName+".Adapter1"); err != nil {
 		t.Fatal(err)
 	}
-	if err := f.conn.Export(fakeAgentManager{f}, "/org/bluez", bluezName+".AgentManager1"); err != nil {
+	if err := dbusexport.Export(f.conn, fakeAgentManager{f}, "/org/bluez", bluezName+".AgentManager1"); err != nil {
 		t.Fatal(err)
 	}
 	f.add("/org/bluez/hci0/dev_AA", map[string]any{"Alias": "Headphones", "Name": "Headphones", "Icon": "audio-headphones", "Paired": true, "Connected": true}, -1)
 	f.add("/org/bluez/hci0/dev_BB", map[string]any{"Alias": "Keyboard", "Name": "Keyboard", "Icon": "input-keyboard", "Paired": true, "Connected": false}, 70)
-	if err := f.conn.Export(objectManager{f}, "/", "org.freedesktop.DBus.ObjectManager"); err != nil {
+	if err := dbusexport.Export(f.conn, objectManager{f}, "/", "org.freedesktop.DBus.ObjectManager"); err != nil {
 		t.Fatal(err)
 	}
 	return f
@@ -169,7 +170,7 @@ func (f *fakeBlueZ) add(path dbus.ObjectPath, props map[string]any, battery int)
 		m[bluezName+".Battery1"] = map[string]*prop.Prop{"Percentage": {Value: byte(battery)}}
 	}
 	d := &fakeDevice{props: export(f.t, f.conn, path, m), battery: battery >= 0}
-	if err := f.conn.Export(fakeDeviceMethods{f, path}, path, bluezName+".Device1"); err != nil {
+	if err := dbusexport.Export(f.conn, fakeDeviceMethods{f, path}, path, bluezName+".Device1"); err != nil {
 		f.t.Fatal(err)
 	}
 	f.mu.Lock()
@@ -357,10 +358,94 @@ func TestBluetoothNoAsker(t *testing.T) {
 	}
 }
 
+// fakeUPower is UPower with the devices it reports.
+type fakeUPower struct {
+	t    *testing.T
+	conn *dbus.Conn
+
+	mu      sync.Mutex
+	devices map[dbus.ObjectPath]*prop.Properties
+}
+
+func (u *fakeUPower) EnumerateDevices() ([]dbus.ObjectPath, *dbus.Error) {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	var paths []dbus.ObjectPath
+	for p := range u.devices {
+		paths = append(paths, p)
+	}
+	return paths, nil
+}
+
+func newFakeUPower(t *testing.T, addr string) *fakeUPower {
+	u := &fakeUPower{t: t, conn: service(t, addr, upowerName), devices: map[dbus.ObjectPath]*prop.Properties{}}
+	if err := dbusexport.ExportMethodTable(u.conn, map[string]any{"EnumerateDevices": u.EnumerateDevices}, "/org/freedesktop/UPower", upowerName); err != nil {
+		t.Fatal(err)
+	}
+	return u
+}
+
+// add makes a device with a serial and a level, and announces it.
+func (u *fakeUPower) add(name, serial string, percent float64) {
+	path := upowerDevices + "/" + dbus.ObjectPath(name)
+	p := export(u.t, u.conn, path, prop.Map{upowerName + ".Device": {
+		"Serial":     {Value: serial},
+		"Percentage": emitted(percent),
+		"UpdateTime": emitted(uint64(1)),
+	}})
+	u.mu.Lock()
+	u.devices[path] = p
+	u.mu.Unlock()
+	u.conn.Emit("/org/freedesktop/UPower", upowerName+".DeviceAdded", path)
+}
+
+func (u *fakeUPower) set(name, prop string, v any) {
+	u.mu.Lock()
+	p := u.devices[upowerDevices+"/"+dbus.ObjectPath(name)]
+	u.mu.Unlock()
+	p.SetMust(upowerName+".Device", prop, v)
+}
+
+// A connected device without BlueZ's level takes UPower's, matched by
+// address: the Magic Trackpad's, which the kernel's HID driver reports.
+func TestBluetoothUPowerLevels(t *testing.T) {
+	addr := dbustest.Start(t)
+	f := newFakeBlueZ(t, addr)
+	f.devices["/org/bluez/hci0/dev_BB"].props.SetMust(bluezName+".Device1", "Connected", true)
+	f.add("/org/bluez/hci0/dev_3C_BF_D7_89_7D_DF", map[string]any{"Address": "3C:BF:D7:89:7D:DF", "Alias": "Trackpad", "Name": "Trackpad", "Paired": true, "Connected": true}, -1)
+	u := newFakeUPower(t, addr)
+	u.add("battery_hid_3cobfod7o89o7dodf_battery", "3c:bf:d7:89:7d:df", 2.0)
+	u.add("keyboard_bb", "bb", 30.0)                                            // BlueZ has 70: BlueZ's wins
+	u.add("battery_hid_ffoffofffoffofffoff_battery", "ff:ff:ff:ff:ff:ff", 50.0) // no such device
+
+	b := NewBluetooth(dialer(addr))
+	got := newStates[BluetoothState]()
+	run(t, func(ctx context.Context) { b.Run(ctx, got.add) })
+	levels := func(s BluetoothState) map[string]int {
+		m := map[string]int{}
+		for _, d := range s.Devices {
+			m[d.Name] = d.Battery
+		}
+		return m
+	}
+	s := got.wait(t, "the trackpad's level", func(s BluetoothState) bool { return levels(s)["Trackpad"] == 2 })
+	if want := map[string]int{"Headphones": -1, "Keyboard": 70, "Trackpad": 2}; !reflect.DeepEqual(levels(s), want) {
+		t.Fatalf("levels %v, want %v", levels(s), want)
+	}
+
+	u.set("battery_hid_3cobfod7o89o7dodf_battery", "Percentage", 55.0)
+	got.wait(t, "the trackpad's new level", func(s BluetoothState) bool { return levels(s)["Trackpad"] == 55 })
+	u.add("headphones_aa", "aa", 40.0)
+	got.wait(t, "the headphones' level", func(s BluetoothState) bool { return levels(s)["Headphones"] == 40 })
+	if d, err := b.device("/org/bluez/hci0/dev_3C_BF_D7_89_7D_DF"); err != nil || d.Battery != 55 {
+		t.Errorf("device %+v, %v", d, err)
+	}
+}
+
 func TestBluetoothWithoutAdapter(t *testing.T) {
 	addr := dbustest.Start(t)
 	conn := service(t, addr, bluezName)
-	if err := conn.Export(emptyManager{}, "/", "org.freedesktop.DBus.ObjectManager"); err != nil {
+	if err := dbusexport.Export(conn, emptyManager{}, "/", "org.freedesktop.DBus.ObjectManager"); err != nil {
 		t.Fatal(err)
 	}
 	b := NewBluetooth(dialer(addr))
@@ -380,14 +465,23 @@ func (emptyManager) GetManagedObjects() (map[dbus.ObjectPath]map[string]map[stri
 	return map[dbus.ObjectPath]map[string]map[string]dbus.Variant{}, nil
 }
 
-func TestSignalOnly(t *testing.T) {
+func TestUnshown(t *testing.T) {
 	changed := func(props map[string]dbus.Variant) *dbus.Signal {
 		return &dbus.Signal{Name: propsIface + ".PropertiesChanged", Body: []any{bluezName + ".Device1", props, []string{}}}
 	}
-	if !signalOnly(changed(map[string]dbus.Variant{"RSSI": dbus.MakeVariant(int16(-60))})) {
+	if !unshown(changed(map[string]dbus.Variant{"RSSI": dbus.MakeVariant(int16(-60))})) {
 		t.Error("a signal strength change is read")
 	}
-	if signalOnly(changed(map[string]dbus.Variant{"RSSI": dbus.MakeVariant(int16(-60)), "Name": dbus.MakeVariant("Phone")})) {
+	if unshown(changed(map[string]dbus.Variant{"RSSI": dbus.MakeVariant(int16(-60)), "Name": dbus.MakeVariant("Phone")})) {
 		t.Error("a name change is ignored")
+	}
+	upower := func(props map[string]dbus.Variant) *dbus.Signal {
+		return &dbus.Signal{Name: propsIface + ".PropertiesChanged", Body: []any{upowerName + ".Device", props, []string{}}}
+	}
+	if !unshown(upower(map[string]dbus.Variant{"UpdateTime": dbus.MakeVariant(uint64(1))})) {
+		t.Error("a UPower device's update time is read")
+	}
+	if unshown(upower(map[string]dbus.Variant{"Percentage": dbus.MakeVariant(55.0)})) {
+		t.Error("a UPower device's level change is ignored")
 	}
 }

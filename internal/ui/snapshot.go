@@ -54,7 +54,7 @@ func (s *shellUI) snapshot(dir string) ([]string, error) {
 		}
 	}
 	if s.passwords.open {
-		if err := save("passwords", &s.passwords.win.Window); err != nil {
+		if err := save("passwords", s.passwords.win); err != nil {
 			return files, err
 		}
 	}

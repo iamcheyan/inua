@@ -14,12 +14,12 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"codeberg.org/puregotk/puregotk/v4/pango"
 	"github.com/makiuchi-d/gozxing"
-	"github.com/makiuchi-d/gozxing/qrcode"
 
 	"github.com/lyricat/inua/internal/assistant/answer"
 	"github.com/lyricat/inua/internal/games"
 	"github.com/lyricat/inua/internal/games/checkersai"
 	"github.com/lyricat/inua/internal/games/checkersnet"
+	"github.com/lyricat/inua/internal/games/gameai"
 	"github.com/lyricat/inua/internal/games/gamerelay"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
@@ -68,11 +68,7 @@ type checkers struct {
 	copyLink            *gtk.Button
 	onCopy              func(gtk.Button)
 	qrCanvas            *canvas
-	qr                  interface {
-		GetWidth() int
-		GetHeight() int
-		Get(x, y int) bool
-	}
+	qr                  *gozxing.BitMatrix
 
 	// The panel.
 	turn, code   gtk.Label
@@ -522,8 +518,13 @@ func (p *checkers) fill() {
 		p.rows = append(p.rows, r)
 	}
 	why := h.Why()
-	if why == "" && !h.HostLeads() && (h.Port() != 0 || p.pub != nil) {
-		why = i18n.T("No one plays at this screen: the first to join from a browser sets the game up, and may start it.")
+	if !h.HostLeads() && (h.Port() != 0 || p.pub != nil) {
+		if why == "" {
+			why = i18n.T("No one plays at this screen: the first to join from a browser sets the game up, and may start it.")
+		}
+		if p.aiState == aiUnknown {
+			defer p.checkAI(-1) // the visitor who sets it up may give seats to the AI
+		}
 	}
 	p.why.SetText(why)
 	p.start.SetSensitive(h.Why() == "")
@@ -606,9 +607,13 @@ func (p *checkers) setSeat(i, c int) {
 
 // checkAI starts the user's AI (inua-assistant --answer), then gives seat
 // its first profile; meanwhile, and if it cannot, the computer plays it.
+// With seat -1 it only starts the AI, for the visitor who sets the game up
+// to choose it.
 func (p *checkers) checkAI(seat int) {
 	if p.aiState == aiReady {
-		p.host.SetSeat(seat, checkersnet.AI, 0, p.ai.Profiles[0].Name, "")
+		if seat >= 0 {
+			p.host.SetSeat(seat, checkersnet.AI, 0, p.ai.Profiles[0].Name, "")
+		}
 		return
 	}
 	if p.aiState == aiChecking {
@@ -617,7 +622,9 @@ func (p *checkers) checkAI(seat int) {
 	p.aiState = aiChecking
 	p.fill()
 	go func() {
-		c, err := startAI()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		c, err := gameai.Start(ctx)
+		cancel()
 		if err == nil && len(c.Profiles) == 0 {
 			err = errors.New(i18n.T("no profile of Settings → AI makes decisions"))
 		}
@@ -635,7 +642,7 @@ func (p *checkers) checkAI(seat int) {
 			p.host.SetAI(func(ctx context.Context, profile, instructions, state string, options []string) (int, error) {
 				return c.Choose(ctx, profile, instructions, state, options)
 			}, names)
-			if p.host.Game == nil {
+			if p.host.Game == nil && seat >= 0 {
 				p.host.SetSeat(seat, checkersnet.AI, 0, names[0], "")
 			}
 			p.fill()
@@ -784,9 +791,7 @@ func (p *checkers) showLink() {
 	} else {
 		p.joinSub.SetText(i18n.T("Scan the code, or open the link in a browser on this network."))
 	}
-	if m, err := qrcode.NewQRCodeWriter().EncodeWithoutHint(urls[0], gozxing.BarcodeFormat_QR_CODE, 0, 0); err == nil {
-		p.qr = m
-	}
+	p.qr = qrOf(urls[0])
 	p.qrCanvas.redraw()
 	p.joinCode.SetText(p.host.Code)
 	// No hyphen where a link breaks: it would read as part of it.
@@ -796,25 +801,7 @@ func (p *checkers) showLink() {
 	p.linkMore.SetVisible(len(urls) > 1)
 }
 
-func (p *checkers) paintQR(pn pen) {
-	pn.Color(white)
-	pn.Rect(0, 0, ckQR, ckQR)
-	pn.Fill()
-	m := p.qr
-	if m == nil {
-		return
-	}
-	k := ckQR / float64(m.GetWidth())
-	pn.Color(color.NRGBA{0x1F, 0x1B, 0x17, 255})
-	for y := range m.GetHeight() {
-		for x := range m.GetWidth() {
-			if m.Get(x, y) {
-				pn.Rect(float64(x)*k, float64(y)*k, k+0.3, k+0.3)
-			}
-		}
-	}
-	pn.Fill()
-}
+func (p *checkers) paintQR(pn pen) { drawQR(pn, p.qr, ckQR) }
 
 // begin starts the game as set up.
 func (p *checkers) begin() {

@@ -2,7 +2,6 @@ package termui
 
 import (
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/gtkx"
@@ -20,7 +19,6 @@ type wsMenu struct {
 	id      int // the workspace the menu is for
 	onPress func(gtk.GestureClick, int32, float64, float64)
 	onKey   func(gtk.EventControllerKey, uint32, uint32, gdk.ModifierType) bool
-	onItem  func(gio.SimpleAction, uintptr)
 	onShut  func(gtk.Popover)
 }
 
@@ -46,15 +44,6 @@ func (c *columns) startMenu(a *App) {
 		}
 		return true
 	}
-	m.onItem = func(act gio.SimpleAction, _ uintptr) {
-		id := m.id
-		switch act.GetName() {
-		case "rename":
-			a.renameWorkspace(id)
-		case "close":
-			a.closeWorkspace(id)
-		}
-	}
 	m.onShut = func(p gtk.Popover) {
 		gtkx.Post(func() { p.Unparent() })
 	}
@@ -75,23 +64,11 @@ func (c *columns) menuRow(row *gtk.ListBoxRow) {
 func (c *columns) showMenu(a *App, w *gtk.Widget, i int, at *gdk.Rectangle) {
 	m := &c.rowMenu
 	m.id = c.rowIDs[i]
-	group := gio.NewSimpleActionGroup()
-	menu := gio.NewMenu()
-	for _, it := range []struct{ label, action string }{
-		{i18n.T("Rename…"), "rename"},
-		{i18n.T("Close…"), "close"},
-	} {
-		act := gio.NewSimpleAction(it.action, nil)
-		act.ConnectActivate(&m.onItem)
-		group.AddAction(act)
-		act.Unref()
-		menu.Append(it.label, "ws."+it.action)
-	}
-	w.InsertActionGroup("ws", group)
-	group.Unref()
-	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-	menu.Unref()
-	uikit.Menu(&pop.Popover, uikit.AtPointer)
+	id := m.id
+	pop := uikit.NewMenu([]uikit.Item{
+		{Label: i18n.T("Rename…"), Run: func() { a.renameWorkspace(id) }},
+		{Label: i18n.T("Close…"), Run: func() { a.closeWorkspace(id) }},
+	}, uikit.AtPointer)
 	pop.SetPosition(gtk.PosBottomValue)
 	if at != nil {
 		pop.SetPointingTo(at)

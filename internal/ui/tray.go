@@ -4,11 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
@@ -23,9 +21,9 @@ const trayIconSize = 16
 type tray struct {
 	host    *sni.Host
 	items   []sni.Item
-	paths   map[string]bool  // icon theme paths already added
-	menuKey string           // item whose menu is open
-	menu    *gtk.PopoverMenu // the open menu, borrowed from its parent
+	paths   map[string]bool // icon theme paths already added
+	menuKey string          // item whose menu is open
+	menu    *gtk.Popover    // the open menu, borrowed from its parent
 }
 
 // startTray serves the StatusNotifierWatcher (unless another process does)
@@ -93,14 +91,6 @@ func (s *shellUI) bindTrayHandlers() {
 				go func() { logErr("tray", s.tray.host.ContextMenu(key)) }()
 			}
 		}
-	}
-	s.onTrayMenuAction = func(a gio.SimpleAction, _ uintptr) {
-		id, err := strconv.Atoi(strings.TrimPrefix(a.GetName(), "i"))
-		if err != nil {
-			return
-		}
-		key := s.tray.menuKey
-		go func() { logErr("tray menu", s.tray.host.MenuClicked(key, int32(id))) }()
 	}
 	s.onTrayMenuClosed = func(p gtk.Popover) {
 		// Unparenting inside the signal is unsafe; the parent's reference
@@ -212,15 +202,8 @@ func (s *shellUI) showTrayMenu(key string, w *gtk.Widget) {
 			if !w.GetMapped() { // the tray was redrawn meanwhile
 				return
 			}
-			group := gio.NewSimpleActionGroup()
-			menu := s.buildMenu(entries, group)
-			w.InsertActionGroup("tray", group)
-			group.Unref()
 			s.tray.menuKey = key
-
-			pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-			menu.Unref()
-			uikit.Menu(&pop.Popover, uikit.Below)
+			pop := uikit.NewMenu(s.trayItems(key, entries), uikit.Below)
 			pop.SetParent(w)
 			pop.ConnectClosed(&s.onTrayMenuClosed)
 			pop.Unref() // the parent holds it now
@@ -230,56 +213,40 @@ func (s *shellUI) showTrayMenu(key string, w *gtk.Widget) {
 	}()
 }
 
-// buildMenu converts dbusmenu entries. Each enabled entry gets an action
-// "i<id>"; disabled ones point at a missing action, which GTK greys out.
-// Separators split the menu into sections.
-func (s *shellUI) buildMenu(entries []sni.MenuEntry, group *gio.SimpleActionGroup) *gio.Menu {
-	menu := gio.NewMenu()
-	section := gio.NewMenu()
-	flush := func() {
-		if section.GetNItems() > 0 {
-			item := gio.NewMenuItemSection("", &section.MenuModel)
-			item.SetAttributeValue("label", nil) // no section heading
-			menu.AppendItem(item)
-			item.Unref()
-		}
-		section.Unref()
-		section = gio.NewMenu()
-	}
+// trayItems turns dbusmenu entries into a menu's lines: a toggle's mark,
+// a submenu's lines, a hairline for a separator (none at either end or
+// twice); a disabled entry greys out.
+func (s *shellUI) trayItems(key string, entries []sni.MenuEntry) []uikit.Item {
+	var out []uikit.Item
 	for _, e := range entries {
 		if e.Separator {
-			flush()
+			if len(out) > 0 && !out[len(out)-1].Separator {
+				out = append(out, uikit.Item{Separator: true})
+			}
 			continue
 		}
-		label := e.Label
+		it := uikit.Item{Label: e.Label}
 		switch {
 		case e.Toggle == "checkmark" && e.Checked:
-			label = "✓  " + label
+			it.Mark = "check"
 		case e.Toggle == "radio" && e.Checked:
-			label = "●  " + label
+			it.Mark = "radio"
 		case e.Toggle != "":
-			label = "     " + label
+			it.Mark = "off"
 		}
-		if len(e.Children) > 0 {
-			sub := s.buildMenu(e.Children, group)
-			section.AppendSubmenu(label, &sub.MenuModel)
-			sub.Unref()
-			continue
+		switch {
+		case len(e.Children) > 0:
+			it.Items = s.trayItems(key, e.Children)
+		case e.Enabled:
+			id := e.ID
+			it.Run = func() { go func() { logErr("tray menu", s.tray.host.MenuClicked(key, id)) }() }
 		}
-		action := "i" + strconv.Itoa(int(e.ID))
-		if e.Enabled {
-			a := gio.NewSimpleAction(action, nil)
-			a.ConnectActivate(&s.onTrayMenuAction)
-			group.AddAction(a)
-			a.Unref()
-		} else {
-			action = "disabled"
-		}
-		section.Append(label, "tray."+action)
+		out = append(out, it)
 	}
-	flush()
-	section.Unref()
-	return menu
+	if len(out) > 0 && out[len(out)-1].Separator {
+		out = out[:len(out)-1]
+	}
+	return out
 }
 
 // trayMenu opens the menu of the n-th tray button on the first bar, as a

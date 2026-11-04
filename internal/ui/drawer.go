@@ -36,14 +36,16 @@ const drawerColumns = 6
 // assistant is on.
 const assistantApp = "io.github.lyricat.Inua.Assistant"
 
-// The drawers: inua's tools and light apps, and the workshop apps.
+// The drawers: inua's tools and light apps, the workshop apps, and an
+// app's menu (showDockMenu), which opens as they do.
 const (
 	drawerApps     = "apps"
 	drawerWorkshop = "workshop"
+	drawerMenu     = "menu"
 )
 
 type drawerPanel struct {
-	kind     string // drawerApps or drawerWorkshop
+	kind     string // drawerApps, drawerWorkshop or drawerMenu
 	bar      *bar   // whose dock it opened from
 	win      gtk.ApplicationWindow
 	backdrop *gtk.Box // borrowed from win
@@ -247,16 +249,31 @@ func (s *shellUI) toggleDrawer(b *bar, kind string) {
 			s.closeDrawer()
 			return
 		}
-		// The other drawer, or opened again while going: that one goes
-		// now.
+	}
+	s.dropDrawer()
+	d := b.dock
+	if d == nil {
+		return
+	}
+	button := d.drawer
+	if kind == drawerWorkshop {
+		button = d.workshop
+		s.freshenApps() // an app just installed: its desktop entry
+	}
+	if button == nil {
+		return
+	}
+	s.openDrawer(b, kind, &button.Widget, s.drawerContent(kind))
+}
+
+// dropDrawer takes the open drawer away at once: the other drawer, or
+// one opened again while going.
+func (s *shellUI) dropDrawer() {
+	if p := s.dockState.drawer; p != nil {
 		s.dockState.drawer = nil
 		p.bubble.forget()
 		p.win.Destroy()
 	}
-	if s.dockState.menu != nil {
-		s.dockState.menu.Popdown()
-	}
-	s.openDrawer(b, kind)
 }
 
 // drawerContent is the card: each group's title, then its apps in rows of
@@ -325,20 +342,10 @@ func (s *shellUI) drawerContent(kind string) *gtk.Box {
 	return content
 }
 
-// openDrawer opens the drawer beside its button, out of the dock.
-func (s *shellUI) openDrawer(b *bar, kind string) {
+// openDrawer opens a drawer of content beside its button, out of the
+// dock; it takes content's reference.
+func (s *shellUI) openDrawer(b *bar, kind string, button *gtk.Widget, content *gtk.Box) {
 	d := b.dock
-	if d == nil {
-		return
-	}
-	button := d.drawer
-	if kind == drawerWorkshop {
-		button = d.workshop
-		s.freshenApps() // an app just installed: its desktop entry
-	}
-	if button == nil {
-		return
-	}
 	p := &drawerPanel{kind: kind, bar: b, win: *gtk.NewApplicationWindow(s.app)}
 	p.win.AddCssClass("drawer-overlay")
 	backdrop := gtk.NewBox(gtk.OrientationVerticalValue, 0)
@@ -348,11 +355,13 @@ func (s *shellUI) openDrawer(b *bar, kind string) {
 	// the bar and the dock.
 	card := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	card.AddCssClass("drawer")
+	if kind == drawerMenu {
+		card.AddCssClass("dock-menu")
+	}
 	scroll := gtk.NewScrolledWindow()
 	scroll.SetPolicy(gtk.PolicyNeverValue, gtk.PolicyAutomaticValue)
 	scroll.SetPropagateNaturalWidth(true)
 	scroll.SetPropagateNaturalHeight(true)
-	content := s.drawerContent(kind)
 	scroll.SetChild(&content.Widget)
 	content.Unref()
 	gtkx.Append(card, &scroll.Widget)

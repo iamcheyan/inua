@@ -14,7 +14,6 @@ import (
 	"unsafe"
 
 	"codeberg.org/puregotk/puregotk/v4/gdk"
-	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gobject/types"
@@ -27,7 +26,6 @@ import (
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
-	"github.com/lyricat/inua/internal/uikit"
 	"github.com/lyricat/inua/internal/workshop"
 )
 
@@ -45,24 +43,26 @@ const (
 )
 
 type dock struct {
-	win      gtk.ApplicationWindow
-	root     gtk.Box
-	reveal   gtk.Revealer
-	island   gtk.Box
-	items    gtk.Box
-	edge     gtk.Box
-	refs     gtkx.Scope
-	shown    string                 // the apps and icons shown (dockSignature)
-	buttons  map[string]*dockButton // by app, borrowed from items
-	size     int
-	position string
-	gaps     bool // style.edge_gaps
-	vertical bool // apps stack along a vertical screen edge
-	hide     bool // autohide
-	hover    bool
-	hideGen  uintptr
-	drawer   *gtk.Button // the drawer's button, borrowed from items; nil without one
-	workshop *gtk.Button // the workshop drawer's, there while workshop apps are installed
+	win                 gtk.ApplicationWindow
+	root                gtk.Box
+	reveal              gtk.Revealer
+	island              gtk.Box
+	items               gtk.Box
+	edge                gtk.Box
+	refs                gtkx.Scope
+	shown               string                 // the apps and icons shown (dockSignature)
+	buttons             map[string]*dockButton // by app, borrowed from items
+	size                int
+	position            string
+	gaps                bool // style.edge_gaps
+	vertical            bool // apps stack along a vertical screen edge
+	hide                bool // autohide
+	hover               bool
+	hideGen             uintptr
+	overviewShown       bool
+	overviewWasRevealed bool
+	drawer              *gtk.Button // the drawer's button, borrowed from items; nil without one
+	workshop            *gtk.Button // the workshop drawer's, there while workshop apps are installed
 
 	// Dragging an app: its button is hidden while it is away, and the
 	// others move aside to leave a gap where it would land (see setGap).
@@ -86,8 +86,7 @@ type dockState struct {
 	apps       shell.AppIndex
 	items      []shell.DockItem
 	launching  map[string]bool // apps started from the dock, bouncing until a window shows
-	menuKey    string          // the app whose menu is open
-	menu       *gtk.Popover    // borrowed from its button
+	menuKey    string          // the app whose menu is open (drawerMenu)
 	gapTicking bool            // onDockGapTick is running
 	drawer     *drawerPanel    // the open drawer, nil when closed
 	programs   map[int]string  // /proc/PID/comm of windows' processes, by PID
@@ -110,6 +109,40 @@ func (s *shellUI) syncDock(b *bar) {
 	}
 	if b.dock != nil {
 		s.renderDock(b)
+	}
+}
+
+// syncOverviewDock temporarily raises the dock above the workspace overview.
+// Autohide state is restored when the overview closes.
+func (s *shellUI) syncOverviewDocks() {
+	for _, b := range s.bars {
+		s.syncOverviewDock(b)
+	}
+}
+
+func (s *shellUI) syncOverviewDock(b *bar) {
+	d := b.dock
+	if d == nil {
+		return
+	}
+	want := s.overview.st.Open && s.cfg.Overview.ShowDock
+	if want == d.overviewShown {
+		return
+	}
+	d.overviewShown = want
+	if want {
+		d.overviewWasRevealed = d.reveal.GetRevealChild()
+		layershell.SetLayer(d.win.GoPointer(), layershell.LayerOverlay)
+		if d.hide {
+			d.reveal.SetRevealChild(true)
+			fitDock(d)
+		}
+		return
+	}
+	layershell.SetLayer(d.win.GoPointer(), layershell.LayerTop)
+	if d.hide {
+		d.reveal.SetRevealChild(d.overviewWasRevealed || d.hover)
+		fitDock(d)
 	}
 }
 
@@ -291,9 +324,6 @@ func (s *shellUI) renderDock(b *bar) {
 	withWorkshop := drawer && len(s.installedWorkshop()) > 0
 	if sig := dockSignature(items, d.size, drawer) + fmt.Sprint(withWorkshop); sig != d.shown {
 		d.shown = sig
-		if s.dockState.menu != nil {
-			s.dockState.menu.Popdown() // its button is about to go
-		}
 		gtkx.Clear(&d.items)
 		d.buttons = map[string]*dockButton{}
 		sepDone := false
@@ -463,15 +493,30 @@ func (s *shellUI) launchApp(e *desktop.Entry) {
 }
 
 // showDockMenu opens an app's menu on its button.
+// showDockMenu opens an app's menu over the dock, out of its button, in
+// the drawer's bubble: the same glass, corners and arrow.
 func (s *shellUI) showDockMenu(btn *gtk.Widget, it shell.DockItem) {
-	group := gio.NewSimpleActionGroup()
-	menu := gio.NewMenu()
+	var b *bar
+	for _, x := range s.bars {
+		if x.dock != nil && btn.IsAncestor(&x.dock.win.Widget) {
+			b = x
+		}
+	}
+	if b == nil {
+		return
+	}
+	menu := gtk.NewBox(gtk.OrientationVerticalValue, 0)
+	menu.AddCssClass("dock-menu-items")
 	add := func(label, action string) {
-		a := gio.NewSimpleAction(action, nil)
-		a.ConnectActivate(&s.onDockAction)
-		group.AddAction(a)
-		a.Unref()
-		menu.Append(label, "dock."+action)
+		item := gtk.NewButton()
+		item.AddCssClass("menu-item")
+		item.SetName(action)
+		l := gtk.NewLabel(label)
+		l.SetXalign(0)
+		item.SetChild(&l.Widget)
+		l.Unref()
+		item.ConnectClicked(&s.onDockMenuItem)
+		gtkx.Append(menu, &item.Widget)
 	}
 	if it.Entry != nil {
 		if !strings.HasPrefix(it.Entry.ID, "inua:") { // the shell's tools have one window
@@ -490,22 +535,36 @@ func (s *shellUI) showDockMenu(btn *gtk.Widget, it shell.DockItem) {
 		}
 		add(label, "quit")
 	}
-	if menu.GetNItems() == 0 {
+	if menu.GetFirstChild() == nil {
 		menu.Unref()
-		group.Unref()
 		return
 	}
-	btn.InsertActionGroup("dock", group)
-	group.Unref()
-	pop := gtk.NewPopoverMenuFromModel(&menu.MenuModel)
-	menu.Unref()
-	uikit.Menu(&pop.Popover, uikit.Above)
-	pop.SetParent(btn)
-	pop.ConnectClosed(&s.onDockMenuClosed)
-	pop.Unref() // the button holds it
+	s.dropDrawer()
 	s.dockState.menuKey = it.Key
-	s.dockState.menu = &pop.Popover
-	pop.Popup()
+	s.openDrawer(b, drawerMenu, btn, menu)
+}
+
+// dockMenuAction carries out a dock menu's item for its app.
+func (s *shellUI) dockMenuAction(name string) {
+	it, ok := s.dockItem(s.dockState.menuKey)
+	if !ok {
+		return
+	}
+	switch name {
+	case "new":
+		s.launchApp(it.Entry)
+		if len(it.Windows) == 0 {
+			s.markLaunching(it.Key)
+		}
+	case "pin", "unpin":
+		c := s.cfg
+		c.Dock.Pinned = shell.Pin(c.Dock.Pinned, it.Key, name == "pin")
+		s.changeSettings(c)
+	case "quit":
+		for _, w := range it.Windows {
+			s.dispatch("closewindow address:" + w.Address)
+		}
+	}
 }
 
 func (s *shellUI) bindDockHandlers() {
@@ -513,6 +572,9 @@ func (s *shellUI) bindDockHandlers() {
 		it, ok := s.dockItem(strings.TrimPrefix(b.GetName(), "dock:"))
 		if !ok {
 			return
+		}
+		if s.overview.st.Open {
+			s.closeOverview(false)
 		}
 		launch, addr := shell.DockTarget(it)
 		switch {
@@ -536,26 +598,12 @@ func (s *shellUI) bindDockHandlers() {
 			s.showDockMenu(w, it)
 		}
 	}
-	s.onDockAction = func(a gio.SimpleAction, _ uintptr) {
-		it, ok := s.dockItem(s.dockState.menuKey)
-		if !ok {
-			return
-		}
-		switch a.GetName() {
-		case "new":
-			s.launchApp(it.Entry)
-			if len(it.Windows) == 0 {
-				s.markLaunching(it.Key)
-			}
-		case "pin", "unpin":
-			c := s.cfg
-			c.Dock.Pinned = shell.Pin(c.Dock.Pinned, it.Key, a.GetName() == "pin")
-			s.changeSettings(c)
-		case "quit":
-			for _, w := range it.Windows {
-				s.dispatch("closewindow address:" + w.Address)
-			}
-		}
+	s.onDockMenuItem = func(b gtk.Button) {
+		name := b.GetName()
+		gtkx.Post(func() {
+			s.closeDrawer() // the item is in it
+			s.dockMenuAction(name)
+		})
 	}
 	s.onDockDragBegin = func(ds gtk.DragSource, _ uintptr) {
 		w := ds.GetWidget()
@@ -664,13 +712,6 @@ func (s *shellUI) bindDockHandlers() {
 		s.changeSettings(c)
 		return true
 	}
-	s.onDockMenuClosed = func(p gtk.Popover) {
-		s.dockState.menu = nil
-		gtkx.Post(func() {
-			p.Unparent()
-			s.hideDocksSoon()
-		})
-	}
 	s.onDockEnter = func(c gtk.EventControllerMotion, _, _ float64) {
 		if d := s.dockOf(c.GetWidget()); d != nil {
 			d.hover = true
@@ -699,7 +740,7 @@ func (s *shellUI) bindDockHandlers() {
 	}
 	s.onDockHide = func(gen uintptr) bool {
 		for _, b := range s.bars {
-			if d := b.dock; d != nil && d.hide && !d.hover && gen == d.hideGen && s.dockState.menu == nil && s.dockState.drawer == nil {
+			if d := b.dock; d != nil && d.hide && !d.hover && !d.overviewShown && gen == d.hideGen && s.dockState.drawer == nil {
 				d.reveal.SetRevealChild(false)
 			}
 		}

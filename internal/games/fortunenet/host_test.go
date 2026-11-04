@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -510,4 +511,30 @@ func TestFortuneNetAI(t *testing.T) {
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
+}
+
+// The lead seats the computer players they choose, by name, each once, as
+// the app's setup does; a name that is not one of them, or one twice, is
+// refused.
+func TestSetUpRivalNames(t *testing.T) {
+	x := newTestHost(t, nil, 2)
+	x.do(func() {
+		u := Setup{City: 0, Rounds: 60, Cash: 2000, Dice: 2, Rivals: 2, RivalNames: []string{"Sol", "Mika"}}
+		if !x.SetUp(u) {
+			t.Fatal("refused Sol and Mika")
+		}
+		if got := x.Settings.RivalNames; !slices.Equal(got, []string{"Sol", "Mika"}) {
+			t.Errorf("rivals %v, want Sol, Mika", got)
+		}
+		for _, names := range [][]string{{"Sol", "Sol"}, {"Sol", "Nobody"}, {"Sol"}} {
+			u.RivalNames = names
+			if x.SetUp(u) {
+				t.Errorf("took %v for 2 computer players", names)
+			}
+		}
+		u.Rivals, u.RivalNames = 1, nil // no names: the ones seated stay first
+		if !x.SetUp(u) || !slices.Equal(x.Settings.RivalNames, []string{"Sol"}) {
+			t.Errorf("one rival without names: %v", x.Settings.RivalNames)
+		}
+	})
 }

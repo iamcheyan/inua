@@ -23,7 +23,8 @@ import (
 // The Game Lobby window: the tables of an inua-game-lobby as they change,
 // each with its game and players. Join and Watch open the table's page in
 // the browser; a free table's Host buttons start Small Fortune or Chinese
-// Checkers set to take that table.
+// Checkers set to take that table. Above them, a lobby can run on this
+// computer (lobbyhost.go), and the window then shows its tables.
 
 type lobbyRoom struct {
 	f      *frame
@@ -34,6 +35,7 @@ type lobbyRoom struct {
 	gen    int    // the connection the tables shown came from
 	shown  string // the tables shown, as JSON: built again only when they change
 	at     string // the address connected to
+	host   *lobbyHost
 
 	onAddr    func(gtk.Entry)
 	onConnect func(gtk.Button)
@@ -45,6 +47,7 @@ func (p *lobbyRoom) setup(f *frame) {
 	p.f = f
 	f.win.SetDefaultSize(1040, 760)
 	f.restart.SetVisible(false)
+	p.hostSection(f)
 
 	row := gtk.NewBox(gtk.OrientationHorizontalValue, 8)
 	row.AddCssClass("lobby-address")
@@ -126,6 +129,9 @@ func (p *lobbyRoom) reset() {
 			gtkx.Post(func() {
 				if gen == p.gen {
 					p.f.say(i18n.Tf("The lobby cannot be reached: %v. Trying again…", err), "bad")
+					if addr == p.host.local {
+						p.host.refresh() // the lobby run here: how it stands
+					}
 				}
 			})
 			select {
@@ -143,8 +149,8 @@ func (p *lobbyRoom) redraw() {}
 // show shows the tables, when they changed.
 func (p *lobbyRoom) show(ts []lobby.Table) {
 	var prefs lobbyPrefs
-	if store.Load("game-lobby", &prefs); prefs.Address != p.at {
-		saveLobbyAddress(p.at) // it is a lobby: keep it, as hosting does
+	if store.Load("game-lobby", &prefs); prefs.Address != p.at && p.at != p.host.local {
+		saveLobbyAddress(p.at) // it is a lobby: keep it, as hosting does; not the one run here, which goes
 	}
 	p.open.SetSensitive(true)
 	playing, free := 0, 0

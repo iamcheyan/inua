@@ -373,7 +373,7 @@ its keys along the bottom, and New game (N). Best scores are kept in
 | **Space Pinball** (`space-pinball`) | After the Windows table: missions and ranks, a hyperspace ramp, multiball, a skill shot, nudge and tilt. P pauses, M mutes (sound through `pw-cat`). |
 | **Small Fortune** (`small-fortune`) | A property game for two to four: people at the screen, people in a browser, and computer players. |
 | **Chinese Checkers** (`chinese-checkers`) | Stern-Halma for two, three, four or six, alone or in teams: people at the screen, people in a browser, the computer and the AI. |
-| **Game Lobby** (`game-lobby`) | A game lobby's tables, live: join or watch a game in the browser, or host one at a free table. See [game-lobby.md](game-lobby.md). |
+| **Game Lobby** (`game-lobby`) | A game lobby's tables, live: join or watch a game in the browser, or host one at a free table; or run a lobby on this computer, on its network or its tailnet. See [game-lobby.md](game-lobby.md). |
 
 ### Small Fortune
 
@@ -422,8 +422,8 @@ the game takes a table at an `inua-game-lobby` instead, or as well
 ([game-lobby.md](game-lobby.md)). When no one plays at this screen, the
 first to join from a browser sets the game up there (the city, the
 rounds, the starting money, the dice, building the day you buy, the
-computer players), starts it, and when it is over may start it again;
-the same holds on the network.
+computer players, and AI players when the AI answers), starts it, and
+when it is over may start it again; the same holds on the network.
 
 Games are kept in memory; the network is used only for a game opened to
 it, and when the AI plays.
@@ -452,7 +452,8 @@ with a join code and its QR code (port 7342); browsers that join take the
 open seats in order, and **Send away** turns one away. The game shows in
 the browser in 3D, with the same rules. When no seat is played at this
 screen, the host only hosts: the first to join from a browser sets the
-game up (the seats, the teams, the rule), starts it, and in a game may
+game up (the seats, the teams, the rule; the AI for a seat when it
+answers), starts it, and in a game may
 start it again or go back to setting it up; if they leave, the next
 visitor does. Someone gone for 15 seconds has the computer play for them
 until they come back.

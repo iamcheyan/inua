@@ -111,7 +111,7 @@ ApplicationWindow settings {
 
                   Label {
                     styles ["section-meta"]
-                    label:  _("The bar, launcher, control center and this window");
+                    label:  _("The bar, the dock, the launcher and the control center");
                     hexpand: true;
                     xalign: 0;
                     ellipsize: end;
@@ -152,7 +152,7 @@ ApplicationWindow settings {
                       }
                       Label {
                         styles ["sub"]
-                        label:  _("Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above");
+                        label:  _("This window, Files, the terminal, the viewer and the other apps; the dock and bar keep the theme above");
                         xalign: 0;
                         wrap: true;
                       }
@@ -1113,6 +1113,36 @@ ApplicationWindow settings {
 
                     Switch dock_enable {
                       name: "dock_enable";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
+                        label:  _("Show during workspace overview");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Keep the dock visible above the overview");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch overview_dock {
+                      name: "overview_dock";
                       valign: center;
                     }
                   }

@@ -3,6 +3,7 @@ package fortunenet
 import (
 	"cmp"
 	"math"
+	"slices"
 
 	"github.com/lyricat/inua/internal/games"
 	"github.com/lyricat/inua/internal/games/gameweb"
@@ -47,27 +48,36 @@ type seatMsg struct {
 	Kicked bool   `json:"kicked"`
 }
 
+// rivalMsg is a computer player the lead may seat: its name in English
+// (games.Rival.Name, as Setup.RivalNames has it) and shown.
+type rivalMsg struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 // lobbyMsg is who is in the lobby, and the game they will play; the lead
 // is sent what it may choose from.
 type lobbyMsg struct {
-	T         string    `json:"t"`
-	Seats     []seatMsg `json:"seats"`
-	You       int       `json:"you"`
-	Room      int       `json:"room"`
-	Rivals    int       `json:"rivals"` // the computer players and the AI's
-	City      string    `json:"city"`
-	Rounds    int       `json:"rounds"`
-	Cash      int       `json:"cash"`
-	Lead      bool      `json:"lead"`
-	LeadName  string    `json:"leadName"`
-	HostLeads bool      `json:"hostLeads"`
-	Setup     Setup     `json:"setup"`
-	AIs       int       `json:"ais"`       // the AI's players, the host's to choose
-	Cities    []string  `json:"cities"`    // for the lead
-	RoundsOf  []int     `json:"roundsOf"`  // for the lead
-	CashOf    []int     `json:"cashOf"`    // for the lead
-	MaxRivals int       `json:"maxRivals"` // for the lead
-	Text      texts     `json:"text"`
+	T         string     `json:"t"`
+	Seats     []seatMsg  `json:"seats"`
+	You       int        `json:"you"`
+	Room      int        `json:"room"`
+	Rivals    int        `json:"rivals"` // the computer players and the AI's
+	City      string     `json:"city"`
+	Rounds    int        `json:"rounds"`
+	Cash      int        `json:"cash"`
+	Lead      bool       `json:"lead"`
+	LeadName  string     `json:"leadName"`
+	HostLeads bool       `json:"hostLeads"`
+	Setup     Setup      `json:"setup"`
+	AIs       int        `json:"ais"`       // the AI's players, the host's to choose
+	Cities    []string   `json:"cities"`    // for the lead
+	RoundsOf  []int      `json:"roundsOf"`  // for the lead
+	CashOf    []int      `json:"cashOf"`    // for the lead
+	MaxRivals int        `json:"maxRivals"` // for the lead
+	MaxAIs    int        `json:"maxAIs"`    // for the lead: 0, the host offers no AI
+	RivalsOf  []rivalMsg `json:"rivalsOf"`  // for the lead: the computer players to seat
+	Text      texts      `json:"text"`
 }
 
 type squareMsg struct {
@@ -222,7 +232,8 @@ func (h *Host) lobbyMsg(c *gameweb.Client) lobbyMsg {
 	m := lobbyMsg{T: "lobby", Seats: h.seatMsgs(), You: c.Seat, Room: h.Room(), Rivals: s.Rivals + len(s.AIs),
 		City: i18n.T(games.FortuneCities[city].Name), Rounds: cmp.Or(s.Rounds, games.DefaultFortune.Rounds),
 		Cash: cmp.Or(s.Cash, games.DefaultFortune.Cash), HostLeads: h.HostLeads(), AIs: len(s.AIs), Text: webTexts()}
-	m.Setup = Setup{City: city, Rounds: m.Rounds, Cash: m.Cash, Dice: 2, BuildOnBuy: s.BuildOnBuy, Rivals: s.Rivals}
+	m.Setup = Setup{City: city, Rounds: m.Rounds, Cash: m.Cash, Dice: 2, BuildOnBuy: s.BuildOnBuy, Rivals: s.Rivals, AIs: len(s.AIs),
+		RivalNames: rivalNames(s)}
 	if s.Dice == 1 {
 		m.Setup.Dice = 1
 	}
@@ -236,8 +247,24 @@ func (h *Host) lobbyMsg(c *gameweb.Client) lobbyMsg {
 		}
 		m.RoundsOf, m.CashOf = games.FortuneRounds, games.FortuneCash
 		m.MaxRivals = max(0, min(len(games.Rivals), MaxPlayers-len(h.Seats)-len(s.AIs)))
+		m.MaxAIs = h.MaxAIs()
+		for _, r := range games.Rivals {
+			m.RivalsOf = append(m.RivalsOf, rivalMsg{ID: r.Name, Name: i18n.T(r.Name)})
+		}
 	}
 	return m
+}
+
+// rivalNames are the computer players seated, by their names in English,
+// as many as s.Rivals: those s names, then the first of games.Rivals.
+func rivalNames(s games.FortuneSettings) []string {
+	names := slices.Clone(s.RivalNames[:min(len(s.RivalNames), s.Rivals)])
+	for _, r := range games.Rivals {
+		if len(names) < s.Rivals && !slices.Contains(names, r.Name) {
+			names = append(names, r.Name)
+		}
+	}
+	return names
 }
 
 func (h *Host) startMsg(c *gameweb.Client) startMsg {

@@ -53,11 +53,17 @@ header { margin-bottom: 22px; }
 .table .lead { margin: 0; }
 
 .row { display: flex; gap: 6px; }
-.row > a { flex: 1; }
-a.button {
+/* A free table's games, at its foot, open one the lobby hosts. */
+.table.free .row { flex-wrap: wrap; margin-top: auto; }
+.table.free .row > .button { flex: 1 1 auto; white-space: nowrap; }
+.table .note.failed { color: var(--shu); }
+
+.row > .button { flex: 1; min-width: 0; }
+.button {
   display: grid; place-items: center; min-height: 38px; padding: 7px 16px; border: 1px solid var(--line); border-radius: 3px;
-  color: var(--t1); text-decoration: none;
+  background: transparent; color: var(--t1); font: inherit; text-decoration: none; cursor: pointer;
 }
-a.button.primary { border-color: var(--accent); background: var(--accent); color: #fff; font-weight: 500; }
-a.button.quiet:hover { border-color: var(--accent); color: var(--ink); }
-a.button:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+.button.primary { border-color: var(--accent); background: var(--accent); color: #fff; font-weight: 500; }
+.button.quiet:hover { border-color: var(--accent); color: var(--ink); }
+.button:disabled { opacity: 0.55; cursor: default; }
+.button:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }

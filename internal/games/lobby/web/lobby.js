@@ -1,10 +1,13 @@
 // The game lobby's page: the tables as the lobby says they are, kept up
 // to date over a WebSocket; joining or watching opens the table's game
-// page with its code.
+// page with its code. At a free table a visitor may open a game the lobby
+// hosts itself, when it does.
 
 const $ = (id) => document.getElementById(id);
 let T = {
   title: 'Game Lobby', table: 'TABLE %d', free: 'Free', freeNote: 'A host can open a game here.',
+  subOpen: 'Join a game at a table, watch one, or open one at a free table. A host can also open a game here from Small Fortune or Chinese Checkers in inua.',
+  freeOpen: 'Open a game here for others to join.', failed: 'The game could not open: %s',
   away: 'The host’s connection dropped: waiting for it to come back…', reconnecting: 'Reconnecting…', lobby: 'Waiting to start',
   room: 'Open seats: %d', playing: 'Playing', over: 'Over', join: 'Join', watch: 'Watch',
   leads: '%s sets up the game', open: 'Open seat', local: 'at the host’s screen', visitor: 'in a browser',
@@ -44,7 +47,7 @@ function connect() {
   ws.onopen = () => { retry = 0; $('notice').hidden = true; };
   ws.onmessage = (ev) => {
     const m = JSON.parse(ev.data);
-    if (m.t === 'tables') show(m.tables);
+    if (m.t === 'tables') show(m);
   };
   ws.onclose = () => {
     $('notice').textContent = T.reconnect;
@@ -53,8 +56,38 @@ function connect() {
   };
 }
 
-function show(tables) {
-  $('tables').replaceChildren(...tables.map(card));
+// games are what a visitor may open at a free table; failed, why the
+// last try at a table did not open, by table.
+let games = [];
+const failed = new Map();
+
+function show(m) {
+  games = m.games ?? [];
+  const sub = document.querySelector('[data-t="sub"]');
+  sub.textContent = games.length ? T.subOpen : T.sub;
+  $('tables').replaceChildren(...m.tables.map(card));
+}
+
+// open asks the lobby to host game at table n, and goes to its page.
+async function open(n, game, buttons) {
+  for (const b of buttons) b.disabled = true;
+  failed.delete(n);
+  try {
+    const res = await fetch('new', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ game, table: n }),
+    });
+    const m = await res.json().catch(() => ({}));
+    if (res.ok && m.url) {
+      location.href = new URL(m.url, location.href).href;
+      return;
+    }
+    failed.set(n, m.error || res.statusText);
+  } catch (e) {
+    failed.set(n, fmt(T.failed, e.message));
+  }
+  for (const b of buttons) b.disabled = false;
+  const note = buttons[0]?.closest('.table')?.querySelector('.note');
+  if (note) { note.textContent = failed.get(n); note.classList.add('failed'); }
 }
 
 // card is a table: free, or its game with the players and how to join it.
@@ -72,11 +105,21 @@ function card(t) {
     state.textContent = T.reconnecting;
     state.classList.add('waiting');
   }
+  if (st) failed.delete(t.n);
   if (!st) {
     if (t.away) li.append(el('p', 'note', T.away));
     else {
       li.classList.add('free');
-      li.append(el('h2', '', T.free), el('p', 'note', T.freeNote));
+      const why = failed.get(t.n);
+      const note = el('p', why ? 'note failed' : 'note', why ?? (games.length ? T.freeOpen : T.freeNote));
+      li.append(el('h2', '', T.free), note);
+      if (games.length) {
+        const acts = el('div', 'row new');
+        const buttons = games.map((g) => el('button', 'button quiet', T.games[g] ?? g));
+        buttons.forEach((b, i) => { b.type = 'button'; b.onclick = () => open(t.n, games[i], buttons); });
+        acts.append(...buttons);
+        li.append(acts);
+      }
     }
     return li;
   }

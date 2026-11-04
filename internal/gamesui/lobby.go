@@ -8,16 +8,19 @@ import (
 
 	"github.com/lyricat/inua/internal/apps/store"
 	"github.com/lyricat/inua/internal/games/gamerelay"
+	"github.com/lyricat/inua/internal/games/lobbyservice"
 	"github.com/lyricat/inua/internal/gtkx"
 	"github.com/lyricat/inua/internal/i18n"
 )
 
 // A game at a lobby (inua-game-lobby, docs/game-lobby.md): the game stays
 // here and takes a table there, where others join it from a browser. The
-// lobby's address is the user's, kept with the games' data.
+// lobby's address is the user's, kept with the games' data, and so is
+// where the lobby the Game Lobby window runs here listens.
 
 type lobbyPrefs struct {
-	Address string `json:"address"`
+	Address string              `json:"address"`
+	Host    lobbyservice.Config `json:"host,omitzero"`
 }
 
 func lobbyAddress() string {
@@ -29,7 +32,12 @@ func lobbyAddress() string {
 	return p.Address
 }
 
-func saveLobbyAddress(addr string) { store.Save("game-lobby", lobbyPrefs{addr}) }
+func saveLobbyAddress(addr string) {
+	var p lobbyPrefs
+	store.Load("game-lobby", &p)
+	p.Address = addr
+	store.Save("game-lobby", p)
+}
 
 // hostAt is the lobby and table inua-games was started to host its game
 // at (HostAt): the Game Lobby window's Host buttons.

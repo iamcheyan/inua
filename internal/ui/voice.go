@@ -140,7 +140,9 @@ func (s *shellUI) followVoice() {
 	}
 	v.voiceRun, v.voxtypeSet = want, false
 	v.typer = dictationTyper{history: s.clipboard.path,
-		hypr:  func() hyprNow { return hyprNow{s.client, s.hyprLua} },
+		hypr: func() (hyprNow, error) {
+			return gtkx.Call(time.Second, func() hyprNow { return hyprNow{s.client, s.hyprLua} })
+		},
 		heard: func(text string) { gtkx.Post(func() { s.dictationHeard(text) }) }}
 	s.sys.Voice = system.VoiceState{}
 	if want == "" {
@@ -169,8 +171,9 @@ func (s *shellUI) followVoice() {
 }
 
 // handOverVoxtype has voxtype, once it is up, hand its words to inua to
-// type (`inua call voice type -`) rather than type them itself, which it
-// cannot without wtype or the session's Wayland in its service.
+// paste (`inua call voice type -`) rather than output them itself: inua
+// pastes them as it does the AI engine's, and voxtype's own output would
+// put them on the clipboard and leave them there.
 func (s *shellUI) handOverVoxtype(st system.VoiceState) {
 	v := &s.svc
 	if v.voxtypeSet || !st.Available || s.cfg.Voice.Engine != "voxtype" {
@@ -219,15 +222,27 @@ func spaced(text string) string {
 	return text + " "
 }
 
-// dictationTyper puts dictation's words into the focused window: typed by
-// wtype when there is one; else pasted, as the clipboard history pastes
-// (Ctrl+V, Ctrl+Shift+V in a terminal), and the clipboard's text put back,
-// neither copy kept in the history. Made on the main thread, typeText runs
-// on the engine's goroutine.
+// dictationTyper puts dictation's words into the focused window, by the
+// clipboard and the paste shortcut: Ctrl+V, Ctrl+Shift+V in a terminal,
+// sent to the window by address so a window under the pointer cannot take
+// it, and the clipboard's text put back, neither copy kept in the history.
+// Made on the main thread, typeText runs on the engine's goroutine.
+//
+// Not wtype: its synthetic keys go through whichever keyboard has the
+// keymap, and with an input method's virtual keyboard holding it (fcitx5,
+// say) they arrive as other characters ("hello" as "v22h3hhhhhh"), which is
+// what made dictation paste nothing usable into apps like Telegram.
 type dictationTyper struct {
-	history string         // the clipboard history's file
-	hypr    func() hyprNow // read on the main thread, when it types
-	heard   func(text string)
+	history string // the clipboard history's file
+	// hypr is the shell's Hyprland client, read on the main thread, and
+	// whether it takes 0.55's Lua dispatchers: both are known only after
+	// start-up.
+	hypr  func() (hyprNow, error)
+	heard func(text string)
+	// The clipboard, for a test: its text, and putting text on it. Left
+	// nil, wl-paste and wl-copy serve it.
+	clipboard func() []byte
+	copy      func([]byte) error
 }
 
 // hyprNow is the shell's Hyprland client (nil without Hyprland) and
@@ -239,17 +254,21 @@ type hyprNow struct {
 
 func (t dictationTyper) typeText(text string) error {
 	t.heard(text)
-	text = spaced(text)
-	if _, err := exec.LookPath("wtype"); err == nil {
-		return exec.Command("wtype", "--", text).Run()
-	}
-	h, err := gtkx.Call(time.Second, t.hypr)
+	return t.paste(spaced(text))
+}
+
+// paste puts text into the focused window through the clipboard: the
+// history's watcher skips it, the window is sent the paste shortcut by its
+// address, and the clipboard's own text is put back once the window has read
+// it. A terminal gets Ctrl+Shift+V, which pastes there.
+func (t dictationTyper) paste(text string) error {
+	h, err := t.hypr()
 	if err != nil {
 		return err
 	}
 	client, lua := h.client, h.lua
 	if client == nil {
-		return errors.New(i18n.T("dictation types with wtype, which is not installed"))
+		return errors.New(i18n.T("dictation pastes with Hyprland, which is not running"))
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -261,8 +280,18 @@ func (t dictationTyper) typeText(text string) error {
 	if json.Unmarshal(reply, &w) != nil || w.Address == "" {
 		return errors.New(i18n.T("no window has the focus to type into"))
 	}
-	old, hadText := exec.Command("wl-paste", "--no-newline", "--type", "text/plain").Output()
+	read := func() []byte {
+		if t.clipboard != nil {
+			return t.clipboard()
+		}
+		out, _ := exec.Command("wl-paste", "--no-newline", "--type", "text/plain").Output()
+		return out
+	}
+	old := read()
 	copyText := func(b []byte) error {
+		if t.copy != nil {
+			return t.copy(b)
+		}
 		// Not into the clipboard history: its capture skips the next one.
 		if t.history != "" {
 			clipboard.SkipFirst(t.history)
@@ -280,12 +309,14 @@ func (t dictationTyper) typeText(text string) error {
 	if class := strings.ToLower(w.Class); slices.ContainsFunc(terminalClasses, func(t string) bool { return strings.Contains(class, t) }) {
 		mods = "CTRL SHIFT"
 	}
+	// The window has to read the clipboard before the shortcut reaches it.
+	time.Sleep(150 * time.Millisecond)
 	if lua {
 		err = client.LuaDispatch(ctx, fmt.Sprintf(`hl.dsp.send_shortcut({ mods = %q, key = "V", window = %q })`, mods, "address:"+w.Address))
 	} else {
 		err = client.Dispatch(ctx, fmt.Sprintf("sendshortcut %s, V, address:%s", mods, w.Address))
 	}
-	if hadText == nil {
+	if len(old) > 0 {
 		time.Sleep(400 * time.Millisecond) // the window has read the clipboard
 		copyText(old)
 	}
