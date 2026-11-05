@@ -388,7 +388,7 @@ func (s *shellUI) wifiRow(n system.WifiNetwork, typed string) *gtk.Box {
 		lock := gtk.NewImageFromIconName("system-lock-screen-symbolic")
 		lock.AddCssClass("wifi-lock")
 		lock.SetValign(gtk.AlignCenterValue)
-		lock.SetTooltipText(shell.WifiSecurity(n.Security))
+		setTooltip(lock.GoPointer(), shell.WifiSecurity(n.Security))
 		gtkx.Append(row, &lock.Widget)
 	}
 

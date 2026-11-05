@@ -14862,68 +14862,68 @@ msgstr ""
 msgid "Bluetooth off"
 msgstr ""
 
-#: internal/ui/overview.go:188
+#: internal/ui/overview.go:189
 msgid "restore focus"
 msgstr "フォーカスを復元する"
 
-#: internal/ui/overview.go:298
+#: internal/ui/overview.go:299
 msgid "kill window"
 msgstr "ウィンドウをキルする"
 
-#: internal/ui/overview.go:447
+#: internal/ui/overview.go:448
 msgid "MRU: ON"
 msgstr "MRU:オン"
 
-#: internal/ui/overview.go:447
+#: internal/ui/overview.go:448
 msgid "MRU: OFF"
 msgstr "MRU: オフ"
 
-#: internal/ui/overview.go:448
+#: internal/ui/overview.go:449
 msgid "This monitor"
 msgstr "このモニター"
 
-#: internal/ui/overview.go:448
+#: internal/ui/overview.go:449
 msgid "All monitors"
 msgstr "すべてのモニター"
 
-#: internal/ui/overview.go:457
+#: internal/ui/overview.go:458
 msgid "FILTER"
 msgstr "絞り込み"
 
-#: internal/ui/overview.go:459
+#: internal/ui/overview.go:460
 msgid "NO MATCHES"
 msgstr "一致なし"
 
-#: internal/ui/overview.go:461
+#: internal/ui/overview.go:462
 msgid "%d RESULT"
 msgid_plural "%d RESULTS"
 msgstr[0] "%d 件"
 
-#: internal/ui/overview.go:494
+#: internal/ui/overview.go:495
 msgid "No workspaces"
 msgstr "ワークスペースがない"
 
-#: internal/ui/overview.go:496
+#: internal/ui/overview.go:497
 msgid "No matches"
 msgstr "一致しない"
 
-#: internal/ui/overview.go:616
+#: internal/ui/overview.go:617
 msgid "＋  New workspace"
 msgstr "＋  新しいワークスペース"
 
-#: internal/ui/overview.go:980
+#: internal/ui/overview.go:986
 msgid "Filter by window title or app"
 msgstr "ウィンドウのタイトルまたはアプリでフィルタリングする"
 
-#: internal/ui/overview.go:996
+#: internal/ui/overview.go:1002
 msgid "TYPE TO FILTER WINDOWS"
 msgstr "入力してウィンドウを絞り込む"
 
-#: internal/ui/overview.go:1009
+#: internal/ui/overview.go:1015
 msgid "Type or / to filter windows   Esc · clear / close   Arrows / Tab · select   Middle click · close   Ctrl+Shift+X · kill   Drag · move"
 msgstr "または / を入力してウィンドウをフィルタリングします Esc · クリア / 閉じる 矢印 / Tab · 選択 中クリック · 閉じる Ctrl+Shift+X · kill ドラッグ · 移動"
 
-#: internal/ui/overview.go:1053
+#: internal/ui/overview.go:1059
 msgid "inua overview"
 msgstr "イヌアの概要"
 

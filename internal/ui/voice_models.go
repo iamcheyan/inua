@@ -161,7 +161,7 @@ func (s *shellUI) fillVoxtypeModels() {
 			del := gtk.NewButtonFromIconName("user-trash-symbolic")
 			del.AddCssClass("plain")
 			del.SetValign(gtk.AlignCenterValue)
-			del.SetTooltipText(i18n.T("Delete its files; it can be downloaded again"))
+			setTooltip(del.GoPointer(), i18n.T("Delete its files; it can be downloaded again"))
 			del.SetName("delete:" + model.Arg)
 			del.SetSensitive(m.busy == "" && !m.upgrading)
 			del.ConnectClicked(&s.onVoxtypeRow)

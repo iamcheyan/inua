@@ -121,7 +121,7 @@ func (s *shellUI) renderTray(b *bar) {
 			tip = it.Title
 		}
 		if tip != "" {
-			btn.SetTooltipText(tip)
+			setTooltip(btn.GoPointer(), tip)
 		}
 		img := s.trayImage(it)
 		btn.SetChild(&img.Widget)

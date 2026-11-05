@@ -57,6 +57,11 @@ elif [ "$which" = wayfire ]; then
         echo "inua-session: not starting; the Wayfire session is unaffected" >&2
         exit 1
     fi
+    # Wayfire does not announce the desktop itself: portals, the default
+    # applications and every toolkit read this, and so does inua
+    # (internal/desktop.Wayfire) where Wayfire needs a different hand.
+    XDG_CURRENT_DESKTOP=Wayfire:Inua
+    export XDG_CURRENT_DESKTOP
     compositor=wayfire
 else
     # start-hyprland (Hyprland 0.53 and later) watches over the compositor;

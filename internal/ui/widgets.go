@@ -826,7 +826,7 @@ func (s *shellUI) buildClockWidget(body *gtk.Box) {
 	p.date = label("", "readout")
 	gtkx.Append(box, &p.date.Widget)
 	open := s.widgetButton("open-clock", &box.Widget, "widget-plain")
-	open.SetTooltipText(i18n.T("Open Clock"))
+	setTooltip(open.GoPointer(), i18n.T("Open Clock"))
 	gtkx.Append(body, &open.Widget)
 	p.zones = gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	p.zones.AddCssClass("rows")
@@ -844,7 +844,7 @@ func (s *shellUI) buildCalendarWidget(body *gtk.Box) {
 	box.Append(&p.grid.Widget)
 	p.grid.Unref()
 	open := s.widgetButton("open-calendar", &box.Widget, "widget-plain")
-	open.SetTooltipText(i18n.T("Open Calendar"))
+	setTooltip(open.GoPointer(), i18n.T("Open Calendar"))
 	gtkx.Append(body, &open.Widget)
 	p.alarm = label("", "sub")
 	gtkx.Append(body, &p.alarm.Widget)
@@ -879,7 +879,7 @@ func (s *shellUI) buildWeatherWidget(body *gtk.Box) {
 	p.wxDays.SetHomogeneous(true)
 	gtkx.Append(box, &p.wxDays.Widget)
 	open := s.widgetButton("open-weather", &box.Widget, "widget-plain")
-	open.SetTooltipText(i18n.T("Open Weather"))
+	setTooltip(open.GoPointer(), i18n.T("Open Weather"))
 	gtkx.Append(body, &open.Widget)
 	s.readWeather()
 }
@@ -944,7 +944,7 @@ func (s *shellUI) buildAppsWidget(body *gtk.Box) {
 	}
 	add := s.appTile("add-app", i18n.T("Add"), "list-add-symbolic")
 	add.AddCssClass("widget-add")
-	add.SetTooltipText(i18n.T("Add an app, or drag one here from the dock"))
+	setTooltip(add.GoPointer(), i18n.T("Add an app, or drag one here from the dock"))
 	tiles.Append(&add.Widget)
 	add.Unref()
 	body.Append(&tiles.Widget)
@@ -964,7 +964,7 @@ func (s *shellUI) appTile(name, title, icon string) *gtk.Button {
 	l.SetMaxWidthChars(9)
 	gtkx.Append(box, &l.Widget)
 	b := s.widgetButton(name, &box.Widget, "widget-app")
-	b.SetTooltipText(title)
+	setTooltip(b.GoPointer(), title)
 	return b
 }
 

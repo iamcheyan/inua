@@ -60,6 +60,7 @@ type workspaceOverview struct {
 	pendingFrames        map[string]queuedOverviewFrame
 	previewSize          map[string][2]int
 	frameDrainQueued     bool
+	wayfireBusy          bool // a Wayfire still capture is in flight
 	columns              int
 	refs                 gtkx.Scope
 	searchMode, killMode bool
@@ -632,7 +633,7 @@ func (s *shellUI) renderOverviewView(o *workspaceOverview) {
 			b := gtk.NewButton()
 			b.SetName("window:" + w.ID)
 			b.SetSizeRequest(int32(pw), int32(ph))
-			b.SetTooltipText(w.Title) // the label is cut short in small previews
+			setTooltip(b.GoPointer(), w.Title) // the label is cut short in small previews
 			ww := &overviewWindowWidgets{button: b, rect: [4]float64{x, y, pw, ph}, title: w.Title}
 			o.windowWidgets[w.ID] = ww
 			b.AddCssClass("overview-window")
@@ -723,7 +724,12 @@ func (s *shellUI) updateOverviewCapture() {
 	}
 	// Live previews are Hyprland's toplevel export; a compositor without
 	// them shows the cards with titles and icons only.
-	if s.hypr == nil || !s.caps.Has(compositor.CapPreviews) {
+	if !s.caps.Has(compositor.CapPreviews) {
+		return
+	}
+	if s.hypr == nil {
+		// Wayfire has no per-window capture: stills cut from the output.
+		s.updateWayfireOverview()
 		return
 	}
 	var targets, priority []string

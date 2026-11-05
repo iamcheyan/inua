@@ -214,10 +214,10 @@ func (s *shellUI) drawerButton(size int, kind string) *gtk.Button {
 	btn.AddCssClass("dock-drawer")
 	btn.SetName("dock-" + kind)
 	icon := "view-app-grid-symbolic"
-	btn.SetTooltipText(i18n.T("Apps"))
+	setTooltip(btn.GoPointer(), i18n.T("Apps"))
 	if kind == drawerWorkshop {
 		icon = "application-x-addon-symbolic"
-		btn.SetTooltipText(i18n.T("Workshop apps"))
+		setTooltip(btn.GoPointer(), i18n.T("Workshop apps"))
 	}
 	btn.SetFocusable(false)
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 3)
@@ -309,7 +309,7 @@ func (s *shellUI) drawerContent(kind string) *gtk.Box {
 			if strings.HasPrefix(e.ID, "inua:") {
 				name, comment = i18n.T(name), i18n.T(comment)
 			}
-			b.SetTooltipText(comment)
+			setTooltip(b.GoPointer(), comment)
 			l := gtk.NewLabel(name)
 			l.AddCssClass("drawer-name")
 			l.SetWrap(true)

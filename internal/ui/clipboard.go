@@ -493,7 +493,7 @@ func (s *shellUI) renderClipboard() {
 			b := gtk.NewButtonFromIconName(icon)
 			b.AddCssClass("plain")
 			b.SetName(fmt.Sprintf("%s:%d", name, i))
-			b.SetTooltipText(tooltip)
+			setTooltip(b.GoPointer(), tooltip)
 			b.ConnectClicked(&s.onClipboardAction)
 			gtkx.Append(row, &b.Widget)
 		}

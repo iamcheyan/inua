@@ -192,7 +192,7 @@ func (s *shellUI) fillPicker() {
 		}
 		over.AddOverlay(&cap.Widget)
 		c.btn.SetChild(&over.Widget)
-		c.btn.SetTooltipText(title)
+		setTooltip(c.btn.GoPointer(), title)
 		c.w, c.h = int(t.W*sf.scale), int(t.H*sf.scale)
 		return c
 	}

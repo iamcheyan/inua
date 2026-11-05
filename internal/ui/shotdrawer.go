@@ -256,7 +256,7 @@ func (s *shellUI) shotItemButton(d *shotDrawer, i int, it shell.ShotItem) *gtk.P
 	btn := gtk.NewButton()
 	btn.AddCssClass("shot-item")
 	btn.SetName("item:" + strconv.Itoa(i))
-	btn.SetTooltipText(filepath.Base(it.Path))
+	setTooltip(btn.GoPointer(), filepath.Base(it.Path))
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 0)
 	over := gtk.NewOverlay()
 	pic := gtk.NewPicture()

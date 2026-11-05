@@ -355,7 +355,7 @@ func (s *shellUI) outputSection(o display.Output, outputs []display.Output, on i
 	reset := gtk.NewButtonWithLabel(own)
 	reset.AddCssClass("outlined")
 	reset.SetValign(gtk.AlignCenterValue)
-	reset.SetTooltipText(i18n.T("Stop setting this display in inua"))
+	setTooltip(reset.GoPointer(), i18n.T("Stop setting this display in inua"))
 	reset.SetSensitive(ruled)
 	d.controls[reset.GoPointer()] = displayControl{output: o, kind: "reset"}
 	reset.ConnectClicked(&s.onDisplayButton)

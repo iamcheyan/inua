@@ -50,7 +50,7 @@ func (s *shellUI) iconTile(grid *gtk.FlowBox, name, title string, ground *gtk.Bo
 	btn.SetName(name)
 	btn.AddCssClass("swatch")
 	btn.AddCssClass("iconset")
-	btn.SetTooltipText(i18n.Tf("%s · right-click to preview every icon", title))
+	setTooltip(btn.GoPointer(), i18n.Tf("%s · right-click to preview every icon", title))
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 6)
 	ground.AddCssClass("ground")
 	gtkx.Append(box, &ground.Widget)
@@ -210,7 +210,7 @@ func (s *shellUI) previewIconSet(set string) {
 		}
 		img := later.image(theme, name, 24)
 		img.AddCssClass("preview-icon")
-		img.SetTooltipText(name)
+		setTooltip(img.GoPointer(), name)
 		grid.Append(&img.Widget)
 		img.Unref()
 	}

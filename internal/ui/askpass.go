@@ -229,7 +229,7 @@ func (s *shellUI) openPass(d *passDialog) {
 		var b gtk.Button
 		ui.Get(r.row, &b)
 		b.ConnectClicked(&s.onPassRow)
-		b.SetTooltipText(i18n.T("Copy"))
+		setTooltip(b.GoPointer(), i18n.T("Copy"))
 		switch r.row {
 		case "row_primary":
 			primaryRow = b
@@ -399,7 +399,7 @@ func fillApproval(d *passDialog) string {
 		d.program.SetWrapMode(pango.WrapCharValue)
 	}
 	d.program.SetText(cmp.Or(a.AllowPath, a.Program))
-	d.program.SetTooltipText(cmp.Or(a.AllowPath, a.Program))
+	setTooltip(d.program.GoPointer(), cmp.Or(a.AllowPath, a.Program))
 	what := a.Script
 	if a.Flatpak != "" {
 		what = i18n.Tf("Flatpak: %s", a.Flatpak)
@@ -499,7 +499,7 @@ func (s *shellUI) fillPassDetails(d *passDialog) {
 		chain = "← " + q.Chain
 	}
 	d.askerChain.SetText(chain)
-	d.askerChain.SetTooltipText(q.Chain)
+	setTooltip(d.askerChain.GoPointer(), q.Chain)
 	d.forKicker.SetText(i18n.T("FOR"))
 	if q.Keyring && q.Secret != "" {
 		d.forKicker.SetText(i18n.T("SECRET"))
@@ -642,10 +642,10 @@ func (s *shellUI) showPassDetails(d *passDialog, m shell.PassMask, hide bool) {
 	toggle(&d.mask.Widget, "on", hide)
 	if hide {
 		d.mask.SetIconName("view-reveal-symbolic")
-		d.mask.SetTooltipText(i18n.T("Show the private details (Ctrl+H)"))
+		setTooltip(d.mask.GoPointer(), i18n.T("Show the private details (Ctrl+H)"))
 	} else {
 		d.mask.SetIconName("view-conceal-symbolic")
-		d.mask.SetTooltipText(i18n.T("Hide the private details: the key's owner, its fingerprint and the pass entry (Ctrl+H)"))
+		setTooltip(d.mask.GoPointer(), i18n.T("Hide the private details: the key's owner, its fingerprint and the pass entry (Ctrl+H)"))
 	}
 	show := func(l *gtk.Label, text string) {
 		toggle(&l.Widget, "pass-masked", hide && text != "")
@@ -682,7 +682,7 @@ func (s *shellUI) showPassDetails(d *passDialog, m shell.PassMask, hide bool) {
 		what = q.Secret
 	}
 	show(&d.forValue, what)
-	d.forValue.SetTooltipText(map[bool]string{false: what, true: ""}[hide])
+	setTooltip(d.forValue.GoPointer(), map[bool]string{false: what, true: ""}[hide])
 	d.forRow.SetVisible(what != "")
 
 	// gpg's own words: only the first line once the key is shown in

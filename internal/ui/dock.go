@@ -404,7 +404,7 @@ func (s *shellUI) newDockButton(it shell.DockItem, size int) *dockButton {
 	btn := gtk.NewButton()
 	btn.AddCssClass("dock-item")
 	btn.SetName("dock:" + it.Key)
-	btn.SetTooltipText(it.Name)
+	setTooltip(btn.GoPointer(), it.Name)
 	btn.SetFocusable(false)
 	box := gtk.NewBox(gtk.OrientationVerticalValue, 3)
 	img := gtk.NewImage()
@@ -444,7 +444,7 @@ func (s *shellUI) newDockButton(it shell.DockItem, size int) *dockButton {
 // updateDockButton shows whether the app runs, is in front, or is starting;
 // the classes drive CSS transitions and animations.
 func (s *shellUI) updateDockButton(db *dockButton, it shell.DockItem) {
-	db.btn.SetTooltipText(it.Name)
+	setTooltip(db.btn.GoPointer(), it.Name)
 	toggle(&db.dot.Widget, "running", len(it.Windows) > 0 && !it.Active)
 	toggle(&db.dot.Widget, "active", it.Active)
 	toggle(&db.img.Widget, "launching", s.dockState.launching[it.Key])

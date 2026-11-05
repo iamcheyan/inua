@@ -490,7 +490,7 @@ func (s *shellUI) buildAICards(n int) {
 		card.listModels = gtk.NewButtonFromIconName("system-search-symbolic")
 		card.listModels.AddCssClass("outlined")
 		card.listModels.SetName(fmt.Sprintf("ai-models:%d", i))
-		card.listModels.SetTooltipText(i18n.T("List the provider's models"))
+		setTooltip(card.listModels.GoPointer(), i18n.T("List the provider's models"))
 		card.listModels.ConnectClicked(&s.onSettingsButton)
 		modelRow.Append(&card.listModels.Widget)
 		s.buildAIModelsPop(card)
@@ -569,7 +569,7 @@ func (s *shellUI) buildAICards(n int) {
 			}
 			b.AddCssClass("outlined")
 			b.SetName(fmt.Sprintf("ai-%s:%d", action, i))
-			b.SetTooltipText(tip)
+			setTooltip(b.GoPointer(), tip)
 			b.ConnectClicked(&s.onSettingsButton)
 			actions.Append(&b.Widget)
 			return b // unreferenced with the card's other widgets
@@ -662,23 +662,23 @@ func (s *shellUI) fillAICard(card *aiCard, i int, p config.AIProfile, saved map[
 	card.decision.SetSensitive(!only && (!choose || text || listen))
 	card.voice.SetSensitive(config.Transcribes(p.Provider) && (!listen || text || choose))
 	if config.Transcribes(p.Provider) {
-		card.voice.SetTooltipText(i18n.T("Turns voice input into text, with a speech-to-text model (gpt-4o-mini-transcribe, whisper-large-v3-turbo …)"))
+		setTooltip(card.voice.GoPointer(), i18n.T("Turns voice input into text, with a speech-to-text model (gpt-4o-mini-transcribe, whisper-large-v3-turbo …)"))
 	} else {
-		card.voice.SetTooltipText(i18n.T("Only OpenAI, Groq and the OpenAI-compatible servers transcribe speech"))
+		setTooltip(card.voice.GoPointer(), i18n.T("Only OpenAI, Groq and the OpenAI-compatible servers transcribe speech"))
 	}
 	switch {
 	case only:
-		card.chat.SetTooltipText(i18n.T("This provider makes quick choices only"))
+		setTooltip(card.chat.GoPointer(), i18n.T("This provider makes quick choices only"))
 	case p.Name == c.Profile:
-		card.chat.SetTooltipText(i18n.T("The profile that answers chats"))
+		setTooltip(card.chat.GoPointer(), i18n.T("The profile that answers chats"))
 	default:
-		card.chat.SetTooltipText("")
+		setTooltip(card.chat.GoPointer(), "")
 	}
 	card.listModels.SetSensitive(!only)
 	if only {
-		card.listModels.SetTooltipText(i18n.T("This provider does not list its models"))
+		setTooltip(card.listModels.GoPointer(), i18n.T("This provider does not list its models"))
 	} else {
-		card.listModels.SetTooltipText(i18n.T("List the provider's models"))
+		setTooltip(card.listModels.GoPointer(), i18n.T("List the provider's models"))
 	}
 	card.abilities.SetText(abilitySummary(text, choose, listen))
 	card.fallback.SetActive(slices.Contains(c.Fallback, p.Name))

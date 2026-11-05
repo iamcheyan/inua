@@ -66,6 +66,9 @@ type shellUI struct {
 	cfg   config.Config
 	app   *gtk.Application
 	layer bool // compositor supports layer-shell and it is in use
+	// wayfire: the shell runs on Wayfire, where a GTK tooltip or popover
+	// parented to a layer surface stops the compositor dispatching events.
+	wayfire bool
 
 	appsStamp string           // the applications folders as last scanned (desktop.Stamp)
 	apps      []*desktop.Entry // the desktop entries as last scanned
@@ -446,10 +449,28 @@ func (s *shellUI) load(name string, scope *gtkx.Scope) *gtkx.Builder {
 	return b
 }
 
+// wayfireTooltipsDisabled turns every tooltip off once the session is
+// known to be Wayfire's: the popup GTK makes for one is parented to a
+// layer surface, and Wayfire never finishes presenting it, which blocks
+// the compositor's dispatch and leaves the shell looking frozen.
+var wayfireTooltipsDisabled bool
+
+// setTooltip gives a widget its tooltip, and takes it away again on
+// Wayfire (wayfireTooltipsDisabled). Every tooltip goes through here.
+func setTooltip(pointer uintptr, text string) {
+	w := gtk.WidgetNewFromInternalPtr(pointer)
+	w.SetTooltipText(text)
+	if wayfireTooltipsDisabled {
+		w.SetHasTooltip(false)
+	}
+}
+
 func (s *shellUI) start() {
 	// A desktop shell must survive having no windows while outputs change
 	// or while restoring a lock before its desktop surfaces can be created.
 	s.app.Hold()
+	s.wayfire = desktop.Wayfire()
+	wayfireTooltipsDisabled = s.wayfire
 	s.loadStyles()
 	s.loadWallpaper()
 
@@ -532,6 +553,8 @@ func (s *shellUI) start() {
 		log.Printf("compositor: %v", err)
 	} else {
 		s.comp = b
+		s.wayfire = b.Name() == "wayfire"
+		wayfireTooltipsDisabled = s.wayfire
 		s.setCaps(b.Capabilities())
 		if h, ok := b.(*hypr.Backend); ok {
 			s.hypr = h

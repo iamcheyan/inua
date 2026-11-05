@@ -326,7 +326,7 @@ func (s *shellUI) showNotesButton(b *bar) {
 		icon, tip = "weather-clear-night-symbolic", i18n.T("Notifications (Focus is on)")
 	}
 	b.notesIcon.SetFromIconName(icon)
-	b.notes.SetTooltipText(tip)
+	setTooltip(b.notes.GoPointer(), tip)
 	b.unread.SetVisible(s.notes.c.Unread() > 0)
 }
 
@@ -407,9 +407,9 @@ func (s *shellUI) buildNote(n notify.Notification, inBanner bool) *gtk.Box {
 	closeB.SetName("close:" + id)
 	if inBanner {
 		closeB.SetName("hide:" + id)
-		closeB.SetTooltipText(i18n.T("Hide"))
+		setTooltip(closeB.GoPointer(), i18n.T("Hide"))
 	} else {
-		closeB.SetTooltipText(i18n.T("Clear"))
+		setTooltip(closeB.GoPointer(), i18n.T("Clear"))
 	}
 	closeB.ConnectClicked(&s.onNoteButton)
 	for i, a := range n.Actions {
@@ -857,7 +857,7 @@ func (s *shellUI) fillCenter() {
 		nt.count.SetText(strconv.Itoa(total))
 	}
 	setOn(&nt.focus, nt.c.Focus)
-	nt.focus.SetTooltipText(map[bool]string{true: i18n.T("Focus is on"), false: i18n.T("Focus")}[nt.c.Focus])
+	setTooltip(nt.focus.GoPointer(), map[bool]string{true: i18n.T("Focus is on"), false: i18n.T("Focus")}[nt.c.Focus])
 	nt.focusNote.SetVisible(nt.c.Focus)
 	nt.clearAll.SetVisible(total > 0)
 	nt.empty.SetVisible(total == 0)

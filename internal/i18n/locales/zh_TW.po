@@ -14862,68 +14862,68 @@ msgstr "藍牙開"
 msgid "Bluetooth off"
 msgstr "藍牙關"
 
-#: internal/ui/overview.go:188
+#: internal/ui/overview.go:189
 msgid "restore focus"
 msgstr "恢復焦點"
 
-#: internal/ui/overview.go:298
+#: internal/ui/overview.go:299
 msgid "kill window"
 msgstr "殺掉窗口"
 
-#: internal/ui/overview.go:447
+#: internal/ui/overview.go:448
 msgid "MRU: ON"
 msgstr "MRU:開"
 
-#: internal/ui/overview.go:447
+#: internal/ui/overview.go:448
 msgid "MRU: OFF"
 msgstr "MRU:關閉"
 
-#: internal/ui/overview.go:448
+#: internal/ui/overview.go:449
 msgid "This monitor"
 msgstr "此顯示器"
 
-#: internal/ui/overview.go:448
+#: internal/ui/overview.go:449
 msgid "All monitors"
 msgstr "所有監視器"
 
-#: internal/ui/overview.go:457
+#: internal/ui/overview.go:458
 msgid "FILTER"
 msgstr "篩選"
 
-#: internal/ui/overview.go:459
+#: internal/ui/overview.go:460
 msgid "NO MATCHES"
 msgstr "沒有相符"
 
-#: internal/ui/overview.go:461
+#: internal/ui/overview.go:462
 msgid "%d RESULT"
 msgid_plural "%d RESULTS"
 msgstr[0] "%d 個結果"
 
-#: internal/ui/overview.go:494
+#: internal/ui/overview.go:495
 msgid "No workspaces"
 msgstr "沒有工作區"
 
-#: internal/ui/overview.go:496
+#: internal/ui/overview.go:497
 msgid "No matches"
 msgstr "沒有匹配項"
 
-#: internal/ui/overview.go:616
+#: internal/ui/overview.go:617
 msgid "＋  New workspace"
 msgstr "＋  新工作區"
 
-#: internal/ui/overview.go:980
+#: internal/ui/overview.go:986
 msgid "Filter by window title or app"
 msgstr "按視窗標題或應用程式過濾"
 
-#: internal/ui/overview.go:996
+#: internal/ui/overview.go:1002
 msgid "TYPE TO FILTER WINDOWS"
 msgstr "輸入以篩選視窗"
 
-#: internal/ui/overview.go:1009
+#: internal/ui/overview.go:1015
 msgid "Type or / to filter windows   Esc · clear / close   Arrows / Tab · select   Middle click · close   Ctrl+Shift+X · kill   Drag · move"
 msgstr "鍵入 或 / 來過濾視窗 Esc · 清除/關閉箭頭/ Tab · 選擇中按一下 · 關閉 Ctrl+Shift+X · 刪除 拖曳 · 移動"
 
-#: internal/ui/overview.go:1053
+#: internal/ui/overview.go:1059
 msgid "inua overview"
 msgstr "inua概述"
 

@@ -164,7 +164,7 @@ func (s *shellUI) showShortcuts() {
 		l.SetXalign(0)
 		l.SetHexpand(true)
 		l.SetEllipsize(3) // end
-		l.SetTooltipText(what)
+		setTooltip(l.GoPointer(), what)
 		gtkx.Append(row, &l.Widget)
 		gtkx.Append(&sc.hypr, &row.Widget)
 		n++
@@ -203,7 +203,7 @@ func (s *shellUI) shortcutRow(box *gtk.Box, id, title, sub string, keys []string
 	}
 	d.SetXalign(0)
 	d.SetEllipsize(3)
-	d.SetTooltipText(sub)
+	setTooltip(d.GoPointer(), sub)
 	d.SetVisible(sub != "")
 	gtkx.Append(text, &d.Widget)
 	gtkx.Append(row, &text.Widget)
@@ -212,7 +212,7 @@ func (s *shellUI) shortcutRow(box *gtk.Box, id, title, sub string, keys []string
 	rec.AddCssClass("keys")
 	rec.SetName("sc-rec:" + id)
 	rec.SetValign(gtk.AlignCenterValue)
-	rec.SetTooltipText(i18n.T("Click, then press the new shortcut"))
+	setTooltip(rec.GoPointer(), i18n.T("Click, then press the new shortcut"))
 	caps := gtk.NewBox(gtk.OrientationHorizontalValue, 6)
 	caps.SetHalign(gtk.AlignEndValue)
 	switch {
@@ -241,7 +241,7 @@ func (s *shellUI) shortcutRow(box *gtk.Box, id, title, sub string, keys []string
 		b := gtk.NewButtonFromIconName(iconName)
 		b.AddCssClass("plain")
 		b.SetName(name)
-		b.SetTooltipText(tip)
+		setTooltip(b.GoPointer(), tip)
 		b.ConnectClicked(&s.onSettingsButton)
 		gtkx.Append(slot, &b.Widget)
 	}
