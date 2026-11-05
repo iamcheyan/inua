@@ -113,7 +113,10 @@ func (b *Backend) Capabilities() compositor.Capabilities {
 		send = "window-rules/configure-view"
 	}
 	return compositor.Capabilities{
-		compositor.CapGeometry:          state("window-rules/list-views"),
+		compositor.CapGeometry: state("window-rules/list-views"),
+		// Pictures are cut from the output: geometry says where, and
+		// wlr-screencopy (grim) gives the frame.
+		compositor.CapPreviews:          state("window-rules/list-views"),
 		compositor.CapQuietFocus:        state("window-rules/focus-view"),
 		compositor.CapMoveWithoutFollow: state(send),
 		compositor.CapWorkspaces:        state("vswitch/set-workspace", send),
