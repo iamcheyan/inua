@@ -43,6 +43,7 @@ type Config struct {
 	OSD        OSD        `toml:"osd"`
 	Clipboard  Clipboard  `toml:"clipboard"`
 	Shortcuts  []Shortcut `toml:"shortcuts"`
+	Session    Session    `toml:"session"`
 
 	// Dir is the directory the file was read from; relative paths in the
 	// file are resolved against it.
@@ -103,6 +104,7 @@ type Launcher struct {
 type Overview struct {
 	MRU        bool `toml:"mru"`
 	PerMonitor bool `toml:"per_monitor"`
+	ShowDock   bool `toml:"show_dock"`
 }
 
 // Quicklink is a site the launcher searches by keyword.
@@ -239,6 +241,14 @@ type Background struct {
 // Shortcut is a keyboard shortcut set in inua's settings window. Written
 // to hypr/inua.conf, it unbinds its keys from anything else, and the keys
 // its action had in hyprland.conf (Replaces), then binds them.
+// Session is what the login starts: the Inua session entry runs
+// inua-session, which reads this.
+type Session struct {
+	// Compositor is the compositor the shell runs on from the next login:
+	// "hyprland" (also ""), "niri" or "wayfire" (internal/session).
+	Compositor string `toml:"compositor"`
+}
+
 type Shortcut struct {
 	// Action is one of ShortcutActions, or "exec" for Command.
 	Action string `toml:"action"`
@@ -906,6 +916,7 @@ var Themes = []string{"yoru", "washi", "aojashin", "suimen", "rinko", "bunko", "
 func Default() Config {
 	return Config{
 		Language: "auto",
+		Session:  Session{Compositor: "hyprland"},
 		Bar: Bar{
 			Enable:      true,
 			Density:     "default",
@@ -921,7 +932,7 @@ func Default() Config {
 			MenuOn:      []string{},
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
-		Overview: Overview{MRU: false, PerMonitor: true},
+		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true},
 		Control: Control{
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",

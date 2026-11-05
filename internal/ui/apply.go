@@ -203,9 +203,6 @@ func (s *shellUI) applyConfig(c config.Config) {
 		}
 		s.renderDocks()
 	}
-	if old.Bar.Menu != c.Bar.Menu {
-		s.setAppMenuOn(c.Bar.Menu)
-	}
 	s.followVoice() // dictation's engine: [voice], or the AI's profile
 	if old.Voice != c.Voice {
 		s.setVoiceButton()
@@ -217,21 +214,20 @@ func (s *shellUI) applyConfig(c config.Config) {
 		s.loadWallpaper()
 	}
 	for _, b := range s.bars {
-		if old.Dock.FlushBar != c.Dock.FlushBar {
-			b.setEdgeGap(!c.Dock.FlushBar)
+		if old.Bar.Density != c.Bar.Density {
+			b.setDensity(c.Bar.Density)
+		}
+		if old.Style.EdgeGaps != c.Style.EdgeGaps {
+			b.setEdgeGap(c.Style.EdgeGaps)
 		}
 		if old.Bar.Enable != c.Bar.Enable {
 			b.win.SetVisible(c.Bar.Enable)
 		}
 		s.syncDock(b)
+		s.syncOverviewDock(b)
 		b.title.SetVisible(c.Bar.Title)
-		b.setClockAtEnd(c.Bar.Menu)
 		b.tray.SetVisible(c.Bar.Tray)
 		b.clipboard.SetVisible(c.Clipboard.Enable && c.Clipboard.Bar)
-		if old.Bar.IconSize != c.Bar.IconSize || old.Bar.IconSpacing != c.Bar.IconSpacing {
-			b.setIconMetrics(c.Bar.IconSize, c.Bar.IconSpacing)
-			s.renderTray(b)
-		}
 		b.passwords.SetVisible(c.Bar.Pass && s.passwords.hasStore)
 		b.widgetsMark.SetVisible(c.Widgets.Enable)
 		b.setHypr(s, s.snap)

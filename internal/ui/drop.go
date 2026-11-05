@@ -43,8 +43,7 @@ type drop struct {
 	backdrop *gtk.Box
 	card     *gtk.Widget
 	host     *bar
-	bar      *gtk.Widget             // the window of the bar it hangs from
-	keyboard layershell.KeyboardMode // the bar's keyboard mode while it hangs
+	bar      *gtk.Widget // the window of the bar it hangs from
 
 	// Where it hangs, in the window's coordinates: the bar's island ends
 	// at left and right and its lower edge is at y, with corners of
@@ -53,8 +52,7 @@ type drop struct {
 	radius, corner float64
 	border         bool
 	end            bool    // flush with the bar's end
-	menu           bool    // align application menus with their trigger
-	under, at      float64 // the middle of the button it hangs under, and its left edge
+	under          float64 // the middle of the button it hangs under
 	x, w, h        float64 // the card's box, at rest
 	glass, line    gdk.RGBA
 
@@ -89,7 +87,6 @@ func (d *drop) attach(win *gtk.Window, keys *gtk.EventController, backdrop *gtk.
 	d.win, d.keys, d.layer = win, keys, layer
 	d.backdrop, d.card, d.canvas, d.bar, d.host = backdrop, card, nil, nil, nil
 	d.end = flush
-	d.keyboard = layershell.KeyboardExclusive
 	d.hanging, d.moving, d.back, d.gone = false, false, false, nil
 	d.shownW = 0
 	if d.onTick == nil {
@@ -108,25 +105,11 @@ func (d *drop) detach() {
 		d.bar.RemoveCssClass("joined-end")
 	}
 	if d.canvas != nil {
-		// Both go: the card back into the backdrop it was built in, the
-		// canvas out of the backdrop entirely. A canvas left there keeps
-		// expanding, and the next open adds another beside it, the two
-		// splitting the window's height between them - the card then lays
-		// itself out in the lower half, off the bar.
 		d.card.Unparent()
-		d.backdrop.Remove(d.canvas)
-		d.backdrop.Append(d.card)
 		gtkx.ForgetCanvas(d.canvas)
 	}
 	if b := d.host; b != nil {
-		// The keys' controller goes back to the panel's window, which then
-		// holds the only reference again. RemoveController drops the ref the
-		// bar held, so the controller is held across it, and AddController
-		// takes that ref as its own: unref it as well and the widget keeps a
-		// controller that is already freed (Gtk-CRITICAL on the next event).
-		d.keys.Ref()
 		b.win.RemoveController(d.keys)
-		d.win.AddController(d.keys)
 		d.backdrop.Ref()
 		b.frame.RemoveOverlay(&d.backdrop.Widget)
 		for _, c := range d.win.GetCssClasses() {
@@ -140,22 +123,6 @@ func (d *drop) detach() {
 	d.win, d.keys = nil, nil
 }
 
-// destroyPanel drops a panel's window. A panel that hung from the bar keeps
-// its card in the bar's window instead, so its own window was never realized
-// and has no GdkSurface; Destroy on such a window reaches a null surface and
-// takes the shell down with a SIGSEGV (gdk_surface_get_display),
-// so that one is only hidden.
-func destroyPanel(w *gtk.Window) {
-	if w == nil {
-		return
-	}
-	if w.GetSurface() == nil {
-		w.SetVisible(false)
-		return
-	}
-	w.Destroy()
-}
-
 // moveTo moves the backdrop into the bar b's window, with the panel's
 // classes for its style, and the keys with it.
 func (d *drop) moveTo(b *bar) {
@@ -166,10 +133,10 @@ func (d *drop) moveTo(b *bar) {
 			d.backdrop.AddCssClass(c)
 		}
 	}
-	b.hold(d.layer, d.keyboard)
+	b.hold(d.layer)
 	b.frame.AddOverlay(&d.backdrop.Widget)
 	d.backdrop.Unref()
-	d.keys.Ref() // RemoveController drops the ref the panel's window held; AddController takes this one
+	d.keys.Ref()
 	d.win.RemoveController(d.keys)
 	b.win.AddController(d.keys)
 	d.host = b
@@ -177,27 +144,7 @@ func (d *drop) moveTo(b *bar) {
 
 // hang moves the card into a canvas, to hang from the bar b under the
 // button whose middle is at under.
-// rehang moves the open card under another button of the same bar: the
-// menu follows the pointer along the bar, as a Mac's does, instead of
-// staying where it was first opened.
-func (d *drop) rehang(b *bar, island [4]float32, under, at float64) {
-	if d.host != b || d.canvas == nil {
-		return
-	}
-	d.left, d.right = float64(island[0]), float64(island[0]+island[2])
-	d.y = float64(island[1] + island[3])
-	d.under, d.at = under, at
-	if d.shownW != 0 {
-		d.resizes = true // the new section's width eases in
-	}
-	d.canvas.QueueAllocate()
-	d.canvas.QueueDraw()
-}
-
-// hang hangs the card from the bar b, under the button whose middle is at
-// under; at is the button's left edge, where the card starts when centring
-// it would push it off the button's own end.
-func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under, at float64) bool {
+func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under float64) bool {
 	if !d.colors(b.win.HasCssClass("empty")) {
 		return false
 	}
@@ -217,7 +164,7 @@ func (d *drop) hang(s *shellUI, b *bar, island [4]float32, under, at float64) bo
 
 	d.left, d.right = float64(island[0]), float64(island[0]+island[2])
 	d.y = float64(island[1] + island[3])
-	d.under, d.at = under, at
+	d.under = under
 	d.radius = float64(s.cfg.Style.Radius)
 	if !b.edgeGaps {
 		d.radius = 0 // flush: square
@@ -391,15 +338,8 @@ func (d *drop) allocate(_ *gtk.Widget, _, _ int) {
 		// Its outline, just outside it, on the bar's border, just inside
 		// the bar.
 		d.x = d.right - 1 - d.w
-	} else if d.menu {
-		d.x = math.Round(max(d.left, min(d.at, d.right-d.w)))
 	} else {
 		room := d.radius + d.corner // the arc's
-		// Centred under what opened it, inside the bar's island: the card
-		// only gives way when it would run off the island's end, and then
-		// it stops at the edge rather than at the button's own left side -
-		// a card that jumped to the button's left edge looked dropped at
-		// the screen's corner whenever the button sat far right.
 		d.x = math.Round(max(d.left+room, min(d.under-d.w/2, d.right-room-d.w)))
 	}
 	n := d.now()
@@ -423,15 +363,6 @@ func (d *drop) anchor() float64 {
 
 func (d *drop) snapshot(_ *gtk.Widget, s *gtk.Snapshot) {
 	if !d.hanging {
-		return
-	}
-	if d.menu {
-		// Each menu column paints its own card and shadow. Painting the
-		// drop's glass here would fill the whole rectangle behind them,
-		// including the gap and the space below a shorter submenu.
-		s.PushClip(rect(0, float32(d.y), float32(d.canvas.GetWidth()), float32(d.canvas.GetHeight())))
-		d.canvas.SnapshotChild(d.card, s)
-		s.Pop()
 		return
 	}
 	n := d.now()
@@ -599,30 +530,10 @@ func (s *shellUI) dropFromBar(d *drop, mon *gdk.Monitor, button func(*bar) *gtk.
 			}
 		}
 	}
-	s.hangFrom(d, on, button)
-}
-
-// dropFromThisBar hangs d's card from b's own bar, under the button it
-// gives: the bar the control sits on, not the focused monitor's. A panel
-// opened from one monitor's bar hangs from that bar, where its control is,
-// whatever monitor has the focus by then.
-func (s *shellUI) dropFromThisBar(d *drop, b *bar, button func(*bar) *gtk.Widget) {
-	if !s.layer {
-		b = nil
-	}
-	s.hangFrom(d, b, button)
-}
-
-// hangFrom is the rest of dropFromBar: the card in the bar's window, under
-// its button, or the panel's own window when there is no bar to hang it in.
-func (s *shellUI) hangFrom(d *drop, on *bar, button func(*bar) *gtk.Widget) {
 	var r, br graphene.Rect
 	if on != nil && on.island.ComputeBounds(&on.win.Widget, &r) && button(on).ComputeBounds(&on.win.Widget, &br) {
 		b := *(*[4]float32)(unsafe.Pointer(&br))
-		// Under the button's middle, but never past the card's own end:
-		// a card wider than the room to its right stops there instead of
-		// running off, and its left edge stays on the button's.
-		if d.hang(s, on, *(*[4]float32)(unsafe.Pointer(&r)), float64(b[0]+b[2]/2), float64(b[0])) {
+		if d.hang(s, on, *(*[4]float32)(unsafe.Pointer(&r)), float64(b[0]+b[2]/2)) {
 			d.open()
 			return
 		}

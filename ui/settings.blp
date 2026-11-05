@@ -1299,6 +1299,36 @@ ApplicationWindow settings {
 
                       Label {
                         styles ["title"]
+                        label:  _("Show during workspace overview");
+                        xalign: 0;
+                      }
+                      Label {
+                        styles ["sub"]
+                        label:  _("Keep the dock visible above the overview");
+                        xalign: 0;
+                        wrap: true;
+                      }
+                    }
+
+                    Switch overview_dock {
+                      name: "overview_dock";
+                      valign: center;
+                    }
+                  }
+
+                  Separator {}
+
+                  Box {
+                    styles ["row"]
+                    spacing: 16;
+
+                    Box {
+                      orientation: vertical;
+                      hexpand: true;
+                      valign: center;
+
+                      Label {
+                        styles ["title"]
                         label:  _("Hide automatically");
                         xalign: 0;
                       }
@@ -3828,13 +3858,13 @@ ApplicationWindow settings {
                     valign: center;
                   }
 
-                  Label {
+                  Label sc_other_label {
                     styles ["section-label"]
                     use-markup: true;
                     label:  _("<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>");
                   }
 
-                  Label {
+                  Label sc_other_meta {
                     styles ["section-meta"]
                     label:  _("Other shortcuts, from hyprland.conf");
                     hexpand: true;
@@ -4265,7 +4295,7 @@ ApplicationWindow settings {
                     label:  _("<span alpha='55%'>[</span>LID<span alpha='55%'>]</span>");
                   }
 
-                  Label {
+                  Label displays_lid_meta {
                     styles ["section-meta"]
                     label:  _("With another display connected");
                     hexpand: true;
@@ -4472,7 +4502,7 @@ ApplicationWindow settings {
                     label:  _("<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>");
                   }
 
-                  Label {
+                  Label kb_source_meta {
                     styles ["section-meta"]
                     label:  _("inua writes these to Hyprland's inua.conf");
                     hexpand: true;
@@ -4673,7 +4703,7 @@ ApplicationWindow settings {
                     label:  _("<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>");
                   }
 
-                  Label {
+                  Label tp_source_meta {
                     styles ["section-meta"]
                     label:  _("inua writes these to Hyprland's inua.conf");
                     hexpand: true;
@@ -4792,6 +4822,34 @@ ApplicationWindow settings {
           // The head of the section scrolled under the top edge.
           [overlay]
           Box sticky_power {
+            styles ["section-head", "sticky"]
+            spacing: 10;
+            valign: start;
+            visible: false;
+          }
+        };
+      }
+
+      StackPage {
+        name: "compositor";
+        title:  _("Compositor");
+
+        child: Overlay {
+          child: ScrolledWindow scroll_compositor {
+            hscrollbar-policy: never;
+
+            // The compositor the login starts, the login manager's side of
+            // it, and what the one running cannot do: laid out by
+            // settings_compositor.go.
+            Box compositor_page {
+              styles ["page"]
+              orientation: vertical;
+            }
+          };
+
+          // The head of the section scrolled under the top edge.
+          [overlay]
+          Box sticky_compositor {
             styles ["section-head", "sticky"]
             spacing: 10;
             valign: start;

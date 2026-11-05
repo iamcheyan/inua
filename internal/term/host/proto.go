@@ -47,6 +47,7 @@ type Message struct {
 	// Snapshot, in an attach: the pane as it is now, drawn again at its
 	// size, in place of its replay; in a welcome: the host makes them.
 	Snapshot bool `json:"snapshot,omitempty"`
+	Confirm  bool `json:"confirm,omitempty"` // close: explicit user consent
 
 	Pane  int      `json:"pane,omitempty"`
 	Argv  []string `json:"argv,omitempty"`   // create
@@ -185,6 +186,7 @@ const (
 	MsgRename       = "rename"        // client: Name for Session, else Workspace
 	MsgCloseSession = "close_session" // client: end Session's panes and forget it
 	MsgRemove       = "remove"        // client: forget Workspace, ending its panes
+	MsgMoveSession  = "move_session"  // client: Session before To (0: last), within Workspace
 	MsgMove         = "move"          // client: Workspace to place To
 	MsgUI           = "ui"            // client: UI, how the window is
 	MsgActive       = "active"        // client: its window is the active one (Active) or not

@@ -1799,6 +1799,49 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                                 <style>
                                                   <class name="title"/>
                                                 </style>
+                                                <property name="label" translatable="yes">Show during workspace overview</property>
+                                                <property name="xalign">0</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="sub"/>
+                                                </style>
+                                                <property name="label" translatable="yes">Keep the dock visible above the overview</property>
+                                                <property name="xalign">0</property>
+                                                <property name="wrap">true</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="overview_dock">
+                                            <property name="name">overview_dock</property>
+                                            <property name="valign">3</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSeparator"></object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="row"/>
+                                        </style>
+                                        <property name="spacing">16</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">1</property>
+                                            <property name="hexpand">true</property>
+                                            <property name="valign">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="title"/>
+                                                </style>
                                                 <property name="label" translatable="yes">Hide automatically</property>
                                                 <property name="xalign">0</property>
                                               </object>
@@ -5334,7 +5377,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="sc_other_label">
                                         <style>
                                           <class name="section-label"/>
                                         </style>
@@ -5343,7 +5386,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="sc_other_meta">
                                         <style>
                                           <class name="section-meta"/>
                                         </style>
@@ -5955,7 +5998,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="displays_lid_meta">
                                         <style>
                                           <class name="section-meta"/>
                                         </style>
@@ -6245,7 +6288,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="kb_source_meta">
                                         <style>
                                           <class name="section-meta"/>
                                         </style>
@@ -6527,7 +6570,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="tp_source_meta">
                                         <style>
                                           <class name="section-meta"/>
                                         </style>
@@ -6685,6 +6728,40 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                     </property>
                     <child type="overlay">
                       <object class="GtkBox" id="sticky_power">
+                        <style>
+                          <class name="section-head"/>
+                          <class name="sticky"/>
+                        </style>
+                        <property name="spacing">10</property>
+                        <property name="valign">1</property>
+                        <property name="visible">false</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage">
+                <property name="name">compositor</property>
+                <property name="title" translatable="yes">Compositor</property>
+                <property name="child">
+                  <object class="GtkOverlay">
+                    <property name="child">
+                      <object class="GtkScrolledWindow" id="scroll_compositor">
+                        <property name="hscrollbar-policy">2</property>
+                        <child>
+                          <object class="GtkBox" id="compositor_page">
+                            <style>
+                              <class name="page"/>
+                            </style>
+                            <property name="orientation">1</property>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <child type="overlay">
+                      <object class="GtkBox" id="sticky_compositor">
                         <style>
                           <class name="section-head"/>
                           <class name="sticky"/>

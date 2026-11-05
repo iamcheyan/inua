@@ -35,37 +35,16 @@ ApplicationWindow bar {
           }
         }
 
-        // The focused application, always the same way: its icon, its name,
-        // then its menus (appmenu.go). The name is a button: it opens the
-        // application's own menu, the one every application has (About,
-        // Close, Quit), as a Mac's does. Hidden with bar.title = false.
-        Button app {
-          styles ["app"]
-          name: "app";
-          has-frame: false;
-          focusable: false;
-
-          Box {
-            spacing: 8;
-
-            Image app_icon {
-              styles ["app-icon"]
-              valign: center;
-            }
-
-            Label title {
-              styles ["title"]
-              ellipsize: end;
-              max-width-chars: 32;
-              valign: center;
-            }
-          }
-        }
-
-        // The focused application's menus (appmenu.go); Go fills it.
         Box app_menu {
           styles ["app-menu"]
           spacing: 2;
+          valign: center;
+        }
+
+        Label title {
+          styles ["title"]
+          ellipsize: end;
+          max-width-chars: 48;
         }
       };
 
@@ -81,8 +60,8 @@ ApplicationWindow bar {
         }
       };
 
-      end-widget: Box end {
-        spacing: 2;
+      end-widget: Box {
+        spacing: 6;
 
         Box tray {
           styles ["tray"]
@@ -121,18 +100,14 @@ ApplicationWindow bar {
           focusable: false;
           visible: false;
           tooltip-text: _("Passwords");
-          Image password_icon {
-            icon-name: "dialog-password-symbolic";
-          }
+          icon-name: "dialog-password-symbolic";
         }
 
         Button clipboard {
           styles ["clipboard"]
           focusable: false;
           tooltip-text: _("Clipboard history");
-          Image clipboard_icon {
-            icon-name: "edit-paste-symbolic";
-          }
+          icon-name: "edit-paste-symbolic";
         }
 
         // Opens the notification center: a bell, a moon while Focus is on,
@@ -181,8 +156,8 @@ ApplicationWindow bar {
           focusable: false;
           tooltip-text:  _("Control Center");
 
-          Box status_icons {
-            spacing: 4;
+          Box {
+            spacing: 9;
 
             Image net_icon {
               icon-name: "network-offline-symbolic";

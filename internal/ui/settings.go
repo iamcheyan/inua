@@ -53,41 +53,38 @@ type settings struct {
 	setThemes map[string]*gtk.IconTheme
 	themeMenu string // the theme of yours a right click opened a menu for
 
-	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus gtk.Switch
-	noteHistory                                                    gtk.Switch
-	bgOwn                                                          gtk.Box // the image's rows, hidden while inua draws
-	bgAnother                                                      gtk.Button
-	barOn, dockOn, dockHide, dockDrawer, dockFlushBar              gtk.Switch
-	barMenu                                                        gtk.Switch
-	appMenuOff, appMenuOn                                          gtk.Box
-	appMenuOffAdd, appMenuOnAdd                                    gtk.DropDown
-	appMenuOffAdds, appMenuOnAdds                                  []string        // the IDs each lists
-	appMenuOffModel, appMenuOnModel                                *gtk.StringList // kept, or the model is collected
-	clipEnable, clipBar, clipPaste                                 gtk.Switch
-	dockSize, dockPosition, barDensity                             gtk.DropDown
-	dockPinned                                                     gtk.Box
-	bgImage, bgColor, clock, terminal, lock, screenshot            gtk.Entry
-	clipSensitive                                                  gtk.Entry
-	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner     gtk.DropDown
-	clipLimit                                                      gtk.DropDown
-	clipLimits                                                     []int // clipLimit's choices
-	textScale                                                      gtk.DropDown
-	textScales                                                     []int    // textScale's choices
-	iconSets                                                       []string // icons' choices
-	appIconSets                                                    []string // appIcons' choices
-	appTheme                                                       gtk.DropDown
-	appThemes, appThemeLabels                                      []string // appTheme's choices, "" first
-	tpSpeed, transparency, radius                                  gtk.Scale
-	barIconSize, barIconSpacing                                    gtk.Scale
-	transparencyVal, radiusVal, clipStats                          gtk.Label
-	barIconSizeVal, barIconSpacingVal                              gtk.Label
-	clipClear, clipReveal                                          gtk.Button
+	bgGenerate, title, tray, barPass, tpAccel, notifyOn, critFocus  gtk.Switch
+	noteHistory                                                     gtk.Switch
+	bgOwn                                                           gtk.Box // the image's rows, hidden while inua draws
+	bgAnother                                                       gtk.Button
+	barOn, dockOn, dockHide, dockDrawer, dockFlushBar, overviewDock gtk.Switch
+	clipEnable, clipBar, clipPaste                                  gtk.Switch
+	dockSize, dockPosition, barDensity                              gtk.DropDown
+	dockPinned                                                      gtk.Box
+	bgImage, bgColor, clock, terminal, lock, screenshot             gtk.Entry
+	clipSensitive                                                   gtk.Entry
+	bgFit, ws, launchMode, swap, caps, icons, appIcons, banner      gtk.DropDown
+	clipLimit                                                       gtk.DropDown
+	clipLimits                                                      []int // clipLimit's choices
+	textScale                                                       gtk.DropDown
+	textScales                                                      []int    // textScale's choices
+	iconSets                                                        []string // icons' choices
+	appIconSets                                                     []string // appIcons' choices
+	appTheme                                                        gtk.DropDown
+	appThemes, appThemeLabels                                       []string // appTheme's choices, "" first
+	tpSpeed, transparency, radius                                   gtk.Scale
+	transparencyVal, radiusVal, clipStats                           gtk.Label
+	clipClear, clipReveal                                           gtk.Button
 
 	// Keyboard and touchpad: where the settings come from, and why they
 	// would do nothing.
 	kbState, kbReadout, kbWarn, tpState, tpValue, tpWarn gtk.Label
-	notifyState                                          gtk.Label
-	kbReset, tpReset                                     gtk.Button
+	// The words that name the compositor, set for one other than Hyprland
+	// (showBackendLabels), and the hints under gated pages (gatePage).
+	kbSourceMeta, tpSourceMeta, scOtherLabel, scOtherMeta gtk.Label
+	compositor                                            compositorSettings
+	notifyState                                           gtk.Label
+	kbReset, tpReset                                      gtk.Button
 	// The language, and the offer to restart the shell into a new one.
 	language       gtk.DropDown
 	langRestartRow gtk.Box
@@ -130,7 +127,7 @@ var themeKanji = map[string]string{
 
 var (
 	fitChoices   = config.Fits
-	wsChoices    = []string{"monitor", "all", "none"}
+	wsChoices    = []string{"monitor", "all"}
 	barDensities = []string{"default", "compact"}
 	modeChoices  = []string{"apps", "windows"}
 	swapChoices  = []string{"", "left", "both"}
@@ -157,12 +154,12 @@ func (s *shellUI) bindSettingsHandlers() {
 			c.Bar.Tray = on
 		case "bar_pass":
 			c.Bar.Pass = on
-		case "bar_menu":
-			c.Bar.Menu = on
 		case "bar_enable":
 			c.Bar.Enable = on
 		case "dock_enable":
 			c.Dock.Enable = on
+		case "overview_dock":
+			c.Overview.ShowDock = on
 		case "dock_drawer":
 			c.Dock.Drawer = on
 		case "dock_autohide":
@@ -197,8 +194,8 @@ func (s *shellUI) bindSettingsHandlers() {
 		default:
 			s.aiSwitch(sw.GetName(), on, &c)
 		}
-		s.changeSettings(c) // applyConfig starts or stops the menu with it
-		return false        // let the switch move
+		s.changeSettings(c)
+		return false // let the switch move
 	}
 	s.onSettingsDrop = func(ptr, _, _ uintptr) {
 		d := s.settings.drops[ptr]
@@ -319,26 +316,6 @@ func (s *shellUI) bindSettingsHandlers() {
 			action, id, _ := strings.Cut(strings.TrimPrefix(name, "pin-"), ":")
 			c.Dock.Pinned = movePinned(c.Dock.Pinned, id, action)
 			s.changeSettings(c)
-		case strings.HasPrefix(name, "menu_off-remove:"):
-			id := strings.TrimPrefix(name, "menu_off-remove:")
-			c.Bar.MenuOff = slices.DeleteFunc(slices.Clone(c.Bar.MenuOff), func(v string) bool { return v == id })
-			s.changeSettings(c)
-		case strings.HasPrefix(name, "menu_on-remove:"):
-			id := strings.TrimPrefix(name, "menu_on-remove:")
-			c.Bar.MenuOn = slices.DeleteFunc(slices.Clone(c.Bar.MenuOn), func(v string) bool { return v == id })
-			s.changeSettings(c)
-		case name == "app_menu_off_addbtn":
-			if id := pickAppMenuChoice(&s.settings.appMenuOffAdd, s.settings.appMenuOffAdds); id != "" {
-				c.Bar.MenuOff = append(slices.Clone(c.Bar.MenuOff), id)
-				c.Bar.MenuOn = slices.DeleteFunc(slices.Clone(c.Bar.MenuOn), func(v string) bool { return v == id })
-				s.changeSettings(c)
-			}
-		case name == "app_menu_on_addbtn":
-			if id := pickAppMenuChoice(&s.settings.appMenuOnAdd, s.settings.appMenuOnAdds); id != "" {
-				c.Bar.MenuOn = append(slices.Clone(c.Bar.MenuOn), id)
-				c.Bar.MenuOff = slices.DeleteFunc(slices.Clone(c.Bar.MenuOff), func(v string) bool { return v == id })
-				s.changeSettings(c)
-			}
 		case name == "lang_restart":
 			if s.settings.dirty {
 				s.saveSettings() // before the restart reads it
@@ -370,20 +347,6 @@ func (s *shellUI) bindSettingsHandlers() {
 			val := int(math.Round(v))
 			c.Style.Radius = val
 			s.settings.radiusVal.SetText(i18n.Tf("%d px", val))
-			s.changeSettings(c)
-			return false
-		}
-		if r.GetName() == "bar_icon_size" {
-			val := int(math.Round(v))
-			c.Bar.IconSize = val
-			s.settings.barIconSizeVal.SetText(i18n.Tf("%d px", val))
-			s.changeSettings(c)
-			return false
-		}
-		if r.GetName() == "bar_icon_spacing" {
-			val := int(math.Round(v))
-			c.Bar.IconSpacing = val
-			s.settings.barIconSpacingVal.SetText(i18n.Tf("%d px", val))
 			s.changeSettings(c)
 			return false
 		}
@@ -471,11 +434,6 @@ func (s *shellUI) openSettings() {
 	ui.Get("title", &st.title)
 	ui.Get("tray", &st.tray)
 	ui.Get("bar_pass", &st.barPass)
-	ui.Get("bar_menu", &st.barMenu)
-	ui.Get("app_menu_off", &st.appMenuOff)
-	ui.Get("app_menu_on", &st.appMenuOn)
-	ui.Get("app_menu_off_add", &st.appMenuOffAdd)
-	ui.Get("app_menu_on_add", &st.appMenuOnAdd)
 	ui.Get("bg_image", &st.bgImage)
 	ui.Get("bg_color", &st.bgColor)
 	ui.Get("clock", &st.clock)
@@ -485,10 +443,6 @@ func (s *shellUI) openSettings() {
 	ui.Get("bg_fit", &st.bgFit)
 	ui.Get("ws", &st.ws)
 	ui.Get("bar_density", &st.barDensity)
-	ui.Get("bar_icon_size", &st.barIconSize)
-	ui.Get("bar_icon_spacing", &st.barIconSpacing)
-	ui.Get("bar_icon_size_val", &st.barIconSizeVal)
-	ui.Get("bar_icon_spacing_val", &st.barIconSpacingVal)
 	ui.Get("launch_mode", &st.launchMode)
 	ui.Get("icons", &st.icons)
 	ui.Get("appstyles", &st.appstyles)
@@ -508,6 +462,7 @@ func (s *shellUI) openSettings() {
 	ui.Get("banner", &st.banner)
 	ui.Get("bar_enable", &st.barOn)
 	ui.Get("dock_enable", &st.dockOn)
+	ui.Get("overview_dock", &st.overviewDock)
 	ui.Get("dock_autohide", &st.dockHide)
 	ui.Get("dock_flush_bar", &st.dockFlushBar)
 	ui.Get("dock_drawer", &st.dockDrawer)
@@ -520,6 +475,10 @@ func (s *shellUI) openSettings() {
 	ui.Get("sc_hypr", &st.sc.hypr)
 	ui.Get("sc_recording", &st.sc.recordingNote)
 	ui.Get("sc_warn", &st.sc.warn)
+	ui.Get("sc_other_label", &st.scOtherLabel)
+	ui.Get("sc_other_meta", &st.scOtherMeta)
+	ui.Get("kb_source_meta", &st.kbSourceMeta)
+	ui.Get("tp_source_meta", &st.tpSourceMeta)
 	ui.Get("sc_new_name", &st.sc.newName)
 	ui.Get("sc_new_cmd", &st.sc.newCmd)
 	var scAdd gtk.Button
@@ -571,6 +530,7 @@ func (s *shellUI) openSettings() {
 	s.getWifiSettings(ui)
 	s.getBluetoothSettings(ui)
 	s.getPowerSettings(ui)
+	s.getCompositorSettings(ui)
 	s.getVoiceSettings(ui)
 	s.getSoundSettings(ui)
 	s.buildSettingsIndex()
@@ -585,7 +545,7 @@ func (s *shellUI) openSettings() {
 		st.drops[d.GoPointer()] = d
 		gtkx.ConnectNotify(d, "selected", &s.onSettingsDrop)
 	}
-	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.barMenu, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
+	for _, sw := range []*gtk.Switch{&st.bgGenerate, &st.title, &st.tray, &st.barPass, &st.tpAccel, &st.notifyOn, &st.critFocus, &st.noteHistory, &st.barOn, &st.dockOn, &st.dockHide, &st.dockDrawer, &st.dockFlushBar, &st.overviewDock, &st.clipEnable, &st.clipBar, &st.clipPaste, &st.displays.lidOff} {
 		sw.ConnectStateSet(&s.onSettingsSwitch)
 	}
 	for _, b := range []*gtk.Button{&choose, &clearImage, &st.bgAnother, &iconPreview, &stylePreview, &st.kbReset, &st.tpReset, &st.langRestart, &st.clipClear, &st.clipReveal} {
@@ -594,8 +554,6 @@ func (s *shellUI) openSettings() {
 	st.tpSpeed.ConnectChangeValue(&s.onSettingsScale)
 	st.transparency.ConnectChangeValue(&s.onSettingsScale)
 	st.radius.ConnectChangeValue(&s.onSettingsScale)
-	st.barIconSize.ConnectChangeValue(&s.onSettingsScale)
-	st.barIconSpacing.ConnectChangeValue(&s.onSettingsScale)
 	s.buildSwatches()
 	st.hyprKb = s.hyprKbOptions()
 	st.sc.binds = s.hyprBinds()
@@ -624,7 +582,7 @@ var settingsGroups = []struct {
 	{i18n.M("Devices"), []string{"displays", "keyboard", "mouse", "sound", "voice"}},
 	{i18n.M("Desktop"), []string{"appearance", "bar", "launcher", "notifications", "shortcuts"}},
 	{i18n.M("Apps"), []string{"apps", "ai", "clipboard", "keyring"}},
-	{i18n.M("System"), []string{"power", "about"}},
+	{i18n.M("System"), []string{"compositor", "power", "about"}},
 }
 
 // settingsPages are the pages' names in settings.ui, in the index's order.
@@ -809,8 +767,6 @@ func (s *shellUI) showSettings() {
 	st.title.SetActive(c.Bar.Title)
 	st.tray.SetActive(c.Bar.Tray)
 	st.barPass.SetActive(c.Bar.Pass)
-	st.barMenu.SetActive(c.Bar.Menu)
-	s.showAppMenuSettings()
 	setEntry(&st.bgImage, c.Background.Image)
 	setEntry(&st.bgColor, c.Background.Color)
 	setEntry(&st.clock, c.Bar.Clock)
@@ -825,10 +781,6 @@ func (s *shellUI) showSettings() {
 	st.ws.SetSelected(uint32(max(0, slices.Index(wsChoices, c.Bar.Workspaces))))
 	st.launchMode.SetSelected(uint32(max(0, slices.Index(modeChoices, c.Launcher.Mode))))
 	st.barDensity.SetSelected(uint32(max(0, slices.Index(barDensities, c.Bar.Density))))
-	st.barIconSize.SetValue(float64(c.Bar.IconSize))
-	st.barIconSizeVal.SetText(i18n.Tf("%d px", c.Bar.IconSize))
-	st.barIconSpacing.SetValue(float64(c.Bar.IconSpacing))
-	st.barIconSpacingVal.SetText(i18n.Tf("%d px", c.Bar.IconSpacing))
 	st.transparency.SetValue(float64(c.Style.Transparency))
 	st.transparencyVal.SetText(i18n.Tf("%d%%", c.Style.Transparency))
 	st.radius.SetValue(float64(c.Style.Radius))
@@ -842,6 +794,8 @@ func (s *shellUI) showSettings() {
 	s.showWifi()
 	s.showBluetooth()
 	s.showPower()
+	s.showCompositor()
+	s.showBackendLabels()
 	s.fillVoiceSettings()
 	s.showSound()
 	s.showDisplays()
@@ -1151,6 +1105,7 @@ func (s *shellUI) showDockSettings() {
 	c := s.cfg
 	st.barOn.SetActive(c.Bar.Enable)
 	st.dockOn.SetActive(c.Dock.Enable)
+	st.overviewDock.SetActive(c.Overview.ShowDock)
 	st.dockHide.SetActive(c.Dock.Autohide)
 	st.dockFlushBar.SetActive(!c.Style.EdgeGaps)
 	st.dockDrawer.SetActive(c.Dock.Drawer)

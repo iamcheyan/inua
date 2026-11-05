@@ -15,8 +15,8 @@ import (
 func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
-		c.Bar.Enable, q(c.Bar.Density), c.Bar.IconSize, c.Bar.IconSpacing, q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass, c.Bar.Menu, list(c.Bar.MenuOff), list(c.Bar.MenuOn),
-		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor,
+		c.Bar.Enable, q(c.Bar.Density), q(c.Bar.Clock), q(c.Bar.Workspaces), c.Bar.Title, c.Bar.Tray, c.Bar.Pass,
+		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor, c.Overview.ShowDock,
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
@@ -27,7 +27,7 @@ func Format(c Config) string {
 		c.Displays.LidOff, monitors(c.Displays.Monitors),
 		c.Notify.Enable, c.Notify.Banner, c.Notify.CriticalInFocus, c.Notify.Updates, c.Notify.History,
 		c.Clipboard.Enable, c.Clipboard.Bar, c.Clipboard.Limit, c.Clipboard.PasteOnClick, list(c.Clipboard.SensitiveSources),
-		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.FlushBar, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
+		c.Dock.Enable, q(c.Dock.Position), c.Dock.Autohide, c.Dock.Size, c.Dock.Drawer, list(c.Dock.Pinned),
 		c.Widgets.Enable, c.Widgets.Swipe, list(c.Widgets.Apps), widgetPlaces(c.Widgets.Places),
 		c.Voice.Enable, c.Voice.PushToTalk, q(c.Voice.Engine), q(c.Voice.Show),
 		c.Assistant.Enable, q(c.Assistant.Profile), list(c.Assistant.Fallback), q(c.Assistant.Decision), q(c.Assistant.Transcription),
@@ -35,6 +35,7 @@ func Format(c Config) string {
 		c.Assistant.ServeEnable, q(c.Assistant.ServeListen), aiProfiles(c.Assistant.Profiles),
 		q(c.Keyring.Folder), c.Keyring.Notify, q(c.Keyring.Untrusted), c.Keyring.LockAfter,
 		c.MCP.Enable, q(c.MCP.Policy),
+		q(c.Session.Compositor),
 		shortcuts(c.Shortcuts))
 }
 
@@ -213,11 +214,6 @@ enable = %t
 # Bar density: "default" or "compact". Compact saves vertical screen space.
 density = %s
 
-# Right-side bar icon size, in pixels (12 to 24).
-icon_size = %d
-# The gap between right-side bar icons, in pixels (2 to 12).
-icon_spacing = %d
-
 # Clock, in strftime format: %%a %%A weekday, %%b %%B month, %%d %%e day, %%m month,
 # %%Y year, %%H %%I hour (24h/12h), %%M minute, %%S second, %%p AM/PM.
 # A '-' drops zero padding (%%-d, %%-H). With seconds, the clock ticks every
@@ -226,7 +222,6 @@ clock = %s
 
 # "monitor": each bar shows the workspaces of its own monitor.
 # "all": every bar shows every workspace.
-# "none": hide the workspace indicator.
 workspaces = %s
 
 # Show the focused window's title.
@@ -239,18 +234,6 @@ tray = %t
 # uses) and copies a password, a user name or a one-time code. Shown only
 # when there is a store. `+"`inua call pass toggle`"+` opens it too.
 pass = %t
-
-# Show the focused application's menu in the bar (macOS style): inua's own
-# apps, and applications that publish one through the AppMenu registrar.
-# Click elsewhere, or the same title again, to close it. The clock moves to
-# the bar's right end while this is on.
-menu = %t
-
-# Per application: the ones whose menu the bar leaves alone, and the ones it
-# still shows while menu is off. A desktop ID ("org.mozilla.firefox") or a
-# window class ("firefox").
-menu_off = %s
-menu_on = %s
 
 [launcher]
 # What `+"`inua call launcher toggle`"+` opens: "apps" or "windows".
@@ -274,6 +257,8 @@ search = %s
 mru = %t
 # Show each display's workspaces on its own overview surface.
 per_monitor = %t
+# Show the dock above the workspace overview while it is open.
+show_dock = %t
 
 [control]
 # Shell commands run by the control center's buttons.
@@ -314,10 +299,10 @@ position = %s
 # built-in theme it names.
 theme = %s
 
-# The apps' colour theme, one of the above: inua's apps (Files, the
-# terminal, the viewer …) and whether other apps are asked to be light or
-# dark. "" (the default) follows theme; the bar, dock, launcher, control
-# center and settings keep theme.
+# The apps' colour theme, one of the above: inua's apps (the settings,
+# Files, the terminal, the viewer …) and whether other apps are asked to be
+# light or dark. "" (the default) follows theme; the bar, dock, launcher
+# and control center keep theme.
 app_theme = %s
 
 # How inua draws apps: inua's own and the others it draws, each as the
@@ -411,14 +396,16 @@ generate = %t
 touchpad_accel = %s
 
 [displays]
-# Monitors, set in the settings window (Displays). inua writes them to
-# ~/.config/hypr/inua.conf as monitor rules after hyprland.conf's, so a
-# display listed here is as it says, and one not listed stays as
-# hyprland.conf has it. After editing by hand: `+"`inua config apply`"+`.
+# Monitors, set in the settings window (Displays). On Hyprland inua
+# writes them to ~/.config/hypr/inua.conf as monitor rules after
+# hyprland.conf's; on Wayfire it sets them over the IPC each time the
+# shell starts. A display listed here is as it says, and one not listed
+# stays as the compositor's own config has it. After editing by hand:
+# `+"`inua config apply`"+`.
 
 # While a laptop's lid is closed and another display is connected, turn
 # the built-in display off (its workspaces move to the others); opening
-# the lid turns it on again, beside them.
+# the lid turns it on again, beside them. Hyprland only.
 lid_off = %t
 
 # A display: output is its connector ("DP-1"), or "desc:" and its
@@ -495,10 +482,6 @@ position = %s
 # Hide the dock until the pointer reaches its screen edge. false: windows
 # make room for it.
 autohide = %t
-
-# Remove the screen-edge margins around the dock and top bar, so they touch
-# the screen's edges.
-flush_bar = %t
 
 # Icon size in pixels (24 to 96).
 size = %d
@@ -647,6 +630,13 @@ enable = %t
 # inua's dialog) or "allow" (change without asking; closing windows,
 # ending processes, power, the clipboard and notifications still ask).
 policy = %s
+
+[session]
+# The compositor the Inua login session starts: "hyprland", "niri" or
+# "wayfire" (Settings, Compositor). It applies at the next login. One that
+# is not installed, or whose own config does not start inua-shell, is
+# passed over for Hyprland, and the shell says why.
+compositor = %s
 
 # Keyboard shortcuts set in the settings window (Shortcuts). inua writes
 # them to ~/.config/hypr/inua.conf: each unbinds its keys from anything

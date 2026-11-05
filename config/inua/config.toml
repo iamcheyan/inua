@@ -22,11 +22,6 @@ enable = true
 # Bar density: "default" or "compact". Compact saves vertical screen space.
 density = "default"
 
-# Right-side bar icon size, in pixels (12 to 24).
-icon_size = 16
-# The gap between right-side bar icons, in pixels (2 to 12).
-icon_spacing = 4
-
 # Clock, in strftime format: %a %A weekday, %b %B month, %d %e day, %m month,
 # %Y year, %H %I hour (24h/12h), %M minute, %S second, %p AM/PM.
 # A '-' drops zero padding (%-d, %-H). With seconds, the clock ticks every
@@ -35,7 +30,6 @@ clock = "%a %b %-d  %H:%M"
 
 # "monitor": each bar shows the workspaces of its own monitor.
 # "all": every bar shows every workspace.
-# "none": hide the workspace indicator.
 workspaces = "monitor"
 
 # Show the focused window's title.
@@ -48,18 +42,6 @@ tray = true
 # uses) and copies a password, a user name or a one-time code. Shown only
 # when there is a store. `inua call pass toggle` opens it too.
 pass = true
-
-# Show the focused application's menu in the bar (macOS style): inua's own
-# apps, and applications that publish one through the AppMenu registrar.
-# Click elsewhere, or the same title again, to close it. The clock moves to
-# the bar's right end while this is on.
-menu = false
-
-# Per application: the ones whose menu the bar leaves alone, and the ones it
-# still shows while menu is off. A desktop ID ("org.mozilla.firefox") or a
-# window class ("firefox").
-menu_off = []
-menu_on = []
 
 [launcher]
 # What `inua call launcher toggle` opens: "apps" or "windows".
@@ -118,6 +100,8 @@ url = "https://translate.google.com/?text=%s"
 mru = false
 # Show each display's workspaces on its own overview surface.
 per_monitor = true
+# Show the dock above the workspace overview while it is open.
+show_dock = true
 
 [control]
 # Shell commands run by the control center's buttons.
@@ -158,10 +142,10 @@ position = "bottom-center"
 # built-in theme it names.
 theme = "yoru"
 
-# The apps' colour theme, one of the above: inua's apps (Files, the
-# terminal, the viewer …) and whether other apps are asked to be light or
-# dark. "" (the default) follows theme; the bar, dock, launcher, control
-# center and settings keep theme.
+# The apps' colour theme, one of the above: inua's apps (the settings,
+# Files, the terminal, the viewer …) and whether other apps are asked to be
+# light or dark. "" (the default) follows theme; the bar, dock, launcher
+# and control center keep theme.
 app_theme = ""
 
 # How inua draws apps: inua's own and the others it draws, each as the
@@ -192,7 +176,7 @@ icons = "phosphor"
 
 # A small gap between the screen edges and the bar and dock. false puts
 # them flush against the edges.
-edge_gaps = false
+edge_gaps = true
 
 # Size of the text in the shell and inua's apps, 80 to 150 percent. Icons,
 # spacing and the stylesheet below keep their sizes.
@@ -255,14 +239,16 @@ generate = true
 touchpad_accel = ""
 
 [displays]
-# Monitors, set in the settings window (Displays). inua writes them to
-# ~/.config/hypr/inua.conf as monitor rules after hyprland.conf's, so a
-# display listed here is as it says, and one not listed stays as
-# hyprland.conf has it. After editing by hand: `inua config apply`.
+# Monitors, set in the settings window (Displays). On Hyprland inua
+# writes them to ~/.config/hypr/inua.conf as monitor rules after
+# hyprland.conf's; on Wayfire it sets them over the IPC each time the
+# shell starts. A display listed here is as it says, and one not listed
+# stays as the compositor's own config has it. After editing by hand:
+# `inua config apply`.
 
 # While a laptop's lid is closed and another display is connected, turn
 # the built-in display off (its workspaces move to the others); opening
-# the lid turns it on again, beside them.
+# the lid turns it on again, beside them. Hyprland only.
 lid_off = true
 
 # A display: output is its connector ("DP-1"), or "desc:" and its
@@ -339,10 +325,6 @@ position = "bottom"
 # Hide the dock until the pointer reaches its screen edge. false: windows
 # make room for it.
 autohide = false
-
-# Remove the screen-edge margins around the dock and top bar, so they touch
-# the screen's edges.
-flush_bar = false
 
 # Icon size in pixels (24 to 96).
 size = 36
@@ -523,6 +505,13 @@ enable = false
 # inua's dialog) or "allow" (change without asking; closing windows,
 # ending processes, power, the clipboard and notifications still ask).
 policy = "ask"
+
+[session]
+# The compositor the Inua login session starts: "hyprland", "niri" or
+# "wayfire" (Settings, Compositor). It applies at the next login. One that
+# is not installed, or whose own config does not start inua-shell, is
+# passed over for Hyprland, and the shell says why.
+compositor = "hyprland"
 
 # Keyboard shortcuts set in the settings window (Shortcuts). inua writes
 # them to ~/.config/hypr/inua.conf: each unbinds its keys from anything

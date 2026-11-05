@@ -13,6 +13,8 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/lyricat/inua/internal/compositor"
+
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
@@ -22,7 +24,6 @@ import (
 
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/gtkx"
-	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
@@ -43,24 +44,26 @@ const (
 )
 
 type dock struct {
-	win      gtk.ApplicationWindow
-	root     gtk.Box
-	reveal   gtk.Revealer
-	island   gtk.Box
-	items    gtk.Box
-	edge     gtk.Box
-	refs     gtkx.Scope
-	shown    string                 // the apps and icons shown (dockSignature)
-	buttons  map[string]*dockButton // by app, borrowed from items
-	size     int
-	position string
-	flushBar bool // dock.flush_bar
-	vertical bool // apps stack along a vertical screen edge
-	hide     bool // autohide
-	hover    bool
-	hideGen  uintptr
-	drawer   *gtk.Button // the drawer's button, borrowed from items; nil without one
-	workshop *gtk.Button // the workshop drawer's, there while workshop apps are installed
+	win                 gtk.ApplicationWindow
+	root                gtk.Box
+	reveal              gtk.Revealer
+	island              gtk.Box
+	items               gtk.Box
+	edge                gtk.Box
+	refs                gtkx.Scope
+	shown               string                 // the apps and icons shown (dockSignature)
+	buttons             map[string]*dockButton // by app, borrowed from items
+	size                int
+	position            string
+	gaps                bool // style.edge_gaps
+	vertical            bool // apps stack along a vertical screen edge
+	hide                bool // autohide
+	hover               bool
+	hideGen             uintptr
+	overviewShown       bool
+	overviewWasRevealed bool
+	drawer              *gtk.Button // the drawer's button, borrowed from items; nil without one
+	workshop            *gtk.Button // the workshop drawer's, there while workshop apps are installed
 
 	// Dragging an app: its button is hidden while it is away, and the
 	// others move aside to leave a gap where it would land (see setGap).
@@ -99,7 +102,7 @@ type dockState struct {
 func (s *shellUI) syncDock(b *bar) {
 	c := s.cfg.Dock
 	want := c.Enable && s.layer
-	if b.dock != nil && (!want || b.dock.size != c.Size || b.dock.hide != c.Autohide || b.dock.position != c.Position || b.dock.flushBar != c.FlushBar) {
+	if b.dock != nil && (!want || b.dock.size != c.Size || b.dock.hide != c.Autohide || b.dock.position != c.Position || b.dock.gaps != s.cfg.Style.EdgeGaps) {
 		dropDock(b)
 	}
 	if want && b.dock == nil {
@@ -107,6 +110,40 @@ func (s *shellUI) syncDock(b *bar) {
 	}
 	if b.dock != nil {
 		s.renderDock(b)
+	}
+}
+
+// syncOverviewDock temporarily raises the dock above the workspace overview.
+// Autohide state is restored when the overview closes.
+func (s *shellUI) syncOverviewDocks() {
+	for _, b := range s.bars {
+		s.syncOverviewDock(b)
+	}
+}
+
+func (s *shellUI) syncOverviewDock(b *bar) {
+	d := b.dock
+	if d == nil {
+		return
+	}
+	want := s.overview.st.Open && s.cfg.Overview.ShowDock
+	if want == d.overviewShown {
+		return
+	}
+	d.overviewShown = want
+	if want {
+		d.overviewWasRevealed = d.reveal.GetRevealChild()
+		layershell.SetLayer(d.win.GoPointer(), layershell.LayerOverlay)
+		if d.hide {
+			d.reveal.SetRevealChild(true)
+			fitDock(d)
+		}
+		return
+	}
+	layershell.SetLayer(d.win.GoPointer(), layershell.LayerTop)
+	if d.hide {
+		d.reveal.SetRevealChild(d.overviewWasRevealed || d.hover)
+		fitDock(d)
 	}
 }
 
@@ -121,7 +158,7 @@ func dropDock(b *bar) {
 
 func (s *shellUI) newDock(b *bar) *dock {
 	position := s.cfg.Dock.Position
-	d := &dock{size: s.cfg.Dock.Size, position: position, vertical: position == "left" || position == "right", hide: s.cfg.Dock.Autohide, flushBar: s.cfg.Dock.FlushBar}
+	d := &dock{size: s.cfg.Dock.Size, position: position, vertical: position == "left" || position == "right", hide: s.cfg.Dock.Autohide, gaps: s.cfg.Style.EdgeGaps}
 	ui := s.load("dock.ui", &d.refs)
 	ui.Get("dock", &d.win)
 	ui.Get("root", &d.root)
@@ -137,12 +174,12 @@ func (s *shellUI) newDock(b *bar) *dock {
 		d.island.SetMarginBottom(0)
 		d.reveal.SetVexpand(true)
 		if position == "left" {
-			if !d.flushBar {
+			if d.gaps {
 				d.island.SetMarginStart(6)
 			}
 			d.reveal.SetTransitionType(gtk.RevealerTransitionTypeSlideRightValue)
 		} else {
-			if !d.flushBar {
+			if d.gaps {
 				d.island.SetMarginEnd(6)
 			}
 			d.island.AddCssClass("dock-right")
@@ -156,20 +193,27 @@ func (s *shellUI) newDock(b *bar) *dock {
 		d.reveal.SetHexpand(true)
 		if position == "top" {
 			d.island.SetMarginBottom(0)
-			if !d.flushBar {
+			if d.gaps {
 				d.island.SetMarginTop(6)
 			}
 			d.reveal.SetTransitionType(gtk.RevealerTransitionTypeSlideDownValue)
 		} else {
-			if d.flushBar {
+			if !d.gaps {
 				d.island.SetMarginBottom(0)
 			}
 			d.reveal.SetTransitionType(gtk.RevealerTransitionTypeSlideUpValue)
 		}
-		d.edge.Widget.SetSizeRequest(-1, 3)
+		d.edge.Widget.SetSizeRequest(-1, dockEdge)
 	}
-	if position == "top" || position == "left" {
+	switch position {
+	case "top", "left":
 		d.root.ReorderChildAfter(&d.edge.Widget, &gtk.Widget{})
+	// The window takes the whole dock as it starts to show (fitDock): the
+	// dock keeps to its screen edge, so it slides out of it.
+	case "right":
+		d.root.SetHalign(gtk.AlignEndValue)
+	default:
+		d.root.SetValign(gtk.AlignEndValue)
 	}
 	drop := gtk.NewDropTarget(types.GType(gobject.TypeStringVal), gdk.ActionMoveValue)
 	drop.ConnectMotion(&s.onDockDropMotion)
@@ -243,7 +287,7 @@ func dockSignature(items []shell.DockItem, size int, drawer bool) string {
 // (Fcitx's candidate popup, whatever class it gets), by the program that
 // owns it. Names are read from /proc/PID/comm once per PID and forgotten
 // when the PID has no window left.
-func (s *shellUI) inputMethodWindow(t hypr.Toplevel) bool {
+func (s *shellUI) inputMethodWindow(t compositor.Window) bool {
 	if t.PID <= 0 { // unknown, as for some XWayland windows
 		return false
 	}
@@ -262,7 +306,7 @@ func (s *shellUI) inputMethodWindow(t hypr.Toplevel) bool {
 // forgetPrograms drops the names of processes without windows.
 func (s *shellUI) forgetPrograms() {
 	live := map[int]bool{}
-	for _, t := range s.snap.Toplevels {
+	for _, t := range s.snap.Windows {
 		live[t.PID] = true
 	}
 	maps.DeleteFunc(s.dockState.programs, func(pid int, _ string) bool { return !live[pid] })
@@ -426,7 +470,7 @@ func (s *shellUI) scrollDock(n int) {
 		return
 	}
 	if it, ok := s.dockItem(key); ok {
-		s.focusWindowHere(it.Windows[0].Address)
+		s.focusWindowHere(it.Windows[0].ID)
 	}
 }
 
@@ -519,7 +563,7 @@ func (s *shellUI) dockMenuAction(name string) {
 		s.changeSettings(c)
 	case "quit":
 		for _, w := range it.Windows {
-			s.dispatch("closewindow address:" + w.Address)
+			s.closeWindow(w.ID)
 		}
 	}
 }
@@ -529,6 +573,9 @@ func (s *shellUI) bindDockHandlers() {
 		it, ok := s.dockItem(strings.TrimPrefix(b.GetName(), "dock:"))
 		if !ok {
 			return
+		}
+		if s.overview.st.Open {
+			s.closeOverview(false)
 		}
 		launch, addr := shell.DockTarget(it)
 		switch {
@@ -694,7 +741,7 @@ func (s *shellUI) bindDockHandlers() {
 	}
 	s.onDockHide = func(gen uintptr) bool {
 		for _, b := range s.bars {
-			if d := b.dock; d != nil && d.hide && !d.hover && gen == d.hideGen && s.dockState.drawer == nil {
+			if d := b.dock; d != nil && d.hide && !d.hover && !d.overviewShown && gen == d.hideGen && s.dockState.drawer == nil {
 				d.reveal.SetRevealChild(false)
 			}
 		}
@@ -711,7 +758,7 @@ func (s *shellUI) showDock(d *dock) {
 
 func (s *shellUI) dockOf(w *gtk.Widget) *dock {
 	for _, b := range s.bars {
-		if b.dock != nil && w != nil && (b.dock.win.GoPointer() == w.GoPointer() || b.dock.edge.GoPointer() == w.GoPointer() || b.dock.island.GoPointer() == w.GoPointer()) {
+		if b.dock != nil && w != nil && b.dock.win.GoPointer() == w.GoPointer() {
 			return b.dock
 		}
 	}
@@ -741,43 +788,15 @@ func (s *shellUI) markLaunching(key string) {
 }
 
 // focusWindowHere focuses a window without moving the pointer to it, as
-// focusing does unless cursor:no_warps is set: the pointer stays on the
-// dock, where the user clicked.
-func (s *shellUI) focusWindowHere(addr string) {
-	if s.client == nil {
+// focusing does on Hyprland unless cursor:no_warps is set: the pointer
+// stays on the dock, where the user clicked. A compositor without a quiet
+// focus focuses as it does.
+func (s *shellUI) focusWindowHere(id string) {
+	if q, ok := s.comp.(compositor.QuietFocuser); ok && s.caps.Has(compositor.CapQuietFocus) {
+		s.compositorDo("focus "+id, func(ctx context.Context) error { return q.FocusWindowQuietly(ctx, id) })
 		return
 	}
-	client, lua := s.client, s.hyprLua
-	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-		defer cancel()
-		if err := focusQuietly(ctx, client, lua, addr); err != nil {
-			log.Printf("dock: focus %s: %v", addr, err)
-		}
-	}()
-}
-
-// focusQuietly focuses the window addr with cursor:no_warps turned on for
-// the focus only, and back as it was: in one Lua script where Hyprland
-// runs Lua (0.55 and later), else in one batch of classic commands. It
-// blocks; run it off the main thread.
-func focusQuietly(ctx context.Context, client *hypr.Client, lua bool, addr string) error {
-	if lua {
-		script := fmt.Sprintf(`local noWarps = hl.get_config("cursor.no_warps"); hl.config({cursor={no_warps=true}}); local ok, err = pcall(function() hl.dispatch(hl.dsp.focus({window=%q})) end); hl.config({cursor={no_warps=noWarps}}); if not ok then error(err) end`, "address:"+addr)
-		reply, err := client.Request(ctx, "eval "+script)
-		if err == nil && strings.TrimSpace(string(reply)) != "ok" {
-			err = fmt.Errorf("eval: %s", strings.TrimSpace(string(reply)))
-		}
-		return err
-	}
-	focus := "focuswindow address:" + addr
-	reply, err := client.Request(ctx, "j/getoption cursor:no_warps")
-	if err == nil && strings.Contains(string(reply), `"int": 0`) {
-		// One batch, so the setting is back before anything else runs.
-		_, err = client.Request(ctx, "[[BATCH]]keyword cursor:no_warps 1;dispatch "+focus+";keyword cursor:no_warps 0")
-		return err
-	}
-	return client.Dispatch(ctx, focus)
+	s.focusWindow(id)
 }
 
 // dockOfItems is the dock whose item box w is.

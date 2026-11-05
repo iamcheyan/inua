@@ -7,7 +7,7 @@ msgstr ""
 
 #: cmd/inua-assistant/answer.go:36
 #: cmd/inua-assistant/transcribe.go:40
-#: internal/assistantui/assistantui.go:323
+#: internal/assistantui/assistantui.go:366
 #: internal/diskui/details.go:332
 #: internal/mailui/assist.go:43
 msgid "The assistant is turned off. Turn it on in Settings → AI."
@@ -52,7 +52,7 @@ msgstr "正しい方法:"
 
 #: cmd/inua-keyring/main.go:117
 #: internal/ui/settings_keyring.go:324
-#: ui/settings.ui:4182
+#: ui/settings.ui:4225
 msgid "Keyring"
 msgstr "キーリング"
 
@@ -135,7 +135,7 @@ msgstr "黒"
 #: internal/lightui/clock.go:220
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
-#: internal/ui/widgets.go:992
+#: internal/ui/widgets.go:987
 msgid "Monday, January 2"
 msgstr "1月2日 Monday"
 
@@ -173,10 +173,10 @@ msgstr "日"
 #: internal/config/strftime.go:50
 #: internal/i18n/time.go:11
 #: internal/lightui/weather.go:360
-#: internal/mailui/window.go:1434
+#: internal/mailui/window.go:1438
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
-#: internal/ui/widgets.go:1050
+#: internal/ui/widgets.go:1045
 #: ui/calendar.ui:127
 msgid "Mon"
 msgstr "月"
@@ -224,7 +224,7 @@ msgstr "週末"
 
 #: internal/apps/clock/clock.go:112
 #: internal/lightui/weather.go:362
-#: internal/ui/widgets.go:1052
+#: internal/ui/widgets.go:1047
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
 msgid "Today"
@@ -278,7 +278,7 @@ msgstr "見つけました"
 msgid "Reply"
 msgstr "返信"
 
-#: internal/apps/connect/service.go:246
+#: internal/apps/connect/service.go:247
 #: internal/apps/connect/share.go:213
 #: internal/apps/connect/share.go:219
 #: internal/connectui/app.go:20
@@ -288,15 +288,15 @@ msgstr "返信"
 msgid "Mobile Link"
 msgstr "モバイルリンク"
 
-#: internal/apps/connect/service.go:248
+#: internal/apps/connect/service.go:249
 msgid "%s wants to pair"
 msgstr "%s がペアリングを求めています"
 
-#: internal/apps/connect/service.go:249
+#: internal/apps/connect/service.go:250
 msgid "Pair only if %s shows the key %s."
 msgstr "%s にキー %s が表示されている場合のみペアリングしてください。"
 
-#: internal/apps/connect/service.go:250
+#: internal/apps/connect/service.go:251
 #: internal/connectui/window.go:425
 #: internal/connectui/window.go:434
 #: internal/remoteui/window.go:618
@@ -308,49 +308,49 @@ msgstr "%s にキー %s が表示されている場合のみペアリングし�
 msgid "Pair"
 msgstr "ペアリング"
 
-#: internal/apps/connect/service.go:250
+#: internal/apps/connect/service.go:251
 #: internal/connectui/window.go:426
 msgid "Refuse"
 msgstr "拒否"
 
-#: internal/apps/connect/service.go:292
+#: internal/apps/connect/service.go:293
 msgid "Ping!"
 msgstr "Ping!"
 
-#: internal/apps/connect/service.go:505
+#: internal/apps/connect/service.go:506
 msgid "Wants to pair"
 msgstr "ペアリングを求めています"
 
-#: internal/apps/connect/service.go:507
+#: internal/apps/connect/service.go:508
 #: internal/shell/bluetooth.go:42
 msgid "Pairing…"
 msgstr "ペアリング中…"
 
-#: internal/apps/connect/service.go:509
+#: internal/apps/connect/service.go:510
 #: internal/apps/tailscale/status.go:265
 #: internal/remoteui/window.go:331
 #: internal/shell/bluetooth.go:52
 msgid "Connected"
 msgstr "接続された"
 
-#: internal/apps/connect/service.go:511
+#: internal/apps/connect/service.go:512
 msgid "Away"
 msgstr "接続されていません"
 
-#: internal/apps/connect/service.go:513
+#: internal/apps/connect/service.go:514
 #: internal/remoteui/window.go:326
 msgid "Not paired"
 msgstr "未ペアリング"
 
-#: internal/apps/connect/service.go:517
+#: internal/apps/connect/service.go:518
 msgid "%d%%, charging"
 msgstr "%d%%、充電中"
 
-#: internal/apps/connect/service.go:519
-#: internal/ui/settings.go:365
-#: internal/ui/settings.go:833
-#: internal/ui/settings.go:937
-#: internal/ui/settings_displays.go:418
+#: internal/apps/connect/service.go:520
+#: internal/ui/settings.go:342
+#: internal/ui/settings.go:785
+#: internal/ui/settings.go:891
+#: internal/ui/settings_displays.go:460
 msgid "%d%%"
 msgstr "%d%%"
 
@@ -373,7 +373,7 @@ msgstr "%s からのファイル"
 #: internal/apps/connect/share.go:129
 #: internal/filesui/cards.go:678
 #: internal/filesui/picker.go:488
-#: internal/filesui/window.go:803
+#: internal/filesui/window.go:801
 #: internal/lightui/workshop_blocks.go:427
 #: internal/lightui/workshop_manager.go:63
 #: internal/mailui/actions.go:533
@@ -395,7 +395,7 @@ msgstr "開く"
 
 #: internal/apps/connect/share.go:129
 #: internal/ui/record.go:157
-#: internal/ui/screenshot.go:1140
+#: internal/ui/screenshot.go:1150
 #: internal/ui/settings_custom.go:40
 msgid "Show in Folder"
 msgstr "フォルダ内で表示"
@@ -586,7 +586,7 @@ msgstr "DEV"
 #: internal/mailui/settings.go:548
 #: ui/mail-compose.ui:269
 #: ui/mail.ui:384
-#: ui/settings.ui:2507
+#: ui/settings.ui:2550
 msgid "AI"
 msgstr "AI"
 
@@ -1216,8 +1216,8 @@ msgstr "プロジェクトの履歴、ブランチ、stash です。プッシュ
 #: internal/filesui/pane.go:1068
 #: internal/filesui/sidebar.go:50
 #: internal/filesui/tabs.go:97
-#: internal/filesui/window.go:309
-#: internal/mailui/window.go:775
+#: internal/filesui/window.go:307
+#: internal/mailui/window.go:779
 msgid "Trash"
 msgstr "ゴミ箱"
 
@@ -1513,7 +1513,7 @@ msgid "Not signed in"
 msgstr "サインインしていません"
 
 #: internal/apps/mail/sort.go:32
-#: internal/mailui/window.go:247
+#: internal/mailui/window.go:248
 msgid "REPLY"
 msgstr "要返信"
 
@@ -1718,7 +1718,7 @@ msgid "online"
 msgstr "オンライン"
 
 #: internal/apps/tailscale/status.go:168
-#: internal/mailui/window.go:1793
+#: internal/mailui/window.go:1797
 msgid "just now"
 msgstr "たった今"
 
@@ -1769,7 +1769,7 @@ msgstr "承認待ち"
 #: internal/filesui/remote.go:170
 #: internal/filesui/remotesetup.go:418
 #: internal/lightui/tailscale.go:153
-#: internal/mailui/window.go:652
+#: internal/mailui/window.go:656
 #: internal/shell/bluetooth.go:38
 #: internal/shell/status.go:158
 #: internal/shell/wifi.go:38
@@ -1881,7 +1881,7 @@ msgid "Enter your password to run this command as administrator:\n\n%s"
 msgstr "このコマンドを管理者として実行するには、パスワードを入力してください:\n\n%s"
 
 #: internal/asker/asker.go:212
-#: internal/assistantui/assistantui.go:688
+#: internal/assistantui/assistantui.go:734
 #: internal/ui/askpass.go:441
 #: internal/ui/portal_ask.go:60
 #: internal/ui/portal_ask.go:80
@@ -1921,7 +1921,7 @@ msgstr "ツールを使うスクリプトを実行中"
 
 #: internal/assistantui/assistantui.go:38
 #: ui/assistant.ui:35
-#: ui/settings.ui:2586
+#: ui/settings.ui:2629
 #: config/apps/io.github.lyricat.Inua.Assistant.desktop:3
 msgid "Assistant"
 msgstr "アシスタント"
@@ -1946,15 +1946,15 @@ msgstr "私のテールネット上のどのデバイスがオンラインです
 msgid "What is the weather this afternoon in Kyoto?"
 msgstr "今日の京都の午後の天気はどうですか?"
 
-#: internal/assistantui/assistantui.go:159
+#: internal/assistantui/assistantui.go:170
 msgid "%s answers from here"
 msgstr "%s の回答はこちらから"
 
-#: internal/assistantui/assistantui.go:384
+#: internal/assistantui/assistantui.go:427
 msgid "Could not start the Console endpoint: %s"
 msgstr "コンソールエンドポイントを開始できませんでした: %s"
 
-#: internal/assistantui/assistantui.go:482
+#: internal/assistantui/assistantui.go:528
 #: internal/lightui/clock.go:498
 #: internal/ui/alarms.go:108
 #: ui/disk.ui:179
@@ -1969,77 +1969,104 @@ msgstr "コンソールエンドポイントを開始できませんでした: %
 msgid "Stop"
 msgstr "停止"
 
-#: internal/assistantui/assistantui.go:489
+#: internal/assistantui/assistantui.go:535
 msgid "✕ Not done: %s"
 msgstr "✕ 未完了: %s"
 
-#: internal/assistantui/assistantui.go:500
+#: internal/assistantui/assistantui.go:546
 #: internal/mailui/settings.go:497
 #: ui/assistant.ui:202
 msgid "Ask"
 msgstr "尋ねる"
 
-#: internal/assistantui/assistantui.go:505
+#: internal/assistantui/assistantui.go:551
 msgid "Stopped."
 msgstr "停止した。"
 
-#: internal/assistantui/assistantui.go:508
+#: internal/assistantui/assistantui.go:554
 msgid "Something went wrong: %s"
 msgstr "問題が発生しました: %s"
 
-#: internal/assistantui/assistantui.go:511
+#: internal/assistantui/assistantui.go:557
 msgid "(no answer)"
 msgstr "（答えなし）"
 
-#: internal/assistantui/assistantui.go:522
+#: internal/assistantui/assistantui.go:568
 msgid "Voice input records with pw-cat, from PipeWire (pipewire-bin on Debian and Ubuntu, pipewire on Arch, pipewire-utils on Fedora)"
 msgstr "音声入力は PipeWire の pw-cat で録音します（Debian と Ubuntu では pipewire-bin、Arch では pipewire、Fedora では pipewire-utils）"
 
-#: internal/assistantui/assistantui.go:524
+#: internal/assistantui/assistantui.go:570
 #: internal/ui/settings_ai.go:730
 #: ui/assistant.ui:193
 msgid "Voice input"
 msgstr "音声入力"
 
-#: internal/assistantui/assistantui.go:532
-#: internal/assistantui/assistantui.go:596
+#: internal/assistantui/assistantui.go:578
+#: internal/assistantui/assistantui.go:642
 msgid "Cannot record: %s"
 msgstr "録音できません: %s"
 
-#: internal/assistantui/assistantui.go:546
+#: internal/assistantui/assistantui.go:592
 msgid "Stop and transcribe"
 msgstr "停止して文字にする"
 
-#: internal/assistantui/assistantui.go:598
+#: internal/assistantui/assistantui.go:644
 msgid "The assistant is not set up."
 msgstr "アシスタントが設定されていません。"
 
-#: internal/assistantui/assistantui.go:602
+#: internal/assistantui/assistantui.go:648
 msgid "Cannot transcribe: %s"
 msgstr "文字にできません: %s"
 
-#: internal/assistantui/assistantui.go:614
+#: internal/assistantui/assistantui.go:660
 msgid "No speech was heard."
 msgstr "声が聞こえませんでした。"
 
-#: internal/assistantui/assistantui.go:688
+#: internal/assistantui/assistantui.go:734
 msgid "Don't"
 msgstr "許可しない"
 
-#: internal/assistantui/assistantui.go:709
+#: internal/assistantui/assistantui.go:755
 msgid "Not allowed"
 msgstr "許可されません"
 
-#: internal/assistantui/assistantui.go:711
+#: internal/assistantui/assistantui.go:757
 msgid "Canceled"
 msgstr "キャンセルされました"
 
-#: internal/assistantui/assistantui.go:713
-#: ui/settings.ui:4429
+#: internal/assistantui/assistantui.go:759
+#: ui/settings.ui:4472
 msgid "Allowed"
 msgstr "許可"
 
-#: internal/assistantui/assistantui.go:802
+#: internal/assistantui/assistantui.go:793
+#: internal/diskui/details.go:581
+#: internal/filesui/window.go:817
+#: internal/gamesui/lobbyhost.go:169
+#: internal/lightui/calculator.go:350
+#: internal/lightui/pass.go:749
+#: internal/lightui/pass.go:774
+#: internal/mailui/details.go:222
+#: internal/shell/launcher_actions.go:59
+#: internal/term/settings/settings.go:119
+#: internal/term/web/strings.go:36
+#: internal/termui/prefsweb.go:92
+#: internal/ui/askpass.go:232
+#: internal/ui/passwords.go:647
+#: internal/vmui/window.go:896
+#: ui/disk.ui:697
+#: ui/gpg.ui:662
+#: ui/gpg.ui:908
+#: ui/settings.ui:3428
+#: ui/vm.ui:639
+msgid "Copy"
+msgstr "コピー"
+
+#: internal/assistantui/assistantui.go:801
+msgid "Clipboard is unavailable."
+msgstr "クリップボードを利用できません。"
+
+#: internal/assistantui/assistantui.go:872
 msgid "TRY"
 msgstr "トライ"
 
@@ -2117,11 +2144,11 @@ msgstr "サービスを起動しています。"
 #: internal/termui/headmenu.go:164
 #: internal/termui/prefsweb.go:130
 #: internal/ui/settings_bluetooth.go:214
-#: internal/ui/settings_displays.go:294
-#: internal/ui/settings_displays.go:389
+#: internal/ui/settings_displays.go:331
+#: internal/ui/settings_displays.go:431
 #: internal/ui/settings_wifi.go:285
 #: ui/remote.ui:359
-#: ui/settings.ui:6152
+#: ui/settings.ui:6195
 msgid "Off"
 msgstr "オフ"
 
@@ -2163,10 +2190,11 @@ msgstr "%s がペアリングを求めています。このキーが表示され
 #: internal/mailui/dialog.go:92
 #: internal/remoteui/window.go:811
 #: internal/term/web/strings.go:29
-#: internal/termui/keys.go:268
-#: internal/termui/keys.go:396
+#: internal/termui/keys.go:293
+#: internal/termui/keys.go:421
 #: internal/termui/paste.go:337
 #: internal/termui/restart.go:42
+#: internal/termui/sessionmenu.go:111
 #: internal/termui/wsmenu.go:127
 #: internal/ui/askpass.go:301
 #: internal/ui/askpass.go:446
@@ -2230,7 +2258,7 @@ msgstr "%s に接続を依頼しました。"
 #: ui/connect.ui:291
 #: ui/files.ui:233
 #: ui/gpg.ui:1343
-#: ui/settings.ui:5260
+#: ui/settings.ui:5303
 #: ui/sysmon.ui:96
 msgid "Name"
 msgstr "名前"
@@ -2252,259 +2280,259 @@ msgstr "実行するもの: systemctl suspend"
 msgid "Remove"
 msgstr "削除"
 
-#: internal/convert/convert.go:97
+#: internal/convert/convert.go:99
 msgid "millimetres"
 msgstr "[0000ミリメートル]"
 
-#: internal/convert/convert.go:98
+#: internal/convert/convert.go:100
 msgid "centimetres"
 msgstr "センチメートル"
 
-#: internal/convert/convert.go:99
+#: internal/convert/convert.go:101
 msgid "metres"
 msgstr "メートル"
 
-#: internal/convert/convert.go:100
+#: internal/convert/convert.go:102
 msgid "kilometres"
 msgstr "[0000キロメートル]"
 
-#: internal/convert/convert.go:101
+#: internal/convert/convert.go:103
 msgid "inches"
 msgstr "インチ"
 
-#: internal/convert/convert.go:102
+#: internal/convert/convert.go:104
 msgid "feet"
 msgstr "フィート"
 
-#: internal/convert/convert.go:103
+#: internal/convert/convert.go:105
 msgid "yards"
 msgstr "ヤード"
 
-#: internal/convert/convert.go:104
+#: internal/convert/convert.go:106
 msgid "miles"
 msgstr "マイル"
 
-#: internal/convert/convert.go:105
+#: internal/convert/convert.go:107
 msgid "nautical miles"
 msgstr "[0000海里]"
 
-#: internal/convert/convert.go:107
+#: internal/convert/convert.go:109
 msgid "milligrams"
 msgstr "[0000ミリグラム]"
 
-#: internal/convert/convert.go:108
+#: internal/convert/convert.go:110
 msgid "grams"
 msgstr "[0000グラム]"
 
-#: internal/convert/convert.go:109
+#: internal/convert/convert.go:111
 msgid "kilograms"
 msgstr "[0000キログラム]"
 
-#: internal/convert/convert.go:110
+#: internal/convert/convert.go:112
 msgid "tonnes"
 msgstr "[0000トン]"
 
-#: internal/convert/convert.go:111
+#: internal/convert/convert.go:113
 msgid "ounces"
 msgstr "[0000オンス]"
 
-#: internal/convert/convert.go:112
+#: internal/convert/convert.go:114
 msgid "pounds"
 msgstr "[0000ポンド]"
 
-#: internal/convert/convert.go:113
+#: internal/convert/convert.go:115
 msgid "stone"
 msgstr "ストーン"
 
-#: internal/convert/convert.go:115
+#: internal/convert/convert.go:117
 msgid "millilitres"
 msgstr "[0000ミリリットル]"
 
-#: internal/convert/convert.go:116
+#: internal/convert/convert.go:118
 msgid "litres"
 msgstr "[0000リットル]"
 
-#: internal/convert/convert.go:117
+#: internal/convert/convert.go:119
 msgid "cubic metres"
 msgstr "[0000立方メートル]"
 
-#: internal/convert/convert.go:118
+#: internal/convert/convert.go:120
 msgid "US gallons"
 msgstr "[0000 米ガロン]"
 
-#: internal/convert/convert.go:119
+#: internal/convert/convert.go:121
 msgid "US quarts"
 msgstr "[0000米国クォート]"
 
-#: internal/convert/convert.go:120
+#: internal/convert/convert.go:122
 msgid "US pints"
 msgstr "[0000 米国パイント]"
 
-#: internal/convert/convert.go:121
+#: internal/convert/convert.go:123
 msgid "US cups"
 msgstr "[0000 US カップ]"
 
-#: internal/convert/convert.go:122
+#: internal/convert/convert.go:124
 msgid "US fluid ounces"
 msgstr "[0000 米国液量オンス]"
 
-#: internal/convert/convert.go:123
+#: internal/convert/convert.go:125
 msgid "tablespoons"
 msgstr "大さじ"
 
-#: internal/convert/convert.go:124
+#: internal/convert/convert.go:126
 msgid "teaspoons"
 msgstr "ティースプーン"
 
-#: internal/convert/convert.go:126
+#: internal/convert/convert.go:128
 msgid "square metres"
 msgstr "[0000平方メートル]"
 
-#: internal/convert/convert.go:127
+#: internal/convert/convert.go:129
 msgid "square kilometres"
 msgstr "[0000平方キロメートル]"
 
-#: internal/convert/convert.go:128
+#: internal/convert/convert.go:130
 msgid "hectares"
 msgstr "[0000ヘクタール]"
 
-#: internal/convert/convert.go:129
+#: internal/convert/convert.go:131
 msgid "acres"
 msgstr "[0000エーカー]"
 
-#: internal/convert/convert.go:130
+#: internal/convert/convert.go:132
 msgid "square feet"
 msgstr "[0000平方フィート]"
 
-#: internal/convert/convert.go:131
+#: internal/convert/convert.go:133
 msgid "square miles"
 msgstr "[0000平方マイル]"
 
-#: internal/convert/convert.go:133
+#: internal/convert/convert.go:135
 msgid "metres per second"
 msgstr "[0000 メートル/秒]"
 
-#: internal/convert/convert.go:134
+#: internal/convert/convert.go:136
 msgid "kilometres per hour"
 msgstr "[0000キロメートル/時]"
 
-#: internal/convert/convert.go:135
+#: internal/convert/convert.go:137
 msgid "miles per hour"
 msgstr "[0000マイル/時]"
 
-#: internal/convert/convert.go:136
+#: internal/convert/convert.go:138
 msgid "knots"
 msgstr "ノット"
 
-#: internal/convert/convert.go:137
+#: internal/convert/convert.go:139
 msgid "feet per second"
 msgstr "[0000 フィート/秒]"
 
-#: internal/convert/convert.go:139
+#: internal/convert/convert.go:141
 msgid "bytes"
 msgstr "バイト"
 
-#: internal/convert/convert.go:140
+#: internal/convert/convert.go:142
 msgid "kilobytes"
 msgstr "[0000キロバイト]"
 
-#: internal/convert/convert.go:141
+#: internal/convert/convert.go:143
 msgid "megabytes"
 msgstr "[0000メガバイト]"
 
-#: internal/convert/convert.go:142
+#: internal/convert/convert.go:144
 msgid "gigabytes"
 msgstr "[0000ギガバイト]"
 
-#: internal/convert/convert.go:143
+#: internal/convert/convert.go:145
 msgid "terabytes"
 msgstr "[0000テラバイト]"
 
-#: internal/convert/convert.go:144
+#: internal/convert/convert.go:146
 msgid "kibibytes"
 msgstr "[0000キビバイト]"
 
-#: internal/convert/convert.go:145
+#: internal/convert/convert.go:147
 msgid "mebibytes"
 msgstr "[0000 メビバイト]"
 
-#: internal/convert/convert.go:146
+#: internal/convert/convert.go:148
 msgid "gibibytes"
 msgstr "[0000ギビバイト]"
 
-#: internal/convert/convert.go:147
+#: internal/convert/convert.go:149
 msgid "tebibytes"
 msgstr "テビバイト"
 
-#: internal/convert/convert.go:148
+#: internal/convert/convert.go:150
 msgid "bits"
 msgstr "ビット"
 
-#: internal/convert/convert.go:149
+#: internal/convert/convert.go:151
 msgid "kilobits"
 msgstr "[0000キロビット]"
 
-#: internal/convert/convert.go:150
+#: internal/convert/convert.go:152
 msgid "megabits"
 msgstr "[0000メガビット]"
 
-#: internal/convert/convert.go:151
+#: internal/convert/convert.go:153
 msgid "gigabits"
 msgstr "ギガビット"
 
-#: internal/convert/convert.go:153
+#: internal/convert/convert.go:155
 msgid "milliseconds"
 msgstr "ミリ秒"
 
-#: internal/convert/convert.go:154
+#: internal/convert/convert.go:156
 msgid "seconds"
 msgstr "秒"
 
-#: internal/convert/convert.go:155
+#: internal/convert/convert.go:157
 msgid "minutes"
 msgstr "分"
 
-#: internal/convert/convert.go:156
+#: internal/convert/convert.go:158
 msgid "hours"
 msgstr "時間"
 
-#: internal/convert/convert.go:157
+#: internal/convert/convert.go:159
 msgid "days"
 msgstr "日"
 
-#: internal/convert/convert.go:158
+#: internal/convert/convert.go:160
 msgid "weeks"
 msgstr "週間"
 
-#: internal/convert/convert.go:159
+#: internal/convert/convert.go:161
 msgid "years"
 msgstr "年"
 
-#: internal/convert/convert.go:166
+#: internal/convert/convert.go:168
 msgid "degrees Celsius"
 msgstr "摂氏"
 
-#: internal/convert/convert.go:167
+#: internal/convert/convert.go:169
 msgid "degrees Fahrenheit"
 msgstr "華氏"
 
-#: internal/convert/convert.go:168
+#: internal/convert/convert.go:170
 msgid "kelvin"
 msgstr "ケルビン"
 
-#: internal/convert/convert.go:277
+#: internal/convert/convert.go:279
 msgid "%s %s in %s"
 msgstr "%[1]s %[2]s で %[3]s"
 
-#: internal/convert/convert.go:309
+#: internal/convert/convert.go:311
 msgid "rates of %s"
 msgstr "%s 時点の為替レート"
 
-#: internal/convert/convert.go:311
+#: internal/convert/convert.go:313
 msgid "prices from Coinbase · %s"
 msgstr "Coinbase からの  価格 · %s"
 
-#: internal/convert/convert.go:315
+#: internal/convert/convert.go:317
 msgid "%s %s in %s · %s"
 msgstr "%[1]s %[2]s で %[3]s · %[4]s"
 
@@ -2544,224 +2572,224 @@ msgstr "クリップボード履歴を消去中"
 msgid "Reading the notification history"
 msgstr "通知履歴を読み取り中"
 
-#: internal/desk/tools.go:224
-#: internal/desk/tools.go:250
+#: internal/desk/tools.go:241
+#: internal/desk/tools.go:267
 msgid "the focused window"
 msgstr "フォーカスされたウィンドウ"
 
-#: internal/desk/tools.go:230
+#: internal/desk/tools.go:247
 msgid "Looking at the windows"
 msgstr "ウィンドウを確認中"
 
-#: internal/desk/tools.go:237
+#: internal/desk/tools.go:254
 msgid "Focusing %s"
 msgstr "フォーカシング %s"
 
-#: internal/desk/tools.go:250
+#: internal/desk/tools.go:267
 msgid "Moving %s to workspace %s"
 msgstr "%[1]s をワークスペース %[2]s に移動します"
 
-#: internal/desk/tools.go:266
+#: internal/desk/tools.go:283
 msgid "Closing %s"
 msgstr "%sを終了"
 
-#: internal/desk/tools.go:278
+#: internal/desk/tools.go:295
 msgid "Going to workspace %s"
 msgstr "ワークスペース %s に移動します"
 
-#: internal/desk/tools.go:289
+#: internal/desk/tools.go:306
 msgid "Looking at the workspaces"
 msgstr "ワークスペースを確認中"
 
-#: internal/desk/tools.go:400
+#: internal/desk/tools.go:388
 msgid "Looking at the apps"
 msgstr "アプリを見ると"
 
-#: internal/desk/tools.go:416
+#: internal/desk/tools.go:404
 msgid "Opening %s"
 msgstr "%s を開いています"
 
-#: internal/desk/tools.go:452
+#: internal/desk/tools.go:440
 msgid "Looking at the system"
 msgstr "システムを見ると"
 
-#: internal/desk/tools.go:466
+#: internal/desk/tools.go:454
 msgid "Setting the volume to %s%%"
 msgstr "音量を %s%% にします"
 
-#: internal/desk/tools.go:468
+#: internal/desk/tools.go:456
 msgid "Setting the brightness to %s%%"
 msgstr "明るさを %s%% にします"
 
-#: internal/desk/tools.go:471
+#: internal/desk/tools.go:459
 msgid "Turning Wi-Fi on"
 msgstr "Wi-Fi をオンにします"
 
-#: internal/desk/tools.go:471
+#: internal/desk/tools.go:459
 msgid "Turning Wi-Fi off"
 msgstr "Wi-Fi をオフにします"
 
-#: internal/desk/tools.go:472
+#: internal/desk/tools.go:460
 msgid "Turning Bluetooth on"
 msgstr "Bluetooth をオンにします"
 
-#: internal/desk/tools.go:472
+#: internal/desk/tools.go:460
 msgid "Turning Bluetooth off"
 msgstr "Bluetooth をオフにします"
 
-#: internal/desk/tools.go:473
+#: internal/desk/tools.go:461
 msgid "Muting the sound"
 msgstr "消音します"
 
-#: internal/desk/tools.go:473
+#: internal/desk/tools.go:461
 msgid "Unmuting the sound"
 msgstr "消音を解除します"
 
-#: internal/desk/tools.go:474
+#: internal/desk/tools.go:462
 msgid "Turning Focus on"
 msgstr "集中モードをオンにします"
 
-#: internal/desk/tools.go:474
+#: internal/desk/tools.go:462
 msgid "Turning Focus off"
 msgstr "集中モードをオフにします"
 
-#: internal/desk/tools.go:475
+#: internal/desk/tools.go:463
 msgid "Turning power saver on"
 msgstr "省電力モードをオンにします"
 
-#: internal/desk/tools.go:475
+#: internal/desk/tools.go:463
 msgid "Turning power saver off"
 msgstr "省電力モードをオフにします"
 
-#: internal/desk/tools.go:477
+#: internal/desk/tools.go:465
 msgid "Setting %s to %s"
 msgstr "%s を %s にします"
 
-#: internal/desk/tools.go:489
+#: internal/desk/tools.go:477
 msgid "Locking the screen"
 msgstr "画面をロックする"
 
-#: internal/desk/tools.go:498
+#: internal/desk/tools.go:486
 msgid "Taking a screenshot of the focused window"
 msgstr "フォーカス中のウィンドウのスクリーンショットを撮ります"
 
-#: internal/desk/tools.go:500
+#: internal/desk/tools.go:488
 msgid "Taking a screenshot of the screen"
 msgstr "画面全体のスクリーンショットを撮ります"
 
-#: internal/desk/tools.go:502
+#: internal/desk/tools.go:490
 msgid "Taking a screenshot of an area"
 msgstr "範囲を選んでスクリーンショットを撮ります"
 
-#: internal/desk/tools.go:517
+#: internal/desk/tools.go:505
 msgid "Suspending"
 msgstr "一時停止"
 
-#: internal/desk/tools.go:517
+#: internal/desk/tools.go:505
 msgid "Restarting the computer"
 msgstr "コンピュータの再起動"
 
-#: internal/desk/tools.go:517
+#: internal/desk/tools.go:505
 msgid "Shutting down"
 msgstr "シャットダウン中"
 
-#: internal/desk/tools.go:517
+#: internal/desk/tools.go:505
 msgid "Logging out"
 msgstr "ログアウト"
 
-#: internal/desk/tools.go:529
+#: internal/desk/tools.go:517
 msgid "Reading the notifications"
 msgstr "通知を読む"
 
-#: internal/desk/tools.go:534
+#: internal/desk/tools.go:522
 msgid "Clearing the notifications"
 msgstr "通知のクリア"
 
-#: internal/desk/tools.go:540
+#: internal/desk/tools.go:528
 msgid "Dismissing a notification"
 msgstr "通知を閉じています"
 
-#: internal/desk/tools.go:554
+#: internal/desk/tools.go:542
 msgid "Choosing “%s” on a notification"
 msgstr "通知の「%s」を選択中"
 
-#: internal/desk/tools.go:556
+#: internal/desk/tools.go:544
 msgid "Opening a notification"
 msgstr "通知を開いています"
 
-#: internal/desk/tools.go:571
+#: internal/desk/tools.go:559
 msgid "Opening the launcher"
 msgstr "ランチャーを開いています"
 
-#: internal/desk/tools.go:571
+#: internal/desk/tools.go:559
 msgid "Opening the overview"
 msgstr "オーバービューを開いています"
 
-#: internal/desk/tools.go:572
+#: internal/desk/tools.go:560
 msgid "Opening the control center"
 msgstr "コントロールセンターを開いています"
 
-#: internal/desk/tools.go:572
+#: internal/desk/tools.go:560
 msgid "Opening the calendar"
 msgstr "カレンダーを開いています"
 
-#: internal/desk/tools.go:573
+#: internal/desk/tools.go:561
 msgid "Opening the clipboard history"
 msgstr "クリップボード履歴を開いています"
 
-#: internal/desk/tools.go:573
+#: internal/desk/tools.go:561
 msgid "Opening the notifications"
 msgstr "通知を開いています"
 
-#: internal/desk/tools.go:574
+#: internal/desk/tools.go:562
 msgid "Opening Settings"
 msgstr "設定を開いています"
 
-#: internal/desk/tools.go:594
+#: internal/desk/tools.go:582
 msgid "Reading the clipboard"
 msgstr "クリップボードの読み取り"
 
-#: internal/desk/tools.go:609
+#: internal/desk/tools.go:597
 msgid "Copying “%s…”"
 msgstr "「%s...」をコピー中"
 
-#: internal/desk/tools.go:611
+#: internal/desk/tools.go:599
 msgid "Copying “%s”"
 msgstr "「%s」のコピー"
 
-#: internal/desk/tools.go:633
+#: internal/desk/tools.go:621
 msgid "Looking at the processes"
 msgstr "プロセスを見ると"
 
-#: internal/desk/tools.go:682
+#: internal/desk/tools.go:670
 msgid "Killing %s(%d)"
 msgstr "%[1]s(%[2]d)を殺す"
 
-#: internal/desk/tools.go:684
+#: internal/desk/tools.go:672
 msgid "Asking %s(%d) to quit"
 msgstr "%[1]s(%[2]d)に終了を求める"
 
-#: internal/desk/tools.go:705
+#: internal/desk/tools.go:693
 msgid "Looking at Tailscale"
 msgstr "Tailscale を確認中"
 
-#: internal/desk/tools.go:735
+#: internal/desk/tools.go:723
 msgid "Stopping the Tailscale exit node"
 msgstr "Tailscale 出口ノードの停止"
 
-#: internal/desk/tools.go:737
+#: internal/desk/tools.go:725
 msgid "Using %s as Tailscale exit node"
 msgstr "%s を Tailscale 出口ノードとして使用する"
 
-#: internal/desk/tools.go:740
+#: internal/desk/tools.go:728
 msgid "Connecting Tailscale"
 msgstr "Tailscale に接続中"
 
-#: internal/desk/tools.go:742
+#: internal/desk/tools.go:730
 msgid "Disconnecting Tailscale"
 msgstr "Tailscale を切断中"
 
-#: internal/desk/tools.go:775
+#: internal/desk/tools.go:763
 msgid "Looking up the weather in %s"
 msgstr "%sで天気を調べる"
 
@@ -2792,17 +2820,17 @@ msgstr "フォルダーを開く"
 
 #: internal/desktop/defaults.go:39
 #: internal/term/web/strings.go:101
-#: internal/termui/app.go:114
-#: internal/termui/app.go:150
-#: internal/termui/app.go:356
-#: internal/termui/app.go:358
+#: internal/termui/app.go:115
+#: internal/termui/app.go:151
+#: internal/termui/app.go:357
+#: internal/termui/app.go:359
 #: internal/termui/menubar.go:40
 #: internal/termui/prefs.go:160
 #: internal/termui/quick.go:29
 #: internal/termui/quick.go:47
 #: internal/termui/quick.go:145
-#: internal/termui/tiles.go:704
-#: ui/settings.ui:2318
+#: internal/termui/tiles.go:756
+#: ui/settings.ui:2361
 #: config/apps/io.github.lyricat.Inua.Term.desktop:3
 msgid "Terminal"
 msgstr "ターミナル"
@@ -2836,8 +2864,8 @@ msgid "Opens video files"
 msgstr "動画ファイルを開く"
 
 #: internal/desktop/defaults.go:48
-#: internal/lightui/pass_otp.go:340
-#: internal/ui/settings.go:1099
+#: internal/lightui/pass_otp.go:338
+#: internal/ui/settings.go:1053
 msgid "Images"
 msgstr "画像"
 
@@ -3004,11 +3032,12 @@ msgstr "%s を完全に削除しますか?"
 
 #: internal/diskui/details.go:528
 #: internal/filesui/cards.go:435
-#: internal/lightui/calculator.go:53
+#: internal/lightui/calculator.go:59
+#: internal/lightui/calculator.go:352
 #: internal/lightui/gpg.go:1518
 #: internal/lightui/pass.go:951
 #: internal/term/web/strings.go:43
-#: internal/ui/clipboard.go:503
+#: internal/ui/clipboard.go:504
 #: internal/vmui/window.go:1996
 #: internal/vmui/window.go:2002
 #: internal/vmui/window.go:2015
@@ -3054,27 +3083,6 @@ msgstr "%s で実行します。"
 msgid "Copied"
 msgstr "コピーしました"
 
-#: internal/diskui/details.go:581
-#: internal/filesui/window.go:819
-#: internal/gamesui/lobbyhost.go:169
-#: internal/lightui/pass.go:749
-#: internal/lightui/pass.go:774
-#: internal/mailui/details.go:222
-#: internal/shell/launcher_actions.go:59
-#: internal/term/settings/settings.go:118
-#: internal/term/web/strings.go:36
-#: internal/termui/prefsweb.go:92
-#: internal/ui/askpass.go:232
-#: internal/ui/passwords.go:647
-#: internal/vmui/window.go:896
-#: ui/disk.ui:697
-#: ui/gpg.ui:662
-#: ui/gpg.ui:908
-#: ui/settings.ui:3385
-#: ui/vm.ui:639
-msgid "Copy"
-msgstr "コピー"
-
 #: internal/diskui/details.go:596
 msgid "Cleans %s, %s now."
 msgstr "%s を片付けます。今は %s。"
@@ -3107,7 +3115,7 @@ msgstr "%s が %s を削除しました:%s 空きました。"
 #: internal/filesui/cards.go:682
 #: internal/filesui/sidebar.go:36
 #: internal/filesui/tabs.go:99
-#: internal/filesui/window.go:313
+#: internal/filesui/window.go:311
 msgid "Home"
 msgstr "ホーム"
 
@@ -3115,7 +3123,7 @@ msgstr "ホーム"
 #: internal/lightui/sysmon.go:969
 #: internal/lightui/tailscale.go:527
 #: internal/lightui/tailscale.go:568
-#: internal/ui/settings.go:627
+#: internal/ui/settings.go:585
 #: ui/vm.ui:2981
 msgid "System"
 msgstr "システム"
@@ -3166,7 +3174,7 @@ msgstr "%s · %s 個のファイル · %s"
 
 #: internal/diskui/window.go:557
 #: internal/filesui/pane.go:1552
-#: internal/ui/widgets.go:1054
+#: internal/ui/widgets.go:1049
 msgid "15:04"
 msgstr "15:04"
 
@@ -3238,8 +3246,8 @@ msgstr[0] "%s · %d 個のフォルダ · 安全に削除可能 %s"
 #: internal/filesui/app.go:86
 #: internal/filesui/cards.go:689
 #: internal/filesui/remote.go:371
-#: internal/filesui/window.go:109
-#: internal/filesui/window.go:306
+#: internal/filesui/window.go:108
+#: internal/filesui/window.go:304
 #: ui/gpg.ui:446
 #: ui/gpg.ui:811
 #: config/apps/io.github.lyricat.Inua.Files.desktop:3
@@ -3299,7 +3307,7 @@ msgstr "アーカイブは「%s」に作られます。"
 
 #: internal/filesui/archive.go:79
 #: internal/mailui/picker.go:142
-#: internal/mailui/window.go:771
+#: internal/mailui/window.go:775
 msgid "Archive"
 msgstr "アーカイブ"
 
@@ -3425,7 +3433,7 @@ msgstr[0] "%d 項目"
 #: internal/filesui/cards.go:692
 #: internal/filesui/renamemany.go:38
 #: internal/term/web/strings.go:89
-#: internal/termui/keys.go:398
+#: internal/termui/keys.go:423
 msgid "Rename"
 msgstr "名前を変更"
 
@@ -3480,8 +3488,8 @@ msgstr "ゴミ箱には移動せず、元に戻せません。"
 
 #: internal/filesui/cards.go:452
 #: internal/filesui/sidebar.go:51
-#: internal/filesui/window.go:776
-#: internal/filesui/window.go:782
+#: internal/filesui/window.go:774
+#: internal/filesui/window.go:780
 #: internal/mailui/actions.go:265
 #: internal/shell/commands.go:32
 #: ui/filespane.ui:288
@@ -3515,7 +3523,7 @@ msgstr "統合"
 
 #: internal/filesui/cards.go:497
 #: internal/filesui/picker.go:369
-#: internal/lightui/pass_otp.go:189
+#: internal/lightui/pass_otp.go:188
 msgid "Replace"
 msgstr "置き換え"
 
@@ -3542,15 +3550,15 @@ msgstr[0] "…ほか %d 件"
 #: internal/mailui/welcome.go:156
 #: internal/shell/launcher_actions.go:53
 #: internal/term/web/strings.go:30
-#: internal/termui/keys.go:270
+#: internal/termui/keys.go:295
+#: internal/termui/sessionmenu.go:113
 #: internal/termui/wsmenu.go:129
-#: internal/ui/appmenu.go:548
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_wifi_details.go:62
 #: ui/mail-compose.ui:292
 #: ui/mail.ui:395
-#: ui/settings.ui:3534
-#: ui/settings.ui:5015
+#: ui/settings.ui:3577
+#: ui/settings.ui:5058
 #: ui/vm.ui:3503
 msgid "Close"
 msgstr "閉じる"
@@ -3663,7 +3671,7 @@ msgid "Copy the paths (none selected: the folder's)"
 msgstr "パスをコピー（未選択ならフォルダーのパス）"
 
 #: internal/filesui/cards.go:693
-#: internal/filesui/window.go:844
+#: internal/filesui/window.go:842
 #: internal/lightui/gpg.go:1526
 #: internal/mailui/picker.go:143
 #: internal/ui/settings_custom.go:41
@@ -3692,17 +3700,17 @@ msgid "Copy / move to the other pane"
 msgstr "もう一方のペインへコピー / 移動"
 
 #: internal/filesui/cards.go:698
-#: internal/filesui/window.go:805
+#: internal/filesui/window.go:803
 msgid "Open with…"
 msgstr "アプリケーションで開く…"
 
 #: internal/filesui/cards.go:699
-#: internal/filesui/window.go:858
+#: internal/filesui/window.go:856
 msgid "Bookmark"
 msgstr "ブックマーク"
 
 #: internal/filesui/cards.go:700
-#: internal/filesui/window.go:791
+#: internal/filesui/window.go:789
 msgid "Terminal here"
 msgstr "ここで端末を開く"
 
@@ -3722,7 +3730,7 @@ msgid "Next / previous tab"
 msgstr "次 / 前のタブ"
 
 #: internal/filesui/cards.go:705
-#: internal/filesui/window.go:808
+#: internal/filesui/window.go:806
 msgid "Middle click"
 msgstr "中クリック"
 
@@ -3736,7 +3744,7 @@ msgstr "リスト / グリッド / カラム"
 
 #: internal/filesui/cards.go:707
 #: internal/filesui/picker.go:501
-#: internal/filesui/window.go:796
+#: internal/filesui/window.go:794
 msgid "Hidden files"
 msgstr "隠しファイル"
 
@@ -3749,7 +3757,7 @@ msgid "Sidebar"
 msgstr "サイドバー"
 
 #: internal/filesui/cards.go:710
-#: internal/filesui/window.go:850
+#: internal/filesui/window.go:848
 msgid "Details"
 msgstr "詳細"
 
@@ -3763,7 +3771,7 @@ msgstr "新しいウィンドウ、ウィンドウを閉じる"
 
 #: internal/filesui/cards.go:713
 #: internal/filesui/picker.go:502
-#: internal/filesui/window.go:797
+#: internal/filesui/window.go:795
 msgid "Reload"
 msgstr "再読み込み"
 
@@ -3771,7 +3779,7 @@ msgstr "再読み込み"
 #: internal/mailui/picker.go:130
 #: internal/mailui/reader.go:378
 #: internal/termui/palette.go:213
-#: internal/termui/prefs.go:203
+#: internal/termui/prefs.go:205
 msgid "Keys"
 msgstr "キー"
 
@@ -3844,7 +3852,7 @@ msgstr "フォルダー"
 
 #: internal/filesui/details.go:51
 #: internal/lightui/sysmon.go:793
-#: internal/mailui/window.go:247
+#: internal/mailui/window.go:248
 #: internal/term/web/strings.go:52
 msgid "FILES"
 msgstr "ファイル"
@@ -3855,7 +3863,7 @@ msgstr "ファイルのサイズ"
 
 #: internal/filesui/details.go:55
 #: internal/mailui/picker.go:137
-#: internal/mailui/window.go:1762
+#: internal/mailui/window.go:1766
 msgid "Search"
 msgstr "検索"
 
@@ -4100,13 +4108,14 @@ msgid "A file of the same name is in this folder; the app will write over it."
 msgstr ""
 
 #: internal/filesui/picker.go:494
-#: internal/filesui/window.go:839
+#: internal/filesui/window.go:837
+#: internal/termui/sessionmenu.go:81
 #: internal/termui/wsmenu.go:69
 msgid "Rename…"
 msgstr "名前を変更…"
 
 #: internal/filesui/picker.go:500
-#: internal/filesui/window.go:787
+#: internal/filesui/window.go:785
 msgid "New folder…"
 msgstr "新規フォルダー…"
 
@@ -4590,12 +4599,12 @@ msgid "Eject"
 msgstr "取り出す"
 
 #: internal/filesui/sidebar.go:143
-#: internal/filesui/window.go:808
+#: internal/filesui/window.go:806
 msgid "Open in a new tab"
 msgstr "新しいタブで開く"
 
 #: internal/filesui/sidebar.go:144
-#: internal/filesui/window.go:809
+#: internal/filesui/window.go:807
 msgid "Open in a new window"
 msgstr "新しいウィンドウで開く"
 
@@ -4623,107 +4632,109 @@ msgstr "アシスタントがフォルダーを整理できるよう、「設定
 msgid "Asked the assistant to tidy %s."
 msgstr "%s の整理をアシスタントに頼みました。"
 
-#: internal/filesui/window.go:779
+#: internal/filesui/window.go:777
 msgid "Restore"
 msgstr "復元"
 
-#: internal/filesui/window.go:780
-#: internal/filesui/window.go:845
+#: internal/filesui/window.go:778
+#: internal/filesui/window.go:843
 msgid "Delete for good…"
 msgstr "完全に削除…"
 
-#: internal/filesui/window.go:788
+#: internal/filesui/window.go:786
 msgid "New file…"
 msgstr "新規ファイル…"
 
-#: internal/filesui/window.go:789
-#: internal/term/settings/settings.go:119
+#: internal/filesui/window.go:787
+#: internal/lightui/calculator.go:351
+#: internal/term/settings/settings.go:120
 #: internal/termui/paste.go:339
 msgid "Paste"
 msgstr "貼り付け"
 
-#: internal/filesui/window.go:792
-#: internal/filesui/window.go:824
+#: internal/filesui/window.go:790
+#: internal/filesui/window.go:822
 msgid "Tidy with AI…"
 msgstr "AI で整理…"
 
-#: internal/filesui/window.go:793
+#: internal/filesui/window.go:791
 msgid "Copy the folder's path"
 msgstr "フォルダーのパスをコピー"
 
-#: internal/filesui/window.go:811
+#: internal/filesui/window.go:809
 msgid "Open in the other pane"
 msgstr "もう一方のペインで開く"
 
-#: internal/filesui/window.go:815
+#: internal/filesui/window.go:813
 msgid "Show in its folder"
 msgstr "フォルダー内で表示"
 
-#: internal/filesui/window.go:818
+#: internal/filesui/window.go:816
+#: internal/lightui/calculator.go:349
 msgid "Cut"
 msgstr "切り取り"
 
-#: internal/filesui/window.go:820
+#: internal/filesui/window.go:818
 msgid "Copy the path"
 msgstr "パスをコピー"
 
-#: internal/filesui/window.go:823
+#: internal/filesui/window.go:821
 msgid "Paste into the folder"
 msgstr "フォルダーに貼り付け"
 
-#: internal/filesui/window.go:828
+#: internal/filesui/window.go:826
 msgid "Extract here"
 msgstr "ここに展開"
 
-#: internal/filesui/window.go:830
+#: internal/filesui/window.go:828
 msgid "Compress…"
 msgstr "圧縮…"
 
-#: internal/filesui/window.go:833
+#: internal/filesui/window.go:831
 msgid "Copy to the other pane"
 msgstr "もう一方のペインへコピー"
 
-#: internal/filesui/window.go:834
+#: internal/filesui/window.go:832
 msgid "Move to the other pane"
 msgstr "もう一方のペインへ移動"
 
-#: internal/filesui/window.go:841
+#: internal/filesui/window.go:839
 msgid "Rename %d item…"
 msgid_plural "Rename %d items…"
 msgstr[0] "%d 項目の名前を変更…"
 
-#: internal/filesui/window.go:856
+#: internal/filesui/window.go:854
 msgid "Remove the bookmark"
 msgstr "ブックマークを削除"
 
-#: internal/filesui/window.go:911
+#: internal/filesui/window.go:909
 msgid "Cut %d item: paste to move it."
 msgid_plural "Cut %d items: paste to move them."
 msgstr[0] "%d 項目を切り取りました。貼り付けると移動します。"
 
-#: internal/filesui/window.go:913
+#: internal/filesui/window.go:911
 msgid "Copied %d item."
 msgid_plural "Copied %d items."
 msgstr[0] "%d 項目をコピーしました。"
 
-#: internal/filesui/window.go:921
+#: internal/filesui/window.go:919
 msgid "Copied %d path."
 msgid_plural "Copied %d paths."
 msgstr[0] "%d 個のパスをコピーしました。"
 
-#: internal/filesui/window.go:1003
+#: internal/filesui/window.go:1001
 msgid "Bookmarked %s."
 msgstr "%s をブックマークしました。"
 
-#: internal/filesui/window.go:1005
+#: internal/filesui/window.go:1003
 msgid "Removed the bookmark of %s."
 msgstr "%s のブックマークを削除しました。"
 
-#: internal/filesui/window.go:1030
+#: internal/filesui/window.go:1028
 msgid "Copied %s."
 msgstr "%s をコピーしました。"
 
-#: internal/filesui/window.go:1059
+#: internal/filesui/window.go:1057
 msgid "No terminal was found: install xdg-terminal-exec or set $TERMINAL."
 msgstr "端末が見つかりません。xdg-terminal-exec をインストールするか $TERMINAL を設定してください。"
 
@@ -7968,7 +7979,7 @@ msgstr "メニューに戻る"
 #: internal/term/web/strings.go:24
 #: internal/termui/guide.go:111
 #: ui/gpg.ui:634
-#: ui/settings.ui:4715
+#: ui/settings.ui:4758
 #: ui/vm.ui:510
 #: ui/vm.ui:3278
 msgid "Back"
@@ -8332,7 +8343,7 @@ msgstr "マルチボール"
 
 #: internal/gamesui/pinball.go:776
 #: ui/control.ui:78
-#: ui/settings.ui:2126
+#: ui/settings.ui:2169
 msgid "Lock"
 msgstr "ロック"
 
@@ -8381,8 +8392,8 @@ msgid "SPACE PINBALL"
 msgstr "スペースピンボール"
 
 #: internal/hyprconf/keys.go:23
-#: internal/shell/dock.go:337
-#: ui/settings.ui:2195
+#: internal/shell/dock.go:312
+#: ui/settings.ui:2238
 msgid "Launcher"
 msgstr "ランチャー"
 
@@ -8403,7 +8414,7 @@ msgid "Notification center"
 msgstr "通知センター"
 
 #: internal/hyprconf/keys.go:28
-#: ui/bar.ui:172
+#: ui/bar.ui:145
 msgid "Clipboard history"
 msgstr "クリップボード履歴"
 
@@ -8418,8 +8429,8 @@ msgstr "フォーカスのオンまたはオフ"
 #: internal/hyprconf/keys.go:31
 #: internal/mailui/picker.go:155
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:336
-#: internal/term/settings/settings.go:125
+#: internal/shell/dock.go:311
+#: internal/term/settings/settings.go:126
 #: internal/term/web/strings.go:96
 #: internal/termui/headmenu.go:110
 #: ui/control.ui:58
@@ -8464,8 +8475,8 @@ msgstr "色を選ぶ"
 
 #: internal/hyprconf/keys.go:40
 #: internal/ui/voice_page.go:169
-#: ui/bar.ui:217
-#: ui/settings.ui:6602
+#: ui/bar.ui:186
+#: ui/settings.ui:6645
 msgid "Dictation"
 msgstr "ディクテーション"
 
@@ -8592,7 +8603,7 @@ msgstr ""
 
 #: internal/lightui/apps.go:16
 #: internal/ui/alarms.go:106
-#: internal/ui/widgets.go:587
+#: internal/ui/widgets.go:582
 #: ui/settings.ui:1290
 #: config/apps/io.github.lyricat.Inua.Clock.desktop:3
 msgid "Clock"
@@ -8601,8 +8612,8 @@ msgstr "時計"
 #: internal/lightui/apps.go:17
 #: internal/lightui/weather.go:226
 #: internal/ui/agenda.go:334
-#: internal/ui/widgets.go:589
-#: internal/ui/widgets.go:1071
+#: internal/ui/widgets.go:584
+#: internal/ui/widgets.go:1066
 #: config/apps/io.github.lyricat.Inua.Weather.desktop:3
 msgid "Weather"
 msgstr "天気"
@@ -8619,8 +8630,8 @@ msgid "Calculator"
 msgstr "電卓"
 
 #: internal/lightui/apps.go:20
-#: internal/ui/widgets.go:588
-#: ui/bar.ui:97
+#: internal/ui/widgets.go:583
+#: ui/bar.ui:74
 #: config/apps/io.github.lyricat.Inua.Calendar.desktop:3
 msgid "Calendar"
 msgstr "カレンダー"
@@ -8638,7 +8649,7 @@ msgstr "システムモニター"
 
 #: internal/lightui/apps.go:24
 #: internal/lightui/pass.go:266
-#: internal/lightui/pass_otp.go:114
+#: internal/lightui/pass_otp.go:113
 #: ui/pass.ui:29
 #: config/apps/io.github.lyricat.Inua.Pass.desktop:3
 msgid "Pass"
@@ -8650,25 +8661,30 @@ msgstr "Pass"
 msgid "GPG"
 msgstr "GPG"
 
-#: internal/lightui/calculator.go:57
+#: internal/lightui/calculator.go:63
 msgid "Change sign"
 msgstr "チェンジサイン"
 
-#: internal/lightui/calculator.go:241
-msgid "Error"
-msgstr "エラー"
+#: internal/lightui/calculator.go:354
+#: internal/term/web/strings.go:94
+msgid "Select all"
+msgstr ""
 
-#: internal/lightui/calculator.go:275
+#: internal/lightui/calculator.go:414
+msgid "Enter a valid expression."
+msgstr ""
+
+#: internal/lightui/calculator.go:444
 msgid "No calculations yet"
 msgstr "まだ計算はされていない"
 
-#: internal/lightui/calculator.go:297
+#: internal/lightui/calculator.go:466
 msgid "Use %s"
 msgstr "%sを使用する"
 
 #: internal/lightui/calendar.go:138
 #: internal/ui/agenda.go:228
-#: internal/ui/widgets.go:1024
+#: internal/ui/widgets.go:1019
 msgid "January 2006"
 msgstr "2006年1月"
 
@@ -8832,7 +8848,7 @@ msgstr "5年"
 #: internal/lightui/gpg.go:145
 #: internal/mailui/settings.go:497
 #: internal/shell/idle.go:162
-#: ui/settings.ui:4374
+#: ui/settings.ui:4417
 msgid "Never"
 msgstr "なし"
 
@@ -9214,7 +9230,7 @@ msgid "Cannot play %s: %s"
 msgstr "%s を再生できません: %s"
 
 #: internal/lightui/music.go:561
-#: internal/ui/widgets.go:1102
+#: internal/ui/widgets.go:1097
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr "再生していません"
@@ -9308,8 +9324,8 @@ msgid "Top level"
 msgstr "最上位"
 
 #: internal/lightui/pass.go:420
-#: internal/ui/settings.go:962
-#: internal/ui/settings.go:989
+#: internal/ui/settings.go:916
+#: internal/ui/settings.go:943
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d 件"
@@ -9333,12 +9349,12 @@ msgid "Decrypting %s"
 msgstr "%s を復号しています"
 
 #: internal/lightui/pass.go:692
-#: internal/lightui/pass_otp.go:188
+#: internal/lightui/pass_otp.go:187
 msgid "Replace the one-time code"
 msgstr "ワンタイムコードを置き換える"
 
 #: internal/lightui/pass.go:694
-#: internal/lightui/pass_otp.go:191
+#: internal/lightui/pass_otp.go:190
 #: ui/pass.ui:230
 #: ui/pass.ui:670
 msgid "Add a one-time code"
@@ -9383,7 +9399,7 @@ msgid "Hide"
 msgstr "ヒデ"
 
 #: internal/lightui/pass.go:788
-#: internal/lightui/pass_otp.go:246
+#: internal/lightui/pass_otp.go:245
 #: internal/ui/passwords.go:661
 msgid "%d second left"
 msgid_plural "%d seconds left"
@@ -9548,13 +9564,13 @@ msgstr "許可: 確認できる相手なし"
 msgid "read"
 msgstr "読み取り"
 
-#: internal/lightui/pass_otp.go:101
+#: internal/lightui/pass_otp.go:100
 msgid "It is not an image this app reads (PNG or JPEG)."
 msgstr "このアプリが読める画像（PNG または JPEG）ではありません。"
 
-#: internal/lightui/pass_otp.go:192
+#: internal/lightui/pass_otp.go:191
 #: internal/lightui/workshop_manager.go:88
-#: internal/ui/widgets.go:950
+#: internal/ui/widgets.go:945
 #: ui/connect.ui:967
 #: ui/pass.ui:871
 #: ui/remote.ui:1053
@@ -9563,28 +9579,28 @@ msgstr "このアプリが読める画像（PNG または JPEG）ではありま
 msgid "Add"
 msgstr "追加"
 
-#: internal/lightui/pass_otp.go:265
+#: internal/lightui/pass_otp.go:264
 msgid "Reading the screen needs grim."
 msgstr "画面の読み取りには grim が必要です。"
 
-#: internal/lightui/pass_otp.go:269
+#: internal/lightui/pass_otp.go:268
 msgid "Selecting an area needs slurp."
 msgstr "範囲の選択には slurp が必要です。"
 
-#: internal/lightui/pass_otp.go:273
+#: internal/lightui/pass_otp.go:272
 msgid "No area was chosen."
 msgstr "範囲が選ばれませんでした。"
 
-#: internal/lightui/pass_otp.go:288
-#: internal/lightui/pass_otp.go:326
+#: internal/lightui/pass_otp.go:287
+#: internal/lightui/pass_otp.go:324
 msgid "The screen could not be read."
 msgstr "画面を読み取れませんでした。"
 
-#: internal/lightui/pass_otp.go:338
+#: internal/lightui/pass_otp.go:336
 msgid "An image with a QR code"
 msgstr "QR コードの入った画像"
 
-#: internal/lightui/pass_otp.go:361
+#: internal/lightui/pass_otp.go:359
 msgid "Reading the QR code…"
 msgstr "QR コードを読み取り中…"
 
@@ -9593,7 +9609,7 @@ msgid "Search for a symbol to add it."
 msgstr "シンボルを検索して追加する。"
 
 #: internal/lightui/stocks.go:284
-#: internal/mailui/window.go:990
+#: internal/mailui/window.go:994
 msgid "Loading %s…"
 msgstr "%sをロード中..."
 
@@ -9640,7 +9656,7 @@ msgstr "検索できませんでした: %s"
 #: internal/lightui/sysmon.go:55
 #: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
-#: internal/ui/dock.go:489
+#: internal/ui/dock.go:533
 #: internal/ui/portal_ask.go:80
 msgid "Quit"
 msgstr "やめる"
@@ -9712,8 +9728,8 @@ msgstr "GPU"
 
 #: internal/lightui/sysmon.go:151
 #: internal/lightui/sysmon.go:1039
-#: internal/shell/dock.go:311
-#: internal/shell/dock.go:354
+#: internal/shell/dock.go:286
+#: internal/shell/dock.go:329
 msgid "NETWORK"
 msgstr "ネットワーク"
 
@@ -10056,8 +10072,8 @@ msgstr "有線"
 
 #: internal/lightui/sysmon.go:1043
 #: ui/control.ui:273
-#: ui/settings.ui:5395
-#: ui/settings.ui:5471
+#: ui/settings.ui:5438
+#: ui/settings.ui:5514
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
@@ -10340,10 +10356,10 @@ msgid "IN USE"
 msgstr "使用中"
 
 #: internal/lightui/tailscale.go:603
-#: internal/termui/prefs.go:345
+#: internal/termui/prefs.go:347
 #: internal/ui/settings_ai.go:272
 #: internal/ui/settings_keyring.go:572
-#: internal/ui/shortcuts.go:150
+#: internal/ui/shortcuts.go:173
 #: internal/ui/voice_page.go:302
 msgid "None"
 msgstr "なし"
@@ -10786,7 +10802,7 @@ msgid "Mail forgets it on this computer: its sign-in and the mail it kept. The m
 msgstr "このコンピューター上のサインイン情報と保存したメールを消します。サーバー上のメールは残ります。"
 
 #: internal/mailui/actions.go:518
-#: internal/mailui/window.go:588
+#: internal/mailui/window.go:592
 msgid "Unsent"
 msgstr "未送信"
 
@@ -10794,7 +10810,7 @@ msgstr "未送信"
 #: internal/mailui/details.go:190
 #: internal/mailui/people.go:301
 #: internal/mailui/reader.go:232
-#: internal/mailui/window.go:1333
+#: internal/mailui/window.go:1337
 msgid "(no subject)"
 msgstr "（件名なし）"
 
@@ -10826,7 +10842,7 @@ msgid_plural "%s and %d more messages"
 msgstr[0] "%s ほか %d 件"
 
 #: internal/mailui/app.go:23
-#: internal/mailui/window.go:1723
+#: internal/mailui/window.go:1727
 #: ui/mail.ui:14
 #: config/apps/io.github.lyricat.Inua.Mail.desktop:3
 msgid "Mail"
@@ -10866,7 +10882,7 @@ msgid "The assistant gave no search."
 msgstr "アシスタントから検索がありませんでした。"
 
 #: internal/mailui/assist.go:262
-#: internal/mailui/window.go:1560
+#: internal/mailui/window.go:1564
 msgid "Searched for %s"
 msgstr "%s を検索しました"
 
@@ -10959,7 +10975,7 @@ msgstr "%s に翻訳"
 #: internal/mailui/details.go:98
 #: internal/mailui/formatted.go:192
 #: internal/mailui/settings.go:382
-#: internal/mailui/window.go:1752
+#: internal/mailui/window.go:1756
 msgid "Not saved: %v"
 msgstr "保存されていません：%v"
 
@@ -11073,7 +11089,7 @@ msgstr ""
 #: internal/mailui/reader.go:826
 #: ui/gpg.ui:653
 #: ui/gpg.ui:897
-#: ui/settings.ui:6783
+#: ui/settings.ui:6860
 msgid "Save…"
 msgstr "保存…"
 
@@ -11314,7 +11330,7 @@ msgid "Forward (F)"
 msgstr "転送 (F)"
 
 #: internal/mailui/reader.go:320
-#: internal/mailui/window.go:1249
+#: internal/mailui/window.go:1253
 msgid "Archive (E)"
 msgstr "アーカイブ (E)"
 
@@ -11331,17 +11347,17 @@ msgid "Move to a folder (V)"
 msgstr "フォルダへ移動 (V)"
 
 #: internal/mailui/reader.go:327
-#: internal/mailui/window.go:1378
+#: internal/mailui/window.go:1382
 msgid "Star (S)"
 msgstr "スターを付ける (S)"
 
 #: internal/mailui/reader.go:330
-#: internal/mailui/window.go:1375
+#: internal/mailui/window.go:1379
 msgid "Unstar (S)"
 msgstr "スターを外す (S)"
 
 #: internal/mailui/reader.go:332
-#: internal/mailui/window.go:1385
+#: internal/mailui/window.go:1389
 msgid "Mark as unread (U)"
 msgstr "未読にする (U)"
 
@@ -11400,7 +11416,7 @@ msgid "Fold"
 msgstr ""
 
 #: internal/mailui/reader.go:670
-#: internal/mailui/window.go:1327
+#: internal/mailui/window.go:1331
 msgid "me"
 msgstr "自分"
 
@@ -11988,7 +12004,7 @@ msgid "Enter signs in · Esc goes back"
 msgstr "Enter でサインイン · Esc で戻る"
 
 #: internal/mailui/welcome.go:600
-#: internal/mailui/window.go:644
+#: internal/mailui/window.go:648
 msgid "Sign in"
 msgstr "サインイン"
 
@@ -12068,251 +12084,251 @@ msgstr "独自の OAuth クライアント…"
 msgid "Hide your own OAuth client"
 msgstr "独自の OAuth クライアントを隠す"
 
-#: internal/mailui/window.go:247
+#: internal/mailui/window.go:248
 msgid "ALL"
 msgstr "すべて"
 
-#: internal/mailui/window.go:247
+#: internal/mailui/window.go:248
 msgid "UNREAD"
 msgstr "未読"
 
-#: internal/mailui/window.go:251
+#: internal/mailui/window.go:252
 msgid "Every conversation"
 msgstr "すべての会話"
 
-#: internal/mailui/window.go:251
+#: internal/mailui/window.go:252
 msgid "With messages not read"
 msgstr "未読のメッセージがある"
 
-#: internal/mailui/window.go:252
-#: internal/mailui/window.go:1370
+#: internal/mailui/window.go:253
+#: internal/mailui/window.go:1374
 msgid "With files attached"
 msgstr "ファイルが添付されている"
 
-#: internal/mailui/window.go:252
+#: internal/mailui/window.go:253
 msgid "Waiting for your reply"
 msgstr "あなたの返信待ち"
 
-#: internal/mailui/window.go:262
+#: internal/mailui/window.go:263
 msgid "MARK READ"
 msgstr "すべて既読"
 
-#: internal/mailui/window.go:265
+#: internal/mailui/window.go:266
 msgid "Mark every conversation here as read"
 msgstr "ここの会話をすべて既読にする"
 
-#: internal/mailui/window.go:269
+#: internal/mailui/window.go:270
 msgid "EMPTY"
 msgstr ""
 
-#: internal/mailui/window.go:272
+#: internal/mailui/window.go:273
 msgid "Permanently delete every message here"
 msgstr ""
 
-#: internal/mailui/window.go:477
+#: internal/mailui/window.go:481
 msgid "Signed out"
 msgstr "サインアウト済み"
 
-#: internal/mailui/window.go:479
+#: internal/mailui/window.go:483
 msgid "No client ID"
 msgstr ""
 
-#: internal/mailui/window.go:496
+#: internal/mailui/window.go:500
 msgid "Offline: server not found"
 msgstr "{'es': 'Sin conexión: no se encuentra el servidor', 'fr': 'Hors ligne : serveur introuvable', 'ja': 'オフライン：サーバーが見つかりません', 'ko': '오프라인: 서버를 찾을 수 없음', 'zh_CN': '离线：找不到服务器', 'zh_TW': '離線：找不到伺服器'}"
 
-#: internal/mailui/window.go:498
+#: internal/mailui/window.go:502
 msgid "Offline: connection refused"
 msgstr "{'es': 'Sin conexión: conexión rechazada', 'fr': 'Hors ligne : connexion refusée', 'ja': 'オフライン：接続が拒否されました', 'ko': '오프라인: 연결이 거부됨', 'zh_CN': '离线：连接被拒绝', 'zh_TW': '離線：連線被拒絕'}"
 
-#: internal/mailui/window.go:500
+#: internal/mailui/window.go:504
 msgid "Offline: no network"
 msgstr "{'es': 'Sin conexión: no hay red', 'fr': 'Hors ligne : pas de réseau', 'ja': 'オフライン：ネットワークがありません', 'ko': '오프라인: 네트워크 없음', 'zh_CN': '离线：没有网络', 'zh_TW': '離線：沒有網路'}"
 
-#: internal/mailui/window.go:502
+#: internal/mailui/window.go:506
 msgid "Offline: certificate not trusted"
 msgstr "{'es': 'Sin conexión: certificado no fiable', 'fr': 'Hors ligne : certificat non reconnu', 'ja': 'オフライン：証明書を信頼できません', 'ko': '오프라인: 신뢰할 수 없는 인증서', 'zh_CN': '离线：证书不受信任', 'zh_TW': '離線：憑證不受信任'}"
 
-#: internal/mailui/window.go:504
+#: internal/mailui/window.go:508
 msgid "Offline: no answer from the server"
 msgstr "{'es': 'Sin conexión: el servidor no responde', 'fr': 'Hors ligne : le serveur ne répond pas', 'ja': 'オフライン：サーバーが応答しません', 'ko': '오프라인: 서버가 응답하지 않음', 'zh_CN': '离线：服务器无响应', 'zh_TW': '離線：伺服器無回應'}"
 
-#: internal/mailui/window.go:506
+#: internal/mailui/window.go:510
 msgid "Offline: connection dropped"
 msgstr "{'es': 'Sin conexión: se cortó la conexión', 'fr': 'Hors ligne : connexion interrompue', 'ja': 'オフライン：接続が切れました', 'ko': '오프라인: 연결이 끊김', 'zh_CN': '离线：连接已断开', 'zh_TW': '離線：連線已中斷'}"
 
-#: internal/mailui/window.go:508
+#: internal/mailui/window.go:512
 #: internal/shell/status.go:77
 msgid "Offline"
 msgstr "オフライン"
 
-#: internal/mailui/window.go:567
-#: internal/mailui/window.go:1698
+#: internal/mailui/window.go:571
+#: internal/mailui/window.go:1702
 msgid "No account yet"
 msgstr "アカウントはまだありません"
 
-#: internal/mailui/window.go:582
+#: internal/mailui/window.go:586
 msgid "All inboxes"
 msgstr "すべての受信トレイ"
 
-#: internal/mailui/window.go:583
+#: internal/mailui/window.go:587
 msgid "Needs reply"
 msgstr "返信が必要"
 
-#: internal/mailui/window.go:584
+#: internal/mailui/window.go:588
 msgid "Starred"
 msgstr "スター付き"
 
-#: internal/mailui/window.go:586
+#: internal/mailui/window.go:590
 msgid "Newsletters"
 msgstr ""
 
-#: internal/mailui/window.go:592
+#: internal/mailui/window.go:596
 msgid "Contacts"
 msgstr ""
 
-#: internal/mailui/window.go:601
+#: internal/mailui/window.go:605
 msgid "This account's settings"
 msgstr "このアカウントの設定"
 
-#: internal/mailui/window.go:679
+#: internal/mailui/window.go:683
 msgid "%d more folder"
 msgid_plural "%d more folders"
 msgstr[0] "ほかに %d フォルダー"
 
-#: internal/mailui/window.go:681
+#: internal/mailui/window.go:685
 msgid "Fewer folders"
 msgstr "フォルダを減らす"
 
-#: internal/mailui/window.go:765
+#: internal/mailui/window.go:769
 msgid "Inbox"
 msgstr "受信トレイ"
 
-#: internal/mailui/window.go:767
+#: internal/mailui/window.go:771
 msgid "Drafts"
 msgstr "下書き"
 
-#: internal/mailui/window.go:769
+#: internal/mailui/window.go:773
 msgid "Sent"
 msgstr "送信済み"
 
-#: internal/mailui/window.go:773
+#: internal/mailui/window.go:777
 msgid "Spam"
 msgstr "迷惑メール"
 
-#: internal/mailui/window.go:812
+#: internal/mailui/window.go:816
 msgid "Search contacts"
 msgstr ""
 
-#: internal/mailui/window.go:814
-#: internal/mailui/window.go:1760
+#: internal/mailui/window.go:818
+#: internal/mailui/window.go:1764
 #: ui/mail.ui:148
 msgid "Search, or ask in a sentence"
 msgstr "検索、または文章で尋ねる"
 
-#: internal/mailui/window.go:1032
+#: internal/mailui/window.go:1036
 msgid "your mail"
 msgstr "メール"
 
-#: internal/mailui/window.go:1045
+#: internal/mailui/window.go:1049
 msgid "Nothing found"
 msgstr "見つかりません"
 
-#: internal/mailui/window.go:1047
+#: internal/mailui/window.go:1051
 msgid "Fetching your mail…"
 msgstr "メールを取得しています…"
 
-#: internal/mailui/window.go:1049
+#: internal/mailui/window.go:1053
 msgid "Nothing waits for your reply"
 msgstr "返信待ちのものはありません"
 
-#: internal/mailui/window.go:1051
+#: internal/mailui/window.go:1055
 msgid "No starred conversation"
 msgstr "スター付きの会話はありません"
 
-#: internal/mailui/window.go:1053
+#: internal/mailui/window.go:1057
 msgid "No newsletter"
 msgstr ""
 
-#: internal/mailui/window.go:1055
+#: internal/mailui/window.go:1059
 msgid "All read"
 msgstr "すべて既読"
 
-#: internal/mailui/window.go:1057
+#: internal/mailui/window.go:1061
 msgid "Inbox empty. Nothing waits for you."
 msgstr "受信トレイは空です。待っているものはありません。"
 
-#: internal/mailui/window.go:1059
+#: internal/mailui/window.go:1063
 msgid "No mail here"
 msgstr "メールはありません"
 
-#: internal/mailui/window.go:1124
+#: internal/mailui/window.go:1128
 msgid "Could not load older mail: %v"
 msgstr "古いメールを読み込めません：%v"
 
-#: internal/mailui/window.go:1250
+#: internal/mailui/window.go:1254
 msgid "Delete (D)"
 msgstr "削除 (D)"
 
-#: internal/mailui/window.go:1274
+#: internal/mailui/window.go:1278
 msgid "SUSPICIOUS"
 msgstr "疑わしい"
 
-#: internal/mailui/window.go:1342
+#: internal/mailui/window.go:1346
 msgid "EMPTY PREVIEW"
 msgstr ""
 
-#: internal/mailui/window.go:1382
+#: internal/mailui/window.go:1386
 msgid "Mark as read"
 msgstr "既読にする"
 
-#: internal/mailui/window.go:1436
+#: internal/mailui/window.go:1440
 #: internal/shell/notify.go:30
 msgid "Jan 2"
 msgstr "1月2日"
 
-#: internal/mailui/window.go:1494
+#: internal/mailui/window.go:1498
 msgid "Press Enter to ask the assistant to search for this."
 msgstr "Enter でアシスタントにこの内容の検索を頼みます。"
 
-#: internal/mailui/window.go:1539
+#: internal/mailui/window.go:1543
 msgid "Searching the server…"
 msgstr "サーバーを検索しています…"
 
-#: internal/mailui/window.go:1563
+#: internal/mailui/window.go:1567
 msgid "The server's search failed: %s"
 msgstr "サーバーの検索に失敗しました：%s"
 
-#: internal/mailui/window.go:1695
+#: internal/mailui/window.go:1699
 msgid "Up to date"
 msgstr "最新です"
 
-#: internal/mailui/window.go:1700
+#: internal/mailui/window.go:1704
 msgid "Checking for mail…"
 msgstr "メールを確認しています…"
 
-#: internal/mailui/window.go:1704
+#: internal/mailui/window.go:1708
 msgid "Offline: trying again soon"
 msgstr "オフライン：まもなく再試行します"
 
-#: internal/mailui/window.go:1706
+#: internal/mailui/window.go:1710
 msgid "%d account cannot connect"
 msgid_plural "%d accounts cannot connect"
 msgstr[0] "%d 件のアカウントに接続できません"
 
-#: internal/mailui/window.go:1708
+#: internal/mailui/window.go:1712
 msgid "Checked %s"
 msgstr "%sに確認"
 
-#: internal/mailui/window.go:1713
+#: internal/mailui/window.go:1717
 msgid "Last checked at %s"
 msgstr "最終確認 %s"
 
-#: internal/mailui/window.go:1721
+#: internal/mailui/window.go:1725
 msgid "Mail · %d unread"
 msgstr "メール · 未読 %d"
 
-#: internal/mailui/window.go:1796
+#: internal/mailui/window.go:1800
 msgid "%d minute ago"
 msgid_plural "%d minutes ago"
 msgstr[0] "%d 分前"
@@ -12346,8 +12362,8 @@ msgstr "このコンピューターにはペアリング用の ID がありま�
 
 #: internal/remoteui/window.go:173
 #: internal/shell/card.go:80
-#: ui/settings.ui:5441
-#: ui/settings.ui:5722
+#: ui/settings.ui:5484
+#: ui/settings.ui:5765
 msgid "This computer"
 msgstr "このコンピュータ"
 
@@ -12669,7 +12685,7 @@ msgid "%d thr"
 msgstr "%d スレッド"
 
 #: internal/shell/cardterm.go:136
-#: internal/ui/settings.go:625
+#: internal/ui/settings.go:583
 msgid "Desktop"
 msgstr "デスクトップ"
 
@@ -12678,7 +12694,7 @@ msgid "Lock Screen"
 msgstr "画面をロック"
 
 #: internal/shell/commands.go:27
-#: ui/settings.ui:4326
+#: ui/settings.ui:4369
 msgid "Lock now"
 msgstr "今すぐロックしてください"
 
@@ -12734,7 +12750,7 @@ msgid "Press Enter again to empty the Trash"
 msgstr "もう一度 Enter を押すとゴミ箱を空にします"
 
 #: internal/shell/commands.go:33
-#: internal/shell/dock.go:336
+#: internal/shell/dock.go:311
 msgid "inua's settings"
 msgstr "inuaの設定"
 
@@ -12743,7 +12759,7 @@ msgid "Screenshot Area"
 msgstr "スクリーンショット領域"
 
 #: internal/shell/commands.go:34
-#: internal/ui/screenshot.go:590
+#: internal/ui/screenshot.go:596
 msgid "Drag out an area"
 msgstr "領域をドラッグアウトする"
 
@@ -12752,7 +12768,7 @@ msgid "Screenshot Window"
 msgstr "スクリーンショットウィンドウ"
 
 #: internal/shell/commands.go:35
-#: internal/ui/screenshot.go:591
+#: internal/ui/screenshot.go:597
 #: ui/screenshot.ui:169
 msgid "Click a window"
 msgstr "ウィンドウをクリックする"
@@ -12762,7 +12778,7 @@ msgid "Screenshot Screen"
 msgstr "スクリーンショット画面"
 
 #: internal/shell/commands.go:36
-#: internal/ui/screenshot.go:592
+#: internal/ui/screenshot.go:598
 #: ui/screenshot.ui:194
 msgid "Click a screen"
 msgstr "画面をクリックします"
@@ -12843,7 +12859,6 @@ msgid "Start the shell again"
 msgstr "シェルを再度開始する"
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:482
 msgid "Close Window"
 msgstr "ウィンドウを閉じる"
 
@@ -12896,57 +12911,57 @@ msgstr "ウェブアドレス"
 msgid "Web search"
 msgstr "ウェブ検索"
 
-#: internal/shell/dock.go:289
-#: internal/shell/dock.go:354
+#: internal/shell/dock.go:264
+#: internal/shell/dock.go:329
 msgid "EVERYDAY"
 msgstr "毎日"
 
-#: internal/shell/dock.go:299
-#: internal/shell/dock.go:354
+#: internal/shell/dock.go:274
+#: internal/shell/dock.go:329
 msgid "TOOLS"
 msgstr "ツール"
 
-#: internal/shell/dock.go:316
+#: internal/shell/dock.go:291
 msgid "PLAY"
 msgstr "遊び"
 
-#: internal/shell/dock.go:323
-#: internal/shell/dock.go:356
+#: internal/shell/dock.go:298
+#: internal/shell/dock.go:331
 #: ui/sysmon.ui:149
 msgid "SYSTEM"
 msgstr "システム"
 
-#: internal/shell/dock.go:337
+#: internal/shell/dock.go:312
 msgid "Find apps, windows and answers"
 msgstr "アプリ、ウィンドウ、および回答を見つける"
 
-#: internal/shell/dock.go:338
-#: internal/ui/screenshot.go:1134
-#: ui/settings.ui:2155
+#: internal/shell/dock.go:313
+#: internal/ui/screenshot.go:1144
+#: ui/settings.ui:2198
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
-#: internal/shell/dock.go:338
+#: internal/shell/dock.go:313
 msgid "Capture an area, a window or a screen"
 msgstr "領域、ウィンドウ、または画面をキャプチャする"
 
-#: internal/shell/dock.go:355
+#: internal/shell/dock.go:330
 msgid "DEVELOPMENT"
 msgstr "開発"
 
-#: internal/shell/dock.go:355
+#: internal/shell/dock.go:330
 msgid "MEDIA"
 msgstr "メディア"
 
-#: internal/shell/dock.go:355
+#: internal/shell/dock.go:330
 msgid "GAMES"
 msgstr "ゲーム"
 
-#: internal/shell/dock.go:356
+#: internal/shell/dock.go:331
 msgid "OTHER"
 msgstr "その他"
 
-#: internal/shell/dock.go:381
+#: internal/shell/dock.go:356
 msgid "WORKSHOP"
 msgstr "ワークショップ"
 
@@ -12964,85 +12979,85 @@ msgstr[0] "%d 分"
 msgid "%s minutes"
 msgstr "%s 分"
 
-#: internal/shell/launcher.go:48
+#: internal/shell/launcher.go:47
 msgid "[WINDOWS]"
 msgstr "[ウィンドウ]"
 
-#: internal/shell/launcher.go:50
-#: internal/ui/widgets.go:600
+#: internal/shell/launcher.go:49
+#: internal/ui/widgets.go:595
 msgid "[APPS]"
 msgstr "[アプリ]"
 
-#: internal/shell/launcher.go:337
+#: internal/shell/launcher.go:352
 msgid "That window has closed"
 msgstr "その窓は閉まりました"
 
-#: internal/shell/launcher.go:364
+#: internal/shell/launcher.go:379
 msgid "Ask the assistant anything"
 msgstr "アシスタントに何でも質問してください"
 
-#: internal/shell/launcher.go:366
+#: internal/shell/launcher.go:381
 msgid "No emoji or symbol matches"
 msgstr "一致する絵文字も記号もありません"
 
-#: internal/shell/launcher.go:368
+#: internal/shell/launcher.go:383
 msgid "Reading apps…"
 msgstr "読書アプリ…"
 
-#: internal/shell/launcher.go:370
+#: internal/shell/launcher.go:385
 msgid "No app matches"
 msgstr "一致するアプリはありません"
 
-#: internal/shell/launcher.go:372
+#: internal/shell/launcher.go:387
 msgid "Not connected to Hyprland"
 msgstr "ハイプラランドに接続されていません"
 
-#: internal/shell/launcher.go:374
+#: internal/shell/launcher.go:389
 msgid "No windows open"
 msgstr "開いているウィンドウはありません"
 
-#: internal/shell/launcher.go:376
+#: internal/shell/launcher.go:391
 msgid "No window matches"
 msgstr "ウィンドウが一致しない"
 
-#: internal/shell/launcher.go:414
+#: internal/shell/launcher.go:430
 msgid "Enter asks"
 msgstr "Enter で質問"
 
-#: internal/shell/launcher.go:426
+#: internal/shell/launcher.go:442
 msgid "or start with ?"
 msgstr "または ? で始まる"
 
-#: internal/shell/launcher.go:429
+#: internal/shell/launcher.go:445
 msgid "%s · Enter copies"
 msgstr "%s · Enter でコピー"
 
-#: internal/shell/launcher.go:479
+#: internal/shell/launcher.go:495
 #: ui/vm.ui:915
 msgid "Ask the assistant"
 msgstr "アシスタントに尋ねる"
 
-#: internal/shell/launcher.go:516
+#: internal/shell/launcher.go:532
 msgid "%s · workspace %s"
 msgstr "%[1]s · ワークスペース %[2]s"
 
 #: internal/shell/launcher_actions.go:33
-#: internal/ui/dock.go:480
+#: internal/ui/dock.go:524
 msgid "New Window"
 msgstr "新しい窓"
 
 #: internal/shell/launcher_actions.go:39
-#: internal/ui/dock.go:483
+#: internal/ui/dock.go:527
 msgid "Remove from Dock"
 msgstr "ドックから取り外す"
 
 #: internal/shell/launcher_actions.go:41
-#: internal/ui/dock.go:485
+#: internal/ui/dock.go:529
 msgid "Keep in Dock"
 msgstr "ドックに固定"
 
 #: internal/shell/launcher_actions.go:47
-#: internal/ui/dock.go:491
+#: internal/ui/dock.go:535
 msgid "Quit (%d windows)"
 msgstr "終了 (%d Windows)"
 
@@ -13236,15 +13251,15 @@ msgstr ""
 msgid "inua-keyring asks for your passphrase, for %s"
 msgstr ""
 
-#: internal/term/host/sessions.go:256
+#: internal/term/host/sessions.go:270
 msgid "No folder given."
 msgstr ""
 
-#: internal/term/host/sessions.go:259
+#: internal/term/host/sessions.go:273
 msgid "%s is not a folder."
 msgstr ""
 
-#: internal/term/host/sessions.go:303
+#: internal/term/host/sessions.go:317
 #: ui/connect.ui:851
 msgid "Commands"
 msgstr "コマンド"
@@ -13293,107 +13308,107 @@ msgstr "温かみのある紙に土の色合い"
 msgid "The classic, on cream"
 msgstr "定番、クリーム色の地で"
 
-#: internal/term/settings/settings.go:102
+#: internal/term/settings/settings.go:103
 msgid "New session in this workspace"
 msgstr "このワークスペースに新しいセッション"
 
-#: internal/term/settings/settings.go:103
+#: internal/term/settings/settings.go:104
 #: internal/term/web/strings.go:70
-#: internal/termui/columns.go:172
+#: internal/termui/columns.go:176
 msgid "New workspace"
 msgstr "新しいワークスペース"
 
-#: internal/term/settings/settings.go:104
+#: internal/term/settings/settings.go:105
 msgid "Split right"
 msgstr "右に分割"
 
-#: internal/term/settings/settings.go:105
+#: internal/term/settings/settings.go:106
 msgid "Split down"
 msgstr "下に分割"
 
-#: internal/term/settings/settings.go:106
+#: internal/term/settings/settings.go:107
 msgid "Close pane"
 msgstr "ペインを閉じる"
 
-#: internal/term/settings/settings.go:107
+#: internal/term/settings/settings.go:108
 msgid "Swap with the pane in a direction (then an arrow)"
 msgstr "その方向のペインと入れ替える（続けて矢印）"
 
-#: internal/term/settings/settings.go:108
+#: internal/term/settings/settings.go:109
 msgid "Zoom pane / back"
 msgstr "ペインを最大化 / 戻す"
 
-#: internal/term/settings/settings.go:109
+#: internal/term/settings/settings.go:110
 msgid "Equalize"
 msgstr "均等にする"
 
-#: internal/term/settings/settings.go:110
+#: internal/term/settings/settings.go:111
 msgid "Next layout"
 msgstr "次のレイアウト"
 
-#: internal/term/settings/settings.go:111
+#: internal/term/settings/settings.go:112
 msgid "Previous session"
 msgstr "前のセッション"
 
-#: internal/term/settings/settings.go:112
+#: internal/term/settings/settings.go:113
 msgid "Next session"
 msgstr "次のセッション"
 
-#: internal/term/settings/settings.go:113
+#: internal/term/settings/settings.go:114
 msgid "Next agent that needs you"
 msgstr "応答を待つ次のエージェント"
 
-#: internal/term/settings/settings.go:114
+#: internal/term/settings/settings.go:115
 msgid "Next agent that needs you or is idle"
 msgstr "対応待ちまたは待機中の次のエージェント"
 
-#: internal/term/settings/settings.go:115
+#: internal/term/settings/settings.go:116
 msgid "Every agent"
 msgstr "すべてのエージェント"
 
-#: internal/term/settings/settings.go:116
+#: internal/term/settings/settings.go:117
 msgid "Fold the workspaces"
 msgstr "ワークスペースを折りたたむ"
 
-#: internal/term/settings/settings.go:117
+#: internal/term/settings/settings.go:118
 msgid "Fold the sessions"
 msgstr "セッションを折りたたむ"
 
-#: internal/term/settings/settings.go:120
+#: internal/term/settings/settings.go:121
 msgid "Search the scrollback"
 msgstr "スクロールバックを検索"
 
-#: internal/term/settings/settings.go:121
+#: internal/term/settings/settings.go:122
 msgid "Copy mode"
 msgstr "コピーモード"
 
-#: internal/term/settings/settings.go:122
+#: internal/term/settings/settings.go:123
 #: internal/term/web/strings.go:90
-#: internal/termui/keys.go:370
+#: internal/termui/keys.go:395
 msgid "Rename the session"
 msgstr "セッション名を変更"
 
-#: internal/term/settings/settings.go:123
+#: internal/term/settings/settings.go:124
 msgid "Every action by name"
 msgstr "すべての操作を名前で"
 
-#: internal/term/settings/settings.go:124
+#: internal/term/settings/settings.go:125
 msgid "Show the keys"
 msgstr "キー一覧を表示"
 
-#: internal/term/settings/settings.go:126
+#: internal/term/settings/settings.go:127
 msgid "Restart the terminal host"
 msgstr "ターミナルホストを再起動"
 
-#: internal/term/settings/settings.go:127
+#: internal/term/settings/settings.go:128
 msgid "Font larger"
 msgstr "文字を大きく"
 
-#: internal/term/settings/settings.go:128
+#: internal/term/settings/settings.go:129
 msgid "Font smaller"
 msgstr "文字を小さく"
 
-#: internal/term/settings/settings.go:129
+#: internal/term/settings/settings.go:130
 msgid "Font size as set"
 msgstr "設定どおりの文字サイズ"
 
@@ -13570,7 +13585,7 @@ msgid "INFO"
 msgstr "情報"
 
 #: internal/term/web/strings.go:61
-#: internal/termui/prefs.go:204
+#: internal/termui/prefs.go:206
 #: ui/gpg.ui:1043
 msgid "KEYS"
 msgstr "鍵"
@@ -13580,7 +13595,7 @@ msgid "Key panel"
 msgstr "キーパネル"
 
 #: internal/term/web/strings.go:63
-#: ui/settings.ui:6043
+#: ui/settings.ui:6086
 msgid "Keyboard"
 msgstr "キーボード"
 
@@ -13598,7 +13613,7 @@ msgid "New pane"
 msgstr ""
 
 #: internal/term/web/strings.go:68
-#: internal/termui/columns.go:173
+#: internal/termui/columns.go:177
 #: ui/term.ui:235
 msgid "New session"
 msgstr "新しいセッション"
@@ -13680,17 +13695,13 @@ msgstr "往復"
 msgid "SNIPPETS"
 msgstr ""
 
-#: internal/term/web/strings.go:94
-msgid "Select all"
-msgstr ""
-
 #: internal/term/web/strings.go:95
 msgid "Session %d"
 msgstr "セッション %d"
 
 #: internal/term/web/strings.go:97
 #: internal/termui/menubar.go:41
-#: internal/termui/prefs.go:179
+#: internal/termui/prefs.go:181
 msgid "Shell"
 msgstr "シェル"
 
@@ -13858,15 +13869,15 @@ msgstr "ターミナルはウィンドウの色を使います"
 msgid "Your login shell (%s)"
 msgstr "ログインシェル（%s）"
 
-#: internal/termui/columns.go:171
+#: internal/termui/columns.go:175
 msgid "Menu"
 msgstr "メニュー"
 
-#: internal/termui/columns.go:174
+#: internal/termui/columns.go:178
 msgid "Hide the sidebar"
 msgstr "サイドバーを隠す"
 
-#: internal/termui/columns.go:175
+#: internal/termui/columns.go:179
 msgid "Show the sidebar"
 msgstr "サイドバーを表示"
 
@@ -13950,20 +13961,29 @@ msgstr "オン、%s"
 msgid "On, but not running"
 msgstr "オンですが動いていません"
 
-#: internal/termui/keys.go:257
+#: internal/termui/keys.go:275
+msgid "Close pane?"
+msgstr ""
+
+#: internal/termui/keys.go:276
+msgid "A program may still be running. Closing the pane ends it."
+msgstr ""
+
+#: internal/termui/keys.go:278
+#: internal/termui/sessionmenu.go:103
 #: internal/termui/wsmenu.go:113
 msgid "Close %s?"
 msgstr "%s を閉じますか？"
 
-#: internal/termui/keys.go:258
+#: internal/termui/keys.go:279
 msgid "It is working on “%s”; closing the pane ends it."
 msgstr "「%s」の作業中です。ペインを閉じると終了します。"
 
-#: internal/termui/keys.go:260
+#: internal/termui/keys.go:281
 msgid "It is waiting for you: %s. Closing the pane ends it."
 msgstr "応答を待っています: %s。ペインを閉じると終了します。"
 
-#: internal/termui/keys.go:301
+#: internal/termui/keys.go:326
 msgid "Choose the workspace's folder"
 msgstr "ワークスペースのフォルダを選ぶ"
 
@@ -14122,95 +14142,103 @@ msgstr "選択でコピー"
 msgid "Selecting copies to the clipboard; the primary selection follows it either way"
 msgstr "選択するとクリップボードにコピー。プライマリ選択は常に追従します"
 
-#: internal/termui/prefs.go:167
+#: internal/termui/prefs.go:164
+msgid "Focus follows mouse"
+msgstr "マウスにフォーカスを追従"
+
+#: internal/termui/prefs.go:164
+msgid "Focus a pane when the pointer enters it in the active window"
+msgstr "アクティブなウィンドウでポインターが入ったペインにフォーカスする"
+
+#: internal/termui/prefs.go:169
 msgid "Scrollback"
 msgstr "スクロールバック"
 
-#: internal/termui/prefs.go:167
+#: internal/termui/prefs.go:169
 msgid "Lines kept per pane"
 msgstr "ペインごとに保つ行数"
 
-#: internal/termui/prefs.go:171
+#: internal/termui/prefs.go:173
 msgid "Replay"
 msgstr "リプレイ"
 
-#: internal/termui/prefs.go:171
+#: internal/termui/prefs.go:173
 msgid "MiB of a pane's recent output kept for a window opened later"
 msgstr "あとで開くウィンドウのために保つ、ペインの最近の出力 (MiB)"
 
-#: internal/termui/prefs.go:173
+#: internal/termui/prefs.go:175
 msgid "Shell and agents"
 msgstr "シェルとエージェント"
 
-#: internal/termui/prefs.go:174
+#: internal/termui/prefs.go:176
 msgid "SHELL AND AGENTS"
 msgstr "シェルとエージェント"
 
-#: internal/termui/prefs.go:174
+#: internal/termui/prefs.go:176
 msgid "Below the shell: used when the terminal host starts again"
 msgstr "シェルより下の項目：ターミナルホストの再起動時に反映"
 
-#: internal/termui/prefs.go:179
+#: internal/termui/prefs.go:181
 msgid "What new panes start; the panes open already keep theirs"
 msgstr "新しいペインで起動するもの。開いているペインはそのまま"
 
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:182
 msgid "Shell integration"
 msgstr "シェル統合"
 
-#: internal/termui/prefs.go:180
+#: internal/termui/prefs.go:182
 msgid "bash, zsh and fish mark their prompts, so the commands are remembered"
 msgstr "bash、zsh、fish がプロンプトに印を付け、コマンドを記憶できるようにします"
 
-#: internal/termui/prefs.go:182
+#: internal/termui/prefs.go:184
 #: internal/ui/notify.go:324
-#: ui/bar.ui:187
-#: ui/settings.ui:3565
+#: ui/bar.ui:156
+#: ui/settings.ui:3608
 msgid "Notifications"
 msgstr "通知"
 
-#: internal/termui/prefs.go:182
+#: internal/termui/prefs.go:184
 msgid "When an agent needs you or is done in a pane you are not looking at"
 msgstr "見ていないペインでエージェントが応答を待つか完了したとき"
 
-#: internal/termui/prefs.go:184
+#: internal/termui/prefs.go:186
 msgid "Remember commands"
 msgstr "コマンドを記憶"
 
-#: internal/termui/prefs.go:184
+#: internal/termui/prefs.go:186
 msgid "Put each pane's last command back at its prompt, not run"
 msgstr "各ペインの最後のコマンドを、実行せずにプロンプトに戻します"
 
-#: internal/termui/prefs.go:199
+#: internal/termui/prefs.go:201
 msgid "Never keep"
 msgstr "記憶しない"
 
-#: internal/termui/prefs.go:199
+#: internal/termui/prefs.go:201
 msgid "Commands matching these patterns, comma-separated"
 msgstr "これらのパターンに一致するコマンド（カンマ区切り）"
 
-#: internal/termui/prefs.go:201
+#: internal/termui/prefs.go:203
 msgid "Web terminal"
 msgstr "Web ターミナル"
 
-#: internal/termui/prefs.go:204
+#: internal/termui/prefs.go:206
 msgid "Click a key, then press the new one; Backspace frees it"
 msgstr "キーをクリックして新しいキーを押す。Backspace で解除"
 
-#: internal/termui/prefs.go:357
-#: internal/ui/shortcuts.go:197
+#: internal/termui/prefs.go:359
+#: internal/ui/shortcuts.go:220
 msgid "Press keys…"
 msgstr "キーを押してください…"
 
-#: internal/termui/prefs.go:358
+#: internal/termui/prefs.go:360
 msgid "Escape cancels; Backspace frees the action's keys."
 msgstr "Escape で取り消し。Backspace でこの操作のキーを解除します。"
 
-#: internal/termui/prefs.go:380
+#: internal/termui/prefs.go:382
 msgid "A key needs Ctrl, Alt or Super with it: the others are the programs'."
 msgstr "キーには Ctrl、Alt、Super のいずれかが必要です。それ以外はプログラムのものです。"
 
-#: internal/termui/prefs.go:391
+#: internal/termui/prefs.go:393
 msgid "%s was %s's; that one has no keys now."
 msgstr "%s は %s のキーでした。そちらはキーなしになりました。"
 
@@ -14282,17 +14310,22 @@ msgstr "次の一致 (Shift+Enter)"
 msgid "Close (Escape)"
 msgstr "クローズ(エスケープ)"
 
-#: internal/termui/tiles.go:605
-msgid "%s\nBranch %s"
-msgstr "%s\nブランチ %s"
-
-#: internal/termui/tiles.go:607
-msgid "%s, a worktree of %s\nBranch %s"
-msgstr "%s（%s の worktree）\nブランチ %s"
-
+#: internal/termui/sessionmenu.go:82
 #: internal/termui/wsmenu.go:70
 msgid "Close…"
 msgstr "閉じる…"
+
+#: internal/termui/sessionmenu.go:104
+msgid "All panes in this session close, and every program running in them quits."
+msgstr ""
+
+#: internal/termui/tiles.go:657
+msgid "%s\nBranch %s"
+msgstr "%s\nブランチ %s"
+
+#: internal/termui/tiles.go:659
+msgid "%s, a worktree of %s\nBranch %s"
+msgstr "%s（%s の worktree）\nブランチ %s"
 
 #: internal/termui/wsmenu.go:91
 msgid "Rename the workspace"
@@ -14317,32 +14350,32 @@ msgid "inua calendar"
 msgstr "イヌアカレンダー"
 
 #: internal/ui/agenda.go:227
-#: internal/ui/widgets.go:992
+#: internal/ui/widgets.go:987
 msgid "%s · WK %d"
 msgstr "%s · 第 %d 週"
 
 #: internal/ui/agenda.go:335
-#: internal/ui/widgets.go:1072
+#: internal/ui/widgets.go:1067
 msgid "Add a place in Weather to see it here"
 msgstr "天気に場所を追加してここに表示します"
 
 #: internal/ui/agenda.go:346
-#: internal/ui/widgets.go:1078
+#: internal/ui/widgets.go:1073
 msgid "No forecast: offline?"
 msgstr "予測がありません: オフラインですか?"
 
 #: internal/ui/agenda.go:348
-#: internal/ui/widgets.go:1076
+#: internal/ui/widgets.go:1071
 msgid "Reading the forecast…"
 msgstr "予測を読んでいると…"
 
 #: internal/ui/agenda.go:356
-#: internal/ui/widgets.go:1085
+#: internal/ui/widgets.go:1080
 msgid "%s · feels %s"
 msgstr "%[1]s・%[2]sを感じる"
 
 #: internal/ui/agenda.go:359
-#: internal/ui/widgets.go:1087
+#: internal/ui/widgets.go:1082
 msgid "H %s  L %s"
 msgstr "H %[1]s L %[2]s"
 
@@ -14353,19 +14386,6 @@ msgstr "アラーム · %02d:%02d"
 #: internal/ui/alarms.go:108
 msgid "Snooze"
 msgstr "スヌーズ"
-
-#: internal/ui/appmenu.go:481
-#: internal/ui/appmenu.go:531
-msgid "About %s"
-msgstr ""
-
-#: internal/ui/appmenu.go:483
-msgid "Quit %s"
-msgstr ""
-
-#: internal/ui/appmenu.go:546
-msgid "Process %d"
-msgstr ""
 
 #: internal/ui/askpass.go:80
 msgid "password: want one JSON request"
@@ -14562,84 +14582,84 @@ msgstr "スクリーンショットのため隠しています。"
 msgid "The passphrases do not match."
 msgstr "パスフレーズが一致しません。"
 
-#: internal/ui/bar.go:586
+#: internal/ui/bar.go:473
 msgid "Workspace %s"
 msgstr "ワークスペース%s"
 
-#: internal/ui/bar.go:599
+#: internal/ui/bar.go:486
 msgid "WORKSPACE"
 msgstr "ワークスペース"
 
-#: internal/ui/clipboard.go:82
+#: internal/ui/clipboard.go:83
 msgid "Could not clear the history"
 msgstr "履歴を消去できませんでした"
 
-#: internal/ui/clipboard.go:95
+#: internal/ui/clipboard.go:96
 msgid "Could not delete it"
 msgstr "削除できませんでした"
 
-#: internal/ui/clipboard.go:250
+#: internal/ui/clipboard.go:251
 msgid "[CLIPBOARD]"
 msgstr "[クリップボード]"
 
-#: internal/ui/clipboard.go:255
+#: internal/ui/clipboard.go:256
 #: ui/center.ui:81
 msgid "Clear all"
 msgstr "すべてクリア"
 
-#: internal/ui/clipboard.go:262
+#: internal/ui/clipboard.go:263
 msgid "Search clipboard history"
 msgstr "クリップボード履歴を検索"
 
-#: internal/ui/clipboard.go:359
+#: internal/ui/clipboard.go:360
 #: ui/connect.ui:728
-#: ui/settings.ui:3829
+#: ui/settings.ui:3872
 msgid "Clipboard"
 msgstr "クリップボード"
 
-#: internal/ui/clipboard.go:423
+#: internal/ui/clipboard.go:424
 msgid "Could not read the clipboard history"
 msgstr "クリップボード履歴を読み込めませんでした"
 
-#: internal/ui/clipboard.go:469
+#: internal/ui/clipboard.go:470
 msgid "Image · %s"
 msgstr "画像 · %s"
 
-#: internal/ui/clipboard.go:499
+#: internal/ui/clipboard.go:500
 msgid "Copy without pasting"
 msgstr "貼り付けずにコピー"
 
-#: internal/ui/clipboard.go:501
+#: internal/ui/clipboard.go:502
 msgid "Paste the image file's path"
 msgstr "画像ファイルのパスを貼り付け"
 
-#: internal/ui/clipboard.go:507
+#: internal/ui/clipboard.go:508
 msgid "Nothing copied yet"
 msgstr "まだ何もコピーしていません"
 
-#: internal/ui/clipboard.go:509
+#: internal/ui/clipboard.go:510
 msgid "Nothing matches"
 msgstr "一致するものはありません"
 
-#: internal/ui/clipboard.go:518
+#: internal/ui/clipboard.go:519
 msgid "%d entry · click to paste · Escape to close"
 msgid_plural "%d entries · click to paste · Escape to close"
 msgstr[0] "%d 件 · クリックで貼り付け · Esc で閉じる"
 
-#: internal/ui/clipboard.go:520
+#: internal/ui/clipboard.go:521
 msgid "%d entry · click to copy · Escape to close"
 msgid_plural "%d entries · click to copy · Escape to close"
 msgstr[0] "%d 件 · クリックでコピー · Esc で閉じる"
 
-#: internal/ui/clipboard.go:540
+#: internal/ui/clipboard.go:541
 msgid "[DETAILS]"
 msgstr "[詳細]"
 
-#: internal/ui/clipboard.go:543
+#: internal/ui/clipboard.go:544
 msgid "[COPIED %s FROM %s]"
 msgstr "[%s に %s からコピー]"
 
-#: internal/ui/clipboard.go:545
+#: internal/ui/clipboard.go:546
 msgid "[COPIED %s]"
 msgstr "[%s にコピー]"
 
@@ -14696,13 +14716,13 @@ msgstr "範囲内にネットワークがありません。"
 #: internal/ui/control_detail.go:182
 #: internal/ui/settings_bluetooth.go:224
 #: internal/ui/settings_wifi.go:305
-#: ui/settings.ui:5636
-#: ui/settings.ui:5865
+#: ui/settings.ui:5679
+#: ui/settings.ui:5908
 msgid "Searching…"
 msgstr "検索中…"
 
 #: internal/ui/control_detail.go:214
-#: internal/ui/settings.go:624
+#: internal/ui/settings.go:582
 msgid "Devices"
 msgstr "デバイス"
 
@@ -14721,10 +14741,10 @@ msgid "No devices paired yet"
 msgstr "ペアリング済みのデバイスはまだありません"
 
 #: internal/ui/drawer.go:217
-#: internal/ui/settings.go:626
-#: internal/ui/widgets.go:591
+#: internal/ui/settings.go:584
+#: internal/ui/widgets.go:586
 #: ui/settings.ui:181
-#: ui/settings.ui:2294
+#: ui/settings.ui:2337
 msgid "Apps"
 msgstr "アプリ"
 
@@ -14736,47 +14756,47 @@ msgstr "ワークショップのアプリ"
 msgid "The light apps are not installed (make install)."
 msgstr "ライトアプリはインストールされない(メイクインストール)。"
 
-#: internal/ui/input.go:55
+#: internal/ui/input.go:65
 msgid "Not applied to Hyprland: %s"
 msgstr "Hyprland には適用されません: %s"
 
-#: internal/ui/input.go:113
-#: internal/ui/input.go:130
-#: internal/ui/settings_displays.go:310
+#: internal/ui/input.go:126
+#: internal/ui/input.go:143
+#: internal/ui/settings_displays.go:352
 msgid "Set by inua"
 msgstr "inuaによる設定"
 
-#: internal/ui/input.go:115
-#: internal/ui/input.go:132
-#: internal/ui/settings_displays.go:308
+#: internal/ui/input.go:128
+#: internal/ui/input.go:145
+#: internal/ui/settings_displays.go:347
 msgid "Set in hyprland.conf"
 msgstr "hyprland.confに設定"
 
-#: internal/ui/input.go:117
+#: internal/ui/input.go:130
 msgid "no XKB options"
 msgstr "XKBオプションなし"
 
-#: internal/ui/input.go:125
+#: internal/ui/input.go:138
 msgid "From hyprland.conf"
 msgstr "hyprland.confより"
 
-#: internal/ui/input.go:153
+#: internal/ui/input.go:183
 msgid "hyprland.lua does not load inua.lua, so these settings do nothing yet. Add this as its last line: %s"
 msgstr "hyprland.lua が inua.lua を読み込んでいないため、これらの設定はまだ効きません。最後の行に次を追加してください:%s"
 
-#: internal/ui/input.go:155
+#: internal/ui/input.go:185
 msgid "hyprland.conf does not load inua.conf, so these settings do nothing yet. Add this as its last line: source = ./%s"
 msgstr "hyprland.conf は inua.conf をロードしないため、これらの設定はまだ何も行いません。これを最後の行として追加します:source = ./%s"
 
-#: internal/ui/input.go:159
+#: internal/ui/input.go:189
 msgid "hyprland.lua sets these again after loading inua.lua, which wins over inua: %s. Move the require line below them."
 msgstr "hyprland.lua は inua.lua を読み込んだ後にこれらを再設定しているため、inua の設定より優先されます:%s。require の行をそれらの下に移動してください。"
 
-#: internal/ui/input.go:161
+#: internal/ui/input.go:191
 msgid "hyprland.conf sets these again after loading inua.conf, which wins over inua: %s. Move the source line below them."
 msgstr "hyprland.conf は、inua.conf をロードした後にこれらを再度設定します。これは、inua: %s よりも優先されます。ソース行をそれらの下に移動します。"
 
-#: internal/ui/launcher.go:516
+#: internal/ui/launcher.go:543
 msgid "inua launcher"
 msgstr "イヌアランチャー"
 
@@ -14842,84 +14862,84 @@ msgstr ""
 msgid "Bluetooth off"
 msgstr ""
 
-#: internal/ui/overview.go:184
+#: internal/ui/overview.go:188
 msgid "restore focus"
 msgstr "フォーカスを復元する"
 
-#: internal/ui/overview.go:295
+#: internal/ui/overview.go:298
 msgid "kill window"
 msgstr "ウィンドウをキルする"
 
-#: internal/ui/overview.go:430
+#: internal/ui/overview.go:447
 msgid "MRU: ON"
 msgstr "MRU:オン"
 
-#: internal/ui/overview.go:430
+#: internal/ui/overview.go:447
 msgid "MRU: OFF"
 msgstr "MRU: オフ"
 
-#: internal/ui/overview.go:431
+#: internal/ui/overview.go:448
 msgid "This monitor"
 msgstr "このモニター"
 
-#: internal/ui/overview.go:431
+#: internal/ui/overview.go:448
 msgid "All monitors"
 msgstr "すべてのモニター"
 
-#: internal/ui/overview.go:440
+#: internal/ui/overview.go:457
 msgid "FILTER"
 msgstr "絞り込み"
 
-#: internal/ui/overview.go:442
+#: internal/ui/overview.go:459
 msgid "NO MATCHES"
 msgstr "一致なし"
 
-#: internal/ui/overview.go:444
+#: internal/ui/overview.go:461
 msgid "%d RESULT"
 msgid_plural "%d RESULTS"
 msgstr[0] "%d 件"
 
-#: internal/ui/overview.go:472
+#: internal/ui/overview.go:494
 msgid "No workspaces"
 msgstr "ワークスペースがない"
 
-#: internal/ui/overview.go:474
+#: internal/ui/overview.go:496
 msgid "No matches"
 msgstr "一致しない"
 
-#: internal/ui/overview.go:593
+#: internal/ui/overview.go:616
 msgid "＋  New workspace"
 msgstr "＋  新しいワークスペース"
 
-#: internal/ui/overview.go:895
+#: internal/ui/overview.go:980
 msgid "Filter by window title or app"
 msgstr "ウィンドウのタイトルまたはアプリでフィルタリングする"
 
-#: internal/ui/overview.go:911
+#: internal/ui/overview.go:996
 msgid "TYPE TO FILTER WINDOWS"
 msgstr "入力してウィンドウを絞り込む"
 
-#: internal/ui/overview.go:924
+#: internal/ui/overview.go:1009
 msgid "Type or / to filter windows   Esc · clear / close   Arrows / Tab · select   Middle click · close   Ctrl+Shift+X · kill   Drag · move"
 msgstr "または / を入力してウィンドウをフィルタリングします Esc · クリア / 閉じる 矢印 / Tab · 選択 中クリック · 閉じる Ctrl+Shift+X · kill ドラッグ · 移動"
 
-#: internal/ui/overview.go:968
+#: internal/ui/overview.go:1053
 msgid "inua overview"
 msgstr "イヌアの概要"
 
-#: internal/ui/overview_manage.go:123
+#: internal/ui/overview_manage.go:125
 msgid "close window"
 msgstr "ウィンドウを閉じる"
 
-#: internal/ui/overview_manage.go:163
+#: internal/ui/overview_manage.go:165
 msgid "%s · %s · Middle click: close"
 msgstr "%[1]s・%[2]s・中クリック:閉じる"
 
-#: internal/ui/overview_manage.go:201
+#: internal/ui/overview_manage.go:203
 msgid "Click a window to force-terminate ONLY that client · Esc / right click cancels"
 msgstr "ウィンドウをクリックしてそのクライアントのみを強制終了・Esc / 右クリックでキャンセル"
 
-#: internal/ui/overview_manage.go:205
+#: internal/ui/overview_manage.go:207
 msgid "Arrows / Tab · select    Type or / · search    Middle click · close    Ctrl+Shift+X · kill    Drag · move"
 msgstr "矢印 / タブ · タイプの選択 または / · 検索 中クリック · 閉じる Ctrl+Shift+X · キル ドラッグ · 移動"
 
@@ -14937,7 +14957,7 @@ msgid "Search every entry"
 msgstr "すべてのエントリーを検索"
 
 #: internal/ui/passwords.go:283
-#: ui/bar.ui:158
+#: ui/bar.ui:135
 #: ui/settings.ui:1667
 msgid "Passwords"
 msgstr "パスワード"
@@ -15054,168 +15074,163 @@ msgstr "録音が保存されました"
 msgid "Screen recording"
 msgstr "画面記録"
 
-#: internal/ui/screenshot.go:572
+#: internal/ui/screenshot.go:578
 msgid "inua screenshot"
 msgstr "イヌアのスクリーンショット"
 
-#: internal/ui/screenshot.go:593
+#: internal/ui/screenshot.go:599
 msgid "Click to copy a colour"
 msgstr "クリックして色をコピーします"
 
-#: internal/ui/screenshot.go:597
+#: internal/ui/screenshot.go:603
 msgid "Drag out an area to record"
 msgstr "録画する領域をドラッグ"
 
-#: internal/ui/screenshot.go:598
+#: internal/ui/screenshot.go:604
 msgid "Click a window to record"
 msgstr "ウィンドウをクリックして記録する"
 
-#: internal/ui/screenshot.go:599
+#: internal/ui/screenshot.go:605
 msgid "Click a screen to record"
 msgstr "画面をクリックして記録する"
 
-#: internal/ui/screenshot.go:644
+#: internal/ui/screenshot.go:650
 msgid "Drag to adjust · click inside to take"
 msgstr "ドラッグで調整 · 内側をクリックで撮影"
 
-#: internal/ui/screenshot.go:646
+#: internal/ui/screenshot.go:652
 msgid "Drag to adjust · click inside to record"
 msgstr "ドラッグで調整 · 内側をクリックで録画"
 
-#: internal/ui/screenshot.go:1128
+#: internal/ui/screenshot.go:1138
 msgid "Screenshot saved and copied"
 msgstr "スクリーンショットの保存とコピー"
 
-#: internal/ui/screenshot.go:1129
+#: internal/ui/screenshot.go:1139
 msgid "Screenshot saved"
 msgstr "スクリーンショットが保存されました"
 
-#: internal/ui/screenshot.go:1130
+#: internal/ui/screenshot.go:1140
 msgid "Screenshot copied"
 msgstr "スクリーンショットがコピーされました"
 
-#: internal/ui/screenshot.go:1131
+#: internal/ui/screenshot.go:1141
 msgid "Screenshot taken"
 msgstr "撮影されたスクリーンショット"
 
-#: internal/ui/settings.go:347
+#: internal/ui/settings.go:324
 msgid "Not restarted: %s"
 msgstr "再起動できませんでした: %s"
 
-#: internal/ui/settings.go:372
-#: internal/ui/settings.go:379
-#: internal/ui/settings.go:386
-#: internal/ui/settings.go:829
-#: internal/ui/settings.go:831
-#: internal/ui/settings.go:835
+#: internal/ui/settings.go:349
+#: internal/ui/settings.go:787
 msgid "%d px"
 msgstr "%d px"
 
-#: internal/ui/settings.go:623
+#: internal/ui/settings.go:581
 msgid "Connections"
 msgstr "接続"
 
-#: internal/ui/settings.go:735
+#: internal/ui/settings.go:693
 msgid "%s · yours: right-click for more"
 msgstr "%s · 自分のテーマ：右クリックでその他"
 
-#: internal/ui/settings.go:752
+#: internal/ui/settings.go:710
 msgid "A CSS file of @define-color lines, kept in themes beside config.toml"
 msgstr "@define-color 行の CSS ファイル。config.toml の隣の themes に置かれます"
 
-#: internal/ui/settings.go:761
+#: internal/ui/settings.go:719
 msgid "Add Theme…"
 msgstr "テーマを追加…"
 
-#: internal/ui/settings.go:867
+#: internal/ui/settings.go:821
 msgid "As the bar (%s)"
 msgstr "バーと同じ（%s）"
 
-#: internal/ui/settings.go:884
+#: internal/ui/settings.go:838
 msgid "inua objects"
 msgstr "inua objects"
 
-#: internal/ui/settings.go:885
+#: internal/ui/settings.go:839
 msgid "inua objects soft"
 msgstr "inua objects soft"
 
-#: internal/ui/settings.go:886
+#: internal/ui/settings.go:840
 msgid "inua objects flat"
 msgstr "inua objects flat"
 
-#: internal/ui/settings.go:894
+#: internal/ui/settings.go:848
 msgid "Phosphor"
 msgstr "Phosphor"
 
-#: internal/ui/settings.go:894
-#: internal/ui/settings.go:895
+#: internal/ui/settings.go:848
+#: internal/ui/settings.go:849
 msgid "System theme"
 msgstr "システムテーマ"
 
-#: internal/ui/settings.go:895
+#: internal/ui/settings.go:849
 #: ui/settings.ui:545
 msgid "As the app style"
 msgstr "アプリのスタイルどおり"
 
-#: internal/ui/settings.go:988
+#: internal/ui/settings.go:942
 msgid "%s (%s, %s) · %s"
 msgstr "%s(%s、%s)· %s"
 
-#: internal/ui/settings.go:990
+#: internal/ui/settings.go:944
 msgid "%d text"
 msgid_plural "%d texts"
 msgstr[0] "テキスト %d 件"
 
-#: internal/ui/settings.go:991
+#: internal/ui/settings.go:945
 msgid "%d image"
 msgid_plural "%d images"
 msgstr[0] "画像 %d 件"
 
-#: internal/ui/settings.go:992
+#: internal/ui/settings.go:946
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: internal/ui/settings.go:1071
+#: internal/ui/settings.go:1025
 #: internal/ui/settings_apps.go:168
 #: internal/ui/settings_card.go:288
 #: internal/ui/settings_portals.go:177
 msgid "Not saved: %s"
 msgstr "保存されていません: %s"
 
-#: internal/ui/settings.go:1097
+#: internal/ui/settings.go:1051
 msgid "Choose a wallpaper"
 msgstr "壁紙を選択してください"
 
-#: internal/ui/settings.go:1139
+#: internal/ui/settings.go:1093
 msgid "Off: another notification daemon can show them"
 msgstr "オフ: 別の通知デーモンがそれらを表示できる"
 
-#: internal/ui/settings.go:1141
+#: internal/ui/settings.go:1095
 msgid "Banners, then the notification center (the bell in the bar, or Super+N)"
 msgstr "バナー表示後に通知センターへ（バーのベル、または Super+N）"
 
-#: internal/ui/settings.go:1143
+#: internal/ui/settings.go:1097
 msgid "Waiting: another notification daemon is running"
 msgstr "待機中: 別の通知デーモンが実行中です"
 
-#: internal/ui/settings.go:1161
+#: internal/ui/settings.go:1116
 msgid "Nothing pinned"
 msgstr "固定したアプリはありません"
 
-#: internal/ui/settings.go:1177
-#: internal/ui/settings_menu.go:94
+#: internal/ui/settings.go:1132
 msgid "%s (not installed)"
 msgstr "%s (未インストール)"
 
-#: internal/ui/settings.go:1190
+#: internal/ui/settings.go:1145
 msgid "Move earlier"
 msgstr "前に移動"
 
-#: internal/ui/settings.go:1191
+#: internal/ui/settings.go:1146
 msgid "Move later"
 msgstr "後ろに移動"
 
-#: internal/ui/settings.go:1192
+#: internal/ui/settings.go:1147
 msgid "Remove from the dock"
 msgstr "ドックから削除"
 
@@ -15285,7 +15300,7 @@ msgid "Minimal"
 msgstr "最小限"
 
 #: internal/ui/settings_ai.go:100
-#: ui/settings.ui:1953
+#: ui/settings.ui:1996
 msgid "Medium"
 msgstr "中"
 
@@ -15318,7 +15333,7 @@ msgid "Hide token"
 msgstr "トークンを隠す"
 
 #: internal/ui/settings_ai.go:248
-#: ui/settings.ui:3179
+#: ui/settings.ui:3222
 msgid "Create token"
 msgstr "トークンの作成"
 
@@ -15752,6 +15767,221 @@ msgstr "要確認"
 msgid "Hyprland, with inua on top."
 msgstr "Hyprland、その上に inua。"
 
+#: internal/ui/settings_compositor.go:76
+msgid "COMPOSITOR"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:76
+msgid "What the next login runs inua on"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:77
+#: ui/settings.ui:6747
+msgid "Compositor"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:94
+msgid "Applies at the next login"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:95
+msgid "Log out…"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:104
+msgid "LOGIN"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:104
+msgid "The login screen starts the Inua session, which starts the compositor"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:105
+msgid "Login manager"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:111
+msgid "THIS SESSION"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:111
+msgid "What the compositor running now does not give inua"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:112
+msgid "Running on"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:125
+msgid "Live window previews in the overview"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:126
+msgid "Windows laid out as they are, in the overview"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:127
+msgid "New workspaces from the overview"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:128
+msgid "Dragging windows between workspaces in the overview"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:129
+msgid "Super alone for the overview, and its number slots"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:130
+msgid "Keyboard settings from inua"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:131
+msgid "Touchpad settings from inua"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:132
+msgid "Shortcuts set in inua"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:133
+msgid "Holding other shortcuts back while one is recorded"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:134
+msgid "Display settings from inua"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:135
+msgid "Pasting into a window from the clipboard history and dictation"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:136
+msgid "A virtual screen for remote desktop without a monitor"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:137
+msgid "Moving the pointer for you"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:170
+msgid "%s. The login starts Hyprland instead until this is put right."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:176
+msgid "%s is not installed: install it to choose it."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:178
+msgid "%s are not installed: install one to choose it."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:183
+msgid "No known compositor is running."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:185
+msgid "%s is running. This session was not started by the Inua session entry; the choice applies when you log in through it."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:187
+msgid "%s is running, and is what the next login starts."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:189
+msgid "%s is running."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:192
+msgid "%s starts when you log in again."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:197
+msgid "None enabled"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:199
+msgid "the Inua session is installed"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:203
+msgid "the Inua session is not installed"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:204
+msgid "Install it from inua's source: make install-session (asks for the administrator's password)."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:206
+msgid "the Inua session is an older one"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:207
+msgid "The installed session script always starts Hyprland. Update it from inua's source: sudo sh scripts/install-session.sh"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:213
+msgid "Nothing inua knows"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:224
+#: internal/ui/settings_displays.go:185
+#: internal/ui/settings_displays.go:217
+msgid "Not available on %s"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:226
+msgid "Not available now"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:235
+msgid "Everything inua uses"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:235
+msgid "Nothing is missing on this compositor."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:252
+msgid "%s's config was not written: %s"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:255
+msgid "Wrote %s, which starts inua on %s."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:286
+msgid "Started on %s"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:287
+msgid "The compositor chosen in Settings was passed over."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:325
+msgid "Not available on %s now."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:327
+msgid "Not available on %s."
+msgstr ""
+
+#: internal/ui/settings_compositor.go:359
+msgid "inua writes these to %s"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:362
+msgid "Use %s's own"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:366
+msgid "Other shortcuts, from %s's own config"
+msgstr ""
+
+#: internal/ui/settings_compositor.go:386
+msgid "Not applied to %s: %s"
+msgstr ""
+
 #: internal/ui/settings_custom.go:96
 msgid "Not moved to the trash: %s"
 msgstr "ゴミ箱に移動できませんでした: %s"
@@ -15777,114 +16007,131 @@ msgstr "追加されませんでした: テーマには #rrggbb 色の @define-c
 msgid "Not added: %s"
 msgstr "追加されませんでした：%s"
 
-#: internal/ui/settings_displays.go:51
-#: internal/ui/settings_displays.go:416
+#: internal/ui/settings_displays.go:54
+#: internal/ui/settings_displays.go:458
 msgid "Automatic"
 msgstr "自動"
 
-#: internal/ui/settings_displays.go:52
+#: internal/ui/settings_displays.go:55
 msgid "Left of the others"
 msgstr "ほかのディスプレイの左"
 
-#: internal/ui/settings_displays.go:53
+#: internal/ui/settings_displays.go:56
 msgid "Right of the others"
 msgstr "ほかのディスプレイの右"
 
-#: internal/ui/settings_displays.go:54
+#: internal/ui/settings_displays.go:57
 msgid "Above the others"
 msgstr "ほかのディスプレイの上"
 
-#: internal/ui/settings_displays.go:55
+#: internal/ui/settings_displays.go:58
 msgid "Below the others"
 msgstr "ほかのディスプレイの下"
 
-#: internal/ui/settings_displays.go:185
+#: internal/ui/settings_displays.go:210
 msgid "No displays"
 msgstr "ディスプレイなし"
 
-#: internal/ui/settings_displays.go:186
-msgid "Hyprland lists no displays"
-msgstr "Hyprland にディスプレイがありません"
+#: internal/ui/settings_displays.go:212
+#: ui/settings.ui:5948
+msgid "Displays"
+msgstr "ディスプレイ"
 
-#: internal/ui/settings_displays.go:186
-msgid "Is the shell connected to Hyprland?"
-msgstr "シェルは Hyprland に接続していますか?"
+#: internal/ui/settings_displays.go:215
+msgid "%s lists no displays"
+msgstr ""
 
-#: internal/ui/settings_displays.go:220
+#: internal/ui/settings_displays.go:215
+msgid "Is the shell connected to %s?"
+msgstr ""
+
+#: internal/ui/settings_displays.go:217
+msgid "Resolution, scale and arrangement are set in the compositor's own configuration."
+msgstr ""
+
+#: internal/ui/settings_displays.go:252
 msgid "Use this display"
 msgstr "このディスプレイを使う"
 
-#: internal/ui/settings_displays.go:234
+#: internal/ui/settings_displays.go:266
 msgid "Preferred"
 msgstr "推奨"
 
-#: internal/ui/settings_displays.go:245
+#: internal/ui/settings_displays.go:277
 #: ui/remote.ui:760
 msgid "Resolution"
 msgstr "解像度"
 
-#: internal/ui/settings_displays.go:266
+#: internal/ui/settings_displays.go:303
 msgid "%s (Hyprland uses %s)"
 msgstr "%s(Hyprland では %s)"
 
-#: internal/ui/settings_displays.go:271
+#: internal/ui/settings_displays.go:308
 msgid "Scale"
 msgstr "拡大率"
 
-#: internal/ui/settings_displays.go:271
+#: internal/ui/settings_displays.go:308
 msgid "Text and windows larger or smaller"
 msgstr "文字とウィンドウを大きく、または小さく"
 
-#: internal/ui/settings_displays.go:284
+#: internal/ui/settings_displays.go:321
 msgid "Where it is (%s, %s)"
 msgstr "今の位置 (%s, %s)"
 
-#: internal/ui/settings_displays.go:286
-#: ui/settings.ui:1845
+#: internal/ui/settings_displays.go:323
+#: ui/settings.ui:1888
 msgid "Position"
 msgstr "位置"
 
-#: internal/ui/settings_displays.go:297
-#: internal/ui/settings_displays.go:301
+#: internal/ui/settings_displays.go:334
+#: internal/ui/settings_displays.go:338
 msgid "Same picture as %s"
 msgstr "%s と同じ画面"
 
-#: internal/ui/settings_displays.go:303
+#: internal/ui/settings_displays.go:340
 msgid "Mirror"
 msgstr "ミラー"
 
-#: internal/ui/settings_displays.go:313
-#: ui/settings.ui:6303
-#: ui/settings.ui:6570
+#: internal/ui/settings_displays.go:347
+#: ui/settings.ui:6346
+#: ui/settings.ui:6613
 msgid "Use hyprland.conf"
 msgstr "hyprland.confを使用する"
 
-#: internal/ui/settings_displays.go:316
+#: internal/ui/settings_displays.go:349
+msgid "Set in %s's own configuration"
+msgstr ""
+
+#: internal/ui/settings_displays.go:349
+msgid "Use %s's"
+msgstr ""
+
+#: internal/ui/settings_displays.go:358
 msgid "Stop setting this display in inua"
 msgstr "このディスプレイを inua で設定しない"
 
-#: internal/ui/settings_displays.go:374
+#: internal/ui/settings_displays.go:416
 msgid "Built-in display"
 msgstr "内蔵ディスプレイ"
 
-#: internal/ui/settings_displays.go:387
+#: internal/ui/settings_displays.go:429
 msgid "Off while the lid is closed"
 msgstr "ふたを閉じている間はオフ"
 
-#: internal/ui/settings_displays.go:393
-#: internal/ui/settings_displays.go:396
+#: internal/ui/settings_displays.go:435
+#: internal/ui/settings_displays.go:438
 msgid "Shows the same picture as %s"
 msgstr "%s と同じ画面を表示"
 
-#: internal/ui/settings_displays.go:398
+#: internal/ui/settings_displays.go:440
 msgid "%s, at %s"
 msgstr "%s、%s"
 
-#: internal/ui/settings_displays.go:408
+#: internal/ui/settings_displays.go:450
 msgid "%d × %d"
 msgstr "%d × %d"
 
-#: internal/ui/settings_displays.go:410
+#: internal/ui/settings_displays.go:452
 msgid "%d × %d, %s Hz"
 msgstr "%d × %d、%s Hz"
 
@@ -15921,7 +16168,7 @@ msgid "Added %s."
 msgstr "%s を追加しました。"
 
 #: internal/ui/settings_keyring.go:270
-#: ui/settings.ui:5003
+#: ui/settings.ui:5046
 msgid "<span alpha='55%'>[</span>READ<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>読み取り<span alpha='55%'>]</span>"
 
@@ -16050,7 +16297,7 @@ msgid "The record of reads cannot be read: %s"
 msgstr "読み取りの記録を読めません: %s"
 
 #: internal/ui/settings_keyring.go:424
-#: ui/settings.ui:4642
+#: ui/settings.ui:4685
 msgid "No app has read a secret yet."
 msgstr "シークレットを読み取ったアプリはまだありません。"
 
@@ -16121,14 +16368,6 @@ msgstr "%s が「%s」を読む"
 #: internal/ui/settings_keyring.go:683
 msgid "Stop allowing it: its programs are asked about again"
 msgstr "許可をやめる：プログラムに再び確認します"
-
-#: internal/ui/settings_menu.go:74
-msgid "Nothing listed"
-msgstr ""
-
-#: internal/ui/settings_menu.go:106
-msgid "Show its menu again"
-msgstr ""
 
 #: internal/ui/settings_portals.go:27
 msgid "Open and save"
@@ -16403,39 +16642,47 @@ msgstr "DNS"
 msgid "Hardware address"
 msgstr "ハードウェアアドレス"
 
-#: internal/ui/shortcuts.go:88
+#: internal/ui/shortcuts.go:108
 msgid "Set in inua"
 msgstr "イヌアを舞台とする"
 
-#: internal/ui/shortcuts.go:90
+#: internal/ui/shortcuts.go:110
 msgid "Turned off in inua"
 msgstr "inuaで電源が切れました"
 
-#: internal/ui/shortcuts.go:93
+#: internal/ui/shortcuts.go:113
 msgid "From Hyprland"
 msgstr "Hyprland から"
 
-#: internal/ui/shortcuts.go:134
+#: internal/ui/shortcuts.go:115
+msgid "From %s"
+msgstr ""
+
+#: internal/ui/shortcuts.go:157
 msgid "Lua function"
 msgstr "Lua 関数"
 
-#: internal/ui/shortcuts.go:192
+#: internal/ui/shortcuts.go:215
 msgid "Click, then press the new shortcut"
 msgstr "新しいショートカットをクリックして押します"
 
-#: internal/ui/shortcuts.go:201
+#: internal/ui/shortcuts.go:224
 msgid "Not set"
 msgstr "未設定"
 
-#: internal/ui/shortcuts.go:227
+#: internal/ui/shortcuts.go:250
 msgid "Remove this command"
 msgstr "このコマンドを削除します"
 
-#: internal/ui/shortcuts.go:229
+#: internal/ui/shortcuts.go:252
 msgid "Use hyprland.conf's shortcut again"
 msgstr "hyprland.conf のショートカットを再度使用する"
 
-#: internal/ui/shortcuts.go:231
+#: internal/ui/shortcuts.go:254
+msgid "Use %s's own shortcut again"
+msgstr ""
+
+#: internal/ui/shortcuts.go:258
 msgid "Turn the shortcut off"
 msgstr "ショートカットをオフにする"
 
@@ -16452,24 +16699,24 @@ msgstr "もう一度撮る"
 msgid "inua recent screenshots"
 msgstr "の最近のスクリーンショット"
 
-#: internal/ui/shotpick.go:203
+#: internal/ui/shotpick.go:204
 msgid "SCREENS"
 msgstr "画面"
 
-#: internal/ui/shotpick.go:203
+#: internal/ui/shotpick.go:204
 msgid "%d screen"
 msgid_plural "%d screens"
 msgstr[0] "%d 画面"
 
-#: internal/ui/shotpick.go:217
+#: internal/ui/shotpick.go:218
 msgid "No windows are open."
 msgstr "開いているウィンドウはありません。"
 
-#: internal/ui/shotpick.go:227
+#: internal/ui/shotpick.go:228
 msgid "WORKSPACE %s"
 msgstr "ワークスペース %s"
 
-#: internal/ui/shotpick.go:231
+#: internal/ui/shotpick.go:232
 msgid "%d window"
 msgid_plural "%d windows"
 msgstr[0] "%d ウィンドウ"
@@ -16483,7 +16730,7 @@ msgid "%s Upgrade with: inua upgrade"
 msgstr "%s アップグレード: inua upgrade"
 
 #: internal/ui/updates.go:99
-#: ui/settings.ui:6929
+#: ui/settings.ui:7006
 msgid "Upgrade"
 msgstr "アップグレード"
 
@@ -16504,15 +16751,15 @@ msgstr "inua をアップグレードできませんでした"
 msgid "Could not upgrade: %s"
 msgstr "アップグレードできませんでした: %s"
 
-#: internal/ui/voice.go:209
+#: internal/ui/voice.go:214
 msgid "Dictation did not work"
 msgstr "ディクテーションはうまくいきませんでした"
 
-#: internal/ui/voice.go:271
-msgid "dictation pastes with Hyprland, which is not running"
-msgstr "Hyprland が動いていないため、ディクテーションは貼り付けできません"
+#: internal/ui/voice.go:274
+msgid "dictation pastes through the compositor, which cannot send keys"
+msgstr ""
 
-#: internal/ui/voice.go:281
+#: internal/ui/voice.go:278
 msgid "no window has the focus to type into"
 msgstr "入力先のフォーカスされたウィンドウがありません"
 
@@ -16796,62 +17043,62 @@ msgstr "ウィジェットを削除"
 msgid "Remove from the Page"
 msgstr "ページから削除"
 
-#: internal/ui/widgets.go:564
+#: internal/ui/widgets.go:559
 #: ui/bar.ui:40
 msgid "Engawa"
 msgstr "縁側"
 
-#: internal/ui/widgets.go:590
+#: internal/ui/widgets.go:585
 msgid "Now Playing"
 msgstr "再生中"
 
-#: internal/ui/widgets.go:596
+#: internal/ui/widgets.go:591
 msgid "[CLOCK]"
 msgstr "[時計]"
 
-#: internal/ui/widgets.go:597
+#: internal/ui/widgets.go:592
 #: ui/agenda.ui:46
 msgid "[CALENDAR]"
 msgstr "[カレンダー]"
 
-#: internal/ui/widgets.go:598
+#: internal/ui/widgets.go:593
 msgid "[WEATHER]"
 msgstr "[天気]"
 
-#: internal/ui/widgets.go:599
+#: internal/ui/widgets.go:594
 msgid "[NOW PLAYING]"
 msgstr "[再生中]"
 
-#: internal/ui/widgets.go:834
+#: internal/ui/widgets.go:829
 msgid "Open Clock"
 msgstr "時計を開く"
 
-#: internal/ui/widgets.go:852
+#: internal/ui/widgets.go:847
 msgid "Open Calendar"
 msgstr "カレンダーを開く"
 
-#: internal/ui/widgets.go:887
+#: internal/ui/widgets.go:882
 #: ui/agenda.ui:116
 msgid "Open Weather"
 msgstr "天気を開く"
 
-#: internal/ui/widgets.go:952
+#: internal/ui/widgets.go:947
 msgid "Add an app, or drag one here from the dock"
 msgstr "アプリを追加するか、ドックからここへドラッグします"
 
-#: internal/ui/widgets.go:1054
+#: internal/ui/widgets.go:1049
 msgid "Alarm %s %s · %s"
 msgstr "アラーム %s %s · %s"
 
-#: internal/ui/widgets.go:1103
+#: internal/ui/widgets.go:1098
 msgid "A player that plays shows here"
 msgstr "再生中のプレーヤーがここに表示されます"
 
-#: internal/ui/widgets.go:1137
+#: internal/ui/widgets.go:1132
 msgid "Search apps"
 msgstr "アプリを検索"
 
-#: internal/ui/widgets.go:1188
+#: internal/ui/widgets.go:1183
 msgid "No app by that name"
 msgstr "その名前のアプリはありません"
 
@@ -17302,7 +17549,7 @@ msgid "Network device (TUN)"
 msgstr "ネットワークデバイス (TUN)"
 
 #: internal/vmui/window.go:1241
-#: ui/settings.ui:4269
+#: ui/settings.ui:4312
 msgid "Secret Service"
 msgstr "Secret Service"
 
@@ -17379,7 +17626,7 @@ msgid "BSD"
 msgstr "BSD"
 
 #: internal/vmui/window.go:1510
-#: ui/settings.ui:2295
+#: ui/settings.ui:2338
 msgid "Windows"
 msgstr "ウィンドウ"
 
@@ -17825,11 +18072,11 @@ msgstr "何をすべきかを尋ねるか、教えてください"
 msgid "Discard the recording"
 msgstr "録音を破棄"
 
-#: ui/bar.ui:127
+#: ui/bar.ui:104
 msgid "Stop recording"
 msgstr "録画を停止"
 
-#: ui/bar.ui:232
+#: ui/bar.ui:201
 msgid "Control Center"
 msgstr "コントロールセンター"
 
@@ -17853,11 +18100,21 @@ msgstr "最近の計算"
 msgid "History"
 msgstr "歴史"
 
-#: ui/calculator.ui:149
+#: ui/calculator.ui:91
+#: ui/calculator.ui:93
+msgid "Formula"
+msgstr ""
+
+#: ui/calculator.ui:105
+#: ui/calculator.ui:107
+msgid "Value"
+msgstr ""
+
+#: ui/calculator.ui:169
 msgid "HISTORY"
 msgstr "の歴史"
 
-#: ui/calculator.ui:170
+#: ui/calculator.ui:190
 msgid "Clear history"
 msgstr "履歴をクリアする"
 
@@ -18039,8 +18296,8 @@ msgid "Wi-Fi networks"
 msgstr "Wi-Fi ネットワーク"
 
 #: ui/control.ui:346
-#: ui/settings.ui:5676
-#: ui/settings.ui:5752
+#: ui/settings.ui:5719
+#: ui/settings.ui:5795
 msgid "Bluetooth"
 msgstr "ブルートゥース"
 
@@ -18061,7 +18318,7 @@ msgid "Display"
 msgstr "ディスプレイ"
 
 #: ui/control.ui:666
-#: ui/settings.ui:6636
+#: ui/settings.ui:6679
 msgid "Sound"
 msgstr "音"
 
@@ -18928,13 +19185,13 @@ msgid "Compact"
 msgstr "コンパクト"
 
 #: ui/settings.ui:1192
-#: ui/settings.ui:1938
+#: ui/settings.ui:1981
 msgid "Icon size"
 msgstr "アイコンのサイズ"
 
 #: ui/settings.ui:1243
 msgid "Icon spacing"
-msgstr "アイコンの間隔"
+msgstr ""
 
 #: ui/settings.ui:1323
 msgid "strftime: %a weekday, %b month, %-d day, %H:%M time"
@@ -18950,7 +19207,7 @@ msgstr "すべてのモニター"
 
 #: ui/settings.ui:1374
 msgid "Do not show"
-msgstr "表示しない"
+msgstr ""
 
 #: ui/settings.ui:1401
 msgid "Window title"
@@ -19013,795 +19270,799 @@ msgid "Pinned apps, then the others with open windows"
 msgstr "アプリを固定し、次に開いているウィンドウを持つその他のアプリ"
 
 #: ui/settings.ui:1802
+msgid "Show during workspace overview"
+msgstr "ワークスペース一覧に表示"
+
+#: ui/settings.ui:1811
+msgid "Keep the dock visible above the overview"
+msgstr "一覧の上に Dock を表示したままにする"
+
+#: ui/settings.ui:1845
 msgid "Hide automatically"
 msgstr "自動的に隠す"
 
-#: ui/settings.ui:1811
+#: ui/settings.ui:1854
 msgid "Comes back when the pointer reaches the dock's screen edge"
 msgstr "ポインタがドックの画面端に到達すると戻ってきます"
 
-#: ui/settings.ui:1854
+#: ui/settings.ui:1897
 msgid "Choose a screen edge for the dock"
 msgstr "ドックの画面端を選択する"
 
-#: ui/settings.ui:1868
+#: ui/settings.ui:1911
 msgid "Bottom"
 msgstr "底部"
 
-#: ui/settings.ui:1869
+#: ui/settings.ui:1912
 msgid "Top"
 msgstr "トップ"
 
-#: ui/settings.ui:1870
+#: ui/settings.ui:1913
 msgid "Left"
 msgstr "左"
 
-#: ui/settings.ui:1871
+#: ui/settings.ui:1914
 msgid "Right"
 msgstr "そうです"
 
-#: ui/settings.ui:1895
+#: ui/settings.ui:1938
 msgid "Remove screen edge gaps"
 msgstr "スクリーンエッジギャップを除去する"
 
-#: ui/settings.ui:1904
+#: ui/settings.ui:1947
 msgid "Remove the screen-edge margins around the dock and top bar"
 msgstr "ドックとトップバーの周囲の画面端の余白を削除します。"
 
-#: ui/settings.ui:1951
+#: ui/settings.ui:1994
 msgid "Smaller"
 msgstr "より小さい"
 
-#: ui/settings.ui:1952
+#: ui/settings.ui:1995
 msgid "Small"
 msgstr "小"
 
-#: ui/settings.ui:1954
+#: ui/settings.ui:1997
 msgid "Large"
 msgstr "大"
 
-#: ui/settings.ui:1981
+#: ui/settings.ui:2024
 msgid "Apps drawer"
 msgstr "アプリドロワー"
 
-#: ui/settings.ui:1990
+#: ui/settings.ui:2033
 msgid "A button at the end for Clock, Weather, Stocks and Calculator"
 msgstr "時計、天気、株価、計算機の端にあるボタン"
 
-#: ui/settings.ui:2035
+#: ui/settings.ui:2078
 msgid "<span alpha='55%'>[</span>PINNED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>固定済み<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2043
+#: ui/settings.ui:2086
 msgid "Right-click an app on the dock to keep it there"
 msgstr "ドック上のアプリを右クリックして、そこに保持します"
 
-#: ui/settings.ui:2092
+#: ui/settings.ui:2135
 msgid "<span alpha='55%'>[</span>CONTROL CENTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>コントロール センター<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2100
+#: ui/settings.ui:2143
 msgid "Shell commands behind the control center's buttons"
 msgstr "コントロールセンターのボタンの背後にあるシェルコマンド"
 
-#: ui/settings.ui:2233
+#: ui/settings.ui:2276
 msgid "<span alpha='55%'>[</span>LAUNCHER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ランチャー<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2241
+#: ui/settings.ui:2284
 msgid "Super+Space finds apps and open windows"
 msgstr "Super+Space はアプリを見つけてウィンドウを開きます"
 
-#: ui/settings.ui:2271
+#: ui/settings.ui:2314
 msgid "Opens with"
 msgstr "で始まります"
 
-#: ui/settings.ui:2280
+#: ui/settings.ui:2323
 msgid "What Super+Space shows"
 msgstr "Super+Space で表示するもの"
 
-#: ui/settings.ui:2328
+#: ui/settings.ui:2371
 msgid "$TERMINAL, then xdg-terminal-exec"
 msgstr "$TERMINAL、次に xdg-terminal-exec"
 
-#: ui/settings.ui:2336
+#: ui/settings.ui:2379
 msgid "Runs apps marked Terminal=true"
 msgstr "Terminal=true とマークされたアプリを実行します"
 
-#: ui/settings.ui:2369
+#: ui/settings.ui:2412
 msgid "Default Apps"
 msgstr "既定のアプリ"
 
-#: ui/settings.ui:2407
+#: ui/settings.ui:2450
 msgid "<span alpha='55%'>[</span>DEFAULT APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>既定のアプリ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2415
+#: ui/settings.ui:2458
 msgid "What opens links, folders and files"
 msgstr "リンク、フォルダー、ファイルを開くアプリ"
 
-#: ui/settings.ui:2459
+#: ui/settings.ui:2502
 msgid "<span alpha='55%'>[</span>DIALOGS<span alpha='55%'>]</span>"
 msgstr ""
 
-#: ui/settings.ui:2467
+#: ui/settings.ui:2510
 msgid "What apps show when they ask the desktop"
 msgstr ""
 
-#: ui/settings.ui:2548
+#: ui/settings.ui:2591
 msgid "<span alpha='55%'>[</span>ASSISTANT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>アシスタント<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2556
+#: ui/settings.ui:2599
 msgid "An agent with inua's tools, run by Mister Morph"
 msgstr "Mister Morph で動く、inua のツールを使うエージェント"
 
-#: ui/settings.ui:2595
+#: ui/settings.ui:2638
 msgid "Ask it from the launcher (the last row, or ? first) or open Assistant"
 msgstr "ランチャー（最後の行、または？最初）から質問するか、アシスタントを開いてください"
 
-#: ui/settings.ui:2629
+#: ui/settings.ui:2672
 msgid "Answers with"
 msgstr "回答に使う設定"
 
-#: ui/settings.ui:2638
+#: ui/settings.ui:2681
 msgid "The profile asked first; the assistant's window can switch for a conversation"
 msgstr "最初に使う設定。会話ごとにアシスタント画面で切り替えられます"
 
-#: ui/settings.ui:2672
+#: ui/settings.ui:2715
 msgid "Quick choices with"
 msgstr "すばやい選択に使う設定"
 
-#: ui/settings.ui:2681
+#: ui/settings.ui:2724
 msgid "The profile that picks from a fixed list, as an AI player in the games does"
 msgstr "決まった選択肢から選ぶプロファイル（ゲームの AI プレイヤーなど）"
 
-#: ui/settings.ui:2715
+#: ui/settings.ui:2758
 msgid "Voice input with"
 msgstr "音声入力に使う"
 
-#: ui/settings.ui:2757
-#: ui/settings.ui:3341
+#: ui/settings.ui:2800
+#: ui/settings.ui:3384
 msgid "Ask before changes"
 msgstr "変更前に質問する"
 
-#: ui/settings.ui:2766
+#: ui/settings.ui:2809
 msgid "Wi-Fi, volume, windows, the clipboard …; power, ending processes and closing windows always ask"
 msgstr "Wi-Fi、ボリューム、ウィンドウ、クリップボード…;電源を入れたり、プロセスを終了したり、ウィンドウを閉じたりするときに常に尋ねられます。"
 
-#: ui/settings.ui:2800
+#: ui/settings.ui:2843
 msgid "Search the web"
 msgstr "ウェブを検索する"
 
-#: ui/settings.ui:2809
+#: ui/settings.ui:2852
 msgid "Mister Morph's web search and page reading"
 msgstr "Mister Morph のウェブ検索とページ閲覧"
 
-#: ui/settings.ui:2843
+#: ui/settings.ui:2886
 msgid "Read files"
 msgstr "ファイルの読み取り"
 
-#: ui/settings.ui:2852
+#: ui/settings.ui:2895
 msgid "Any file you can read; asks each time"
 msgstr "読み取り可能な任意のファイル。毎回尋ねる"
 
-#: ui/settings.ui:2886
+#: ui/settings.ui:2929
 msgid "Run commands"
 msgstr "コマンドを実行します"
 
-#: ui/settings.ui:2895
+#: ui/settings.ui:2938
 msgid "A shell, as you; asks each time"
 msgstr "あなたの権限でシェルを実行。毎回確認します"
 
-#: ui/settings.ui:2929
+#: ui/settings.ui:2972
 msgid "As administrator"
 msgstr "管理者として"
 
-#: ui/settings.ui:2938
+#: ui/settings.ui:2981
 msgid "A command as root, once you approve it in a dialog that shows it, with your password"
 msgstr "コマンドを root で実行します。そのコマンドを示すダイアログで、パスワードを入れて承認したときだけ"
 
-#: ui/settings.ui:2983
+#: ui/settings.ui:3026
 msgid "<span alpha='55%'>[</span>CONSOLE ENDPOINT<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>コンソール エンドポイント<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:2991
+#: ui/settings.ui:3034
 msgid "Connect other Consoles to this desktop"
 msgstr "他のコンソールをこのデスクトップに接続します"
 
-#: ui/settings.ui:3021
-#: ui/settings.ui:3040
+#: ui/settings.ui:3064
+#: ui/settings.ui:3083
 msgid "Serve endpoint"
 msgstr "サービスエンドポイント"
 
-#: ui/settings.ui:3030
+#: ui/settings.ui:3073
 msgid "Allow Console connections; the assistant keeps running when this is off"
 msgstr "コンソール接続を許可する。これがオフの場合でもアシスタントは実行し続けます"
 
-#: ui/settings.ui:3065
+#: ui/settings.ui:3108
 msgid "Listen address"
 msgstr "リッスンアドレス"
 
-#: ui/settings.ui:3074
+#: ui/settings.ui:3117
 msgid "Host:port; kept when serving is off"
 msgstr "0010 ホスト:ポート。サービスがオフのときに保持される"
 
-#: ui/settings.ui:3085
+#: ui/settings.ui:3128
 msgid "Use host:port, with a port from 1 to 65535. For IPv6, use [address]:port."
 msgstr "host:port を、1 ～ 65535 のポートで使用します。IPv6 の場合、[address]:port を使用します。"
 
-#: ui/settings.ui:3107
+#: ui/settings.ui:3150
 msgid "Endpoint URL"
 msgstr "エンドポイントURL"
 
-#: ui/settings.ui:3118
+#: ui/settings.ui:3161
 msgid "Set a listen address first"
 msgstr "最初にリッスンアドレスを設定する"
 
-#: ui/settings.ui:3127
+#: ui/settings.ui:3170
 msgid "Copy URL"
 msgstr "URLをコピーする"
 
-#: ui/settings.ui:3158
+#: ui/settings.ui:3201
 msgid "Access token"
 msgstr "アクセストークン"
 
-#: ui/settings.ui:3170
+#: ui/settings.ui:3213
 msgid "Token hidden"
 msgstr "トークンの隠蔽"
 
-#: ui/settings.ui:3188
+#: ui/settings.ui:3231
 msgid "Copy token"
 msgstr "コピートークン"
 
-#: ui/settings.ui:3198
+#: ui/settings.ui:3241
 msgid "Kept in the keyring (pass with inua-keyring). Creating or reading it may ask for your passphrase."
 msgstr "キーリング内に保持される(inua-keyringで渡す)。作成または読み取りの際に、パスフレーズの入力を求められる場合があります。"
 
-#: ui/settings.ui:3235
+#: ui/settings.ui:3278
 msgid "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>MCP<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3243
+#: ui/settings.ui:3286
 msgid "Let AI agents on this computer use inua's tools"
 msgstr "このコンピューターの AI エージェントに inua のツールを使わせる"
 
-#: ui/settings.ui:3273
-#: ui/settings.ui:3292
+#: ui/settings.ui:3316
+#: ui/settings.ui:3335
 msgid "MCP server"
 msgstr "MCP サーバー"
 
-#: ui/settings.ui:3282
+#: ui/settings.ui:3325
 msgid "Agents such as Claude Code or Codex see the windows, open apps, change settings and more, through inua mcp. The assistant uses these tools either way."
 msgstr "Claude Code や Codex などのエージェントが、inua mcp を通してウィンドウを見たり、アプリを開いたり、設定を変えたりできます。アシスタントはどちらの場合もこれらのツールを使います。"
 
-#: ui/settings.ui:3317
+#: ui/settings.ui:3360
 msgid "What agents may do"
 msgstr "エージェントにできること"
 
-#: ui/settings.ui:3326
+#: ui/settings.ui:3369
 msgid "Closing windows, ending processes, power, the clipboard and notifications always ask"
 msgstr "ウィンドウを閉じる、プロセスを終了する、電源、クリップボード、通知は常に確認します"
 
-#: ui/settings.ui:3340
+#: ui/settings.ui:3383
 msgid "Look only"
 msgstr "見るだけ"
 
-#: ui/settings.ui:3342
+#: ui/settings.ui:3385
 msgid "Change without asking"
 msgstr "確認せずに変更"
 
-#: ui/settings.ui:3365
+#: ui/settings.ui:3408
 msgid "Connect an agent"
 msgstr "エージェントを接続"
 
-#: ui/settings.ui:3395
+#: ui/settings.ui:3438
 msgid "Other agents: a stdio server that runs inua mcp. Each call is recorded; asking happens in inua's dialog."
 msgstr "ほかのエージェント: inua mcp を実行する stdio サーバーとして設定します。呼び出しはすべて記録され、確認は inua のダイアログで行います。"
 
-#: ui/settings.ui:3432
+#: ui/settings.ui:3475
 msgid "<span alpha='55%'>[</span>PROFILES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>モデル設定<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3440
+#: ui/settings.ui:3483
 msgid "The models it can use; fallbacks answer when the first fails"
 msgstr "利用するモデル。最初のモデルが失敗したら代替を使います"
 
-#: ui/settings.ui:3470
+#: ui/settings.ui:3513
 msgid "Add Profile"
 msgstr "モデル設定を追加"
 
-#: ui/settings.ui:3603
+#: ui/settings.ui:3646
 msgid "<span alpha='55%'>[</span>NOTIFICATIONS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>通知<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3611
+#: ui/settings.ui:3654
 msgid "Banners, then the notification center"
 msgstr "バナー、次に通知センター"
 
-#: ui/settings.ui:3641
+#: ui/settings.ui:3684
 msgid "Show notifications"
 msgstr "通知を表示する"
 
-#: ui/settings.ui:3683
+#: ui/settings.ui:3726
 msgid "Banner duration"
 msgstr "バナー持続時間"
 
-#: ui/settings.ui:3692
+#: ui/settings.ui:3735
 msgid "How long a banner shows; critical ones stay"
 msgstr "バナーが表示される長さ。重要なものは残る"
 
-#: ui/settings.ui:3706
+#: ui/settings.ui:3749
 msgid "3 seconds"
 msgstr "3秒"
 
-#: ui/settings.ui:3707
+#: ui/settings.ui:3750
 msgid "5 seconds"
 msgstr "5秒"
 
-#: ui/settings.ui:3708
+#: ui/settings.ui:3751
 msgid "8 seconds"
 msgstr "8秒"
 
-#: ui/settings.ui:3709
+#: ui/settings.ui:3752
 msgid "12 seconds"
 msgstr "12秒"
 
-#: ui/settings.ui:3736
+#: ui/settings.ui:3779
 msgid "Critical during Focus"
 msgstr "集中モードでも緊急通知を表示"
 
-#: ui/settings.ui:3745
+#: ui/settings.ui:3788
 msgid "Critical notifications still show banners"
 msgstr "重要な通知には依然としてバナーが表示される"
 
-#: ui/settings.ui:3779
+#: ui/settings.ui:3822
 msgid "Keep a history"
 msgstr "履歴を残す"
 
-#: ui/settings.ui:3788
+#: ui/settings.ui:3831
 msgid "The last 500 notifications, dismissed ones too, for the assistant, agents and workshop apps allowed to read them. Off clears it."
 msgstr "最新 500 件の通知（閉じたものも含む）を、読み取りを許されたアシスタント、エージェント、ワークショップアプリのために残します。オフにすると消去します。"
 
-#: ui/settings.ui:3867
+#: ui/settings.ui:3910
 msgid "<span alpha='55%'>[</span>CLIPBOARD<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>クリップボード<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:3875
+#: ui/settings.ui:3918
 msgid "History, panel appearance and pasting"
 msgstr "履歴、パネルの見た目と貼り付け"
 
-#: ui/settings.ui:3905
+#: ui/settings.ui:3948
 msgid "Keep a clipboard history"
 msgstr "クリップボード履歴を残す"
 
-#: ui/settings.ui:3914
+#: ui/settings.ui:3957
 msgid "Text and images you copy, kept on this computer; a password manager's copies are left out"
 msgstr "コピーしたテキストと画像をこのコンピューターに保存します。パスワードマネージャーからのコピーは除きます"
 
-#: ui/settings.ui:3944
+#: ui/settings.ui:3987
 msgid "Never record copies from"
 msgstr "記録しないコピー元"
 
-#: ui/settings.ui:3954
+#: ui/settings.ui:3997
 msgid "pass, keepassxc, …"
 msgstr "pass, keepassxc, …"
 
-#: ui/settings.ui:3962
+#: ui/settings.ui:4005
 msgid "Programs or window classes, separated by commas. The program that ran wl-copy and the focused window are checked; hover over an entry in the history to see where it came from"
 msgstr "プログラムまたはウィンドウクラスをカンマ区切りで。wl-copy を実行したプログラムとフォーカス中のウィンドウを調べます。履歴の項目にポインタを合わせるとコピー元が分かります"
 
-#: ui/settings.ui:3988
+#: ui/settings.ui:4031
 msgid "Show in top bar"
 msgstr "トップバーに表示"
 
-#: ui/settings.ui:3997
+#: ui/settings.ui:4040
 msgid "A button in the status area opens the clipboard history"
 msgstr "ステータス領域のボタンでクリップボード履歴を開きます"
 
-#: ui/settings.ui:4031
+#: ui/settings.ui:4074
 msgid "Paste on click"
 msgstr "クリックで貼り付け"
 
-#: ui/settings.ui:4040
+#: ui/settings.ui:4083
 msgid "Clicking an entry pastes it into the window you were in; off only copies it"
 msgstr "項目をクリックすると、元のウィンドウに貼り付けます。オフにするとコピーのみ"
 
-#: ui/settings.ui:4074
+#: ui/settings.ui:4117
 msgid "History limit"
 msgstr "履歴の上限"
 
-#: ui/settings.ui:4083
+#: ui/settings.ui:4126
 msgid "How many entries it keeps; the oldest go first"
 msgstr "保持する件数。古いものから消えます"
 
-#: ui/settings.ui:4117
+#: ui/settings.ui:4160
 msgid "History storage"
 msgstr "履歴の容量"
 
-#: ui/settings.ui:4126
+#: ui/settings.ui:4169
 msgid "Loading history…"
 msgstr "履歴を読み込み中…"
 
-#: ui/settings.ui:4139
+#: ui/settings.ui:4182
 msgid "Reveal"
 msgstr "表示"
 
-#: ui/settings.ui:4150
+#: ui/settings.ui:4193
 msgid "Clear the history"
 msgstr "履歴を消去"
 
-#: ui/settings.ui:4231
+#: ui/settings.ui:4274
 msgid "<span alpha='55%'>[</span>KEYRING<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>キーリング<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4239
+#: ui/settings.ui:4282
 msgid "Apps' secrets: browsers' keys, Wi-Fi passwords, API keys"
 msgstr "アプリのシークレット: ブラウザーの鍵、Wi-Fi パスワード、API キー"
 
-#: ui/settings.ui:4305
+#: ui/settings.ui:4348
 msgid "Unlocked secrets"
 msgstr "ロック解除された秘密"
 
-#: ui/settings.ui:4351
+#: ui/settings.ui:4394
 msgid "Lock when unused"
 msgstr "使わないときにロック"
 
-#: ui/settings.ui:4360
+#: ui/settings.ui:4403
 msgid "It locks with the screen and before suspend, and after this long without a read"
 msgstr "画面のロック時とサスペンド前、そしてこの時間読み取りがないとロックします"
 
-#: ui/settings.ui:4375
+#: ui/settings.ui:4418
 msgid "5 minutes"
 msgstr "5 分"
 
-#: ui/settings.ui:4376
+#: ui/settings.ui:4419
 msgid "15 minutes"
 msgstr "15 分"
 
-#: ui/settings.ui:4377
+#: ui/settings.ui:4420
 msgid "30 minutes"
 msgstr "30 分"
 
-#: ui/settings.ui:4378
+#: ui/settings.ui:4421
 msgid "1 hour"
 msgstr "1 時間"
 
-#: ui/settings.ui:4379
+#: ui/settings.ui:4422
 msgid "4 hours"
 msgstr "4 時間"
 
-#: ui/settings.ui:4406
+#: ui/settings.ui:4449
 msgid "With no one to ask"
 msgstr "確認できる相手がいないとき"
 
-#: ui/settings.ui:4415
+#: ui/settings.ui:4458
 msgid "A read by an app not trusted with the secret, while the inua shell is not running"
 msgstr "inua シェルが動いていないときの、秘密を信頼されていないアプリによる読み取り"
 
-#: ui/settings.ui:4430
+#: ui/settings.ui:4473
 msgid "Denied"
 msgstr "拒否"
 
-#: ui/settings.ui:4457
+#: ui/settings.ui:4500
 msgid "Tell when an app reads a secret"
 msgstr "アプリがシークレットを読み取ったら通知"
 
-#: ui/settings.ui:4466
+#: ui/settings.ui:4509
 msgid "A notification for each app's first read since inua-keyring started"
 msgstr "inua-keyring の起動後、各アプリの最初の読み取りを通知します"
 
-#: ui/settings.ui:4511
-#: ui/settings.ui:4725
+#: ui/settings.ui:4554
+#: ui/settings.ui:4768
 msgid "<span alpha='55%'>[</span>TRUSTED APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>信頼するアプリ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4519
+#: ui/settings.ui:4562
 msgid "Apps that read a secret without asking; any other app is asked about first"
 msgstr "確認なしで秘密を読めるアプリ。ほかのアプリは先に確認します"
 
-#: ui/settings.ui:4555
+#: ui/settings.ui:4598
 msgid "Trusted apps"
 msgstr "信頼するアプリ"
 
-#: ui/settings.ui:4610
+#: ui/settings.ui:4653
 msgid "<span alpha='55%'>[</span>READS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>読み取り<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4618
+#: ui/settings.ui:4661
 msgid "Every secret inua-keyring handed out and passphrase asked for, newest first"
 msgstr "inua-keyring が渡したすべてのシークレットと要求されたパスフレーズ（新しい順）"
 
-#: ui/settings.ui:4664
+#: ui/settings.ui:4707
 msgid "Refresh"
 msgstr "更新"
 
-#: ui/settings.ui:4758
+#: ui/settings.ui:4801
 msgid "The list is not trusted"
 msgstr "一覧は信頼されていません"
 
-#: ui/settings.ui:4779
+#: ui/settings.ui:4822
 msgid "Trust this list again"
 msgstr "この一覧をもう一度信頼"
 
-#: ui/settings.ui:4819
+#: ui/settings.ui:4862
 msgid "<span alpha='55%'>[</span>ALLOWED PATHS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>許可されたパス<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4846
+#: ui/settings.ui:4889
 msgid "Any program at one of these paths reads every secret without asking, even after it changes: for an app that updates every day. inua-keyring asks you before a path is added."
 msgstr "これらのパスのプログラムは、更新された後も含め、確認なしですべてのシークレットを読み取ります。毎日更新されるアプリ向けです。パスを追加する前に inua-keyring が確認します。"
 
-#: ui/settings.ui:4866
+#: ui/settings.ui:4909
 msgid "A path; * within a folder: ~/.local/share/app/versions/*"
 msgstr "パス。* はフォルダー内：~/.local/share/app/versions/*"
 
-#: ui/settings.ui:4875
+#: ui/settings.ui:4918
 msgid "Allow path"
 msgstr "パスを許可"
 
-#: ui/settings.ui:4920
+#: ui/settings.ui:4963
 msgid "<span alpha='55%'>[</span>APPS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>アプリ<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:4935
+#: ui/settings.ui:4978
 msgid "Filter by app, program or secret"
 msgstr "アプリ・プログラム・秘密で絞り込む"
 
-#: ui/settings.ui:5047
+#: ui/settings.ui:5090
 msgid "Shortcuts"
 msgstr "ショートカット"
 
-#: ui/settings.ui:5077
+#: ui/settings.ui:5120
 msgid "Press the new shortcut. Esc cancels; Backspace turns it off."
 msgstr "新しいショートカットを押します。 Esc でキャンセルします。バックスペースキーを押すとオフになります。"
 
-#: ui/settings.ui:5106
-#: ui/settings.ui:6828
+#: ui/settings.ui:5149
+#: ui/settings.ui:6905
 msgid "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>INUA<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5114
+#: ui/settings.ui:5157
 msgid "The shell's own actions"
 msgstr "シェル自身のアクション"
 
-#: ui/settings.ui:5163
+#: ui/settings.ui:5206
 msgid "<span alpha='55%'>[</span>SCREENSHOTS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>スクリーンショット<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5171
+#: ui/settings.ui:5214
 msgid "With grim and slurp"
 msgstr "grim と slurp を使用"
 
-#: ui/settings.ui:5220
+#: ui/settings.ui:5263
 msgid "<span alpha='55%'>[</span>CUSTOM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>カスタム<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5228
+#: ui/settings.ui:5271
 msgid "Your own commands"
 msgstr "独自のコマンド"
 
-#: ui/settings.ui:5270
+#: ui/settings.ui:5313
 msgid "Command, e.g. kitty"
 msgstr "コマンド（例：kitty）"
 
-#: ui/settings.ui:5279
+#: ui/settings.ui:5322
 msgid "Add…"
 msgstr "追加…"
 
-#: ui/settings.ui:5280
+#: ui/settings.ui:5323
 msgid "Add, then press its shortcut"
 msgstr "追加して、そのショートカットを押します"
 
-#: ui/settings.ui:5342
+#: ui/settings.ui:5385
 msgid "<span alpha='55%'>[</span>HYPRLAND<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ハイパーランド<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5350
+#: ui/settings.ui:5393
 msgid "Other shortcuts, from hyprland.conf"
 msgstr "他のショートカット、hyprland.confから"
 
-#: ui/settings.ui:5433
+#: ui/settings.ui:5476
 msgid "<span alpha='55%'>[</span>WI-FI<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>WI-FI<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5524
+#: ui/settings.ui:5567
 msgid "<span alpha='55%'>[</span>CONNECTED<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>接続中<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5532
+#: ui/settings.ui:5575
 msgid "The network in use"
 msgstr "使用中のネットワーク"
 
-#: ui/settings.ui:5576
+#: ui/settings.ui:5619
 msgid "<span alpha='55%'>[</span>KNOWN NETWORKS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>既知のネットワーク<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5584
+#: ui/settings.ui:5627
 msgid "Saved on this computer; joined again by themselves"
 msgstr "このコンピュータに保存済み。自動で再接続します"
 
-#: ui/settings.ui:5628
-#: ui/settings.ui:5857
+#: ui/settings.ui:5671
+#: ui/settings.ui:5900
 msgid "<span alpha='55%'>[</span>NEARBY<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>近くのデバイス<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5714
+#: ui/settings.ui:5757
 msgid "<span alpha='55%'>[</span>BLUETOOTH<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>BLUETOOTH<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5805
+#: ui/settings.ui:5848
 msgid "<span alpha='55%'>[</span>MY DEVICES<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>マイデバイス<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5813
+#: ui/settings.ui:5856
 msgid "Paired with this computer"
 msgstr "このコンピュータとペアリング済み"
 
-#: ui/settings.ui:5905
-msgid "Displays"
-msgstr "ディスプレイ"
-
-#: ui/settings.ui:5954
+#: ui/settings.ui:5997
 msgid "<span alpha='55%'>[</span>LID<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ふた<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:5962
+#: ui/settings.ui:6005
 msgid "With another display connected"
 msgstr "ほかのディスプレイの接続中"
 
-#: ui/settings.ui:5992
+#: ui/settings.ui:6035
 msgid "Closing the lid turns off the built-in display"
 msgstr "ふたを閉じると内蔵ディスプレイをオフにする"
 
-#: ui/settings.ui:6002
+#: ui/settings.ui:6045
 msgid "Its windows move to the other display. Open the lid to use both."
 msgstr "そのウィンドウはもう一方のディスプレイに移ります。ふたを開けると両方を使えます。"
 
-#: ui/settings.ui:6091
+#: ui/settings.ui:6134
 msgid "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>KEYS<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6099
+#: ui/settings.ui:6142
 msgid "Every keyboard"
 msgstr "あらゆるキーボード"
 
-#: ui/settings.ui:6129
+#: ui/settings.ui:6172
 msgid "Swap Ctrl and Alt"
 msgstr "Ctrl と Alt を入れ替える"
 
-#: ui/settings.ui:6138
+#: ui/settings.ui:6181
 msgid "Alt acts as Ctrl, and Ctrl as Alt"
 msgstr "Alt は Ctrl として機能し、Ctrl は Alt として機能します"
 
-#: ui/settings.ui:6153
+#: ui/settings.ui:6196
 msgid "Left side"
 msgstr "左側"
 
-#: ui/settings.ui:6154
+#: ui/settings.ui:6197
 msgid "Both sides"
 msgstr "左右両方"
 
-#: ui/settings.ui:6181
-#: ui/settings.ui:6204
+#: ui/settings.ui:6224
+#: ui/settings.ui:6247
 msgid "Caps Lock"
 msgstr "Caps Lock"
 
-#: ui/settings.ui:6190
+#: ui/settings.ui:6233
 msgid "What the Caps Lock key does"
 msgstr "Caps Lock キーの機能"
 
-#: ui/settings.ui:6205
+#: ui/settings.ui:6248
 msgid "Escape"
 msgstr "Esc"
 
-#: ui/settings.ui:6206
+#: ui/settings.ui:6249
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ui/settings.ui:6244
-#: ui/settings.ui:6526
+#: ui/settings.ui:6287
+#: ui/settings.ui:6569
 msgid "<span alpha='55%'>[</span>SOURCE<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>ソース<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6252
-#: ui/settings.ui:6534
+#: ui/settings.ui:6295
+#: ui/settings.ui:6577
 msgid "inua writes these to Hyprland's inua.conf"
 msgstr "inua はこれらを Hyprland の inua.conf に書き込みます"
 
-#: ui/settings.ui:6304
+#: ui/settings.ui:6347
 msgid "Stop setting keyboard options in inua"
 msgstr "inua でのキーボード オプションの設定を停止する"
 
-#: ui/settings.ui:6335
+#: ui/settings.ui:6378
 msgid "Mouse & Touch"
 msgstr "マウスとタッチパッド"
 
-#: ui/settings.ui:6383
+#: ui/settings.ui:6426
 msgid "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>POINTER<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6391
+#: ui/settings.ui:6434
 msgid "Every touchpad"
 msgstr "あらゆるタッチパッド"
 
-#: ui/settings.ui:6421
+#: ui/settings.ui:6464
 msgid "Pointer speed"
 msgstr "ポインタの速度"
 
-#: ui/settings.ui:6472
+#: ui/settings.ui:6515
 msgid "Acceleration"
 msgstr "加速度"
 
-#: ui/settings.ui:6481
+#: ui/settings.ui:6524
 msgid "Faster swipes move the pointer further"
 msgstr "スワイプが速いとポインタがさらに遠くに移動します"
 
-#: ui/settings.ui:6571
+#: ui/settings.ui:6614
 msgid "Stop setting the touchpad in inua"
 msgstr "inua でのタッチパッドの設定を停止する"
 
-#: ui/settings.ui:6670
+#: ui/settings.ui:6713
 msgid "Power"
 msgstr "電源"
 
-#: ui/settings.ui:6704
+#: ui/settings.ui:6781
 msgid "About"
 msgstr "について"
 
-#: ui/settings.ui:6742
+#: ui/settings.ui:6819
 msgid "<span alpha='55%'>[</span>SYSTEM<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>システム<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:6750
+#: ui/settings.ui:6827
 msgid "This computer, as a card to share"
 msgstr "このコンピュータを共有用カードに"
 
-#: ui/settings.ui:6762
+#: ui/settings.ui:6839
 msgid "Copy image"
 msgstr "画像をコピー"
 
-#: ui/settings.ui:6772
+#: ui/settings.ui:6849
 msgid "Copy text"
 msgstr "テキストをコピー"
 
-#: ui/settings.ui:6774
+#: ui/settings.ui:6851
 msgid "As Markdown"
 msgstr "Markdown で"
 
-#: ui/settings.ui:6785
+#: ui/settings.ui:6862
 msgid "As a PNG image"
 msgstr "PNG 画像で"
 
-#: ui/settings.ui:6836
+#: ui/settings.ui:6913
 msgid "The version, and new releases"
 msgstr "バージョンと新しいリリース"
 
-#: ui/settings.ui:6866
+#: ui/settings.ui:6943
 msgid "Version"
 msgstr "バージョン"
 
-#: ui/settings.ui:6902
+#: ui/settings.ui:6979
 msgid "Updates"
 msgstr "アップデート"
 
-#: ui/settings.ui:6938
+#: ui/settings.ui:7015
 msgid "Check for updates"
 msgstr "アップデートをチェックする"
 
-#: ui/settings.ui:6964
+#: ui/settings.ui:7041
 msgid "Check every day"
 msgstr "毎日チェックする"
 
-#: ui/settings.ui:6973
+#: ui/settings.ui:7050
 msgid "A notification says when a new release is out, with a button to upgrade"
 msgstr "新しいリリースがリリースされると、アップグレードするボタンが表示される通知が表示されます。"
 
-#: ui/settings.ui:7018
+#: ui/settings.ui:7095
 msgid "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 msgstr "<span alpha='55%'>[</span>CHANGELOG<span alpha='55%'>]</span>"
 
-#: ui/settings.ui:7026
+#: ui/settings.ui:7103
 msgid "What the latest release changed"
 msgstr "最新リリースの変更点"
 

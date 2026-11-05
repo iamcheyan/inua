@@ -7,6 +7,8 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/lyricat/inua/internal/compositor"
+
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/graphene"
@@ -15,7 +17,6 @@ import (
 	"github.com/lyricat/inua/internal/appmenu"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/gtkx"
-	"github.com/lyricat/inua/internal/hypr"
 	"github.com/lyricat/inua/internal/i18n"
 	"github.com/lyricat/inua/internal/layershell"
 	"github.com/lyricat/inua/internal/shell"
@@ -30,48 +31,38 @@ type bar struct {
 	frame       gtk.Overlay // the island, and the panel hanging from it
 	island      gtk.CenterBox
 	workspaces  gtk.Box
-	app         gtk.Button // the application's name, which opens its own menu
-	appIcon     gtk.Image
-	appClass    string // the focused window's class
-	appName     string // the application the bar names, and its icon
-	appIconName string
-	appMenu     gtk.Box
-	appMenuGen  uint64
-	appMenuPID  int
-	// appMenuTargets is this bar's own menu buttons, by name. Each bar shows
-	// the menu of the application it names, so two bars can hold different
-	// menus at once (appmenu.go).
-	appMenuTargets map[string]appMenuTarget
-	appMenuEntries []appmenu.Entry // the menu this bar read, for the app's own button
-	widgetsMark    gtk.Button      // the widget page's place, before the workspaces
-	title          gtk.Label
-	clock          gtk.Label
-	end            gtk.Box
-	clipboard      gtk.Button
-	clipboardIcon  gtk.Image
-	passwords      gtk.Button
-	passwordIcon   gtk.Image
-	notes          gtk.Button
-	notesIcon      gtk.Image
-	voice          gtk.Button
-	voiceIcon      gtk.Image
-	unread         gtk.Box
-	tray           gtk.Box
-	status         gtk.Button
-	statusIcons    gtk.Box
-	netIcon        gtk.Image
-	btIcon         gtk.Image
-	volIcon        gtk.Image
-	battery        gtk.Box
-	batIcon        gtk.Image
-	batLabel       gtk.Label
-	rec            gtk.Button
-	clockButton    gtk.Button // opens the calendar panel
-	recTime        gtk.Label
-	refs           gtkx.Scope
-	edgeGaps       bool
-	compact        bool
-	height         int32 // the window's, by its density
+	widgetsMark gtk.Button // the widget page's place, before the workspaces
+	title       gtk.Label
+	clock       gtk.Label
+	clipboard   gtk.Button
+	passwords   gtk.Button
+	notes       gtk.Button
+	notesIcon   gtk.Image
+	voice       gtk.Button
+	voiceIcon   gtk.Image
+	unread      gtk.Box
+	tray        gtk.Box
+	appMenu     gtk.Box // the focused application's menu (appmenu.go)
+	status      gtk.Button
+	netIcon     gtk.Image
+	btIcon      gtk.Image
+	volIcon     gtk.Image
+	battery     gtk.Box
+	batIcon     gtk.Image
+	batLabel    gtk.Label
+	rec         gtk.Button
+	clockButton gtk.Button // opens the calendar panel
+	recTime     gtk.Label
+	refs        gtkx.Scope
+
+	appMenuReg     appmenu.Registration // whose menu it shows, if any
+	appMenuTop     []appMenuTop         // the buttons, as last drawn
+	appMenuLoading bool                 // the menu is being read
+	appMenuStale   bool                 // and changed meanwhile
+
+	edgeGaps bool
+	compact  bool
+	height   int32 // the window's, by its density
 
 	// held counts the panels hanging from the bar (drop.go), whose
 	// window is grown down over the monitor meanwhile; pressHeld is
@@ -88,11 +79,11 @@ type bar struct {
 	// The workspaces this bar shows, and their buttons by id, owned by the
 	// workspaces box. Buttons are kept across updates so a focus change
 	// restyles them, which CSS animates.
-	shown []hypr.Workspace
-	ws    map[int]*gtk.Button
+	shown []compositor.Workspace
+	ws    map[string]*gtk.Button
 	// Buttons not styled yet: a class set before their first frame would
 	// not animate.
-	fresh map[int]bool
+	fresh map[string]bool
 }
 
 // connector is the monitor's name, as Hyprland calls it too ("eDP-1"). A
@@ -143,6 +134,7 @@ func (s *shellUI) dropBar(b *bar) {
 	if s.tray.menu != nil {
 		s.tray.menu.Popdown() // it may hang off this bar
 	}
+	s.clearAppMenu(b)
 	// A panel hanging from the bar goes with it.
 	if s.control.drop.host == b {
 		s.closeControl()
@@ -162,7 +154,6 @@ func (s *shellUI) dropBar(b *bar) {
 		}
 	}
 	delete(s.bars, b.mon.GoPointer())
-	b.clockButton.Unref() // the reference newBar took
 	dropWallpaper(b)
 	dropDock(b)
 	b.win.Destroy()
@@ -171,16 +162,12 @@ func (s *shellUI) dropBar(b *bar) {
 }
 
 func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
-	b := &bar{mon: mon, ws: map[int]*gtk.Button{}, fresh: map[int]bool{}}
+	b := &bar{mon: mon, ws: map[string]*gtk.Button{}, fresh: map[string]bool{}}
 	ui := s.load("bar.ui", &b.refs)
 	ui.Get("bar", &b.win)
 	ui.Get("frame", &b.frame)
 	ui.Get("island", &b.island)
 	ui.Get("workspaces", &b.workspaces)
-	ui.Get("app", &b.app)
-	ui.Get("app_icon", &b.appIcon)
-	ui.Get("app_menu", &b.appMenu)
-	ui.Get("end", &b.end)
 	ui.Get("widgets", &b.widgetsMark)
 	overviewClick := gtk.NewGestureClick()
 	overviewClick.SetButton(3)
@@ -194,21 +181,17 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("clock", &b.clock)
 	ui.Get("notes", &b.notes)
 	ui.Get("clipboard", &b.clipboard)
-	ui.Get("password_icon", &b.passwordIcon)
-	ui.Get("clipboard_icon", &b.clipboardIcon)
 	ui.Get("passwords", &b.passwords)
 	ui.Get("rec", &b.rec)
 	ui.Get("rec_time", &b.recTime)
 	ui.Get("clock_button", &b.clockButton)
-	b.clockButton.Ref() // ours: it moves between the island's middle and its end, and a
-	// box drops the reference it held when the widget leaves it
 	ui.Get("notes_icon", &b.notesIcon)
 	ui.Get("voice", &b.voice)
 	ui.Get("voice_icon", &b.voiceIcon)
 	ui.Get("unread", &b.unread)
 	ui.Get("tray", &b.tray)
+	ui.Get("app_menu", &b.appMenu)
 	ui.Get("status", &b.status)
-	ui.Get("status_icons", &b.statusIcons)
 	ui.Get("net_icon", &b.netIcon)
 	ui.Get("bt_icon", &b.btIcon)
 	ui.Get("vol_icon", &b.volIcon)
@@ -216,9 +199,8 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	ui.Get("bat_icon", &b.batIcon)
 	ui.Get("bat_label", &b.batLabel)
 	ui.Close()
+	b.setEdgeGap(s.cfg.Style.EdgeGaps)
 	b.setDensity(s.cfg.Bar.Density)
-	b.setClockAtEnd(s.cfg.Bar.Menu)
-	b.setEdgeGap(!s.cfg.Dock.FlushBar)
 	b.status.ConnectClicked(&s.onControlButton)
 	b.notes.ConnectClicked(&s.onNotesButton)
 	b.voice.ConnectClicked(&s.onVoiceButton)
@@ -237,7 +219,6 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	}
 	b.rec.ConnectClicked(&s.onRecButton)
 	b.clockButton.ConnectClicked(&s.onClockButton)
-	b.app.ConnectClicked(&s.onAppButton)
 	s.showNotesButton(b)
 	// The buttons reach to the screen's edges: the bar's margin around and
 	// between them hovers, clicks and scrolls as the button (endReach,
@@ -261,10 +242,9 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	b.setStatus(&s.sys)
 	b.setHypr(s, s.snap)
 	b.setClock(s, time.Now())
-	b.app.SetVisible(s.cfg.Bar.Title)
+	b.title.SetVisible(s.cfg.Bar.Title)
 	b.tray.SetVisible(s.cfg.Bar.Tray)
 	s.renderTray(b)
-	b.setIconMetrics(s.cfg.Bar.IconSize, s.cfg.Bar.IconSpacing)
 
 	b.win.SetApplication(s.app)
 	w := b.win.GoPointer()
@@ -287,6 +267,7 @@ func (s *shellUI) newBar(mon *gdk.Monitor) *bar {
 	}
 	s.syncWallpaper(b)
 	s.syncDock(b)
+	s.syncOverviewDock(b)
 	return b
 }
 
@@ -350,30 +331,14 @@ func (b *bar) setDensity(density string) {
 	b.win.QueueResize()
 }
 
-// setIconMetrics keeps the icons and the visual gap between them uniform on
-// the bar's right side. Each adjacent button contributes one 1 px border.
-func (b *bar) setIconMetrics(size, gap int) {
-	outerGap := int32(gap - 2)
-	b.end.SetSpacing(outerGap)
-	b.tray.SetSpacing(outerGap)
-	b.statusIcons.SetSpacing(int32(gap))
-	px := int32(size)
-	for _, img := range []*gtk.Image{
-		&b.passwordIcon, &b.clipboardIcon, &b.notesIcon, &b.voiceIcon,
-		&b.netIcon, &b.btIcon, &b.volIcon, &b.batIcon,
-	} {
-		img.SetPixelSize(px)
-	}
-}
-
 // hold grows the bar's window down over its monitor for a panel to hang
 // in, on layer and with the keyboard, the space it keeps from windows
 // as it was.
-func (b *bar) hold(layer layershell.Layer, keyboard layershell.KeyboardMode) {
+func (b *bar) hold(layer layershell.Layer) {
 	b.held++
 	w := b.win.GoPointer()
 	layershell.SetLayer(w, layer)
-	layershell.SetKeyboardMode(w, keyboard)
+	layershell.SetKeyboardMode(w, layershell.KeyboardExclusive)
 	if b.held > 1 {
 		return
 	}
@@ -421,82 +386,16 @@ func (b *bar) release() {
 	}
 }
 
-// clockAtEnd reports whether the clock is at the bar's right end.
-func (b *bar) clockAtEnd() bool {
-	if w := b.island.GetCenterWidget(); w != nil {
-		w.Unref() // GetCenterWidget takes a reference
-		return false
-	}
-	return true
-}
-
-// setClockAtEnd puts the clock at the bar's right end while the bar shows the
-// focused application's menu, and in the middle otherwise: the menu's titles
-// take the left of the bar, and its card hangs under them.
-func (b *bar) setClockAtEnd(atEnd bool) {
-	if b.clockAtEnd() == atEnd {
-		return
-	}
-	if atEnd {
-		b.island.SetCenterWidget(nil)
-		gtkx.Append(&b.end, &b.clockButton.Widget)
-		return
-	}
-	b.end.Remove(&b.clockButton.Widget)
-	b.island.SetCenterWidget(&b.clockButton.Widget)
-}
-
 func (b *bar) setClock(s *shellUI, now time.Time) {
 	b.clock.SetText(config.Strftime(s.cfg.Bar.Clock, now))
 }
 
-// setApp names the window in the bar: its application's icon and name, the
-// same way for every application, its own title not with them. A window of
-// an app with no desktop entry is named by its class.
-func (b *bar) setApp(s *shellUI, t hypr.Toplevel) {
-	name, icon := t.Class, t.Class
-	b.appClass = t.Class
-	if e := s.dockState.apps.ForClass(t.Class); e != nil {
-		name, icon = shell.AppName(e), e.Icon
-	}
-	if b.appName == name && b.appIconName == icon {
-		return
-	}
-	b.appName, b.appIconName = name, icon
-	b.title.SetText(name)
-	setIcon(&b.appIcon, icon)
-	b.appIcon.SetVisible(icon != "")
-}
-
-// setDistribution names an empty workspace with this system's identity.
-func (b *bar) setDistribution(s *shellUI) {
-	d := s.distro
-	name := d.Name
-	if d.Version != "" {
-		name += " " + d.Version
-	}
-	if b.appName == name && b.appIconName == d.Logo && b.appClass == "" {
-		return
-	}
-	b.appClass = ""
-	b.appName, b.appIconName = name, d.Logo
-	b.title.SetText(name)
-	setIcon(&b.appIcon, d.Logo)
-	b.appIcon.SetVisible(d.Logo != "")
-}
-
-func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
+func (b *bar) setHypr(s *shellUI, snap compositor.Snapshot) {
 	name := b.connector()
-	activeWorkspace := 0
-	for _, mon := range snap.Monitors {
-		if mon.Name == name {
-			activeWorkspace = mon.ActiveWorkspaceID
-			break
-		}
-	}
+	activeWorkspace := snap.ActiveWorkspace(name)
 	hasWindows := false
-	for _, win := range snap.Toplevels {
-		if win.WorkspaceID == activeWorkspace {
+	for _, win := range snap.Windows {
+		if activeWorkspace != "" && win.Workspace == activeWorkspace {
 			hasWindows = true
 			break
 		}
@@ -508,18 +407,11 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 		b.win.RemoveCssClass("occupied")
 		b.win.AddCssClass("empty")
 	}
-	if hasWindows {
-		b.setApp(s, shell.BarWindow(snap, name))
-	} else {
-		b.setDistribution(s)
-	}
+	b.title.SetText(shell.BarTitle(snap, name))
 	order := s.overview.st
 	order.MRU = s.cfg.Overview.MRU
-	b.workspaces.SetVisible(s.cfg.Bar.Workspaces != "none")
 	b.setWorkspaces(s, order.BarWorkspaces(snap, name, s.cfg.Bar.Workspaces == "all"))
-	if name == snap.FocusedMonitor {
-		s.syncAppMenu()
-	}
+	s.syncAppMenu(b)
 }
 
 // scrollWorkspaces goes n notches' way (down the next, up the previous)
@@ -528,23 +420,18 @@ func (b *bar) setHypr(s *shellUI, snap hypr.Snapshot) {
 // the place before the first: up from there opens it, down from it goes
 // back to the workspace under it.
 func (s *shellUI) scrollWorkspaces(b *bar, n int) {
-	current := 0
-	for _, mon := range s.snap.Monitors {
-		if mon.Name == b.connector() {
-			current = mon.ActiveWorkspaceID
-		}
-	}
+	current := s.snap.ActiveWorkspace(b.connector())
 	var ids []string
 	if s.cfg.Widgets.Enable {
 		ids = append(ids, widgetsPlace)
 	}
 	for _, w := range b.shown {
-		ids = append(ids, fmt.Sprint(w.ID))
+		ids = append(ids, w.ID)
 		if w.Focused && s.cfg.Bar.Workspaces == "all" {
 			current = w.ID
 		}
 	}
-	from := fmt.Sprint(current)
+	from := current
 	shown := s.widgetsShownOn(b)
 	if shown {
 		from = widgetsPlace
@@ -565,10 +452,10 @@ func (s *shellUI) scrollWorkspaces(b *bar, n int) {
 // already exist are restyled right away, so the focus change animates; new
 // ones are styled a moment later, after their first frame, so they grow in
 // too.
-func (b *bar) setWorkspaces(s *shellUI, wss []hypr.Workspace) {
+func (b *bar) setWorkspaces(s *shellUI, wss []compositor.Workspace) {
 	b.shown = wss
 	for id, btn := range b.ws {
-		if !slices.ContainsFunc(wss, func(w hypr.Workspace) bool { return w.ID == id }) {
+		if !slices.ContainsFunc(wss, func(w compositor.Workspace) bool { return w.ID == id }) {
 			b.workspaces.Remove(&btn.Widget) // drops the last reference
 			delete(b.ws, id)
 			delete(b.fresh, id)
@@ -580,7 +467,7 @@ func (b *bar) setWorkspaces(s *shellUI, wss []hypr.Workspace) {
 		btn, ok := b.ws[w.ID]
 		if !ok {
 			btn = gtk.NewButton()
-			btn.SetName(fmt.Sprint(w.ID))
+			btn.SetName(w.ID)
 			btn.SetFocusable(false)
 			btn.SetValign(gtk.AlignCenterValue)
 			btn.SetTooltipText(i18n.Tf("Workspace %s", w.Name))
