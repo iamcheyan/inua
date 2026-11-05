@@ -132,7 +132,7 @@ msgid "Black"
 msgstr "Negro"
 
 #: internal/apps/calendar/calendar.go:69
-#: internal/lightui/clock.go:220
+#: internal/lightui/clock.go:219
 #: internal/ui/control.go:322
 #: internal/ui/lock.go:248
 #: internal/ui/widgets.go:987
@@ -172,7 +172,7 @@ msgstr "dom"
 #: internal/apps/clock/clock.go:69
 #: internal/config/strftime.go:50
 #: internal/i18n/time.go:11
-#: internal/lightui/weather.go:360
+#: internal/lightui/weather.go:358
 #: internal/mailui/window.go:1438
 #: internal/shell/notify.go:28
 #: internal/ui/agenda.go:371
@@ -223,7 +223,7 @@ msgid "Weekends"
 msgstr "Fines de semana"
 
 #: internal/apps/clock/clock.go:112
-#: internal/lightui/weather.go:362
+#: internal/lightui/weather.go:360
 #: internal/ui/widgets.go:1047
 #: ui/agenda.ui:80
 #: ui/calendar.ui:39
@@ -1744,8 +1744,8 @@ msgid "%d mo ago"
 msgstr "hace %d meses"
 
 #: internal/apps/tailscale/status.go:187
-#: internal/lightui/gpg.go:364
-#: internal/lightui/gpg.go:605
+#: internal/lightui/gpg.go:363
+#: internal/lightui/gpg.go:604
 msgid "expired %s"
 msgstr "%s caducado"
 
@@ -1833,7 +1833,7 @@ msgid "Thunderstorm"
 msgstr "Tormenta"
 
 #: internal/apps/weather/weather.go:214
-#: internal/lightui/sysmon.go:1083
+#: internal/lightui/sysmon.go:1081
 #: internal/vmui/window.go:2335
 msgid "Unknown"
 msgstr "Desconocido"
@@ -1960,7 +1960,7 @@ msgid "Could not start the Console endpoint: %s"
 msgstr "No se pudo iniciar el punto final de la consola: %s"
 
 #: internal/assistantui/assistantui.go:528
-#: internal/lightui/clock.go:498
+#: internal/lightui/clock.go:497
 #: internal/ui/alarms.go:108
 #: ui/disk.ui:179
 #: ui/mail-compose.ui:375
@@ -2049,8 +2049,8 @@ msgstr "Permitido"
 #: internal/filesui/window.go:817
 #: internal/gamesui/lobbyhost.go:169
 #: internal/lightui/calculator.go:350
-#: internal/lightui/pass.go:749
-#: internal/lightui/pass.go:774
+#: internal/lightui/pass.go:748
+#: internal/lightui/pass.go:773
 #: internal/mailui/details.go:222
 #: internal/shell/launcher_actions.go:59
 #: internal/term/settings/settings.go:119
@@ -2139,7 +2139,7 @@ msgid "The service is starting."
 msgstr "El servicio se está iniciando."
 
 #: internal/connectui/window.go:387
-#: internal/lightui/video.go:531
+#: internal/lightui/video.go:530
 #: internal/mailui/settings.go:530
 #: internal/shell/notify.go:44
 #: internal/shell/status.go:103
@@ -2191,7 +2191,7 @@ msgstr "%s pide emparejarse. Empareja solo si muestra esta clave:"
 #: internal/filesui/renamemany.go:37
 #: internal/games/fortunenet/texts.go:76
 #: internal/gamesui/fortune_host.go:334
-#: internal/lightui/workshop.go:983
+#: internal/lightui/workshop.go:982
 #: internal/mailui/dialog.go:92
 #: internal/remoteui/window.go:811
 #: internal/term/web/strings.go:29
@@ -2256,8 +2256,8 @@ msgstr "Se pidió a %s que se conecte."
 #: internal/filesui/archive.go:76
 #: internal/filesui/remotesetup.go:226
 #: internal/filesui/renamemany.go:168
-#: internal/lightui/sysmon.go:968
-#: internal/lightui/tailscale.go:632
+#: internal/lightui/sysmon.go:966
+#: internal/lightui/tailscale.go:631
 #: internal/ui/settings_ai.go:486
 #: internal/viewerui/app.go:806
 #: ui/connect.ui:291
@@ -2273,7 +2273,7 @@ msgid "What it runs: systemctl suspend"
 msgstr "Lo que ejecuta: systemctl suspend"
 
 #: internal/connectui/window.go:560
-#: internal/lightui/pass.go:1201
+#: internal/lightui/pass.go:1200
 #: internal/lightui/workshop_manager.go:115
 #: internal/mailui/actions.go:469
 #: internal/mailui/compose.go:474
@@ -2847,7 +2847,7 @@ msgstr "Super+Intro y las aplicaciones que se ejecutan en un terminal"
 #: internal/desktop/defaults.go:41
 #: internal/lightui/apps.go:30
 #: internal/lightui/music.go:293
-#: internal/lightui/music.go:1105
+#: internal/lightui/music.go:1104
 #: config/apps/io.github.lyricat.Inua.Music.desktop:3
 msgid "Music"
 msgstr "Música"
@@ -2859,7 +2859,7 @@ msgstr "Abre archivos de audio"
 #: internal/desktop/defaults.go:45
 #: internal/lightui/apps.go:31
 #: internal/lightui/video.go:257
-#: internal/lightui/video.go:512
+#: internal/lightui/video.go:511
 #: config/apps/io.github.lyricat.Inua.Video.desktop:3
 msgid "Video"
 msgstr "Vídeo"
@@ -3041,8 +3041,8 @@ msgstr "¿Eliminar %s para siempre?"
 #: internal/filesui/cards.go:435
 #: internal/lightui/calculator.go:59
 #: internal/lightui/calculator.go:352
-#: internal/lightui/gpg.go:1518
-#: internal/lightui/pass.go:951
+#: internal/lightui/gpg.go:1517
+#: internal/lightui/pass.go:950
 #: internal/term/web/strings.go:43
 #: internal/ui/clipboard.go:504
 #: internal/vmui/window.go:1996
@@ -3079,8 +3079,8 @@ msgstr "Se ejecuta en %s."
 #: internal/diskui/details.go:578
 #: internal/gamesui/checkers.go:738
 #: internal/gamesui/fortune_host.go:293
-#: internal/lightui/gpg.go:872
-#: internal/lightui/tailscale.go:471
+#: internal/lightui/gpg.go:871
+#: internal/lightui/tailscale.go:470
 #: internal/mailui/welcome.go:480
 #: internal/term/web/strings.go:35
 #: internal/ui/askpass.go:571
@@ -3127,9 +3127,9 @@ msgid "Home"
 msgstr "Carpeta personal"
 
 #: internal/diskui/window.go:329
-#: internal/lightui/sysmon.go:969
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:568
+#: internal/lightui/sysmon.go:967
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:567
 #: internal/ui/settings.go:585
 #: ui/vm.ui:2981
 msgid "System"
@@ -3686,7 +3686,7 @@ msgstr "Copiar las rutas (sin selección: la de la carpeta)"
 
 #: internal/filesui/cards.go:693
 #: internal/filesui/window.go:842
-#: internal/lightui/gpg.go:1526
+#: internal/lightui/gpg.go:1525
 #: internal/mailui/picker.go:143
 #: internal/ui/settings_custom.go:41
 #: ui/disk.ui:771
@@ -3856,7 +3856,7 @@ msgid "Columns"
 msgstr "Columnas"
 
 #: internal/filesui/columns.go:176
-#: internal/lightui/pass.go:1013
+#: internal/lightui/pass.go:1012
 msgid "NAME"
 msgstr "NOMBRE"
 
@@ -3865,7 +3865,7 @@ msgid "FOLDERS"
 msgstr "CARPETAS"
 
 #: internal/filesui/details.go:51
-#: internal/lightui/sysmon.go:793
+#: internal/lightui/sysmon.go:791
 #: internal/mailui/window.go:248
 #: internal/term/web/strings.go:52
 msgid "FILES"
@@ -3973,14 +3973,14 @@ msgstr "Enlace roto"
 #: internal/filesui/remotesetup.go:68
 #: internal/filesui/remotesetup.go:75
 #: internal/filesui/remotesetup.go:83
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 #: internal/viewerui/app.go:807
 #: ui/vm.ui:322
 msgid "Folder"
 msgstr "Carpeta"
 
 #: internal/filesui/kinds.go:38
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 #: internal/ui/settings_keyring.go:326
 msgid "Program"
 msgstr "Programa"
@@ -4080,8 +4080,8 @@ msgid "done"
 msgstr "listo"
 
 #: internal/filesui/pane.go:1554
-#: internal/lightui/pass.go:1216
-#: internal/lightui/sysmon.go:973
+#: internal/lightui/pass.go:1215
+#: internal/lightui/sysmon.go:971
 #: internal/ui/settings_keyring.go:508
 #: internal/ui/shotdrawer.go:327
 msgid "Jan 2 15:04"
@@ -4176,7 +4176,7 @@ msgstr "Iniciar sesión en %s"
 #: internal/filesui/remotesetup.go:54
 #: internal/filesui/remotesetup.go:60
 #: internal/filesui/remotesetup.go:66
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "User"
 msgstr "Usuario"
 
@@ -4934,7 +4934,7 @@ msgstr "Equipo %s"
 
 #: internal/games/checkersnet/texts.go:37
 #: internal/games/fortunenet/texts.go:29
-#: internal/lightui/gpg.go:1187
+#: internal/lightui/gpg.go:1186
 msgid "you"
 msgstr "tú"
 
@@ -5091,7 +5091,7 @@ msgstr "Tienda de cartas"
 
 #: internal/games/fortune.go:65
 #: internal/gamesui/fortune_menu.go:172
-#: internal/lightui/clock.go:493
+#: internal/lightui/clock.go:492
 #: internal/termui/guide.go:161
 #: internal/ui/voice_page.go:186
 #: ui/clock.ui:339
@@ -7328,7 +7328,7 @@ msgstr ""
 
 #: internal/games/lobby/texts.go:12
 #: internal/gamesui/lobbywin.go:236
-#: internal/lightui/sysmon.go:997
+#: internal/lightui/sysmon.go:995
 msgid "Free"
 msgstr "Gratis"
 
@@ -8280,7 +8280,7 @@ msgid "Hit the three yellow mission targets to light a mission; the hyperspace r
 msgstr "Golpee los tres objetivos de misión amarillos para iluminar una misión; la rampa hiperespacial está a la izquierda."
 
 #: internal/gamesui/pinball.go:241
-#: internal/lightui/clock.go:584
+#: internal/lightui/clock.go:583
 msgid "PAUSED"
 msgstr "PAUSADO"
 
@@ -8647,7 +8647,7 @@ msgid "Clock"
 msgstr "Reloj"
 
 #: internal/lightui/apps.go:17
-#: internal/lightui/weather.go:226
+#: internal/lightui/weather.go:224
 #: internal/ui/agenda.go:334
 #: internal/ui/widgets.go:584
 #: internal/ui/widgets.go:1066
@@ -8719,54 +8719,54 @@ msgstr "Aún no hay cálculos"
 msgid "Use %s"
 msgstr "Utilice %s"
 
-#: internal/lightui/calendar.go:138
+#: internal/lightui/calendar.go:132
 #: internal/ui/agenda.go:228
 #: internal/ui/widgets.go:1019
 msgid "January 2006"
 msgstr "January de 2006"
 
-#: internal/lightui/calendar.go:140
+#: internal/lightui/calendar.go:134
 #: internal/ui/agenda.go:246
 msgid "WK"
 msgstr "SEM"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Su"
 msgstr "do"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Mo"
 msgstr "lu"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Tu"
 msgstr "ma"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "We"
 msgstr "mi"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Th"
 msgstr "ju"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Fr"
 msgstr "vi"
 
-#: internal/lightui/calendar.go:145
+#: internal/lightui/calendar.go:139
 #: internal/lightui/clock.go:149
 #: internal/ui/agenda.go:247
 msgid "Sa"
@@ -8784,89 +8784,89 @@ msgstr "MIN"
 msgid "SEC"
 msgstr "SEG"
 
-#: internal/lightui/clock.go:261
+#: internal/lightui/clock.go:260
 msgid "Day"
 msgstr "Día"
 
-#: internal/lightui/clock.go:264
+#: internal/lightui/clock.go:263
 msgid "Night"
 msgstr "Noche"
 
-#: internal/lightui/clock.go:339
+#: internal/lightui/clock.go:338
 msgid "No city by that name"
 msgstr "Ninguna ciudad con ese nombre"
 
-#: internal/lightui/clock.go:371
-#: internal/lightui/weather.go:249
+#: internal/lightui/clock.go:370
+#: internal/lightui/weather.go:247
 msgid "Remove %s"
 msgstr "Eliminar %s"
 
-#: internal/lightui/clock.go:404
+#: internal/lightui/clock.go:403
 #: internal/termui/menubar.go:42
 #: ui/pass.ui:252
 msgid "Edit"
 msgstr "Editar"
 
-#: internal/lightui/clock.go:494
+#: internal/lightui/clock.go:493
 #: ui/music.ui:332
 msgid "Reset"
 msgstr "Restablecer"
 
-#: internal/lightui/clock.go:499
-#: internal/lightui/clock.go:508
+#: internal/lightui/clock.go:498
+#: internal/lightui/clock.go:507
 #: ui/clock.ui:329
 msgid "Lap"
 msgstr "Vuelta"
 
-#: internal/lightui/clock.go:547
+#: internal/lightui/clock.go:546
 msgid "LAP %d"
 msgstr "VUELTA %d"
 
-#: internal/lightui/clock.go:567
-#: internal/lightui/clock.go:577
-#: internal/lightui/sysmon.go:58
-#: internal/lightui/sysmon.go:58
+#: internal/lightui/clock.go:566
+#: internal/lightui/clock.go:576
+#: internal/lightui/sysmon.go:57
+#: internal/lightui/sysmon.go:57
 #: ui/clock.ui:463
 msgid "Pause"
 msgstr "Pausar"
 
-#: internal/lightui/clock.go:570
-#: internal/lightui/clock.go:578
+#: internal/lightui/clock.go:569
+#: internal/lightui/clock.go:577
 msgid "ENDS AT %s"
 msgstr "TERMINA EN %s"
 
-#: internal/lightui/clock.go:583
-#: internal/lightui/sysmon.go:871
-#: internal/lightui/sysmon.go:871
+#: internal/lightui/clock.go:582
+#: internal/lightui/sysmon.go:869
+#: internal/lightui/sysmon.go:869
 #: internal/vmui/window.go:2465
 msgid "Resume"
 msgstr "Reanudar"
 
-#: internal/lightui/clock.go:595
+#: internal/lightui/clock.go:594
 msgid "Timer done"
 msgstr "Temporizador terminado"
 
-#: internal/lightui/clock.go:596
+#: internal/lightui/clock.go:595
 msgid "Your timer has ended."
 msgstr "Su cronómetro ha finalizado."
 
-#: internal/lightui/colorpicker.go:123
+#: internal/lightui/colorpicker.go:121
 msgid "HEX"
 msgstr "HEX"
 
-#: internal/lightui/colorpicker.go:123
+#: internal/lightui/colorpicker.go:121
 msgid "RGB"
 msgstr "RGB"
 
-#: internal/lightui/colorpicker.go:123
+#: internal/lightui/colorpicker.go:121
 msgid "HSL"
 msgstr "HSL"
 
-#: internal/lightui/colorpicker.go:137
+#: internal/lightui/colorpicker.go:135
 msgid "Copy %s"
 msgstr "Copiar %s"
 
-#: internal/lightui/colorpicker.go:142
+#: internal/lightui/colorpicker.go:140
 msgid "No colour yet. Pick one from anywhere on the screen."
 msgstr "Aún no hay color. Elija uno desde cualquier lugar de la pantalla."
 
@@ -8889,19 +8889,19 @@ msgstr "5 años"
 msgid "Never"
 msgstr "Nunca"
 
-#: internal/lightui/gpg.go:319
+#: internal/lightui/gpg.go:318
 msgid "The keyring cannot be read: %s"
 msgstr "No se puede leer el llavero: %s"
 
-#: internal/lightui/gpg.go:361
+#: internal/lightui/gpg.go:360
 msgid "created %s"
 msgstr "creada el %s"
 
-#: internal/lightui/gpg.go:361
-#: internal/lightui/gpg.go:364
-#: internal/lightui/gpg.go:366
-#: internal/lightui/gpg.go:605
-#: internal/lightui/gpg.go:627
+#: internal/lightui/gpg.go:360
+#: internal/lightui/gpg.go:363
+#: internal/lightui/gpg.go:365
+#: internal/lightui/gpg.go:604
+#: internal/lightui/gpg.go:626
 #: internal/shell/notify.go:32
 #: internal/ui/askpass.go:414
 #: internal/ui/askpass.go:482
@@ -8913,155 +8913,155 @@ msgstr "creada el %s"
 msgid "Jan 2, 2006"
 msgstr "2 Jan 2006"
 
-#: internal/lightui/gpg.go:366
+#: internal/lightui/gpg.go:365
 msgid "expires %s"
 msgstr "caduca el %s"
 
-#: internal/lightui/gpg.go:380
-#: internal/lightui/gpg.go:764
+#: internal/lightui/gpg.go:379
+#: internal/lightui/gpg.go:763
 msgid "signs only"
 msgstr "solo firma"
 
-#: internal/lightui/gpg.go:390
+#: internal/lightui/gpg.go:389
 msgid "revoked"
 msgstr "revocada"
 
-#: internal/lightui/gpg.go:392
+#: internal/lightui/gpg.go:391
 msgid "expired"
 msgstr "caducada"
 
-#: internal/lightui/gpg.go:394
+#: internal/lightui/gpg.go:393
 msgid "disabled"
 msgstr "desactivada"
 
-#: internal/lightui/gpg.go:396
-#: internal/lightui/gpg.go:611
-#: internal/lightui/gpg.go:737
+#: internal/lightui/gpg.go:395
+#: internal/lightui/gpg.go:610
+#: internal/lightui/gpg.go:736
 msgid "yours"
 msgstr "tuya"
 
-#: internal/lightui/gpg.go:398
+#: internal/lightui/gpg.go:397
 msgid "verified"
 msgstr "verificada"
 
-#: internal/lightui/gpg.go:400
+#: internal/lightui/gpg.go:399
 msgid "partly verified"
 msgstr "verificada en parte"
 
-#: internal/lightui/gpg.go:402
+#: internal/lightui/gpg.go:401
 msgid "not verified"
 msgstr "sin verificar"
 
-#: internal/lightui/gpg.go:465
+#: internal/lightui/gpg.go:464
 #: ui/gpg.ui:306
 msgid "Encrypt to your key as well, so you can open it later"
 msgstr "Cifrar también para tu clave, para poder abrirlo después"
 
-#: internal/lightui/gpg.go:467
+#: internal/lightui/gpg.go:466
 msgid "This key only signs; it cannot be encrypted to"
 msgstr "Esta clave solo firma; no se puede cifrar para ella"
 
-#: internal/lightui/gpg.go:518
+#: internal/lightui/gpg.go:517
 msgid "Take off"
 msgstr "Quitar"
 
-#: internal/lightui/gpg.go:529
+#: internal/lightui/gpg.go:528
 msgid "%d recipient"
 msgid_plural "%d recipients"
 msgstr[0] "%d destinatario"
 msgstr[1] "%d destinatarios"
 
-#: internal/lightui/gpg.go:532
+#: internal/lightui/gpg.go:531
 #: ui/gpg.ui:118
 msgid "Name, address or key ID"
 msgstr "Nombre, dirección o ID de clave"
 
-#: internal/lightui/gpg.go:534
+#: internal/lightui/gpg.go:533
 msgid "Add another"
 msgstr "Añadir otro"
 
-#: internal/lightui/gpg.go:583
+#: internal/lightui/gpg.go:582
 msgid "%d more: type to narrow them down"
 msgid_plural "%d more: type to narrow them down"
 msgstr[0] "%d más: escribe para acotar"
 msgstr[1] "%d más: escribe para acotar"
 
-#: internal/lightui/gpg.go:626
+#: internal/lightui/gpg.go:625
 msgid "This key expired on %s, so gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr "Esta clave caducó el %s, así que gpg no puede cifrar para ella. Pide a %s una clave actualizada y luego impórtala."
 
-#: internal/lightui/gpg.go:629
-#: internal/lightui/gpg.go:780
+#: internal/lightui/gpg.go:628
+#: internal/lightui/gpg.go:779
 msgid "%s revoked this key; ask for their new one."
 msgstr "%s revocó esta clave; pide la nueva."
 
-#: internal/lightui/gpg.go:631
+#: internal/lightui/gpg.go:630
 msgid "This key cannot encrypt."
 msgstr "Esta clave no puede cifrar."
 
-#: internal/lightui/gpg.go:641
+#: internal/lightui/gpg.go:640
 msgid "No key matches. Import theirs on the Keys tab."
 msgstr "Ninguna clave coincide. Importa la suya en la pestaña Claves."
 
-#: internal/lightui/gpg.go:643
+#: internal/lightui/gpg.go:642
 msgid "Already added."
 msgstr "Ya está añadido."
 
-#: internal/lightui/gpg.go:646
+#: internal/lightui/gpg.go:645
 msgid "Your keyring is empty. Import their key on the Keys tab."
 msgstr "Tu llavero está vacío. Importa su clave en la pestaña Claves."
 
-#: internal/lightui/gpg.go:648
+#: internal/lightui/gpg.go:647
 msgid "Every key is chosen."
 msgstr "Todas las claves están elegidas."
 
-#: internal/lightui/gpg.go:703
+#: internal/lightui/gpg.go:702
 msgid "MY KEYS"
 msgstr "MIS CLAVES"
 
-#: internal/lightui/gpg.go:703
+#: internal/lightui/gpg.go:702
 msgid "OTHERS"
 msgstr "OTRAS"
 
-#: internal/lightui/gpg.go:703
+#: internal/lightui/gpg.go:702
 msgid "INVALID KEYS"
 msgstr "CLAVES NO VÁLIDAS"
 
-#: internal/lightui/gpg.go:710
+#: internal/lightui/gpg.go:709
 msgid "%d key"
 msgid_plural "%d keys"
 msgstr[0] "%d clave"
 msgstr[1] "%d claves"
 
-#: internal/lightui/gpg.go:774
+#: internal/lightui/gpg.go:773
 msgid "Extend it to use it again. Keep it either way: it opens what was encrypted to it."
 msgstr "Amplíala para volver a usarla. Consérvala en todo caso: abre lo que se cifró para ella."
 
-#: internal/lightui/gpg.go:776
+#: internal/lightui/gpg.go:775
 msgid "Keep it: it opens what was encrypted to it."
 msgstr "Consérvala: abre lo que se cifró para ella."
 
-#: internal/lightui/gpg.go:778
+#: internal/lightui/gpg.go:777
 msgid "gpg cannot encrypt to it. Ask %s for an updated key, then import it."
 msgstr "gpg no puede cifrar para ella. Pide a %s una clave actualizada y luego impórtala."
 
-#: internal/lightui/gpg.go:801
+#: internal/lightui/gpg.go:800
 msgid "Copy fingerprint"
 msgstr "Copiar huella"
 
-#: internal/lightui/gpg.go:802
+#: internal/lightui/gpg.go:801
 msgid "Copy public key"
 msgstr "Copiar clave pública"
 
-#: internal/lightui/gpg.go:804
+#: internal/lightui/gpg.go:803
 msgid "Encrypt to…"
 msgstr "Cifrar para…"
 
-#: internal/lightui/gpg.go:807
+#: internal/lightui/gpg.go:806
 msgid "Extend 2 years"
 msgstr "Ampliar 2 años"
 
-#: internal/lightui/gpg.go:812
+#: internal/lightui/gpg.go:811
 #: ui/disk.ui:781
 #: ui/vm.ui:391
 #: ui/vm.ui:1540
@@ -9072,189 +9072,189 @@ msgstr "Ampliar 2 años"
 msgid "Delete…"
 msgstr "Eliminar…"
 
-#: internal/lightui/gpg.go:875
+#: internal/lightui/gpg.go:874
 msgid "Copied; taken off the clipboard in 45 seconds"
 msgstr "Copiado; se quitará del portapapeles en 45 segundos"
 
-#: internal/lightui/gpg.go:928
+#: internal/lightui/gpg.go:927
 msgid "Fingerprint copied"
 msgstr "Huella copiada"
 
-#: internal/lightui/gpg.go:940
+#: internal/lightui/gpg.go:939
 msgid "Public key copied"
 msgstr "Clave pública copiada"
 
-#: internal/lightui/gpg.go:1008
+#: internal/lightui/gpg.go:1007
 msgid "Files to encrypt"
 msgstr "Archivos para cifrar"
 
-#: internal/lightui/gpg.go:1008
+#: internal/lightui/gpg.go:1007
 msgid "Files to decrypt"
 msgstr "Archivos para descifrar"
 
-#: internal/lightui/gpg.go:1008
+#: internal/lightui/gpg.go:1007
 msgid "Key file to import"
 msgstr "Archivo de clave para importar"
 
-#: internal/lightui/gpg.go:1074
+#: internal/lightui/gpg.go:1073
 msgid "Leave it out"
 msgstr "Quitar"
 
-#: internal/lightui/gpg.go:1109
+#: internal/lightui/gpg.go:1108
 msgid "Saved to %s"
 msgstr "Guardado en %s"
 
-#: internal/lightui/gpg.go:1125
+#: internal/lightui/gpg.go:1124
 msgid "Add someone to encrypt to."
 msgstr "Añade a alguien para quien cifrar."
 
-#: internal/lightui/gpg.go:1139
-#: internal/lightui/gpg.go:1265
+#: internal/lightui/gpg.go:1138
+#: internal/lightui/gpg.go:1264
 msgid "Choose or drop files first."
 msgstr "Primero elige o suelta archivos."
 
-#: internal/lightui/gpg.go:1150
+#: internal/lightui/gpg.go:1149
 msgid "Type a message first."
 msgstr "Primero escribe un mensaje."
 
-#: internal/lightui/gpg.go:1155
+#: internal/lightui/gpg.go:1154
 msgid "Encrypting…"
 msgstr "Cifrando…"
 
-#: internal/lightui/gpg.go:1192
+#: internal/lightui/gpg.go:1191
 msgid "For %s"
 msgstr "Para %s"
 
-#: internal/lightui/gpg.go:1194
+#: internal/lightui/gpg.go:1193
 msgid "signed"
 msgstr "firmado"
 
-#: internal/lightui/gpg.go:1211
+#: internal/lightui/gpg.go:1210
 msgid "written in %s"
 msgstr "escrito en %s"
 
-#: internal/lightui/gpg.go:1215
+#: internal/lightui/gpg.go:1214
 msgid "Move to Trash…"
 msgstr "Mover a la papelera…"
 
-#: internal/lightui/gpg.go:1239
+#: internal/lightui/gpg.go:1238
 msgid "%s moved to the trash"
 msgstr "%s se movió a la papelera"
 
-#: internal/lightui/gpg.go:1274
+#: internal/lightui/gpg.go:1273
 msgid "Paste a message first."
 msgstr "Primero pega un mensaje."
 
-#: internal/lightui/gpg.go:1281
+#: internal/lightui/gpg.go:1280
 msgid "Decrypting… gpg may ask for your passphrase."
 msgstr "Descifrando… gpg puede pedir tu frase de paso."
 
-#: internal/lightui/gpg.go:1330
+#: internal/lightui/gpg.go:1329
 msgid "Not signed: who sent it is not known"
 msgstr "Sin firma: no se sabe quién lo envió"
 
-#: internal/lightui/gpg.go:1338
+#: internal/lightui/gpg.go:1337
 msgid "Signed by %s"
 msgstr "Firmado por %s"
 
-#: internal/lightui/gpg.go:1341
+#: internal/lightui/gpg.go:1340
 msgid "Jan 2, 2006 15:04"
 msgstr "2 Jan 2006 15:04"
 
-#: internal/lightui/gpg.go:1345
+#: internal/lightui/gpg.go:1344
 msgid "The signature by %s does not match: it was changed after signing"
 msgstr "La firma de %s no coincide: se cambió después de firmar"
 
-#: internal/lightui/gpg.go:1349
+#: internal/lightui/gpg.go:1348
 msgid "Signed by a key not in your keyring, so it cannot be checked"
 msgstr "Firmado con una clave que no está en tu llavero, así que no se puede comprobar"
 
-#: internal/lightui/gpg.go:1353
+#: internal/lightui/gpg.go:1352
 msgid "Signed by %s, with a key that is no longer valid"
 msgstr "Firmado por %s, con una clave que ya no es válida"
 
-#: internal/lightui/gpg.go:1371
+#: internal/lightui/gpg.go:1370
 msgid "Encrypted to %s"
 msgstr "Cifrado para %s"
 
-#: internal/lightui/gpg.go:1387
+#: internal/lightui/gpg.go:1386
 #: ui/gpg.ui:1281
 msgid "Import"
 msgstr "Importar"
 
-#: internal/lightui/gpg.go:1397
+#: internal/lightui/gpg.go:1396
 msgid "No key found in it."
 msgstr "No contiene ninguna clave."
 
-#: internal/lightui/gpg.go:1402
+#: internal/lightui/gpg.go:1401
 msgid "Import %d key"
 msgid_plural "Import %d keys"
 msgstr[0] "Importar %d clave"
 msgstr[1] "Importar %d claves"
 
-#: internal/lightui/gpg.go:1414
+#: internal/lightui/gpg.go:1413
 msgid "new"
 msgstr "nueva"
 
-#: internal/lightui/gpg.go:1417
+#: internal/lightui/gpg.go:1416
 msgid "holds a secret key"
 msgstr "contiene una clave secreta"
 
-#: internal/lightui/gpg.go:1419
+#: internal/lightui/gpg.go:1418
 msgid "updates one you have"
 msgstr "actualiza una que tienes"
 
-#: internal/lightui/gpg.go:1444
+#: internal/lightui/gpg.go:1443
 msgid "Importing…"
 msgstr "Importando…"
 
-#: internal/lightui/gpg.go:1455
+#: internal/lightui/gpg.go:1454
 msgid "%d key imported"
 msgid_plural "%d keys imported"
 msgstr[0] "%d clave importada"
 msgstr[1] "%d claves importadas"
 
-#: internal/lightui/gpg.go:1468
+#: internal/lightui/gpg.go:1467
 msgid "Give a name and an address."
 msgstr "Indica un nombre y una dirección."
 
-#: internal/lightui/gpg.go:1472
+#: internal/lightui/gpg.go:1471
 msgid "That address has no @."
 msgstr "Esa dirección no tiene @."
 
-#: internal/lightui/gpg.go:1478
+#: internal/lightui/gpg.go:1477
 msgid "Creating… gpg asks for a passphrase for the new key."
 msgstr "Creando… gpg pide una frase de paso para la clave nueva."
 
-#: internal/lightui/gpg.go:1492
+#: internal/lightui/gpg.go:1491
 msgid "Your key is created"
 msgstr "Tu clave está creada"
 
-#: internal/lightui/gpg.go:1515
+#: internal/lightui/gpg.go:1514
 msgid "Delete the key of %s?"
 msgstr "¿Eliminar la clave de %s?"
 
-#: internal/lightui/gpg.go:1517
+#: internal/lightui/gpg.go:1516
 msgid "It goes from your keyring. Messages it signed then show as signed by a key not in your keyring; importing it again brings that back."
 msgstr "Sale de tu llavero. Los mensajes que firmó aparecerán como firmados por una clave que no está en tu llavero; importarla de nuevo lo arregla."
 
-#: internal/lightui/gpg.go:1524
+#: internal/lightui/gpg.go:1523
 msgid "Move %s to the trash?"
 msgstr "¿Mover %s a la papelera?"
 
-#: internal/lightui/gpg.go:1525
+#: internal/lightui/gpg.go:1524
 msgid "The decrypted copy goes to the trash, where it can be restored from; the encrypted file stays."
 msgstr "La copia descifrada va a la papelera, desde donde se puede restaurar; el archivo cifrado se queda."
 
-#: internal/lightui/gpg.go:1542
+#: internal/lightui/gpg.go:1541
 msgid "Key deleted"
 msgstr "Clave eliminada"
 
-#: internal/lightui/gpg.go:1552
+#: internal/lightui/gpg.go:1551
 msgid "Extending… gpg asks for your passphrase."
 msgstr "Ampliando… gpg pide tu frase de paso."
 
-#: internal/lightui/gpg.go:1561
+#: internal/lightui/gpg.go:1560
 msgid "Extended by 2 years"
 msgstr "Ampliada 2 años"
 
@@ -9267,106 +9267,106 @@ msgstr "GStreamer no está instalado: instala sus complementos (en Ubuntu gstrea
 msgid "Presets"
 msgstr "Ajustes"
 
-#: internal/lightui/music.go:487
+#: internal/lightui/music.go:486
 msgid "Cannot play %s: %s"
 msgstr "No se puede reproducir %s: %s"
 
-#: internal/lightui/music.go:561
+#: internal/lightui/music.go:560
 #: internal/ui/widgets.go:1097
 #: ui/music.ui:86
 msgid "Nothing playing"
 msgstr "Nada en reproducción"
 
-#: internal/lightui/music.go:611
+#: internal/lightui/music.go:610
 msgid "MONO"
 msgstr "MONO"
 
-#: internal/lightui/music.go:613
+#: internal/lightui/music.go:612
 msgid "STEREO"
 msgstr "ESTÉREO"
 
-#: internal/lightui/music.go:680
+#: internal/lightui/music.go:679
 msgid "PRE"
 msgstr "PRE"
 
-#: internal/lightui/music.go:789
+#: internal/lightui/music.go:788
 #: ui/music.ui:270
 msgid "Repeat: off (R)"
 msgstr "Repetir: no (R)"
 
-#: internal/lightui/music.go:792
+#: internal/lightui/music.go:791
 msgid "Repeat: the playlist (R)"
 msgstr "Repetir: la lista (R)"
 
-#: internal/lightui/music.go:794
+#: internal/lightui/music.go:793
 msgid "Repeat: this track (R)"
 msgstr "Repetir: esta pista (R)"
 
-#: internal/lightui/music.go:1017
+#: internal/lightui/music.go:1016
 msgid "%d track"
 msgid_plural "%d tracks"
 msgstr[0] "%d pista"
 msgstr[1] "%d pistas"
 
-#: internal/lightui/music.go:1104
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/music.go:1103
+#: internal/lightui/sysmon.go:792
 msgid "Open files"
 msgstr "Abrir archivos"
 
-#: internal/lightui/music.go:1104
+#: internal/lightui/music.go:1103
 #: ui/music.ui:424
 msgid "Add files"
 msgstr "Añadir archivos"
 
-#: internal/lightui/music.go:1108
+#: internal/lightui/music.go:1107
 #: ui/music.ui:434
 msgid "Add a folder"
 msgstr "Añadir una carpeta"
 
-#: internal/lightui/music.go:1111
+#: internal/lightui/music.go:1110
 msgid "Load a playlist"
 msgstr "Cargar una lista"
 
-#: internal/lightui/music.go:1112
+#: internal/lightui/music.go:1111
 msgid "Playlists"
 msgstr "Listas"
 
-#: internal/lightui/music.go:1115
+#: internal/lightui/music.go:1114
 msgid "Save the playlist"
 msgstr "Guardar la lista"
 
-#: internal/lightui/music.go:1116
+#: internal/lightui/music.go:1115
 msgid "Playlist"
 msgstr "Lista"
 
-#: internal/lightui/pass.go:348
+#: internal/lightui/pass.go:347
 msgid "A password store: a folder with a .gpg-id"
 msgstr "Un almacén de contraseñas: una carpeta con un .gpg-id"
 
-#: internal/lightui/pass.go:356
+#: internal/lightui/pass.go:355
 msgid "%s is not a password store: it has no .gpg-id (pass init makes one)."
 msgstr "%s no es un almacén de contraseñas: no tiene .gpg-id (pass init lo crea)."
 
-#: internal/lightui/pass.go:376
+#: internal/lightui/pass.go:375
 msgid "No password store. pass init YOUR-GPG-KEY-ID makes one in ~/.password-store; another folder can be added below."
 msgstr "No hay almacén de contraseñas. pass init SU-ID-DE-CLAVE-GPG crea uno en ~/.password-store; abajo se puede añadir otra carpeta."
 
-#: internal/lightui/pass.go:403
+#: internal/lightui/pass.go:402
 msgid "The store is empty. + makes an entry."
 msgstr "El almacén está vacío. + crea una entrada."
 
-#: internal/lightui/pass.go:406
-#: internal/lightui/pass.go:805
-#: internal/lightui/pass.go:877
-#: internal/lightui/pass.go:1136
+#: internal/lightui/pass.go:405
+#: internal/lightui/pass.go:804
+#: internal/lightui/pass.go:876
+#: internal/lightui/pass.go:1135
 msgid "Choose an entry."
 msgstr "Elija una entrada."
 
-#: internal/lightui/pass.go:412
+#: internal/lightui/pass.go:411
 msgid "Top level"
 msgstr "Nivel superior"
 
-#: internal/lightui/pass.go:420
+#: internal/lightui/pass.go:419
 #: internal/ui/settings.go:916
 #: internal/ui/settings.go:943
 msgid "%d entry"
@@ -9374,61 +9374,61 @@ msgid_plural "%d entries"
 msgstr[0] "%d entrada"
 msgstr[1] "%d entradas"
 
-#: internal/lightui/pass.go:425
+#: internal/lightui/pass.go:424
 msgid "Right-click to rename or move"
 msgstr "Clic derecho para renombrar o mover"
 
-#: internal/lightui/pass.go:488
+#: internal/lightui/pass.go:487
 #: internal/ui/passwords.go:488
 msgid "Nothing matches. Each word is looked for in the whole path."
 msgstr "Nada coincide. Cada palabra se busca en toda la ruta."
 
-#: internal/lightui/pass.go:490
+#: internal/lightui/pass.go:489
 msgid "And %d more: another word narrows them."
 msgid_plural "And %d more: another word narrows them."
 msgstr[0] "Y %d más: otra palabra los acota."
 msgstr[1] "Y %d más: otra palabra los acota."
 
-#: internal/lightui/pass.go:636
+#: internal/lightui/pass.go:635
 msgid "Decrypting %s"
 msgstr "Descifrando %s"
 
-#: internal/lightui/pass.go:692
+#: internal/lightui/pass.go:691
 #: internal/lightui/pass_otp.go:187
 msgid "Replace the one-time code"
 msgstr "Reemplazar el código de un solo uso"
 
-#: internal/lightui/pass.go:694
+#: internal/lightui/pass.go:693
 #: internal/lightui/pass_otp.go:190
 #: ui/pass.ui:230
 #: ui/pass.ui:670
 msgid "Add a one-time code"
 msgstr "Añadir un código de un solo uso"
 
-#: internal/lightui/pass.go:699
+#: internal/lightui/pass.go:698
 #: internal/ui/passwords.go:561
 msgid "USERNAME"
 msgstr "USUARIO"
 
-#: internal/lightui/pass.go:702
+#: internal/lightui/pass.go:701
 #: internal/ui/passwords.go:564
 msgid "PASSWORD"
 msgstr "CONTRASEÑA"
 
-#: internal/lightui/pass.go:707
-#: internal/lightui/pass.go:759
+#: internal/lightui/pass.go:706
+#: internal/lightui/pass.go:758
 #: internal/ui/passwords.go:567
 #: internal/ui/passwords.go:570
 #: ui/pass.ui:802
 msgid "ONE-TIME CODE"
 msgstr "CÓDIGO DE UN SOLO USO"
 
-#: internal/lightui/pass.go:714
+#: internal/lightui/pass.go:713
 #: internal/ui/passwords.go:577
 msgid "NOTES"
 msgstr "NOTAS"
 
-#: internal/lightui/pass.go:743
+#: internal/lightui/pass.go:742
 #: internal/mailui/formatted.go:184
 #: internal/term/desktop/desktop_linux.go:43
 #: internal/ui/passwords.go:644
@@ -9437,13 +9437,13 @@ msgstr "NOTAS"
 msgid "Show"
 msgstr "Mostrar"
 
-#: internal/lightui/pass.go:745
+#: internal/lightui/pass.go:744
 #: internal/ui/notify.go:410
 #: internal/ui/passwords.go:642
 msgid "Hide"
 msgstr "Ocultar"
 
-#: internal/lightui/pass.go:788
+#: internal/lightui/pass.go:787
 #: internal/lightui/pass_otp.go:245
 #: internal/ui/passwords.go:661
 msgid "%d second left"
@@ -9451,94 +9451,94 @@ msgid_plural "%d seconds left"
 msgstr[0] "%d segundo restante"
 msgstr[1] "%d segundos restantes"
 
-#: internal/lightui/pass.go:933
+#: internal/lightui/pass.go:932
 msgid "Rename or move the category “%s”"
 msgstr "Renombrar o mover la categoría «%s»"
 
-#: internal/lightui/pass.go:934
+#: internal/lightui/pass.go:933
 msgid "Its new path. Another name renames it; a path under another category moves it there, with all its entries."
 msgstr "Su nueva ruta. Otro nombre la renombra; una ruta bajo otra categoría la mueve allí, con todas sus entradas."
 
-#: internal/lightui/pass.go:935
-#: internal/lightui/pass.go:939
+#: internal/lightui/pass.go:934
+#: internal/lightui/pass.go:938
 #: internal/term/web/strings.go:65
 msgid "Move"
 msgstr "Mover"
 
-#: internal/lightui/pass.go:937
+#: internal/lightui/pass.go:936
 msgid "Rename or move “%s”"
 msgstr "Renombrar o mover «%s»"
 
-#: internal/lightui/pass.go:938
+#: internal/lightui/pass.go:937
 msgid "Its new path. The first part is its category: change it to move the entry, the rest to rename it."
 msgstr "Su nueva ruta. La primera parte es su categoría: cámbiala para mover la entrada, y el resto para renombrarla."
 
-#: internal/lightui/pass.go:941
+#: internal/lightui/pass.go:940
 #: ui/pass.ui:137
 msgid "New entry"
 msgstr "Entrada nueva"
 
-#: internal/lightui/pass.go:942
+#: internal/lightui/pass.go:941
 msgid "Its path: the first part is its category. Its content comes next."
 msgstr "Su ruta: la primera parte es su categoría. Después, su contenido."
 
-#: internal/lightui/pass.go:947
+#: internal/lightui/pass.go:946
 #: internal/termui/guide.go:163
 #: ui/vm.ui:3289
 msgid "Next"
 msgstr "Siguiente"
 
-#: internal/lightui/pass.go:949
+#: internal/lightui/pass.go:948
 msgid "Delete “%s”?"
 msgstr "¿Eliminar «%s»?"
 
-#: internal/lightui/pass.go:950
+#: internal/lightui/pass.go:949
 msgid "pass removes its file; a git store keeps it in its history."
 msgstr "pass elimina su archivo; un almacén con git lo conserva en su historial."
 
-#: internal/lightui/pass.go:986
-#: internal/lightui/pass.go:1016
+#: internal/lightui/pass.go:985
+#: internal/lightui/pass.go:1015
 #: internal/mailui/reader.go:549
 #: internal/mailui/reader.go:794
 #: internal/viewerui/app.go:805
 msgid "FILE"
 msgstr "ARCHIVO"
 
-#: internal/lightui/pass.go:1012
+#: internal/lightui/pass.go:1011
 msgid "CATEGORY"
 msgstr "CATEGORÍA"
 
-#: internal/lightui/pass.go:1026
+#: internal/lightui/pass.go:1025
 msgid "and %d more"
 msgid_plural "and %d more"
 msgstr[0] "y %d más"
 msgstr[1] "y %d más"
 
-#: internal/lightui/pass.go:1070
+#: internal/lightui/pass.go:1069
 msgid "That is where it is."
 msgstr "Ya está ahí."
 
-#: internal/lightui/pass.go:1072
+#: internal/lightui/pass.go:1071
 msgid "A category cannot move into itself."
 msgstr "Una categoría no puede moverse dentro de sí misma."
 
-#: internal/lightui/pass.go:1074
+#: internal/lightui/pass.go:1073
 msgid "That path is already in the store."
 msgstr "Esa ruta ya está en el almacén."
 
-#: internal/lightui/pass.go:1076
+#: internal/lightui/pass.go:1075
 msgid "It is no longer in the store."
 msgstr "Ya no está en el almacén."
 
-#: internal/lightui/pass.go:1078
+#: internal/lightui/pass.go:1077
 msgid "Each part of the path needs a name, without a leading dot."
 msgstr "Cada parte de la ruta necesita un nombre, sin punto inicial."
 
-#: internal/lightui/pass.go:1185
+#: internal/lightui/pass.go:1184
 msgid "TRUSTED APPS"
 msgstr "APPS DE CONFIANZA"
 
-#: internal/lightui/pass.go:1185
+#: internal/lightui/pass.go:1184
 #: internal/lightui/workshop_manager.go:50
 #: internal/ui/settings_keyring.go:551
 msgid "%d app"
@@ -9546,18 +9546,18 @@ msgid_plural "%d apps"
 msgstr[0] "%d app"
 msgstr[1] "%d apps"
 
-#: internal/lightui/pass.go:1187
+#: internal/lightui/pass.go:1186
 msgid "None: an app reading it is asked about first."
 msgstr "Ninguna: por una app que lo lea se pregunta antes."
 
-#: internal/lightui/pass.go:1193
+#: internal/lightui/pass.go:1192
 #: internal/ui/askpass.go:405
 #: internal/ui/settings_keyring.go:624
 msgid "Flatpak: %s"
 msgstr "Flatpak: %s"
 
-#: internal/lightui/pass.go:1198
-#: internal/lightui/pass.go:1220
+#: internal/lightui/pass.go:1197
+#: internal/lightui/pass.go:1219
 #: internal/ui/settings_keyring.go:469
 #: internal/ui/settings_keyring.go:477
 #: internal/ui/settings_keyring.go:629
@@ -9565,51 +9565,51 @@ msgstr "Flatpak: %s"
 msgid "%s · %s"
 msgstr "%s · %s"
 
-#: internal/lightui/pass.go:1205
+#: internal/lightui/pass.go:1204
 #: internal/ui/settings_keyring.go:649
 msgid "Stop trusting it: it is asked about at its next read"
 msgstr "Dejar de confiar: se preguntará en su próxima lectura"
 
-#: internal/lightui/pass.go:1210
+#: internal/lightui/pass.go:1209
 msgid "LAST READS"
 msgstr "ÚLTIMAS LECTURAS"
 
-#: internal/lightui/pass.go:1212
+#: internal/lightui/pass.go:1211
 msgid "No app has read it yet."
 msgstr "Ninguna app lo ha leído aún."
 
-#: internal/lightui/pass.go:1218
+#: internal/lightui/pass.go:1217
 msgid "%s · %d times"
 msgid_plural "%s · %d times"
 msgstr[0] "%s · %d vez"
 msgstr[1] "%s · %d veces"
 
-#: internal/lightui/pass.go:1230
+#: internal/lightui/pass.go:1229
 #: internal/ui/settings_keyring.go:694
 msgid "trusted"
 msgstr "de confianza"
 
-#: internal/lightui/pass.go:1232
+#: internal/lightui/pass.go:1231
 #: internal/ui/settings_keyring.go:696
 msgid "allowed once"
 msgstr "permitido una vez"
 
-#: internal/lightui/pass.go:1234
+#: internal/lightui/pass.go:1233
 #: internal/ui/settings_keyring.go:698
 msgid "allowed, and trusted from now on"
 msgstr "permitido, y de confianza desde ahora"
 
-#: internal/lightui/pass.go:1236
+#: internal/lightui/pass.go:1235
 #: internal/ui/settings_keyring.go:700
 msgid "denied"
 msgstr "denegado"
 
-#: internal/lightui/pass.go:1238
+#: internal/lightui/pass.go:1237
 #: internal/ui/settings_keyring.go:702
 msgid "allowed: no one to ask"
 msgstr "permitido: nadie a quien preguntar"
 
-#: internal/lightui/pass.go:1240
+#: internal/lightui/pass.go:1239
 msgid "read"
 msgstr "leído"
 
@@ -9653,56 +9653,56 @@ msgstr "Una imagen con un código QR"
 msgid "Reading the QR code…"
 msgstr "Leyendo el código QR…"
 
-#: internal/lightui/stocks.go:277
+#: internal/lightui/stocks.go:275
 msgid "Search for a symbol to add it."
 msgstr "Busque un símbolo para agregarlo."
 
-#: internal/lightui/stocks.go:284
+#: internal/lightui/stocks.go:282
 #: internal/mailui/window.go:994
 msgid "Loading %s…"
 msgstr "Cargando %s..."
 
-#: internal/lightui/stocks.go:297
+#: internal/lightui/stocks.go:295
 msgid "%s could not be read.\n%s"
 msgstr "No se pudo leer %[1]s.\n%[2]s"
 
-#: internal/lightui/stocks.go:320
+#: internal/lightui/stocks.go:318
 msgid "Previous close"
 msgstr "Cierre anterior"
 
-#: internal/lightui/stocks.go:322
+#: internal/lightui/stocks.go:320
 msgid "Range start"
 msgstr "Inicio de rango"
 
-#: internal/lightui/stocks.go:325
+#: internal/lightui/stocks.go:323
 #: internal/ui/settings_ai.go:100
 msgid "High"
 msgstr "Alto"
 
-#: internal/lightui/stocks.go:325
+#: internal/lightui/stocks.go:323
 #: internal/ui/settings_ai.go:100
 msgid "Low"
 msgstr "Bajo"
 
-#: internal/lightui/stocks.go:331
+#: internal/lightui/stocks.go:329
 msgid "As of %s"
 msgstr "Actualizado: %s"
 
-#: internal/lightui/stocks.go:331
+#: internal/lightui/stocks.go:329
 msgid "Jan 2, 15:04"
 msgstr "2 Jan 15:04"
 
-#: internal/lightui/stocks.go:407
+#: internal/lightui/stocks.go:405
 msgid "Nothing by that name"
 msgstr "Nada con ese nombre"
 
-#: internal/lightui/stocks.go:409
-#: internal/lightui/weather.go:475
+#: internal/lightui/stocks.go:407
+#: internal/lightui/weather.go:473
 msgid "Could not search: %s"
 msgstr "No se pudo buscar: %s"
 
-#: internal/lightui/sysmon.go:55
-#: internal/lightui/sysmon.go:55
+#: internal/lightui/sysmon.go:54
+#: internal/lightui/sysmon.go:54
 #: internal/shell/launcher_actions.go:45
 #: internal/termui/menubar.go:34
 #: internal/ui/dock.go:533
@@ -9710,474 +9710,474 @@ msgstr "No se pudo buscar: %s"
 msgid "Quit"
 msgstr "Salir"
 
-#: internal/lightui/sysmon.go:55
+#: internal/lightui/sysmon.go:54
 msgid "Asks it to quit. It can save its work first."
 msgstr "Le pide que se cierre. Puede guardar su trabajo primero."
 
-#: internal/lightui/sysmon.go:56
-#: internal/lightui/sysmon.go:56
+#: internal/lightui/sysmon.go:55
+#: internal/lightui/sysmon.go:55
 msgid "Interrupt"
 msgstr "Interrumpir"
 
-#: internal/lightui/sysmon.go:56
+#: internal/lightui/sysmon.go:55
 msgid "As Ctrl+C in a terminal."
 msgstr "Como Ctrl+C en una terminal."
 
-#: internal/lightui/sysmon.go:57
-#: internal/lightui/sysmon.go:57
+#: internal/lightui/sysmon.go:56
+#: internal/lightui/sysmon.go:56
 msgid "Hang Up"
 msgstr "Colgar"
 
-#: internal/lightui/sysmon.go:57
+#: internal/lightui/sysmon.go:56
 msgid "As closing its terminal. Many services reload instead."
 msgstr "Como cerrar su terminal. En su lugar, muchos servicios se recargan."
 
-#: internal/lightui/sysmon.go:58
+#: internal/lightui/sysmon.go:57
 msgid "Stops it running until it is resumed."
 msgstr "Detiene su ejecución hasta que se reanuda."
 
-#: internal/lightui/sysmon.go:59
-#: internal/lightui/sysmon.go:59
+#: internal/lightui/sysmon.go:58
+#: internal/lightui/sysmon.go:58
 msgid "Force Quit"
 msgstr "Forzar salida"
 
-#: internal/lightui/sysmon.go:59
+#: internal/lightui/sysmon.go:58
 msgid "Ends it at once. Work it has not saved is lost."
 msgstr "Lo finaliza de una vez. El trabajo que no ha guardado se pierde."
 
-#: internal/lightui/sysmon.go:60
+#: internal/lightui/sysmon.go:59
 msgid "Quit with Children"
 msgstr "Dejar de fumar con los niños"
 
+#: internal/lightui/sysmon.go:59
 #: internal/lightui/sysmon.go:60
-#: internal/lightui/sysmon.go:61
 msgid "Quit All"
 msgstr "Salir todo"
 
-#: internal/lightui/sysmon.go:61
+#: internal/lightui/sysmon.go:60
 msgid "Quit All by Name"
 msgstr "Salir de todos por nombre"
 
-#: internal/lightui/sysmon.go:145
-#: internal/lightui/sysmon.go:728
+#: internal/lightui/sysmon.go:144
+#: internal/lightui/sysmon.go:726
 #: ui/sysmon.ui:84
 msgid "CPU"
 msgstr "CPU"
 
-#: internal/lightui/sysmon.go:147
-#: internal/lightui/sysmon.go:728
-#: internal/lightui/sysmon.go:789
-#: internal/lightui/sysmon.go:993
+#: internal/lightui/sysmon.go:146
+#: internal/lightui/sysmon.go:726
+#: internal/lightui/sysmon.go:787
+#: internal/lightui/sysmon.go:991
 msgid "MEMORY"
 msgstr "MEMORIA"
 
-#: internal/lightui/sysmon.go:149
+#: internal/lightui/sysmon.go:148
 msgid "GPU"
 msgstr "GPU"
 
-#: internal/lightui/sysmon.go:151
-#: internal/lightui/sysmon.go:1039
+#: internal/lightui/sysmon.go:150
+#: internal/lightui/sysmon.go:1037
 #: internal/shell/dock.go:286
 #: internal/shell/dock.go:329
 msgid "NETWORK"
 msgstr "RED"
 
-#: internal/lightui/sysmon.go:152
+#: internal/lightui/sysmon.go:151
 #: internal/ui/settings_card.go:526
 msgid "DISK"
 msgstr "DISCO"
 
-#: internal/lightui/sysmon.go:154
+#: internal/lightui/sysmon.go:153
 msgid "BATTERY"
 msgstr "BATERÍA"
 
-#: internal/lightui/sysmon.go:395
+#: internal/lightui/sysmon.go:393
 msgid "%d threads"
 msgstr "Hilos %d"
 
-#: internal/lightui/sysmon.go:400
+#: internal/lightui/sysmon.go:398
 msgid "load %.2f %.2f %.2f"
 msgstr "cargar %.2[1]f %.2[2]f %.2[3]f"
 
-#: internal/lightui/sysmon.go:410
+#: internal/lightui/sysmon.go:408
 msgid "CPU %d: %.0f%%"
 msgstr "CPU %[1]d: %.0[2]f%%"
 
-#: internal/lightui/sysmon.go:419
+#: internal/lightui/sysmon.go:417
 msgid "of %s · cache %s"
 msgstr "de %[1]s · caché %[2]s"
 
-#: internal/lightui/sysmon.go:421
+#: internal/lightui/sysmon.go:419
 msgid " · swap %s of %s"
 msgstr "· intercambiar %[1]s por %[2]s"
 
-#: internal/lightui/sysmon.go:436
+#: internal/lightui/sysmon.go:434
 msgid " · video memory %s of %s"
 msgstr "· memoria de video %[1]s de %[2]s"
 
-#: internal/lightui/sysmon.go:448
+#: internal/lightui/sysmon.go:446
 msgid "↑ %s · received %s, sent %s"
 msgstr "↑ %[1]s · recibido %[2]s, enviado %[3]s"
 
-#: internal/lightui/sysmon.go:455
+#: internal/lightui/sysmon.go:453
 msgid "of %s on / · %s free"
 msgstr "de %[1]s en / · %[2]s libre"
 
-#: internal/lightui/sysmon.go:457
+#: internal/lightui/sysmon.go:455
 msgid " · read %s · write %s"
 msgstr "· leer %[1]s · escribir %[2]s"
 
-#: internal/lightui/sysmon.go:473
+#: internal/lightui/sysmon.go:471
 msgid "health %.0f%%"
 msgstr "salud %.0f%%"
 
-#: internal/lightui/sysmon.go:478
+#: internal/lightui/sysmon.go:476
 msgid "UP %s"
 msgstr "ARRIBA %s"
 
-#: internal/lightui/sysmon.go:540
+#: internal/lightui/sysmon.go:538
 msgid "%d PROCESSES"
 msgstr "PROCESOS %d"
 
-#: internal/lightui/sysmon.go:542
+#: internal/lightui/sysmon.go:540
 msgid "%d OF %d PROCESSES"
 msgstr "%[1]d DE PROCESOS %[2]d"
 
-#: internal/lightui/sysmon.go:546
+#: internal/lightui/sysmon.go:544
 msgid "No process matches."
 msgstr "Ningún proceso coincide."
 
-#: internal/lightui/sysmon.go:582
+#: internal/lightui/sysmon.go:580
 msgid "Details and the ways to end %s"
 msgstr "Detalles y formas de finalizar %s"
 
-#: internal/lightui/sysmon.go:610
+#: internal/lightui/sysmon.go:608
 msgid "Not sent: an administrator's password is needed."
 msgstr "No enviado: se necesita una contraseña de administrador."
 
-#: internal/lightui/sysmon.go:654
+#: internal/lightui/sysmon.go:652
 msgid "Process %d has ended."
 msgstr "El proceso %d ha finalizado."
 
-#: internal/lightui/sysmon.go:728
+#: internal/lightui/sysmon.go:726
 msgid "THREADS"
 msgstr "HILOS"
 
-#: internal/lightui/sysmon.go:744
+#: internal/lightui/sysmon.go:742
 msgid "END OR PAUSE"
 msgstr "FIN O PAUSA"
 
-#: internal/lightui/sysmon.go:785
+#: internal/lightui/sysmon.go:783
 msgid "PROCESS"
 msgstr "PROCESO"
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Parent"
 msgstr "Padre"
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "State"
 msgstr "Estado"
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Started"
 msgstr "Comenzado"
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "CPU time"
 msgstr "tiempo de CPU"
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Priority"
 msgstr "Prioridad"
 
-#: internal/lightui/sysmon.go:786
+#: internal/lightui/sysmon.go:784
 msgid "Unit"
 msgstr "Unidad"
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Resident"
 msgstr "Residente"
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Private"
 msgstr "Privado"
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Shared"
 msgstr "Compartido"
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Swapped out"
 msgstr "Intercambiado"
 
-#: internal/lightui/sysmon.go:790
+#: internal/lightui/sysmon.go:788
 msgid "Peak"
 msgstr "Pico"
 
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 msgid "Command"
 msgstr "Comando"
 
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 msgid "Disk read"
 msgstr "Lectura de disco"
 
-#: internal/lightui/sysmon.go:794
+#: internal/lightui/sysmon.go:792
 msgid "Disk written"
 msgstr "Disco escrito"
 
-#: internal/lightui/sysmon.go:808
+#: internal/lightui/sysmon.go:806
 msgid "PID %d · %s"
 msgstr "PID %[1]d · %[2]s"
 
-#: internal/lightui/sysmon.go:810
+#: internal/lightui/sysmon.go:808
 msgid "PID %d · ENDED"
 msgstr "PID %d · FINALIZADO"
 
-#: internal/lightui/sysmon.go:821
-#: internal/lightui/sysmon.go:1104
-#: internal/lightui/sysmon.go:1111
+#: internal/lightui/sysmon.go:819
+#: internal/lightui/sysmon.go:1102
+#: internal/lightui/sysmon.go:1109
 msgid "Not readable: not your process"
 msgstr "No legible: no es su proceso"
 
-#: internal/lightui/sysmon.go:844
+#: internal/lightui/sysmon.go:842
 msgid "%s · %s ago"
 msgstr "%[1]s · Hace %[2]s"
 
-#: internal/lightui/sysmon.go:844
+#: internal/lightui/sysmon.go:842
 #: internal/ui/settings_keyring.go:298
 msgid "Jan 2 15:04:05"
 msgstr "2 Jan 15:04:05"
 
-#: internal/lightui/sysmon.go:847
+#: internal/lightui/sysmon.go:845
 msgid "nice %d"
 msgstr "agradable %d"
 
-#: internal/lightui/sysmon.go:871
+#: internal/lightui/sysmon.go:869
 msgid "It is paused. Lets it go on."
 msgstr "Está en pausa. Vamos a seguir."
 
-#: internal/lightui/sysmon.go:875
+#: internal/lightui/sysmon.go:873
 msgid "Also its %d child process, the youngest first."
 msgid_plural "Also its %d child processes, the youngest first."
 msgstr[0] "También su proceso hijo %d, el más joven primero."
 msgstr[1] "También sus procesos hijos %d, el más joven primero."
 
-#: internal/lightui/sysmon.go:878
+#: internal/lightui/sysmon.go:876
 msgid "All %d processes named %s."
 msgstr "Todos los procesos %[1]d se denominan %[2]s."
 
-#: internal/lightui/sysmon.go:900
+#: internal/lightui/sysmon.go:898
 msgid "This process has ended."
 msgstr "Este proceso ha finalizado."
 
-#: internal/lightui/sysmon.go:931
+#: internal/lightui/sysmon.go:929
 msgid "Asked %s to quit."
 msgstr "Pidió a %s que saliera."
 
-#: internal/lightui/sysmon.go:933
+#: internal/lightui/sysmon.go:931
 msgid "Interrupted %s."
 msgstr "%s interrumpido."
 
-#: internal/lightui/sysmon.go:935
+#: internal/lightui/sysmon.go:933
 msgid "Hung up on %s."
 msgstr "Colgué en %s."
 
-#: internal/lightui/sysmon.go:937
+#: internal/lightui/sysmon.go:935
 msgid "Ended %s."
 msgstr "Finalizó %s."
 
-#: internal/lightui/sysmon.go:939
+#: internal/lightui/sysmon.go:937
 msgid "Paused %s."
 msgstr "%s en pausa."
 
-#: internal/lightui/sysmon.go:941
+#: internal/lightui/sysmon.go:939
 msgid "Resumed %s."
 msgstr "%s reanudado."
 
-#: internal/lightui/sysmon.go:945
+#: internal/lightui/sysmon.go:943
 msgid "Asked %s and its %d child to quit."
 msgid_plural "Asked %s and its %d children to quit."
 msgstr[0] "Pidió a %[1]s y a su hijo %[2]d que salieran."
 msgstr[1] "Pidió a %[1]s y a sus hijos %[2]d que abandonaran."
 
-#: internal/lightui/sysmon.go:948
+#: internal/lightui/sysmon.go:946
 msgid "Asked %d processes named %s to quit."
 msgstr "Pidió a los procesos %[1]d denominados %[2]s que salieran."
 
-#: internal/lightui/sysmon.go:966
+#: internal/lightui/sysmon.go:964
 msgid "COMPUTER"
 msgstr "COMPUTADORA"
 
-#: internal/lightui/sysmon.go:967
-#: internal/lightui/sysmon.go:979
+#: internal/lightui/sysmon.go:965
+#: internal/lightui/sysmon.go:977
 #: internal/shell/cardterm.go:113
 #: internal/ui/settings_ai.go:497
 msgid "Model"
 msgstr "Modelo"
 
-#: internal/lightui/sysmon.go:970
+#: internal/lightui/sysmon.go:968
 #: internal/shell/cardterm.go:136
 msgid "Kernel"
 msgstr "Núcleo"
 
-#: internal/lightui/sysmon.go:973
+#: internal/lightui/sysmon.go:971
 msgid "%s · since %s"
 msgstr "%[1]s · desde %[2]s"
 
-#: internal/lightui/sysmon.go:975
+#: internal/lightui/sysmon.go:973
 msgid "Up"
 msgstr "Arriba"
 
-#: internal/lightui/sysmon.go:978
+#: internal/lightui/sysmon.go:976
 msgid "PROCESSOR"
 msgstr "PROCESADOR"
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "Cores"
 msgstr "Núcleos"
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "%s, %s"
 msgstr "%[1]s, %[2]s"
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "%d core"
 msgid_plural "%d cores"
 msgstr[0] "Núcleo %d"
 msgstr[1] "Núcleos %d"
 
-#: internal/lightui/sysmon.go:980
+#: internal/lightui/sysmon.go:978
 msgid "%d thread"
 msgid_plural "%d threads"
 msgstr[0] "Rosca %d"
 msgstr[1] "Hilos %d"
 
-#: internal/lightui/sysmon.go:983
+#: internal/lightui/sysmon.go:981
 msgid "up to %s"
 msgstr "hasta %s"
 
-#: internal/lightui/sysmon.go:986
+#: internal/lightui/sysmon.go:984
 msgid "now %s"
 msgstr "ahora %s"
 
-#: internal/lightui/sysmon.go:989
+#: internal/lightui/sysmon.go:987
 msgid "Speed"
 msgstr "Velocidad"
 
-#: internal/lightui/sysmon.go:994
+#: internal/lightui/sysmon.go:992
 #: internal/lightui/workshop_manager.go:50
 msgid "Installed"
 msgstr "Instalado"
 
-#: internal/lightui/sysmon.go:995
+#: internal/lightui/sysmon.go:993
 #: internal/ui/voice_models.go:152
 msgid "In use"
 msgstr "En uso"
 
-#: internal/lightui/sysmon.go:996
+#: internal/lightui/sysmon.go:994
 msgid "Cache"
 msgstr "Caché"
 
-#: internal/lightui/sysmon.go:996
+#: internal/lightui/sysmon.go:994
 msgid "%s · given back when needed"
 msgstr "%s · devuelto cuando sea necesario"
 
-#: internal/lightui/sysmon.go:999
+#: internal/lightui/sysmon.go:997
 msgid "Swap"
 msgstr "Intercambiar"
 
-#: internal/lightui/sysmon.go:999
-#: internal/lightui/sysmon.go:1011
-#: internal/lightui/sysmon.go:1025
+#: internal/lightui/sysmon.go:997
+#: internal/lightui/sysmon.go:1009
+#: internal/lightui/sysmon.go:1023
 msgid "%s of %s"
 msgstr "%[1]s de %[2]s"
 
-#: internal/lightui/sysmon.go:1003
+#: internal/lightui/sysmon.go:1001
 msgid "GRAPHICS"
 msgstr "GRÁFICOS"
 
-#: internal/lightui/sysmon.go:1005
+#: internal/lightui/sysmon.go:1003
 #: internal/ui/voice_page.go:200
 msgid "Card"
 msgstr "Tarjeta"
 
-#: internal/lightui/sysmon.go:1006
+#: internal/lightui/sysmon.go:1004
 msgid "Driver"
 msgstr "Conductor"
 
-#: internal/lightui/sysmon.go:1008
+#: internal/lightui/sysmon.go:1006
 msgid "Busy"
 msgstr "Ocupado"
 
-#: internal/lightui/sysmon.go:1011
+#: internal/lightui/sysmon.go:1009
 msgid "Video memory"
 msgstr "Memoria de vídeo"
 
-#: internal/lightui/sysmon.go:1017
+#: internal/lightui/sysmon.go:1015
 msgid "STORAGE"
 msgstr "ALMACENAMIENTO"
 
-#: internal/lightui/sysmon.go:1041
+#: internal/lightui/sysmon.go:1039
 msgid "wired"
 msgstr "cableado"
 
-#: internal/lightui/sysmon.go:1043
+#: internal/lightui/sysmon.go:1041
 #: ui/control.ui:273
 #: ui/settings.ui:5438
 #: ui/settings.ui:5514
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
-#: internal/lightui/sysmon.go:1045
+#: internal/lightui/sysmon.go:1043
 msgid "down"
 msgstr "abajo"
 
-#: internal/lightui/sysmon.go:1047
+#: internal/lightui/sysmon.go:1045
 msgid "up"
 msgstr "arriba"
 
-#: internal/lightui/sysmon.go:1051
-#: internal/lightui/tailscale.go:634
+#: internal/lightui/sysmon.go:1049
+#: internal/lightui/tailscale.go:633
 msgid "Addresses"
 msgstr "Direcciones"
 
-#: internal/lightui/sysmon.go:1054
+#: internal/lightui/sysmon.go:1052
 msgid "Hardware"
 msgstr "Hardware"
 
-#: internal/lightui/sysmon.go:1057
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:571
+#: internal/lightui/sysmon.go:1055
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:570
 msgid "Traffic"
 msgstr "Tráfico"
 
-#: internal/lightui/sysmon.go:1057
+#: internal/lightui/sysmon.go:1055
 msgid "received %s · sent %s"
 msgstr "recibido %[1]s · enviado %[2]s"
 
-#: internal/lightui/sysmon.go:1063
+#: internal/lightui/sysmon.go:1061
 msgid "SENSORS"
 msgstr "SENSORES"
 
-#: internal/lightui/sysmon.go:1082
+#: internal/lightui/sysmon.go:1080
 msgid "Charging"
 msgstr "Cargando"
 
-#: internal/lightui/sysmon.go:1082
+#: internal/lightui/sysmon.go:1080
 msgid "Discharging"
 msgstr "Descarga"
 
-#: internal/lightui/sysmon.go:1082
+#: internal/lightui/sysmon.go:1080
 msgid "Full"
 msgstr "Completo"
 
-#: internal/lightui/sysmon.go:1083
+#: internal/lightui/sysmon.go:1081
 msgid "Not charging"
 msgstr "No cargando"
 
-#: internal/lightui/sysmon.go:1090
+#: internal/lightui/sysmon.go:1088
 msgid "%.1f s"
 msgstr "%.1f s"
 
@@ -10241,174 +10241,174 @@ msgstr "%s encendido."
 msgid "%s off."
 msgstr "%s apagado."
 
-#: internal/lightui/tailscale.go:305
+#: internal/lightui/tailscale.go:304
 msgid "Not changed: allow this app to manage Tailscale first."
 msgstr "No modificado: permita que esta aplicación administre Tailscale primero."
 
-#: internal/lightui/tailscale.go:307
+#: internal/lightui/tailscale.go:306
 msgid "Tailscale is not running."
 msgstr "Tailscale no se está ejecutando."
 
-#: internal/lightui/tailscale.go:349
+#: internal/lightui/tailscale.go:348
 #: internal/shell/status.go:99
 #: internal/shell/status.go:116
 #: internal/shell/status.go:131
 msgid "Unavailable"
 msgstr "No disponible"
 
-#: internal/lightui/tailscale.go:360
+#: internal/lightui/tailscale.go:359
 msgid "%d of %d devices online"
 msgstr "%[1]d de dispositivos %[2]d en línea"
 
-#: internal/lightui/tailscale.go:373
+#: internal/lightui/tailscale.go:372
 msgid "Tailscale's service is not running."
 msgstr "El servicio de Tailscale no se está ejecutando."
 
-#: internal/lightui/tailscale.go:373
+#: internal/lightui/tailscale.go:372
 msgid "Start…"
 msgstr "Iniciar…"
 
-#: internal/lightui/tailscale.go:374
+#: internal/lightui/tailscale.go:373
 msgid "Started Tailscale."
 msgstr "Tailscale iniciado."
 
-#: internal/lightui/tailscale.go:378
+#: internal/lightui/tailscale.go:377
 msgid "This device is logged out of its tailnet."
 msgstr "Este dispositivo está desconectado de su tailnet."
 
-#: internal/lightui/tailscale.go:378
+#: internal/lightui/tailscale.go:377
 msgid "Log In"
 msgstr "Iniciar sesión"
 
-#: internal/lightui/tailscale.go:381
+#: internal/lightui/tailscale.go:380
 msgid "An admin of the tailnet has to approve this device."
 msgstr "Un administrador de tailnet tiene que aprobar este dispositivo."
 
-#: internal/lightui/tailscale.go:381
-#: internal/lightui/tailscale.go:668
+#: internal/lightui/tailscale.go:380
+#: internal/lightui/tailscale.go:667
 msgid "Admin Console"
 msgstr "Consola de administración"
 
-#: internal/lightui/tailscale.go:384
+#: internal/lightui/tailscale.go:383
 msgid "To change Tailscale from here, allow it once; it asks for an administrator's password."
 msgstr "Para cambiar Tailscale desde aquí, permítalo una vez; pide una contraseña de administrador."
 
-#: internal/lightui/tailscale.go:384
+#: internal/lightui/tailscale.go:383
 msgid "Allow…"
 msgstr "Permitir…"
 
-#: internal/lightui/tailscale.go:386
+#: internal/lightui/tailscale.go:385
 msgid "This app may now manage Tailscale."
 msgstr "Esta aplicación ahora puede administrar Tailscale."
 
-#: internal/lightui/tailscale.go:418
+#: internal/lightui/tailscale.go:417
 msgid "No device matches."
 msgstr "Ningún dispositivo coincide."
 
-#: internal/lightui/tailscale.go:420
+#: internal/lightui/tailscale.go:419
 msgid "No other devices in the tailnet yet."
 msgstr "Aún no hay otros dispositivos en la red trasera."
 
-#: internal/lightui/tailscale.go:437
+#: internal/lightui/tailscale.go:436
 msgid "exit node in use"
 msgstr "nodo de salida en uso"
 
-#: internal/lightui/tailscale.go:439
+#: internal/lightui/tailscale.go:438
 msgid "exit node"
 msgstr "nodo de salida"
 
-#: internal/lightui/tailscale.go:449
+#: internal/lightui/tailscale.go:448
 msgid "Details, ping, exit node and sending files"
 msgstr "Detalles, ping, nodo de salida y envío de archivos"
 
-#: internal/lightui/tailscale.go:509
+#: internal/lightui/tailscale.go:508
 msgid "Copy IP"
 msgstr "Copiar IP"
 
-#: internal/lightui/tailscale.go:509
+#: internal/lightui/tailscale.go:508
 msgid "Copy Name"
 msgstr "Copiar nombre"
 
-#: internal/lightui/tailscale.go:509
+#: internal/lightui/tailscale.go:508
 #: ui/connect.ui:622
 msgid "Ping"
 msgstr "Ping"
 
-#: internal/lightui/tailscale.go:517
-#: internal/lightui/tailscale.go:579
+#: internal/lightui/tailscale.go:516
+#: internal/lightui/tailscale.go:578
 msgid "Use as Exit Node"
 msgstr "Uso como nodo de salida"
 
-#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:525
 msgid "DEVICE"
 msgstr "DISPOSITIVO"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:565
-#: internal/lightui/tailscale.go:633
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:564
+#: internal/lightui/tailscale.go:632
 msgid "MagicDNS"
 msgstr "MagicDNS"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:566
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:565
 msgid "IPv4"
 msgstr "IPv4"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:567
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:566
 msgid "IPv6"
 msgstr "IPv6"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:569
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:568
 msgid "Status"
 msgstr "Estado"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:570
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:569
 #: internal/term/web/strings.go:32
 msgid "Connection"
 msgstr "Conexión"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:572
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:571
 msgid "Key expires"
 msgstr "La clave caduca"
 
-#: internal/lightui/tailscale.go:527
-#: internal/lightui/tailscale.go:573
+#: internal/lightui/tailscale.go:526
+#: internal/lightui/tailscale.go:572
 msgid "Tags"
 msgstr "Etiquetas"
 
-#: internal/lightui/tailscale.go:530
+#: internal/lightui/tailscale.go:529
 msgid "SEND FILES"
 msgstr "ENVIAR ARCHIVOS"
 
-#: internal/lightui/tailscale.go:546
+#: internal/lightui/tailscale.go:545
 msgid "NO LONGER IN THE TAILNET"
 msgstr "YA NO EN LA RED TRASERA"
 
-#: internal/lightui/tailscale.go:568
+#: internal/lightui/tailscale.go:567
 msgid "%s · host name %s"
 msgstr "%[1]s · nombre de host %[2]s"
 
-#: internal/lightui/tailscale.go:574
+#: internal/lightui/tailscale.go:573
 msgid "Drop files on this panel to send them to %s with Taildrop. They wait on it until saved."
 msgstr "Suelte archivos en este panel para enviarlos a %s con Taildrop. Esperan hasta que sean salvos."
 
-#: internal/lightui/tailscale.go:577
+#: internal/lightui/tailscale.go:576
 msgid "Stop Using as Exit Node"
 msgstr "Dejar de utilizar como nodo de salida"
 
-#: internal/lightui/tailscale.go:586
+#: internal/lightui/tailscale.go:585
 msgid "SEND THIS DEVICE'S TRAFFIC THROUGH"
 msgstr "ENVIAR EL TRÁFICO DE ESTE DISPOSITIVO A TRAVÉS"
 
-#: internal/lightui/tailscale.go:596
+#: internal/lightui/tailscale.go:595
 msgid "IN USE"
 msgstr "EN USO"
 
-#: internal/lightui/tailscale.go:603
+#: internal/lightui/tailscale.go:602
 #: internal/termui/prefs.go:347
 #: internal/ui/settings_ai.go:272
 #: internal/ui/settings_keyring.go:572
@@ -10417,168 +10417,168 @@ msgstr "EN USO"
 msgid "None"
 msgstr "Ninguno"
 
-#: internal/lightui/tailscale.go:603
+#: internal/lightui/tailscale.go:602
 msgid "Traffic goes out from this device as usual."
 msgstr "El tráfico sale de este dispositivo como de costumbre."
 
-#: internal/lightui/tailscale.go:611
+#: internal/lightui/tailscale.go:610
 msgid "No device in the tailnet offers to be an exit node. Turn on Offer as Exit Node on one, then approve it in the admin console."
 msgstr "Ningún dispositivo en la red de cola ofrece ser un nodo de salida. Active Oferta como nodo de salida en uno y luego apruebe en la consola de administración."
 
-#: internal/lightui/tailscale.go:618
+#: internal/lightui/tailscale.go:617
 msgid "Allow local network access"
 msgstr "Permitir el acceso a la red local"
 
-#: internal/lightui/tailscale.go:619
+#: internal/lightui/tailscale.go:618
 msgid "Reach printers and other devices on this network while the exit node carries the rest."
 msgstr "Llegar a impresoras y otros dispositivos en esta red mientras el nodo de salida lleva el resto."
 
-#: internal/lightui/tailscale.go:630
+#: internal/lightui/tailscale.go:629
 #: ui/tailscale.ui:170
 msgid "THIS DEVICE"
 msgstr "ESTE DISPOSITIVO"
 
-#: internal/lightui/tailscale.go:637
+#: internal/lightui/tailscale.go:636
 msgid "Tailnet"
 msgstr "Red Tailscale"
 
-#: internal/lightui/tailscale.go:639
+#: internal/lightui/tailscale.go:638
 msgid "SETTINGS"
 msgstr "CONFIGURACIÓN"
 
-#: internal/lightui/tailscale.go:648
+#: internal/lightui/tailscale.go:647
 msgid "RECEIVED FILES"
 msgstr "ARCHIVOS RECIBIDOS"
 
-#: internal/lightui/tailscale.go:651
+#: internal/lightui/tailscale.go:650
 msgid "Files sent to this device show here once this app may manage Tailscale."
 msgstr "Los archivos enviados a este dispositivo se muestran aquí una vez que esta aplicación puede administrar Tailscale."
 
-#: internal/lightui/tailscale.go:655
+#: internal/lightui/tailscale.go:654
 msgid "None waiting. Files other devices send with Taildrop show here."
 msgstr "Ninguno esperando. Los archivos que otros dispositivos envían con Taildrop se muestran aquí."
 
-#: internal/lightui/tailscale.go:660
+#: internal/lightui/tailscale.go:659
 msgid "Save to Downloads"
 msgstr "Guardar en Descargas"
 
-#: internal/lightui/tailscale.go:663
+#: internal/lightui/tailscale.go:662
 msgid "ACCOUNT"
 msgstr "CUENTA"
 
-#: internal/lightui/tailscale.go:664
+#: internal/lightui/tailscale.go:663
 #: internal/shell/commands.go:31
 msgid "Log Out"
 msgstr "Cerrar sesión"
 
-#: internal/lightui/tailscale.go:666
+#: internal/lightui/tailscale.go:665
 msgid "Sure?"
 msgstr "¿Confirmar?"
 
-#: internal/lightui/tailscale.go:751
+#: internal/lightui/tailscale.go:750
 msgid "No exit node: traffic goes out from this device."
 msgstr "No hay nodo de salida: el tráfico sale de este dispositivo."
 
-#: internal/lightui/tailscale.go:753
-#: internal/lightui/tailscale.go:764
+#: internal/lightui/tailscale.go:752
+#: internal/lightui/tailscale.go:763
 msgid "Traffic now goes through %s."
 msgstr "El tráfico ahora pasa por %s."
 
-#: internal/lightui/tailscale.go:762
+#: internal/lightui/tailscale.go:761
 msgid "Stopped using %s as exit node."
 msgstr "Se dejó de usar %s como nodo de salida."
 
-#: internal/lightui/tailscale.go:784
+#: internal/lightui/tailscale.go:783
 msgid "Logged out."
 msgstr "Cerrado la sesión."
 
-#: internal/lightui/tailscale.go:807
+#: internal/lightui/tailscale.go:806
 msgid "Pinging %s…"
 msgstr "Haciendo ping a %s…"
 
-#: internal/lightui/tailscale.go:821
+#: internal/lightui/tailscale.go:820
 msgid "%s did not answer"
 msgstr "%s no respondió"
 
-#: internal/lightui/tailscale.go:824
+#: internal/lightui/tailscale.go:823
 msgid "%s answered in %.0f ms"
 msgstr "%[1]s respondido en %.0[2]f ms"
 
-#: internal/lightui/tailscale.go:825
+#: internal/lightui/tailscale.go:824
 msgid "Direct, %s"
 msgstr "Directo, %s"
 
-#: internal/lightui/tailscale.go:827
+#: internal/lightui/tailscale.go:826
 msgid "Relayed through %s"
 msgstr "Retransmitido a través de %s"
 
-#: internal/lightui/tailscale.go:843
+#: internal/lightui/tailscale.go:842
 msgid "Sending %s to %s…"
 msgstr "Enviando %[1]s a %[2]s..."
 
-#: internal/lightui/tailscale.go:868
+#: internal/lightui/tailscale.go:867
 msgid "Sent %s to %s."
 msgstr "Envió %[1]s a %[2]s."
 
-#: internal/lightui/tailscale.go:905
+#: internal/lightui/tailscale.go:904
 msgid "Saved %s to %s."
 msgstr "%[1]s guardado en %[2]s."
 
-#: internal/lightui/tailscale.go:916
+#: internal/lightui/tailscale.go:915
 msgid "Opening the login page…"
 msgstr "Abriendo la página de inicio de sesión…"
 
-#: internal/lightui/tailscale.go:943
+#: internal/lightui/tailscale.go:942
 msgid "No password prompt is running in this session (a polkit agent); run in a terminal: sudo %s"
 msgstr "No se está ejecutando ninguna solicitud de contraseña en esta sesión (un agente polkit); ejecutar en una terminal: sudo %s"
 
-#: internal/lightui/tailscale.go:945
+#: internal/lightui/tailscale.go:944
 msgid "not done: no administrator's password was given"
 msgstr "no hecho: no se proporcionó ninguna contraseña de administrador"
 
-#: internal/lightui/video.go:307
+#: internal/lightui/video.go:306
 msgid "Resumed at %s"
 msgstr "Continuado en %s"
 
-#: internal/lightui/video.go:396
+#: internal/lightui/video.go:395
 msgid "Playing a video"
 msgstr "Reproduciendo un vídeo"
 
-#: internal/lightui/video.go:419
+#: internal/lightui/video.go:418
 msgid "Cannot play it: %s"
 msgstr "No se puede reproducir: %s"
 
-#: internal/lightui/video.go:577
+#: internal/lightui/video.go:576
 msgid "Speed %s×"
 msgstr "Velocidad %s×"
 
-#: internal/lightui/video.go:686
+#: internal/lightui/video.go:685
 msgid "Open a video"
 msgstr "Abrir un vídeo"
 
-#: internal/lightui/video.go:694
+#: internal/lightui/video.go:693
 msgid "Videos"
 msgstr "Vídeos"
 
-#: internal/lightui/weather.go:258
+#: internal/lightui/weather.go:256
 msgid "Add a city to see its weather."
 msgstr "Agregue una ciudad para ver su clima."
 
-#: internal/lightui/weather.go:258
+#: internal/lightui/weather.go:256
 #: ui/clock.ui:122
 #: ui/weather.ui:95
 msgid "Add a city"
 msgstr "Agregar una ciudad"
 
-#: internal/lightui/weather.go:264
+#: internal/lightui/weather.go:262
 msgid "Reading the weather…"
 msgstr "Leyendo el tiempo…"
 
-#: internal/lightui/weather.go:276
+#: internal/lightui/weather.go:274
 msgid "The weather could not be read.\n%s"
 msgstr "No se pudo leer el tiempo.\n%s"
 
-#: internal/lightui/weather.go:276
+#: internal/lightui/weather.go:274
 #: internal/mailui/panel.go:307
 #: internal/ui/passwords.go:534
 #: ui/mail-compose.ui:456
@@ -10586,43 +10586,43 @@ msgstr "No se pudo leer el tiempo.\n%s"
 msgid "Try again"
 msgstr "Inténtalo de nuevo"
 
-#: internal/lightui/weather.go:325
+#: internal/lightui/weather.go:323
 msgid "H %s   L %s"
 msgstr "H %[1]s L %[2]s"
 
-#: internal/lightui/weather.go:334
+#: internal/lightui/weather.go:332
 msgid "NOW"
 msgstr "AHORA"
 
-#: internal/lightui/weather.go:397
+#: internal/lightui/weather.go:395
 msgid "FEELS LIKE"
 msgstr "SENSACIÓN TÉRMICA"
 
-#: internal/lightui/weather.go:398
+#: internal/lightui/weather.go:396
 msgid "HUMIDITY"
 msgstr "HUMEDAD"
 
-#: internal/lightui/weather.go:399
+#: internal/lightui/weather.go:397
 msgid "WIND"
 msgstr "VIENTO"
 
-#: internal/lightui/weather.go:400
+#: internal/lightui/weather.go:398
 msgid "RAIN"
 msgstr "LLUVIA"
 
-#: internal/lightui/weather.go:405
+#: internal/lightui/weather.go:403
 msgid "SUNRISE"
 msgstr "AMANECER"
 
-#: internal/lightui/weather.go:406
+#: internal/lightui/weather.go:404
 msgid "SUNSET"
 msgstr "PUESTA DEL SOL"
 
-#: internal/lightui/weather.go:428
+#: internal/lightui/weather.go:426
 msgid "UPDATED %s · OPEN-METEO"
 msgstr "ACTUALIZADO %s · OPEN-METEO"
 
-#: internal/lightui/weather.go:473
+#: internal/lightui/weather.go:471
 msgid "No place by that name"
 msgstr "Ningún lugar con ese nombre"
 
@@ -10631,35 +10631,35 @@ msgstr "Ningún lugar con ese nombre"
 msgid "Workshop"
 msgstr "Taller"
 
-#: internal/lightui/workshop.go:210
+#: internal/lightui/workshop.go:209
 msgid "Starting %s…"
 msgstr "Iniciando %s…"
 
-#: internal/lightui/workshop.go:223
+#: internal/lightui/workshop.go:222
 msgid "%s could not start"
 msgstr "%s no pudo iniciarse"
 
-#: internal/lightui/workshop.go:234
+#: internal/lightui/workshop.go:233
 msgid "It ended without an error."
 msgstr "Terminó sin error."
 
-#: internal/lightui/workshop.go:238
+#: internal/lightui/workshop.go:237
 msgid "%s stopped"
 msgstr "%s se detuvo"
 
-#: internal/lightui/workshop.go:289
+#: internal/lightui/workshop.go:288
 msgid "Start again"
 msgstr "Iniciar de nuevo"
 
-#: internal/lightui/workshop.go:295
+#: internal/lightui/workshop.go:294
 msgid "It starts again by itself when a file of it changes."
 msgstr "Se inicia de nuevo sola cuando cambia uno de sus archivos."
 
-#: internal/lightui/workshop.go:690
+#: internal/lightui/workshop.go:689
 msgid "Unknown building block %q"
 msgstr "Bloque desconocido %q"
 
-#: internal/lightui/workshop.go:988
+#: internal/lightui/workshop.go:987
 #: internal/term/web/strings.go:81
 #: internal/ui/askpass.go:300
 #: internal/ui/settings_card.go:624
