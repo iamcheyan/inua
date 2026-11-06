@@ -11,6 +11,7 @@ import (
 	"codeberg.org/puregotk/puregotk/v4/gtk"
 
 	"github.com/lyricat/inua/internal/apps/files"
+	"github.com/lyricat/inua/internal/appui"
 	"github.com/lyricat/inua/internal/config"
 	"github.com/lyricat/inua/internal/desktop"
 	"github.com/lyricat/inua/internal/i18n"
@@ -43,6 +44,7 @@ type window struct {
 
 	side     []sideItem // the sidebar's entries, for Alt+1 … Alt+9
 	sideMenu *popMenu
+	menu     *appui.MenuBar
 	sidePtr  []uintptr
 	card     *card
 	jobs     jobs
@@ -161,6 +163,8 @@ func (a *App) newWindow() *window {
 	w.dualToggle.SetActive(s.Dual)
 	w.sideMenu = newPopMenu(a.h, &w.sidebarCol.Widget)
 	w.buildSidebar()
+	w.menu = w.menuBar()
+	w.menu.AppendLocal(&w.sidebarCol)
 	return w
 }
 
@@ -246,6 +250,9 @@ func (w *window) closeRequested() bool {
 	w.app.h.forget(w.owned)
 	w.app.h.forget(w.sidePtr)
 	w.sideMenu.destroy()
+	if w.menu != nil {
+		w.menu.Close()
+	}
 	for _, p := range w.p {
 		w.app.h.forget(p.crumbPtr)
 	}
