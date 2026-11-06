@@ -125,6 +125,9 @@ show_dock = true
 # Show the line under the overview's cards: the controls, and the window
 # under the pointer.
 hints = true
+# The control shortcut in the overview: a new workspace with the launcher,
+# and the same shortcut back to the overview.
+launcher_workspace = true
 # What the overview shows on its cards: "thumbnails" or "icons".
 style = "icons"
 

@@ -113,6 +113,9 @@ type Overview struct {
 	// Hints shows the line under the overview's cards: the controls, and
 	// the window under the pointer.
 	Hints bool `toml:"hints"`
+	// LauncherWorkspace makes the control shortcut, while the overview is
+	// open, go to a new workspace with the launcher and back.
+	LauncherWorkspace bool `toml:"launcher_workspace"`
 	// Style is how the overview draws its cards: "thumbnails" or "icons".
 	Style string `toml:"style"`
 }
@@ -1021,7 +1024,7 @@ func Default() Config {
 			MenuOn:        []string{},
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
-		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true, Hints: true, Style: "icons"},
+		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true, Hints: true, LauncherWorkspace: true, Style: "icons"},
 		Control: Control{
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",

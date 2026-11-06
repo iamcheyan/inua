@@ -150,7 +150,7 @@ func (s *shellUI) bindControlHandlers() {
 }
 
 func (s *shellUI) toggleControl() {
-	if s.overview.win != nil {
+	if s.cfg.Overview.LauncherWorkspace && s.overview.win != nil {
 		s.newWorkspaceLauncher()
 		return
 	}

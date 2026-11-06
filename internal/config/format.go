@@ -16,7 +16,7 @@ func Format(c Config) string {
 	return fmt.Sprintf(template,
 		q(c.Language),
 		c.Bar.Enable, q(c.Bar.Density), c.Bar.IconSize, c.Bar.IconSpacing, q(c.Bar.Clock), q(c.Bar.ClockLanguage), q(c.Bar.Workspaces), c.Bar.Title, q(c.Bar.TitleMode), c.Bar.Tray, c.Bar.Pass, c.Bar.Menu,
-		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor, c.Overview.ShowDock, c.Overview.Hints, q(c.Overview.Style),
+		q(c.Launcher.Mode), q(c.Launcher.Terminal), q(c.Launcher.Search), quicklinks(c.Launcher.Quicklinks), c.Overview.MRU, c.Overview.PerMonitor, c.Overview.ShowDock, c.Overview.Hints, c.Overview.LauncherWorkspace, q(c.Overview.Style),
 		q(c.Control.Lock), q(c.Control.Screenshot),
 		q(c.Screenshot.Folder), c.Screenshot.Copy, q(c.Screenshot.Recordings),
 		c.OSD.Enable, q(c.OSD.Position),
@@ -281,6 +281,9 @@ show_dock = %t
 # Show the line under the overview's cards: the controls, and the window
 # under the pointer.
 hints = %t
+# The control shortcut in the overview: a new workspace with the launcher,
+# and the same shortcut back to the overview.
+launcher_workspace = %t
 # What the overview shows on its cards: "thumbnails" or "icons".
 style = %s
 
