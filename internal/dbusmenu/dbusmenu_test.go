@@ -1,6 +1,8 @@
 package dbusmenu_test
 
 import (
+	"os"
+
 	"github.com/godbus/dbus/v5"
 
 	"github.com/lyricat/inua/internal/appmenu"
@@ -9,6 +11,23 @@ import (
 	"testing"
 	"time"
 )
+
+// A menu published by Publish is found for the process that published it,
+// without registering an X11 window with the Canonical registrar.
+func TestPublishedMenuFound(t *testing.T) {
+	addr := dbustest.Start(t)
+	t.Setenv("DBUS_SESSION_BUS_ADDRESS", addr)
+	p, err := dbusmenu.Publish([]dbusmenu.Node{{Label: "File", Enabled: true}}, func(string) {})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer p.Close()
+	client := appmenu.NewClient(appmenu.New(dbustest.Conn(t, addr)), nil)
+	entries, err := client.Menu(os.Getpid())
+	if err != nil || len(entries) != 1 || entries[0].Label != "File" {
+		t.Fatalf("menu=%+v err=%v", entries, err)
+	}
+}
 
 func TestPublishMenuRoundTrip(t *testing.T) {
 	addr := dbustest.Start(t)
