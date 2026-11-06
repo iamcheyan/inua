@@ -67,7 +67,10 @@ type Bar struct {
 	// Workspaces is "monitor" (this bar's monitor), "all", or "none" to hide the indicator.
 	Workspaces string `toml:"workspaces"`
 	Title      bool   `toml:"title"`
-	Tray       bool   `toml:"tray"`
+	// TitleMode is "app" for the application's name or "window" for its
+	// focused window's title.
+	TitleMode string `toml:"title_mode"`
+	Tray      bool   `toml:"tray"`
 	// Pass shows a button that searches the password store (the Pass
 	// app's) and copies from it, when there is a store.
 	Pass bool `toml:"pass"`
@@ -1007,6 +1010,7 @@ func Default() Config {
 			ClockLanguage: "auto",
 			Workspaces:    "monitor",
 			Title:         true,
+			TitleMode:     "app",
 			Tray:          true,
 			Pass:          true,
 			Menu:          false,
@@ -1104,6 +1108,7 @@ func (c *Config) validate() []string {
 		*v = def
 	}
 	oneOf("bar.workspaces", &c.Bar.Workspaces, d.Bar.Workspaces, "monitor", "all", "none")
+	oneOf("bar.title_mode", &c.Bar.TitleMode, d.Bar.TitleMode, "app", "window")
 	oneOf("bar.density", &c.Bar.Density, d.Bar.Density, "default", "compact")
 	if c.Bar.IconSize < 12 || c.Bar.IconSize > 24 {
 		w = append(w, fmt.Sprintf("bar.icon_size = %d: want 12 to 24; using %d", c.Bar.IconSize, d.Bar.IconSize))

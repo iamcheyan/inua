@@ -42,8 +42,12 @@ clock_language = "auto"
 # "none": hide the workspace indicator.
 workspaces = "monitor"
 
-# Show the focused window's title.
+# Show the focused application's icon and label.
 title = true
+
+# The label beside the icon: "app" for the application's name, "window"
+# for the focused window's title.
+title_mode = "app"
 
 # Show tray (StatusNotifierItem) icons.
 tray = true

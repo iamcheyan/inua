@@ -460,6 +460,9 @@ func (b *bar) setApp(s *shellUI, t hypr.Toplevel) {
 	if e := s.dockState.apps.ForClass(t.Class); e != nil {
 		name, icon = shell.AppName(e), e.Icon
 	}
+	if s.cfg.Bar.TitleMode == "window" && t.Title != "" {
+		name = t.Title
+	}
 	if b.appName == name && b.appIconName == icon {
 		return
 	}
