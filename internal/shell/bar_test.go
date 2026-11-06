@@ -70,8 +70,34 @@ func TestBarTitle(t *testing.T) {
 			t.Errorf("%s: %q, want %q", c.connector, got, c.want)
 		}
 	}
+	// Focus moves to the other monitor: the bar there shows the focused
+	// window, and this monitor's bar keeps its own.
+	snap.ActiveToplevel = "0x3"
+	snap.FocusedMonitor = "HDMI-A-1"
+	for _, c := range []struct{ connector, want string }{
+		{"eDP-1", "shell"},
+		{"HDMI-A-1", "docs"},
+	} {
+		if got := BarTitle(snap, c.connector); got != c.want {
+			t.Errorf("focus on HDMI, %s: %q, want %q", c.connector, got, c.want)
+		}
+	}
+	// The focused monitor may already be the new one while the active
+	// window is still the old one: neither bar changes.
+	snap.ActiveToplevel = "0x3"
+	snap.FocusedMonitor = "eDP-1"
+	for _, c := range []struct{ connector, want string }{
+		{"eDP-1", "shell"},
+		{"HDMI-A-1", "docs"},
+	} {
+		if got := BarTitle(snap, c.connector); got != c.want {
+			t.Errorf("lagging focus, %s: %q, want %q", c.connector, got, c.want)
+		}
+	}
+	// Nothing focused: each bar keeps the last focused one it had.
 	snap.ActiveToplevel = ""
-	if got := BarTitle(snap, "eDP-1"); got != "" {
+	snap.FocusedMonitor = "eDP-1"
+	if got := BarTitle(snap, "eDP-1"); got != "shell" {
 		t.Errorf("nothing focused: %q", got)
 	}
 }

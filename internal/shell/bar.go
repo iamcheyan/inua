@@ -35,18 +35,20 @@ func BarTitle(snap hypr.Snapshot, connector string) string {
 	return BarWindow(snap, connector).Title
 }
 
-// BarWindow is the window the bar on a monitor names: the focused window's
-// on the focused monitor, elsewhere the window last focused on that
-// monitor's visible workspace. The bar shows the application's icon and
-// name from it, not the window's title. Its zero value is no window.
+// BarWindow is the window the bar on a monitor names: the focused window
+// when it is that monitor's, elsewhere the window last focused on that
+// monitor's visible workspace. A bar never takes the focused window of
+// another monitor, so moving the focus across monitors leaves it unchanged;
+// the focused monitor may already be the new one when the active window is
+// still the old one. The bar shows the application's icon and name from it,
+// not the window's title. Its zero value is no window.
 func BarWindow(snap hypr.Snapshot, connector string) hypr.Toplevel {
-	if !knownMonitor(snap, connector) || connector == snap.FocusedMonitor {
-		for _, t := range snap.Toplevels {
-			if t.Address == snap.ActiveToplevel {
-				return t
-			}
-		}
-		return hypr.Toplevel{}
+	if !knownMonitor(snap, connector) {
+		t, _ := focusedToplevel(snap)
+		return t
+	}
+	if t, ok := focusedToplevel(snap); ok && windowOnMonitor(snap, t, connector) {
+		return t
 	}
 	ws := 0
 	for _, m := range snap.Monitors {
@@ -64,6 +66,31 @@ func BarWindow(snap hypr.Snapshot, connector string) hypr.Toplevel {
 		}
 	}
 	return found
+}
+
+// focusedToplevel is the focused window, or false when none is.
+func focusedToplevel(snap hypr.Snapshot) (hypr.Toplevel, bool) {
+	for _, t := range snap.Toplevels {
+		if t.Address == snap.ActiveToplevel {
+			return t, true
+		}
+	}
+	return hypr.Toplevel{}, false
+}
+
+// windowOnMonitor reports whether t is on the monitor named connector. A
+// window's monitor is set, or the workspace it is on says which monitor
+// shows it.
+func windowOnMonitor(snap hypr.Snapshot, t hypr.Toplevel, connector string) bool {
+	if t.Monitor != "" {
+		return t.Monitor == connector
+	}
+	for _, w := range snap.Workspaces {
+		if w.ID == t.WorkspaceID {
+			return w.Monitor == connector
+		}
+	}
+	return false
 }
 
 // BarReach finds which of the bar's buttons at its end, left to right, a
