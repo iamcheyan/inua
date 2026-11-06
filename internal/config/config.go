@@ -110,6 +110,9 @@ type Overview struct {
 	MRU        bool `toml:"mru"`
 	PerMonitor bool `toml:"per_monitor"`
 	ShowDock   bool `toml:"show_dock"`
+	// Hints shows the line under the overview's cards: the controls, and
+	// the window under the pointer.
+	Hints bool `toml:"hints"`
 	// Style is how the overview draws its cards: "thumbnails" or "icons".
 	Style string `toml:"style"`
 }
@@ -1018,7 +1021,7 @@ func Default() Config {
 			MenuOn:        []string{},
 		},
 		Launcher: Launcher{Mode: "apps", Search: "https://www.google.com/search?q=%s", Quicklinks: slices.Clone(DefaultQuicklinks)},
-		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true, Style: "icons"},
+		Overview: Overview{MRU: false, PerMonitor: true, ShowDock: true, Hints: true, Style: "icons"},
 		Control: Control{
 			Lock:       "inua call lock now",
 			Screenshot: "inua call screenshot area",

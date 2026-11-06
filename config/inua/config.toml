@@ -122,6 +122,9 @@ mru = false
 per_monitor = true
 # Show the dock above the workspace overview while it is open.
 show_dock = true
+# Show the line under the overview's cards: the controls, and the window
+# under the pointer.
+hints = true
 # What the overview shows on its cards: "thumbnails" or "icons".
 style = "icons"
 
