@@ -2918,6 +2918,7 @@ msgid "Size"
 msgstr "Tamaño"
 
 #: internal/diskui/details.go:49
+#: internal/ui/appmenu.go:617
 #: internal/ui/settings_menu.go:25
 msgid "File"
 msgid_plural "Files"
@@ -3158,7 +3159,7 @@ msgstr "Carpeta personal"
 #: internal/lightui/sysmon.go:969
 #: internal/lightui/tailscale.go:527
 #: internal/lightui/tailscale.go:568
-#: internal/ui/appmenu.go:464
+#: internal/ui/appmenu.go:478
 #: internal/ui/bar.go:481
 #: internal/ui/settings.go:724
 #: ui/vm.ui:2981
@@ -3596,7 +3597,7 @@ msgstr[1] "… y %d más"
 #: internal/term/web/strings.go:30
 #: internal/termui/keys.go:295
 #: internal/termui/wsmenu.go:129
-#: internal/ui/appmenu.go:667
+#: internal/ui/appmenu.go:709
 #: internal/ui/settings_bench.go:132
 #: internal/ui/settings_menu.go:26
 #: internal/ui/settings_wifi_details.go:62
@@ -8460,7 +8461,7 @@ msgstr "PINBALL ESPACIAL"
 
 #: internal/hyprconf/keys.go:23
 #: internal/shell/dock.go:312
-#: internal/ui/appmenu.go:442
+#: internal/ui/appmenu.go:456
 #: ui/settings.ui:2601
 msgid "Launcher"
 msgstr "Lanzador"
@@ -8501,7 +8502,7 @@ msgstr "Enfoque activado o desactivado"
 #: internal/term/settings/settings.go:125
 #: internal/term/web/strings.go:96
 #: internal/termui/headmenu.go:110
-#: internal/ui/appmenu.go:441
+#: internal/ui/appmenu.go:455
 #: ui/control.ui:58
 #: ui/settings.ui:30
 msgid "Settings"
@@ -10509,7 +10510,7 @@ msgstr "CUENTA"
 
 #: internal/lightui/tailscale.go:664
 #: internal/shell/commands.go:31
-#: internal/ui/appmenu.go:447
+#: internal/ui/appmenu.go:461
 msgid "Log Out"
 msgstr "Cerrar sesión"
 
@@ -12801,7 +12802,7 @@ msgid "Desktop"
 msgstr "Escritorio"
 
 #: internal/shell/commands.go:27
-#: internal/ui/appmenu.go:446
+#: internal/ui/appmenu.go:460
 msgid "Lock Screen"
 msgstr "Bloquear pantalla"
 
@@ -12820,7 +12821,7 @@ msgstr "Suspender, bloquear primero"
 
 #: internal/shell/commands.go:29
 #: internal/termui/restart.go:44
-#: internal/ui/appmenu.go:454
+#: internal/ui/appmenu.go:468
 #: internal/ui/control.go:522
 #: ui/control.ui:168
 msgid "Restart"
@@ -12835,7 +12836,7 @@ msgid "Press Enter again to restart"
 msgstr "Pulsa Enter otra vez para reiniciar"
 
 #: internal/shell/commands.go:30
-#: internal/ui/appmenu.go:455
+#: internal/ui/appmenu.go:469
 msgid "Shut Down"
 msgstr "Apagar"
 
@@ -12973,7 +12974,8 @@ msgid "Start the shell again"
 msgstr "Iniciar el shell nuevamente"
 
 #: internal/shell/commands.go:46
-#: internal/ui/appmenu.go:601
+#: internal/ui/appmenu.go:618
+#: internal/ui/appmenu.go:643
 msgid "Close Window"
 msgstr "Cerrar ventana"
 
@@ -13051,7 +13053,7 @@ msgid "Find apps, windows and answers"
 msgstr "Encuentra aplicaciones, ventanas y respuestas"
 
 #: internal/shell/dock.go:313
-#: internal/ui/appmenu.go:443
+#: internal/ui/appmenu.go:457
 #: internal/ui/screenshot.go:1154
 #: ui/settings.ui:2561
 msgid "Screenshot"
@@ -13228,14 +13230,14 @@ msgid "Performance"
 msgstr "Rendimiento"
 
 #: internal/shell/power.go:24
-#: internal/ui/appmenu.go:452
+#: internal/ui/appmenu.go:466
 #: internal/ui/control.go:520
 #: ui/control.ui:120
 msgid "Suspend"
 msgstr "Suspender"
 
 #: internal/shell/power.go:26
-#: internal/ui/appmenu.go:450
+#: internal/ui/appmenu.go:464
 #: internal/ui/control.go:521
 #: ui/control.ui:144
 msgid "Hibernate"
@@ -14114,13 +14116,15 @@ msgid "Choose the workspace's folder"
 msgstr "Elige la carpeta del espacio de trabajo"
 
 #: internal/termui/menubar.go:32
+#: internal/ui/appmenu.go:620
 #: internal/ui/settings_menu.go:28
 msgid "View"
-msgstr ""
+msgstr "Ver"
 
 #: internal/termui/menubar.go:34
+#: internal/ui/appmenu.go:623
 msgid "Help"
-msgstr ""
+msgstr "Ayuda"
 
 #: internal/termui/palette.go:20
 msgid "Focus the pane in that direction"
@@ -14506,21 +14510,31 @@ msgstr "Alarma · %02d:%02d"
 msgid "Snooze"
 msgstr "Posponer"
 
-#: internal/ui/appmenu.go:444
+#: internal/ui/appmenu.go:458
 #: ui/bar.ui:232
 msgid "Control Center"
 msgstr "Centro de control"
 
-#: internal/ui/appmenu.go:600
-#: internal/ui/appmenu.go:650
-msgid "About %s"
-msgstr ""
-
-#: internal/ui/appmenu.go:602
+#: internal/ui/appmenu.go:619
+#: internal/ui/appmenu.go:644
 msgid "Quit %s"
 msgstr ""
 
-#: internal/ui/appmenu.go:665
+#: internal/ui/appmenu.go:621
+msgid "Fullscreen"
+msgstr "Pantalla completa"
+
+#: internal/ui/appmenu.go:622
+msgid "Float"
+msgstr "Flotante"
+
+#: internal/ui/appmenu.go:624
+#: internal/ui/appmenu.go:642
+#: internal/ui/appmenu.go:692
+msgid "About %s"
+msgstr ""
+
+#: internal/ui/appmenu.go:707
 msgid "Process %d"
 msgstr ""
 

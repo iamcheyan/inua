@@ -88,6 +88,8 @@ const (
 	ActionAbout       = "about"
 	ActionCloseWindow = "close-window"
 	ActionQuitApp     = "quit-app"
+	ActionFullscreen  = "fullscreen"
+	ActionFloat       = "float"
 	// Actions the shell itself runs for the system's own menu, shown when no
 	// window has the focus: the value carries the power action's name.
 	ActionSystem = "system"

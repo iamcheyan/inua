@@ -205,7 +205,11 @@ func (s *shellUI) loadAppMenu(b *bar, gen uint64, pid int) {
 		}
 		if err != nil {
 			log.Printf("appmenu %d: %v", pid, err)
-			return
+		}
+		if len(entries) == 0 {
+			// No source gave this application a menu: the bar shows the
+			// generic one every window has.
+			entries = s.genericAppSections(pid)
 		}
 		gtkx.Clear(&b.appMenu)
 		if os.Getenv("INUA_APPMENU_DEBUG") != "" {
@@ -303,6 +307,16 @@ func (s *shellUI) activateAppMenu(target appMenuTarget) {
 	case appmenu.ActionQuitApp:
 		s.closeMenu()
 		go s.quitApp(target.pid)
+		return
+	case appmenu.ActionFullscreen:
+		s.closeMenu()
+		s.dispatch("fullscreen 0")
+		return
+	case appmenu.ActionFloat:
+		if t := s.windowOf(target.pid); t != nil {
+			s.closeMenu()
+			s.dispatch("togglefloating address:" + t.Address)
+		}
 		return
 	}
 	go func() {
@@ -581,6 +595,34 @@ func (s *shellUI) logAppMenuBounds() bool {
 		}
 	}
 	return false
+}
+
+// genericAppSections is the menu an application without one of its own is
+// given: the commands that work for every window, in the places a Mac puts
+// them. Their actions ask the compositor, so they do not depend on the
+// toolkit's own menu model.
+func (s *shellUI) genericAppSections(pid int) []appmenu.Entry {
+	t := s.windowOf(pid)
+	if t == nil {
+		return nil
+	}
+	name := s.appNameOf(*t)
+	action := func(label, kind string) appmenu.Entry {
+		return appmenu.Entry{Label: label, Enabled: true, Action: appmenu.Action{Kind: kind, Index: int32(pid)}}
+	}
+	section := func(label string, items ...appmenu.Entry) appmenu.Entry {
+		return appmenu.Entry{Label: label, Enabled: true, Children: items}
+	}
+	return []appmenu.Entry{
+		section(i18n.T("File"),
+			action(i18n.T("Close Window"), appmenu.ActionCloseWindow),
+			action(i18n.Tf("Quit %s", name), appmenu.ActionQuitApp)),
+		section(i18n.T("View"),
+			action(i18n.T("Fullscreen"), appmenu.ActionFullscreen),
+			action(i18n.T("Float"), appmenu.ActionFloat)),
+		section(i18n.T("Help"),
+			action(i18n.Tf("About %s", name), appmenu.ActionAbout)),
+	}
 }
 
 // appMenuEntries is the menu behind the application's name: the one menu
